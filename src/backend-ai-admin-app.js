@@ -15,7 +15,7 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-icons/iron-icons.js';
-import './polymer.style.js';
+import './backend-ai-styles.js';
 
 class BackendAiAdminApp extends PolymerElement {
   static get properties() {
