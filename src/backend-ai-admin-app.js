@@ -4,19 +4,20 @@
 
 import { PolymerElement, html } from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
-import '@polymer/paper-checkbox/paper-checkbox.js';
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings';
-import '@polymer/app-layout/app-layout.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-styles/typography.js';
-import '@polymer/paper-styles/color.js';
-import '@polymer/paper-material/paper-material.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-item/paper-item.js';
-import '@polymer/iron-icon/iron-icon.js';
-import '@polymer/iron-icons/iron-icons.js';
-import '@polymer/iron-image/iron-image.js';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import '@polymer/app-layout/app-layout';
+import '@polymer/paper-icon-button/paper-icon-button';
+import '@polymer/paper-styles/typography';
+import '@polymer/paper-styles/color';
+import '@polymer/paper-material/paper-material';
+import '@polymer/paper-listbox/paper-listbox';
+import '@polymer/paper-item/paper-item';
+import '@polymer/iron-icon/iron-icon';
+import '@polymer/iron-icons/iron-icons';
+import '@polymer/iron-image/iron-image';
+import '@polymer/iron-flex-layout/iron-flex-layout';
+import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
+import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
 import * as ai from 'backend.ai-client';
 import './backend-ai-styles.js';
 
@@ -57,7 +58,7 @@ class BackendAiAdminApp extends PolymerElement {
                         <iron-image width=43 height=43 style="width:43px; height:43px;" src="img/logo-black.svg"
                                     sizing="contain"></iron-image>
                     </div>
-                    <span class="site-name">cloud.<span class="bold">backend</span>.ai</span>
+                    <span class="site-name">cloud.<span class="bold">backend</span>.AI</span>
                     <span class="flex"></span>
                 </div>
             </app-header>
