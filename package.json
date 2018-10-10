@@ -11,6 +11,7 @@
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/paper-checkbox": "latest",
     "@polymer/paper-icon-button": "^3.0.1",
+    "@polymer/paper-material": "^3.0.1",
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/polymer": "latest",
     "@webcomponents/webcomponentsjs": "latest"
