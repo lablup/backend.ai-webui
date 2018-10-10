@@ -111,10 +111,10 @@ class BackendAiAdminApp extends PolymerElement {
         </app-header>
         <div class="content">
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap">
-            Top Navbar.
             </div>
             <section id="content" class="container layout vertical center">
             <paper-material class="item" elevation="1">
+            <h3 class="paper-material-title">Menu title</h3>
 
 TEST</paper-material>
             </section>
