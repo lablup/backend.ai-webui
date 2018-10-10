@@ -114,9 +114,11 @@ class BackendAiAdminApp extends PolymerElement {
             </div>
             <section id="content" class="container layout vertical center">
             <paper-material class="item" elevation="1">
-            <h3 class="paper-material-title">Menu title</h3>
-
-TEST</paper-material>
+                <h3 class="paper-material-title">Menu title</h3>
+                <div>
+                    TEST
+                </div>
+            </paper-material>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
                 <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
