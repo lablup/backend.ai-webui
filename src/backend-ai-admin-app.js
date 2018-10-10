@@ -17,6 +17,7 @@ import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-icons/iron-icons.js';
 import '@polymer/iron-image/iron-image.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import * as ai from 'backend.ai-client';
 import './backend-ai-styles.js';
 
 class BackendAiAdminApp extends PolymerElement {
@@ -94,7 +95,7 @@ class BackendAiAdminApp extends PolymerElement {
             </footer>
             <div id="sidebar-navbar-footer" class="horizontal center center-justified layout">
                 <address>
-                    Alpha
+                    <small>Ultra Alpha</small>
                 </address>
             </div>
         </app-header-layout>

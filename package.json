@@ -17,6 +17,7 @@
     "@polymer/paper-material": "^3.0.1",
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/polymer": "latest",
-    "@webcomponents/webcomponentsjs": "latest"
+    "@webcomponents/webcomponentsjs": "latest",
+    "node-fetch": "^2.2.0"
   }
 }
