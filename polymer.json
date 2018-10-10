@@ -1,0 +1,22 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/backend-ai-admin-app.js",
+  "fragments": [
+  ],
+  "sources": [
+   "src/backend-ai-admin-app.js",
+   "manifest/**",
+   "package.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "node_modules/@webcomponents/webcomponentsjs/**"
+  ],
+  "builds": [
+    { 
+      "preset": "es6-unbundled"
+    }
+  ],
+  "moduleResolution": "node",
+  "npm": true
+}

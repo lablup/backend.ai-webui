@@ -1,0 +1,13 @@
+{
+  "name": "backend.ai-admin-app",
+  "version": "0.1.0",
+  "main": "src/backend.ai-admin-app.js",
+  "repository": "https://github.com/lablup/backend.ai-admin-app.git",
+  "author": "Jeongkyu Shin",
+  "license": "LGPL-v3",
+  "dependencies": {
+    "@polymer/paper-checkbox": "latest",
+    "@polymer/polymer": "latest",
+    "@webcomponents/webcomponentsjs": "latest"
+  }
+}

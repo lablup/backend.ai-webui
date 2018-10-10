@@ -59,3 +59,10 @@ typings/
 
 # next.js build output
 .next
+
+.vscode
+.DS_Store
+public
+build
+.firebaserc
+firebase.json
