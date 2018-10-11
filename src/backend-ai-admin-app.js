@@ -18,8 +18,15 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
 import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
-import * as ai from 'backend.ai-client';
+import '@polymer/iron-pages/iron-pages';
+import '@polymer/app-route/app-location.js';
+import '@polymer/app-route/app-route.js';
+
+//import * as ai from 'backend.ai-client';
+import * as ai from './backend.ai-client'; // Now use internal backend.ai-client version.
+
 import './backend-ai-styles.js';
+import './backend-ai-job-view.js';
 
 class BackendAiAdminApp extends PolymerElement {
   static get properties() {
@@ -36,11 +43,36 @@ class BackendAiAdminApp extends PolymerElement {
 
   ready() {
     super.ready();
+    this.clientConfig = new ai.backend.ClientConfig(
+        'AKIAJHYLTQBDDRYTHBXY',
+        '6OAKp_sOZLA99--XcMszRaWNJIqc7vX_7LBnz3qp',
+        'https://api.backend.ai'
+    );
+
+    this.client = new ai.backend.Client(
+      this.clientConfig,
+      `Backend.AI Admin App.`,
+    );
+  }
+  static get observers() {
+    return [
+      '_routeChanged(route.*)',
+      '_viewChanged(routeData.view)'
+    ]
+  }
+  
+  _routeChanged(changeRecord) {
+    if (changeRecord.path === 'path') {
+      console.log('Path changed!');
+    }
+  }
+  _viewChanged(view) {
+    // load data for view
   }
 
   static get template() {
     return html`
-<style is="custom-style" include="backend-ai-styles iron-flex-layout">
+<style is="custom-style" include="backend-ai-styles">
     paper-icon-button {
         --paper-icon-button-ink-color: white;
     }
@@ -49,6 +81,12 @@ class BackendAiAdminApp extends PolymerElement {
         display: none;
     }
 </style>
+<app-location route="{{route}}"></app-location>
+<app-route
+    route="{{route}}"
+    pattern="/:view"
+    data="{{routeData}}"
+    tail="{{subroute}}"></app-route>
 <app-drawer-layout id="app-body" responsive-width="900px" drawer-width="200px">
     <app-drawer swipe-open slot="drawer" class="drawer-menu">
         <app-header-layout has-scrolling-region class="vertical layout">
@@ -63,27 +101,31 @@ class BackendAiAdminApp extends PolymerElement {
                 </div>
             </app-header>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
-                <paper-item link>
-                    <iron-icon id="activities-icon" class="orange" icon="icons:view-quilt"></iron-icon>
-                    Summary
-                </paper-item>
-                <paper-item link>
-                    <iron-icon class="fg red" icon="icons:subject"></iron-icon>
-                    Jobs
-                </paper-item>
-                <paper-item link>
-                    <iron-icon class="fg green" icon="icons:pageview"></iron-icon>
-                    Experiments
-                </paper-item>
-                <paper-item disabled>
-                    <iron-icon icon="icons:assessment"></iron-icon>
-                    Statistics
-                </paper-item>
-                <paper-item link>
-                    <iron-icon class="fg blue" icon="icons:build"></iron-icon>
-                    Settings
-                    <span class="flex"></span>
-                </paper-item>
+                <a href="/summary" tabindex="-1">
+                    <paper-item link>
+                        <iron-icon id="activities-icon" class="orange" icon="icons:view-quilt"></iron-icon>
+                        Summary
+                    </paper-item>
+                </a>
+                <a href="/job" tabindex="-1">
+                    <paper-item link>
+                        <iron-icon class="fg red" icon="icons:subject"></iron-icon>
+                        Jobs
+                    </paper-item>
+                </a>
+                    <paper-item link>
+                        <iron-icon class="fg green" icon="icons:pageview"></iron-icon>
+                        Experiments
+                    </paper-item>
+                    <paper-item disabled>
+                        <iron-icon icon="icons:assessment"></iron-icon>
+                        Statistics
+                    </paper-item>
+                    <paper-item link>
+                        <iron-icon class="fg blue" icon="icons:build"></iron-icon>
+                        Settings
+                        <span class="flex"></span>
+                    </paper-item>
             </paper-listbox>
             <footer>
                 <div class="terms-of-use" style="margin-bottom:50px;">
@@ -115,12 +157,9 @@ class BackendAiAdminApp extends PolymerElement {
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap">
             </div>
             <section id="content" class="container layout vertical center">
-            <paper-material class="item" elevation="1">
-                <h3 class="paper-material-title">Menu title</h3>
-                <div>
-                    TEST
-                </div>
-            </paper-material>
+            <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
+              <backend-ai-job-view name="job" route="{{subroute}}"></backend-ai-job-view>
+            </iron-pages>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
                 <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
