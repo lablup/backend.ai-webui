@@ -9,6 +9,7 @@ Licensed under MIT
 /*jshint esnext: true */
 
 //import { graphql, GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
+import * as Buffer from './buffer';
 
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
