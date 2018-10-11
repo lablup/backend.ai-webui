@@ -31,6 +31,10 @@ import './backend-ai-job-view.js';
 class BackendAiAdminApp extends PolymerElement {
   static get properties() {
     return {
+        menuTitle: {
+            type: String,
+            value: 'Default'
+        }
     };
   }
 
@@ -68,6 +72,16 @@ class BackendAiAdminApp extends PolymerElement {
   }
   _viewChanged(view) {
     // load data for view
+    switch(view) {
+        case 'summary':
+            this.menuTitle = 'Summary';
+            break;
+        case 'job':
+            this.menuTitle = 'Jobs';
+            break;
+        default:
+            this.menuTitle = 'Summary';
+    }
   }
 
   static get template() {
@@ -149,7 +163,7 @@ class BackendAiAdminApp extends PolymerElement {
                     effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
             <app-toolbar primary style="height:80px;" class="bar">
                 <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                <span title id="main-panel-toolbar-title">Title</span>
+                <span title id="main-panel-toolbar-title">[[menuTitle]]</span>
                 <span class="flex"></span>
             </app-toolbar>
         </app-header>

@@ -52,7 +52,7 @@ class BackendAIJobView extends PolymerElement {
     <style is="custom-style" include="backend-ai-styles">
     </style>
     <paper-material class="item" elevation="1">
-        <h3 class="paper-material-title">Menu title</h3>
+        <h3 class="paper-material-title">Jobs</h3>
         <div>
             TEST
         </div>
