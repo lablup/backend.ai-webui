@@ -4,7 +4,7 @@
   "main": "src/backend.ai-admin-app.js",
   "repository": "https://github.com/lablup/backend.ai-admin-app.git",
   "author": "Jeongkyu Shin",
-  "license": "LGPL-v3",
+  "license": "LGPL-3.0-or-later",
   "dependencies": {
     "@polymer/app-layout": "^3.0.1",
     "@polymer/iron-icon": "^3.0.1",
