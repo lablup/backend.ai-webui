@@ -4,6 +4,7 @@
 exports.byteLength = byteLength
 exports.toByteArray = toByteArray
 exports.fromByteArray = fromByteArray
+
 var lookup = []
 var revLookup = []
 var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
@@ -2017,3 +2018,5 @@ function numberIsNaN (obj) {
 
 },{"base64-js":1,"ieee754":2}]},{},[])("buffer")
 });
+
+export { Buffer };

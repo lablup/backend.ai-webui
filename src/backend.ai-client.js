@@ -9,8 +9,19 @@ Licensed under MIT
 /*jshint esnext: true */
 
 //import { graphql, GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
-import * as Buffer from './buffer';
+//global.Buffer = Buffer;
+//import Buffer from './buffer.mjs';
+//import { Buffer }  from './buffer.js';
 
+//var Buffer = require('buffer/').Buffer;
+/*
+if (typeof fetch === 'undefined') {
+  var fetch = require('node-fetch');
+  var Headers = fetch.Headers;
+}
+*/
+var crypto = require('crypto');
+//var crypto = window.crypto || window.msCrypto;
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
     // fixed configs with this implementation
@@ -262,7 +273,8 @@ class Client {
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = new Headers({
       "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(requestBody),
+      //"Content-Length": Buffer.byteLength(requestBody),
+      "Content-Length": this.getByteLength(requestBody),
       "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
       "X-BackendAI-Version": this._config.apiVersion,
       "X-BackendAI-Date": d.toISOString(),
@@ -321,6 +333,7 @@ class Client {
   }
 
   sign(key, key_encoding, msg, digest_type) {
+    //let kbuf = key;
     let kbuf = new Buffer(key, key_encoding);
     let hmac = crypto.createHmac(this._config.hashType, kbuf);
     hmac.update(msg, 'utf8');
@@ -332,6 +345,11 @@ class Client {
     let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
     return k2;
   }
+
+  getByteLength(s,b,i,c){
+    for(b=i=0;c=s.charCodeAt(i++);b+=c>>11?3:c>>7?2:1);
+    return b;
+  }  
 }
 
 // below will become "static const" properties in ES7
@@ -359,4 +377,14 @@ const backend = {
   ClientConfig: ClientConfig,
 }
 
-export { backend, Client, ClientConfig };
+//if (typeof module !== 'undefined' && module.exports) {
+  // for use like "ai.backend.Client"
+  module.exports.backend = backend;
+  // for classical uses
+  module.exports.Client = Client;
+  module.exports.ClientConfig = ClientConfig;
+  // legacy aliases
+  module.exports.BackendAIClient = Client;
+  module.exports.BackendAIClientConfig = ClientConfig;
+//}
+//export { backend, Client, ClientConfig };

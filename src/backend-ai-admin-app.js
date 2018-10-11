@@ -25,7 +25,8 @@ import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 
 //import * as ai from 'backend.ai-client';
-import * as ai from './backend.ai-client'; // Now use internal backend.ai-client version.
+import * as ai from './b.js'; // Now use internal backend.ai-client version.
+import {ClientConfig} from './b.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-job-view.js';
@@ -49,6 +50,7 @@ class BackendAiAdminApp extends PolymerElement {
 
   ready() {
     super.ready();
+    console.log(ClientConfig);
     this.clientConfig = new ai.backend.ClientConfig(
         'AKIAJHYLTQBDDRYTHBXY',
         '6OAKp_sOZLA99--XcMszRaWNJIqc7vX_7LBnz3qp',
