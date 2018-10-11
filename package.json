@@ -23,6 +23,7 @@
     "@polymer/polymer": "latest",
     "@vaadin/vaadin-grid": "^5.2.0-beta2",
     "@webcomponents/webcomponentsjs": "latest",
+    "graphql": "^14.0.2",
     "node-fetch": "^2.2.0"
   }
 }

@@ -8,6 +8,8 @@ Licensed under MIT
 */
 /*jshint esnext: true */
 
+//import { graphql, GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
+
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
     // fixed configs with this implementation
@@ -223,6 +225,20 @@ class Client {
     return uaSig;
   }
 
+  /* GraphQL requests */
+  gql(query) {
+    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
+    return this._wrapWithPromise(rqst);
+  }
+  test_gql(){
+    let status = 'RUNNING';
+    let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
+    let q = `query(${this._config.accessKey}:String, ${status}:String) {`+
+    `  compute_sessions(access_key:${this._config.accessKey}, status:${status}) { ${fields.join(" ")} }`+
+    '}';
+    a = this.gql(q);
+    console.log(a);
+  }
   /**
    * Generate a RequestInfo object that can be passed to fetch() API,
    * which includes a properly signed header with the configured auth information.

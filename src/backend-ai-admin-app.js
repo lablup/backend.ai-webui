@@ -59,6 +59,7 @@ class BackendAiAdminApp extends PolymerElement {
       this.clientConfig,
       `Backend.AI Admin App.`,
     );
+    this.client.test_gql();
   }
   static get observers() {
     return [
