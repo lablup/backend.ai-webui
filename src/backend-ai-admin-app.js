@@ -55,7 +55,7 @@ class BackendAiAdminApp extends PolymerElement {
             <app-header id="portrait-bar" slot="header" effects="waterfall" fixed>
                 <div class="horizontal layout flex center bar">
                     <div class="portrait-canvas">
-                        <iron-image width=43 height=43 style="width:43px; height:43px;" src="img/logo-black.svg"
+                        <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/logo-black.svg"
                                     sizing="contain"></iron-image>
                     </div>
                     <span class="site-name">cloud.<span class="bold">backend</span>.AI</span>

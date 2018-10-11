@@ -1,9 +1,9 @@
 {
-  "description": "Template Polymer 3.0 App",
+  "description": "Backend.AI Administration App.",
   "manifest_version": 1,
-  "name": "Start Polymer 3.0",
-  "short_name": "StartP3",
-  "version": "0.1",
+  "name": "Backend.AI Admin App.",
+  "short_name": "BackendAIAdminApp",
+  "version": "0.1.1",
   "start_url": ".",
   "display": "fullscreen",
   "background_color": "#fff",
