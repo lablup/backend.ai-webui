@@ -14,6 +14,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import './backend-ai-styles.js';
+import './lablup-job-list.js';
 
 class BackendAIJobView extends PolymerElement {
   static get properties() {
@@ -54,7 +55,7 @@ class BackendAIJobView extends PolymerElement {
     <paper-material class="item" elevation="1">
         <h3 class="paper-material-title">Jobs</h3>
         <div>
-            TEST
+            <lablup-job-list></lablup-job-list>
         </div>
     </paper-material>
     `;

@@ -8,17 +8,20 @@
   "dependencies": {
     "@polymer/app-layout": "^3.0.1",
     "@polymer/app-route": "^3.0.2",
+    "@polymer/iron-ajax": "^3.0.1",
     "@polymer/iron-icon": "^3.0.1",
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/iron-image": "^3.0.1",
     "@polymer/iron-pages": "^3.0.1",
     "@polymer/paper-checkbox": "latest",
+    "@polymer/paper-dialog": "^3.0.1",
     "@polymer/paper-icon-button": "^3.0.1",
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
     "@polymer/paper-material": "^3.0.1",
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/polymer": "latest",
+    "@vaadin/vaadin-grid": "^5.2.0-beta2",
     "@webcomponents/webcomponentsjs": "latest",
     "node-fetch": "^2.2.0"
   }

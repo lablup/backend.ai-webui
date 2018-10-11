@@ -16,6 +16,8 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
 import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
 import '@polymer/iron-pages/iron-pages';
@@ -86,7 +88,7 @@ class BackendAiAdminApp extends PolymerElement {
 
   static get template() {
     return html`
-<style is="custom-style" include="backend-ai-styles">
+<style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
     paper-icon-button {
         --paper-icon-button-ink-color: white;
     }
@@ -105,7 +107,7 @@ class BackendAiAdminApp extends PolymerElement {
     <app-drawer swipe-open slot="drawer" class="drawer-menu">
         <app-header-layout has-scrolling-region class="vertical layout">
             <app-header id="portrait-bar" slot="header" effects="waterfall" fixed>
-                <div class="horizontal layout flex center bar">
+                <div class="horizontal center layout flex bar">
                     <div class="portrait-canvas">
                         <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/logo-black.svg"
                                     sizing="contain"></iron-image>
@@ -161,7 +163,7 @@ class BackendAiAdminApp extends PolymerElement {
         <app-header slot="header" id="main-toolbar" condenses reveals
                     effects="waterfall blend-background"
                     effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
-            <app-toolbar primary style="height:80px;" class="bar">
+            <app-toolbar primary style="height:48px;" class="bar">
                 <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                 <span title id="main-panel-toolbar-title">[[menuTitle]]</span>
                 <span class="flex"></span>
