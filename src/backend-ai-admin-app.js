@@ -102,18 +102,18 @@ class BackendAiAdminApp extends PolymerElement {
             </app-header>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
                 <a href="/summary" tabindex="-1">
-                    <paper-item link>
-                        <iron-icon id="activities-icon" class="orange" icon="icons:view-quilt"></iron-icon>
+                    <paper-item link role="menuitem">
+                        <iron-icon id="activities-icon" class="fg orange" icon="icons:view-quilt"></iron-icon>
                         Summary
                     </paper-item>
                 </a>
-                <a href="/job" tabindex="-1">
+                <a href="/job" tabindex="-1" role="menuitem">
                     <paper-item link>
                         <iron-icon class="fg red" icon="icons:subject"></iron-icon>
                         Jobs
                     </paper-item>
                 </a>
-                    <paper-item link>
+                    <paper-item disabled>
                         <iron-icon class="fg green" icon="icons:pageview"></iron-icon>
                         Experiments
                     </paper-item>
@@ -121,7 +121,7 @@ class BackendAiAdminApp extends PolymerElement {
                         <iron-icon icon="icons:assessment"></iron-icon>
                         Statistics
                     </paper-item>
-                    <paper-item link>
+                    <paper-item disabled>
                         <iron-icon class="fg blue" icon="icons:build"></iron-icon>
                         Settings
                         <span class="flex"></span>
@@ -157,9 +157,9 @@ class BackendAiAdminApp extends PolymerElement {
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap">
             </div>
             <section id="content" class="container layout vertical center">
-            <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
-              <backend-ai-job-view name="job" route="{{subroute}}"></backend-ai-job-view>
-            </iron-pages>
+                <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
+                    <backend-ai-job-view name="job" route="{{subroute}}"></backend-ai-job-view>
+                </iron-pages>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
                 <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>

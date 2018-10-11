@@ -36,7 +36,7 @@ const template = html `
                 --general-content-container-width: 980px;
                 --general-background-color: rgba(244, 245, 247, 0.95);
                 --general-sidebar-topbar-color: #434854;
-                --general-sidebar-color: #424242;
+                --general-sidebar-color: #DDD;
                 --general-sidebar-background-color: rgba(24, 24, 24, 0.95);
                 --general-sidebar-h3-color: #424242;
                 --general-sidebar-h3-border-color: 1px solid #DDD;
@@ -102,7 +102,6 @@ const template = html `
 
             a {
                 text-decoration: none;
-                color: #222;
                 cursor: pointer;
             }
 
@@ -545,7 +544,8 @@ const template = html `
                 }
             }
 
-            #content > paper-material {
+            #content > paper-material,
+            #content > iron-pages {
                 max-width: var(--general-content-container-width, 980px);
             }
 
@@ -557,13 +557,15 @@ const template = html `
             }
 
             @media screen and (max-width: 449px) {
-                #content > paper-material {
+                #content > paper-material,
+                #content > iron-pages {
                     width: 100%;
                 }
             }
 
             @media screen and (min-width: 450px) {
-                #content > paper-material {
+                #content > paper-material,
+                #content > iron-pages {
                     width: 95%;
                 }
             }
@@ -700,7 +702,8 @@ const template = html `
                 color: var(--general-sidebar-color, #eeeeee);;
             }
 
-            paper-listbox.sidebar paper-item.iron-selected {
+            paper-listbox.sidebar paper-item.iron-selected,
+            paper-listbox.sidebar a.iron-selected paper-item {
                 color: var(--general-sidebar-selected-color, #eeeeee);
                 background: var(--general-sidebar-selected-background-color, #23252B);
                 border-left: var(--general-sidebar-selected-border-left);
@@ -765,7 +768,8 @@ const template = html `
                 width: 40px;
             }
 
-            paper-tabs.file-tabs paper-tab.iron-selected {
+            paper-tabs.file-tabs paper-tab.iron-selected,
+            paper-tabs.file-tabs a.iron-selected {
                 color: #ffffff !important;
             }
 
@@ -1067,7 +1071,7 @@ const template = html `
             }
 
             .drawer-menu a {
-                color: #222;
+                color: #DDD;
             }
 
             .drawer-menu iron-icon {
