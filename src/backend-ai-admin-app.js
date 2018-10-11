@@ -78,9 +78,11 @@ class BackendAiAdminApp extends PolymerElement {
     switch(view) {
         case 'summary':
             this.menuTitle = 'Summary';
+            this.$['sidebar-menu'].selected = 0;
             break;
         case 'job':
             this.menuTitle = 'Jobs';
+            this.$['sidebar-menu'].selected = 1;
             break;
         default:
             this.menuTitle = 'Summary';
