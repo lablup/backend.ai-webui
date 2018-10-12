@@ -20,8 +20,8 @@ if (typeof fetch === 'undefined') {
   var Headers = fetch.Headers;
 }
 */
-var crypto = require('crypto');
-//var crypto = window.crypto || window.msCrypto;
+
+var crypto = window.crypto || window.msCrypto;
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
     // fixed configs with this implementation
@@ -324,6 +324,16 @@ class Client {
             + bodyHash);
   }
 
+  getAuthenticationString_new(method, queryString, dateValue, bodyValue) {
+    window.crypto.subtle.digest({name: "SHA-256",},new Uint8Array(bodyValue)).then((bodyHash)=>{
+      return (method + '\n' + queryString + '\n' + dateValue + '\n'
+      + 'host:' + this._config.endpointHost + '\n'
+      + 'content-type:application/json' + '\n'
+      + 'x-backendai-version:' + this._config.apiVersion + '\n'
+      + bodyHash);
+    });
+  }
+
   getCurrentDate(now) {
     let year = (`0000${now.getUTCFullYear()}`).slice(-4);
     let month = (`0${now.getUTCMonth() + 1}`).slice(-2);
@@ -349,7 +359,7 @@ class Client {
   getByteLength(s,b,i,c){
     for(b=i=0;c=s.charCodeAt(i++);b+=c>>11?3:c>>7?2:1);
     return b;
-  }  
+  }
 }
 
 // below will become "static const" properties in ES7
@@ -377,14 +387,4 @@ const backend = {
   ClientConfig: ClientConfig,
 }
 
-//if (typeof module !== 'undefined' && module.exports) {
-  // for use like "ai.backend.Client"
-  module.exports.backend = backend;
-  // for classical uses
-  module.exports.Client = Client;
-  module.exports.ClientConfig = ClientConfig;
-  // legacy aliases
-  module.exports.BackendAIClient = Client;
-  module.exports.BackendAIClientConfig = ClientConfig;
-//}
-//export { backend, Client, ClientConfig };
+export { backend, Client, ClientConfig };
