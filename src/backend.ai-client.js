@@ -313,7 +313,7 @@ class Client {
     };
     return requestInfo;
   }
-
+  /*
   getAuthenticationString(method, queryString, dateValue, bodyValue) {
     let bodyHash = crypto.createHash(this._config.hashType)
                    .update(bodyValue).digest('hex');
@@ -322,9 +322,9 @@ class Client {
             + 'content-type:application/json' + '\n'
             + 'x-backendai-version:' + this._config.apiVersion + '\n'
             + bodyHash);
-  }
+  }*/
 
-  getAuthenticationString_new(method, queryString, dateValue, bodyValue) {
+  getAuthenticationString(method, queryString, dateValue, bodyValue) {
     return window.crypto.subtle.digest({name: "SHA-256",},new Uint16Array(this.str2ab(bodyValue))).then((bodyHash)=>{
       return (method + '\n' + queryString + '\n' + dateValue + '\n'
       + 'host:' + this._config.endpointHost + '\n'
@@ -341,13 +341,23 @@ class Client {
     let t = year + month + day;
     return t;
   }
-
+  /*
   sign(key, key_encoding, msg, digest_type) {
     //let kbuf = key;
     let kbuf = new Buffer(key, key_encoding);
     let hmac = crypto.createHmac(this._config.hashType, kbuf);
     hmac.update(msg, 'utf8');
     return hmac.digest(digest_type);
+  }*/
+
+  sign(key, key_encoding, msg, digest_type) {
+    window.crypto.subtle.sign({name: "HMAC",},kbuf, msg).then((signature)=>{
+      if (digest_type == 'binary') {
+        return this.buf2bin(signature);
+      } else {
+        return signature;
+      }
+    });
   }
 
   getSignKey(secret_key, now) {
@@ -373,8 +383,17 @@ class Client {
     }
     return buf;
   }
+
   buf2hex(buffer) {
     return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+  }
+
+  buf2bin(buffer) {
+    var i, len = buffer.length, b_str = "";
+    for (i=0; i<len; i++) {
+      b_str += String.fromCharCode(buffer[i]);
+    }
+    return b_str;
   }
 }
 
