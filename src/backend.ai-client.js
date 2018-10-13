@@ -330,7 +330,7 @@ class Client {
       + 'host:' + this._config.endpointHost + '\n'
       + 'content-type:application/json' + '\n'
       + 'x-backendai-version:' + this._config.apiVersion + '\n'
-      + this.ab2str(bodyHash));
+      + this.buf2hex(bodyHash));
     });
   }
 
@@ -372,6 +372,9 @@ class Client {
       bufView[i] = str.charCodeAt(i);
     }
     return buf;
+  }
+  buf2hex(buffer) {
+    return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
   }
 }
 
