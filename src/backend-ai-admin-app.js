@@ -116,7 +116,10 @@ class BackendAiAdminApp extends PolymerElement {
                         <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand.svg"
                                     sizing="contain"></iron-image>
                     </div>
-                    <span class="site-name">cloud.<span class="bold">backend</span>.AI</span>
+                    <div class="vertical start-justified layout">
+                        <span class="site-name"><span class="bold">backend</span>.AI</span>
+                        <span style="font-size:13px;">webconsole</span>
+                    </div>
                     <span class="flex"></span>
                 </div>
             </app-header>
