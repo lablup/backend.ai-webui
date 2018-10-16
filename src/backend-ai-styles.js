@@ -270,7 +270,7 @@ const template = html `
 
             #portrait-bar,
             #main-toolbar {
-                height: 80px;
+                height: 48px;
             }
 
             #portrait-bar .bar {
@@ -288,8 +288,9 @@ const template = html `
                 bottom: 0;
                 color: var(--general-sidebar-footer-color, #AAAAAA);
                 background-color: var(--general-sidebar-background-color);
-                margin: 0 5px;
+                margin: 0;
                 padding-bottom: 5px;
+                font-size: 10px;
             }
 
             .drawer-menu footer a {

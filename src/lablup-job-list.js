@@ -145,12 +145,7 @@ class LablupJobList extends PolymerElement {
             <vaadin-grid-column resizable>
                 <template class="header">Job ID</template>
                 <template>
-                    <paper-item style="padding:0">
-                        <paper-item-body two-line>
-                            <div>[[item.sess_id]]</div>
-                            <div secondary class="indicator">[[item.access_key]]</div>
-                        </paper-item-body>
-                    </paper-item>
+                    <div class="indicator">[[item.sess_id]]</div>
                 </template>
             </vaadin-grid-column>
 
