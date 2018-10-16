@@ -229,17 +229,22 @@ class Client {
     return uaSig;
   }
   /* GraphQL requests */
-  gql(query) {
+  gql(q, v) {
+    let query = {
+      'query': q,
+      'variables': v
+    }
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
     return this._wrapWithPromise(rqst);
   }
   test_gql(){
     let status = 'RUNNING';
     let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
-    let q = `query(${this._config.accessKey}:String, ${status}:String) {`+
-    `  compute_sessions(access_key:${this._config.accessKey}, status:${status}) { ${fields.join(" ")} }`+
+    let q = `query($ak:String, $status:String) {`+
+    `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
     '}';
-    var a = this.gql(q);
+    let v = {'status': 'RUNNING', 'ak': this._config.accessKey};
+    var a = this.gql(q, v);
     console.log(a);
   }
 

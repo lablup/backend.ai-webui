@@ -54,10 +54,16 @@ class BackendAIJobView extends PolymerElement {
     </style>
     <paper-material class="item" elevation="1">
         <h3 class="paper-material-title">Jobs</h3>
+        <h4>Running</h4>
         <div>
-            <lablup-job-list></lablup-job-list>
+            <lablup-job-list condition="running"></lablup-job-list>
         </div>
-    </paper-material>
+        <h4>Finished</h4>
+        <div>
+            <lablup-job-list condition="finished"></lablup-job-list>
+        </div>
+
+        </paper-material>
     `;
   }
 }

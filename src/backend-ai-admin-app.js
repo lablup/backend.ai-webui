@@ -53,17 +53,18 @@ class BackendAiAdminApp extends PolymerElement {
     super.ready();
     console.log(ai);
     this.clientConfig = new ai.backend.ClientConfig(
-        'AKIAJHYLTQBDDRYTHBXY',
-        '6OAKp_sOZLA99--XcMszRaWNJIqc7vX_7LBnz3qp',
-        'https://api.backend.ai'
+        'AKIAIOSFODNN7EXAMPLE',
+        'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+        'http://192.168.0.125:8081'
     );
 
     this.client = new ai.backend.Client(
       this.clientConfig,
       `Backend.AI Admin App.`,
     );
-    this.client.test_gql();
-  }
+    window.backendaiclient = this.client;
+    console.log("connected");
+}
   static get observers() {
     return [
       '_routeChanged(route.*)',

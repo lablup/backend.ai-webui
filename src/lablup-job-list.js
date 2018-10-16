@@ -41,15 +41,28 @@ class LablupJobList extends PolymerElement {
     connectedCallback() {
         super.connectedCallback();
         afterNextRender(this, function () {
-            /*
-            this._requestBot.url = '/job/get/' + this.condition;
-            this._requestBot.method = 'get';
-            this._requestBot.body = JSON.stringify({
-                'condition': this.condition
-            });
-            const req = this._requestBot.generateRequest();
-            req.completes.then(req => {
-                this.jobs = req.response;
+            let status = 'RUNNING';
+            switch (this.condition) {
+                case 'running':
+                    status = 'RUNNING';
+                    break;
+                case 'finished':
+                    status = 'TERMINATED';
+                    break;
+                case 'archived':
+                default:
+                    status = 'RUNNING';
+            };
+
+            let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
+            let q = `query($ak:String, $status:String) {`+
+            `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
+            '}';
+            let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
+       
+            window.backendaiclient.gql(q, v).then(response => {
+                this.jobs = response;
+                console.log(this.jobs);
             }).catch(err => {
                 if (req.response && req.response.error_msg) {
                     setNotification(req.response.error_msg);
@@ -57,7 +70,6 @@ class LablupJobList extends PolymerElement {
                     setNotification(err);
                 }
             });
-            this._requestBot.method = 'post';*/
         });
     }
 
@@ -124,7 +136,7 @@ class LablupJobList extends PolymerElement {
             }
         </style>
 
-        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.result]]">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.compute_sessions]]">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>
                 <template class="header">#</template>
                 <template>[[_indexFrom1(index)]]</template>
@@ -135,7 +147,7 @@ class LablupJobList extends PolymerElement {
                 <template>
                     <paper-item style="padding:0">
                         <paper-item-body two-line>
-                            <div>[[item.kernel_id]]</div>
+                            <div>[[item.sess_id]]</div>
                             <div secondary class="indicator">[[item.access_key]]</div>
                         </paper-item-body>
                     </paper-item>
@@ -146,7 +158,7 @@ class LablupJobList extends PolymerElement {
                 <template class="header">Starts</template>
                 <template>
                     <div class="layout vertical">
-                        <span>[[item.started_at]]</span>
+                        <span>[[item.created_at]]</span>
                         <span class="indicator">([[item.elapsed]])</span>
                     </div>
                 </template>
@@ -157,11 +169,11 @@ class LablupJobList extends PolymerElement {
               <template>
                   <div class="layout horizontal center flex">
                       <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                      <span>[[item.cpu_capacity]]</span>
+                      <span>[[item.cpu_slot]]</span>
                       <span class="indicator">core</span>
                       <iron-icon class="fg green" icon="fa-web-application:microchip"></iron-icon>
-                      <span>[[item.ram_capacity]]</span>
-                      <span class="indicator">[[item.ram_unit]]</span>
+                      <span>[[item.mem_slot]]</span>
+                      <span class="indicator">GB[[item.mem_unit]]</span>
                       <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
                       <!-- <span>[[item.storage_capacity]]</span> -->
                       <!-- <span class="indicator">[[item.storage_unit]]</span> -->
@@ -174,11 +186,16 @@ class LablupJobList extends PolymerElement {
               <template>
                   <div class="layout horizontal center flex">
                       <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                      <div class="vertical start layout">
                       <span>[[item.cpu_used]]</span>
-                      <span class="indicator">[[item.cpu_unit]]</span>
+                      <span class="indicator">msec.</span>
+                      </div>
                       <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                      <span>[[item.io_used]]</span>
-                      <span class="indicator">[[item.io_unit]]</span>
+                      <div class="vertical start layout">
+                        <span style="font-size:8px">[[item.io_read_bytes]]</span>
+                        <span style="font-size:8px">[[item.io_write_bytes]]</span>
+                      </div>
+                      <span class="indicator">bytes</span>
                   </div>
               </template>
             </vaadin-grid-column>
@@ -187,7 +204,7 @@ class LablupJobList extends PolymerElement {
               <template class="header">Control</template>
               <template>
                   <div id="controls" class="layout horizontal flex center"
-                       kernel-id="[[item.kernel_id]]">
+                       kernel-id="[[item.sess_id]]">
                       <paper-icon-button disabled class="fg"
                                          icon="assignment"></paper-icon-button>
                       <template is="dom-if" if="[[_isRunning()]]">
