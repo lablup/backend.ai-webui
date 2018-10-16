@@ -76,6 +76,25 @@ class LablupJobList extends PolymerElement {
     _isRunning() {
         return this.condition === 'running';
     }
+    _byteToMB(value) {
+        return Math.floor(value/1000000);
+    }
+
+    _elapsed(start, end) {
+        var startDate = new Date(start);
+        if (this.condition == 'running') {
+            var endDate = new Date();
+        } else {
+            var endDate = new Date(end);
+        }
+        var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000,-1);
+        if (this.condition == 'running') {
+            return 'Running ' + seconds + 'sec.';
+        } else {
+            return 'Reserved for ' + seconds + 'sec.';
+        }
+        return seconds;
+    }
 
     _indexFrom1(index) {
         return index + 1;
@@ -154,7 +173,7 @@ class LablupJobList extends PolymerElement {
                 <template>
                     <div class="layout vertical">
                         <span>[[item.created_at]]</span>
-                        <span class="indicator">([[item.elapsed]])</span>
+                        <span class="indicator">([[_elapsed(item.created_at, item.terminated_at)]])</span>
                     </div>
                 </template>
             </vaadin-grid-column>
@@ -166,9 +185,12 @@ class LablupJobList extends PolymerElement {
                       <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
                       <span>[[item.cpu_slot]]</span>
                       <span class="indicator">core</span>
-                      <iron-icon class="fg green" icon="fa-web-application:microchip"></iron-icon>
                       <span>[[item.mem_slot]]</span>
                       <span class="indicator">GB[[item.mem_unit]]</span>
+                      <template is="dom-if" if="[[item.gpu_slot]]">
+                        <span>[[item.gpu_slot]]</span>
+                        <span class="indicator">vGPU</span>
+                      </template>
                       <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
                       <!-- <span>[[item.storage_capacity]]</span> -->
                       <!-- <span class="indicator">[[item.storage_unit]]</span> -->
@@ -187,10 +209,9 @@ class LablupJobList extends PolymerElement {
                       </div>
                       <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
                       <div class="vertical start layout">
-                        <span style="font-size:8px">[[item.io_read_bytes]]</span>
-                        <span style="font-size:8px">[[item.io_write_bytes]]</span>
+                        <span style="font-size:8px">[[_byteToMB(item.io_read_bytes)]]<span class="indicator">MB</span></span>
+                        <span style="font-size:8px">[[_byteToMB(item.io_write_bytes)]]<span class="indicator">MB</span></span>
                       </div>
-                      <span class="indicator">bytes</span>
                   </div>
               </template>
             </vaadin-grid-column>
