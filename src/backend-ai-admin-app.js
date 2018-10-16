@@ -24,10 +24,7 @@ import '@polymer/iron-pages/iron-pages';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 
-//import * as ai from 'backend.ai-client';
-//import * as ai from './backend.ai-client.js'; // Now use internal backend.ai-client version.
 import './backend.ai-client-bundle.js';
-//import * as ai from './b.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-job-view.js';
@@ -116,7 +113,7 @@ class BackendAiAdminApp extends PolymerElement {
             <app-header id="portrait-bar" slot="header" effects="waterfall" fixed>
                 <div class="horizontal center layout flex bar">
                     <div class="portrait-canvas">
-                        <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/logo-black.svg"
+                        <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand.svg"
                                     sizing="contain"></iron-image>
                     </div>
                     <span class="site-name">cloud.<span class="bold">backend</span>.AI</span>

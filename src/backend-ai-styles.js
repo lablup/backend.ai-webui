@@ -129,7 +129,6 @@ const template = html `
                 text-align: center;
                 margin-left: auto;
                 margin-right: auto;
-                padding-top: 4px;
                 line-height: 16px;
                 font-size: 16px;
                 font-weight: 100;
