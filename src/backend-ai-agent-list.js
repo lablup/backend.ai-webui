@@ -69,7 +69,7 @@ class BackendAIAgentList extends PolymerElement {
             let v = {'status': status};
        
             window.backendaiclient.gql(q, v).then(response => {
-                this.jobs = response;
+                this.agents = response;
                 console.log(this.jobs);
             }).catch(err => {
                 if (req.response && req.response.error_msg) {
@@ -86,6 +86,13 @@ class BackendAIAgentList extends PolymerElement {
     }
     _byteToMB(value) {
         return Math.floor(value/1000000);
+    }
+
+    _MBtoGB(value) {
+        return Math.floor(value/1000);
+    }
+    _slotToCPU(value) {
+        return Math.floor(value/3);
     }
 
     _elapsed(start, end) {
@@ -163,7 +170,7 @@ class BackendAIAgentList extends PolymerElement {
             }
         </style>
 
-        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.compute_sessions]]">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[agents.agents]]">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>
                 <template class="header">#</template>
                 <template>[[_indexFrom1(index)]]</template>
@@ -190,9 +197,11 @@ class BackendAIAgentList extends PolymerElement {
               <template>
                   <div class="layout horizontal center flex">
                       <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                      <span>[[_slotToCPU(item.cpu_slots)]]</span>
+                      <span class="indicator">cores</span>
                       <span>[[item.cpu_slots]]</span>
-                      <span class="indicator">core</span>
-                      <span>[[item.mem_slots]]</span>
+                      <span class="indicator">slots</span>
+                      <span>[[_MBtoGB(item.mem_slots)]]</span>
                       <span class="indicator">GB[[item.mem_unit]]</span>
                       <template is="dom-if" if="[[item.gpu_slots]]">
                         <span>[[item.gpu_slot]]</span>
@@ -201,24 +210,6 @@ class BackendAIAgentList extends PolymerElement {
                       <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
                       <!-- <span>[[item.storage_capacity]]</span> -->
                       <!-- <span class="indicator">[[item.storage_unit]]</span> -->
-                  </div>
-              </template>
-            </vaadin-grid-column>
-
-            <vaadin-grid-column resizable>
-              <template class="header">Using</template>
-              <template>
-                  <div class="layout horizontal center flex">
-                      <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
-                      <div class="vertical start layout">
-                      <span>[[item.cpu_used]]</span>
-                      <span class="indicator">msec.</span>
-                      </div>
-                      <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                      <div class="vertical start layout">
-                        <span style="font-size:8px">[[_byteToMB(item.io_read_bytes)]]<span class="indicator">MB</span></span>
-                        <span style="font-size:8px">[[_byteToMB(item.io_write_bytes)]]<span class="indicator">MB</span></span>
-                      </div>
                   </div>
               </template>
             </vaadin-grid-column>
