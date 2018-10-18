@@ -199,16 +199,16 @@ class BackendAIAgentList extends PolymerElement {
               <template class="header">Resources</template>
               <template>
                   <div class="layout horizontal center flex">
-                      <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                      <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
                       <span>[[_slotToCPU(item.cpu_slots)]]</span>
                       <span class="indicator">cores</span>
+                      <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
                       <span>[[_MBtoGB(item.mem_slots)]]</span>
                       <span class="indicator">GB[[item.mem_unit]]</span>
                       <template is="dom-if" if="[[item.gpu_slots]]">
-                        <span>[[_slotToGPU(item.gpu_slots)]]</span>
+                        <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                        <span>[[_slotToGPU(item.gpu_slots)]]</span> 
                         <span class="indicator">GPU</span>
-                        <span>[[item.gpu_slots]]</span>
-                        <span class="indicator">vGPU</span>
                       </template>
                       <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
                       <!-- <span>[[item.storage_capacity]]</span> -->
