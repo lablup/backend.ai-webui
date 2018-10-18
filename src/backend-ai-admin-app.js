@@ -28,6 +28,7 @@ import './backend.ai-client-bundle.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-job-view.js';
+import './backend-ai-agent-view.js';
 
 class BackendAiAdminApp extends PolymerElement {
   static get properties() {
@@ -136,6 +137,12 @@ class BackendAiAdminApp extends PolymerElement {
                         Jobs
                     </paper-item>
                 </a>
+                <a href="/agent" tabindex="-1" role="menuitem">
+                    <paper-item link>
+                        <iron-icon class="fg red" icon="icons:subject"></iron-icon>
+                        Agents
+                    </paper-item>
+                </a>
                     <paper-item disabled>
                         <iron-icon class="fg green" icon="icons:pageview"></iron-icon>
                         Experiments
@@ -182,7 +189,8 @@ class BackendAiAdminApp extends PolymerElement {
             <section id="content" class="container layout vertical center">
                 <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
                     <backend-ai-job-view name="job" route="{{subroute}}"></backend-ai-job-view>
-                </iron-pages>
+                    <backend-ai-agent-view name="agent" route="{{subroute}}"></backend-ai-agent-view>
+                    </iron-pages>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
                 <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
