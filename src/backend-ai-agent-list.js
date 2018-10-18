@@ -70,7 +70,7 @@ class BackendAIAgentList extends PolymerElement {
        
             window.backendaiclient.gql(q, v).then(response => {
                 this.agents = response;
-                console.log(this.jobs);
+                console.log(this.agents);
             }).catch(err => {
                 if (req.response && req.response.error_msg) {
                     setNotification(req.response.error_msg);
@@ -180,7 +180,7 @@ class BackendAIAgentList extends PolymerElement {
             </vaadin-grid-column>
 
             <vaadin-grid-column resizable>
-                <template class="header">ID</template>
+                <template class="header">Endpoint</template>
                 <template>
                     <div class="indicator">[[item.addr]]</div>
                 </template>
@@ -202,14 +202,12 @@ class BackendAIAgentList extends PolymerElement {
                       <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
                       <span>[[_slotToCPU(item.cpu_slots)]]</span>
                       <span class="indicator">cores</span>
-                      <span>[[item.cpu_slots]]</span>
-                      <span class="indicator">slots</span>
                       <span>[[_MBtoGB(item.mem_slots)]]</span>
                       <span class="indicator">GB[[item.mem_unit]]</span>
                       <template is="dom-if" if="[[item.gpu_slots]]">
-                        <span>[[_slotToGPU(item.gpu_slot)]]</span>
+                        <span>[[_slotToGPU(item.gpu_slots)]]</span>
                         <span class="indicator">GPU</span>
-                        <span>[[item.gpu_slot]]</span>
+                        <span>[[item.gpu_slots]]</span>
                         <span class="indicator">vGPU</span>
                       </template>
                       <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
@@ -218,7 +216,14 @@ class BackendAIAgentList extends PolymerElement {
                   </div>
               </template>
             </vaadin-grid-column>
-
+            <vaadin-grid-column width="80px" flex-grow="0" resizable>
+              <template class="header">Status</template>
+              <template>
+                  <div>
+                    ALIVE
+                  </div>
+              </template>
+            </vaadin-grid-column>
             <vaadin-grid-column resizable>
               <template class="header">Control</template>
               <template>

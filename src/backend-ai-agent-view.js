@@ -54,7 +54,7 @@ class BackendAIAgentView extends PolymerElement {
     </style>
     <paper-material class="item" elevation="1">
         <h3 class="paper-material-title">Agent nodes</h3>
-        <h4>Running</h4>
+        <h4>Connected</h4>
         <div>
             <backend-ai-agent-list condition="running"></backend-ai-agent-list>
         </div>
