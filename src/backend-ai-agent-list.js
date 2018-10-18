@@ -92,7 +92,10 @@ class BackendAIAgentList extends PolymerElement {
         return Math.floor(value/1000);
     }
     _slotToCPU(value) {
-        return Math.floor(value/3);
+        return Math.floor(value/6);
+    }
+    _slotToGPU(value) {
+        return Math.floor(value/2);
     }
 
     _elapsed(start, end) {
@@ -204,6 +207,8 @@ class BackendAIAgentList extends PolymerElement {
                       <span>[[_MBtoGB(item.mem_slots)]]</span>
                       <span class="indicator">GB[[item.mem_unit]]</span>
                       <template is="dom-if" if="[[item.gpu_slots]]">
+                        <span>[[_slotToGPU(item.gpu_slot)]]</span>
+                        <span class="indicator">GPU</span>
                         <span>[[item.gpu_slot]]</span>
                         <span class="indicator">vGPU</span>
                       </template>
