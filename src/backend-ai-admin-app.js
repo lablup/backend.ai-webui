@@ -29,6 +29,7 @@ import './backend.ai-client-bundle.js';
 import './backend-ai-styles.js';
 import './backend-ai-job-view.js';
 import './backend-ai-agent-view.js';
+import './backend-ai-summary-view.js';
 
 class BackendAiAdminApp extends PolymerElement {
   static get properties() {
@@ -137,9 +138,9 @@ class BackendAiAdminApp extends PolymerElement {
                         Jobs
                     </paper-item>
                 </a>
-                <a href="/agent" tabindex="-1" role="menuitem">
+                <a href="/agent" tabindex="-1" role="menuitem">gi
                     <paper-item link>
-                        <iron-icon class="fg red" icon="icons:subject"></iron-icon>
+                        <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
                         Agents
                     </paper-item>
                 </a>
@@ -152,7 +153,7 @@ class BackendAiAdminApp extends PolymerElement {
                         Statistics
                     </paper-item>
                     <paper-item disabled>
-                        <iron-icon class="fg blue" icon="icons:build"></iron-icon>
+                        <iron-icon class="fg lime" icon="icons:build"></iron-icon>
                         Settings
                         <span class="flex"></span>
                     </paper-item>
@@ -188,6 +189,7 @@ class BackendAiAdminApp extends PolymerElement {
             </div>
             <section id="content" class="container layout vertical center">
                 <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
+                    <backend-ai-summary-view name="summary" route="{{subroute}}"></backend-ai-summary-view>
                     <backend-ai-job-view name="job" route="{{subroute}}"></backend-ai-job-view>
                     <backend-ai-agent-view name="agent" route="{{subroute}}"></backend-ai-agent-view>
                     </iron-pages>

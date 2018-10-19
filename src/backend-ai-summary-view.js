@@ -14,9 +14,8 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import './backend-ai-styles.js';
-import './backend-ai-job-list.js';
 
-class BackendAIJobView extends PolymerElement {
+class BackendAISummary extends PolymerElement {
   static get properties() {
     return {
     };
@@ -51,21 +50,24 @@ class BackendAIJobView extends PolymerElement {
   static get template() {
     return html`
     <style is="custom-style" include="backend-ai-styles">
+    ul li {
+      list-style:none;
+    }
     </style>
     <paper-material class="item" elevation="1">
-        <h3 class="paper-material-title">Jobs</h3>
-        <h4>Running</h4>
+        <h3 class="paper-material-title">Statistics</h3>
         <div>
-            <backend-ai-job-list condition="running"></backend-ai-job-list>
         </div>
-        <h4>Finished</h4>
+        <h3 class="paper-material-title">Actions</h3>
         <div>
-            <backend-ai-job-list condition="finished"></backend-ai-job-list>
+          <ul>
+            <li>Create a new key pair</li>
+            <li>Maintain keypairs</li>
+            </ul>
         </div>
-
-        </paper-material>
+      </paper-material>
     `;
   }
 }
 
-customElements.define('backend-ai-job-view', BackendAIJobView);
+customElements.define('backend-ai-summary-view', BackendAISummary);

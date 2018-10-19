@@ -16,9 +16,9 @@ import '@vaadin/vaadin-grid/vaadin-grid.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 
-class LablupJobList extends PolymerElement {
+class BackendAIJobList extends PolymerElement {
     static get is() {
-        return 'lablup-job-list';
+        return 'backend-ai-job-list';
     }
 
     static get properties() {
@@ -182,12 +182,14 @@ class LablupJobList extends PolymerElement {
               <template class="header">Configuration</template>
               <template>
                   <div class="layout horizontal center flex">
-                      <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                      <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
                       <span>[[item.cpu_slot]]</span>
-                      <span class="indicator">core</span>
+                      <span class="indicator">slot</span>
+                      <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
                       <span>[[item.mem_slot]]</span>
                       <span class="indicator">GB[[item.mem_unit]]</span>
                       <template is="dom-if" if="[[item.gpu_slot]]">
+                        <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                         <span>[[item.gpu_slot]]</span>
                         <span class="indicator">vGPU</span>
                       </template>
@@ -241,4 +243,4 @@ class LablupJobList extends PolymerElement {
     }
 }
 
-customElements.define(LablupJobList.is, LablupJobList);
+customElements.define(BackendAIJobList.is, BackendAIJobList);
