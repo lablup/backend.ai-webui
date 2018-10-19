@@ -138,7 +138,7 @@ class BackendAiAdminApp extends PolymerElement {
                         Jobs
                     </paper-item>
                 </a>
-                <a href="/agent" tabindex="-1" role="menuitem">gi
+                <a href="/agent" tabindex="-1" role="menuitem">
                     <paper-item link>
                         <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
                         Agents
