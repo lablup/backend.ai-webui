@@ -72,10 +72,9 @@ class BackendAIAgentList extends PolymerElement {
                 this.agents = response;
                 console.log(this.agents);
             }).catch(err => {
-                if (req.response && req.response.error_msg) {
-                    setNotification(req.response.error_msg);
-                } else {
-                    setNotification(err);
+                if (err && err.message) {
+                    this.$.notification.text = err.message;
+                    this.$.notification.show();
                 }
             });
         });
@@ -128,12 +127,15 @@ class BackendAIAgentList extends PolymerElement {
         const req = this._requestBot.generateRequest();
         req.completes.then((req) => {
             termButton.setAttribute('disabled', '');
-            setNotification('Session will soon be terminated');
+            this.$.notification.text = 'Session will soon be terminated';
+            this.$.notification.show();
         }).catch((err) => {
-            if (req.response && req.response.error_msg) {
-                setNotification(req.response.error_msg);
+            if (response && response.error_msg) {
+                this.$.notification.text = response.error_msg;
+                this.$.notification.show();
             } else {
-                setNotification(err);
+                this.$.notification.text = err.message;
+                this.$.notification.show();
             }
         });
         this._requestBot.method = 'post';
@@ -172,7 +174,7 @@ class BackendAIAgentList extends PolymerElement {
                 margin-right: 5px;
             }
         </style>
-
+        <paper-toast id="notification" text=""></paper-toast>
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[agents.agents]]">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>
                 <template class="header">#</template>

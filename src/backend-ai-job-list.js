@@ -66,12 +66,9 @@ class BackendAIJobList extends PolymerElement {
                 console.log(this.jobs);
             }).catch(err => {
                 console.log(err);
-                if (response && response.error_msg) {
-                    this.notification.text = response.error_msg;
-                    this.notification.show();
-                } else {
-                    this.notification.text = err.message;
-                    this.notification.show();
+                if (err && err.message) {
+                    this.$.notification.text = err.message;
+                    this.$.notification.show();
                 }
             });
         });
