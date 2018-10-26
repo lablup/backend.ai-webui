@@ -19,6 +19,7 @@
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
     "@polymer/paper-material": "^3.0.1",
+    "@polymer/paper-spinner": "^3.0.1",
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/polymer": "latest",
     "@vaadin/vaadin-grid": "^5.2.0-beta2",

@@ -4,6 +4,7 @@ import '@polymer/paper-material/paper-material';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/color';
 import '@polymer/iron-flex-layout/iron-flex-layout';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -17,12 +18,13 @@ class LablupActivityPanel extends PolymerElement {
                 box-sizing: border-box;
                 margin: 16px;
                 padding: 0;
-                border-radius: 2px;
+                border-radius: 5px;
             }
 
             paper-material > h4 {
                 border-left: 3px solid var(--paper-yellow-400);
                 font-size: 14px;
+                font-weight: 100;
                 height: 32px;
                 padding: 5px 15px 5px 20px;
                 margin: 0 0 10px 0;
@@ -52,7 +54,7 @@ class LablupActivityPanel extends PolymerElement {
             ul {
                 padding-inline-start: 0;
             }
-            
+
         </style>
         <paper-material id="activity" elevation="{{ elevation }}">
             <h4 class="layout flex justified center">{{ title }}<paper-icon-button id="button" icon="close"></paper-icon-button></h4>

@@ -13,13 +13,24 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
 
 class BackendAISummary extends PolymerElement {
   static get properties() {
     return {
+      condition: {
+        type: String,
+        default: 'running'  // finished, running, archived
+      },
+      jobs: {
+          type: Object,
+          value: {}
+      }
     };
+
   }
 
   constructor() {
@@ -47,10 +58,13 @@ class BackendAISummary extends PolymerElement {
   _viewChanged(view) {
     // load data for view
   }
+  _countObject(obj) {
+    return Object.keys(obj).length;    
+  }
 
   static get template() {
     return html`
-    <style is="custom-style" include="backend-ai-styles">
+    <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
     ul li {
       list-style:none;
       font-size:13px;
@@ -59,18 +73,24 @@ class BackendAISummary extends PolymerElement {
 
     <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="paper-material-title">Statistics</h3>
-        <div>
+        <div class="horizontal wrap layout">
           <lablup-activity-panel title="Health" elevation="1">
-          <div slot="message">
+            <div slot="message">
             <ul>
-              <li>Create a new key pair</li>
-              <li>Maintain keypairs</li>
+              <li>Connected agents: [[_countObject(jobs)]]</li>
             </ul>
-          </div>
+            </div>
           </lablup-activity-panel>
+
+          <lablup-activity-panel title="Loads" elevation="1">
+            <div slot="message">
+            
+            </div>
+          </lablup-activity-panel>
+
         </div>
         <h3 class="paper-material-title">Actions</h3>
-        <div>
+        <div class="horizontal wrap layout">
           <lablup-activity-panel title="Keypair" elevation="1">
           <div slot="message">
             <ul>
@@ -83,6 +103,37 @@ class BackendAISummary extends PolymerElement {
       </paper-material>
     `;
   }
+  connectedCallback() {
+    super.connectedCallback();
+    afterNextRender(this, function () {
+      let status = 'RUNNING';
+      switch (this.condition) {
+          case 'running':
+              status = 'RUNNING';
+              break;
+          case 'finished':
+              status = 'TERMINATED';
+              break;
+          case 'archived':
+          default:
+              status = 'RUNNING';
+      };
+
+      let fields = ["sess_id"];
+      let q = `query($ak:String, $status:String) {`+
+      `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
+      '}';
+      let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
+ 
+      window.backendaiclient.gql(q, v).then(response => {
+        this.jobs = response;
+        console.log(this.jobs);
+      }).catch(err => {
+        this.jobs = [];
+      });
+    });
+  }
+
 }
 
 customElements.define('backend-ai-summary-view', BackendAISummary);
