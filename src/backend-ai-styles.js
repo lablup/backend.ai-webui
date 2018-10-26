@@ -1438,67 +1438,6 @@ const template = html `
                 height: 16px;
             }
 
-            /* Quiz */
-            #quiz #prev-tests paper-icon-item {
-                --paper-item-min-height: 55px;
-                --paper-item-icon-width: 40px;
-                height: 55px;
-            }
-
-            /* Sitting */
-            #exam #exam-item-container paper-icon-item {
-                --paper-item-min-height: 55px;
-                --paper-item-icon-width: 40px;
-                height: 55px;
-            }
-
-            #exam #sitting-summary paper-progress {
-                width: 90%;
-                margin-top: 10px;
-                border-radius: 5px;
-                --paper-progress-height: 15px;
-            }
-
-            #exam #sitting-summary paper-button {
-                height: 35px;
-                padding-top: 5px;
-                padding-bottom: 3px;
-            }
-
-            /* Bookmarks */
-            .bookmark paper-material {
-                display: inline-block;
-                width: 400px;
-            }
-
-            .entry-list paper-item .icon,
-            .bookmark paper-item .icon {
-                display: inline-block;
-                width: 40px;
-                height: 40px;
-                overflow: hidden;
-            }
-
-            .entry-list paper-item paper-icon-button,
-            .bookmark paper-item paper-icon-button {
-                width: 15px;
-                padding: 0;
-            }
-
-            .entry-item .desc {
-                margin-top: 5px;
-                margin-bottom: 5px;
-                font-size: 11px;
-                line-height: 13px;
-                color: #666;
-            }
-
-            @media screen and (max-width: 639px) {
-                lablup-entry-item {
-                    width: 100%;
-                }
-            }
-
             /* File-upload */
             #entry .uploadArea,
             #notice .uploadArea {

@@ -160,7 +160,7 @@ class BackendAiAdminApp extends PolymerElement {
             </paper-listbox>
             <footer>
                 <div class="terms-of-use" style="margin-bottom:50px;">
-                    <small>
+                    <small style="font-size:11px;">
                         <a href="https://cloud.backend.ai/@lablupinc/terms-of-service-payment">Terms of Service</a>
                         ·
                         <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
@@ -169,7 +169,8 @@ class BackendAiAdminApp extends PolymerElement {
             </footer>
             <div id="sidebar-navbar-footer" class="horizontal center center-justified layout">
                 <address>
-                    <small>Ultra Alpha</small>
+                    <small>WebConsole</small>
+                    <small style="font-size:9px;">0.1.20181026</small>
                 </address>
             </div>
         </app-header-layout>

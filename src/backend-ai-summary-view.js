@@ -14,6 +14,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import './backend-ai-styles.js';
+import './lablup-activity-panel.js';
 
 class BackendAISummary extends PolymerElement {
   static get properties() {
@@ -52,19 +53,33 @@ class BackendAISummary extends PolymerElement {
     <style is="custom-style" include="backend-ai-styles">
     ul li {
       list-style:none;
+      font-size:13px;
     }
     </style>
-    <paper-material class="item" elevation="1">
+
+    <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="paper-material-title">Statistics</h3>
         <div>
+          <lablup-activity-panel title="Health" elevation="1">
+          <div slot="message">
+            <ul>
+              <li>Create a new key pair</li>
+              <li>Maintain keypairs</li>
+            </ul>
+          </div>
+          </lablup-activity-panel>
         </div>
         <h3 class="paper-material-title">Actions</h3>
         <div>
-          <ul>
-            <li>Create a new key pair</li>
-            <li>Maintain keypairs</li>
+          <lablup-activity-panel title="Keypair" elevation="1">
+          <div slot="message">
+            <ul>
+              <li>Create a new key pair</li>
+              <li>Maintain keypairs</li>
             </ul>
-        </div>
+          </div>
+        </lablup-activity-panel>
+      </div>
       </paper-material>
     `;
   }
