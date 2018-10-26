@@ -12,6 +12,7 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@polymer/paper-toast';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -64,10 +65,13 @@ class BackendAIJobList extends PolymerElement {
                 this.jobs = response;
                 console.log(this.jobs);
             }).catch(err => {
-                if (req.response && req.response.error_msg) {
-                    setNotification(req.response.error_msg);
+                console.log(err);
+                if (response && response.error_msg) {
+                    this.notification.text = response.error_msg;
+                    this.notification.show();
                 } else {
-                    setNotification(err);
+                    this.notification.text = err.message;
+                    this.notification.show();
                 }
             });
         });
@@ -122,7 +126,7 @@ class BackendAIJobList extends PolymerElement {
     }
     static get template() {
         return html`
-        <style include="iron-flex iron-flex-alignment shared-button-styles">
+        <style include="iron-flex iron-flex-alignment">
             vaadin-grid {
                 border: 0;
                 font-size: 14px;
@@ -154,6 +158,7 @@ class BackendAIJobList extends PolymerElement {
                 margin-right: 5px;
             }
         </style>
+        <paper-toast id="notification" text=""></paper-toast>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.compute_sessions]]">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>

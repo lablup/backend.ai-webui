@@ -140,7 +140,7 @@ class BackendAIAgentList extends PolymerElement {
     }
     static get template() {
         return html`
-        <style include="iron-flex iron-flex-alignment shared-button-styles">
+        <style include="iron-flex iron-flex-alignment">
             vaadin-grid {
                 border: 0;
                 font-size: 14px;

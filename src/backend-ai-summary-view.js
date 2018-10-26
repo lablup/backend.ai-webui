@@ -14,9 +14,11 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+import '@polymer/paper-toast';
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
+import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 class BackendAISummary extends PolymerElement {
   static get properties() {
@@ -42,6 +44,7 @@ class BackendAISummary extends PolymerElement {
 
   ready() {
     super.ready();
+    this.notification = this.$.notification;
   }
   static get observers() {
     return [
@@ -70,7 +73,7 @@ class BackendAISummary extends PolymerElement {
       font-size:13px;
     }
     </style>
-
+    <paper-toast id="notification" text=""></paper-toast>
     <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="paper-material-title">Statistics</h3>
         <div class="horizontal wrap layout">
@@ -124,12 +127,14 @@ class BackendAISummary extends PolymerElement {
       `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
       '}';
       let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
- 
+
       window.backendaiclient.gql(q, v).then(response => {
         this.jobs = response;
         console.log(this.jobs);
       }).catch(err => {
         this.jobs = [];
+        this.notification.text = 'Couldn\'t connect to manager.';
+        this.notification.show();
       });
     });
   }

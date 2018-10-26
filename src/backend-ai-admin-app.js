@@ -62,7 +62,6 @@ class BackendAiAdminApp extends PolymerElement {
       `Backend.AI Admin App.`,
     );
     window.backendaiclient = this.client;
-    console.log("connected");
 }
   static get observers() {
     return [
