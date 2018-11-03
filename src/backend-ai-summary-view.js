@@ -44,7 +44,6 @@ class BackendAISummary extends PolymerElement {
 
   ready() {
     super.ready();
-    this.notification = this.$.notification;
   }
   static get observers() {
     return [

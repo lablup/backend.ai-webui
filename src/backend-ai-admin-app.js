@@ -55,7 +55,7 @@ class BackendAiAdminApp extends PolymerElement {
         'AKIAIOSFODNN7EXAMPLE',
         'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
         //'http://127.0.0.1:8081'
-        'http://52.79.234.71:8080'
+        'http://52.79.234.71:8080'
     );
 
     this.client = new ai.backend.Client(
