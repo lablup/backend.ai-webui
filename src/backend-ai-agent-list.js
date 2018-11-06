@@ -43,44 +43,46 @@ class BackendAIAgentList extends PolymerElement {
         super.connectedCallback();
         afterNextRender(this, function () {
             let status = 'ALIVE';
-            switch (this.condition) {
-                case 'running':
-                    status = 'ALIVE';
-                    break;
-                case 'finished':
-                    status = 'TERMINATED';
-                    break;
-                case 'archived':
-                default:
-                    status = 'ALIVE';
-            };
-            let fields = ['id',
-            'addr',
-            'status',
-            'first_contact',
-            'mem_slots',
-            'cpu_slots',
-            'gpu_slots']
-            let q = `query($status: String) {` +
-            `  agents(status: $status) {` +
-            `     ${fields.join(" ")}` +
-            `  }` +
-            `}`;
-
-            let v = {'status': status};
-       
-            window.backendaiclient.gql(q, v).then(response => {
-                this.agents = response;
-                console.log(this.agents);
-            }).catch(err => {
-                if (err && err.message) {
-                    this.$.notification.text = err.message;
-                    this.$.notification.show();
-                }
-            });
+            this._loadAgentList(status);
         });
     }
+    _loadAgentList(status = 'running') {
+        switch (this.condition) {
+            case 'running':
+                status = 'ALIVE';
+                break;
+            case 'finished':
+                status = 'TERMINATED';
+                break;
+            case 'archived':
+            default:
+                status = 'ALIVE';
+        };
+        let fields = ['id',
+        'addr',
+        'status',
+        'first_contact',
+        'mem_slots',
+        'cpu_slots',
+        'gpu_slots']
+        let q = `query($status: String) {` +
+        `  agents(status: $status) {` +
+        `     ${fields.join(" ")}` +
+        `  }` +
+        `}`;
 
+        let v = {'status': status};
+   
+        window.backendaiclient.gql(q, v).then(response => {
+            this.agents = response;
+            console.log(this.agents);
+        }).catch(err => {
+            if (err && err.message) {
+                this.$.notification.text = err.message;
+                this.$.notification.show();
+            }
+        });
+    }
     _isRunning() {
         return this.condition === 'running';
     }
@@ -113,7 +115,11 @@ class BackendAIAgentList extends PolymerElement {
         }
         return seconds;
     }
+    _humanReadableDate(start) {
+        var startDate = new Date(start);
+        return startDate.toLocaleString('ko-KR');
 
+    }
     _indexFrom1(index) {
         return index + 1;
     }
@@ -193,7 +199,7 @@ class BackendAIAgentList extends PolymerElement {
                 <template class="header">Starts</template>
                 <template>
                     <div class="layout vertical">
-                        <span>[[item.first_contact]]</span>
+                        <span>[[_humanReadableDate(item.first_contact)]]</span>
                     </div>
                 </template>
             </vaadin-grid-column>
@@ -241,7 +247,7 @@ class BackendAIAgentList extends PolymerElement {
                                              icon="alarm-add"></paper-icon-button>
                           <paper-icon-button disabled class="fg controls-running"
                                              icon="av:pause"></paper-icon-button>
-                          <paper-icon-button class="fg red controls-running" icon="delete"
+                          <paper-icon-button disabled class="fg red controls-running" icon="delete"
                                              on-tap="_terminateKernel"></paper-icon-button>
                       </template>
                   </div>
