@@ -12,7 +12,7 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
-import '@polymer/paper-toast';
+import '@polymer/paper-toast/paper-toast';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 

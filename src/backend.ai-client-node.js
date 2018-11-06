@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI Cloud Javascript API Library (v2.9)
+Backend.AI Cloud Javascript API Library (v3.0a1)
 ==============================================
 
 (C) Copyright 2016-2018 Lablup Inc.
@@ -8,10 +8,8 @@ Licensed under MIT
 */
 /*jshint esnext: true */
 
-if (typeof fetch === 'undefined') {
-  var fetch = require('node-fetch');
-  var Headers = fetch.Headers;
-}
+var fetch = require('node-fetch');
+var Headers = fetch.Headers;
 var crypto = require('crypto');
 
 class ClientConfig {
@@ -84,7 +82,7 @@ class Client {
     this.code = null;
     this.kernelId = null;
     this.kernelType = null;
-    this.clientVersion = '0.2.0';  // TODO: read from package.json?
+    this.clientVersion = '0.4.0';  // TODO: read from package.json?
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -154,7 +152,7 @@ class Client {
    */
   createIfNotExists(kernelType, sessionId) {
     if (sessionId === undefined)
-      sessionId = "backend-ai-live-code-runner";
+      sessionId = this.generateSessionId();
     let params = {
       "lang": kernelType,
       "clientSessionToken": sessionId,
@@ -340,6 +338,14 @@ class Client {
     let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
     return k2;
   }
+
+  generateSessionId() {
+    var text = "backend-ai-SDK-js-";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 8; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+  }
 }
 
 // below will become "static const" properties in ES7
@@ -367,14 +373,11 @@ const backend = {
   ClientConfig: ClientConfig,
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-  // for use like "ai.backend.Client"
-  module.exports.backend = backend;
-  // for classical uses
-  module.exports.Client = Client;
-  module.exports.ClientConfig = ClientConfig;
-  // legacy aliases
-  module.exports.BackendAIClient = Client;
-  module.exports.BackendAIClientConfig = ClientConfig;
-}
-
+// for use like "ai.backend.Client"
+module.exports.backend = backend;
+// for classical uses
+module.exports.Client = Client;
+module.exports.ClientConfig = ClientConfig;
+// legacy aliases
+module.exports.BackendAIClient = Client;
+module.exports.BackendAIClientConfig = ClientConfig;

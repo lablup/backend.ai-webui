@@ -14,7 +14,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
-import '@polymer/paper-toast';
+import '@polymer/paper-toast/paper-toast';
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
