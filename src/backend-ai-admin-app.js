@@ -24,7 +24,7 @@ import '@polymer/iron-pages/iron-pages';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 
-import './backend.ai-client-bundle.js';
+import './backend.ai-client-es6.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-job-view.js';
