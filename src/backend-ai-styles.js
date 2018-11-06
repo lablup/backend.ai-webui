@@ -545,7 +545,8 @@ const template = html `
             }
 
             #content > paper-material,
-            #content > iron-pages {
+            #content > iron-pages,
+            #content > iron-lazy-pages {
                 max-width: var(--general-content-container-width, 980px);
             }
 
@@ -558,14 +559,16 @@ const template = html `
 
             @media screen and (max-width: 449px) {
                 #content > paper-material,
-                #content > iron-pages {
+                #content > iron-pages,
+                #content > iron-lazy-pages {
                     width: 100%;
                 }
             }
 
             @media screen and (min-width: 450px) {
                 #content > paper-material,
-                #content > iron-pages {
+                #content > iron-pages,
+                #content > iron-lazy-pages {
                     width: 95%;
                 }
             }

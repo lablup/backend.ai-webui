@@ -23,13 +23,13 @@ import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
 import '@polymer/iron-pages/iron-pages';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
-
+import 'iron-lazy-pages/iron-lazy-pages';
 import './backend.ai-client-es6.js';
 
 import './backend-ai-styles.js';
-import './backend-ai-job-view.js';
-import './backend-ai-agent-view.js';
-import './backend-ai-summary-view.js';
+//import './backend-ai-job-view.js';
+//import './backend-ai-agent-view.js';
+//import './backend-ai-summary-view.js';
 
 class BackendAiAdminApp extends PolymerElement {
   static get properties() {
@@ -189,11 +189,11 @@ class BackendAiAdminApp extends PolymerElement {
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap">
             </div>
             <section id="content" class="container layout vertical center">
-                <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
-                    <backend-ai-summary-view name="summary" route="{{subroute}}"></backend-ai-summary-view>
-                    <backend-ai-job-view name="job" route="{{subroute}}"></backend-ai-job-view>
-                    <backend-ai-agent-view name="agent" route="{{subroute}}"></backend-ai-agent-view>
-                    </iron-pages>
+                <iron-lazy-pages selected="[[routeData.view]]" attr-for-selected="name">
+                    <backend-ai-summary-view name="summary" route="{{subroute}}" data-path='src/backend-ai-summary-view.js'></backend-ai-summary-view>
+                    <backend-ai-job-view name="job" route="{{subroute}}" data-path='src/backend-ai-job-view.js'></backend-ai-job-view>
+                    <backend-ai-agent-view name="agent" route="{{subroute}}" data-path='src/backend-ai-agent-view.js'></backend-ai-agent-view>
+                </iron-lazy-pages>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
                 <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>

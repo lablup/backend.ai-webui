@@ -13,6 +13,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-toast/paper-toast';
+import './backend-ai-styles.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -123,7 +124,7 @@ class BackendAIJobList extends PolymerElement {
     }
     static get template() {
         return html`
-        <style include="iron-flex iron-flex-alignment">
+        <style include="backend-ai-styles iron-flex iron-flex-alignment">
             vaadin-grid {
                 border: 0;
                 font-size: 14px;
