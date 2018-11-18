@@ -38,43 +38,48 @@ class BackendAIJobList extends PolymerElement {
 
     ready() {
         super.ready();
+        document.addEventListener('backend-ai-connected', () => {
+            this._refreshJobData();
+        }, true);
     }
 
     connectedCallback() {
         super.connectedCallback();
         afterNextRender(this, function () {
-            let status = 'RUNNING';
-            switch (this.condition) {
-                case 'running':
-                    status = 'RUNNING';
-                    break;
-                case 'finished':
-                    status = 'TERMINATED';
-                    break;
-                case 'archived':
-                default:
-                    status = 'RUNNING';
-            };
-
-            let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
-            let q = `query($ak:String, $status:String) {`+
-            `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
-            '}';
-            let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
-       
-            window.backendaiclient.gql(q, v).then(response => {
-                this.jobs = response;
-                console.log(this.jobs);
-            }).catch(err => {
-                console.log(err);
-                if (err && err.message) {
-                    this.$.notification.text = err.message;
-                    this.$.notification.show();
-                }
-            });
+            this._refreshJobData();
         });
     }
+    _refreshJobData() {
+        let status = 'RUNNING';
+        switch (this.condition) {
+            case 'running':
+                status = 'RUNNING';
+                break;
+            case 'finished':
+                status = 'TERMINATED';
+                break;
+            case 'archived':
+            default:
+                status = 'RUNNING';
+        };
 
+        let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
+        let q = `query($ak:String, $status:String) {`+
+        `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
+        '}';
+        let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
+   
+        window.backendaiclient.gql(q, v).then(response => {
+            this.jobs = response;
+            console.log(this.jobs);
+        }).catch(err => {
+            console.log(err);
+            if (err && err.message) {
+                this.$.notification.text = err.message;
+                this.$.notification.show();
+            }
+        });
+    }
     _isRunning() {
         return this.condition === 'running';
     }

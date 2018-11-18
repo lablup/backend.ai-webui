@@ -96,6 +96,8 @@ class BackendAiLogin extends PolymerElement {
         let v = {'status': status, 'ak': this.client._config.accessKey};
         this.client.gql(q, v).then(response => {
             window.backendaiclient = this.client;
+            var event = new CustomEvent("backend-ai-connected", { "detail": this.client });
+            document.dispatchEvent(event);
             this.close();
         }).catch(err => {   // Connection failed
             this.$.notification.text = 'Login failed. Check information.';

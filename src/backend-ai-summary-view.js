@@ -44,12 +44,15 @@ class BackendAISummary extends PolymerElement {
 
   ready() {
     super.ready();
+    document.addEventListener('backend-ai-connected', () => {
+      this._refreshHealthPanel();
+    }, true);
   }
   static get observers() {
     return [
       '_routeChanged(route.*)',
       '_viewChanged(routeData.view)',
-      '_healthPanel(window.backendaiclient)'
+      '_refreshHealthPanel(window.backendaiclient)'
     ]
   }
   
@@ -109,10 +112,11 @@ class BackendAISummary extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     afterNextRender(this, function () {
+      this._refreshHealthPanel();
     });
   }
-  _healthPanel(client) {
-    alert("asdsd");
+
+  _refreshHealthPanel() {
     let status = 'RUNNING';
     switch (this.condition) {
         case 'running':

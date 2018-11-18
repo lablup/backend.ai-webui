@@ -14,6 +14,7 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
+import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
@@ -159,7 +160,7 @@ class BackendAiAdminApp extends PolymerElement {
             <div id="sidebar-navbar-footer" class="horizontal center center-justified layout">
                 <address>
                     <small>WebConsole (Alpha)</small>
-                    <small style="font-size:9px;">0.1.20181026</small>
+                    <small style="font-size:9px;">0.3.20181118</small>
                 </address>
             </div>
         </app-header-layout>

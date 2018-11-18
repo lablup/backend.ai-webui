@@ -37,6 +37,10 @@ class BackendAIAgentList extends PolymerElement {
 
     ready() {
         super.ready();
+        document.addEventListener('backend-ai-connected', () => {
+            let status = 'ALIVE';
+            this._loadAgentList(status);
+        }, true);
     }
 
     connectedCallback() {
