@@ -109,6 +109,7 @@ class Client {
     let errorType = Client.ERR_REQUEST;
     let errorMsg;
     let resp, body;
+    console.log(rqst.method);
     try {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
@@ -225,7 +226,7 @@ class Client {
       "mode": mode,
       "code": code,
       "runId": runId,
-      "opts": opts,
+      "options": opts,
     };
     let rqst = this.newSignedRequest('POST', `/kernel/${sessionId}`, params);
     return this._wrapWithPromise(rqst);

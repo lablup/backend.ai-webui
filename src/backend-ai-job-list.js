@@ -112,20 +112,13 @@ class BackendAIJobList extends PolymerElement {
         const controls = e.target.closest('#controls');
         const kernelId = controls.kernelId;
 
-        this._requestBot.url = '/job/kernel/terminate/' + kernelId;
-        this._requestBot.method = 'delete';
-        const req = this._requestBot.generateRequest();
-        req.completes.then((req) => {
+        window.backendaiclient.destroyKernel(kernelId).then((req) => {
             termButton.setAttribute('disabled', '');
             setNotification('Session will soon be terminated');
-        }).catch((err) => {
-            if (req.response && req.response.error_msg) {
-                setNotification(req.response.error_msg);
-            } else {
-                setNotification(err);
-            }
+        }).catch(err => { 
+            this.$.notification.text = 'Problem occurred during termination.';
+            this.$.notification.show();
         });
-        this._requestBot.method = 'post';
     }
     static get template() {
         return html`
@@ -161,7 +154,7 @@ class BackendAIJobList extends PolymerElement {
                 margin-right: 5px;
             }
         </style>
-        <paper-toast id="notification" text=""></paper-toast>
+        <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.compute_sessions]]">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>

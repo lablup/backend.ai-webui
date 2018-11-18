@@ -152,7 +152,7 @@ paper-button {
     </form>
     </paper-material>
 </paper-dialog>
-<paper-toast id="notification" text=""></paper-toast>
+<paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
     `;
     }
 }

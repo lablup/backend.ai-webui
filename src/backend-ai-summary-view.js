@@ -76,7 +76,7 @@ class BackendAISummary extends PolymerElement {
       font-size:13px;
     }
     </style>
-    <paper-toast id="notification" text=""></paper-toast>
+    <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
     <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="paper-material-title">Statistics</h3>
         <div class="horizontal wrap layout">
