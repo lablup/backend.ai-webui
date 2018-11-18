@@ -13,6 +13,9 @@
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/iron-image": "^3.0.1",
     "@polymer/iron-pages": "^3.0.1",
+    "@polymer/lit-element": "^0.6.3",
+    "@polymer/neon-animation": "^3.0.1",
+    "@polymer/paper-button": "^3.0.1",
     "@polymer/paper-checkbox": "latest",
     "@polymer/paper-dialog": "^3.0.1",
     "@polymer/paper-icon-button": "^3.0.1",
@@ -28,7 +31,8 @@
     "buffer": "^5.2.1",
     "graphql": "^14.0.2",
     "iron-lazy-pages": "^3.0.2",
-    "node-fetch": "^2.2.0"
+    "node-fetch": "^2.2.0",
+    "web-animations-js": "^2.3.1"
   },
   "devDependencies": {
     "electron": "^3.0.8"

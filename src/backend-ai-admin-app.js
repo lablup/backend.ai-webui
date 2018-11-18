@@ -27,6 +27,7 @@ import 'iron-lazy-pages/iron-lazy-pages';
 import './backend.ai-client-es6.js';
 
 import './backend-ai-styles.js';
+import './backend-ai-login.js';
 //import './backend-ai-job-view.js';
 //import './backend-ai-agent-view.js';
 //import './backend-ai-summary-view.js';
@@ -43,27 +44,15 @@ class BackendAiAdminApp extends PolymerElement {
 
   constructor() {
     super();
-    // Resolve warning about scroll performance 
-    // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
     setPassiveTouchGestures(true);
   }
 
   ready() {
     super.ready();
-    console.log(ai);
-    this.clientConfig = new ai.backend.ClientConfig(
-        'AKIAIOSFODNN7EXAMPLE',
-        'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
-        'http://127.0.0.1:8082'
-        //'http://52.79.234.71:8080'
-    );
-
-    this.client = new ai.backend.Client(
-      this.clientConfig,
-      `Backend.AI Admin App.`,
-    );
-    window.backendaiclient = this.client;
-}
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+        document.querySelector('#login-panel').open();
+    }
+  }
   static get observers() {
     return [
       '_routeChanged(route.*)',

@@ -91,7 +91,7 @@ class BackendAIAgentList extends PolymerElement {
     }
 
     _MBtoGB(value) {
-        return Math.floor(value/1000);
+        return Math.floor(value/1);
     }
     _slotToCPU(value) {
         return Math.floor(value/6);

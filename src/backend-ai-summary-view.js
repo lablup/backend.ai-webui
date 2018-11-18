@@ -48,7 +48,8 @@ class BackendAISummary extends PolymerElement {
   static get observers() {
     return [
       '_routeChanged(route.*)',
-      '_viewChanged(routeData.view)'
+      '_viewChanged(routeData.view)',
+      '_healthPanel(window.backendaiclient)'
     ]
   }
   
@@ -108,33 +109,36 @@ class BackendAISummary extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     afterNextRender(this, function () {
-      let status = 'RUNNING';
-      switch (this.condition) {
-          case 'running':
-              status = 'RUNNING';
-              break;
-          case 'finished':
-              status = 'TERMINATED';
-              break;
-          case 'archived':
-          default:
-              status = 'RUNNING';
-      };
+    });
+  }
+  _healthPanel(client) {
+    alert("asdsd");
+    let status = 'RUNNING';
+    switch (this.condition) {
+        case 'running':
+            status = 'RUNNING';
+            break;
+        case 'finished':
+            status = 'TERMINATED';
+            break;
+        case 'archived':
+        default:
+            status = 'RUNNING';
+    };
 
-      let fields = ["sess_id"];
-      let q = `query($ak:String, $status:String) {`+
-      `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
-      '}';
-      let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
+    let fields = ["sess_id"];
+    let q = `query($ak:String, $status:String) {`+
+    `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
+    '}';
+    let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
 
-      window.backendaiclient.gql(q, v).then(response => {
-        this.jobs = response;
-        console.log(this.jobs);
-      }).catch(err => {
-        this.jobs = [];
-        this.notification.text = 'Couldn\'t connect to manager.';
-        this.notification.show();
-      });
+    window.backendaiclient.gql(q, v).then(response => {
+      this.jobs = response;
+      console.log(this.jobs);
+    }).catch(err => {
+      this.jobs = [];
+      this.$.notification.text = 'Couldn\'t connect to manager.';
+      this.$.notification.show();
     });
   }
 
