@@ -277,7 +277,7 @@ class Client {
     } else {
       requestBody = JSON.stringify(body);
     }
-    queryString = '/' + this._config.apiVersionMajor + queryString;
+    //queryString = '/' + this._config.apiVersionMajor + queryString;
     let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody);
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = new Headers({
@@ -316,7 +316,7 @@ class Client {
       "X-BackendAI-Version": this._config.apiVersion,
       "X-BackendAI-Date": d.toISOString()
     });
-    queryString = '/' + urlPrefix + queryString;
+    //queryString = '/' + urlPrefix + queryString;
     let requestInfo = {
       method: method,
       headers: hdrs,
