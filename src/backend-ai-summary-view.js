@@ -55,7 +55,45 @@ class BackendAISummary extends PolymerElement {
       '_refreshHealthPanel(window.backendaiclient)'
     ]
   }
-  
+  connectedCallback() {
+    super.connectedCallback();
+    afterNextRender(this, function () {
+      if (window.backendaiclient != undefined && window.backendaiclient != null) {
+        this._refreshHealthPanel();
+      }
+    });
+  }
+
+  _refreshHealthPanel() {
+    let status = 'RUNNING';
+    switch (this.condition) {
+        case 'running':
+            status = 'RUNNING';
+            break;
+        case 'finished':
+            status = 'TERMINATED';
+            break;
+        case 'archived':
+        default:
+            status = 'RUNNING';
+    };
+
+    let fields = ["sess_id"];
+    let q = `query($ak:String, $status:String) {`+
+    `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
+    '}';
+    let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
+
+    window.backendaiclient.gql(q, v).then(response => {
+      this.jobs = response;
+      console.log(this.jobs);
+    }).catch(err => {
+      this.jobs = [];
+      this.$.notification.text = 'Couldn\'t connect to manager.';
+      this.$.notification.show();
+    });
+  }
+
   _routeChanged(changeRecord) {
     if (changeRecord.path === 'path') {
       console.log('Path changed!');
@@ -109,43 +147,6 @@ class BackendAISummary extends PolymerElement {
       </paper-material>
     `;
   }
-  connectedCallback() {
-    super.connectedCallback();
-    afterNextRender(this, function () {
-      this._refreshHealthPanel();
-    });
-  }
-
-  _refreshHealthPanel() {
-    let status = 'RUNNING';
-    switch (this.condition) {
-        case 'running':
-            status = 'RUNNING';
-            break;
-        case 'finished':
-            status = 'TERMINATED';
-            break;
-        case 'archived':
-        default:
-            status = 'RUNNING';
-    };
-
-    let fields = ["sess_id"];
-    let q = `query($ak:String, $status:String) {`+
-    `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
-    '}';
-    let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
-
-    window.backendaiclient.gql(q, v).then(response => {
-      this.jobs = response;
-      console.log(this.jobs);
-    }).catch(err => {
-      this.jobs = [];
-      this.$.notification.text = 'Couldn\'t connect to manager.';
-      this.$.notification.show();
-    });
-  }
-
 }
 
 customElements.define('backend-ai-summary-view', BackendAISummary);
