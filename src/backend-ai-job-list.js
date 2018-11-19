@@ -11,11 +11,13 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
+import '@polymer/iron-icons/av-icons';
+
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
 
 class BackendAIJobList extends PolymerElement {
@@ -65,15 +67,15 @@ class BackendAIJobList extends PolymerElement {
                 status = 'RUNNING';
         };
 
-        let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
-        let q = `query($ak:String, $status:String) {`+
-        `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
-        '}';
-        let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
-   
+        let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
+        let q = `query($ak:String, $status:String) {` +
+            `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
+            '}';
+        let v = { 'status': status, 'ak': window.backendaiclient._config.accessKey };
+
         window.backendaiclient.gql(q, v).then(response => {
             this.jobs = response;
-            setTimeout(()=>{this._refreshJobData(status)}, 5000);
+            setTimeout(() => { this._refreshJobData(status) }, 5000);
             console.log(this.jobs);
         }).catch(err => {
             console.log(err);
@@ -87,7 +89,7 @@ class BackendAIJobList extends PolymerElement {
         return this.condition === 'running';
     }
     _byteToMB(value) {
-        return Math.floor(value/1000000);
+        return Math.floor(value / 1000000);
     }
 
     _elapsed(start, end) {
@@ -97,7 +99,7 @@ class BackendAIJobList extends PolymerElement {
         } else {
             var endDate = new Date(end);
         }
-        var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000,-1);
+        var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
         if (this.condition == 'running') {
             return 'Running ' + seconds + 'sec.';
         } else {
@@ -118,7 +120,7 @@ class BackendAIJobList extends PolymerElement {
         window.backendaiclient.destroyKernel(kernelId).then((req) => {
             termButton.setAttribute('disabled', '');
             setNotification('Session will soon be terminated');
-        }).catch(err => { 
+        }).catch(err => {
             this.$.notification.text = 'Problem occurred during termination.';
             this.$.notification.show();
         });
@@ -158,7 +160,7 @@ class BackendAIJobList extends PolymerElement {
             }
         </style>
         <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-
+        
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.compute_sessions]]">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>
                 <template class="header">#</template>
@@ -237,7 +239,7 @@ class BackendAIJobList extends PolymerElement {
                           <paper-icon-button disabled class="fg controls-running"
                                              icon="av:pause"></paper-icon-button>
                           <paper-icon-button class="fg red controls-running" icon="delete"
-                                             on-tap="_terminateKernel"></paper-icon-button>
+                            on-tap="_terminateKernel"></paper-icon-button>
                       </template>
                   </div>
               </template>
