@@ -73,6 +73,7 @@ class BackendAIJobList extends PolymerElement {
    
         window.backendaiclient.gql(q, v).then(response => {
             this.jobs = response;
+            setTimeout(()=>{this._refreshJobData(status)}, 5000);
             console.log(this.jobs);
         }).catch(err => {
             console.log(err);
@@ -190,7 +191,7 @@ class BackendAIJobList extends PolymerElement {
                       <span class="indicator">slot</span>
                       <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
                       <span>[[item.mem_slot]]</span>
-                      <span class="indicator">GB[[item.mem_unit]]</span>
+                      <span class="indicator">MB[[item.mem_unit]]</span>
                       <template is="dom-if" if="[[item.gpu_slot]]">
                         <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                         <span>[[item.gpu_slot]]</span>
