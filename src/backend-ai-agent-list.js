@@ -46,8 +46,10 @@ class BackendAIAgentList extends PolymerElement {
     connectedCallback() {
         super.connectedCallback();
         afterNextRender(this, function () {
-            let status = 'ALIVE';
-            this._loadAgentList(status);
+            if (window.backendaiclient != undefined && window.backendaiclient != null) {
+                let status = 'ALIVE';
+                this._loadAgentList(status);
+            }
         });
     }
     _loadAgentList(status = 'running') {
@@ -80,6 +82,7 @@ class BackendAIAgentList extends PolymerElement {
         window.backendaiclient.gql(q, v).then(response => {
             this.agents = response;
             console.log(this.agents);
+            setTimeout(()=>{this._loadAgentList(status)}, 5000);
         }).catch(err => {
             if (err && err.message) {
                 this.$.notification.text = err.message;
@@ -127,7 +130,9 @@ class BackendAIAgentList extends PolymerElement {
     _indexFrom1(index) {
         return index + 1;
     }
-
+    _heartbeatStatus(state) {
+        return state;
+    }
     _terminateKernel(e) {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
@@ -233,7 +238,7 @@ class BackendAIAgentList extends PolymerElement {
               <template class="header">Status</template>
               <template>
                   <div>
-                    ALIVE
+                  [[_heartbeatStatus(item.status)]]
                   </div>
               </template>
             </vaadin-grid-column>

@@ -58,6 +58,10 @@ class BackendAIAgentView extends PolymerElement {
         <div>
             <backend-ai-agent-list condition="running"></backend-ai-agent-list>
         </div>
+        <h4>Terminated</h4>
+        <div>
+            <backend-ai-agent-list condition="finished"></backend-ai-agent-list>
+        </div>
         </paper-material>
     `;
   }

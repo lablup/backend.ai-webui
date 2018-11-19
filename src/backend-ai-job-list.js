@@ -46,7 +46,9 @@ class BackendAIJobList extends PolymerElement {
     connectedCallback() {
         super.connectedCallback();
         afterNextRender(this, function () {
-            this._refreshJobData();
+            if (window.backendaiclient != undefined && window.backendaiclient != null) {
+                this._refreshJobData();
+            }
         });
     }
     _refreshJobData() {
