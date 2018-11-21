@@ -37,19 +37,24 @@ class BackendAiLogin extends PolymerElement {
         return {
             api_key: {
                 type: String
+                //value: ''
                 //value: 'AKIAIOSFODNN7EXAMPLE'
             },
             secret_key: {
                 type: String
+                //value:  ''
                 //value: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
             },
             api_endpoint: {
                 type: String
+                //value:  ''
                 //value: 'http://127.0.0.1:8082'
             }
         };
     }
-
+    _getStoredKeys(key) {
+        return '';
+    }
     constructor() {
         super();
         setPassiveTouchGestures(true);
@@ -57,18 +62,26 @@ class BackendAiLogin extends PolymerElement {
 
     ready() {
         super.ready();
-        this.$['id_api_key'].value = 'AKIAIOSFODNN7EXAMPLE';
-        this.$['id_secret_key'].value = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY';
-        this.$['id_api_endpoint'].value = 'http://127.0.0.1:8082';
+        //this.$['id_api_key'].value = 'AKIAIOSFODNN7EXAMPLE';
+        //this.$['id_secret_key'].value = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY';
+        //this.$['id_api_endpoint'].value = 'http://127.0.0.1:8082';
 
         this.$['login-button'].addEventListener('tap', this._login.bind(this));
     }
+    
     open() {
         this.$['login-panel'].open();
     }
     close() {
         this.$['login-panel'].close();
     }
+    login() {
+        this.api_key = this.$['id_api_key'].value;
+        this.secret_key = this.$['id_secret_key'].value;
+        this.api_endpoint = this.$['id_api_endpoint'].value;
+        this.open();
+    }
+
     _login() {
         this.api_key = this.$['id_api_key'].value;
         this.secret_key = this.$['id_secret_key'].value;
@@ -136,7 +149,7 @@ paper-button {
    
 <paper-dialog id="login-panel"
         entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-<app-localstorage-document key="backendaiconsole.api_key" data="{{api_key}}"></app-localstorage-document>
+<app-localstorage-document id="storage" key="backendaiconsole.api_key" data="{{api_key}}"></app-localstorage-document>
 <app-localstorage-document key="backendaiconsole.secret_key" data="{{secret_key}}"></app-localstorage-document>
 <app-localstorage-document key="backendaiconsole.api_endpoint" data="{{api_endpoint}}"></app-localstorage-document>
     <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
@@ -144,11 +157,11 @@ paper-button {
     <form id="login-form" onSubmit="this._login()">
     <fieldset>
          <input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
-                placeholder="API Key" />
+                placeholder="API Key" value="{{api_key}}" />
          <input type="password" name="secret_key" id="id_secret_key"
-                placeholder="Secret Key" />
+                placeholder="Secret Key" value="{{secret_key}}" />
         <input type="text" name="api_endpoint" id="id_api_endpoint"
-        placeholder="API Endpoint" />
+        placeholder="API Endpoint"  value="{{api_endpoint}}"/>
          <br /><br />
          <paper-button class="blue" type="submit"
                  id="login-button">

@@ -52,7 +52,7 @@ class BackendAiAdminApp extends PolymerElement {
   ready() {
     super.ready();
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
-        document.querySelector('#login-panel').open();
+        document.querySelector('#login-panel').login();
     }
   }
   static get observers() {
