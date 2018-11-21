@@ -76,12 +76,21 @@ class BackendAiLogin extends PolymerElement {
         this.$['login-panel'].close();
     }
     login() {
-        this.api_key = this.$['id_api_key'].value;
-        this.secret_key = this.$['id_secret_key'].value;
-        this.api_endpoint = this.$['id_api_endpoint'].value;
+        if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+            this._connect();
+        }
+        //this.api_key = this.$['id_api_key'].value;
+        //this.secret_key = this.$['id_secret_key'].value;
+        //this.api_endpoint = this.$['id_api_endpoint'].value;
+        console.log(this.api_key);
         this.open();
     }
-
+    _validate_data(value) {
+        if (value != undefined && value != null && value != '') {
+            return true;
+        }
+        return false;
+    }
     _login() {
         this.api_key = this.$['id_api_key'].value;
         this.secret_key = this.$['id_secret_key'].value;
@@ -116,7 +125,7 @@ class BackendAiLogin extends PolymerElement {
             document.dispatchEvent(event);
             this.close();
         }).catch(err => {   // Connection failed
-            this.$.notification.text = 'Login failed. Check information.';
+            this.$.notification.text = 'Login failed. Check login information.';
             this.$.notification.show();
         });
     }
