@@ -23,6 +23,8 @@ import '@polymer/paper-button/paper-button';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
 
+import '@polymer/app-storage/app-localstorage/app-localstorage-document';
+
 import './backend.ai-client-es6.js';
 
 import './backend-ai-styles.js';
@@ -34,16 +36,16 @@ class BackendAiLogin extends PolymerElement {
     static get properties() {
         return {
             api_key: {
-                type: String,
-                value: 'AKIAIOSFODNN7EXAMPLE'
+                type: String
+                //value: 'AKIAIOSFODNN7EXAMPLE'
             },
             secret_key: {
-                type: String,
-                value: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+                type: String
+                //value: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
             },
             api_endpoint: {
-                type: String,
-                value: 'http://127.0.0.1:8082'
+                type: String
+                //value: 'http://127.0.0.1:8082'
             }
         };
     }
@@ -134,6 +136,9 @@ paper-button {
    
 <paper-dialog id="login-panel"
         entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+<app-localstorage-document key="backendaiconsole.api_key" data="{{api_key}}"></app-localstorage-document>
+<app-localstorage-document key="backendaiconsole.secret_key" data="{{secret_key}}"></app-localstorage-document>
+<app-localstorage-document key="backendaiconsole.api_endpoint" data="{{api_endpoint}}"></app-localstorage-document>
     <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
     <h3>Console login</h3>
     <form id="login-form" onSubmit="this._login()">
