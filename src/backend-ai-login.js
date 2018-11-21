@@ -16,6 +16,7 @@ import '@polymer/paper-styles/color';
 import '@polymer/paper-material/paper-material';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
+import '@polymer/paper-toast/paper-toast';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
