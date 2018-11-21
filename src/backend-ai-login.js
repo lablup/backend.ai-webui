@@ -65,25 +65,24 @@ class BackendAiLogin extends PolymerElement {
         //this.$['id_api_key'].value = 'AKIAIOSFODNN7EXAMPLE';
         //this.$['id_secret_key'].value = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY';
         //this.$['id_api_endpoint'].value = 'http://127.0.0.1:8082';
-
         this.$['login-button'].addEventListener('tap', this._login.bind(this));
     }
     
     open() {
         this.$['login-panel'].open();
     }
+
     close() {
         this.$['login-panel'].close();
     }
+
     login() {
         if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+            console.log('trying to connect to server.');
             this._connect();
+        } else {
+            this.open();
         }
-        //this.api_key = this.$['id_api_key'].value;
-        //this.secret_key = this.$['id_secret_key'].value;
-        //this.api_endpoint = this.$['id_api_endpoint'].value;
-        console.log(this.api_key);
-        this.open();
     }
     _validate_data(value) {
         if (value != undefined && value != null && value != '') {
@@ -125,8 +124,14 @@ class BackendAiLogin extends PolymerElement {
             document.dispatchEvent(event);
             this.close();
         }).catch(err => {   // Connection failed
-            this.$.notification.text = 'Login failed. Check login information.';
-            this.$.notification.show();
+            if (this.$['login-panel'].opened != true) {
+                this.$.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+                this.$.notification.show();
+                this.open();
+            } else {
+                this.$.notification.text = 'Login failed. Check login information.';
+                this.$.notification.show();
+            }
         });
     }
     static get template() {
