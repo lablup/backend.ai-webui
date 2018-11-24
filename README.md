@@ -1,6 +1,6 @@
 # backend.ai-admin-console
 
-Web-based Backend.AI administration console.
+Web-based Backend.AI administration GUI console.
 
 ## Develop and Test
 
