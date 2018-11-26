@@ -19,8 +19,8 @@ import './backend-ai-styles.js';
 
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
-
 class BackendAICredentialList extends PolymerElement {
+
     static get is() {
         return 'backend-ai-credential-list';
     }
@@ -29,9 +29,9 @@ class BackendAICredentialList extends PolymerElement {
         return {
             condition: {
                 type: String,
-                default: 'running'  // finished, running, archived
+                default: 'active'  // active, inactive
             },
-            jobs: {
+            keypairs: {
                 type: Object,
                 value: {}
             }
@@ -41,7 +41,7 @@ class BackendAICredentialList extends PolymerElement {
     ready() {
         super.ready();
         document.addEventListener('backend-ai-connected', () => {
-            this._refreshJobData();
+            this._refreshKeyData();
         }, true);
     }
 
@@ -49,38 +49,39 @@ class BackendAICredentialList extends PolymerElement {
         super.connectedCallback();
         afterNextRender(this, function () {
             if (window.backendaiclient != undefined && window.backendaiclient != null) {
-                this._refreshJobData();
+                this._refreshKeyData();
             }
         });
     }
-    _refreshJobData() {
-        let status = 'RUNNING';
+
+    _refreshKeyData() {
+        let status = 'active';
+        let is_active = true;
         switch (this.condition) {
-            case 'running':
-                status = 'RUNNING';
+            case 'active':
+                is_active = true;
                 break;
-            case 'finished':
-                status = 'TERMINATED';
-                break;
-            case 'archived':
             default:
-                status = 'RUNNING';
+                is_active = false;
         };
 
-        let fields = ["access_key", "secret_key", 'is_active', 'is_admin'];
-        let q = `query($user_id: {0}, $is_active: Boolean) {` +
+        let user_id = 'admin@lablup.com';
+        let fields = ["access_key", "secret_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used', 
+            'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries'];
+        let q = `query($user_id: String!, $is_active: Boolean) {` +
             `  keypairs(user_id: $user_id, is_active: $is_active) {` +
             `    ${fields.join(" ")}` +
             `  }` +
-            '}';
+            `}`;
+
         let v = { 'user_id': user_id,
             'is_active': is_active,
         }
 
         window.backendaiclient.gql(q, v).then(response => {
-            this.jobs = response;
-            setTimeout(() => { this._refreshJobData(status) }, 5000);
-            console.log(this.jobs);
+            this.keypairs = response;
+            setTimeout(() => { this._refreshKeyData(status) }, 5000);
+            console.log(this.keypairs);
         }).catch(err => {
             console.log(err);
             if (err && err.message) {
@@ -98,18 +99,14 @@ class BackendAICredentialList extends PolymerElement {
 
     _elapsed(start, end) {
         var startDate = new Date(start);
-        if (this.condition == 'running') {
+        if (this.condition == 'active') {
             var endDate = new Date();
         } else {
             var endDate = new Date(end);
         }
         var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
-        if (this.condition == 'running') {
-            return 'Running ' + seconds + 'sec.';
-        } else {
-            return 'Reserved for ' + seconds + 'sec.';
-        }
-        return seconds;
+        var days = Math.floor(seconds / 86400);
+        return days;
     }
 
     _indexFrom1(index) {
@@ -165,25 +162,32 @@ class BackendAICredentialList extends PolymerElement {
         </style>
         <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
         
-        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.compute_sessions]]">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list" items="[[keypairs.keypairs]]">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>
                 <template class="header">#</template>
                 <template>[[_indexFrom1(index)]]</template>
             </vaadin-grid-column>
 
             <vaadin-grid-column resizable>
-                <template class="header">Job ID</template>
+                <template class="header">User ID</template>
                 <template>
-                    <div class="indicator">[[item.sess_id]]</div>
+                    <div class="indicator">[[item.user_id]]</div>
                 </template>
             </vaadin-grid-column>
 
             <vaadin-grid-column resizable>
-                <template class="header">Starts</template>
+                <template class="header">Access Key</template>
+                <template>
+                    <div class="indicator">[[item.access_key]]</div>
+                </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+                <template class="header">Key age</template>
                 <template>
                     <div class="layout vertical">
-                        <span>[[item.created_at]]</span>
-                        <span class="indicator">([[_elapsed(item.created_at, item.terminated_at)]])</span>
+                        <span>[[_elapsed(item.created_at)]] Days</span>
+                        <span class="indicator">([[item.created_at]])</span>
                     </div>
                 </template>
             </vaadin-grid-column>
@@ -211,13 +215,13 @@ class BackendAICredentialList extends PolymerElement {
             </vaadin-grid-column>
 
             <vaadin-grid-column resizable>
-              <template class="header">Using</template>
+              <template class="header">Allocation</template>
               <template>
                   <div class="layout horizontal center flex">
                       <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
                       <div class="vertical start layout">
-                      <span>[[item.cpu_used]]</span>
-                      <span class="indicator">msec.</span>
+                      <span>[[item.concurrency_limit]]</span>
+                      <span class="indicator">concurrency</span>
                       </div>
                       <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
                       <div class="vertical start layout">

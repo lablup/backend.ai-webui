@@ -26,6 +26,9 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import './backend-ai-styles.js';
 import './backend-ai-credential-list.js';
 
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
+
+
 class BackendAICredentialView extends PolymerElement {
   static get properties() {
     return {
