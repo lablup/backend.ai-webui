@@ -77,6 +77,10 @@ class BackendAiLogin extends PolymerElement {
   }
 
   login() {
+    this.api_key =  JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
+    this.secret_key =  JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
+    this.api_endpoint =  JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
+    console.log(this.api_key);
     if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       console.log('trying to connect to server.');
       this._connect();
@@ -102,13 +106,10 @@ class BackendAiLogin extends PolymerElement {
       this.api_key,
       this.secret_key,
       this.api_endpoint
-      ///'AKIAIOSFODNN7EXAMPLE',
-      ///'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
-      ///'http://127.0.0.1:8082'
     );
     this.client = new ai.backend.Client(
       this.clientConfig,
-      `Backend.AI Admin App.`,
+      `Backend.AI Webconsole.`,
     );
     // Test connection
     let status = 'RUNNING';
@@ -124,6 +125,7 @@ class BackendAiLogin extends PolymerElement {
       document.dispatchEvent(event);
       this.close();
     }).catch(err => {   // Connection failed
+      console.log(this.api_key);
       if (this.$['login-panel'].opened != true) {
         this.$.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
         this.$.notification.show();

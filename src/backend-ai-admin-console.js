@@ -49,7 +49,9 @@ class BackendAiAdminConsole extends PolymerElement {
 
   ready() {
     super.ready();
-    if (!isAuthenticated()) document.querySelector('#login-panel').login();
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      document.querySelector('#login-panel').login();
+    }
   }
   static get observers() {
     return [
