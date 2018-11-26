@@ -16,6 +16,7 @@ import '@polymer/iron-icons/av-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
+import './lablup-piechart.js';
 
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -66,8 +67,8 @@ class BackendAICredentialList extends PolymerElement {
         };
 
         let user_id = 'admin@lablup.com';
-        let fields = ["access_key", "secret_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used', 
-            'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries'];
+        let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used', 
+            'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
         let q = `query($user_id: String!, $is_active: Boolean) {` +
             `  keypairs(user_id: $user_id, is_active: $is_active) {` +
             `    ${fields.join(" ")}` +
@@ -90,8 +91,8 @@ class BackendAICredentialList extends PolymerElement {
             }
         });
     }
-    _isRunning() {
-        return this.condition === 'running';
+    _isActive() {
+        return this.condition === 'active';
     }
     _byteToMB(value) {
         return Math.floor(value / 1000000);
@@ -218,15 +219,17 @@ class BackendAICredentialList extends PolymerElement {
               <template class="header">Allocation</template>
               <template>
                   <div class="layout horizontal center flex">
-                      <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
                       <div class="vertical start layout">
-                      <span>[[item.concurrency_limit]]</span>
-                      <span class="indicator">concurrency</span>
+                      <lablup-piechart 
+                        number="[[item.concurrency_used]]" 
+                        maxnumber="[[item.concurrency_limit]]" 
+                        chartcolor="#cddc39" 
+                        unit="[[item.concurrency_limit]]" 
+                        size="25"></lablup-piechart>
                       </div>
-                      <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
                       <div class="vertical start layout">
-                        <span style="font-size:8px">[[_byteToMB(item.io_read_bytes)]]<span class="indicator">MB</span></span>
-                        <span style="font-size:8px">[[_byteToMB(item.io_write_bytes)]]<span class="indicator">MB</span></span>
+                        <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15min.</span></span>
+                        <span style="font-size:8px">No policy</span>
                       </div>
                   </div>
               </template>
@@ -239,7 +242,7 @@ class BackendAICredentialList extends PolymerElement {
                        kernel-id="[[item.sess_id]]">
                       <paper-icon-button disabled class="fg"
                                          icon="assignment"></paper-icon-button>
-                      <template is="dom-if" if="[[_isRunning()]]">
+                      <template is="dom-if" if="[[_isActive()]]">
                           <paper-icon-button disabled class="fg controls-running"
                                              icon="build"></paper-icon-button>
                           <paper-icon-button disabled class="fg controls-running"
