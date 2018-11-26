@@ -112,8 +112,6 @@ class BackendAICredentialList extends PolymerElement {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
         const access_key = controls.accessKey;
-        let user_id = 'admin@lablup.com';
-        let fields = ["access_key", "secret_key"]
         let q = `mutation($access_key: String!) {` +
             `  delete_keypair(access_key: $access_key) {` +
             `    ok msg` +
@@ -137,8 +135,8 @@ class BackendAICredentialList extends PolymerElement {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
         const access_key = controls.accessKey;
-        let user_id = 'admin@lablup.com';
-        let fields = ["access_key", "secret_key"]
+        let original = this.keypairs.keypairs.find(this._findKeyItem, access_key)
+        console.log(original);
         let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
             `  modify_keypair(access_key: $access_key, props: $input) {` +
             `    ok msg` +
@@ -148,10 +146,15 @@ class BackendAICredentialList extends PolymerElement {
         let v = { 'access_key': access_key,
             'input': {
                 'is_active': is_active,
+                'is_admin': original.is_admin,
+                'resource_policy': original.resource_policy,
+                'rate_limit': original.rate_limit,
+                'concurrency_limit': original.concurrency_limit,
             },
         };
         window.backendaiclient.gql(q, v).then(response => {
-            this.refresh();
+            var event = new CustomEvent("backend-ai-credential-refresh", { "detail": this });
+            document.dispatchEvent(event);
         }).catch(err => {
             console.log(err);
             if (err && err.message) {
@@ -159,6 +162,10 @@ class BackendAICredentialList extends PolymerElement {
                 this.$.notification.show();
             }
         });
+    }
+
+    _findKeyItem(element) {
+        return element.access_key = this;
     }
 
     _byteToMB(value) {
@@ -170,7 +177,7 @@ class BackendAICredentialList extends PolymerElement {
         if (this.condition == 'active') {
             var endDate = new Date();
         } else {
-            var endDate = new Date(end);
+            var endDate = new Date();
         }
         var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
         var days = Math.floor(seconds / 86400);
@@ -314,15 +321,15 @@ class BackendAICredentialList extends PolymerElement {
                         <paper-icon-button disabled class="fg"
                                          icon="assignment"></paper-icon-button>
                         <template is="dom-if" if="[[_isActive()]]">
-                            <paper-icon-button class="fg blue controls-running" icon="delete"
-                                on-tap="_revokeKey"></paper-icon-button>
                             <template is="dom-if" if="[[!item.is_admin]]">
+                                <paper-icon-button class="fg blue controls-running" icon="delete"
+                                    on-tap="_revokeKey"></paper-icon-button>
                                 <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                    on-tap="_deleteKey"></paper-icon-button>
+                                        on-tap="_deleteKey"></paper-icon-button>
                             </template>
                         </template>
                         <template is="dom-if" if="[[!_isActive()]]">
-                            <paper-icon-button class="fg blue controls-running" icon="delete"
+                            <paper-icon-button class="fg blue controls-running" icon="icons:redo"
                             on-tap="_reuseKey"></paper-icon-button>
                         </template>
                     </div>

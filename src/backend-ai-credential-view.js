@@ -48,6 +48,10 @@ class BackendAICredentialView extends PolymerElement {
   ready() {
     super.ready();
     this.$['add-keypair'].addEventListener('tap', this._addKeyPair.bind(this));
+    document.addEventListener('backend-ai-credential-refresh', () => {
+        this.$['active-credential-list'].refresh();
+        this.$['inactive-credential-list'].refresh();
+    }, true);
   }
 
   connectedCallback() {
