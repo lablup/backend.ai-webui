@@ -100,13 +100,44 @@ class BackendAICredentialList extends PolymerElement {
         return this.condition === 'active';
     }
 
-    _revokeKey(e) {
+    _revokeKey2(e) {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
         const accessKey = controls.accessKey;
-        
+
         console.log(accessKey);
     }
+
+    _revokeKey(e) {
+        const termButton = e.target;
+        const controls = e.target.closest('#controls');
+        const access_key = controls.accessKey;
+        let user_id = 'admin@lablup.com';
+        let fields = ["access_key", "secret_key"]
+        let q = `mutation($access_key: String!) {` +
+            `  delete_keypair(access_key: $access_key) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+        let v = { 'access_key': access_key,
+        };
+    
+        window.backendaiclient.gql(q, v).then(response => {
+            this.test = response;
+            //setTimeout(() => { this._refreshJobData(status) }, 5000);
+            console.log(this.test);
+            this.refresh();
+            //this.$['inactive-credential-list'].refresh();
+        }).catch(err => {
+            console.log(err);
+            if (err && err.message) {
+                this.$.notification.text = err.message;
+                this.$.notification.show();
+            }
+        });
+    }
+    
+
     _byteToMB(value) {
         return Math.floor(value / 1000000);
     }
