@@ -108,6 +108,31 @@ class BackendAICredentialList extends PolymerElement {
         console.log(accessKey);
     }
 
+    _deleteKey(e) {
+        const termButton = e.target;
+        const controls = e.target.closest('#controls');
+        const access_key = controls.accessKey;
+        let user_id = 'admin@lablup.com';
+        let fields = ["access_key", "secret_key"]
+        let q = `mutation($access_key: String!) {` +
+            `  delete_keypair(access_key: $access_key) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+        let v = { 'access_key': access_key,
+        };
+    
+        window.backendaiclient.gql(q, v).then(response => {
+            this.refresh();
+        }).catch(err => {
+            console.log(err);
+            if (err && err.message) {
+                this.$.notification.text = err.message;
+                this.$.notification.show();
+            }
+        });
+    }
+    
     _revokeKey(e) {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
@@ -123,11 +148,7 @@ class BackendAICredentialList extends PolymerElement {
         };
     
         window.backendaiclient.gql(q, v).then(response => {
-            this.test = response;
-            //setTimeout(() => { this._refreshJobData(status) }, 5000);
-            console.log(this.test);
             this.refresh();
-            //this.$['inactive-credential-list'].refresh();
         }).catch(err => {
             console.log(err);
             if (err && err.message) {
@@ -136,7 +157,6 @@ class BackendAICredentialList extends PolymerElement {
             }
         });
     }
-    
 
     _byteToMB(value) {
         return Math.floor(value / 1000000);
@@ -161,19 +181,6 @@ class BackendAICredentialList extends PolymerElement {
         return index + 1;
     }
 
-    _terminateKernel(e) {
-        const termButton = e.target;
-        const controls = e.target.closest('#controls');
-        const kernelId = controls.kernelId;
-
-        window.backendaiclient.destroyKernel(kernelId).then((req) => {
-            termButton.setAttribute('disabled', '');
-            setNotification('Session will soon be terminated');
-        }).catch(err => {
-            this.$.notification.text = 'Problem occurred during termination.';
-            this.$.notification.show();
-        });
-    }
     static get template() {
         return html`
         <style include="backend-ai-styles iron-flex iron-flex-alignment">
@@ -290,7 +297,7 @@ class BackendAICredentialList extends PolymerElement {
                       </div>
                       <div class="vertical start layout">
                         <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15min.</span></span>
-                        <span style="font-size:8px">No policy</span>
+                        <span style="font-size:8px">[[item.num_queries]] <span class="indicator">queries</span></span>
                       </div>
                   </div>
               </template>
@@ -301,13 +308,21 @@ class BackendAICredentialList extends PolymerElement {
               <template>
                   <div id="controls" class="layout horizontal flex center"
                        access-key="[[item.access_key]]">
-                      <paper-icon-button disabled class="fg"
+                        <paper-icon-button disabled class="fg"
                                          icon="assignment"></paper-icon-button>
-                      <template is="dom-if" if="[[_isActive()]]">
-                          <paper-icon-button class="fg red controls-running" icon="delete"
-                            on-tap="_revokeKey"></paper-icon-button>
-                      </template>
-                  </div>
+                        <template is="dom-if" if="[[_isActive()]]">
+                            <paper-icon-button class="fg blue controls-running" icon="delete"
+                                on-tap="_revokeKey"></paper-icon-button>
+                            <template is="dom-if" if="[[!item.is_admin]]">
+                                <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
+                                    on-tap="_deleteKey"></paper-icon-button>
+                            </template>
+                        </template>
+                        <template is="dom-if" if="[[!_isActive()]]">
+                            <paper-icon-button class="fg blue controls-running" icon="delete"
+                            on-tap="_reuseKey"></paper-icon-button>
+                        </template>
+                    </div>
               </template>
             </vaadin-grid-column>
         </vaadin-grid>

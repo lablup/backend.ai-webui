@@ -13,6 +13,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-toast';
+import './lablup-shields.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -133,6 +134,16 @@ class BackendAIAgentList extends PolymerElement {
     _heartbeatStatus(state) {
         return state;
     }
+    _heartbeatColor(state) {
+        switch (state) {
+            case 'ALIVE':
+                return 'green';
+            case 'TERMINATED':
+                return 'red';
+            default:
+                return 'blue';
+        };
+    }
     _terminateKernel(e) {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
@@ -238,7 +249,7 @@ class BackendAIAgentList extends PolymerElement {
               <template class="header">Status</template>
               <template>
                   <div>
-                  [[_heartbeatStatus(item.status)]]
+                  <lablup-shields app="" color="[[_heartbeatColor(item.status)]]" description="[[_heartbeatStatus(item.status)]]" ui="flat"></lablup-shields>
                   </div>
               </template>
             </vaadin-grid-column>
