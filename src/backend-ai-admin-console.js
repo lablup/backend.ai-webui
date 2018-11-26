@@ -52,6 +52,7 @@ class BackendAiAdminConsole extends PolymerElement {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.querySelector('#login-panel').login();
     }
+    this.$['logout-button'].addEventListener('tap', this.logout);
   }
   static get observers() {
     return [
@@ -88,6 +89,16 @@ class BackendAiAdminConsole extends PolymerElement {
       default:
         this.menuTitle = 'Summary';
     }
+  }
+
+  logout() {
+    window.backendaiclient = null;
+    const keys = Object.keys(localStorage);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
+    }
+    location.reload();
   }
 
   static get template() {
@@ -187,7 +198,7 @@ class BackendAiAdminConsole extends PolymerElement {
         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
         <span title id="main-panel-toolbar-title">[[menuTitle]]</span>
         <span class="flex"></span>
-        <paper-icon-button icon="icons:exit-to-app"></paper-icon-button>
+        <paper-icon-button id="logout-button" icon="icons:exit-to-app"></paper-icon-button>
       </app-toolbar>
     </app-header>
     <div class="content">
