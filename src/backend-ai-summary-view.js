@@ -138,8 +138,8 @@ class BackendAISummary extends PolymerElement {
           <lablup-activity-panel title="Keypair" elevation="1">
           <div slot="message">
             <ul>
-              <li>Create a new key pair</li>
-              <li>Maintain keypairs</li>
+              <li><a href="/credential">Create a new key pair</a></li>
+              <li><a href="/credential">Maintain keypairs</a></li>
             </ul>
           </div>
         </lablup-activity-panel>

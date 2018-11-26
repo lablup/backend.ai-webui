@@ -71,7 +71,10 @@ class BackendAIAgentList extends PolymerElement {
         'first_contact',
         'mem_slots',
         'cpu_slots',
-        'gpu_slots']
+        'gpu_slots',
+        'used_mem_slots',
+        'used_cpu_slots',
+        'used_gpu_slots']
         let q = `query($status: String) {` +
         `  agents(status: $status) {` +
         `     ${fields.join(" ")}` +
@@ -99,7 +102,7 @@ class BackendAIAgentList extends PolymerElement {
     }
 
     _MBtoGB(value) {
-        return Math.floor(value/1);
+        return Math.floor(value/1024);
     }
     _slotToCPU(value) {
         return Math.floor(value/6);
