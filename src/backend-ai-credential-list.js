@@ -139,14 +139,17 @@ class BackendAICredentialList extends PolymerElement {
         const access_key = controls.accessKey;
         let user_id = 'admin@lablup.com';
         let fields = ["access_key", "secret_key"]
-        let q = `mutation($access_key: String!) {` +
-            `  delete_keypair(access_key: $access_key) {` +
+        let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
+            `  modify_keypair(access_key: $access_key, props: $input) {` +
             `    ok msg` +
             `  }` +
             `}`;
+        let is_active = false;
         let v = { 'access_key': access_key,
+            'input': {
+                'is_active': is_active,
+            },
         };
-    
         window.backendaiclient.gql(q, v).then(response => {
             this.refresh();
         }).catch(err => {
