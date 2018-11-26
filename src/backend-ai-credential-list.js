@@ -130,8 +130,15 @@ class BackendAICredentialList extends PolymerElement {
             }
         });
     }
-    
+
     _revokeKey(e) {
+        this._mutateKey(e, false);
+    }
+    _reuseKey(e) {
+        this._mutateKey(e, true);
+    }
+    
+    _mutateKey(e, is_active) {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
         const access_key = controls.accessKey;
@@ -142,7 +149,6 @@ class BackendAICredentialList extends PolymerElement {
             `    ok msg` +
             `  }` +
             `}`;
-        let is_active = false;
         let v = { 'access_key': access_key,
             'input': {
                 'is_active': is_active,
