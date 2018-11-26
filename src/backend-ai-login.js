@@ -189,3 +189,5 @@ paper-button {
   `;
   }
 }
+
+customElements.define(BackendAiLogin.is, BackendAiLogin);
