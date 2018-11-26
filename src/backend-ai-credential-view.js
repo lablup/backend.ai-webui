@@ -47,7 +47,7 @@ class BackendAICredentialView extends PolymerElement {
 
   ready() {
     super.ready();
-    this.$['launch-session'].addEventListener('tap', this._newSession.bind(this));
+    this.$['add-keypair'].addEventListener('tap', this._addKeyPair.bind(this));
   }
 
   connectedCallback() {
@@ -76,21 +76,14 @@ class BackendAICredentialView extends PolymerElement {
   }
 
   _addKeyPair() {
-    let status = 'RUNNING';
-    switch (this.condition) {
-        case 'running':
-            status = 'RUNNING';
-            break;
-        case 'finished':
-            status = 'TERMINATED';
-            break;
-        case 'archived':
-        default:
-            status = 'RUNNING';
-    };
-
+    let is_active = true;
+    let is_admin = false;
+    let resource_policy = null;
+    let rate_limit = null;
+    let concurrency_limit = null;
+    let user_id = 'admin@lablup.com';
     let fields = ["access_key", "secret_key"]
-    let q = `mutation($user_id: {0}, $input: KeyPairInput!) {{` +
+    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
         `  create_keypair(user_id: $user_id, props: $input) {` +
         `    ok msg keypair { ${fields.join(" ")} }` +
         `  }` +
@@ -102,14 +95,13 @@ class BackendAICredentialView extends PolymerElement {
             'resource_policy': resource_policy,
             'rate_limit': rate_limit,
             'concurrency_limit': concurrency_limit,
-
         },
     };
 
     window.backendaiclient.gql(q, v).then(response => {
-        this.jobs = response;
-        setTimeout(() => { this._refreshJobData(status) }, 5000);
-        console.log(this.jobs);
+        this.test = response;
+        //setTimeout(() => { this._refreshJobData(status) }, 5000);
+        console.log(this.test);
     }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -131,7 +123,7 @@ class BackendAICredentialView extends PolymerElement {
         <h4 class="horizontal flex center-justified layout">
             <span>Active</span>
             <span class="flex"></span>
-            <paper-button id="launch-session" class="fg red">
+            <paper-button id="add-keypair" class="fg red">
                 <iron-icon icon="add"></iron-icon>
                 Add
             </paper-button>

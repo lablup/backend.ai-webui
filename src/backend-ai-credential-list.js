@@ -94,6 +94,13 @@ class BackendAICredentialList extends PolymerElement {
     _isActive() {
         return this.condition === 'active';
     }
+
+    _revokeKey(e) {
+        const termButton = e.target;
+        const controls = e.target.closest('#controls');
+        const accessKey = controls.accessKey;
+        console.log(accessKey);
+    }
     _byteToMB(value) {
         return Math.floor(value / 1000000);
     }
@@ -109,7 +116,10 @@ class BackendAICredentialList extends PolymerElement {
         var days = Math.floor(seconds / 86400);
         return days;
     }
-
+    _humanReadableTime(d) {
+        var d = new Date(d);
+        return d.toUTCString();
+    }
     _indexFrom1(index) {
         return index + 1;
     }
@@ -188,7 +198,7 @@ class BackendAICredentialList extends PolymerElement {
                 <template>
                     <div class="layout vertical">
                         <span>[[_elapsed(item.created_at)]] Days</span>
-                        <span class="indicator">([[item.created_at]])</span>
+                        <span class="indicator">([[_humanReadableTime(item.created_at)]])</span>
                     </div>
                 </template>
             </vaadin-grid-column>
@@ -198,10 +208,10 @@ class BackendAICredentialList extends PolymerElement {
               <template>
                   <div class="layout horizontal center flex">
                       <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                      <span>[[item.cpu_slot]]</span>
+                      <span>[[item.cpu_slot]]Inf.</span>
                       <span class="indicator">slot</span>
                       <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                      <span>[[item.mem_slot]]</span>
+                      <span>[[item.mem_slot]]Inf.</span>
                       <span class="indicator">MB[[item.mem_unit]]</span>
                       <template is="dom-if" if="[[item.gpu_slot]]">
                         <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
@@ -239,18 +249,12 @@ class BackendAICredentialList extends PolymerElement {
               <template class="header">Control</template>
               <template>
                   <div id="controls" class="layout horizontal flex center"
-                       kernel-id="[[item.sess_id]]">
+                       access-key="[[item.access_key]]">
                       <paper-icon-button disabled class="fg"
                                          icon="assignment"></paper-icon-button>
                       <template is="dom-if" if="[[_isActive()]]">
-                          <paper-icon-button disabled class="fg controls-running"
-                                             icon="build"></paper-icon-button>
-                          <paper-icon-button disabled class="fg controls-running"
-                                             icon="alarm-add"></paper-icon-button>
-                          <paper-icon-button disabled class="fg controls-running"
-                                             icon="av:pause"></paper-icon-button>
                           <paper-icon-button class="fg red controls-running" icon="delete"
-                            on-tap="_terminateKernel"></paper-icon-button>
+                            on-tap="_revokeKey"></paper-icon-button>
                       </template>
                   </div>
               </template>
