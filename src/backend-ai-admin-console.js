@@ -1,5 +1,5 @@
 /**
- * Backend.AI-admin-app 
+ * Backend.AI-admin-app
  */
 
 import { PolymerElement, html } from '@polymer/polymer';
@@ -62,7 +62,7 @@ class BackendAiAdminConsole extends PolymerElement {
       '_viewChanged(routeData.view)'
     ]
   }
-  
+
   _routeChanged(changeRecord) {
     if (changeRecord.path === 'path') {
       console.log('Path changed!');
