@@ -137,28 +137,28 @@ class BackendAiLogin extends PolymerElement {
   static get template() {
     return html `
 <style is="custom-style" include="backend-ai-styles">
-paper-icon-button {
-  --paper-icon-button-ink-color: white;
-}
+  paper-icon-button {
+    --paper-icon-button-ink-color: white;
+  }
 
-app-drawer-layout:not([narrow]) [drawer-toggle] {
-  display: none;
-}
-fieldset input {
-  width: 100%;
-  border: 0;
-  border-bottom: 1px solid #aaa;
-  margin: 15px 0;
-  font: inherit;
-  font-size: 16px;
-  outline: none;
-}
-fieldset input:focus {
-  border-bottom: 1.5px solid #0d47a1;
-}
-paper-button {
-  width: 100%;
-}
+  app-drawer-layout:not([narrow]) [drawer-toggle] {
+    display: none;
+  }
+  fieldset input {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid #aaa;
+    margin: 15px 0;
+    font: inherit;
+    font-size: 16px;
+    outline: none;
+  }
+  fieldset input:focus {
+    border-bottom: 1.5px solid #0d47a1;
+  }
+  paper-button {
+    width: 100%;
+  }
 </style>
 
 <paper-dialog id="login-panel"

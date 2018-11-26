@@ -1,3 +1,15 @@
+function isAuthenticated() {
+  const api_key = localStorage.getItem('backendaiconsole.api_key');
+  const secret_key = localStorage.getItem('backendaiconsole.secret_key');
+  const api_endpoint = localStorage.getItem('backendaiconsole.api_endpoint');
+  let authenticated = false;
+  if (api_key && secret_key && api_endpoint &&
+      api_key !== 'null' && secret_key !== 'null' && api_endpoint !== 'null') {
+    authenticated = true;
+  }
+  return authenticated;
+}
+
 function backToPreviousPage(e) {
     window.history.back();
 }

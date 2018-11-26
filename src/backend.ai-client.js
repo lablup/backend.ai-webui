@@ -370,11 +370,11 @@ class Client {
     for(b=i=0;c=s.charCodeAt(i++);b+=c>>11?3:c>>7?2:1);
     return b;
   }
-  
+
   ab2str(buf) {
     return String.fromCharCode.apply(null, new Uint16Array(buf));
   }
-  
+
   str2ab(str) {
     var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
     var bufView = new Uint16Array(buf);

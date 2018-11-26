@@ -249,7 +249,7 @@ class Client {
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
     return this._wrapWithPromise(rqst);
   }
-  test_gql(){
+  test_gql() {
     let status = 'RUNNING';
     let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
     let q = `query($ak:String, $status:String) {`+
