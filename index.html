@@ -11,13 +11,12 @@
   <script src="./node_modules/web-animations-js/web-animations-next-lite.min.js"></script>
   <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js" async></script>
   <script src="manifest/app.js" async></script>
-  <base href="app://./" />
-  <script src="./src/backend-ai-admin-app.js" type="module" async></script>
+  <script src="./src/backend-ai-admin-console.js" type="module" async></script>
   <script src="./src/backend-ai-login.js" type="module" async></script>
   <title>Backend.AI WebConsole</title>
 </head>
 <body>
-  <backend-ai-admin-app>
+  <backend-ai-admin-console>
     <div id="jsyes" style="position:fixed;bottom:10px;left:10px;font-family:monospace;font-size:16px;"></div>
     <script type="text/javascript">
       document.getElementById('jsyes').innerHTML='LOADING...'
@@ -25,7 +24,7 @@
     <noscript>
       <p>Could not render Backend.AI modules. Check that JavaScript is enabled.</p>
     </noscript>
-  </backend-ai-admin-app>
+  </backend-ai-admin-console>
   <backend-ai-login id="login-panel"></backend-ai-login>
 </body>
 </html>

@@ -1,5 +1,5 @@
 /**
- * Backend.AI-admin-app 
+ * Login implementation of Backend.AI-admin-console
  */
 
 import {
