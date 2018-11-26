@@ -17,6 +17,7 @@ import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 import './lablup-piechart.js';
+import './lablup-shields.js';
 
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -81,7 +82,7 @@ class BackendAICredentialList extends PolymerElement {
 
         window.backendaiclient.gql(q, v).then(response => {
             this.keypairs = response;
-            setTimeout(() => { this._refreshKeyData(status) }, 5000);
+            //setTimeout(() => { this._refreshKeyData(status) }, 5000);
             console.log(this.keypairs);
         }).catch(err => {
             console.log(err);
@@ -91,6 +92,10 @@ class BackendAICredentialList extends PolymerElement {
             }
         });
     }
+    refresh() {
+        this._refreshKeyData();
+    }
+
     _isActive() {
         return this.condition === 'active';
     }
@@ -182,7 +187,9 @@ class BackendAICredentialList extends PolymerElement {
             <vaadin-grid-column resizable>
                 <template class="header">User ID</template>
                 <template>
+                    <div class="layout horizontal center flex">
                     <div class="indicator">[[item.user_id]]</div>
+                    </div>
                 </template>
             </vaadin-grid-column>
 
@@ -190,6 +197,18 @@ class BackendAICredentialList extends PolymerElement {
                 <template class="header">Access Key</template>
                 <template>
                     <div class="indicator">[[item.access_key]]</div>
+                </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+                <template class="header">Permission</template>
+                <template>
+                    <div class="layout horizontal center flex">
+                    <template is="dom-if" if="[[item.is_admin]]">
+                        <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
+                    </template>
+                    <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+                    </div>
                 </template>
             </vaadin-grid-column>
 

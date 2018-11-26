@@ -102,6 +102,8 @@ class BackendAICredentialView extends PolymerElement {
         this.test = response;
         //setTimeout(() => { this._refreshJobData(status) }, 5000);
         console.log(this.test);
+        this.$['active-credential-list'].refresh();
+        this.$['inactive-credential-list'].refresh();
     }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -120,7 +122,7 @@ class BackendAICredentialView extends PolymerElement {
     </style>
     <paper-material class="item" elevation="1">
         <h3 class="paper-material-title">Credentials</h3>
-        <h4 class="horizontal flex center-justified layout">
+        <h4 class="horizontal flex center layout">
             <span>Active</span>
             <span class="flex"></span>
             <paper-button id="add-keypair" class="fg red">
@@ -129,11 +131,11 @@ class BackendAICredentialView extends PolymerElement {
             </paper-button>
         </h4>
         <div>
-            <backend-ai-credential-list condition="active"></backend-ai-job-list>
+            <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
         </div>
         <h4>Inactive</h4>
         <div>
-            <backend-ai-credential-list condition="inactive"></backend-ai-job-list>
+            <backend-ai-credential-list id="inactive-credential-list" condition="inactive"></backend-ai-job-list>
         </div>
     
     </paper-material>
