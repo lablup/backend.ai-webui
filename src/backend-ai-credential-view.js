@@ -79,8 +79,8 @@ class BackendAICredentialView extends PolymerElement {
     let is_active = true;
     let is_admin = false;
     let resource_policy = null;
-    let rate_limit = null;
-    let concurrency_limit = null;
+    let rate_limit = 5000;
+    let concurrency_limit = 1;
     let user_id = 'admin@lablup.com';
     let fields = ["access_key", "secret_key"]
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +

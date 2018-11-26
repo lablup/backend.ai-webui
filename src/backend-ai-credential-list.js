@@ -104,6 +104,7 @@ class BackendAICredentialList extends PolymerElement {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
         const accessKey = controls.accessKey;
+        
         console.log(accessKey);
     }
     _byteToMB(value) {
