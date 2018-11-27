@@ -127,15 +127,26 @@ const template = html `
 
             .site-name {
                 text-align: center;
-                margin-left: auto;
+                margin-left: 0;
                 margin-right: auto;
                 line-height: 16px;
                 font-size: 16px;
                 font-weight: 100;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
             }
 
             .site-name > .bold {
                 font-weight: 400;
+            }
+
+            .sidebar-footer {
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 16px;
+                font-size: 12px;
+                font-weight: 100;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
             }
 
             .welcome-username {

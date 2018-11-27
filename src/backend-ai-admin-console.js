@@ -129,7 +129,7 @@ class BackendAiAdminConsole extends PolymerElement {
           </div>
           <div class="vertical start-justified layout">
             <span class="site-name"><span class="bold">backend</span>.AI</span>
-            <span style="font-size:13px;">webconsole</span>
+            <span class="site-name" style="font-size:13px;">webconsole</span>
           </div>
           <span class="flex"></span>
         </div>
@@ -182,10 +182,10 @@ class BackendAiAdminConsole extends PolymerElement {
           </small>
         </div>
       </footer>
-      <div id="sidebar-navbar-footer" class="horizontal center center-justified layout">
+      <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
         <address>
-          <small>WebConsole (Alpha)</small>
-          <small style="font-size:9px;">0.3.20181118</small>
+          <small class="sidebar-footer">WebConsole (Alpha)</small>
+          <small class="sidebar-footer" style="font-size:9px;">0.4.20181127</small>
         </address>
       </div>
     </app-header-layout>
