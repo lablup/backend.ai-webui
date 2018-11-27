@@ -10,7 +10,8 @@
   ],
   "extraDependencies": [
     "manifest.json",
-    "node_modules/@webcomponents/webcomponentsjs/**"
+    "node_modules/@webcomponents/webcomponentsjs/**",
+    "node_modules/web-animations-js/**"
   ],
   "builds": [
     { 
