@@ -4,7 +4,7 @@
   "fragments": [
   ],
   "sources": [
-   "src/backend-ai-admin-console.js",
+   "src/**.js",
    "manifest/**",
    "package.json"
   ],
