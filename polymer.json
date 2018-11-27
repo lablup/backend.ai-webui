@@ -1,10 +1,10 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/backend-ai-admin-app.js",
+  "shell": "src/backend-ai-admin-console.js",
   "fragments": [
   ],
   "sources": [
-   "src/backend-ai-admin-app.js",
+   "src/backend-ai-admin-console.js",
    "manifest/**",
    "package.json"
   ],

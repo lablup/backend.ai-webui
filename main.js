@@ -1,52 +1,50 @@
-let {app, protocol, BrowserWindow} = require("electron");
-let {readFile} = require("fs");
-let {extname} = require("path");
-let {URL} = require("url");
+// Modules to control application life and create native browser window
+const {app, BrowserWindow, protocol } = require('electron')
 
-let createProtocol = (scheme, normalize = true) => {
-  protocol.registerBufferProtocol(scheme,
-    (request, respond) => {
-      let pathName = new URL(request.url).pathname;
-      pathName = decodeURI(pathName); // Needed in case URL contains spaces
-    
-      readFile(__dirname + "/" + pathName, (error, data) => {
-        let extension = extname(pathName).toLowerCase();
-        let mimeType = "";
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let mainWindow
 
-        if (extension === ".js") {
-          mimeType = "text/javascript";
-        }
-        else if (extension === ".html") {
-          mimeType = "text/html";
-        }
-        else if (extension === ".css") {
-          mimeType = "text/css";
-        }
-        else if (extension === ".svg" || extension === ".svgz") {
-          mimeType = "image/svg+xml";
-        }
-        else if (extension === ".json") {
-          mimeType = "application/json";
-        }
+function createWindow () {
+  // Create the browser window.
+  mainWindow = new BrowserWindow({width: 1960, height: 1024})
+  mainWindow.webContents.openDevTools()
+  // and load the index.html of the app.
+  mainWindow.loadFile('build/es6-unbundled/index.html')
 
-        respond({mimeType, data}); 
-      });
-    },
-    (error) => {
-      if (error) {
-        console.error(`Failed to register ${scheme} protocol`, error);
-      }
-    }
-  );
+  // Open the DevTools.
+  // mainWindow.webContents.openDevTools()
+
+  // Emitted when the window is closed.
+  mainWindow.on('closed', function () {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    mainWindow = null
+  })
 }
 
-// Standard scheme must be registered before the app is ready
-protocol.registerStandardSchemes(["app"], { secure: true });
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', createWindow)
 
-app.on("ready", () => {
-  createProtocol("app");
+// Quit when all windows are closed.
+app.on('window-all-closed', function () {
+  // On OS X it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
 
-  let browserWindow = new BrowserWindow({webPreferences: {preload: `${__dirname}/preload.js`}});
-  browserWindow.webContents.openDevTools();
-  browserWindow.loadFile("index.html");
-});
+app.on('activate', function () {
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (mainWindow === null) {
+    createWindow()
+  }
+})
+
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
