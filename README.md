@@ -18,4 +18,10 @@ $ polymer build
 
 ## Build (App)
 
-In preparation.
+```
+$ polymer build
+$ cd build/es6-unbundled
+$ npm install --only=prod
+$ cd ../..
+$ npm start
+```

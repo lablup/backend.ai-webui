@@ -4,8 +4,8 @@
   "name": "Backend.AI Admin App.",
   "short_name": "BackendAIAdminApp",
   "version": "0.1.1",
-  "start_url": ".",
-  "display": "fullscreen",
+  "start_url": "/",
+  "display": "standalone",
   "background_color": "#fff",
   "theme_color":"#fff",
   "icons": [{
