@@ -162,12 +162,12 @@ class BackendAiLogin extends PolymerElement {
     width: 100%;
   }
 </style>
-
-<paper-dialog id="login-panel"
-              entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
 <app-localstorage-document id="storage" key="backendaiconsole.api_key" data="{{api_key}}"></app-localstorage-document>
 <app-localstorage-document key="backendaiconsole.secret_key" data="{{secret_key}}"></app-localstorage-document>
 <app-localstorage-document key="backendaiconsole.api_endpoint" data="{{api_endpoint}}"></app-localstorage-document>
+
+<paper-dialog id="login-panel"
+              entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
   <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
   <h3>Console login</h3>
   <form id="login-form" onSubmit="this._login()">
