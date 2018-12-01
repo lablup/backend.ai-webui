@@ -298,7 +298,7 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1280, height: 1024})
+  mainWindow = new BrowserWindow({width: 1280, height: 980})
   // and load the index.html of the app.
   mainWindow.loadFile('build/es6-unbundled/index.html')
   mainWindow.webContents.openDevTools();
