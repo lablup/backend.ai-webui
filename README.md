@@ -17,7 +17,7 @@ Default setup will build es6-unbundled.
 $ polymer build
 ```
 
-## Build (App)
+## Build (Electron App)
 
 ```
 $ polymer build
