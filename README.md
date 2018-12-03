@@ -19,6 +19,16 @@ $ polymer build
 
 ## Build (Electron App)
 
+### Using makefile
+
+```
+$ make mac
+$ make win (not yet working)
+$ make linux (not yet working)
+```
+
+### Manual run (using local Electron)
+
 ```
 $ polymer build
 $ cd build/es6-unbundled
