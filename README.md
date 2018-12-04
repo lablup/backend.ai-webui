@@ -12,7 +12,8 @@ $ polymer serve --npm
 
 ## Build (Web)
 
-Default setup will build es6-unbundled.
+Default setup will build `es6-unbundled`.
+
 ```
 $ polymer build
 ```
