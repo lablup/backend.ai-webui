@@ -80,7 +80,11 @@ class BackendAiLogin extends PolymerElement {
   }
 
   login() {
-    this.email =  JSON.parse(localStorage.getItem('backendaiconsole.email'));
+    if (localStorage.getItem('backendaiconsole.email') != null) {
+      this.email =  JSON.parse(localStorage.getItem('backendaiconsole.email'));
+    } else {
+      this.email = '';
+    }
     this.api_key =  JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
     this.secret_key =  JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
     this.api_endpoint =  JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));

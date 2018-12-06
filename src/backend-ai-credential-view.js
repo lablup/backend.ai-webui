@@ -139,11 +139,13 @@ class BackendAICredentialView extends PolymerElement {
         <h4 class="horizontal flex center center-justified layout">
             <span>Active</span>
             <span class="flex"></span>
-            <paper-input name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"></paper-input>
-            <paper-button id="add-keypair" class="fg red">
-                <iron-icon icon="add"></iron-icon>
+            <paper-input type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
+            auto-validate>
+                <paper-button id="add-keypair" slot="suffix" class="fg red">
+                <iron-icon icon="add" class="fg red"></iron-icon>
                 Add
-            </paper-button>
+                </paper-button>
+            </paper-input>
         </h4>
         <div>
             <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
