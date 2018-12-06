@@ -86,7 +86,8 @@ class BackendAiLogin extends PolymerElement {
     this.api_endpoint =  JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
 
     console.log(this.api_key);
-    if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+    console.log(this.email);
+    if (this._validate_data(this.email) && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       console.log('trying to connect to server.');
       this._connect();
     } else {
@@ -118,16 +119,22 @@ class BackendAiLogin extends PolymerElement {
       `Backend.AI Webconsole.`,
     );
     // Test connection
-    let status = 'RUNNING';
-
-    let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
-    let q = `query($ak:String, $status:String) {`+
-    `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
+    let fields = ["user_id"];
+    let q = `query($ak:String) {`+
+    `  keypair(access_key:$ak) { ${fields.join(" ")} }`+
     '}';
-    let v = {'status': status, 'ak': this.client._config.accessKey};
+    let v = {'ak': this.client._config.accessKey};
+
     this.client.gql(q, v).then(response => {
       window.backendaiclient = this.client;
+      let email = response['keypair'].user_id;
+      if (this.email != email) {
+        this.email = email;
+        this.$['id_email'].value = this.email;
+        localStorage.setItem('backendaiconsole.email', this.email);
+      }
       window.backendaiclient_email = this.email;
+      console.log(window.backendaiclient_email);
       var event = new CustomEvent("backend-ai-connected", { "detail": this.client });
       document.dispatchEvent(event);
       this.close();
@@ -180,14 +187,14 @@ class BackendAiLogin extends PolymerElement {
   <h3>Console login</h3>
   <form id="login-form" onSubmit="this._login()">
   <fieldset>
-    <input type="text" name="email" id="id_email" maxlength="30" autofocus
-    placeholder="E-mail" value="{{email}}" />
     <input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
            placeholder="API Key" value="{{api_key}}" />
     <input type="password" name="secret_key" id="id_secret_key"
            placeholder="Secret Key" value="{{secret_key}}" />
     <input type="text" name="api_endpoint" id="id_api_endpoint"
     placeholder="API Endpoint"  value="{{api_endpoint}}"/>
+    <input type="text" name="email" id="id_email" maxlength="30" autofocus
+    placeholder="E-mail (Optional)" value="{{email}}" />
     <br /><br />
     <paper-button class="blue" type="submit" id="login-button">
       <iron-icon icon="check"></iron-icon>
