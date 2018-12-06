@@ -88,8 +88,10 @@ class BackendAICredentialView extends PolymerElement {
     let concurrency_limit = 1;
     let user_id;
     if (this.$['id_new_user_id'].value != '') {
+        if (this.$['id_new_user_id'].invalid == true) {
+            return;
+        }
         user_id = this.$['id_new_user_id'].value;
-        console.log(user_id);
     } else {
         user_id = window.backendaiclient_email;
     }
