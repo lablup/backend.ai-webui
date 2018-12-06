@@ -200,7 +200,7 @@ class BackendAiAdminConsole extends PolymerElement {
       <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
         <address>
           <small class="sidebar-footer">WebConsole (Alpha)</small>
-          <small class="sidebar-footer" style="font-size:9px;">0.4.20181127</small>
+          <small class="sidebar-footer" style="font-size:9px;">0.5.20181206</small>
         </address>
       </div>
     </app-header-layout>
