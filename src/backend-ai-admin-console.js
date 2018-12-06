@@ -198,6 +198,7 @@ class BackendAiAdminConsole extends PolymerElement {
         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
         <span title id="main-panel-toolbar-title">[[menuTitle]]</span>
         <span class="flex"></span>
+        <span>{{window.backendaiclient_email}}</span>
         <paper-icon-button id="logout-button" icon="icons:exit-to-app"></paper-icon-button>
       </app-toolbar>
     </app-header>
