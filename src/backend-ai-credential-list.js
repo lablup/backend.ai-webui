@@ -67,7 +67,7 @@ class BackendAICredentialList extends PolymerElement {
                 is_active = false;
         };
 
-        let user_id = 'admin@lablup.com';
+        let user_id = window.backendaiclient_email;
         let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used', 
             'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
         let q = `query($user_id: String!, $is_active: Boolean) {` +

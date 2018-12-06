@@ -35,6 +35,9 @@ class BackendAiLogin extends PolymerElement {
   }
   static get properties() {
     return {
+      email: {
+        type: String
+      },
       api_key: {
         type: String
         //value: ''
@@ -77,9 +80,11 @@ class BackendAiLogin extends PolymerElement {
   }
 
   login() {
+    this.email =  JSON.parse(localStorage.getItem('backendaiconsole.email'));
     this.api_key =  JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
     this.secret_key =  JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
     this.api_endpoint =  JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
+
     console.log(this.api_key);
     if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       console.log('trying to connect to server.');
@@ -95,6 +100,7 @@ class BackendAiLogin extends PolymerElement {
     return false;
   }
   _login() {
+    this.email = this.$['id_email'].value;
     this.api_key = this.$['id_api_key'].value;
     this.secret_key = this.$['id_secret_key'].value;
     this.api_endpoint = this.$['id_api_endpoint'].value;
@@ -121,6 +127,7 @@ class BackendAiLogin extends PolymerElement {
     let v = {'status': status, 'ak': this.client._config.accessKey};
     this.client.gql(q, v).then(response => {
       window.backendaiclient = this.client;
+      window.backendaiclient_email = this.email;
       var event = new CustomEvent("backend-ai-connected", { "detail": this.client });
       document.dispatchEvent(event);
       this.close();
@@ -162,6 +169,7 @@ class BackendAiLogin extends PolymerElement {
     width: 100%;
   }
 </style>
+<app-localstorage-document key="backendaiconsole.email" data="{{email}}"></app-localstorage-document>
 <app-localstorage-document id="storage" key="backendaiconsole.api_key" data="{{api_key}}"></app-localstorage-document>
 <app-localstorage-document key="backendaiconsole.secret_key" data="{{secret_key}}"></app-localstorage-document>
 <app-localstorage-document key="backendaiconsole.api_endpoint" data="{{api_endpoint}}"></app-localstorage-document>
@@ -172,6 +180,8 @@ class BackendAiLogin extends PolymerElement {
   <h3>Console login</h3>
   <form id="login-form" onSubmit="this._login()">
   <fieldset>
+    <input type="text" name="email" id="id_email" maxlength="30" autofocus
+    placeholder="E-mail" value="{{email}}" />
     <input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
            placeholder="API Key" value="{{api_key}}" />
     <input type="password" name="secret_key" id="id_secret_key"
