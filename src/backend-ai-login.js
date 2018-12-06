@@ -35,9 +35,6 @@ class BackendAiLogin extends PolymerElement {
   }
   static get properties() {
     return {
-      email: {
-        type: String
-      },
       api_key: {
         type: String
         //value: ''
@@ -80,18 +77,12 @@ class BackendAiLogin extends PolymerElement {
   }
 
   login() {
-    if (localStorage.getItem('backendaiconsole.email') != null) {
-      this.email =  JSON.parse(localStorage.getItem('backendaiconsole.email'));
-    } else {
-      this.email = '';
-    }
     this.api_key =  JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
     this.secret_key =  JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
     this.api_endpoint =  JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
 
     console.log(this.api_key);
-    console.log(this.email);
-    if (this._validate_data(this.email) && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+    if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       console.log('trying to connect to server.');
       this._connect();
     } else {
@@ -105,7 +96,6 @@ class BackendAiLogin extends PolymerElement {
     return false;
   }
   _login() {
-    this.email = this.$['id_email'].value;
     this.api_key = this.$['id_api_key'].value;
     this.secret_key = this.$['id_secret_key'].value;
     this.api_endpoint = this.$['id_api_endpoint'].value;
@@ -134,8 +124,6 @@ class BackendAiLogin extends PolymerElement {
       let email = response['keypair'].user_id;
       if (this.email != email) {
         this.email = email;
-        this.$['id_email'].value = this.email;
-        localStorage.setItem('backendaiconsole.email', this.email);
       }
       window.backendaiclient_email = this.email;
       console.log(window.backendaiclient_email);
@@ -197,8 +185,6 @@ class BackendAiLogin extends PolymerElement {
            placeholder="Secret Key" value="{{secret_key}}" />
     <input type="text" name="api_endpoint" id="id_api_endpoint"
     placeholder="API Endpoint"  value="{{api_endpoint}}"/>
-    <input type="text" name="email" id="id_email" maxlength="30" autofocus
-    placeholder="E-mail (Optional)" value="{{email}}" />
     <br /><br />
     <paper-button class="blue" type="submit" id="login-button">
       <iron-icon icon="check"></iron-icon>

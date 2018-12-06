@@ -14,6 +14,7 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 
 import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 import './lablup-piechart.js';
@@ -56,7 +57,7 @@ class BackendAICredentialList extends PolymerElement {
         });
     }
 
-    _refreshKeyData() {
+    _refreshKeyData(user_id) {
         let status = 'active';
         let is_active = true;
         switch (this.condition) {
@@ -66,16 +67,23 @@ class BackendAICredentialList extends PolymerElement {
             default:
                 is_active = false;
         };
-
-        let user_id = window.backendaiclient_email;
+        let q;
         let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used', 
             'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-        let q = `query($user_id: String!, $is_active: Boolean) {` +
+
+        if (user_id == null) {
+            q = `query($is_active: Boolean) {` +
+            `  keypairs(is_active: $is_active) {` +
+            `    ${fields.join(" ")}` +
+            `  }` +
+            `}`;
+        } else {
+            q = `query($user_id: String!, $is_active: Boolean) {` +
             `  keypairs(user_id: $user_id, is_active: $is_active) {` +
             `    ${fields.join(" ")}` +
             `  }` +
             `}`;
-
+        }
         let v = { 'user_id': user_id,
             'is_active': is_active,
         }
@@ -93,6 +101,8 @@ class BackendAICredentialList extends PolymerElement {
         });
     }
     refresh() {
+        //let user_id = window.backendaiclient_email;
+        let user_id = null;
         this._refreshKeyData();
     }
 
@@ -240,7 +250,9 @@ class BackendAICredentialList extends PolymerElement {
             </vaadin-grid-column>
 
             <vaadin-grid-column resizable>
-                <template class="header">User ID</template>
+                <template class="header">
+                    <vaadin-grid-sorter path="user_id">User ID</vaadin-grid-sorter>
+                </template>
                 <template>
                     <div class="layout horizontal center flex">
                     <div class="indicator">[[item.user_id]]</div>
