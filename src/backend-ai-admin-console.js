@@ -57,6 +57,7 @@ class BackendAiAdminConsole extends PolymerElement {
 
   ready() {
     super.ready();
+    window.backendaiclient_view = '';
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.querySelector('#login-panel').login();
     }
@@ -99,10 +100,10 @@ class BackendAiAdminConsole extends PolymerElement {
         this.menuTitle = 'Agents';
         this.$['sidebar-menu'].selected = 2;
         break;
-
       default:
         this.menuTitle = 'Summary';
     }
+    window.backendaiclient_view = view;
   }
 
   logout() {
@@ -222,7 +223,7 @@ class BackendAiAdminConsole extends PolymerElement {
     <div class="content">
       <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
       <section id="content" class="container layout vertical center">
-        <iron-lazy-pages selected="[[routeData.view]]" attr-for-selected="name">
+        <iron-lazy-pages id="app-page" selected="[[routeData.view]]" attr-for-selected="name">
           <backend-ai-summary-view name="summary" route="{{subroute}}" data-path='src/backend-ai-summary-view.js'></backend-ai-summary-view>
           <backend-ai-job-view name="job" route="{{subroute}}" data-path='src/backend-ai-job-view.js'></backend-ai-job-view>
           <backend-ai-credential-view name="credential" route="{{subroute}}" data-path='src/backend-ai-credential-view.js'></backend-ai-credential-view>
