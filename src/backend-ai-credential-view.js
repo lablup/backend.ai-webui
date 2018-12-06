@@ -15,6 +15,7 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 
+import '@polymer/paper-input/paper-input';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-listbox/paper-listbox';
@@ -85,7 +86,16 @@ class BackendAICredentialView extends PolymerElement {
     let resource_policy = null;
     let rate_limit = 5000;
     let concurrency_limit = 1;
-    let user_id = window.backendaiclient_email;
+    let user_id;
+    if (this.$['id_new_user_id'].value != '') {
+        user_id = this.$['id_new_user_id'].value;
+        console.log(user_id);
+    } else {
+        user_id = window.backendaiclient_email;
+    }
+    console.log(user_id);
+
+    //user_id = window.backendaiclient_email;
     let fields = ["access_key", "secret_key"]
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
         `  create_keypair(user_id: $user_id, props: $input) {` +
@@ -126,9 +136,10 @@ class BackendAICredentialView extends PolymerElement {
     </style>
     <paper-material class="item" elevation="1">
         <h3 class="paper-material-title">Credentials</h3>
-        <h4 class="horizontal flex center layout">
+        <h4 class="horizontal flex center center-justified layout">
             <span>Active</span>
             <span class="flex"></span>
+            <paper-input name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"></paper-input>
             <paper-button id="add-keypair" class="fg red">
                 <iron-icon icon="add"></iron-icon>
                 Add
