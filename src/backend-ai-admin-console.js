@@ -38,7 +38,15 @@ class BackendAiAdminConsole extends PolymerElement {
       menuTitle: {
           type: String,
           value: 'Default'
-      }
+      },
+      user_id: {
+        type: String,
+        value: ''
+      },
+      api_endpoint: {
+        type: String,
+        value: ''
+      },
     };
   }
 
@@ -53,6 +61,9 @@ class BackendAiAdminConsole extends PolymerElement {
       document.querySelector('#login-panel').login();
     }
     this.$['logout-button'].addEventListener('tap', this.logout);
+    document.addEventListener('backend-ai-connected', () => {
+      this._refreshUserInfoPanel();
+    });
   }
   static get observers() {
     return [
@@ -60,7 +71,10 @@ class BackendAiAdminConsole extends PolymerElement {
       '_viewChanged(routeData.view)'
     ]
   }
-
+  _refreshUserInfoPanel() {
+    this.user_id = window.backendaiclient_email;
+    this.api_endpoint = window.backendaiclient._config.endpoint;
+  }
   _routeChanged(changeRecord) {
     if (changeRecord.path === 'path') {
       console.log('Path changed!');
@@ -199,8 +213,8 @@ class BackendAiAdminConsole extends PolymerElement {
         <span title id="main-panel-toolbar-title">[[menuTitle]]</span>
         <span class="flex"></span>
         <div style="vertical end-justified flex layout">
-          <div style="font-size: 10px;text-align:right">test@example.com</div>
-          <div style="font-size: 8px;text-align:right">http://127.0.0.1:8081</div>
+          <div style="font-size: 10px;text-align:right">{{user_id}}</div>
+          <div style="font-size: 8px;text-align:right">{{api_endpoint}}</div>
         </div>
         <paper-icon-button id="logout-button" icon="icons:exit-to-app"></paper-icon-button>
       </app-toolbar>
