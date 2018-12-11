@@ -31,6 +31,7 @@ import './backend.ai-client-es6.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-login.js';
+import './backend-ai-summary-view.js';
 
 class BackendAiAdminConsole extends PolymerElement {
   static get properties() {
@@ -47,6 +48,10 @@ class BackendAiAdminConsole extends PolymerElement {
         type: String,
         value: 'CLICK TO CONNECT'
       },
+      is_connected: {
+        type: Boolean,
+        value: false
+      }
     };
   }
 
@@ -61,8 +66,10 @@ class BackendAiAdminConsole extends PolymerElement {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.querySelector('#login-panel').login();
     }
-    this.$['logout-button'].addEventListener('tap', this.logout);
+    this.$['sign-button'].addEventListener('tap', this.logout);
     document.addEventListener('backend-ai-connected', () => {
+      this.$['sign-button'].icon = 'icons:exit-to-app';
+      this.is_connected = true;
       this._refreshUserInfoPanel();
     });
   }
@@ -72,6 +79,7 @@ class BackendAiAdminConsole extends PolymerElement {
       '_viewChanged(routeData.view)'
     ]
   }
+
   _refreshUserInfoPanel() {
     this.user_id = window.backendaiclient_email;
     this.api_endpoint = window.backendaiclient._config.endpoint;
@@ -217,7 +225,7 @@ class BackendAiAdminConsole extends PolymerElement {
           <div style="font-size: 10px;text-align:right">{{user_id}}</div>
           <div style="font-size: 8px;text-align:right">{{api_endpoint}}</div>
         </div>
-        <paper-icon-button id="logout-button" icon="icons:exit-to-app"></paper-icon-button>
+        <paper-icon-button id="sign-button" icon="icons:launch"></paper-icon-button>
       </app-toolbar>
     </app-header>
     <div class="content">

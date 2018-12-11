@@ -109,6 +109,9 @@ class BackendAISummary extends PolymerElement {
   static get template() {
     return html`
     <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
+    ul {
+      padding-left: 0;
+    }
     ul li {
       list-style:none;
       font-size:13px;
@@ -128,7 +131,7 @@ class BackendAISummary extends PolymerElement {
 
           <lablup-activity-panel title="Loads" elevation="1">
             <div slot="message">
-            
+              DISCONNECTED
             </div>
           </lablup-activity-panel>
 

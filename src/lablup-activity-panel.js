@@ -39,8 +39,10 @@ class LablupActivityPanel extends PolymerElement {
             paper-material > div {
                 margin: 20px;
                 padding-bottom: 20px;
+                font-size:12px;
+                padding-left: 3px;
             }
-
+          
             paper-material > h4 > paper-icon-button {
                 display: flex;
             }
