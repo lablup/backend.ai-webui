@@ -41,11 +41,11 @@ class BackendAiAdminConsole extends PolymerElement {
       },
       user_id: {
         type: String,
-        value: ''
+        value: 'DISCONNECTED'
       },
       api_endpoint: {
         type: String,
-        value: ''
+        value: 'CLICK TO CONNECT'
       },
     };
   }
