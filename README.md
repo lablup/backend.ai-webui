@@ -2,6 +2,9 @@
 
 Web-based Backend.AI GUI console.
 
+ * Administration
+ * User mode
+
 ## Develop and Test
 
 ```
