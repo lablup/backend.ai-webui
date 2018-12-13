@@ -5,6 +5,11 @@ Web-based Backend.AI GUI console.
  * Administration
  * User mode
 
+## Features
+ * Key management
+ * Session management
+ * Experiments
+ 
 ## Develop and Test
 
 ```
