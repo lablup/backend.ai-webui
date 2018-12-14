@@ -3,7 +3,7 @@
   "manifest_version": 2,
   "name": "Backend.AI Admin App.",
   "short_name": "BackendAIAdminConsole",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff",
