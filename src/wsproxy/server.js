@@ -1,5 +1,5 @@
 const Client = require("./lib/WstClient"),
-      ai = require('backend.ai-client');
+      ai = require('../backend.ai-client-node');
 const httpSetup = require("./lib/httpSetup");
 
 class Proxy extends ai.backend.Client {

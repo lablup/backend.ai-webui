@@ -39,7 +39,8 @@
     "graphql": "^14.0.2",
     "iron-lazy-pages": "^3.0.2",
     "node-fetch": "^2.2.0",
-    "web-animations-js": "^2.3.1"
+    "web-animations-js": "^2.3.1",
+    "wstunnel": "^1.2.6"
   },
   "devDependencies": {
     "electron": "^3.0.8",
