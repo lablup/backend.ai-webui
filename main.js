@@ -1,11 +1,13 @@
 // Modules to control application life and create native browser window
 const {app, Menu, Shell, BrowserWindow } = require('electron')
+const web = require('./src/wsproxy/web')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 app.once('ready', function() {
+  web();
   var template;
   if (process.platform == 'darwin') {
     template = [
