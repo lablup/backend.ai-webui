@@ -30,6 +30,8 @@ $ polymer build
 
 ### Using makefile
 
+Prerequistics : electron, electron-packager
+
 ```
 $ make mac
 $ make win (not yet working)
