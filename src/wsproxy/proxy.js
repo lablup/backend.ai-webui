@@ -1,15 +1,12 @@
 const Client = require("./lib/WstClient"),
-      ai = require('../backend.ai-client-node');
-const httpSetup = require("./lib/httpSetup");
-
-class Proxy extends ai.backend.Client {
-
+      ai = require('backend.ai-client');
+module.exports = (proxy = class Proxy extends ai.backend.Client {
   get_header(queryString) {
     let method = "GET";
     let requestBody = '';
     let d = new Date();
+    console.log(d)
     let signKey = this.getSignKey(this._config.secretKey, d);
-
     let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody);
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = {
@@ -22,23 +19,19 @@ class Proxy extends ai.backend.Client {
     return hdrs;
   }
 
-  proxy(kernelId, port) {
+  start_proxy(kernelId, port) {
     let host = "localhost:" + port;
     let queryString = '/' + this._config.apiVersionMajor + "/wsproxy/" + kernelId + "/stream";
     let uri = this._config.endpoint + queryString;
     uri = uri.replace(/^http/, "ws")
 
-    let hdrs = this.get_header(queryString)
-    let client = new Client()
-    client.verbose()
-    client.start(host, uri, undefined, hdrs);
+    let hdrs = function(){return this.get_header(queryString)}.bind(this);
+    this.c = new Client()
+    this.c.verbose()
+    this.c.start(host, uri, undefined, hdrs);
   }
-}
-
-let config = ai.backend.ClientConfig.createFromEnv();
-let aiclient = new Proxy(config);
-aiclient.createIfNotExists('app-jupyter', 'appsession')
-.then(response => {
-  console.log(`my session is created: ${response.kernelId}`);
-  aiclient.proxy(response.kernelId, 8080)
-})
+  stop_proxy() {
+    console.log("closing");
+    this.c.close();
+  }
+});

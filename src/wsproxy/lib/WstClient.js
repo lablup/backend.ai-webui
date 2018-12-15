@@ -2,8 +2,7 @@
 let wst_client;
 const net = require("net");
 const WsStream = require("./WsStream");
-const log = require("lawg");
-const ClientConn = require("./httptunnel/ClientConn");
+const log = require("log");
 const createWsClient = () => new (require('websocket').client)();
 
 module.exports = (wst_client = class wst_client extends require('events').EventEmitter {
@@ -19,19 +18,17 @@ module.exports = (wst_client = class wst_client extends require('events').EventE
     this.tcpServer = net.createServer();
   }
 
+  close() {
+    this.tcpServer.close()
+  }
+
   verbose() {
     this.on('tunnel', (ws, sock) => {
-      if (ws instanceof WsStream) {
-        log('Websocket tunnel established');
-      } else { log('Http tunnel established'); }
+      log('Websocket tunnel established');
       return sock.on('close', () => log('Tunnel closed'));
     });
     this.on('connectHttpFailed', error => log(`HTTP connect error: ${error.toString()}`));
     return this.on('connectFailed', error => log(`WS connect error: ${error.toString()}`));
-  }
-
-  setHttpOnly(httpOnly) {
-    this.httpOnly = httpOnly;
   }
 
   // example:  start(8081, "wss://ws.domain.com:454", "dst.domain.com:22")
@@ -39,13 +36,9 @@ module.exports = (wst_client = class wst_client extends require('events').EventE
   // or start("localhost:8081", "wss://ws.domain.com:454", "dst.domain.com:22")
   // @wsHostUrl:  ws:// denotes standard socket, wss:// denotes ssl socket
   //              may be changed at any time to change websocket server info
-  start(localAddr, wsHostUrl, remoteAddr, optionalHeaders, cb) {
+  start(localAddr, wsHostUrl, remoteAddr, get_hdrs, cb) {
     let localHost, localPort;
     this.wsHostUrl = wsHostUrl;
-    if (typeof optionalHeaders === 'function') {
-      cb = optionalHeaders;
-      optionalHeaders = {};
-    }
 
     if (typeof localAddr === 'number') {
       localPort = localAddr;
@@ -66,32 +59,20 @@ module.exports = (wst_client = class wst_client extends require('events').EventE
         return this.emit('tunnel', s, tcp);
       };
 
-      if (this.httpOnly) {
-        return this._httpConnect(this.wsHostUrl, remoteAddr, optionalHeaders, (err, httpConn) => {
-          if (!err) {
-            return bind(httpConn, tcpConn);
-          } else { return tcpConn.end(); }
-        });
-      } else {
-        return this._wsConnect(this.wsHostUrl, remoteAddr, optionalHeaders, (error, wsStream) => {
-          if (!error) {
-            return bind(wsStream, tcpConn);
-          } else {
-            this.emit('connectFailed', error);
-            return this._httpConnect(this.wsHostUrl, remoteAddr, optionalHeaders, (err, httpConn) => {
-              if (!err) {
-                return bind(httpConn, tcpConn);
-              } else { return tcpConn.end(); }
-            });
-          }
-        });
-      }
+      return this._wsConnect(this.wsHostUrl, remoteAddr, get_hdrs, (error, wsStream) => {
+        if (!error) {
+          return bind(wsStream, tcpConn);
+        } else {
+          this.emit('connectFailed', error);
+          log("FAIL")
+        }
+      });
     });
   }
 
-  _wsConnect(wsHostUrl, remoteAddr, optionalHeaders, cb) {
+  _wsConnect(wsHostUrl, remoteAddr, get_hdrs, cb) {
+    let optionalHeaders = get_hdrs()
     const wsClient = createWsClient();
-    let d = new Date();
     wsClient.connect(wsHostUrl, undefined, undefined, optionalHeaders
                      , { agent: null } );
     wsClient.on('connectFailed', error => cb(error));

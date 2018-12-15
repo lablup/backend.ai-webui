@@ -1,4 +1,4 @@
-const log = require("lawg");
+const log = require("log");
 
 module.exports = {
   isDebug: process.env['NODE_DEBUG'] && /wstunnel/.test(process.env['NODE_DEBUG'])

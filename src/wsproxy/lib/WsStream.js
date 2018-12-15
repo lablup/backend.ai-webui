@@ -2,10 +2,8 @@
 let WsStream;
 const stream = require("stream");
 const assert = require("assert");
-const log = require("lawg");
+const log = require("log");
 const util = require("util");
-const future = require("phuture");
-const domain = require("domain");
 
 // Stream wrapper for http://github.com/Worlize/WebSocket-Node.git version 1.0.8
 module.exports = (WsStream = class WsStream extends stream.Duplex {

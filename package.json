@@ -36,11 +36,14 @@
     "@vaadin/vaadin-grid": "^5.2.0-beta2",
     "@webcomponents/webcomponentsjs": "latest",
     "buffer": "^5.2.1",
+    "express": "^4.16.4",
     "graphql": "^14.0.2",
     "iron-lazy-pages": "^3.0.2",
+    "log": "^3.2.0",
     "node-fetch": "^2.2.0",
+    "underscore": "^1.9.1",
     "web-animations-js": "^2.3.1",
-    "wstunnel": "^1.2.6"
+    "websocket": "^1.0.28"
   },
   "devDependencies": {
     "electron": "^3.0.8",

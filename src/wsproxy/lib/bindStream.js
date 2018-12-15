@@ -1,6 +1,5 @@
 const _ = require("underscore");
-const log = require("lawg");
-const future = require("phuture");
+const log = require("log");
 const debug = require("./debug");
 let _n = 0;
 
@@ -57,32 +56,5 @@ module.exports = function(s1, s2) {
     return s1.pipe(s2, {end}).pipe(s1, {end});
   };
 
-  // manualPipe()
   autoPipe();
-
-  class SpeedMeter {
-    constructor(msg) {
-      this.msg = msg;
-      this.n = 0;
-      this.timer = future.interval(1000, () => {
-        if (this.n > 0) {
-          log(`${this.msg} ${this.n / 1000}k/s`);
-          return this.n = 0;
-        }
-      });
-    }
-    attach(readStream) {
-      readStream.on('data', d => {
-        return this.n += d.length;
-      });
-      return readStream.on('end', () => {
-        return this.timer.cancel();
-      });
-    }
-  }
-  // must install after pipe
-  if (debug.isDebug) {
-    (new SpeedMeter(name(s1))).attach(s1);
-    return (new SpeedMeter(name(s2))).attach(s2);
-  }
 };
