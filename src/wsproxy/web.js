@@ -51,7 +51,7 @@ function express_app(port) {
     if(!(kernelId in proxies)) {
       let proxy = new Proxy(aiclient._config);
       getFreePorts(1, 'localhost').then((freePortsList) => {
-          proxy.start_proxy(kernelId, freePortsList[0])
+          proxy.start_proxy(kernelId, "jupyter", freePortsList[0])
           proxies[kernelId] = proxy;
           res.send({"code": 200, "proxy": proxy.host})
       });
