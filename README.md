@@ -2,14 +2,15 @@
 
 Web-based Backend.AI GUI console.
 
- * Administration
+ * Administration mode
  * User mode
 
 ## Features
  * Key management
  * Session management
  * Experiments
- 
+ * Proxy mode to support various app environments
+
 ## Develop and Test
 
 ```
@@ -29,6 +30,8 @@ $ polymer build
 ## Build (Electron App)
 
 ### Using makefile
+
+Prerequistics : electron, electron-packager
 
 ```
 $ make mac
