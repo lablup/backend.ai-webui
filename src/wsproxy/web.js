@@ -4,13 +4,11 @@ const Client = require("./lib/WstClient"),
       ai = require('../backend.ai-client-node'),
       Proxy = require("./proxy");
 
-var bodyParser = require('body-parser');
-
 function express_app(port) {
   let config;
   let aiclient
   let proxies = {};
-  app.use(bodyParser.json()); // for parsing application/json
+  app.use(express.json());
 
   app.put('/conf', function (req, res) {
     config = new ai.backend.ClientConfig(
