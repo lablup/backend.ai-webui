@@ -1,5 +1,6 @@
 const Client = require("./lib/WstClient"),
       ai = require('../backend.ai-client-node');
+
 module.exports = (proxy = class Proxy extends ai.backend.Client {
   get_header(queryString) {
     let method = "GET";
@@ -20,7 +21,8 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
   }
 
   start_proxy(kernelId, port) {
-    let host = "localhost:" + port;
+    this.port = port;
+    this.host = "localhost:" + port;
     let queryString = '/' + this._config.apiVersionMajor + "/wsproxy/" + kernelId + "/stream";
     let uri = this._config.endpoint + queryString;
     uri = uri.replace(/^http/, "ws")
@@ -28,7 +30,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     let hdrs = () => {return this.get_header(queryString);}
     this.c = new Client()
     this.c.verbose()
-    this.c.start(host, uri, undefined, hdrs);
+    this.c.start(this.host, uri, undefined, hdrs);
   }
 
   stop_proxy() {

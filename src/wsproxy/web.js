@@ -8,6 +8,8 @@ function express_app(port) {
   let config;
   let aiclient
   let proxies = {};
+  let {getFreePorts} = require('node-port-check');
+
   app.use(express.json());
 
   app.put('/conf', function (req, res) {
@@ -48,10 +50,15 @@ function express_app(port) {
     let kernelId = req.params["kernelId"]
     if(!(kernelId in proxies)) {
       let proxy = new Proxy(aiclient._config);
-      proxy.start_proxy(kernelId, 8080)
-      proxies[kernelId] = proxy;
+      getFreePorts(1, 'localhost').then((freePortsList) => {
+          proxy.start_proxy(kernelId, freePortsList[0])
+          proxies[kernelId] = proxy;
+          res.send({"code": 200, "proxy": proxy.host})
+      });
+    } else {
+      let proxy = proxies[kernelId];
+      res.send({"code": 200, "proxy": proxy.host})
     }
-    res.send({"code": 200})
   })
 
   app.get('/proxy/:kernelId/delete', function (req, res) {
