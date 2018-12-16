@@ -7,7 +7,9 @@ const web = require('./src/wsproxy/web')
 let mainWindow
 
 app.once('ready', function() {
-  web();
+  let port = 5050;
+  web(port);
+
   var template;
   if (process.platform == 'darwin') {
     template = [
