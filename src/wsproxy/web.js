@@ -3,24 +3,38 @@ const app = express()
 const Client = require("./lib/WstClient"),
       ai = require('../backend.ai-client-node'),
       Proxy = require("./proxy");
+
+var bodyParser = require('body-parser');
+
 function express_app(port) {
   let config;
-  let aiclient = new ai.backend.Client(config);
-  let proxy;
+  let aiclient
   let proxies = {};
-  let kernelId;
+  app.use(bodyParser.json()); // for parsing application/json
 
   app.put('/conf', function (req, res) {
-    conf = ai.backend.ClientConfig.createFromEnv();
-    aiclient.createIfNotExists('app-jupyter', 'appsession')
-    .then(response => {
-      console.log(`my session is created: ${response.kernelId}`);
-      kernelId = response.kernelId;
-    })
+    config = new ai.backend.ClientConfig(
+      req.body.access_key,
+      req.body.secret_key,
+      req.body.endpoint,
+    );
+    aiclient = new ai.backend.Client(config);
     res.send({})
   })
 
+  app.get('/test', function (req, res) {
+    aiclient.createIfNotExists('app-jupyter', 'appsession')
+    .then(response => {
+      console.log(`my session is created: ${response.kernelId}`);
+      res.send({})
+    })
+  })
+
   app.get('/', function (req, res) {
+    if(config == undefined) {
+      res.send({"code": 401})
+      return;
+    }
     let rtn = [];
     for (var key in proxies) {
       rtn.push(key);
@@ -29,6 +43,10 @@ function express_app(port) {
   })
 
   app.get('/proxy/:kernelId/add', function (req, res) {
+    if(config == undefined) {
+      res.send({"code": 401})
+      return;
+    }
     let kernelId = req.params["kernelId"]
     if(!(kernelId in proxies)) {
       let proxy = new Proxy(aiclient._config);
@@ -39,6 +57,10 @@ function express_app(port) {
   })
 
   app.get('/proxy/:kernelId/delete', function (req, res) {
+    if(config == undefined) {
+      res.send({"code": 401})
+      return;
+    }
     let kernelId = req.params["kernelId"]
     if(kernelId in proxies) {
       proxies[kernelId].stop_proxy();
@@ -50,6 +72,11 @@ function express_app(port) {
   })
 
   app.get('/proxy/:kernelId', function (req, res) {
+    if(config == undefined) {
+      res.send({"code": 401})
+      return;
+    }
+    let kernelId = req.params["kernelId"]
     if(kernelId in proxies) {
       res.send({"code": 200})
     } else {
