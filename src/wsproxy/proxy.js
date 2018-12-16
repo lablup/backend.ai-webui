@@ -25,11 +25,12 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     let uri = this._config.endpoint + queryString;
     uri = uri.replace(/^http/, "ws")
 
-    let hdrs = function(){return this.get_header(queryString)}.bind(this);
+    let hdrs = () => {return this.get_header(queryString);}
     this.c = new Client()
     this.c.verbose()
     this.c.start(host, uri, undefined, hdrs);
   }
+
   stop_proxy() {
     console.log("closing");
     this.c.close();
