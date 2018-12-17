@@ -23,7 +23,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
   start_proxy(kernelId, app, port) {
     this.port = port;
     this.host = "localhost:" + port;
-    let queryString = '/stream/kernel/" + kernelId + "/httpproxy?app=" + app;
+    let queryString = '/stream/kernel/' + kernelId + "/httpproxy?app=" + app;
     let uri = this._config.endpoint + queryString;
     uri = uri.replace(/^http/, "ws")
 
