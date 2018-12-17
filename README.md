@@ -9,7 +9,7 @@ Web-based Backend.AI GUI console.
  * Key management
  * Session management
  * Experiments
- * Proxy mode to support various app environments
+ * Proxy mode to support various app environments (with Electron)
 
 ## Develop and Test
 
