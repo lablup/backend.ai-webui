@@ -110,7 +110,8 @@ class BackendAiAdminConsole extends PolymerElement {
         break;
       default:
         this.menuTitle = 'Summary';
-    }
+        this.$['sidebar-menu'].selected = 0;
+      }
     window.backendaiclient_view = view;
   }
 
