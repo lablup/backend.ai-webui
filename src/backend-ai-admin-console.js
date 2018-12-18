@@ -85,12 +85,14 @@ class BackendAiAdminConsole extends PolymerElement {
     this.api_endpoint = window.backendaiclient._config.endpoint;
   }
   _routeChanged(changeRecord) {
-    if (changeRecord.path === 'path') {
+    if (changeRecord.path === "route" && changeRecord.value.path == '/') {
       console.log('Path changed!');
     }
   }
   _viewChanged(view) {
     // load data for view
+    console.log("Asdasdasdasd");
+    console.log(view);
     switch(view) {
       case 'summary':
         this.menuTitle = 'Summary';
@@ -233,7 +235,7 @@ class BackendAiAdminConsole extends PolymerElement {
       <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
       <section id="content" class="container layout vertical center">
         <iron-lazy-pages id="app-page" selected="[[routeData.view]]" attr-for-selected="name">
-          <backend-ai-summary-view name="summary" route="{{subroute}}" data-path='src/backend-ai-summary-view.js'></backend-ai-summary-view>
+        <backend-ai-summary-view name="summary" route="{{subroute}}" data-path='src/backend-ai-summary-view.js'></backend-ai-summary-view>
           <backend-ai-job-view name="job" route="{{subroute}}" data-path='src/backend-ai-job-view.js'></backend-ai-job-view>
           <backend-ai-credential-view name="credential" route="{{subroute}}" data-path='src/backend-ai-credential-view.js'></backend-ai-credential-view>
           <backend-ai-agent-view name="agent" route="{{subroute}}" data-path='src/backend-ai-agent-view.js'></backend-ai-agent-view>
