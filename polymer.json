@@ -4,7 +4,7 @@
   "fragments": [
   ],
   "sources": [
-   "src/**.js",
+   "src/**",
    "manifest/**",
    "package.json"
   ],
