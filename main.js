@@ -306,7 +306,7 @@ function createWindow () {
     width: 1280, 
     height: 970,
     title: "Backend.AI WebConsole",
-    frame: false,
+    frame: true,
     webPreferences: {
       nativeWindowOpen: true
     }  
