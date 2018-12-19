@@ -1,10 +1,13 @@
 // Modules to control application life and create native browser window
 const {app, Menu, Shell, BrowserWindow } = require('electron')
 const web = require('./wsproxy/web')
+const url = require('url');
+const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow;
+var mainIndex = 'app/index.html';
 
 app.once('ready', function() {
   let port = 5050;
@@ -311,7 +314,13 @@ function createWindow () {
       nativeWindowOpen: true
     }  
   })  // and load the index.html of the app.
-  mainWindow.loadFile('app/index.html')
+  //mainWindow.loadFile('app/index.html')
+  mainWindow.loadURL(url.format({ // Load HTML into new Window
+    pathname: path.join(__dirname, mainIndex),
+    protocol: 'file',
+    slashes: true
+  }));
+
   //mainWindow.webContents.openDevTools();
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -343,6 +352,10 @@ app.on('activate', function () {
     createWindow()
   }
 })
-
+app.on('certificate-error', function(event, webContents, url, error, 
+  certificate, callback) {
+      event.preventDefault();
+      callback(true);
+});
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

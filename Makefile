@@ -14,6 +14,7 @@ mac:
 	cd build/electron-app; npm install
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	$(EP) --platform=darwin
+	$(EP) --platform=win32
 clean:
 	cd app;	rm -rf ./backend*
 	cd build;rm -rf ./es6-unbundled ./electron-app
