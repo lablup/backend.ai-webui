@@ -311,7 +311,8 @@ function createWindow () {
     title: "Backend.AI WebConsole",
     frame: true,
     webPreferences: {
-      nativeWindowOpen: true
+      nativeWindowOpen: true,
+      nodeIntegration: false
     }  
   })
   // and load the index.html of the app.
@@ -331,6 +332,14 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
+  })
+
+  mainWindow.webContents.on('new-window', (event, url) => {
+    event.preventDefault()
+    const win = new BrowserWindow({show: false})
+    win.once('ready-to-show', () => win.show())
+    win.loadURL(url)
+    event.newGuest = win
   })
 }
 

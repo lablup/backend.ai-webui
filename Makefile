@@ -4,7 +4,16 @@ mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 
-mac:
+test:
+	polymer build
+	mkdir build/electron-app
+	cp -Rp build/es6-unbundled build/electron-app/app
+	cp -Rp ./wsproxy build/electron-app/wsproxy
+	rm -rf build/electron-app/wsproxy/node_modules
+	cp ./wsproxy/package.json build/electron-app/package.json
+	cd build/electron-app; npm install
+	cp ./main.electron-packager.js ./build/electron-app/main.js
+app:
 	polymer build
 	mkdir build/electron-app
 	cp -Rp build/es6-unbundled build/electron-app/app
