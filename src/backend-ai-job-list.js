@@ -129,7 +129,7 @@ class BackendAIJobList extends PolymerElement {
             termButton.setAttribute('disabled', '');
             this.$.notification.text = 'Session will soon be terminated';
             this.$.notification.show();
-            setTimeout(this.refresh(), 1000);
+            setTimeout(() => { this.refresh() }, 1000);
         }).catch(err => {
             this.$.notification.text = 'Problem occurred during termination.';
             this.$.notification.show();
