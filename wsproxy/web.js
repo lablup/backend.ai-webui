@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors');
 const app = express()
 const Client = require("./lib/WstClient"),
       ai = require('./backend.ai-client-node'),
@@ -11,6 +12,7 @@ function express_app(port) {
   let {getFreePorts} = require('node-port-check');
 
   app.use(express.json());
+  app.use(cors());
 
   app.put('/conf', function (req, res) {
     console.log(req.body);

@@ -147,7 +147,7 @@ class BackendAIJobList extends PolymerElement {
         let rqst = {
             method: 'PUT',
             body: JSON.stringify(param),
-            uri: 'http://localhost:5050/conf'
+            uri: 'http://127.0.0.1:5050/conf'
         };
         
         try {
@@ -176,12 +176,15 @@ class BackendAIJobList extends PolymerElement {
     }
     
     _runJupyter(e) {
-        if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-            this._open_wsproxy().then(console.log("ok"));
-        }
         const termButton = e.target;
         const controls = e.target.closest('#controls');
         const kernelId = controls.kernelId;
+        if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+            this._open_wsproxy().then(response => {
+                console.log("ok");
+                console.log(kernelId);
+            });
+        }
     }
     static get template() {
         return html`
