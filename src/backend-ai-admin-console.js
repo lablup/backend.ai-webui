@@ -32,9 +32,9 @@ import './backend.ai-client-es6.js';
 import './backend-ai-styles.js';
 import './backend-ai-login.js';
 import './backend-ai-summary-view.js';
-//import './backend-ai-job-view';
-//import './backend-ai-credential-view';
-//import './backend-ai-agent-view';
+import './backend-ai-job-view';
+import './backend-ai-credential-view';
+import './backend-ai-agent-view';
 
 class BackendAiAdminConsole extends PolymerElement {
   static get properties() {
