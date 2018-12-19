@@ -15,7 +15,6 @@ function express_app(port) {
   app.use(cors());
 
   app.put('/conf', function (req, res) {
-    console.log(req.body);
     config = new ai.backend.ClientConfig(
       req.body.access_key,
       req.body.secret_key,

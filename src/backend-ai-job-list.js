@@ -153,7 +153,10 @@ class BackendAIJobList extends PolymerElement {
             },
             uri: 'http://127.0.0.1:5050/conf'
         };
-        
+        return this.sendRequest(rqst);
+    }
+    async sendRequest(rqst) {
+        let resp, body;
         try {
             if (rqst.method == 'GET') {
               rqst.body = undefined;
@@ -175,8 +178,9 @@ class BackendAIJobList extends PolymerElement {
               throw body;
             }
         } catch(e) {
-            console.log("OMG");
+            console.log(e);
         }
+        return body;
     }
     
     _runJupyter(e) {
@@ -184,10 +188,28 @@ class BackendAIJobList extends PolymerElement {
         const controls = e.target.closest('#controls');
         const kernelId = controls.kernelId;
         if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-            this._open_wsproxy().then(response => {
+            this._open_wsproxy()
+                .then((response) => {
+                    let rqst = {
+                        method: 'GET',
+                        uri: 'http://127.0.0.1:5050/proxy/' + kernelId
+                    };
+                    return this.sendRequest(rqst)})
+                .then( (response) => {
+                    let rqst = {
+                        method: 'GET',
+                        uri: 'http://127.0.0.1:5050/proxy/' + kernelId + '/add'
+                    };
+                    return this.sendRequest(rqst);
+                })
+                .then( (response) => {
+                    if (response.proxy) {
+                        window.open(response.proxy, '_blank'); 
+                    }
+                    console.log(response.proxy);
+                });
                 console.log("ok");
                 console.log(kernelId);
-            });
         }
     }
     static get template() {
