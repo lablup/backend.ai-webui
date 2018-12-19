@@ -67,7 +67,7 @@ class BackendAIJobView extends PolymerElement {
 
   _newSession() {
     window.backendaiclient.createKernel('python').then((req) => {
-        this.$['running-jobs'].refresh();
+        this.$['running-jobs'].refreshList();
         this.$['new-session-dialog'].close();
     });
   }
