@@ -107,10 +107,10 @@ class BackendAIAgentList extends PolymerElement {
         return Math.floor(value/1024);
     }
     _slotToCPU(value) {
-        return Math.floor(value/6);
+        return Math.floor(value/1);
     }
     _slotToGPU(value) {
-        return Math.floor(value/2);
+        return Math.floor(value/1);
     }
 
     _elapsed(start, end) {
