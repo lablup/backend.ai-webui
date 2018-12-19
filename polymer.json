@@ -4,7 +4,8 @@
   "fragments": [
   ],
   "sources": [
-   "src/**",
+   "src/**.js",
+   "src/wsproxy/**",
    "manifest/**",
    "package.json"
   ],
