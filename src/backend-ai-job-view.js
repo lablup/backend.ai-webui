@@ -105,14 +105,12 @@ class BackendAIJobView extends PolymerElement {
                     <div class="horizontal center layout">
                     <paper-dropdown-menu label="Environments">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>TensorFlow</paper-item>
-                            <paper-item>PyTorch</paper-item>
                             <paper-item>Python</paper-item>
                         </paper-listbox>
                     </paper-dropdown-menu>
                     <paper-dropdown-menu label="Version">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>Latest</paper-item>
+                            <paper-item>3.6</paper-item>
                         </paper-listbox>
                     </paper-dropdown-menu>
                     </div>
