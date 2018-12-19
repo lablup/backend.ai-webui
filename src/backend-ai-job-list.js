@@ -53,6 +53,9 @@ class BackendAIJobList extends PolymerElement {
             }
         });
     }
+    refresh() {
+        return this._refreshJobData();
+    }
     _refreshJobData() {
         let status = 'RUNNING';
         switch (this.condition) {
@@ -121,7 +124,9 @@ class BackendAIJobList extends PolymerElement {
 
         window.backendaiclient.destroyKernel(kernelId).then((req) => {
             termButton.setAttribute('disabled', '');
-            setNotification('Session will soon be terminated');
+            this.$.notification.text = 'Session will soon be terminated';
+            this.$.notification.show();
+            setTimeout(this.refresh(), 1000);
         }).catch(err => {
             this.$.notification.text = 'Problem occurred during termination.';
             this.$.notification.show();

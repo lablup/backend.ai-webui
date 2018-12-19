@@ -17,6 +17,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
+import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
@@ -41,7 +42,8 @@ class BackendAIJobView extends PolymerElement {
 
   ready() {
     super.ready();
-    this.$['launch-session'].addEventListener('tap', this._newSession.bind(this));
+    this.$['launch-session'].addEventListener('tap', this._launchSessionDialog.bind(this));
+    this.$['launch-button'].addEventListener('tap', this._newSession.bind(this));
   }
   static get observers() {
     return [
@@ -58,8 +60,16 @@ class BackendAIJobView extends PolymerElement {
   _viewChanged(view) {
     // load data for view
   }
-  _newSession() {
+
+  _launchSessionDialog() {
     this.$['new-session-dialog'].open();
+  }
+
+  _newSession() {
+    window.backendaiclient.createKernel('python').then((req) => {
+        this.$['running-jobs'].refresh();
+        this.$['new-session-dialog'].close();
+    });
   }
 
   static get template() {
@@ -69,6 +79,7 @@ class BackendAIJobView extends PolymerElement {
         width: 100%;
       }
     </style>
+    <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
     <paper-material class="item" elevation="1">
         <h3 class="paper-material-title">Jobs</h3>
         <h4 class="horizontal center layout">
@@ -79,13 +90,12 @@ class BackendAIJobView extends PolymerElement {
             </paper-button>
         </h4>
         <div>
-            <backend-ai-job-list condition="running"></backend-ai-job-list>
+            <backend-ai-job-list id="running-jobs" condition="running"></backend-ai-job-list>
         </div>
         <h4>Finished</h4>
         <div>
             <backend-ai-job-list condition="finished"></backend-ai-job-list>
         </div>
-    
     </paper-material>
     <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
@@ -103,8 +113,6 @@ class BackendAIJobView extends PolymerElement {
                     <paper-dropdown-menu label="Version">
                         <paper-listbox slot="dropdown-content" selected="0">
                             <paper-item>Latest</paper-item>
-                            <paper-item>2</paper-item>
-                            <paper-item>1</paper-item>
                         </paper-listbox>
                     </paper-dropdown-menu>
                     </div>
