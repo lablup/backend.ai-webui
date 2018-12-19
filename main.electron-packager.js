@@ -1,16 +1,20 @@
 // Modules to control application life and create native browser window
 const {app, Menu, Shell, BrowserWindow } = require('electron')
+const web = require('./src/wsproxy/web')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 app.once('ready', function() {
+  let port = 5050;
+  web(port);
+
   var template;
   if (process.platform == 'darwin') {
     template = [
       {
-        label: app.getName(),
+        label: 'Backend.AI',
         submenu: [
           {
             label: 'About Backend.AI Admin Console',
@@ -298,7 +302,7 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1280, height: 950})
+  mainWindow = new BrowserWindow({width: 1280, height: 970})
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
   //mainWindow.webContents.openDevTools();

@@ -93,6 +93,9 @@ class BackendAIJobList extends PolymerElement {
     _isRunning() {
         return this.condition === 'running';
     }
+    _isAppRunning(lang) {
+        return this.condition === 'running' && lang == 'lablup/python:3.6-ubuntu';
+    }
     _byteToMB(value) {
         return Math.floor(value / 1000000);
     }
@@ -131,6 +134,54 @@ class BackendAIJobList extends PolymerElement {
             this.$.notification.text = 'Problem occurred during termination.';
             this.$.notification.show();
         });
+    }
+    async _open_wsproxy() {
+        if (window.backendaiclient == undefined || window.backendaiclient == null) {
+            return false;
+        }
+        let param = {
+            access_key: window.backendaiclient._config.accessKey,
+            secret_key: window.backendaiclient._config.secretKey,
+            endpoint: window.backendaiclient._config.endpoint
+        };
+        let rqst = {
+            method: 'PUT',
+            body: JSON.stringify(param),
+            uri: 'http://localhost:5050/conf'
+        };
+        
+        try {
+            if (rqst.method == 'GET') {
+              rqst.body = undefined;
+            }
+            resp = await fetch(rqst.uri, rqst);
+            let contentType = resp.headers.get('Content-Type');
+            if (contentType.startsWith('application/json') ||
+                contentType.startsWith('application/problem+json')) {
+              body = await resp.json();
+            } else if (contentType.startsWith('text/')) {
+              body = await resp.text();
+            } else {
+              if (resp.blob === undefined)
+                body = await resp.buffer();  // for node-fetch
+              else
+                body = await resp.blob();
+            }
+            if (!resp.ok) {
+              throw body;
+            }
+        } catch(e) {
+            console.log("OMG");
+        }
+    }
+    
+    _runJupyter(e) {
+        if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+            this._open_wsproxy().then(console.log("ok"));
+        }
+        const termButton = e.target;
+        const controls = e.target.closest('#controls');
+        const kernelId = controls.kernelId;
     }
     static get template() {
         return html`
@@ -238,9 +289,11 @@ class BackendAIJobList extends PolymerElement {
                        kernel-id="[[item.sess_id]]">
                       <paper-icon-button disabled class="fg"
                                          icon="assignment"></paper-icon-button>
+                      <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
+                        <paper-icon-button class="fg controls-running"
+                        on-tap="_runJupyter" src="manifest/jupyter.png"></paper-icon-button>
+                      </template>
                       <template is="dom-if" if="[[_isRunning()]]">
-                          <paper-icon-button disabled class="fg controls-running"
-                                             icon="build"></paper-icon-button>
                           <paper-icon-button disabled class="fg controls-running"
                                              icon="alarm-add"></paper-icon-button>
                           <paper-icon-button disabled class="fg controls-running"
