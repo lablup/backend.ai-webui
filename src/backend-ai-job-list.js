@@ -147,6 +147,10 @@ class BackendAIJobList extends PolymerElement {
         let rqst = {
             method: 'PUT',
             body: JSON.stringify(param),
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
             uri: 'http://localhost:5050/conf'
         };
         
