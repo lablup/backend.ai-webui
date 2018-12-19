@@ -5,6 +5,7 @@ current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 
 mac:
+	polymer build
 	\cp ./main.electron-packager.js ./build/es6-unbundled/main.js
 	cd build/es6-unbundled; npm install
 	$(EP) --platform=darwin
