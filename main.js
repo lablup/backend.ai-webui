@@ -302,7 +302,15 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1280, height: 970})
+  mainWindow = new BrowserWindow({
+    width: 1280, 
+    height: 970,
+    title: "Backend.AI WebConsole",
+    frame: false,
+    webPreferences: {
+      nativeWindowOpen: true
+    }  
+  })
   // and load the index.html of the app.
   mainWindow.loadFile('build/electron-app/app/index.html')
   mainWindow.webContents.openDevTools();

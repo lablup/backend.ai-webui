@@ -204,7 +204,7 @@ class BackendAIJobList extends PolymerElement {
                 })
                 .then( (response) => {
                     if (response.proxy) {
-                        window.open(response.proxy, '_blank'); 
+                        window.open(response.proxy, '_blank', 'nodeIntegration=no'); 
                     }
                     console.log(response.proxy);
                 });
