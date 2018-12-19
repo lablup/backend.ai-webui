@@ -6,9 +6,9 @@ current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 mac:
 	polymer build
-	\cp ./main.electron-packager.js ./build/es6-unbundled/main.js
 	cd build/es6-unbundled; npm install
+	\cp ./main.electron-packager.js ./build/es6-unbundled/main.js
 	$(EP) --platform=darwin
 clean:
-	cd app
-	\rm -rf ./backend*
+	cd app;	rm -rf ./backend*
+	cd build;rm -rf ./es6-unbundled
