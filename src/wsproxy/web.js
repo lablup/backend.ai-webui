@@ -88,7 +88,7 @@ function express_app(port) {
       res.send({"code": 404})
     }
   })
-  app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+  app.listen(port, () => console.log(`Listening on port ${port}!`))
 }
 
 module.exports = express_app;
