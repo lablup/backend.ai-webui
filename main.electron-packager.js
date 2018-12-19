@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const {app, Menu, Shell, BrowserWindow } = require('electron')
-const web = require('./src/wsproxy/web')
+const web = require('./wsproxy/web')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -304,7 +304,7 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1280, height: 970})
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  mainWindow.loadFile('app/index.html')
   //mainWindow.webContents.openDevTools();
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

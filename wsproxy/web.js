@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const Client = require("./lib/WstClient"),
-      ai = require('../backend.ai-client-node'),
+      ai = require('./backend.ai-client-node'),
       Proxy = require("./proxy");
 
 function express_app(port) {

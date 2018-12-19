@@ -5,7 +5,6 @@
   ],
   "sources": [
    "src/**.js",
-   "src/wsproxy/**",
    "manifest/**",
    "package.json"
   ],
