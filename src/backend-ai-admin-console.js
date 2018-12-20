@@ -94,8 +94,6 @@ class BackendAiAdminConsole extends PolymerElement {
   }
   _viewChanged(view) {
     // load data for view
-    console.log("Asdasdasdasd");
-    console.log(view);
     switch(view) {
       case 'summary':
         this.menuTitle = 'Summary';
