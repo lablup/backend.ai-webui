@@ -1,8 +1,8 @@
 {
-  "description": "Backend.AI Administration WebConsole.",
+  "description": "Backend.AI Console",
   "manifest_version": 2,
-  "name": "Backend.AI Admin App.",
-  "short_name": "BackendAIAdminConsole",
+  "name": "Backend.AI Console",
+  "short_name": "BackendAIConsole",
   "version": "0.6.1",
   "start_url": "/",
   "display": "standalone",
