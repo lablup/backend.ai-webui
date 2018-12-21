@@ -378,7 +378,7 @@ app.on('certificate-error', function(event, webContents, url, error,
       event.preventDefault();
       callback(true);
 });
-
+// Let windows without node integration
 app.on('web-contents-created', (event, contents) => {
   contents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if unused or verify their location is legitimate
