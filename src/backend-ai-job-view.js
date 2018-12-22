@@ -43,15 +43,23 @@ class BackendAIJobView extends PolymerElement {
         supports: {
             type: Object,
             value: {
-                'TensorFlow': ['1.12', '2.0'],
-                'Python': ['3.6']
+                'TensorFlow': ['1.10', '1.11', '1.12', '2.0'],
+                'Python': ['3.6', '3.7'],
+                'PyTorch': ['0.2', '0.3', '0.4', '1.0'],
+                'Chainer': ['3.2', '4.0'],
+                'R': ['3'],
+                'Julia': ['1.0']
             }
         },
         aliases: {
             type: Object,
             value: {
                 'TensorFlow': 'kernel-python-tensorflow',
-                'Python': 'kernel-python'
+                'Python': 'kernel-python',
+                'PyTorch': 'kernel-python-pytorch',
+                'Chainer': 'kernel-chainer',
+                'R': 'kernel-r',
+                'Julia': 'kernel-julia',
             }
         },
         versions: {
@@ -60,7 +68,7 @@ class BackendAIJobView extends PolymerElement {
         },
         languages: {
             type: Array,
-            value: ['TensorFlow','Python']
+            value: ['TensorFlow','Python', 'PyTorch', 'Chainer', 'R', 'Julia']
         }
     }
   }
@@ -113,6 +121,7 @@ class BackendAIJobView extends PolymerElement {
     }
     return this.aliases[kernel] + ':' + version + postfix;
   }
+
   _newSession() {
     let kernel = this.$['environment'].value;
     let version = this.$['version'].value;
@@ -135,13 +144,10 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _supportLanguages() {
-      console.log(Object.keys(this.supports));
       return Object.keys(this.supports);
   }
   _supportVersions() {
     let lang = this.$['environment'].value;
-    console.log('lang:');
-    console.log(lang);
     return this.supports[lang];
 }
 
@@ -185,8 +191,8 @@ class BackendAIJobView extends PolymerElement {
                     </paper-dropdown-menu>
                     <paper-dropdown-menu id="version" label="Version">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <template is="dom-repeat" items="{{ versions }}">
-                                <paper-item id="{{ item }}" label="{{item}}">{{ item }}</paper-item>
+                            <template is="dom-repeat" items="[[ versions ]]">
+                                <paper-item id="[[ item ]]" label="[[ item ]]">[[ item ]]</paper-item>
                             </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
