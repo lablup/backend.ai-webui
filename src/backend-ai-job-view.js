@@ -4,6 +4,7 @@
 
 import { PolymerElement, html } from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
+import '@polymer/polymer/lib/elements/dom-repeat.js';
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
@@ -26,25 +27,60 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
 class BackendAIJobView extends PolymerElement {
-  static get properties() {
-    return {
-    };
-  }
-
+    static get is() {
+        return 'backend-ai-job-view';
+    }
   constructor() {
     super();
-    // Resolve warning about scroll performance 
-    // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
     setPassiveTouchGestures(true);
+  }
+
+  static get properties() {
+    return {
+        supports: {
+            type: Object,
+            value: {
+                'TensorFlow': ['1.12', '2.0'],
+                'Python': ['3.6']
+            }
+        },
+        aliases: {
+            type: Object,
+            value: {
+                'TensorFlow': 'kernel-python-tensorflow',
+                'Python': 'kernel-python'
+            }
+        },
+        versions: {
+            type: Array,
+            value: ['1.12']
+        },
+        languages: {
+            type: Array,
+            value: ['TensorFlow','Python']
+        }
+    }
   }
 
   ready() {
     super.ready();
     this.$['launch-session'].addEventListener('tap', this._launchSessionDialog.bind(this));
     this.$['launch-button'].addEventListener('tap', this._newSession.bind(this));
+    this.$['environment'].addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
   }
+
+  updateLanguage() {
+      this._updateVersions(this.$['environment'].selectedItemLabel);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    afterNextRender(this, function () {
+    });
+  }  
   static get observers() {
     return [
       '_routeChanged(route.*)',
@@ -65,12 +101,49 @@ class BackendAIJobView extends PolymerElement {
     this.$['new-session-dialog'].open();
   }
 
+  _generateKernelIndex(kernel, version) {
+    let postfix;
+    switch (kernel) {
+        case 'TensorFlow':
+            postfix = '-py36';
+            break;
+        case 'Python':
+        default:
+            postfix = '-ubuntu';
+    }
+    return this.aliases[kernel] + ':' + version + postfix;
+  }
   _newSession() {
-    window.backendaiclient.createKernel('python').then((req) => {
+    let kernel = this.$['environment'].value;
+    let version = this.$['version'].value;
+    console.log(kernel);
+    console.log(version);
+    let kernelName = this._generateKernelIndex(kernel, version);
+    console.log(kernelName);
+    window.backendaiclient.createKernel(kernelName).then((req) => {
         this.$['running-jobs'].refreshList();
         this.$['new-session-dialog'].close();
     });
   }
+  _updateEnvironment() {
+      this.languages = Object.keys(this.supports);
+      this.versions = this.supports[lang];
+  }
+
+  _updateVersions(lang) {
+    this.versions = this.supports[lang];
+  }
+
+  _supportLanguages() {
+      console.log(Object.keys(this.supports));
+      return Object.keys(this.supports);
+  }
+  _supportVersions() {
+    let lang = this.$['environment'].value;
+    console.log('lang:');
+    console.log(lang);
+    return this.supports[lang];
+}
 
   static get template() {
     return html`
@@ -103,14 +176,18 @@ class BackendAIJobView extends PolymerElement {
             <form id="login-form" onSubmit="this._launchSession()">
                 <fieldset>
                     <div class="horizontal center layout">
-                    <paper-dropdown-menu label="Environments">
+                    <paper-dropdown-menu id="environment" label="Environments">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>Python</paper-item>
+                            <template is="dom-repeat" items="{{ languages }}">
+                                <paper-item id="{{ item }}" label="{{item}}">{{ item }}</paper-item>
+                            </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu label="Version">
+                    <paper-dropdown-menu id="version" label="Version">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>3.6</paper-item>
+                            <template is="dom-repeat" items="{{ versions }}">
+                                <paper-item id="{{ item }}" label="{{item}}">{{ item }}</paper-item>
+                            </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
                     </div>
@@ -127,4 +204,4 @@ class BackendAIJobView extends PolymerElement {
   }
 }
 
-customElements.define('backend-ai-job-view', BackendAIJobView);
+customElements.define(BackendAIJobView.is, BackendAIJobView);

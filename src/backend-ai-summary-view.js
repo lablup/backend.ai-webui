@@ -32,7 +32,6 @@ class BackendAISummary extends PolymerElement {
           value: {}
       }
     };
-
   }
 
   constructor() {

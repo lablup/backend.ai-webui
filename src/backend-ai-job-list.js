@@ -94,7 +94,14 @@ class BackendAIJobList extends PolymerElement {
         return this.condition === 'running';
     }
     _isAppRunning(lang) {
-        return this.condition === 'running' && lang == 'lablup/python:3.6-ubuntu';
+        let support_kernels = [
+            'lablup/python:3.6-ubuntu',
+            'lablup/python-tensorflow:1.10-py36',
+            'lablup/python-tensorflow:1.11-py36',
+            'lablup/python-tensorflow:1.12-py36',
+            'lablup/python-tensorflow:2.0-py36'
+        ];
+        return this.condition === 'running' && support_kernels.includes(lang);
     }
     _byteToMB(value) {
         return Math.floor(value / 1000000);
@@ -322,7 +329,7 @@ class BackendAIJobList extends PolymerElement {
                                          icon="assignment"></paper-icon-button>
                       <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
                         <paper-icon-button class="fg controls-running"
-                        on-tap="_runJupyter" src="manifest/jupyter.png"></paper-icon-button>
+                        on-tap="_runJupyter" src="images/jupyter.png"></paper-icon-button>
                       </template>
                       <template is="dom-if" if="[[_isRunning()]]">
                           <paper-icon-button disabled class="fg controls-running"
