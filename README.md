@@ -34,7 +34,8 @@ $ polymer build
 Prerequistics : electron, electron-packager
 
 ```
-$ make mac
+$ make all 
+$ make test  
 $ make win (not yet working)
 $ make linux (not yet working)
 ```
