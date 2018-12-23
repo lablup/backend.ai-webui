@@ -34,8 +34,8 @@ $ polymer build
 Prerequistics : electron, electron-packager
 
 ```
-$ make all 
-$ make test  
+$ make all (build win/mac app) 
+$ make test (build only (for polymer serving test)) 
 $ make win (not yet working)
 $ make linux (not yet working)
 ```
