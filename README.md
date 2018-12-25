@@ -5,6 +5,8 @@ Web-based Backend.AI GUI console.
  * Administration mode
  * User mode
 
+ Each mode is chosen with keypair.
+
 ## Features
  * Key management
  * Session management
