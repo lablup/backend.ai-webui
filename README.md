@@ -15,10 +15,20 @@ Web-based Backend.AI GUI console.
 
 ## Develop and Test
 
+### Running polymer-based web UI
+
 ```
 $ npm install -g polymer-cli
 $ npm install
 $ polymer serve --npm
+```
+
+### Running websocket with node.js (only needed with pure ES6 dev. environment)
+
+```
+$ cd wsproxy
+$ npm install
+$ node ./test_proxy.js
 ```
 
 ## Build (Web)
