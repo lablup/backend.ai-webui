@@ -20,7 +20,7 @@ app.once('ready', function() {
         label: 'Backend.AI',
         submenu: [
           {
-            label: 'About Backend.AI Admin Console',
+            label: 'About Backend.AI Console',
             selector: 'orderFrontStandardAboutPanel:'
           },
           {
@@ -34,7 +34,7 @@ app.once('ready', function() {
             type: 'separator'
           },
           {
-            label: 'Hide Backend.AI Admin Console',
+            label: 'Hide Backend.AI Console',
             accelerator: 'Command+H',
             selector: 'hide:'
           },
