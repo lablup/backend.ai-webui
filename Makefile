@@ -11,7 +11,7 @@ test:
 	cp -Rp ./wsproxy build/electron-app/wsproxy
 	rm -rf build/electron-app/wsproxy/node_modules
 	cp ./wsproxy/package.json build/electron-app/package.json
-	cd build/electron-app; npm install
+	cd build/electron-app; npm install --only=prod
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 all:
 	polymer build
