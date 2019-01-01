@@ -36,7 +36,7 @@ import './backend-ai-job-view';
 import './backend-ai-credential-view';
 import './backend-ai-agent-view';
 
-class BackendAiAdminConsole extends PolymerElement {
+class BackendAiWebConsole extends PolymerElement {
   static get properties() {
     return {
       menuTitle: {
@@ -254,4 +254,4 @@ class BackendAiAdminConsole extends PolymerElement {
   }
 }
 
-customElements.define('backend-ai-admin-console', BackendAiAdminConsole);
+customElements.define('backend-ai-web-console', BackendAiWebConsole);
