@@ -23,7 +23,7 @@ $ npm install
 $ polymer serve --npm
 ```
 
-### Running websocket with node.js (only needed with pure ES6 dev. environment)
+### Running websocket with node.js (only needed with pure ES6 dev. environment / browser)
 
 ```
 $ cd wsproxy
