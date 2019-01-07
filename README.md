@@ -1,4 +1,4 @@
-# backend.ai-admin-console
+# backend.ai-web-console
 
 Web-based Backend.AI GUI console.
 
