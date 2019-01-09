@@ -9,8 +9,9 @@ Web-based Backend.AI GUI console.
 
 ## Features
  * Key management
-    * Dynamic resource allocation
+    * Allocate resource limitation for keys
  * Session management
+    * Set default resources for runs
  * Experiments
  * Proxy mode to support various app environments (with Electron)
 
