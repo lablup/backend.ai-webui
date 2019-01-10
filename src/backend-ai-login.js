@@ -114,10 +114,8 @@ class BackendAiLogin extends PolymerElement {
     );
     // Test connection
     let fields = ["user_id"];
-    let q = `query($ak:String) {`+
-    `  keypair(access_key:$ak) { ${fields.join(" ")} }`+
-    '}';
-    let v = {'ak': this.client._config.accessKey};
+    let q = `query { keypair { ${fields.join(" ")} } }`;
+    let v = {}
 
     this.client.gql(q, v).then(response => {
       window.backendaiclient = this.client;
