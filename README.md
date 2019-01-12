@@ -35,6 +35,10 @@ $ npm install
 $ node ./test_proxy.js
 ```
 
+### Running stand-alone web service
+
+Will be prepared soon.
+
 ## Build (Web)
 
 Default setup will build `es6-unbundled` version.
