@@ -32,7 +32,7 @@ This is only needed with pure ES6 dev. environment / browser. With `Electron`, w
 ```
 $ cd wsproxy
 $ npm install
-$ node ./test_proxy.js
+$ node ./local_proxy.js
 ```
 
 ### Running stand-alone web service
