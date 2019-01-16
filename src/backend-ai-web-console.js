@@ -40,6 +40,14 @@ import './backend-ai-agent-view';
 class BackendAiWebConsole extends PolymerElement {
   static get properties() {
     return {
+      route: {
+        type: Object,
+        notify: true
+      },
+      routeData: {
+        type: Object,
+        notify: true
+      },
       menuTitle: {
           type: String,
           value: 'Default'
@@ -60,7 +68,7 @@ class BackendAiWebConsole extends PolymerElement {
         type: Boolean,
         value: false
       }
-    };
+    } 
   }
 
   constructor() {
@@ -85,6 +93,7 @@ class BackendAiWebConsole extends PolymerElement {
       this._refreshUserInfoPanel();
     });
   }
+
   static get observers() {
     return [
       '_routeChanged(route.*)',
@@ -102,14 +111,12 @@ class BackendAiWebConsole extends PolymerElement {
   }
   _viewChanged(view) {
     // load data for view
-    if (['summary','job','agent','credential'].includes(view) != true) {
+    if (['summary','job','agent','credential'].includes(view) != true) { // Fallback for Windows OS
       view = this.route.path.split(/[\/]+/).pop();
       this.routeData.view = view;
+      this.route.path = '/'+view;
+      this.$['app-page'].selected = view;
     }
-    console.log("view changed");
-    console.log(view);
-    console.log(this.routeData);
-    console.log(this.route);
     switch(view) {
       case 'summary':
         this.menuTitle = 'Summary';
