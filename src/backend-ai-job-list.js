@@ -44,9 +44,6 @@ class BackendAIJobList extends PolymerElement {
 
     ready() {
         super.ready();
-        document.addEventListener('backend-ai-job-refresh', () => {
-            this._refreshJobData();
-        }, true);
     }
 
     connectedCallback() {
@@ -54,6 +51,27 @@ class BackendAIJobList extends PolymerElement {
         afterNextRender(this, function () {
         });
     }
+    static get observers() {
+        return [
+          '_menuChanged(visible)'
+        ]
+    }
+
+    _menuChanged(visible) {
+        console.log('list called');
+        if(!visible) { 
+          return;
+       }
+       // If disconnected
+       if (window.backendaiclient == undefined || window.backendaiclient == null) {
+        document.addEventListener('backend-ai-connected', () => {
+            this._refreshJobData();
+        }, true);
+       } else { // already connected
+           this._refreshJobData();
+       }
+    }
+        
     refreshList() {
         return this._refreshJobData();
     }
@@ -79,7 +97,7 @@ class BackendAIJobList extends PolymerElement {
 
         window.backendaiclient.gql(q, v).then(response => {
             this.jobs = response;
-            if (window.backendaiclient_view == 'job') {
+            if (this.visible == true) {
                 setTimeout(() => { this._refreshJobData(status) }, 5000);
             }
             console.log(this.jobs);

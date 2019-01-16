@@ -119,8 +119,14 @@ class BackendAIJobView extends PolymerElement {
 
   _menuChanged(visible) {
       console.log(visible);
-      if(!visible) { return; }
-      // refresh job view
+      if(!visible) { 
+        this.$['running-jobs'].visible = false;
+        this.$['finished-jobs'].visible = false;
+        return;
+     }
+     this.$['running-jobs'].visible = true;
+     this.$['finished-jobs'].visible = true;
+     // refresh job view
       var event = new CustomEvent("backend-ai-job-refresh", { "detail": this });
       document.dispatchEvent(event);
   }
@@ -197,7 +203,7 @@ class BackendAIJobView extends PolymerElement {
         </div>
         <h4>Finished</h4>
         <div>
-            <backend-ai-job-list condition="finished"></backend-ai-job-list>
+            <backend-ai-job-list id="finished-jobs" condition="finished"></backend-ai-job-list>
         </div>
     </paper-material>
     <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
