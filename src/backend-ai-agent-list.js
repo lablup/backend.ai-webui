@@ -103,7 +103,7 @@ class BackendAIAgentList extends PolymerElement {
         window.backendaiclient.gql(q, v).then(response => {
             this.agents = response;
             console.log(this.agents);
-            if (window.backendaiclient_view == 'agent') {
+            if (this.visible == true) {
                 setTimeout(()=>{this._loadAgentList(status)}, 5000);
             }
         }).catch(err => {

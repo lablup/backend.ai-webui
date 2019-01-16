@@ -70,7 +70,6 @@ class BackendAiWebConsole extends PolymerElement {
 
   ready() {
     super.ready();
-    window.backendaiclient_view = '';
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.querySelector('#login-panel').login();
     }
@@ -132,7 +131,6 @@ class BackendAiWebConsole extends PolymerElement {
         this.menuTitle = 'Summary';
         this.$['sidebar-menu'].selected = 0;
       }
-    window.backendaiclient_view = view;
   }
 
   logout() {
