@@ -13,7 +13,7 @@ test:
 	cp ./wsproxy/package.json build/electron-app/package.json
 	cd build/electron-app; npm install --only=prod
 	cp ./main.electron-packager.js ./build/electron-app/main.js
-all: dep mac
+all: dep mac win
 dep:
 	polymer build
 	mkdir build/electron-app
