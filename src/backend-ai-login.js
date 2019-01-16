@@ -99,6 +99,7 @@ class BackendAiLogin extends PolymerElement {
     this.api_key = this.$['id_api_key'].value;
     this.secret_key = this.$['id_secret_key'].value;
     this.api_endpoint = this.$['id_api_endpoint'].value;
+    this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this._connect();
   }
   _connect() {
