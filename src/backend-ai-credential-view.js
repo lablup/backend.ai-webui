@@ -83,7 +83,14 @@ class BackendAICredentialView extends PolymerElement {
   }
 
   _menuChanged(visible) {
-    if(!visible) { return; }
+    if(!visible) { 
+        this.$['active-credential-list'].visible = false;
+        this.$['inactive-credential-list'].visible = false;
+        return;
+    } else {
+        this.$['active-credential-list'].visible = true;
+        this.$['inactive-credential-list'].visible = true;
+    }
   }
   _newSession() {
     this.$['new-session-dialog'].open();

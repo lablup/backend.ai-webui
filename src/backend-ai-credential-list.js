@@ -30,6 +30,10 @@ class BackendAICredentialList extends PolymerElement {
 
     static get properties() {
         return {
+            visible: {
+                type: Boolean,
+                value: false
+            },
             condition: {
                 type: String,
                 default: 'active'  // active, inactive
@@ -51,12 +55,26 @@ class BackendAICredentialList extends PolymerElement {
     connectedCallback() {
         super.connectedCallback();
         afterNextRender(this, function () {
-            if (window.backendaiclient != undefined && window.backendaiclient != null) {
-                this._refreshKeyData();
-            }
         });
     }
-
+    static get observers() {
+        return [
+          '_menuChanged(visible)'
+        ]
+    }
+    _menuChanged(visible) {
+        if(!visible) { 
+           return;
+        }
+        // If disconnected
+        if (window.backendaiclient == undefined || window.backendaiclient == null) {
+         document.addEventListener('backend-ai-connected', () => {
+             this._refreshKeyData();
+         }, true);
+        } else { // already connected
+            this._refresKeyData();
+        }
+     }
     _refreshKeyData(user_id) {
         let status = 'active';
         let is_active = true;
