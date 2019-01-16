@@ -102,6 +102,14 @@ class BackendAiWebConsole extends PolymerElement {
   }
   _viewChanged(view) {
     // load data for view
+    if (['summary','job','agent','credential'].includes(view) != true) {
+      view = this.route.path.split(/[\/]+/).pop();
+      this.routeData.view = view;
+    }
+    console.log("view changed");
+    console.log(view);
+    console.log(this.routeData);
+    console.log(this.route);
     switch(view) {
       case 'summary':
         this.menuTitle = 'Summary';
