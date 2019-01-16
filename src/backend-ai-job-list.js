@@ -27,6 +27,10 @@ class BackendAIJobList extends PolymerElement {
 
     static get properties() {
         return {
+            visible: {
+                type: Boolean,
+                value: false
+            },
             condition: {
                 type: String,
                 default: 'running'  // finished, running, archived
@@ -40,7 +44,7 @@ class BackendAIJobList extends PolymerElement {
 
     ready() {
         super.ready();
-        document.addEventListener('backend-ai-connected', () => {
+        document.addEventListener('backend-ai-job-refresh', () => {
             this._refreshJobData();
         }, true);
     }
@@ -48,9 +52,6 @@ class BackendAIJobList extends PolymerElement {
     connectedCallback() {
         super.connectedCallback();
         afterNextRender(this, function () {
-            if (window.backendaiclient != undefined && window.backendaiclient != null) {
-                this._refreshJobData();
-            }
         });
     }
     refreshList() {

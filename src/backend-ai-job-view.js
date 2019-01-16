@@ -118,9 +118,13 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _menuChanged(visible) {
+      console.log(visible);
       if(!visible) { return; }
+      // refresh job view
+      var event = new CustomEvent("backend-ai-job-refresh", { "detail": this });
+      document.dispatchEvent(event);
   }
-  
+
   _launchSessionDialog() {
     this.$['new-session-dialog'].open();
   }

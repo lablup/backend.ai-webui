@@ -62,9 +62,6 @@ class BackendAiLogin extends PolymerElement {
 
   ready() {
     super.ready();
-    //this.$['id_api_key'].value = 'AKIAIOSFODNN7EXAMPLE';
-    //this.$['id_secret_key'].value = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY';
-    //this.$['id_api_endpoint'].value = 'http://127.0.0.1:8082';
     this.$['login-button'].addEventListener('tap', this._login.bind(this));
   }
 
