@@ -1,6 +1,6 @@
 /**
 @license
-Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
 import { PolymerElement, html } from '@polymer/polymer';

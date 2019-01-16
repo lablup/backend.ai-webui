@@ -1,5 +1,6 @@
 /**
- * Backend.AI-web-console
+@license
+Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
 import { PolymerElement, html } from '@polymer/polymer';
@@ -54,6 +55,10 @@ class BackendAiWebConsole extends PolymerElement {
       is_connected: {
         type: Boolean,
         value: false
+      },
+      is_admin: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -73,6 +78,11 @@ class BackendAiWebConsole extends PolymerElement {
     document.addEventListener('backend-ai-connected', () => {
       this.$['sign-button'].icon = 'icons:exit-to-app';
       this.is_connected = true;
+      if (window.backendaiclient != undefined && window.backendaiclient != null && window.backendaiclient.is_admin != undefined && window.backendaiclient.is_admin == true) {
+        this.is_admin = true;
+      } else {
+        this.is_admin = false;
+      }
       this._refreshUserInfoPanel();
     });
   }
@@ -82,7 +92,6 @@ class BackendAiWebConsole extends PolymerElement {
       '_viewChanged(routeData.view)'
     ]
   }
-
   _refreshUserInfoPanel() {
     this.user_id = window.backendaiclient.email;
     this.api_endpoint = window.backendaiclient._config.endpoint;
@@ -103,13 +112,21 @@ class BackendAiWebConsole extends PolymerElement {
         this.menuTitle = 'Jobs';
         this.$['sidebar-menu'].selected = 1;
         break;
-      case 'credential':
-        this.menuTitle = 'Credentials';
-        this.$['sidebar-menu'].selected = 3;
-        break;
       case 'agent':
         this.menuTitle = 'Agents';
-        this.$['sidebar-menu'].selected = 2;
+        if (this.is_admin) {
+          this.$['sidebar-menu'].selected = 2;
+        } else {
+          this.$['sidebar-menu'].selected = 0;
+        }
+        break;
+      case 'credential':
+        this.menuTitle = 'Credentials';
+        if (this.is_admin) {
+          this.$['sidebar-menu'].selected = 3;
+        } else {
+          this.$['sidebar-menu'].selected = 2;
+        }
         break;
       default:
         this.menuTitle = 'Summary';
@@ -156,7 +173,7 @@ class BackendAiWebConsole extends PolymerElement {
           </div>
           <div class="vertical start-justified layout">
             <span class="site-name"><span class="bold">backend</span>.AI</span>
-            <span class="site-name" style="font-size:13px;">webconsole</span>
+            <span class="site-name" style="font-size:13px;">console</span>
           </div>
           <span class="flex"></span>
         </div>
@@ -174,12 +191,14 @@ class BackendAiWebConsole extends PolymerElement {
             Jobs
           </paper-item>
         </a>
-        <a href="/agent" tabindex="-1" role="menuitem">
-          <paper-item link>
-            <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-            Agents
-          </paper-item>
-        </a>
+        <template is="dom-if" if="{{is_admin}}">
+          <a href="/agent" tabindex="-1" role="menuitem">
+            <paper-item link>
+              <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
+              Agents
+            </paper-item>
+          </a>
+        </template>
         <a href="/credential" tabindex="-1" role="menuitem">
           <paper-item link>
             <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
