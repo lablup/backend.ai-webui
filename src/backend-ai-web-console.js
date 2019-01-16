@@ -231,7 +231,7 @@ class BackendAiWebConsole extends PolymerElement {
       <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
         <address>
           <small class="sidebar-footer">WebConsole (Alpha)</small>
-          <small class="sidebar-footer" style="font-size:9px;">0.5.20181206</small>
+          <small class="sidebar-footer" style="font-size:9px;">0.7.20190116</small>
         </address>
       </div>
     </app-header-layout>
@@ -254,12 +254,12 @@ class BackendAiWebConsole extends PolymerElement {
     <div class="content">
       <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
       <section id="content" class="container layout vertical center">
-        <iron-lazy-pages id="app-page" selected="[[routeData.view]]" attr-for-selected="name">
-        <backend-ai-summary-view name="summary" route="{{subroute}}" data-path='src/backend-ai-summary-view.js'></backend-ai-summary-view>
+        <iron-pages id="app-page" selected="[[routeData.view]]" attr-for-selected="name" selected-attribute="visible" fallback-selection="summary">
+          <backend-ai-summary-view name="summary" route="{{subroute}}" data-path='src/backend-ai-summary-view.js'></backend-ai-summary-view>
           <backend-ai-job-view name="job" route="{{subroute}}" data-path='src/backend-ai-job-view.js'></backend-ai-job-view>
           <backend-ai-credential-view name="credential" route="{{subroute}}" data-path='src/backend-ai-credential-view.js'></backend-ai-credential-view>
           <backend-ai-agent-view name="agent" route="{{subroute}}" data-path='src/backend-ai-agent-view.js'></backend-ai-agent-view>
-        </iron-lazy-pages>
+        </iron-pages>
       </section>
       <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>

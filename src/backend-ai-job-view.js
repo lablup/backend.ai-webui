@@ -41,6 +41,10 @@ class BackendAIJobView extends PolymerElement {
 
   static get properties() {
     return {
+        visible: {
+            type: Boolean,
+            value: false
+        },
         supports: {
             type: Object,
 /*            value: {
@@ -98,7 +102,8 @@ class BackendAIJobView extends PolymerElement {
   static get observers() {
     return [
       '_routeChanged(route.*)',
-      '_viewChanged(routeData.view)'
+      '_viewChanged(routeData.view)',
+      '_menuChanged(visible)'
     ]
   }
   
@@ -108,9 +113,14 @@ class BackendAIJobView extends PolymerElement {
     }
   }
   _viewChanged(view) {
+    console.log('View changed!');
     // load data for view
   }
 
+  _menuChanged(visible) {
+      if(!visible) { return; }
+  }
+  
   _launchSessionDialog() {
     this.$['new-session-dialog'].open();
   }

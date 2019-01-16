@@ -33,6 +33,10 @@ import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 class BackendAICredentialView extends PolymerElement {
   static get properties() {
     return {
+        visible: {
+            type: Boolean,
+            value: false
+        }
     };
   }
   static get is() {
@@ -64,7 +68,8 @@ class BackendAICredentialView extends PolymerElement {
   static get observers() {
     return [
       '_routeChanged(route.*)',
-      '_viewChanged(routeData.view)'
+      '_viewChanged(routeData.view)',
+      '_menuChanged(visible)'
     ]
   }
   
@@ -75,6 +80,10 @@ class BackendAICredentialView extends PolymerElement {
   }
   _viewChanged(view) {
     // load data for view
+  }
+
+  _menuChanged(visible) {
+    if(!visible) { return; }
   }
   _newSession() {
     this.$['new-session-dialog'].open();

@@ -1,5 +1,6 @@
 /**
- * Backend.AI-job-view 
+@license
+Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
 import { PolymerElement, html } from '@polymer/polymer';
@@ -30,6 +31,10 @@ class BackendAISummary extends PolymerElement {
       jobs: {
           type: Object,
           value: {}
+      },
+      visible: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -51,7 +56,8 @@ class BackendAISummary extends PolymerElement {
     return [
       '_routeChanged(route.*)',
       '_viewChanged(routeData.view)',
-      '_refreshHealthPanel(window.backendaiclient)'
+      '_refreshHealthPanel(window.backendaiclient)',
+      '_menuChanged(visible)'
     ]
   }
   connectedCallback() {
@@ -100,6 +106,9 @@ class BackendAISummary extends PolymerElement {
   }
   _viewChanged(view) {
     // load data for view
+  }
+  _menuChanged(visible) {
+    if(!visible) { return; }
   }
   _countObject(obj) {
     return Object.keys(obj).length;    
