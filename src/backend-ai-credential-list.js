@@ -47,9 +47,6 @@ class BackendAICredentialList extends PolymerElement {
 
     ready() {
         super.ready();
-        document.addEventListener('backend-ai-connected', () => {
-            this._refreshKeyData();
-        }, true);
     }
 
     connectedCallback() {
@@ -72,7 +69,7 @@ class BackendAICredentialList extends PolymerElement {
              this._refreshKeyData();
          }, true);
         } else { // already connected
-            this._refresKeyData();
+            this._refreshKeyData();
         }
      }
     _refreshKeyData(user_id) {

@@ -169,7 +169,9 @@ class BackendAIJobView extends PolymerElement {
 
   _updateVersions(lang) {
     this.versions = this.supports[lang];
-    this.$.version.value = this.versions[0];
+    if (this.versions != undefined) {
+        this.$.version.value = this.versions[0];
+    }
   }
 
   _supportLanguages() {

@@ -199,12 +199,14 @@ class BackendAiWebConsole extends PolymerElement {
             </paper-item>
           </a>
         </template>
-        <a href="/credential" tabindex="-1" role="menuitem">
-          <paper-item link>
-            <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
-            Credentials
-          </paper-item>
-        </a>
+        <template is="dom-if" if="{{is_admin}}">
+          <a href="/credential" tabindex="-1" role="menuitem">
+            <paper-item link>
+              <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
+              Credentials
+            </paper-item>
+          </a>
+        </template>
         <paper-item disabled>
           <iron-icon class="fg green" icon="icons:pageview"></iron-icon>
           Experiments

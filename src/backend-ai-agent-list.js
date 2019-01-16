@@ -32,27 +32,44 @@ class BackendAIAgentList extends PolymerElement {
             jobs: {
                 type: Object,
                 value: {}
+            },
+            visible: {
+                type: Boolean,
+                value: false
             }
         };
     }
 
     ready() {
         super.ready();
-        document.addEventListener('backend-ai-connected', () => {
-            let status = 'ALIVE';
-            this._loadAgentList(status);
-        }, true);
     }
 
     connectedCallback() {
         super.connectedCallback();
         afterNextRender(this, function () {
-            if (window.backendaiclient != undefined && window.backendaiclient != null) {
-                let status = 'ALIVE';
-                this._loadAgentList(status);
-            }
         });
     }
+    static get observers() {
+        return [
+          '_menuChanged(visible)'
+        ]
+    }
+    _menuChanged(visible) {
+        if(!visible) { 
+           return;
+        }
+        // If disconnected
+        if (window.backendaiclient == undefined || window.backendaiclient == null) {
+         document.addEventListener('backend-ai-connected', () => {
+            let status = 'ALIVE';
+            this._loadAgentList(status);
+          }, true);
+        } else { // already connected
+            let status = 'ALIVE';
+            this._loadAgentList(status);
+        }
+     }
+
     _loadAgentList(status = 'running') {
         switch (this.condition) {
             case 'running':

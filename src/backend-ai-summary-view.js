@@ -32,6 +32,10 @@ class BackendAISummary extends PolymerElement {
           type: Object,
           value: {}
       },
+      is_admin: {
+        type: Boolean,
+        value: false
+      },
       visible: {
         type: Boolean,
         value: false
@@ -49,6 +53,7 @@ class BackendAISummary extends PolymerElement {
   ready() {
     super.ready();
     document.addEventListener('backend-ai-connected', () => {
+      this.is_admin = window.backendaiclient.is_admin;
       this._refreshHealthPanel();
     }, true);
   }
@@ -63,9 +68,6 @@ class BackendAISummary extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     afterNextRender(this, function () {
-      if (window.backendaiclient != undefined && window.backendaiclient != null) {
-        this._refreshHealthPanel();
-      }
     });
   }
 
@@ -84,10 +86,10 @@ class BackendAISummary extends PolymerElement {
     };
 
     let fields = ["sess_id"];
-    let q = `query($ak:String, $status:String) {`+
-    `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
+    let q = `query($status:String) {`+
+    `  compute_sessions(status:$status) { ${fields.join(" ")} }`+
     '}';
-    let v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
+    let v = {'status': status};
 
     window.backendaiclient.gql(q, v).then(response => {
       this.jobs = response;
@@ -146,6 +148,7 @@ class BackendAISummary extends PolymerElement {
         </div>
         <h3 class="paper-material-title">Actions</h3>
         <div class="horizontal wrap layout">
+        <template is="dom-if" if="{{is_admin}}">
           <lablup-activity-panel title="Keypair" elevation="1">
           <div slot="message">
             <ul>
@@ -154,6 +157,14 @@ class BackendAISummary extends PolymerElement {
             </ul>
           </div>
         </lablup-activity-panel>
+        </template>
+        <template is="dom-if" if="{{!is_admin}}">
+        <lablup-activity-panel title="No action" elevation="1">
+        <div slot="message">
+        No action on user mode yet.
+        </div>
+      </lablup-activity-panel>
+        </template>
       </div>
       </paper-material>
     `;

@@ -28,8 +28,6 @@ class BackendAIAgentView extends PolymerElement {
 
   constructor() {
     super();
-    // Resolve warning about scroll performance 
-    // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
     setPassiveTouchGestures(true);
   }
 
@@ -53,7 +51,13 @@ class BackendAIAgentView extends PolymerElement {
     // load data for view
   }
   _menuChanged(visible) {
-    if(!visible) { return; }
+    if(!visible) { 
+      this.$['running-agents'].visible = false;
+      this.$['finished-agents'].visible = false;
+      return;
+    }
+    this.$['running-agents'].visible = true;
+    this.$['finished-agents'].visible = true;
   }
   static get template() {
     return html`
@@ -63,11 +67,11 @@ class BackendAIAgentView extends PolymerElement {
         <h3 class="paper-material-title">Agent nodes</h3>
         <h4>Connected</h4>
         <div>
-            <backend-ai-agent-list condition="running"></backend-ai-agent-list>
+            <backend-ai-agent-list id="running-agents" condition="running"></backend-ai-agent-list>
         </div>
         <h4>Terminated</h4>
         <div>
-            <backend-ai-agent-list condition="finished"></backend-ai-agent-list>
+            <backend-ai-agent-list id="finished-agents" condition="finished"></backend-ai-agent-list>
         </div>
         </paper-material>
     `;
