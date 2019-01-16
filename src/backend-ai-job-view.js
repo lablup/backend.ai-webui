@@ -20,6 +20,7 @@ import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-listbox/paper-listbox';
+import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
@@ -42,13 +43,17 @@ class BackendAIJobView extends PolymerElement {
     return {
         supports: {
             type: Object,
-            value: {
+/*            value: {
                 'TensorFlow': ['1.10', '1.11', '1.12', '2.0'],
                 'Python': ['3.6', '3.7'],
                 'PyTorch': ['0.2', '0.3', '0.4', '1.0'],
                 'Chainer': ['3.2', '4.0'],
                 'R': ['3'],
                 'Julia': ['1.0']
+            }*/
+            value: {
+                'TensorFlow': ['1.12', '1.11'],
+                'Python': ['3.6']
             }
         },
         aliases: {
@@ -68,7 +73,8 @@ class BackendAIJobView extends PolymerElement {
         },
         languages: {
             type: Array,
-            value: ['TensorFlow','Python', 'PyTorch', 'Chainer', 'R', 'Julia']
+            /*value: ['TensorFlow','Python', 'PyTorch', 'Chainer', 'R', 'Julia']*/
+            value: ['TensorFlow','Python']
         }
     }
   }
@@ -114,6 +120,9 @@ class BackendAIJobView extends PolymerElement {
     switch (kernel) {
         case 'TensorFlow':
             postfix = '-py36';
+            if (this.$['enable-gpu'].checked) {
+                postfix = postfix + '-gpu';
+            }
             break;
         case 'Python':
         default:
@@ -141,6 +150,7 @@ class BackendAIJobView extends PolymerElement {
 
   _updateVersions(lang) {
     this.versions = this.supports[lang];
+    this.$.version.value = this.versions[0];
   }
 
   _supportLanguages() {
@@ -197,7 +207,10 @@ class BackendAIJobView extends PolymerElement {
                         </paper-listbox>
                     </paper-dropdown-menu>
                     </div>
-                    <br /><br />
+                    <div>
+                        <paper-checkbox id="enable-gpu">Use GPU</paper-checkbox>
+                    </div>
+                    <br />
                     <paper-button class="blue launch-button" type="submit" id="launch-button">
                         <iron-icon icon="rowing"></iron-icon>
                         Launch
