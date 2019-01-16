@@ -118,7 +118,6 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _menuChanged(visible) {
-      console.log(visible);
       if(!visible) { 
         this.$['running-jobs'].visible = false;
         this.$['finished-jobs'].visible = false;

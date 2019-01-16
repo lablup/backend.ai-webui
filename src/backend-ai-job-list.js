@@ -58,8 +58,7 @@ class BackendAIJobList extends PolymerElement {
     }
 
     _menuChanged(visible) {
-        console.log('list called');
-        if(!visible) { 
+       if(!visible) { 
           return;
        }
        // If disconnected
@@ -90,11 +89,20 @@ class BackendAIJobList extends PolymerElement {
         };
 
         let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
-        let q = `query($ak:String, $status:String) {` +
-            `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
-            '}';
-        let v = { 'status': status, 'ak': window.backendaiclient._config.accessKey };
+        if (window.backendaiclient.is_admin == true) {
+            console.log('admin');
+            let q = `query($ak:String, $status:String) {` +
+                `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
+                '}';
+            let v = { 'status': status, 'ak': window.backendaiclient._config.accessKey };
+        } else {
+            console.log('non');
 
+            let q = `query($status:String) {` +
+                `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
+                '}';
+            let v = { 'status': status };
+        }
         window.backendaiclient.gql(q, v).then(response => {
             this.jobs = response;
             if (this.visible == true) {
