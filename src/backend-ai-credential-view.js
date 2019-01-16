@@ -93,11 +93,11 @@ class BackendAICredentialView extends PolymerElement {
         }
         user_id = this.$['id_new_user_id'].value;
     } else {
-        user_id = window.backendaiclient_email;
+        user_id = window.backendaiclient.email;
     }
     console.log(user_id);
 
-    //user_id = window.backendaiclient_email;
+    //user_id = window.backendaiclient.email;
     let fields = ["access_key", "secret_key"]
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
         `  create_keypair(user_id: $user_id, props: $input) {` +

@@ -84,7 +84,7 @@ class BackendAiWebConsole extends PolymerElement {
   }
 
   _refreshUserInfoPanel() {
-    this.user_id = window.backendaiclient_email;
+    this.user_id = window.backendaiclient.email;
     this.api_endpoint = window.backendaiclient._config.endpoint;
   }
   _routeChanged(changeRecord) {

@@ -68,7 +68,7 @@ class BackendAICredentialList extends PolymerElement {
                 is_active = false;
         };
         let q;
-        let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used', 
+        let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used', 
             'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
 
         if (user_id == null) {

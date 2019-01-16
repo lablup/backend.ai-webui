@@ -113,18 +113,20 @@ class BackendAiLogin extends PolymerElement {
       `Backend.AI Webconsole.`,
     );
     // Test connection
-    let fields = ["user_id"];
+    let fields = ["user_id", "is_admin"];
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {}
 
     this.client.gql(q, v).then(response => {
       window.backendaiclient = this.client;
       let email = response['keypair'].user_id;
+      let is_admin = response['keypair'].is_admin;
       if (this.email != email) {
         this.email = email;
       }
-      window.backendaiclient_email = this.email;
-      console.log(window.backendaiclient_email);
+      window.backendaiclient.email = this.email;
+      window.backendaiclient.is_admin = is_admin;
+      console.log(window.backendaiclient.email);
       var event = new CustomEvent("backend-ai-connected", { "detail": this.client });
       document.dispatchEvent(event);
       this.close();
