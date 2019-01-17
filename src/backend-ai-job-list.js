@@ -249,6 +249,39 @@ class BackendAIJobList extends PolymerElement {
                 console.log(kernelId);
         }
     }
+    _runJupyterTerminal(e) {
+        const termButton = e.target;
+        const controls = e.target.closest('#controls');
+        const kernelId = controls.kernelId;
+        if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+            this._open_wsproxy()
+                .then((response) => {
+                    let rqst = {
+                        method: 'GET',
+                        uri: 'http://127.0.0.1:5050/proxy/' + kernelId
+                    };
+                    return this.sendRequest(rqst)})
+                .then( (response) => {
+                    let rqst = {
+                        method: 'GET',
+                        uri: 'http://127.0.0.1:5050/proxy/' + kernelId + '/add'
+                    };
+                    return this.sendRequest(rqst);
+                })
+                .then( (response) => {
+                    if (response.proxy) {
+                        console.log('http://'+response.proxy + '/terminals/1');
+                        setTimeout(() => { 
+                            window.open('http://'+response.proxy + '/terminals/1', '_blank'); 
+                            //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no'); 
+                        }, 1000);
+                    }
+                });
+                console.log("Jupyter proxy loaded: ");
+                console.log(kernelId);
+        }
+    }
+
     static get template() {
         return html`
         <style include="backend-ai-styles iron-flex iron-flex-alignment">
@@ -357,7 +390,9 @@ class BackendAIJobList extends PolymerElement {
                                          icon="assignment"></paper-icon-button>
                       <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
                         <paper-icon-button class="fg controls-running"
-                        on-tap="_runJupyter" src="images/jupyter.png"></paper-icon-button>
+                        on-tap="_runJupyter" src="/manifest/jupyter.png"></paper-icon-button>
+                        <paper-icon-button class="fg controls-running"
+                        on-tap="_runJupyterTerminal" src="/manifest/jupyter.png"></paper-icon-button>
                       </template>
                       <template is="dom-if" if="[[_isRunning()]]">
                           <paper-icon-button disabled class="fg controls-running"
