@@ -14,6 +14,7 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 
 import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 
@@ -389,14 +390,12 @@ class BackendAIJobList extends PolymerElement {
                       <paper-icon-button disabled class="fg"
                                          icon="assignment"></paper-icon-button>
                       <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
+                        <paper-icon-button class="fg controls-running orange"
+                        on-tap="_runJupyter" icon="vaadin:notebook"></paper-icon-button>
                         <paper-icon-button class="fg controls-running"
-                        on-tap="_runJupyter" src="/manifest/jupyter.png"></paper-icon-button>
-                        <paper-icon-button class="fg controls-running"
-                        on-tap="_runJupyterTerminal" src="/manifest/jupyter.png"></paper-icon-button>
+                        on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
                       </template>
                       <template is="dom-if" if="[[_isRunning()]]">
-                          <paper-icon-button disabled class="fg controls-running"
-                                             icon="alarm-add"></paper-icon-button>
                           <paper-icon-button disabled class="fg controls-running"
                                              icon="av:pause"></paper-icon-button>
                           <paper-icon-button class="fg red controls-running" icon="delete"
