@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, Menu, Shell, BrowserWindow } = require('electron')
+const {app, Menu, shell, BrowserWindow } = require('electron')
 const web = require('./wsproxy/web')
 const url = require('url');
 const path = require('path');
@@ -22,6 +22,19 @@ app.once('ready', function() {
           {
             label: 'About Backend.AI Console',
             selector: 'orderFrontStandardAboutPanel:'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Login',
+            click: function() {
+              mainWindow.loadURL(url.format({ // Load HTML into new Window
+                pathname: path.join(__dirname, mainIndex),
+                protocol: 'file',
+                slashes: true
+              }));
+            }
           },
           {
             type: 'separator'
@@ -100,16 +113,6 @@ app.once('ready', function() {
       {
         label: 'View',
         submenu: [
-          {
-            label: 'Reload',
-            accelerator: 'Command+R',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.reload();
-              }
-            }
-          },
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
@@ -191,7 +194,7 @@ app.once('ready', function() {
           {
             label: 'Learn More',
             click: function() {
-              Shell.openExternal('https://www.backend.ai/');
+              shell.openExternal('https://www.backend.ai/');
             }
           }
         ]
@@ -221,16 +224,6 @@ app.once('ready', function() {
       {
         label: '&View',
         submenu: [
-          {
-            label: '&Reload',
-            accelerator: 'Ctrl+R',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.reload();
-              }
-            }
-          },
           {
             label: 'Zoom In',
             accelerator: 'Ctrl+=',
@@ -290,7 +283,7 @@ app.once('ready', function() {
           {
             label: 'Learn More',
             click: function() {
-              Shell.openExternal('https://github.com/lablup/backend.ai');
+              shell.openExternal('https://github.com/lablup/backend.ai');
             }
           }
         ]
