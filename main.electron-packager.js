@@ -114,16 +114,6 @@ app.once('ready', function() {
         label: 'View',
         submenu: [
           {
-            label: 'Reload',
-            accelerator: 'Command+R',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.reload();
-              }
-            }
-          },
-          {
             label: 'Zoom In',
             accelerator: 'Command+=',
             click: function() {
@@ -161,16 +151,6 @@ app.once('ready', function() {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-              }
-            }
-          },
-          {
-            label: 'Toggle Developer Tools',
-            accelerator: 'Alt+Command+I',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
               }
             }
           },
@@ -282,16 +262,6 @@ app.once('ready', function() {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-              }
-            }
-          },
-          {
-            label: 'Toggle &Developer Tools',
-            accelerator: 'Alt+Ctrl+I',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
               }
             }
           },
