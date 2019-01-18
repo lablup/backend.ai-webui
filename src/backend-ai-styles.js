@@ -51,10 +51,10 @@ const template = html `
                 --general-sidebar-selected-border-left: 5px solid #2AB6F6;
                 --general-sidebar-footer-color: #777777;
                 --general-sidebar-navbar-footer-color: #222222;
-
                 --general-sidebar-item-even-background-color: transparent;
                 --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
                 --app-drawer-width: 190px;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
             }
 
             body {
