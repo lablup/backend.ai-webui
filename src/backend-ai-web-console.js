@@ -221,15 +221,19 @@ class BackendAiWebConsole extends PolymerElement {
           </a>
         </template>
         <paper-item disabled>
-          <iron-icon class="fg green" icon="icons:pageview"></iron-icon>
+          <iron-icon icon="icons:pageview"></iron-icon>
           Experiments
+        </paper-item>
+        <paper-item disabled>
+          <iron-icon icon="vaadin:folder-open-o"></iron-icon>
+          Data
         </paper-item>
         <paper-item disabled>
           <iron-icon icon="icons:assessment"></iron-icon>
           Statistics
         </paper-item>
         <paper-item disabled>
-          <iron-icon class="fg lime" icon="icons:build"></iron-icon>
+          <iron-icon icon="icons:build"></iron-icon>
           Settings
           <span class="flex"></span>
         </paper-item>
