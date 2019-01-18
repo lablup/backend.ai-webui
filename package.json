@@ -10,7 +10,7 @@
     "build": "electron-packager ."
   },
   "dependencies": {
-    "@polymer/app-layout": "^3.0.1",
+    "@polymer/app-layout": "^3.0.2",
     "@polymer/app-route": "^3.0.2",
     "@polymer/app-storage": "^3.0.2",
     "@polymer/iron-ajax": "^3.0.1",
@@ -18,13 +18,12 @@
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/iron-image": "^3.0.1",
     "@polymer/iron-pages": "^3.0.1",
-    "@polymer/lit-element": "^0.6.3",
     "@polymer/neon-animation": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
     "@polymer/paper-checkbox": "^3.1.0",
     "@polymer/paper-dialog": "^3.0.1",
     "@polymer/paper-dropdown-menu": "^3.0.1",
-    "@polymer/paper-icon-button": "^3.0.1",
+    "@polymer/paper-icon-button": "^3.0.2",
     "@polymer/paper-input": "^3.0.1",
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
@@ -33,22 +32,22 @@
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/polymer": "latest",
-    "@vaadin/vaadin-grid": "^5.2.0-beta2",
+    "@vaadin/vaadin-grid": "^5.2.7",
     "@vaadin/vaadin-icons": "^4.2.1",
-    "@webcomponents/webcomponentsjs": "latest",
+    "@webcomponents/webcomponentsjs": "^2.2.4",
     "buffer": "^5.2.1",
     "express": "^4.16.4",
-    "graphql": "^14.0.2",
+    "graphql": "^14.1.1",
     "iron-lazy-pages": "^3.0.2",
     "log": "^3.2.0",
-    "node-fetch": "^2.2.0",
+    "node-fetch": "^2.3.0",
     "node-port-check": "^2.0.1",
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.1",
     "websocket": "^1.0.28"
   },
   "devDependencies": {
-    "electron": "^3.0.8",
+    "electron": "^3.1.1",
     "electron-packager": "^12.2.0"
   }
 }
