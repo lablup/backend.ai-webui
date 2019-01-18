@@ -23,6 +23,7 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
+import '@vaadin/vaadin-icons/vaadin-icons.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-credential-list.js';
@@ -52,7 +53,9 @@ class BackendAICredentialView extends PolymerElement {
 
   ready() {
     super.ready();
-    this.$['add-keypair'].addEventListener('tap', this._addKeyPair.bind(this));
+    this.$['add-keypair'].addEventListener('tap', this._launchKeyPairDialog.bind(this));
+    this.$['create-button'].addEventListener('tap', this._addKeyPair.bind(this));
+
     document.addEventListener('backend-ai-credential-refresh', () => {
         this.$['active-credential-list'].refresh();
         this.$['inactive-credential-list'].refresh();
@@ -92,8 +95,8 @@ class BackendAICredentialView extends PolymerElement {
         this.$['inactive-credential-list'].visible = true;
     }
   }
-  _newSession() {
-    this.$['new-session-dialog'].open();
+  _launchKeyPairDialog() {
+    this.$['new-keypair-dialog'].open();
   }
 
   _addKeyPair() {
@@ -112,6 +115,13 @@ class BackendAICredentialView extends PolymerElement {
         user_id = window.backendaiclient.email;
     }
     console.log(user_id);
+    // Read resources
+    let cpu_resource = this.$['cpu-resource'].value;
+    let ram_resource = this.$['ram-resource'].value;
+    let gpu_resource = this.$['gpu-resource'].value;
+
+    concurrency_limit = this.$['concurrency-limit'].value;
+    rate_limit = this.$['rate-limit'].value;
 
     //user_id = window.backendaiclient.email;
     let fields = ["access_key", "secret_key"]
@@ -148,7 +158,7 @@ class BackendAICredentialView extends PolymerElement {
   static get template() {
     return html`
     <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
-      paper-button.launch-button {
+      paper-button.create-button {
         width: 100%;
       }
     </style>
@@ -157,13 +167,10 @@ class BackendAICredentialView extends PolymerElement {
         <h4 class="horizontal flex center center-justified layout">
             <span>Active</span>
             <span class="flex"></span>
-            <paper-input type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
-            auto-validate>
-                <paper-button id="add-keypair" slot="suffix" class="fg red">
-                <iron-icon icon="add" class="fg red"></iron-icon>
-                Add
-                </paper-button>
-            </paper-input>
+            <paper-button id="add-keypair" slot="suffix" class="fg red">
+            <iron-icon icon="add" class="fg red"></iron-icon>
+            Add
+            </paper-button>
         </h4>
         <div>
             <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
@@ -172,33 +179,59 @@ class BackendAICredentialView extends PolymerElement {
         <div>
             <backend-ai-credential-list id="inactive-credential-list" condition="inactive"></backend-ai-job-list>
         </div>
-    
     </paper-material>
-    <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+    <paper-dialog id="new-keypair-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-            <h3>Start a new session</h3>
-            <form id="login-form" onSubmit="this._launchSession()">
+            <h3>Create</h3>
+            <form id="login-form" onSubmit="this._addKeyPair()">
                 <fieldset>
-                    <div class="horizontal center layout">
-                    <paper-dropdown-menu label="Environments">
+                <paper-input type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
+                auto-validate></paper-input>
+                <h4>Resource Policy</h4>
+                <div class="horizontal center layout">
+                    <paper-dropdown-menu id="cpu-resource" label="CPU">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>TensorFlow</paper-item>
-                            <paper-item>PyTorch</paper-item>
-                            <paper-item>Python</paper-item>
+                            <paper-item>1</paper-item>
+                            <paper-item>2</paper-item>
+                            <paper-item>3</paper-item>
+                            <paper-item>4</paper-item>
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu label="Version">
+                    <paper-dropdown-menu id="ram-resource" label="RAM">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>Latest</paper-item>
+                            <paper-item>1</paper-item>
                             <paper-item>2</paper-item>
+                            <paper-item>3</paper-item>
+                            <paper-item>4</paper-item>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="gpu-resource" label="GPU">
+                        <paper-listbox slot="dropdown-content" selected="0">
+                            <paper-item>0</paper-item>
+                            <paper-item>0.3</paper-item>
+                            <paper-item>0.6</paper-item>
                             <paper-item>1</paper-item>
                         </paper-listbox>
                     </paper-dropdown-menu>
                     </div>
+                <div class="horizontal center layout">
+                    <paper-dropdown-menu id="concurrency-limit" label="Concurrency Limit">
+                        <paper-listbox slot="dropdown-content" selected="0">
+                            <paper-item>1</paper-item>
+                            <paper-item>2</paper-item>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="rate-limit" label="Rate Limit">
+                        <paper-listbox slot="dropdown-content" selected="0">
+                            <paper-item>1000</paper-item>
+                            <paper-item>2000</paper-item>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                </div>
                     <br /><br />
-                    <paper-button class="blue launch-button" type="submit" id="launch-button">
-                        <iron-icon icon="rowing"></iron-icon>
-                        Launch
+                    <paper-button class="blue create-button" type="submit" id="create-button">
+                        <iron-icon icon="vaadin:key-o"></iron-icon>
+                        Create credential
                     </paper-button>
                 </fieldset>
             </form>
