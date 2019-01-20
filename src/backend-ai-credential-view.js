@@ -4,6 +4,7 @@
 
 import { PolymerElement, html } from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
+import '@polymer/polymer/lib/elements/dom-repeat.js';
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
@@ -37,8 +38,28 @@ class BackendAICredentialView extends PolymerElement {
         visible: {
             type: Boolean,
             value: false
-        }
-    };
+        },
+        cpu_metric: {
+            type: Array,
+            value: [1,2,3,4,8,16]
+        },
+        ram_metric: {
+            type: Array,
+            value: [1,2,4,8,16]
+        },
+        gpu_metric: {
+            type: Array,
+            value: [0,0.3,0.6,1,1.5,2]
+        },
+        rate_metric: {
+            type: Array,
+            value: [1000,2000,3000,4000,5000,10000]
+        },
+        concurrency_metric: {
+            type: Array,
+            value: [1,2,3,4,5,10]
+        },
+    }
   }
   static get is() {
       return 'backend-ai-credential-view';
@@ -191,40 +212,39 @@ class BackendAICredentialView extends PolymerElement {
                 <div class="horizontal center layout">
                     <paper-dropdown-menu id="cpu-resource" label="CPU">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>1</paper-item>
-                            <paper-item>2</paper-item>
-                            <paper-item>3</paper-item>
-                            <paper-item>4</paper-item>
+                        <template is="dom-repeat" items="{{ cpu_metric }}">
+                            <paper-item label="{{item}}">{{ item }}</paper-item>
+                        </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu id="ram-resource" label="RAM">
+                    <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>1</paper-item>
-                            <paper-item>2</paper-item>
-                            <paper-item>3</paper-item>
-                            <paper-item>4</paper-item>
+                        <template is="dom-repeat" items="{{ ram_metric }}">
+                            <paper-item label="{{item}}">{{ item }}</paper-item>
+                        </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
                     <paper-dropdown-menu id="gpu-resource" label="GPU">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>0</paper-item>
-                            <paper-item>0.3</paper-item>
-                            <paper-item>0.6</paper-item>
-                            <paper-item>1</paper-item>
+                        <template is="dom-repeat" items="{{ gpu_metric }}">
+                            <paper-item label="{{item}}">{{ item }}</paper-item>
+                        </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
                     </div>
                 <div class="horizontal center layout">
-                    <paper-dropdown-menu id="concurrency-limit" label="Concurrency Limit">
+                    <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>1</paper-item>
-                            <paper-item>2</paper-item>
+                        <template is="dom-repeat" items="{{ concurrency_metric }}">
+                            <paper-item label="{{item}}">{{ item }}</paper-item>
+                        </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu id="rate-limit" label="Rate Limit">
+                    <paper-dropdown-menu id="rate-limit" label="Rate Limit (for 15 min.)">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <paper-item>1000</paper-item>
-                            <paper-item>2000</paper-item>
+                        <template is="dom-repeat" items="{{ rate_metric }}">
+                            <paper-item label="{{item}}">{{ item }}</paper-item>
+                        </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
                 </div>
