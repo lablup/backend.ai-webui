@@ -231,6 +231,33 @@ class BackendAIJobView extends PolymerElement {
                     <div>
                         <paper-checkbox id="enable-gpu">Use GPU</paper-checkbox>
                     </div>
+                    <h4>Advanced</h4>
+                    <div class="horizontal center layout">
+                        <paper-dropdown-menu id="cpu-resource" label="CPU">
+                            <paper-listbox slot="dropdown-content" selected="0">
+                                <paper-item>1</paper-item>
+                                <paper-item>2</paper-item>
+                                <paper-item>3</paper-item>
+                                <paper-item>4</paper-item>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                        <paper-dropdown-menu id="ram-resource" label="RAM">
+                            <paper-listbox slot="dropdown-content" selected="0">
+                                <paper-item>1</paper-item>
+                                <paper-item>2</paper-item>
+                                <paper-item>3</paper-item>
+                                <paper-item>4</paper-item>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                        <paper-dropdown-menu id="gpu-resource" label="GPU">
+                            <paper-listbox slot="dropdown-content" selected="0">
+                                <paper-item>0</paper-item>
+                                <paper-item>0.3</paper-item>
+                                <paper-item>0.6</paper-item>
+                                <paper-item>1</paper-item>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                    </div>
                     <br />
                     <paper-button class="blue launch-button" type="submit" id="launch-button">
                         <iron-icon icon="rowing"></iron-icon>
