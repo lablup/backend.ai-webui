@@ -79,6 +79,18 @@ class BackendAIJobView extends PolymerElement {
             type: Array,
             /*value: ['TensorFlow','Python', 'PyTorch', 'Chainer', 'R', 'Julia']*/
             value: ['TensorFlow','Python']
+        },
+        cpu_metric: {
+            type: Array,
+            value: [1,2,3,4,8,16]
+        },
+        ram_metric: {
+            type: Array,
+            value: [1,2,4,8,16]
+        },
+        gpu_metric: {
+            type: Array,
+            value: [0,0.3,0.6,1,1.5,2]
         }
     }
   }
@@ -233,30 +245,27 @@ class BackendAIJobView extends PolymerElement {
                     </div>
                     <h4>Advanced</h4>
                     <div class="horizontal center layout">
-                        <paper-dropdown-menu id="cpu-resource" label="CPU">
-                            <paper-listbox slot="dropdown-content" selected="0">
-                                <paper-item>1</paper-item>
-                                <paper-item>2</paper-item>
-                                <paper-item>3</paper-item>
-                                <paper-item>4</paper-item>
-                            </paper-listbox>
-                        </paper-dropdown-menu>
-                        <paper-dropdown-menu id="ram-resource" label="RAM">
-                            <paper-listbox slot="dropdown-content" selected="0">
-                                <paper-item>1</paper-item>
-                                <paper-item>2</paper-item>
-                                <paper-item>3</paper-item>
-                                <paper-item>4</paper-item>
-                            </paper-listbox>
-                        </paper-dropdown-menu>
-                        <paper-dropdown-menu id="gpu-resource" label="GPU">
-                            <paper-listbox slot="dropdown-content" selected="0">
-                                <paper-item>0</paper-item>
-                                <paper-item>0.3</paper-item>
-                                <paper-item>0.6</paper-item>
-                                <paper-item>1</paper-item>
-                            </paper-listbox>
-                        </paper-dropdown-menu>
+                    <paper-dropdown-menu id="cpu-resource" label="CPU">
+                        <paper-listbox slot="dropdown-content" selected="0">
+                        <template is="dom-repeat" items="{{ cpu_metric }}">
+                            <paper-item label="{{item}}">{{ item }}</paper-item>
+                        </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
+                        <paper-listbox slot="dropdown-content" selected="0">
+                        <template is="dom-repeat" items="{{ ram_metric }}">
+                            <paper-item label="{{item}}">{{ item }}</paper-item>
+                        </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="gpu-resource" label="GPU">
+                        <paper-listbox slot="dropdown-content" selected="0">
+                        <template is="dom-repeat" items="{{ gpu_metric }}">
+                            <paper-item label="{{item}}">{{ item }}</paper-item>
+                        </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
                     </div>
                     <br />
                     <paper-button class="blue launch-button" type="submit" id="launch-button">
