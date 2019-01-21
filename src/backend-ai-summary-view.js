@@ -122,6 +122,9 @@ class BackendAISummary extends PolymerElement {
     window.backendaiclient.gql(q, v).then(response => {
       this.jobs = response;
       this.sessions = response.compute_sessions;
+      if (this.visible == true) {
+        setTimeout(()=>{this._refreshSessionInformation()}, 15000);
+      }
     }).catch(err => {
       this.jobs = [];
       this.sessions = [];
@@ -173,9 +176,9 @@ class BackendAISummary extends PolymerElement {
           this.resources.gpu.used = this.resources.gpu.used + value.used_gpu_slots;
         });
         this._sync_resource_values();
-        //if (this.visible == true) {
-        //    setTimeout(()=>{this._loadAgentList(status)}, 5000);
-        //}
+        if (this.visible == true) {
+            setTimeout(()=>{this._refreshAgentInformation(status)}, 15000);
+        }
     }).catch(err => {
         if (err && err.message) {
             this.$.notification.text = err.message;
