@@ -121,14 +121,12 @@ class BackendAIJobList extends PolymerElement {
     }
     _isAppRunning(lang) {
         let support_kernels = [
-            'lablup/python:3.6-ubuntu18.04',
-            'lablup/python-tensorflow:1.10-py36',
-            'lablup/python-tensorflow:1.11-py36',
-            'lablup/python-tensorflow:1.12-py36',
-            'lablup/python-tensorflow:1.11-py36-gpu',
-            'lablup/python-tensorflow:1.12-py36-gpu',
-            'lablup/python-tensorflow:2.0-py36'
+            'python',
+            'python-tensorflow',
+            'ngc-digits',
+            'ngc-tensorflow'
         ];
+        lang = lang.split(':');
         return this.condition === 'running' && support_kernels.includes(lang);
     }
     _byteToMB(value) {
@@ -170,6 +168,7 @@ class BackendAIJobList extends PolymerElement {
             this.$.notification.show();
         });
     }
+
     async _open_wsproxy() {
         if (window.backendaiclient == undefined || window.backendaiclient == null) {
             return false;

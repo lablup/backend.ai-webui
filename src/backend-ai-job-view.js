@@ -56,30 +56,40 @@ class BackendAIJobView extends PolymerElement {
                 'R': ['3'],
                 'Julia': ['1.0']
             }*/
-            value: {
-                'TensorFlow': ['1.12', '1.11'],
-                'Python': ['3.6']
-            }
+            value: {}
         },
         aliases: {
             type: Object,
             value: {
-                'TensorFlow': 'kernel-python-tensorflow',
-                'Python': 'kernel-python',
-                'PyTorch': 'kernel-python-pytorch',
-                'Chainer': 'kernel-chainer',
-                'R': 'kernel-r',
-                'Julia': 'kernel-julia',
+                'TensorFlow': 'python-tensorflow',
+                'Python': 'python',
+                'PyTorch': 'python-pytorch',
+                'Chainer': 'chainer',
+                'R': 'r',
+                'Julia': 'julia',
+                'DIGITS': 'ngc-digits',
+                'NGC TensorFlow': 'ngc-tensorflow',
+                'NGC PyTorch': 'ngc-pytorch',
+                'kernel-python-tensorflow':'TensorFlow',
+                'python-pytorch':'PyTorch',
+                'chainer':'Chainer',
+                'r':'R',
+                'julia':'Julia',
+                'ngc-digits':'DIGITS',
+                'ngc-tensorflow':'NGC TensorFlow (NGC)',
+                'ngc-pytorch':'PyTorch (NGC)',
+                'python-tensorflow':'TensorFlow',
+                'python':'Python',
             }
         },
         versions: {
             type: Array,
-            value: ['1.12']
+            value: ['3.6']
         },
         languages: {
             type: Array,
             /*value: ['TensorFlow','Python', 'PyTorch', 'Chainer', 'R', 'Julia']*/
-            value: ['TensorFlow','Python']
+            value: []
         },
         cpu_metric: {
             type: Array,
@@ -92,6 +102,10 @@ class BackendAIJobView extends PolymerElement {
         gpu_metric: {
             type: Array,
             value: [0,0.3,0.6,1,1.5,2]
+        },
+        images: {
+            type: Object,
+            value: {}
         }
     }
   }
@@ -102,10 +116,19 @@ class BackendAIJobView extends PolymerElement {
     this.$['launch-button'].addEventListener('tap', this._newSession.bind(this));
     this.$['environment'].addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
 
+    document.addEventListener('backend-ai-connected', () => {
+        this._refreshImageList();
+    }, true);
+  
     var cpu_resource = this.$['cpu-resource'];
     this.$['cpu-value'].textContent = cpu_resource.value;
     cpu_resource.addEventListener('value-change', ()=> {
       this.$['cpu-value'].textContent = cpu_resource.value;
+    });
+    var ram_resource = this.$['ram-resource'];
+    this.$['ram-value'].textContent = ram_resource.value;
+    ram_resource.addEventListener('value-change', ()=> {
+      this.$['ram-value'].textContent = ram_resource.value;
     });
     var gpu_resource = this.$['gpu-resource'];
     this.$['gpu-value'].textContent = gpu_resource.value;
@@ -116,11 +139,6 @@ class BackendAIJobView extends PolymerElement {
       } else {
         this.$['use-gpu-checkbox'].checked = false;
       }
-    });
-    var ram_resource = this.$['ram-resource'];
-    this.$['ram-value'].textContent = ram_resource.value;
-    ram_resource.addEventListener('value-change', ()=> {
-      this.$['ram-value'].textContent = ram_resource.value;
     });
   }
 
@@ -160,9 +178,6 @@ class BackendAIJobView extends PolymerElement {
      }
      this.$['running-jobs'].visible = true;
      this.$['finished-jobs'].visible = true;
-     // refresh job view
-      var event = new CustomEvent("backend-ai-job-refresh", { "detail": this });
-      document.dispatchEvent(event);
   }
 
   _launchSessionDialog() {
@@ -170,6 +185,7 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _generateKernelIndex(kernel, version) {
+    return kernel + ':' + version;
     let postfix;
     switch (kernel) {
         case 'TensorFlow':
@@ -198,8 +214,7 @@ class BackendAIJobView extends PolymerElement {
     });
   }
   _updateEnvironment() {
-      this.languages = Object.keys(this.supports);
-      this.versions = this.supports[lang];
+      this.languages = Object.keys(this.supports);      
   }
 
   _updateVersions(lang) {
@@ -215,7 +230,39 @@ class BackendAIJobView extends PolymerElement {
   _supportVersions() {
     let lang = this.$['environment'].value;
     return this.supports[lang];
-}
+  }
+  _refreshImageList() {
+    let fields = ["name", "tag", "hash"];
+    let q, v;
+    q = `query {` +
+        `  images { ${fields.join(" ")} }` +
+        '}';
+    v = {};
+    window.backendaiclient.gql(q, v).then((response) => {
+        this.images = response.images;
+        Object.keys(this.images).map((objectKey, index) => {
+            var item = this.images[objectKey];
+            if (!(item.name in this.supports)) {
+                this.supports[item.name] = [item.tag];
+                if (item.name in this.aliases) {
+                    this.languages.push(this.aliases[item.name]);
+                } else {
+                    this.languages.push(item.name);
+                }
+                console.log(this.languages);
+            } else {
+                this.supports[item.name].push(item.tag);
+            }
+        });
+        this._updateEnvironment();
+    }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
+            this.$.notification.text = err.message;
+            this.$.notification.show();
+        }
+    });
+  }
 
   static get template() {
     return html`
@@ -260,8 +307,8 @@ class BackendAIJobView extends PolymerElement {
                     <div class="horizontal center layout">
                     <paper-dropdown-menu id="environment" label="Environments">
                         <paper-listbox slot="dropdown-content" selected="0">
-                            <template is="dom-repeat" items="{{ languages }}">
-                                <paper-item id="{{ item }}" label="{{item}}">{{ item }}</paper-item>
+                            <template is="dom-repeat" items="[[ languages ]]">
+                                <paper-item id="[[ item ]]" label="[[ item ]]">[[ item ]]</paper-item>
                             </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
