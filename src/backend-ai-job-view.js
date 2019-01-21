@@ -101,6 +101,27 @@ class BackendAIJobView extends PolymerElement {
     this.$['launch-session'].addEventListener('tap', this._launchSessionDialog.bind(this));
     this.$['launch-button'].addEventListener('tap', this._newSession.bind(this));
     this.$['environment'].addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
+
+    var cpu_resource = this.$['cpu-resource'];
+    this.$['cpu-value'].textContent = cpu_resource.value;
+    cpu_resource.addEventListener('value-change', ()=> {
+      this.$['cpu-value'].textContent = cpu_resource.value;
+    });
+    var gpu_resource = this.$['gpu-resource'];
+    this.$['gpu-value'].textContent = gpu_resource.value;
+    gpu_resource.addEventListener('value-change', ()=> {
+      this.$['gpu-value'].textContent = gpu_resource.value;
+      if (gpu_resource.value > 0) {
+        this.$['use-gpu-checkbox'].checked = true;
+      } else {
+        this.$['use-gpu-checkbox'].checked = false;
+      }
+    });
+    var ram_resource = this.$['ram-resource'];
+    this.$['ram-value'].textContent = ram_resource.value;
+    ram_resource.addEventListener('value-change', ()=> {
+      this.$['ram-value'].textContent = ram_resource.value;
+    });
   }
 
   updateLanguage() {
@@ -125,6 +146,7 @@ class BackendAIJobView extends PolymerElement {
       console.log('Path changed!');
     }
   }
+
   _viewChanged(view) {
     console.log('View changed!');
     // load data for view
@@ -201,6 +223,16 @@ class BackendAIJobView extends PolymerElement {
       paper-button.launch-button {
         width: 100%;
       }
+      span.caption {
+        width: 30px;
+        padding-left:10px;
+      }
+      div.caption {
+          width: 100px;
+      }
+      .indicator {
+          font-family: monospace;
+      }
     </style>
     <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
     <paper-material class="item" elevation="1">
@@ -242,22 +274,34 @@ class BackendAIJobView extends PolymerElement {
                     </paper-dropdown-menu>
                     </div>
                     <div>
-                        <paper-checkbox>Use GPU</paper-checkbox>
+                        <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
                     </div>
-                    <h4>Advanced</h4>
+                    <h4>Resource allocation (Working in progress UI)</h4>
                     <div class="horizontal center layout">
                         <span>CPU</span>
-                        <paper-slider id="cpu-resource" pin snaps
-                            min="1" max="8" markers="{{ cpu_metric }}"></paper-slider>
+                        <div class="horizontal end-justified layout caption">
+                            <span class="indicator" id="cpu-value"></span>
+                            <span class="caption">Core</span>
+                        </div>
+                        <paper-slider id="cpu-resource" pin snaps expand
+                        min="1" max="8" value="1" markers="[[ cpu_metric ]]"></paper-slider>
                     </div>
                     <div class="horizontal center layout">
                         <span>RAM</span>
+                        <div class="horizontal end-justified layout caption">
+                            <span class="indicator" id="ram-value"></span>
+                            <span class="caption">GB</span>
+                        </div>
                         <paper-slider id="ram-resource" pin snaps
-                            min="1" max="32" markers="{{ ram_metric }}"></paper-slider>
+                            min="1" max="32" value="4" markers="[[ ram_metric ]]"></paper-slider>
                     </div>
                     <div class="horizontal center layout">
                         <span>GPU</span>
-                        <paper-slider id="gpu-resource" pin snaps
+                        <div class="horizontal end-justified layout caption">
+                            <span class="indicator" id="gpu-value"></span>
+                            <span class="caption">vGPU</span>
+                        </div>
+                        <paper-slider id="gpu-resource" pin snaps step=0.1
                             min="0" max="2" markers="{{ gpu_metric }}"></paper-slider>
                     </div>
                     <br />
