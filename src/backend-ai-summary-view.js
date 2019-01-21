@@ -44,6 +44,10 @@ class BackendAISummary extends PolymerElement {
         type: Boolean,
         value: false
       },
+      resources: {
+        type: Object,
+        value: {}
+      },
       visible: {
         type: Boolean,
         value: false
@@ -61,6 +65,15 @@ class BackendAISummary extends PolymerElement {
   ready() {
     super.ready();
     document.addEventListener('backend-ai-connected', () => {
+      this.resources.cpu = {};
+      this.resources.cpu.total = 0;
+      this.resources.cpu.used = 0;
+      this.resources.mem = {};
+      this.resources.mem.total = 0;
+      this.resources.mem.used = 0;
+      this.resources.gpu = {};
+      this.resources.gpu.total = 0;
+      this.resources.gpu.used = 0;
       this.is_admin = window.backendaiclient.is_admin;
       this._refreshHealthPanel();
     }, true);
@@ -148,11 +161,21 @@ class BackendAISummary extends PolymerElement {
     let v = {'status': status};
 
     window.backendaiclient.gql(q, v).then(response => {
-        this.agents = response;
-        console.log(this.agents);
-        if (this.visible == true) {
-            setTimeout(()=>{this._loadAgentList(status)}, 5000);
-        }
+        this.agents = response.agents;
+        Object.keys(this.agents).map((objectKey, index) => {
+          var value = this.agents[objectKey];
+          console.log(value);
+          this.resources.cpu.total = this.resources.cpu.total + value.cpu_slots;
+          this.resources.cpu.used = this.resources.cpu.used + value.used_cpu_slots;
+          this.resources.mem.total = this.resources.mem.total + value.mem_slots;
+          this.resources.mem.used = this.resources.mem.used + value.used_mem_slots;
+          this.resources.gpu.total = this.resources.gpu.total + value.cpu_slots;
+          this.resources.gpu.used = this.resources.gpu.used + value.used_gpu_slots;
+        });
+        this._sync_resource_values();
+        //if (this.visible == true) {
+        //    setTimeout(()=>{this._loadAgentList(status)}, 5000);
+        //}
     }).catch(err => {
         if (err && err.message) {
             this.$.notification.text = err.message;
@@ -160,6 +183,14 @@ class BackendAISummary extends PolymerElement {
         }
     });
   }  
+  _sync_resource_values() {
+    this.cpu_total = this.resources.cpu.total;
+    this.mem_total = this.resources.mem.total;
+    this.gpu_total = this.resources.gpu.total;
+    this.cpu_used = this.resources.cpu.used;
+    this.mem_used = this.resources.mem.used;
+    this.gpu_used = this.resources.gpu.used;
+  }
   _routeChanged(changeRecord) {
     if (changeRecord.path === 'path') {
       console.log('Path changed!');
@@ -203,7 +234,13 @@ class BackendAISummary extends PolymerElement {
 
           <lablup-activity-panel title="Loads" elevation="1">
             <div slot="message">
-              Collecting statistics now.
+            <template is="dom-if" if="{{is_admin}}">
+            <ul>
+              <li>CPUs: [[cpu_used]]/[[cpu_total]]</li>
+              <li>Memory: [[mem_used]]/[[mem_total]]</li>
+              <li>GPUs: <span>[[gpu_used]]</span>/[[gpu_total]]</li>
+            </ul>
+            </template>
             </div>
           </lablup-activity-panel>
 
