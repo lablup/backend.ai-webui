@@ -166,7 +166,7 @@ class BackendAIAgentList extends PolymerElement {
                 return 'blue';
         };
     }
-    _terminateKernel(e) {
+    _terminateAgent(e) {
         const termButton = e.target;
         const controls = e.target.closest('#controls');
         const kernelId = controls.kernelId;
@@ -290,7 +290,7 @@ class BackendAIAgentList extends PolymerElement {
                           <paper-icon-button disabled class="fg controls-running"
                                              icon="av:pause"></paper-icon-button>
                           <paper-icon-button disabled class="fg red controls-running" icon="delete"
-                                             on-tap="_terminateKernel"></paper-icon-button>
+                                             on-tap="_terminateAgent"></paper-icon-button>
                       </template>
                   </div>
               </template>

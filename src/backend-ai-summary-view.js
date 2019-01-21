@@ -32,6 +32,14 @@ class BackendAISummary extends PolymerElement {
           type: Object,
           value: {}
       },
+      sessions: {
+        type: Object,
+        value: {}
+      },
+      agents: {
+        type: Object,
+        value: {}
+      },
       is_admin: {
         type: Boolean,
         value: false
@@ -72,6 +80,13 @@ class BackendAISummary extends PolymerElement {
   }
 
   _refreshHealthPanel() {
+    this._refreshSessionInformation();
+    if (this.is_admin) {
+      this._refreshAgentInformation();
+    }
+  }
+
+  _refreshSessionInformation() {
     let status = 'RUNNING';
     switch (this.condition) {
         case 'running':
@@ -93,14 +108,58 @@ class BackendAISummary extends PolymerElement {
 
     window.backendaiclient.gql(q, v).then(response => {
       this.jobs = response;
-      console.log(this.jobs);
+      this.sessions = response.compute_sessions;
     }).catch(err => {
       this.jobs = [];
+      this.sessions = [];
       this.$.notification.text = 'Couldn\'t connect to manager.';
       this.$.notification.show();
     });
   }
 
+  _refreshAgentInformation(status = 'running') {
+    switch (this.condition) {
+        case 'running':
+            status = 'ALIVE';
+            break;
+        case 'finished':
+            status = 'TERMINATED';
+            break;
+        case 'archived':
+        default:
+            status = 'ALIVE';
+    };
+    let fields = ['id',
+    'addr',
+    'status',
+    'first_contact',
+    'mem_slots',
+    'cpu_slots',
+    'gpu_slots',
+    'used_mem_slots',
+    'used_cpu_slots',
+    'used_gpu_slots']
+    let q = `query($status: String) {` +
+    `  agents(status: $status) {` +
+    `     ${fields.join(" ")}` +
+    `  }` +
+    `}`;
+
+    let v = {'status': status};
+
+    window.backendaiclient.gql(q, v).then(response => {
+        this.agents = response;
+        console.log(this.agents);
+        if (this.visible == true) {
+            setTimeout(()=>{this._loadAgentList(status)}, 5000);
+        }
+    }).catch(err => {
+        if (err && err.message) {
+            this.$.notification.text = err.message;
+            this.$.notification.show();
+        }
+    });
+  }  
   _routeChanged(changeRecord) {
     if (changeRecord.path === 'path') {
       console.log('Path changed!');
@@ -134,14 +193,17 @@ class BackendAISummary extends PolymerElement {
           <lablup-activity-panel title="Health" elevation="1">
             <div slot="message">
             <ul>
-              <li>Connected agents: [[_countObject(jobs)]]</li>
+              <template is="dom-if" if="{{is_admin}}">
+                <li>Connected agents: [[_countObject(agents)]]</li>
+              </template>
+              <li>Active sessions: [[_countObject(sessions)]]</li>
             </ul>
             </div>
           </lablup-activity-panel>
 
           <lablup-activity-panel title="Loads" elevation="1">
             <div slot="message">
-              DISCONNECTED
+              Collecting statistics now.
             </div>
           </lablup-activity-panel>
 

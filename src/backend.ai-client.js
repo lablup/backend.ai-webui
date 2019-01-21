@@ -25,8 +25,8 @@ var crypto = window.crypto || window.msCrypto;
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
     // fixed configs with this implementation
-    this._apiVersionMajor = 'v2';
-    this._apiVersion = 'v2.20170315';
+    this._apiVersionMajor = 'v4';
+    this._apiVersion = 'v4.20190115';
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
