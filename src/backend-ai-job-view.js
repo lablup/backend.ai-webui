@@ -214,11 +214,13 @@ class BackendAIJobView extends PolymerElement {
     });
   }
   _updateEnvironment() {
-      this.languages = Object.keys(this.supports);      
+      this.languages = Object.keys(this.supports);
+      this.languages.sort();
   }
 
   _updateVersions(lang) {
     this.versions = this.supports[lang];
+    this.versions = this.versions.sort();
     if (this.versions != undefined) {
         this.$.version.value = this.versions[0];
     }
