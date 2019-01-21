@@ -22,8 +22,8 @@ import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
 import '@polymer/paper-slider/paper-slider';
+import '@polymer/paper-item/paper-item';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
 
@@ -180,7 +180,7 @@ class BackendAIJobView extends PolymerElement {
             break;
         case 'Python':
         default:
-            postfix = '-ubuntu';
+            postfix = '-ubuntu18.04';
     }
     return this.aliases[kernel] + ':' + version + postfix;
   }

@@ -121,7 +121,7 @@ class BackendAIJobList extends PolymerElement {
     }
     _isAppRunning(lang) {
         let support_kernels = [
-            'lablup/python:3.6-ubuntu',
+            'lablup/python:3.6-ubuntu18.04',
             'lablup/python-tensorflow:1.10-py36',
             'lablup/python-tensorflow:1.11-py36',
             'lablup/python-tensorflow:1.12-py36',
