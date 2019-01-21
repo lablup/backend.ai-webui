@@ -65,15 +65,7 @@ class BackendAISummary extends PolymerElement {
   ready() {
     super.ready();
     document.addEventListener('backend-ai-connected', () => {
-      this.resources.cpu = {};
-      this.resources.cpu.total = 0;
-      this.resources.cpu.used = 0;
-      this.resources.mem = {};
-      this.resources.mem.total = 0;
-      this.resources.mem.used = 0;
-      this.resources.gpu = {};
-      this.resources.gpu.total = 0;
-      this.resources.gpu.used = 0;
+      this._init_resource_values();
       this.is_admin = window.backendaiclient.is_admin;
       this._refreshHealthPanel();
     }, true);
@@ -165,6 +157,7 @@ class BackendAISummary extends PolymerElement {
 
     window.backendaiclient.gql(q, v).then(response => {
         this.agents = response.agents;
+        this._init_resource_values();
         Object.keys(this.agents).map((objectKey, index) => {
           var value = this.agents[objectKey];
           console.log(value);
@@ -185,7 +178,18 @@ class BackendAISummary extends PolymerElement {
             this.$.notification.show();
         }
     });
-  }  
+  }
+  _init_resource_values() {
+    this.resources.cpu = {};
+    this.resources.cpu.total = 0;
+    this.resources.cpu.used = 0;
+    this.resources.mem = {};
+    this.resources.mem.total = 0;
+    this.resources.mem.used = 0;
+    this.resources.gpu = {};
+    this.resources.gpu.total = 0;
+    this.resources.gpu.used = 0;    
+  }
   _sync_resource_values() {
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = this.resources.mem.total;
