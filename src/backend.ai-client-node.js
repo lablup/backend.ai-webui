@@ -1,9 +1,9 @@
 'use babel';
 /*
-Backend.AI Cloud Javascript API Library (v3.0a1)
-==============================================
+Backend.AI Cloud Javascript API Library (v19.01a1)
+==================================================
 
-(C) Copyright 2016-2018 Lablup Inc.
+(C) Copyright 2016-2019 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -15,10 +15,8 @@ var crypto = require('crypto');
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
     // fixed configs with this implementation
-    //this._apiVersionMajor = 'v3';
-    //this._apiVersion = 'v3.20170615';
     this._apiVersionMajor = 'v4';
-    this._apiVersion = 'v4.20181215';
+    this._apiVersion = 'v4.20190115';
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
