@@ -28,6 +28,7 @@
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
     "@polymer/paper-material": "^3.0.1",
+    "@polymer/paper-slider": "^3.0.1",
     "@polymer/paper-spinner": "^3.0.1",
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/paper-toast": "^3.0.1",

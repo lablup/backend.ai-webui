@@ -23,6 +23,7 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
+import '@polymer/paper-slider/paper-slider';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
 
@@ -241,31 +242,23 @@ class BackendAIJobView extends PolymerElement {
                     </paper-dropdown-menu>
                     </div>
                     <div>
-                        <paper-checkbox id="enable-gpu">Use GPU</paper-checkbox>
+                        <paper-checkbox>Use GPU</paper-checkbox>
                     </div>
                     <h4>Advanced</h4>
                     <div class="horizontal center layout">
-                    <paper-dropdown-menu id="cpu-resource" label="CPU">
-                        <paper-listbox slot="dropdown-content" selected="0">
-                        <template is="dom-repeat" items="{{ cpu_metric }}">
-                            <paper-item label="{{item}}">{{ item }}</paper-item>
-                        </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
-                        <paper-listbox slot="dropdown-content" selected="0">
-                        <template is="dom-repeat" items="{{ ram_metric }}">
-                            <paper-item label="{{item}}">{{ item }}</paper-item>
-                        </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu id="gpu-resource" label="GPU">
-                        <paper-listbox slot="dropdown-content" selected="0">
-                        <template is="dom-repeat" items="{{ gpu_metric }}">
-                            <paper-item label="{{item}}">{{ item }}</paper-item>
-                        </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
+                        <span>CPU</span>
+                        <paper-slider id="cpu-resource" pin snaps
+                            min="1" max="8" markers="{{ cpu_metric }}"></paper-slider>
+                    </div>
+                    <div class="horizontal center layout">
+                        <span>RAM</span>
+                        <paper-slider id="ram-resource" pin snaps
+                            min="1" max="32" markers="{{ ram_metric }}"></paper-slider>
+                    </div>
+                    <div class="horizontal center layout">
+                        <span>GPU</span>
+                        <paper-slider id="gpu-resource" pin snaps
+                            min="0" max="2" markers="{{ gpu_metric }}"></paper-slider>
                     </div>
                     <br />
                     <paper-button class="blue launch-button" type="submit" id="launch-button">
