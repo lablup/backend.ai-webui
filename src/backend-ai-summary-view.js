@@ -223,6 +223,9 @@ class BackendAISummary extends PolymerElement {
       list-style:none;
       font-size:13px;
     }
+    span.indicator {
+      width: 100px;
+    }
     </style>
     <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
     <paper-material class="item" elevation="1" style="padding-bottom:20px;">
@@ -243,14 +246,18 @@ class BackendAISummary extends PolymerElement {
             <div slot="message">
             <template is="dom-if" if="{{is_admin}}">
             <ul>
-              <li>CPUs: [[cpu_used]]/[[cpu_total]]</li>
-              <li>Memory: [[mem_used]]/[[mem_total]]</li>
-              <li>GPUs: <span>[[gpu_used]]</span>/[[gpu_total]]</li>
+              <li><span class="indicator">CPUs:</span> [[cpu_used]]/[[cpu_total]] Cores</li>
+              <li><span class="indicator">Memory:</span> [[mem_used]]/[[mem_total]] MB</li>
+              <li><span class="indicator">GPUs:</span> <span>[[gpu_used]]</span>/[[gpu_total]] vGPUs</li>
+            </ul>
+            </template>
+            <template is="dom-if" if="{{!is_admin}}">
+            <ul>
+              <li>You need an administrator privileges.</li>
             </ul>
             </template>
             </div>
           </lablup-activity-panel>
-
         </div>
         <h3 class="paper-material-title">Actions</h3>
         <div class="horizontal wrap layout">
@@ -267,9 +274,11 @@ class BackendAISummary extends PolymerElement {
         <template is="dom-if" if="{{!is_admin}}">
         <lablup-activity-panel title="No action" elevation="1">
         <div slot="message">
-        No action on user mode yet.
+          <ul>
+            <li>You need an administrator privileges.</li>
+          </ul>
         </div>
-      </lablup-activity-panel>
+        </lablup-activity-panel>
         </template>
       </div>
       </paper-material>
