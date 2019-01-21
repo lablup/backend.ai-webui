@@ -214,8 +214,16 @@ class BackendAIJobView extends PolymerElement {
     });
   }
   _updateEnvironment() {
-      this.languages = Object.keys(this.supports);
-      this.languages.sort();
+      //this.languages = Object.keys(this.supports);
+      //this.languages.sort();
+      let lang = Object.keys(this.supports);
+      lang.sort();
+      this.languages = [];
+      lang.forEach((item, index) => {
+        this.languages.push({
+            name: item,
+            alias: this.aliases[item]});
+      });
   }
 
   _updateVersions(lang) {
@@ -310,7 +318,7 @@ class BackendAIJobView extends PolymerElement {
                     <paper-dropdown-menu id="environment" label="Environments">
                         <paper-listbox slot="dropdown-content" selected="0">
                             <template is="dom-repeat" items="[[ languages ]]">
-                                <paper-item id="[[ item ]]" label="[[ item ]]">[[ item ]]</paper-item>
+                                <paper-item id="[[ item.name ]]" label="[[ item.name ]]">[[ item.alias ]]</paper-item>
                             </template>
                         </paper-listbox>
                     </paper-dropdown-menu>

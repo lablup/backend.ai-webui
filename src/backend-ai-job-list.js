@@ -120,13 +120,14 @@ class BackendAIJobList extends PolymerElement {
         return this.condition === 'running';
     }
     _isAppRunning(lang) {
+        if (this.condition != 'running') return false;
         let support_kernels = [
             'python',
             'python-tensorflow',
             'ngc-digits',
             'ngc-tensorflow'
         ];
-        lang = lang.split(':');
+        lang = lang.split('/')[1].split(':')[0];
         return this.condition === 'running' && support_kernels.includes(lang);
     }
     _byteToMB(value) {
