@@ -41,8 +41,10 @@ var crypto = require('crypto');
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
     // fixed configs with this implementation
-    this._apiVersionMajor = 'v3';
-    this._apiVersion = 'v3.20170615';
+    //this._apiVersionMajor = 'v3';
+    //this._apiVersion = 'v3.20170615';
+    this._apiVersionMajor = 'v4';
+    this._apiVersion = 'v4.20181215';
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
@@ -304,7 +306,13 @@ class Client {
       requestBody = JSON.stringify(body);
     }
     //queryString = '/' + this._config.apiVersionMajor + queryString;
-    let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody);
+    let aStr;
+    if (this._config._apiVersion[1] < 4) {
+      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody);
+    } else {
+      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '');
+    }
+
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = new Headers({
       "Content-Type": "application/json",
@@ -352,7 +360,6 @@ class Client {
     };
     return requestInfo;
   }
-
 
   getAuthenticationString(method, queryString, dateValue, bodyValue) {
     let bodyHash = crypto.createHash(this._config.hashType)
