@@ -104,8 +104,14 @@ class BackendAIJobList extends PolymerElement {
         }
         window.backendaiclient.gql(q, v).then(response => {
             this.jobs = response;
+            let refreshTime;
             if (this.visible == true) {
-                setTimeout(() => { this._refreshJobData(status) }, 5000);
+                if (this.condition === 'running') {
+                    refreshTime = 5000;
+                } else {
+                    refreshTime = 15000;
+                }
+                setTimeout(() => { this._refreshJobData(status) }, refreshTime);
             }
             console.log(this.jobs);
         }).catch(err => {
