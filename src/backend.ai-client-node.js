@@ -15,8 +15,10 @@ var crypto = require('crypto');
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
     // fixed configs with this implementation
-    this._apiVersionMajor = 'v3';
-    this._apiVersion = 'v3.20170615';
+    //this._apiVersionMajor = 'v3';
+    //this._apiVersion = 'v3.20170615';
+    this._apiVersionMajor = 'v4';
+    this._apiVersion = 'v4.20190115';
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
@@ -278,7 +280,12 @@ class Client {
       requestBody = JSON.stringify(body);
     }
     //queryString = '/' + this._config.apiVersionMajor + queryString;
-    let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody);
+    if (this._config._apiVersion[1] < 4) {
+      let aStr = this.getAuthenticationString_v3(method, queryString, d.toISOString(), requestBody);
+    } else {
+      let aStr = this.getAuthenticationString(method, queryString, d.toISOString());
+    }
+
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = new Headers({
       "Content-Type": "application/json",
@@ -327,8 +334,7 @@ class Client {
     return requestInfo;
   }
 
-
-  getAuthenticationString(method, queryString, dateValue, bodyValue) {
+  getAuthenticationString_v3(method, queryString, dateValue, bodyValue) {
     let bodyHash = crypto.createHash(this._config.hashType)
                    .update(bodyValue).digest('hex');
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
@@ -337,6 +343,14 @@ class Client {
             + 'x-backendai-version:' + this._config.apiVersion + '\n'
             + bodyHash);
   }
+
+  getAuthenticationString(method, queryString, dateValue) {
+    return (method + '\n' + queryString + '\n' + dateValue + '\n'
+            + 'host:' + this._config.endpointHost + '\n'
+            + 'content-type:application/json' + '\n'
+            + 'x-backendai-version:' + this._config.apiVersion);
+  }
+
 
   getCurrentDate(now) {
     let year = (`0000${now.getUTCFullYear()}`).slice(-4);
