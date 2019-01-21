@@ -153,14 +153,37 @@ class Client {
    *
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
+   * @param {object} resources - Per-session resource
    */
-  createIfNotExists(kernelType, sessionId) {
+  createIfNotExists(kernelType, sessionId, resources = {}) {
     if (sessionId === undefined)
       sessionId = this.generateSessionId();
     let params = {
       "lang": kernelType,
       "clientSessionToken": sessionId,
     };
+    if (resources != {}) {
+      let config = {};
+      if (resources['cpu']) {
+        config['instanceCores'] = resources['cpu'];
+      }
+      if (resources['mem']) {
+        config['instanceMemory'] = resources['mem'];
+      }
+      if (resources['gpu']) {
+        config['instanceGPUs'] = resources['gpu'];
+      }
+      if (resources['tpu']) {
+        config['instanceTPUs'] = resources['tpu'];
+      }
+      if (resources['env']) {
+        config['environ'] = resources['env'];
+      }
+      if (resources['clustersize']) {
+        config['clusterSize'] = resources['clustersize'];
+      }
+      params['config'] = config;
+    }
     let rqst = this.newSignedRequest('POST', '/kernel/create', params);
     return this._wrapWithPromise(rqst);
   }
@@ -219,8 +242,8 @@ class Client {
   }
 
   // legacy aliases
-  createKernel(kernelType) {
-    return this.createIfNotExists(kernelType);
+  createKernel(kernelType, sessionId = undefined, resources = {}) {
+    return this.createIfNotExists(kernelType, sessionId, resources);
   }
 
   destroyKernel(kernelId) {

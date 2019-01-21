@@ -204,11 +204,17 @@ class BackendAIJobView extends PolymerElement {
   _newSession() {
     let kernel = this.$['environment'].value;
     let version = this.$['version'].value;
+    let config = {};
+    config['cpu'] = this.$['cpu-resource'].value;
+    config['gpu'] = this.$['gpu-resource'].value;
+    config['mem'] = this.$['ram-resource'].value;
+    console.log(config);
     console.log(kernel);
     console.log(version);
     let kernelName = this._generateKernelIndex(kernel, version);
     console.log(kernelName);
-    window.backendaiclient.createKernel(kernelName).then((req) => {
+
+    window.backendaiclient.createKernel(kernelName, undefined, config).then((req) => {
         this.$['running-jobs'].refreshList();
         this.$['new-session-dialog'].close();
     });

@@ -179,14 +179,37 @@ class Client {
    *
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
+   * @param {object} resources - Per-session resource
    */
-  createIfNotExists(kernelType, sessionId) {
+  createIfNotExists(kernelType, sessionId, resources = {}) {
     if (sessionId === undefined)
       sessionId = this.generateSessionId();
     let params = {
       "lang": kernelType,
       "clientSessionToken": sessionId,
     };
+    if (resources != {}) {
+      let config = {};
+      if (resources['cpu']) {
+        config['instanceCores'] = resources['cpu'];
+      }
+      if (resources['mem']) {
+        config['instanceMemory'] = resources['mem'];
+      }
+      if (resources['gpu']) {
+        config['instanceGPUs'] = resources['gpu'];
+      }
+      if (resources['tpu']) {
+        config['instanceTPUs'] = resources['tpu'];
+      }
+      if (resources['env']) {
+        config['environ'] = resources['env'];
+      }
+      if (resources['clustersize']) {
+        config['clusterSize'] = resources['clustersize'];
+      }
+      params['config'] = config;
+    }
     let rqst = this.newSignedRequest('POST', '/kernel/create', params);
     return this._wrapWithPromise(rqst);
   }
@@ -245,8 +268,8 @@ class Client {
   }
 
   // legacy aliases
-  createKernel(kernelType) {
-    return this.createIfNotExists(kernelType);
+  createKernel(kernelType, sessionId = undefined, resources = {}) {
+    return this.createIfNotExists(kernelType, sessionId, resources);
   }
 
   destroyKernel(kernelId) {
@@ -17930,8 +17953,7 @@ var AttributeTypeValue = asn.define('AttributeTypeValue', function () {
 var AlgorithmIdentifier = asn.define('AlgorithmIdentifier', function () {
   this.seq().obj(
     this.key('algorithm').objid(),
-    this.key('parameters').optional(),
-    this.key('curve').objid().optional()
+    this.key('parameters').optional()
   )
 })
 
@@ -17973,7 +17995,7 @@ var Extension = asn.define('Extension', function () {
 
 var TBSCertificate = asn.define('TBSCertificate', function () {
   this.seq().obj(
-    this.key('version').explicit(0).int().optional(),
+    this.key('version').explicit(0).int(),
     this.key('serialNumber').int(),
     this.key('signature').use(AlgorithmIdentifier),
     this.key('issuer').use(Name),
@@ -18031,12 +18053,12 @@ module.exports = function (okey, password) {
 
 }).call(this,require("buffer").Buffer)
 },{"browserify-aes":23,"buffer":50,"evp_bytestokey":86}],112:[function(require,module,exports){
+(function (Buffer){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
 var ciphers = require('browserify-aes')
 var compat = require('pbkdf2')
-var Buffer = require('safe-buffer').Buffer
 module.exports = parseKeys
 
 function parseKeys (buffer) {
@@ -18046,7 +18068,7 @@ function parseKeys (buffer) {
     buffer = buffer.key
   }
   if (typeof buffer === 'string') {
-    buffer = Buffer.from(buffer)
+    buffer = new Buffer(buffer)
   }
 
   var stripped = fixProc(buffer, password)
@@ -18131,7 +18153,7 @@ function decrypt (data, password) {
   var iv = data.algorithm.decrypt.cipher.iv
   var cipherText = data.subjectPrivateKey
   var keylen = parseInt(algo.split('-')[1], 10) / 8
-  var key = compat.pbkdf2Sync(password, salt, iters, keylen, 'sha1')
+  var key = compat.pbkdf2Sync(password, salt, iters, keylen)
   var cipher = ciphers.createDecipheriv(algo, key, iv)
   var out = []
   out.push(cipher.update(cipherText))
@@ -18139,7 +18161,8 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":108,"./asn1":109,"./fixProc":111,"browserify-aes":23,"pbkdf2":113,"safe-buffer":144}],113:[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+},{"./aesid.json":108,"./asn1":109,"./fixProc":111,"browserify-aes":23,"buffer":50,"pbkdf2":113}],113:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
