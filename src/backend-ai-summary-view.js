@@ -165,7 +165,7 @@ class BackendAISummary extends PolymerElement {
           this.resources.cpu.used = this.resources.cpu.used + value.used_cpu_slots;
           this.resources.mem.total = this.resources.mem.total + value.mem_slots;
           this.resources.mem.used = this.resources.mem.used + value.used_mem_slots;
-          this.resources.gpu.total = this.resources.gpu.total + value.cpu_slots;
+          this.resources.gpu.total = this.resources.gpu.total + value.gpu_slots;
           this.resources.gpu.used = this.resources.gpu.used + value.used_gpu_slots;
         });
         this._sync_resource_values();
