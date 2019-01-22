@@ -108,10 +108,11 @@ class BackendAIJobList extends PolymerElement {
             if (this.visible == true) {
                 if (this.condition === 'running') {
                     refreshTime = 5000;
+                    setTimeout(() => { this._refreshJobData(status) }, refreshTime);
                 } else {
                     refreshTime = 15000;
                 }
-                setTimeout(() => { this._refreshJobData(status) }, refreshTime);
+                //setTimeout(() => { this._refreshJobData(status) }, refreshTime);
             }
             console.log(this.jobs);
         }).catch(err => {

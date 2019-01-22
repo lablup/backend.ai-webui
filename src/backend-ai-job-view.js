@@ -68,18 +68,8 @@ class BackendAIJobView extends PolymerElement {
                 'R': 'r',
                 'Julia': 'julia',
                 'DIGITS': 'ngc-digits',
-                'NGC TensorFlow': 'ngc-tensorflow',
-                'NGC PyTorch': 'ngc-pytorch',
-                'kernel-python-tensorflow':'TensorFlow',
-                'python-pytorch':'PyTorch',
-                'chainer':'Chainer',
-                'r':'R',
-                'julia':'Julia',
-                'ngc-digits':'DIGITS',
-                'ngc-tensorflow':'NGC TensorFlow (NGC)',
-                'ngc-pytorch':'PyTorch (NGC)',
-                'python-tensorflow':'TensorFlow',
-                'python':'Python',
+                'TensorFlow (NGC)': 'ngc-tensorflow',
+                'PyTorch (NGC)': 'ngc-pytorch',
             }
         },
         versions: {
@@ -88,7 +78,6 @@ class BackendAIJobView extends PolymerElement {
         },
         languages: {
             type: Array,
-            /*value: ['TensorFlow','Python', 'PyTorch', 'Chainer', 'R', 'Julia']*/
             value: []
         },
         cpu_metric: {
@@ -115,7 +104,7 @@ class BackendAIJobView extends PolymerElement {
     this.$['launch-session'].addEventListener('tap', this._launchSessionDialog.bind(this));
     this.$['launch-button'].addEventListener('tap', this._newSession.bind(this));
     this.$['environment'].addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
-
+    this._initAliases();
     document.addEventListener('backend-ai-connected', () => {
         this._refreshImageList();
     }, true);
@@ -144,6 +133,14 @@ class BackendAIJobView extends PolymerElement {
 
   updateLanguage() {
       this._updateVersions(this.$['environment'].selectedItemLabel);
+  }
+
+  _initAliases() {
+    for (let item in this.aliases) {
+        this.aliases[this.aliases[item]] = item;
+    }
+    console.log("asdasdasdsad");
+    console.log(this.aliases);
   }
 
   connectedCallback() {
@@ -233,7 +230,7 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _updateVersions(lang) {
-    this.versions = this.supports[lang];
+    this.versions = this.supports[this.aliases[lang]];
     this.versions = this.versions.sort();
     if (this.versions != undefined) {
         this.$.version.value = this.versions[0];
@@ -324,7 +321,7 @@ class BackendAIJobView extends PolymerElement {
                     <paper-dropdown-menu id="environment" label="Environments">
                         <paper-listbox slot="dropdown-content" selected="0">
                             <template is="dom-repeat" items="[[ languages ]]">
-                                <paper-item id="[[ item.name ]]" label="[[ item.name ]]">[[ item.alias ]]</paper-item>
+                                <paper-item id="[[ item.name ]]" label="[[ item.alias ]]">[[ item.alias ]]</paper-item>
                             </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
