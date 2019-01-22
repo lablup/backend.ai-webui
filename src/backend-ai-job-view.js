@@ -182,20 +182,10 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _generateKernelIndex(kernel, version) {
-    return kernel + ':' + version;
-    let postfix;
-    switch (kernel) {
-        case 'TensorFlow':
-            postfix = '-py36';
-            if (this.$['enable-gpu'].checked) {
-                postfix = postfix + '-gpu';
-            }
-            break;
-        case 'Python':
-        default:
-            postfix = '-ubuntu18.04';
+    if (kernel in this.aliases) {
+        return this.aliases[kernel] + ':' + version;
     }
-    return this.aliases[kernel] + ':' + version + postfix;
+    return kernel + ':' + version;
   }
 
   _newSession() {
@@ -205,9 +195,6 @@ class BackendAIJobView extends PolymerElement {
     config['cpu'] = this.$['cpu-resource'].value;
     config['gpu'] = this.$['gpu-resource'].value;
     config['mem'] = this.$['ram-resource'].value;
-    console.log(config);
-    console.log(kernel);
-    console.log(version);
     let kernelName = this._generateKernelIndex(kernel, version);
     console.log(kernelName);
 
