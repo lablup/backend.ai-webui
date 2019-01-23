@@ -1,6 +1,6 @@
-# backend.ai-web-console
+# backend.ai-console
 
-Web-based Backend.AI GUI console.
+Backend.AI GUI console. Supports both app / web mode.
 
  * Administration mode
  * User mode
