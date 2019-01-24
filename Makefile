@@ -13,6 +13,10 @@ test:
 	cp ./wsproxy/package.json build/electron-app/package.json
 	cd build/electron-app; npm install --only=prod
 	cp ./main.electron-packager.js ./build/electron-app/main.js
+web:
+	node ./node_modules/polymer-cli/bin/polymer.js serve --npm
+proxy:
+	node ./wsproxy/local_proxy.js
 all: dep mac win
 dep:
 	polymer build

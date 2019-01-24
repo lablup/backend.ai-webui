@@ -7,7 +7,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager ."
+    "build": "electron-packager .",
+    "test": "node ./wsproxy/local_proxy.js && node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
   },
   "dependencies": {
     "@polymer/app-layout": "^3.0.2",
@@ -32,7 +33,7 @@
     "@polymer/paper-spinner": "^3.0.1",
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/paper-toast": "^3.0.1",
-    "@polymer/polymer": "latest",
+    "@polymer/polymer": "^3.1.0",
     "@vaadin/vaadin-grid": "^5.2.7",
     "@vaadin/vaadin-icons": "^4.2.1",
     "@webcomponents/webcomponentsjs": "^2.2.4",
@@ -49,6 +50,7 @@
   },
   "devDependencies": {
     "electron": "^3.1.1",
-    "electron-packager": "^12.2.0"
+    "electron-packager": "^12.2.0",
+    "polymer-cli": "^1.9.5"
   }
 }
