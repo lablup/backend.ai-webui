@@ -11,6 +11,8 @@ Licensed under MIT
 var fetch = require('node-fetch');
 var Headers = fetch.Headers;
 var crypto = require('crypto');
+var FormData = require('form-data');
+
 
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
@@ -258,6 +260,13 @@ class Client {
     return this.execute(kernelId, runId, mode, code, {});
   }
 
+  upload(sessionId, path, fs) {
+    const formData = new FormData();
+    formData.append('src', fs, {filepath: path});
+    let rqst = this.newSignedRequest('POST', `/kernel/${sessionId}/upload`, formData)
+    return this._wrapWithPromise(rqst);
+  }
+
   mangleUserAgentSignature() {
     let uaSig = this.clientVersion
                 + (this.agentSignature ? ('; ' + this.agentSignature) : '');
@@ -292,31 +301,44 @@ class Client {
    * @param {string} body - an object that will be encoded as JSON in the request body
    */
   newSignedRequest(method, queryString, body) {
+    let content_type = "application/json";
     let requestBody;
+    let authBody;
     let d = new Date();
     let signKey = this.getSignKey(this._config.secretKey, d);
     if (body === null || body === undefined) {
       requestBody = '';
+      authBody = requestBody;
+    } else if (typeof body.getBoundary === 'function') {
+      // detect form data input from form-data module
+      requestBody = body;
+      authBody = '';
+      content_type = "multipart/form-data";
     } else {
       requestBody = JSON.stringify(body);
+      authBody = requestBody;
     }
     //queryString = '/' + this._config.apiVersionMajor + queryString;
     let aStr;
     if (this._config._apiVersion[1] < 4) {
-      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody);
+      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), authBody, content_type);
     } else {
-      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '');
+      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
     }
 
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = new Headers({
-      "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(requestBody),
+      "Content-Type": content_type,
       "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
       "X-BackendAI-Version": this._config.apiVersion,
       "X-BackendAI-Date": d.toISOString(),
       "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
     });
+    if (typeof body.getBoundary === 'function') {
+      rqst.headers.set('Content-Type', body.getHeaders()['content-type']);
+    } else {
+      rqst.headers.set('Content-Length', Buffer.byteLength(authBody)
+    }
 
     let requestInfo = {
       method: method,
@@ -356,12 +378,12 @@ class Client {
     return requestInfo;
   }
 
-  getAuthenticationString(method, queryString, dateValue, bodyValue) {
+  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type) {
     let bodyHash = crypto.createHash(this._config.hashType)
                    .update(bodyValue).digest('hex');
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
             + 'host:' + this._config.endpointHost + '\n'
-            + 'content-type:application/json' + '\n'
+            + 'content-type:' + content_type + '\n'
             + 'x-backendai-version:' + this._config.apiVersion + '\n'
             + bodyHash);
   }
