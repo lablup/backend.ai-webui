@@ -140,8 +140,6 @@ class BackendAIJobView extends PolymerElement {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
     }
-    console.log("asdasdasdsad");
-    console.log(this.aliases);
   }
 
   connectedCallback() {

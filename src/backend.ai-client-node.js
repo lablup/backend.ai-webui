@@ -91,6 +91,7 @@ class Client {
     } else {
       this._config = config;
     }
+    this.vfolder = new VFolder(this);
   }
 
   async _wrapWithPromise(rqst) {
@@ -106,7 +107,7 @@ class Client {
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
       if (contentType.startsWith('application/json') ||
-          contentType.startsWith('application/problem+json')) {
+        contentType.startsWith('application/problem+json')) {
         body = await resp.json();
       } else if (contentType.startsWith('text/')) {
         body = await resp.text();
@@ -122,16 +123,16 @@ class Client {
       }
     } catch (err) {
       switch (errorType) {
-      case Client.ERR_REQUEST:
-        errorMsg = `sending request has failed: ${err}`;
-        break;
-      case Client.ERR_RESPONSE:
-        errorMsg = `reading response has failed: ${err}`;
-        break;
-      case Client.ERR_SERVER:
-        errorMsg = 'server responded failure: '
-                   + `${resp.status} ${resp.statusText} - ${body.title}`;
-        break;
+        case Client.ERR_REQUEST:
+          errorMsg = `sending request has failed: ${err}`;
+          break;
+        case Client.ERR_RESPONSE:
+          errorMsg = `reading response has failed: ${err}`;
+          break;
+        case Client.ERR_SERVER:
+          errorMsg = 'server responded failure: '
+            + `${resp.status} ${resp.statusText} - ${body.title}`;
+          break;
       }
       throw {
         type: errorType,
@@ -269,9 +270,10 @@ class Client {
 
   mangleUserAgentSignature() {
     let uaSig = this.clientVersion
-                + (this.agentSignature ? ('; ' + this.agentSignature) : '');
+      + (this.agentSignature ? ('; ' + this.agentSignature) : '');
     return uaSig;
   }
+
   /* GraphQL requests */
   gql(q, v) {
     let query = {
@@ -280,16 +282,6 @@ class Client {
     }
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
     return this._wrapWithPromise(rqst);
-  }
-  test_gql() {
-    let status = 'RUNNING';
-    let fields = ["sess_id","lang","created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
-    let q = `query($ak:String, $status:String) {`+
-    `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }`+
-    '}';
-    let v = {'status': 'RUNNING', 'ak': this._config.accessKey};
-    var a = this.gql(q, v);
-    console.log(a);
   }
 
   /**
@@ -334,10 +326,12 @@ class Client {
       "X-BackendAI-Date": d.toISOString(),
       "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
     });
-    if (typeof body.getBoundary === 'function') {
-      hdrs.set('Content-Type', body.getHeaders()['content-type']);
-    } else {
-      hdrs.set('Content-Length', Buffer.byteLength(authBody));
+    if (body != undefined) {
+      if (typeof body.getBoundary === 'function') {
+        hdrs.set('Content-Type', body.getHeaders()['content-type']);
+      } else {
+        hdrs.set('Content-Length', Buffer.byteLength(authBody));
+      }
     }
 
     let requestInfo = {
@@ -380,12 +374,12 @@ class Client {
 
   getAuthenticationString(method, queryString, dateValue, bodyValue, content_type) {
     let bodyHash = crypto.createHash(this._config.hashType)
-                   .update(bodyValue).digest('hex');
+      .update(bodyValue).digest('hex');
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
-            + 'host:' + this._config.endpointHost + '\n'
-            + 'content-type:' + content_type + '\n'
-            + 'x-backendai-version:' + this._config.apiVersion + '\n'
-            + bodyHash);
+      + 'host:' + this._config.endpointHost + '\n'
+      + 'content-type:' + content_type + '\n'
+      + 'x-backendai-version:' + this._config.apiVersion + '\n'
+      + bodyHash);
   }
 
   getCurrentDate(now) {
@@ -413,29 +407,40 @@ class Client {
     var text = "backend-ai-SDK-js-";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 8; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
   }
 }
 
+class VFolder{
+  constructor(client) {
+    this.client = client;
+  }
+  list() {
+    let rqst = this.client.newSignedRequest('GET', `/folders`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+
 // below will become "static const" properties in ES7
 Object.defineProperty(Client, 'ERR_SERVER', {
-    value: 0,
-    writable: false,
-    enumerable: true,
-    configurable: false
+  value: 0,
+  writable: false,
+  enumerable: true,
+  configurable: false
 });
 Object.defineProperty(Client, 'ERR_RESPONSE', {
-    value: 1,
-    writable: false,
-    enumerable: true,
-    configurable: false
+  value: 1,
+  writable: false,
+  enumerable: true,
+  configurable: false
 });
 Object.defineProperty(Client, 'ERR_REQUEST', {
-    value: 2,
-    writable: false,
-    enumerable: true,
-    configurable: false
+  value: 2,
+  writable: false,
+  enumerable: true,
+  configurable: false
 });
 
 const backend = {
