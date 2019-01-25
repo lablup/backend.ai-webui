@@ -442,14 +442,61 @@ class Client {
   }
 }
 
-class VFolder{
-  constructor(client) {
+class VFolder {
+  constructor(client, name = null) {
     this.client = client;
+    this.name = name;
   }
+
   list() {
     let rqst = this.client.newSignedRequest('GET', `/folders`, null);
     return this.client._wrapWithPromise(rqst);
   }
+
+  info(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('GET', `/folders/${name}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  delete(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('DELETE', `/folders/${name}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  upload() {
+
+  }
+
+  mkdir(path, name = null) {
+  }
+
+  delete_files(files, name = null) {
+  }
+
+  download(files, show_progress = false) {
+  }
+
+  list_files(path, name = null) {
+  }
+
+  invite(perm, emails, name = null) {
+  }
+
+  invitations(path, name = null) {
+  }
+
+  accept_invitation(inv_id, inv_ak) {
+  }
+
+  delete_invitation(inv_id) {
+  }
+
 }
 
 
