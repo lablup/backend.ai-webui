@@ -30,6 +30,10 @@ class BackendAIData extends PolymerElement {
         type: Object,
         value: {}
       },
+      folderInfo: {
+        type: Object,
+        value: {}
+      },
       is_admin: {
         type: Boolean,
         value: false
@@ -107,6 +111,13 @@ class BackendAIData extends PolymerElement {
     this.$['add-folder-dialog'].open();
   }
 
+  openDialog(id) {
+    this.$[id].open();
+  }
+  closeDialog(id) {
+    this.$[id].close();
+  }
+
   _indexFrom1(index) {
     return index + 1;
   }
@@ -120,20 +131,29 @@ class BackendAIData extends PolymerElement {
   _addFolder() {
 
   }
-
-  _deleteFolder(e) {
+  _getControlId(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
-    const folderId = controls.folderId;
+    return controls.folderId;
+  }
+
+  _infoFolder(e) {
+    const folderId = this._getControlId(e);
     let job = window.backendaiclient.vfolder.info(folderId);
-    //let job = window.backendaiclient.vfolder.delete(folderId);
+    job.then((value) => {
+      this.folderInfo = value;
+      this.openDialog('info-folder-dialog');
+      console.log(value);
+    });
+  }
+  _deleteFolder(e) {
+    const folderId = this._getControlId(e);
+    let job = window.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
       console.log(value);
       this._refreshFolderList();
     });
-
   }
-
   static get template() {
     // language=HTML
     return html`
@@ -225,9 +245,9 @@ class BackendAIData extends PolymerElement {
             <template class="header">Control</template>
             <template>
               <div id="controls" class="layout horizontal flex center"
-                   folder-id="[[item.id]]">
-                <paper-icon-button disabled class="fg"
-                                   icon="assignment"></paper-icon-button>
+                   folder-id="[[item.name]]">
+                <paper-icon-button class="fg green controls-running" icon="vaadin:info-circle-o"
+                on-tap="_infoFolder"></paper-icon-button>
                 <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'w')]]">
@@ -255,7 +275,26 @@ class BackendAIData extends PolymerElement {
           </form>
         </paper-material>
       </paper-dialog>
-    `;
+      <paper-dialog id="info-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center justified layout">
+            <span>Folder information</span>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
+          <ul>
+            <li>[[folderInfo.name]]</li>
+            <li>[[folderInfo.id]]</li>
+            <li>[[folderInfo.is_owner]]</li>
+            <li>[[folderInfo.host]]</li>
+            <li>[[folderInfo.numFiles]]</li>
+            <li>[[folderInfo.permission]]</li>
+          </ul>
+        </paper-material>
+      </paper-dialog>
+      `;
   }
 }
 

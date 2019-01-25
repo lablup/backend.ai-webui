@@ -89,10 +89,10 @@ class BackendAiWebConsole extends PolymerElement {
       this.is_connected = true;
       if (window.backendaiclient != undefined && window.backendaiclient != null && window.backendaiclient.is_admin != undefined && window.backendaiclient.is_admin == true) {
         this.is_admin = true;
-        this._viewChanged(this.route);
       } else {
         this.is_admin = false;
       }
+      this._viewChanged(this.route);
       this._refreshUserInfoPanel();
     });
   }
@@ -267,7 +267,7 @@ class BackendAiWebConsole extends PolymerElement {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">GUI Console (Alpha)</small>
-                <small class="sidebar-footer" style="font-size:9px;">0.7.20190118</small>
+                <small class="sidebar-footer" style="font-size:9px;">0.8.20190125</small>
               </address>
             </div>
           </app-header-layout>
