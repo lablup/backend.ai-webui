@@ -138,7 +138,7 @@ class BackendAIData extends PolymerElement {
       <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
         vaadin-grid {
           border: 0;
-          font-size: 14px;
+          font-size: 12px;
         }
 
         ul {
@@ -157,7 +157,6 @@ class BackendAIData extends PolymerElement {
         paper-button.add-button {
           width: 100%;
         }
-
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
