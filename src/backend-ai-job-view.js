@@ -107,19 +107,8 @@ class BackendAIJobView extends PolymerElement {
     this.$['environment'].addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this._initAliases();
     document.addEventListener('backend-ai-connected', () => {
-      this._refreshImageList();
     }, true);
 
-    var cpu_resource = this.$['cpu-resource'];
-    this.$['cpu-value'].textContent = cpu_resource.value;
-    cpu_resource.addEventListener('value-change', () => {
-      this.$['cpu-value'].textContent = cpu_resource.value;
-    });
-    var ram_resource = this.$['ram-resource'];
-    this.$['ram-value'].textContent = ram_resource.value;
-    ram_resource.addEventListener('value-change', () => {
-      this.$['ram-value'].textContent = ram_resource.value;
-    });
     var gpu_resource = this.$['gpu-resource'];
     this.$['gpu-value'].textContent = gpu_resource.value;
     gpu_resource.addEventListener('value-change', () => {
@@ -175,6 +164,30 @@ class BackendAIJobView extends PolymerElement {
     }
     this.$['running-jobs'].visible = true;
     this.$['finished-jobs'].visible = true;
+    // If disconnected
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._refreshResourceValues();
+      }, true);
+    } else { // already connected
+        this._refreshResourceValues();
+    }
+  }
+
+  _refreshResourceValues() {
+    this._refreshImageList();
+    var cpu_resource = this.$['cpu-resource'];
+    this.$['cpu-value'].textContent = cpu_resource.value;
+    cpu_resource.addEventListener('value-change', () => {
+      this.$['cpu-value'].textContent = cpu_resource.value;
+    });
+    var ram_resource = this.$['ram-resource'];
+    this.$['ram-value'].textContent = ram_resource.value;
+    ram_resource.addEventListener('value-change', () => {
+      this.$['ram-value'].textContent = ram_resource.value;
+    });
+    var gpu_resource = this.$['gpu-resource'];
+    this.$['gpu-value'].textContent = gpu_resource.value;
   }
 
   _launchSessionDialog() {

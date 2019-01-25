@@ -412,12 +412,30 @@ class Client {
   }
 }
 
-class VFolder{
-  constructor(client) {
+class VFolder {
+  constructor(client, name = null) {
     this.client = client;
+    this.name = name;
   }
+
   list() {
     let rqst = this.client.newSignedRequest('GET', `/folders`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  info(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('GET', `/folders/${name}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  delete(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('DELETE', `/folders/${name}`, null);
     return this.client._wrapWithPromise(rqst);
   }
 }
