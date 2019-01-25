@@ -129,7 +129,20 @@ class BackendAIData extends PolymerElement {
     return false;
   }
   _addFolder() {
-
+    let name = this.$['add-folder-name'].value;
+    let job = window.backendaiclient.vfolder.create(name);
+    job.then((value) => {
+      this.$.notification.text = 'Virtual folder is successfully created.';
+      this.$.notification.show();
+      this._refreshFolderList();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+    this.closeDialog('add-folder-dialog');
   }
   _getControlId(e) {
     const termButton = e.target;
@@ -144,14 +157,27 @@ class BackendAIData extends PolymerElement {
       this.folderInfo = value;
       this.openDialog('info-folder-dialog');
       console.log(value);
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
     });
   }
   _deleteFolder(e) {
     const folderId = this._getControlId(e);
     let job = window.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
-      console.log(value);
+      this.$.notification.text = 'Virtual folder is successfully deleted.';
+      this.$.notification.show();
       this._refreshFolderList();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
     });
   }
   static get template() {
@@ -266,6 +292,10 @@ class BackendAIData extends PolymerElement {
           <h3>Create a new virtual folder</h3>
           <form id="login-form" onSubmit="this._addFolder()">
             <fieldset>
+              <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" 
+                error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+              <paper-input id="add-folder-host" label="Host" pattern="[a-zA-Z0-9_-]*" disabled 
+              error-message="Allows letters, numbers and -_." auto-validate value="local"></paper-input>
               <br/>
               <paper-button class="blue add-button" type="submit" id="add-button">
                 <iron-icon icon="rowing"></iron-icon>

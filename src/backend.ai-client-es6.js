@@ -443,9 +443,19 @@ class Client {
 }
 
 class VFolder {
+  // https://github.com/lablup/backend.ai-client-py/blob/master/src/ai/backend/client/vfolder.py
+
   constructor(client, name = null) {
     this.client = client;
     this.name = name;
+  }
+  create(name, host = null) {
+    let body = {
+      'name': name,
+      'host': host
+    };
+    let rqst = this.client.newSignedRequest('POST', `/folders`, body);
+    return this.client._wrapWithPromise(rqst);
   }
 
   list() {

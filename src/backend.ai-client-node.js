@@ -419,6 +419,14 @@ class VFolder {
     this.client = client;
     this.name = name;
   }
+  create(name, host = null) {
+    let body = {
+      'name': name,
+      'host': host
+    };
+    let rqst = this.client.newSignedRequest('POST', `/folders`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
 
   list() {
     let rqst = this.client.newSignedRequest('GET', `/folders`, null);
