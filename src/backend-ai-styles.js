@@ -2,8 +2,9 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/paper-styles/color.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-const template = html `
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+
+const template = html`
 <dom-module id="backend-ai-styles">
     <template>
         <style is="custom-style" include="iron-flex iron-flex-alignment iron-positioning">

@@ -33,6 +33,7 @@ class BackendAiLogin extends PolymerElement {
   static get is() {
     return 'backend-ai-login';
   }
+
   static get properties() {
     return {
       api_key: {
@@ -52,9 +53,11 @@ class BackendAiLogin extends PolymerElement {
       }
     };
   }
+
   _getStoredKeys(key) {
     return '';
   }
+
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -74,9 +77,9 @@ class BackendAiLogin extends PolymerElement {
   }
 
   login() {
-    this.api_key =  JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
-    this.secret_key =  JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
-    this.api_endpoint =  JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
+    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
+    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
+    this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
 
     console.log(this.api_key);
     if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
@@ -86,12 +89,14 @@ class BackendAiLogin extends PolymerElement {
       this.open();
     }
   }
+
   _validate_data(value) {
     if (value != undefined && value != null && value != '') {
       return true;
     }
     return false;
   }
+
   _login() {
     this.api_key = this.$['id_api_key'].value;
     this.secret_key = this.$['id_secret_key'].value;
@@ -99,6 +104,7 @@ class BackendAiLogin extends PolymerElement {
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this._connect();
   }
+
   _connect() {
     console.log(ai);
     this.clientConfig = new ai.backend.ClientConfig(
@@ -125,7 +131,7 @@ class BackendAiLogin extends PolymerElement {
       window.backendaiclient.email = this.email;
       window.backendaiclient.is_admin = is_admin;
       console.log(window.backendaiclient.email);
-      var event = new CustomEvent("backend-ai-connected", { "detail": this.client });
+      var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
     }).catch(err => {   // Connection failed
@@ -140,60 +146,67 @@ class BackendAiLogin extends PolymerElement {
       }
     });
   }
+
   static get template() {
-    return html `
-<style is="custom-style" include="backend-ai-styles">
-  paper-icon-button {
-    --paper-icon-button-ink-color: white;
-  }
+    // language=HTML
+    return html`
+      <style is="custom-style" include="backend-ai-styles">
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
 
-  app-drawer-layout:not([narrow]) [drawer-toggle] {
-    display: none;
-  }
-  fieldset input {
-    width: 100%;
-    border: 0;
-    border-bottom: 1px solid #aaa;
-    margin: 15px 0;
-    font: inherit;
-    font-size: 16px;
-    outline: none;
-  }
-  fieldset input:focus {
-    border-bottom: 1.5px solid #0d47a1;
-  }
-  paper-button {
-    width: 100%;
-  }
-</style>
-<app-localstorage-document key="backendaiconsole.email" data="{{email}}"></app-localstorage-document>
-<app-localstorage-document id="storage" key="backendaiconsole.api_key" data="{{api_key}}"></app-localstorage-document>
-<app-localstorage-document key="backendaiconsole.secret_key" data="{{secret_key}}"></app-localstorage-document>
-<app-localstorage-document key="backendaiconsole.api_endpoint" data="{{api_endpoint}}"></app-localstorage-document>
+        app-drawer-layout:not([narrow]) [drawer-toggle] {
+          display: none;
+        }
 
-<paper-dialog id="login-panel"
-              entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
-  <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-  <h3>Console login</h3>
-  <form id="login-form" onSubmit="this._login()">
-  <fieldset>
-    <input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
-           placeholder="API Key" value="{{api_key}}" />
-    <input type="password" name="secret_key" id="id_secret_key"
-           placeholder="Secret Key" value="{{secret_key}}" />
-    <input type="text" name="api_endpoint" id="id_api_endpoint"
-    placeholder="API Endpoint"  value="{{api_endpoint}}"/>
-    <br /><br />
-    <paper-button dialog-confirm class="blue" type="submit" id="login-button">
-      <iron-icon icon="check"></iron-icon>
-      Login
-    </paper-button>
-  </fieldset>
-  </form>
-  </paper-material>
-</paper-dialog>
-<paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-  `;
+        fieldset input {
+          width: 100%;
+          border: 0;
+          border-bottom: 1px solid #aaa;
+          margin: 15px 0;
+          font: inherit;
+          font-size: 16px;
+          outline: none;
+        }
+
+        fieldset input:focus {
+          border-bottom: 1.5px solid #0d47a1;
+        }
+
+        paper-button {
+          width: 100%;
+        }
+      </style>
+      <app-localstorage-document key="backendaiconsole.email" data="{{email}}"></app-localstorage-document>
+      <app-localstorage-document id="storage" key="backendaiconsole.api_key"
+                                 data="{{api_key}}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.secret_key" data="{{secret_key}}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.api_endpoint"
+                                 data="{{api_endpoint}}"></app-localstorage-document>
+
+      <paper-dialog id="login-panel"
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3>Console login</h3>
+          <form id="login-form" onSubmit="this._login()">
+            <fieldset>
+              <input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
+                     placeholder="API Key" value="{{api_key}}"/>
+              <input type="password" name="secret_key" id="id_secret_key"
+                     placeholder="Secret Key" value="{{secret_key}}"/>
+              <input type="text" name="api_endpoint" id="id_api_endpoint"
+                     placeholder="API Endpoint" value="{{api_endpoint}}"/>
+              <br/><br/>
+              <paper-button dialog-confirm class="blue" type="submit" id="login-button">
+                <iron-icon icon="check"></iron-icon>
+                Login
+              </paper-button>
+            </fieldset>
+          </form>
+        </paper-material>
+      </paper-dialog>
+      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+    `;
   }
 }
 

@@ -1,11 +1,11 @@
 /**
-@license
-Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import { PolymerElement, html } from '@polymer/polymer';
+import {PolymerElement, html} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
-import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings';
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
@@ -29,8 +29,8 @@ class BackendAISummary extends PolymerElement {
         default: 'running'  // finished, running, archived
       },
       jobs: {
-          type: Object,
-          value: {}
+        type: Object,
+        value: {}
       },
       sessions: {
         type: Object,
@@ -75,6 +75,7 @@ class BackendAISummary extends PolymerElement {
       this._refreshHealthPanel();
     }, true);
   }
+
   static get observers() {
     return [
       '_routeChanged(route.*)',
@@ -83,6 +84,7 @@ class BackendAISummary extends PolymerElement {
       '_menuChanged(visible)'
     ]
   }
+
   connectedCallback() {
     super.connectedCallback();
     afterNextRender(this, function () {
@@ -99,28 +101,31 @@ class BackendAISummary extends PolymerElement {
   _refreshSessionInformation() {
     let status = 'RUNNING';
     switch (this.condition) {
-        case 'running':
-            status = 'RUNNING';
-            break;
-        case 'finished':
-            status = 'TERMINATED';
-            break;
-        case 'archived':
-        default:
-            status = 'RUNNING';
-    };
+      case 'running':
+        status = 'RUNNING';
+        break;
+      case 'finished':
+        status = 'TERMINATED';
+        break;
+      case 'archived':
+      default:
+        status = 'RUNNING';
+    }
+    ;
 
     let fields = ["sess_id"];
-    let q = `query($status:String) {`+
-    `  compute_sessions(status:$status) { ${fields.join(" ")} }`+
-    '}';
+    let q = `query($status:String) {` +
+      `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
+      '}';
     let v = {'status': status};
 
     window.backendaiclient.gql(q, v).then(response => {
       this.jobs = response;
       this.sessions = response.compute_sessions;
       if (this.visible == true) {
-        setTimeout(()=>{this._refreshSessionInformation()}, 15000);
+        setTimeout(() => {
+          this._refreshSessionInformation()
+        }, 15000);
       }
     }).catch(err => {
       this.jobs = [];
@@ -132,58 +137,62 @@ class BackendAISummary extends PolymerElement {
 
   _refreshAgentInformation(status = 'running') {
     switch (this.condition) {
-        case 'running':
-            status = 'ALIVE';
-            break;
-        case 'finished':
-            status = 'TERMINATED';
-            break;
-        case 'archived':
-        default:
-            status = 'ALIVE';
-    };
+      case 'running':
+        status = 'ALIVE';
+        break;
+      case 'finished':
+        status = 'TERMINATED';
+        break;
+      case 'archived':
+      default:
+        status = 'ALIVE';
+    }
+    ;
     let fields = ['id',
-    'addr',
-    'status',
-    'first_contact',
-    'mem_slots',
-    'cpu_slots',
-    'gpu_slots',
-    'used_mem_slots',
-    'used_cpu_slots',
-    'used_gpu_slots']
+      'addr',
+      'status',
+      'first_contact',
+      'mem_slots',
+      'cpu_slots',
+      'gpu_slots',
+      'used_mem_slots',
+      'used_cpu_slots',
+      'used_gpu_slots']
     let q = `query($status: String) {` +
-    `  agents(status: $status) {` +
-    `     ${fields.join(" ")}` +
-    `  }` +
-    `}`;
+      `  agents(status: $status) {` +
+      `     ${fields.join(" ")}` +
+      `  }` +
+      `}`;
 
     let v = {'status': status};
 
     window.backendaiclient.gql(q, v).then(response => {
-        this.agents = response.agents;
-        this._init_resource_values();
-        Object.keys(this.agents).map((objectKey, index) => {
-          var value = this.agents[objectKey];
-          console.log(value);
-          this.resources.cpu.total = this.resources.cpu.total + value.cpu_slots;
-          this.resources.cpu.used = this.resources.cpu.used + value.used_cpu_slots;
-          this.resources.mem.total = this.resources.mem.total + value.mem_slots;
-          this.resources.mem.used = this.resources.mem.used + value.used_mem_slots;
-          this.resources.gpu.total = this.resources.gpu.total + value.gpu_slots;
-          this.resources.gpu.used = this.resources.gpu.used + value.used_gpu_slots;
-        });
-        this._sync_resource_values();
-        if (this.visible == true) {
-            setTimeout(()=>{this._refreshAgentInformation(status)}, 15000);
-        }
+      this.agents = response.agents;
+      this._init_resource_values();
+      Object.keys(this.agents).map((objectKey, index) => {
+        var value = this.agents[objectKey];
+        console.log(value);
+        this.resources.cpu.total = this.resources.cpu.total + value.cpu_slots;
+        this.resources.cpu.used = this.resources.cpu.used + value.used_cpu_slots;
+        this.resources.mem.total = this.resources.mem.total + value.mem_slots;
+        this.resources.mem.used = this.resources.mem.used + value.used_mem_slots;
+        this.resources.gpu.total = this.resources.gpu.total + value.gpu_slots;
+        this.resources.gpu.used = this.resources.gpu.used + value.used_gpu_slots;
+      });
+      this._sync_resource_values();
+      if (this.visible == true) {
+        setTimeout(() => {
+          this._refreshAgentInformation(status)
+        }, 15000);
+      }
     }).catch(err => {
-        if (err && err.message) {
-            this.$.notification.text = err.message;
-            this.$.notification.show();
-        }
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
     });
   }
+
   _init_resource_values() {
     this.resources.cpu = {};
     this.resources.cpu.total = 0;
@@ -193,8 +202,9 @@ class BackendAISummary extends PolymerElement {
     this.resources.mem.used = 0;
     this.resources.gpu = {};
     this.resources.gpu.total = 0;
-    this.resources.gpu.used = 0;    
+    this.resources.gpu.used = 0;
   }
+
   _sync_resource_values() {
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = this.resources.mem.total;
@@ -203,89 +213,98 @@ class BackendAISummary extends PolymerElement {
     this.mem_used = this.resources.mem.used;
     this.gpu_used = this.resources.gpu.used;
   }
+
   _routeChanged(changeRecord) {
     if (changeRecord.path === 'path') {
       console.log('Path changed!');
     }
   }
+
   _viewChanged(view) {
     // load data for view
   }
+
   _menuChanged(visible) {
-    if(!visible) { return; }
+    if (!visible) {
+      return;
+    }
   }
+
   _countObject(obj) {
-    return Object.keys(obj).length;    
+    return Object.keys(obj).length;
   }
 
   static get template() {
+    // language=HTML
     return html`
-    <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
-    ul {
-      padding-left: 0;
-    }
-    ul li {
-      list-style:none;
-      font-size:13px;
-    }
-    span.indicator {
-      width: 100px;
-    }
-    </style>
-    <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-    <paper-material class="item" elevation="1" style="padding-bottom:20px;">
+      <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
+        ul {
+          padding-left: 0;
+        }
+
+        ul li {
+          list-style: none;
+          font-size: 13px;
+        }
+
+        span.indicator {
+          width: 100px;
+        }
+      </style>
+      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="paper-material-title">Statistics</h3>
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="Health" elevation="1">
             <div slot="message">
-            <ul>
-              <template is="dom-if" if="{{is_admin}}">
-                <li>Connected agents: [[_countObject(agents)]]</li>
-              </template>
-              <li>Active sessions: [[_countObject(sessions)]]</li>
-            </ul>
+              <ul>
+                <template is="dom-if" if="{{is_admin}}">
+                  <li>Connected agents: [[_countObject(agents)]]</li>
+                </template>
+                <li>Active sessions: [[_countObject(sessions)]]</li>
+              </ul>
             </div>
           </lablup-activity-panel>
 
           <lablup-activity-panel title="Loads" elevation="1">
             <div slot="message">
-            <template is="dom-if" if="{{is_admin}}">
-            <ul>
-              <li><span class="indicator">CPUs:</span> [[cpu_used]]/[[cpu_total]] Cores</li>
-              <li><span class="indicator">Memory:</span> [[mem_used]]/[[mem_total]] MB</li>
-              <li><span class="indicator">GPUs:</span> <span>[[gpu_used]]</span>/[[gpu_total]] vGPUs</li>
-            </ul>
-            </template>
-            <template is="dom-if" if="{{!is_admin}}">
-            <ul>
-              <li>Login with administrator privileges required.</li>
-            </ul>
-            </template>
+              <template is="dom-if" if="{{is_admin}}">
+                <ul>
+                  <li><span class="indicator">CPUs:</span> [[cpu_used]]/[[cpu_total]] Cores</li>
+                  <li><span class="indicator">Memory:</span> [[mem_used]]/[[mem_total]] MB</li>
+                  <li><span class="indicator">GPUs:</span> <span>[[gpu_used]]</span>/[[gpu_total]] vGPUs</li>
+                </ul>
+              </template>
+              <template is="dom-if" if="{{!is_admin}}">
+                <ul>
+                  <li>Login with administrator privileges required.</li>
+                </ul>
+              </template>
             </div>
           </lablup-activity-panel>
         </div>
         <h3 class="paper-material-title">Actions</h3>
         <div class="horizontal wrap layout">
-        <template is="dom-if" if="{{is_admin}}">
-          <lablup-activity-panel title="Keypair" elevation="1">
-          <div slot="message">
-            <ul>
-              <li><a href="/credential">Create a new key pair</a></li>
-              <li><a href="/credential">Maintain keypairs</a></li>
-            </ul>
-          </div>
-        </lablup-activity-panel>
-        </template>
-        <template is="dom-if" if="{{!authenticated}}">
-        <lablup-activity-panel title="No action" elevation="1">
-        <div slot="message">
-          <ul>
-            <li>You need an administrator privileges.</li>
-          </ul>
+          <template is="dom-if" if="{{is_admin}}">
+            <lablup-activity-panel title="Keypair" elevation="1">
+              <div slot="message">
+                <ul>
+                  <li><a href="/credential">Create a new key pair</a></li>
+                  <li><a href="/credential">Maintain keypairs</a></li>
+                </ul>
+              </div>
+            </lablup-activity-panel>
+          </template>
+          <template is="dom-if" if="{{!authenticated}}">
+            <lablup-activity-panel title="No action" elevation="1">
+              <div slot="message">
+                <ul>
+                  <li>You need an administrator privileges.</li>
+                </ul>
+              </div>
+            </lablup-activity-panel>
+          </template>
         </div>
-        </lablup-activity-panel>
-        </template>
-      </div>
       </paper-material>
     `;
   }
