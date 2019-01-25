@@ -119,6 +119,11 @@ class BackendAIData extends PolymerElement {
     // language=HTML
     return html`
       <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+        }
+
         ul {
           padding-left: 0;
         }
@@ -175,21 +180,21 @@ class BackendAIData extends PolymerElement {
           </vaadin-grid-column>
 
 
-          <vaadin-grid-column width="80px" flex-grow="0" resizable>
+          <vaadin-grid-column width="85px" flex-grow="0" resizable>
             <template class="header">Permission</template>
             <template>
-              <div>
+              <div class="horizontal center-justified wrap layout">
                 <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
                   <lablup-shields app="" color="green"
-                                  description="Read" ui="flat"></lablup-shields>
+                                  description="R" ui="flat"></lablup-shields>
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'w')]]">
                   <lablup-shields app="" color="blue"
-                                  description="Write" ui="flat"></lablup-shields>
+                                  description="W" ui="flat"></lablup-shields>
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
                   <lablup-shields app="" color="red"
-                                  description="Delete" ui="flat"></lablup-shields>
+                                  description="D" ui="flat"></lablup-shields>
                 </template>
               </div>
             </template>
