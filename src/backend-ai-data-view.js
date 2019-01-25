@@ -172,6 +172,7 @@ class BackendAIData extends PolymerElement {
   }
   _deleteFolderDialog(e) {
     this.deleteFolderId = this._getControlId(e);
+    this.$['delete-folder-name'].value = '';
     this.openDialog('delete-folder-dialog');
   }
   _deleteFolderWithCheck() {
@@ -308,9 +309,14 @@ class BackendAIData extends PolymerElement {
           </vaadin-grid-column>
         </vaadin-grid>
       </paper-material>
-      <paper-dialog id="add-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-dialog id="add-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Create a new virtual folder</h3>
+          <h3 class="horizontal center layout">
+            <span>Create a new virtual folder</span>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
           <form id="login-form" onSubmit="this._addFolder()">
             <fieldset>
               <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" 
@@ -328,7 +334,12 @@ class BackendAIData extends PolymerElement {
       </paper-dialog>
       <paper-dialog id="delete-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Delete a virtual folder</h3>
+          <h3 class="horizontal center layout">
+            <span>Delete a virtual folder</span>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
           <div class="warning">WARNING: this cannot be undone!</div>
           <form id="login-form" onSubmit="this._addFolder()">
             <fieldset>
@@ -345,9 +356,8 @@ class BackendAIData extends PolymerElement {
       </paper-dialog>
       <paper-dialog id="info-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center justified layout">
+          <h3 class="horizontal center layout">
             <span>Folder information</span>
-            <div class="flex"></div>
             <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
               Close
             </paper-icon-button>
