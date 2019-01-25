@@ -81,7 +81,6 @@ class BackendAIData extends PolymerElement {
     let l = window.backendaiclient.vfolder.list();
     l.then((value) => {
       this.folders = value;
-      console.log(this.folders);
     });
   }
 
@@ -122,7 +121,14 @@ class BackendAIData extends PolymerElement {
 
   }
 
-  _deleteFolder() {
+  _deleteFolder(e) {
+    const termButton = e.target;
+    const controls = e.target.closest('#controls');
+    const folderId = controls.folderId;
+    let job = window.backendaiclient.vfolder.delete(folderId);
+    job.then((value) => {
+      this._refreshFolderList();
+    });
 
   }
 
@@ -218,7 +224,7 @@ class BackendAIData extends PolymerElement {
             <template class="header">Control</template>
             <template>
               <div id="controls" class="layout horizontal flex center"
-                   kernel-id="[[item.sess_id]]">
+                   folder-id="[[item.id]]">
                 <paper-icon-button disabled class="fg"
                                    icon="assignment"></paper-icon-button>
                 <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
