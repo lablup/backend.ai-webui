@@ -125,8 +125,10 @@ class BackendAIData extends PolymerElement {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const folderId = controls.folderId;
-    let job = window.backendaiclient.vfolder.delete(folderId);
+    let job = window.backendaiclient.vfolder.info(folderId);
+    //let job = window.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
+      console.log(value);
       this._refreshFolderList();
     });
 

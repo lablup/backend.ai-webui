@@ -89,6 +89,7 @@ class BackendAiWebConsole extends PolymerElement {
       this.is_connected = true;
       if (window.backendaiclient != undefined && window.backendaiclient != null && window.backendaiclient.is_admin != undefined && window.backendaiclient.is_admin == true) {
         this.is_admin = true;
+        this._viewChanged(this.route);
       } else {
         this.is_admin = false;
       }
