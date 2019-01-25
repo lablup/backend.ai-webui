@@ -337,7 +337,7 @@ class Client {
     if (typeof body.getBoundary === 'function') {
       rqst.headers.set('Content-Type', body.getHeaders()['content-type']);
     } else {
-      rqst.headers.set('Content-Length', Buffer.byteLength(authBody);
+      rqst.headers.set('Content-Length', Buffer.byteLength(authBody));
     }
 
     let requestInfo = {
