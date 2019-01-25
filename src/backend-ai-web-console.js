@@ -37,6 +37,7 @@ import './backend-ai-summary-view.js';
 import './backend-ai-job-view';
 import './backend-ai-credential-view';
 import './backend-ai-agent-view';
+import './backend-ai-data-view';
 
 class BackendAiWebConsole extends PolymerElement {
   static get properties() {
@@ -112,7 +113,7 @@ class BackendAiWebConsole extends PolymerElement {
   }
   _viewChanged(view) {
     // load data for view
-    if (['summary','job','agent','credential'].includes(view) != true) { // Fallback for Windows OS
+    if (['summary','job','agent','credential','data'].includes(view) != true) { // Fallback for Windows OS
       view = this.route.path.split(/[\/]+/).pop();
       this.routeData.view = view;
       this.route.path = '/'+view;
@@ -141,6 +142,14 @@ class BackendAiWebConsole extends PolymerElement {
           this.$['sidebar-menu'].selected = 3;
         } else {
           this.$['sidebar-menu'].selected = 2;
+        }
+        break;
+      case 'data':
+        this.menuTitle = 'Data';
+        if (this.is_admin) {
+          this.$['sidebar-menu'].selected = 5;
+        } else {
+          this.$['sidebar-menu'].selected = 4;
         }
         break;
       default:
@@ -225,10 +234,12 @@ class BackendAiWebConsole extends PolymerElement {
           <iron-icon icon="icons:pageview"></iron-icon>
           Experiments
         </paper-item>
-        <paper-item disabled>
-          <iron-icon icon="vaadin:folder-open-o"></iron-icon>
-          Data
-        </paper-item>
+        <a href="/data" tabindex="-1">
+          <paper-item link>
+            <iron-icon class="fg red" icon="vaadin:folder-open-o"></iron-icon>
+                Data
+          </paper-item>
+        </a>
         <paper-item disabled>
           <iron-icon icon="icons:assessment"></iron-icon>
           Statistics
@@ -279,6 +290,7 @@ class BackendAiWebConsole extends PolymerElement {
           <backend-ai-job-view name="job" route="{{subroute}}" data-path='src/backend-ai-job-view.js'></backend-ai-job-view>
           <backend-ai-credential-view name="credential" route="{{subroute}}" data-path='src/backend-ai-credential-view.js'></backend-ai-credential-view>
           <backend-ai-agent-view name="agent" route="{{subroute}}" data-path='src/backend-ai-agent-view.js'></backend-ai-agent-view>
+          <backend-ai-data-view name="data" route="{{subroute}}" data-path='src/backend-ai-data-view.js'></backend-ai-data-view>
         </iron-pages>
       </section>
       <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">

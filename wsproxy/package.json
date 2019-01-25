@@ -7,7 +7,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager ."
+    "build": "electron-packager .",
+    "test": "node ./local_proxy.js"
   },
   "dependencies": {
     "buffer": "^5.2.1",
