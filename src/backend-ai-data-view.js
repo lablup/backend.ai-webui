@@ -60,7 +60,7 @@ class BackendAIData extends PolymerElement {
       this._refreshFolderList();
     }, true);
     this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
-
+    this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
   }
 
   static get observers() {
@@ -117,6 +117,9 @@ class BackendAIData extends PolymerElement {
       return true;
     }
     return false;
+  }
+  _addFolder() {
+
   }
 
   _deleteFolder() {
