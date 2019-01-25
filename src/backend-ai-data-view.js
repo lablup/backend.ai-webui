@@ -113,12 +113,15 @@ class BackendAIData extends PolymerElement {
   }
 
   _addFolderDialog() {
-    this.$['add-folder-dialog'].open();
+    this.openDialog('add-folder-dialog');
   }
 
   openDialog(id) {
+    var body = document.querySelector('body');
+    body.appendChild(this.$[id]);
     this.$[id].open();
   }
+
   closeDialog(id) {
     this.$[id].close();
   }
