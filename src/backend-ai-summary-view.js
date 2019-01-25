@@ -48,6 +48,10 @@ class BackendAISummary extends PolymerElement {
         type: Object,
         value: {}
       },
+      authenticated: {
+        type: Boolean,
+        value: false
+      },
       visible: {
         type: Boolean,
         value: false
@@ -67,6 +71,7 @@ class BackendAISummary extends PolymerElement {
     document.addEventListener('backend-ai-connected', () => {
       this._init_resource_values();
       this.is_admin = window.backendaiclient.is_admin;
+      this.authenticated = true;
       this._refreshHealthPanel();
     }, true);
   }
@@ -253,7 +258,7 @@ class BackendAISummary extends PolymerElement {
             </template>
             <template is="dom-if" if="{{!is_admin}}">
             <ul>
-              <li>You need an administrator privileges.</li>
+              <li>Login with administrator privileges required.</li>
             </ul>
             </template>
             </div>
@@ -271,7 +276,7 @@ class BackendAISummary extends PolymerElement {
           </div>
         </lablup-activity-panel>
         </template>
-        <template is="dom-if" if="{{!is_admin}}">
+        <template is="dom-if" if="{{!authenticated}}">
         <lablup-activity-panel title="No action" elevation="1">
         <div slot="message">
           <ul>

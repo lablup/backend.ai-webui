@@ -365,9 +365,9 @@ class Client {
       "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
     });
     if (typeof body.getBoundary === 'function') {
-      rqst.headers.set('Content-Type', body.getHeaders()['content-type']);
+      hdrs.set('Content-Type', body.getHeaders()['content-type']);
     } else {
-      rqst.headers.set('Content-Length', Buffer.byteLength(authBody));
+      hdrs.set('Content-Length', Buffer.byteLength(authBody));
     }
 
     let requestInfo = {
