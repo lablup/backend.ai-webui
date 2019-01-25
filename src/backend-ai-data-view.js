@@ -16,6 +16,7 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-toast/paper-toast';
+import '@polymer/paper-dialog/paper-dialog';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 
 import './backend-ai-styles.js';
@@ -58,6 +59,8 @@ class BackendAIData extends PolymerElement {
       this.authenticated = true;
       this._refreshFolderList();
     }, true);
+    this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
+
   }
 
   static get observers() {
@@ -101,6 +104,10 @@ class BackendAIData extends PolymerElement {
     return Object.keys(obj).length;
   }
 
+  _addFolderDialog() {
+    this.$['add-folder-dialog'].open();
+  }
+
   _indexFrom1(index) {
     return index + 1;
   }
@@ -111,6 +118,7 @@ class BackendAIData extends PolymerElement {
     }
     return false;
   }
+
   _deleteFolder() {
 
   }
@@ -136,6 +144,11 @@ class BackendAIData extends PolymerElement {
         span.indicator {
           width: 100px;
         }
+
+        paper-button.add-button {
+          width: 100%;
+        }
+
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
@@ -171,14 +184,13 @@ class BackendAIData extends PolymerElement {
           </vaadin-grid-column>
 
           <vaadin-grid-column resizable>
-            <template class="header">Host</template>
+            <template class="header">Location</template>
             <template>
               <div class="layout vertical">
                 <span>[[item.host]]</span>
               </div>
             </template>
           </vaadin-grid-column>
-
 
           <vaadin-grid-column width="85px" flex-grow="0" resizable>
             <template class="header">Permission</template>
@@ -218,9 +230,21 @@ class BackendAIData extends PolymerElement {
             </template>
           </vaadin-grid-column>
         </vaadin-grid>
-
-
       </paper-material>
+      <paper-dialog id="add-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3>Create a new virtual folder</h3>
+          <form id="login-form" onSubmit="this._addFolder()">
+            <fieldset>
+              <br/>
+              <paper-button class="blue add-button" type="submit" id="add-button">
+                <iron-icon icon="rowing"></iron-icon>
+                Create
+              </paper-button>
+            </fieldset>
+          </form>
+        </paper-material>
+      </paper-dialog>
     `;
   }
 }
