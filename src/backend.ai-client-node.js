@@ -438,6 +438,35 @@ class VFolder {
     let rqst = this.client.newSignedRequest('DELETE', `/folders/${name}`, null);
     return this.client._wrapWithPromise(rqst);
   }
+
+  upload() {
+
+  }
+
+  mkdir(path, name = null) {
+  }
+
+  delete_files(files, name = null) {
+  }
+
+  download(files, show_progress = false) {
+  }
+
+  list_files(path, name = null) {
+  }
+
+  invite(perm, emails, name = null) {
+  }
+
+  invitations(path, name = null) {
+  }
+
+  accept_invitation(inv_id, inv_ak) {
+  }
+
+  delete_invitation(inv_id) {
+  }
+
 }
 
 
