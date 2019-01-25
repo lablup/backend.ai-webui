@@ -42,6 +42,10 @@ class BackendAIData extends PolymerElement {
         type: Boolean,
         value: false
       },
+      deleteFolderId: {
+        type: String,
+        value: ''
+      },
       visible: {
         type: Boolean,
         value: false
@@ -65,6 +69,7 @@ class BackendAIData extends PolymerElement {
     }, true);
     this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
     this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
+    this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
   }
 
   static get observers() {
@@ -165,8 +170,21 @@ class BackendAIData extends PolymerElement {
       }
     });
   }
-  _deleteFolder(e) {
-    const folderId = this._getControlId(e);
+  _deleteFolderDialog(e) {
+    this.deleteFolderId = this._getControlId(e);
+    this.openDialog('delete-folder-dialog');
+  }
+  _deleteFolderWithCheck() {
+    let typedDeleteFolderName = this.$['delete-folder-name'].value;
+    if (typedDeleteFolderName != this.deleteFolderId) {
+      this.$.notification.text = 'Folder name mismatched. Check your typing.';
+      this.$.notification.show();
+      return;
+    }
+    this.closeDialog('delete-folder-dialog');
+    this._deleteFolder(this.deleteFolderId);
+  }
+  _deleteFolder(folderId) {
     let job = window.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
       this.$.notification.text = 'Virtual folder is successfully deleted.';
@@ -204,6 +222,9 @@ class BackendAIData extends PolymerElement {
 
         paper-button.add-button {
           width: 100%;
+        }
+        .warning {
+          color: red;
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
@@ -280,7 +301,7 @@ class BackendAIData extends PolymerElement {
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
                   <paper-icon-button class="fg red controls-running" icon="delete"
-                                     on-tap="_deleteFolder"></paper-icon-button>
+                                     on-tap="_deleteFolderDialog"></paper-icon-button>
                 </template>
               </div>
             </template>
@@ -300,6 +321,23 @@ class BackendAIData extends PolymerElement {
               <paper-button class="blue add-button" type="submit" id="add-button">
                 <iron-icon icon="rowing"></iron-icon>
                 Create
+              </paper-button>
+            </fieldset>
+          </form>
+        </paper-material>
+      </paper-dialog>
+      <paper-dialog id="delete-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3>Delete a virtual folder</h3>
+          <div class="warning">WARNING: this cannot be undone!</div>
+          <form id="login-form" onSubmit="this._addFolder()">
+            <fieldset>
+              <paper-input class="red" id="delete-folder-name" label="Type folder name to delete" pattern="[a-zA-Z0-9_-]*" 
+                error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+              <br/>
+              <paper-button class="blue delete-button" type="submit" id="delete-button">
+                <iron-icon icon="close"></iron-icon>
+                Delete
               </paper-button>
             </fieldset>
           </form>
