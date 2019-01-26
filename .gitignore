@@ -69,3 +69,7 @@ firebase.json
 
 # electron
 app
+
+# IDEA
+.idea
+.vscode
