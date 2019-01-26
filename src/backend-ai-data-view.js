@@ -312,7 +312,7 @@ class BackendAIData extends PolymerElement {
           </vaadin-grid-column>
         </vaadin-grid>
       </paper-material>
-      <paper-dialog id="add-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
+      <paper-dialog id="add-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
