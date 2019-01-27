@@ -117,8 +117,8 @@ class BackendAIData extends PolymerElement {
   }
 
   openDialog(id) {
-    var body = document.querySelector('body');
-    body.appendChild(this.$[id]);
+    //var body = document.querySelector('body');
+    //body.appendChild(this.$[id]);
     this.$[id].open();
   }
 
