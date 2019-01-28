@@ -257,10 +257,10 @@ class BackendAIJobList extends PolymerElement {
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-      this._startProgressDialog();
+      this.$.indicator.start();
       this._open_wsproxy()
         .then((response) => {
-          this._setProgressDialog(40, 'Preparing connection...');
+          this.$.indicator.set(40, 'Preparing connection...');
           let rqst = {
             method: 'GET',
             uri: 'http://127.0.0.1:5050/proxy/' + kernelId
@@ -268,7 +268,7 @@ class BackendAIJobList extends PolymerElement {
           return this.sendRequest(rqst)
         })
         .then((response) => {
-          this._setProgressDialog(80, 'Adding kernel to socket queue...');
+          this.$.indicator.set(80, 'Adding kernel to socket queue...');
           let rqst = {
             method: 'GET',
             uri: 'http://127.0.0.1:5050/proxy/' + kernelId + '/add'
@@ -278,10 +278,10 @@ class BackendAIJobList extends PolymerElement {
         .then((response) => {
           if (response.proxy) {
             console.log('http://' + response.proxy + '/tree');
-            this._setProgressDialog(100, 'Prepared.');
+            this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               window.open('http://' + response.proxy + '/tree', '_blank');
-              this._endProgressDialog();
+              this.$.indicator.end();
               //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
             }, 1000);
           }
@@ -296,10 +296,10 @@ class BackendAIJobList extends PolymerElement {
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-      this._startProgressDialog();
+      this.$.indicator.start();
       this._open_wsproxy()
         .then((response) => {
-          this._setProgressDialog(40, 'Preparing connection...');
+          this.$.indicator.set(40, 'Preparing connection...');
           let rqst = {
             method: 'GET',
             uri: 'http://127.0.0.1:5050/proxy/' + kernelId
@@ -307,7 +307,7 @@ class BackendAIJobList extends PolymerElement {
           return this.sendRequest(rqst)
         })
         .then((response) => {
-          this._setProgressDialog(80, 'Adding kernel to socket queue...');
+          this.$.indicator.set(80, 'Adding kernel to socket queue...');
           let rqst = {
             method: 'GET',
             uri: 'http://127.0.0.1:5050/proxy/' + kernelId + '/add'
@@ -317,8 +317,9 @@ class BackendAIJobList extends PolymerElement {
         .then((response) => {
           if (response.proxy) {
             console.log('http://' + response.proxy + '/terminals/1');
-            this._setProgressDialog(100, 'Prepared.');
+            this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
+              this.$.indicator.end();
               window.open('http://' + response.proxy + '/terminals/1', '_blank');
               //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
             }, 1000);
@@ -455,10 +456,7 @@ class BackendAIJobList extends PolymerElement {
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-      <paper-dialog id="app-progress-dialog">
-        <div id="app-progress-text"></div>
-        <paper-progress id="app-progress"></paper-progress>
-      </paper-dialog>
+      <backend-ai-indicator id="indicator"></backend-ai-indicator>
     `;
   }
 }
