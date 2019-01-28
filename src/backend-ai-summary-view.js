@@ -17,6 +17,8 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-toast/paper-toast';
 
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
+
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
@@ -269,11 +271,12 @@ class BackendAISummary extends PolymerElement {
           <lablup-activity-panel title="Loads" elevation="1">
             <div slot="message">
               <template is="dom-if" if="{{is_admin}}">
-                <ul>
-                  <li><span class="indicator">CPUs:</span> [[cpu_used]]/[[cpu_total]] Cores</li>
-                  <li><span class="indicator">Memory:</span> [[mem_used]]/[[mem_total]] MB</li>
-                  <li><span class="indicator">GPUs:</span> <span>[[gpu_used]]</span>/[[gpu_total]] vGPUs</li>
-                </ul>
+                <vaadin-progress-bar id="cpu-bar" value="[[cpu_used]]" max="[[cpu_total]]"></vaadin-progress-bar>
+                CPUs: <span id="progress-value"> [[cpu_used]]</span>/[[cpu_total]] Cores
+                <vaadin-progress-bar id="mem-bar" value="[[mem_used]]" max="[[mem_total]]"></vaadin-progress-bar>
+                Memory: <span id="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
+                <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
+                GPUs: <span id="progress-value"> [[gpu_used]]</span>/[[gpu_total]] vGPUs
               </template>
               <template is="dom-if" if="{{!is_admin}}">
                 <ul>
