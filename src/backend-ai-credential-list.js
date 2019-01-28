@@ -383,15 +383,12 @@ class BackendAICredentialList extends PolymerElement {
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">
-                <lablup-piechart
-                  number="[[item.concurrency_used]]"
-                  maxnumber="[[item.concurrency_limit]]"
-                  chartcolor="#cddc39"
-                  unit="[[item.concurrency_limit]]"
-                  size="25"></lablup-piechart>
+                <div style="font-size:11px;width:40px;">[[item.concurrency_used]] / 
+                [[item.concurrency_limit]]</div>
+                <span class="indicator">Sess.</span>
               </div>
               <div class="vertical start layout">
-                <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15min.</span></span>
+                <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15m.</span></span>
                 <span style="font-size:8px">[[item.num_queries]] <span class="indicator">queries</span></span>
               </div>
             </div>

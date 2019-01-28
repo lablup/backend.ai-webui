@@ -21,11 +21,11 @@ class LablupPiechart extends PolymerElement {
 
   static get properties() {
     return {
-      number: {
+      currentNumber: {
         type: Number,
         value: 50
       },
-      maxnumber: {
+      maxNumber: {
         type: Number,
         value: 100
       },
@@ -79,7 +79,7 @@ class LablupPiechart extends PolymerElement {
     this.shadowRoot.querySelector("#chart").setAttribute("height", this.sizeParam);
 
     this.indicatorPath = "M 0.5 0.5 L0.5 0 ";
-    var number = 100 * (this.maxnumber - this.number) / this.maxnumber;
+    var number = 100 * (this.maxNumber - this.currentNumber) / this.maxNumber;
     if (number > 12.5) {
       this.indicatorPath = this.indicatorPath + "L1 0 ";
     }
@@ -113,9 +113,10 @@ class LablupPiechart extends PolymerElement {
     y = -y + 0.5;
     this.indicatorPath = this.indicatorPath + "L" + x + " " + y + " z";
     this.$.pievalue.setAttribute("d", this.indicatorPath);
-    if (this.url != undefined && this.url != "") {
+    if (this.url !== undefined && this.url !== "") {
       this.shadowRoot.querySelector("#chart").addEventListener('tap', this._moveTo.bind(this));
     }
+    console.log(this.currentNumber);
     this.updateStyles();
   }
 
@@ -145,7 +146,7 @@ class LablupPiechart extends PolymerElement {
           <text id="chart-text" x="0.5" y="0.5" font-family="Roboto" text-anchor="middle"
                 dy="0.1">
             <tspan>{{ prefix }}</tspan>
-            <tspan>{{ number }}</tspan>
+            <tspan>{{ currentNumber }}</tspan>
             <tspan id="unit-text" font-size="0.2" dy="-0.07">{{ unit }}</tspan>
           </text>
         </g>
