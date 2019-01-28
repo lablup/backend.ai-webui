@@ -239,7 +239,7 @@ class BackendAiWebConsole extends PolymerElement {
                 <iron-icon icon="icons:pageview"></iron-icon>
                 Experiments
               </paper-item>
-              <a href="/data" tabindex="-1">
+              <a href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg lime" icon="vaadin:folder-open-o"></iron-icon>
                   Data

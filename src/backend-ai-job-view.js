@@ -94,7 +94,7 @@ class BackendAIJobView extends PolymerElement {
       },
       gpu_metric: {
         type: Array,
-        value: [0, 0.3, 0.6, 1, 1.5, 2]
+        value: [0, 0.3, 0.6, 1, 1.5, 2, 3, 4]
       },
       images: {
         type: Object,
@@ -235,8 +235,10 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _updateVersions(lang) {
-    this.versions = this.supports[this.aliases[lang]];
-    this.versions = this.versions.sort();
+    if (this.aliases[lang] in this.supports) {
+      this.versions = this.supports[this.aliases[lang]];
+      this.versions = this.versions.sort();
+    }
     if (this.versions != undefined) {
       this.$.version.value = this.versions[0];
     }
@@ -260,6 +262,8 @@ class BackendAIJobView extends PolymerElement {
     v = {};
     window.backendaiclient.gql(q, v).then((response) => {
       this.images = response.images;
+      this.languages = [];
+      this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
         var item = this.images[objectKey];
         if (!(item.name in this.supports)) {
