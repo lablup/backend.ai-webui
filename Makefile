@@ -32,6 +32,8 @@ mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
 win: dep
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
+linux: dep
+	$(EP) --platform=linux --icon=manifest/backend-ai.ico
 clean:
 	cd app;	rm -rf ./backend*
 	cd build;rm -rf ./es6-unbundled ./electron-app

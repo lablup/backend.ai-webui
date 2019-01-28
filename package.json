@@ -53,7 +53,7 @@
     "websocket": "^1.0.28"
   },
   "devDependencies": {
-    "electron": "^3.1.2",
+    "electron": "^4.0.2",
     "electron-packager": "^12.2.0"
   }
 }
