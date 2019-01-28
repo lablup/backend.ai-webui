@@ -29,8 +29,10 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
+import {OverlayPatchMixin} from './overlay-patch-mixin.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
+//class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 class BackendAIJobView extends PolymerElement {
   static get is() {
     return 'backend-ai-job-view';
@@ -108,7 +110,6 @@ class BackendAIJobView extends PolymerElement {
     this._initAliases();
     document.addEventListener('backend-ai-connected', () => {
     }, true);
-
     var gpu_resource = this.$['gpu-resource'];
     this.$['gpu-value'].textContent = gpu_resource.value;
     gpu_resource.addEventListener('value-change', () => {
@@ -319,9 +320,15 @@ class BackendAIJobView extends PolymerElement {
           <backend-ai-job-list id="finished-jobs" condition="finished"></backend-ai-job-list>
         </div>
       </paper-material>
-      <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Start a new session</h3>
+          <h3 class="horizontal center layout">
+            <span>Start a new session</span>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
           <form id="login-form" onSubmit="this._launchSession()">
             <fieldset>
               <div class="horizontal center layout">
