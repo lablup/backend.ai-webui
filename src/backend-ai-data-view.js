@@ -15,7 +15,7 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
 import '@polymer/paper-material/paper-material';
-import '@polymer/paper-item/paper-item';
+import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-dialog/paper-dialog';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
