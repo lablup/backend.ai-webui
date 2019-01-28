@@ -18,7 +18,7 @@ import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
-import './backend-ai-indicator';
+import './backend-ai-indicator.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 

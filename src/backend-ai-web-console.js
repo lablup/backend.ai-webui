@@ -153,7 +153,7 @@ class BackendAiWebConsole extends PolymerElement {
         if (this.is_admin) {
           this.$['sidebar-menu'].selected = 5;
         } else {
-          this.$['sidebar-menu'].selected = 4;
+          this.$['sidebar-menu'].selected = 3;
         }
         break;
       default:
@@ -241,7 +241,7 @@ class BackendAiWebConsole extends PolymerElement {
               </paper-item>
               <a href="/data" tabindex="-1">
                 <paper-item link>
-                  <iron-icon class="fg red" icon="vaadin:folder-open-o"></iron-icon>
+                  <iron-icon class="fg lime" icon="vaadin:folder-open-o"></iron-icon>
                   Data
                 </paper-item>
               </a>

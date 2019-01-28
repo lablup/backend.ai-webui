@@ -349,7 +349,7 @@ class BackendAICredentialList extends PolymerElement {
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
                 <span>[[item.cpu_slot]]&infin; </span>
-                <span class="indicator">slot</span>
+                <span class="indicator">cores</span>
               </div>
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
