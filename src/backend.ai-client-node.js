@@ -12,6 +12,8 @@ var fetch = require('node-fetch');
 var Headers = fetch.Headers;
 var crypto = require('crypto');
 var FormData = require('form-data');
+const querystring = require('querystring');
+
 
 
 class ClientConfig {
@@ -449,34 +451,97 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
-  upload() {
+  upload(path, fs, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    const formData = new FormData();
+    formData.append('src', fs, {filepath: path});
+    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/upload`, formData)
+    return this.client._wrapWithPromise(rqst);
 
   }
 
   mkdir(path, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let body = {
+      'path': path
+    };
+    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/mkdir`, body);
+    return this.client._wrapWithPromise(rqst);
   }
 
-  delete_files(files, name = null) {
+  delete_files(files, recursive = null, name = null) {
+
+    if (name == null) {
+      name = this.name;
+    }
+    if (recursive == null) {
+      recursive = false;
+    }
+    let body = {
+      'files': files,
+      'recursive': recursive,
+    };
+    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/delete_files`, body);
+    return this.client._wrapWithPromise(rqst);
   }
 
   download(files, show_progress = false) {
+    let body = {
+      'files': files
+    };
+    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/download`, body);
+    return this.client._wrapWithPromise(rqst);
   }
 
   list_files(path, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let params = {
+      'path': path
+    };
+    let q = querystring.stringify(params)
+    let rqst = this.client.newSignedRequest('GET', `/folders/${name}/files?${q}`, null);
+    return this.client._wrapWithPromise(rqst);
   }
 
   invite(perm, emails, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let body = {
+      'perm': perm,
+      'user_ides': emails
+    };
+    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/invite`, body);
+    return this.client._wrapWithPromise(rqst);
   }
 
-  invitations(path, name = null) {
+  invitations() {
+    let rqst = this.client.newSignedRequest('GET', `/folders/invitations/list`, null);
+    return this.client._wrapWithPromise(rqst);
   }
 
   accept_invitation(inv_id, inv_ak) {
+    let body = {
+      'inv_id': inv_id,
+      'inv_ak': inv_ak
+    };
+    let rqst = this.client.newSignedRequest('POST', `/folders/invitations/accept`, body);
+    return this.client._wrapWithPromise(rqst);
   }
 
   delete_invitation(inv_id) {
+    let body = {
+      'inv_id': inv_id
+    };
+    let rqst = this.client.newSignedRequest('POST', `/folders/invitations/delete`, body);
+    return this.client._wrapWithPromise(rqst);
   }
-
 }
 
 
