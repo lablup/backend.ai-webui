@@ -320,7 +320,7 @@ class BackendAIJobView extends PolymerElement {
           <backend-ai-job-list id="finished-jobs" condition="finished"></backend-ai-job-list>
         </div>
       </paper-material>
-      <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
+      <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Start a new session</span>

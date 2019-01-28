@@ -19,6 +19,7 @@ import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-dialog/paper-dialog';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-item/vaadin-item.js';
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
@@ -377,38 +378,28 @@ class BackendAIData extends PolymerElement {
             </paper-icon-button>
           </h3>
           <div role="listbox" style="margin: 0;">
-            <paper-item>
-              <paper-item-body two-line>
-                <div>ID</div>
-                <div secondary>[[folderInfo.id]]</div>
-              </paper-item-body>
-            </paper-item>
-            <paper-item>
-              <paper-item-body two-line>
-                <div>Location</div>
-                <div secondary>[[folderInfo.host]]</div>
-              </paper-item-body>
-            </paper-item>
-            <paper-item>
-              <paper-item-body two-line>
-                <div>Number of Files</div>
+            <vaadin-item>
+              <div><strong>ID</strong></div>
+              <div secondary>[[folderInfo.id]]</div>
+            </vaadin-item>
+            <vaadin-item>
+              <div><strong>Location</strong></div>
+              <div secondary>[[folderInfo.host]]</div>
+            </vaadin-item>
+            <vaadin-item>
+              <div><strong>Number of Files</strong></div>
                 <div secondary>[[folderInfo.numFiles]]</div>
-              </paper-item-body>
-            </paper-item>
+            </vaadin-item>
             <template is="dom-if" if="[[folderInfo.is_owner]]">
-              <paper-item>
-                <paper-item-body two-line>
-                  <div>Ownership</div>
+              <vaadin-item>
+                <div><strong>Ownership</strong></div>
                   <div secondary>You are the owner of this folder.</div>
-                </paper-item-body>
-              </paper-item>
+              </vaadin-item>
             </template>
-            <paper-item>
-              <paper-item-body two-line>
-                <div>Permission</div>
+            <vaadin-item>
+              <div><strong>Permission</strong></div>
                 <div secondary>[[folderInfo.permission]]</div>
-              </paper-item-body>
-            </paper-item>
+            </vaadin-item>
           </div>
         </paper-material>
       </paper-dialog>

@@ -37,6 +37,7 @@
     "@polymer/polymer": "^3.1.0",
     "@vaadin/vaadin-grid": "^5.2.7",
     "@vaadin/vaadin-icons": "^4.2.1",
+    "@vaadin/vaadin-item": "^2.1.0",
     "@webcomponents/webcomponentsjs": "^2.2.4",
     "buffer": "^5.2.1",
     "express": "^4.16.4",
