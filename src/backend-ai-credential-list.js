@@ -16,6 +16,7 @@ import '@polymer/iron-icons/av-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
+import '@vaadin/vaadin-item/vaadin-item';
 
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
@@ -41,6 +42,10 @@ class BackendAICredentialList extends PolymerElement {
         default: 'active'  // active, inactive
       },
       keypairs: {
+        type: Object,
+        value: {}
+      },
+      keypairInfo: {
         type: Object,
         value: {}
       }
@@ -89,7 +94,7 @@ class BackendAICredentialList extends PolymerElement {
     }
     ;
     let q;
-    let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+    let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
 
     if (user_id == null) {
@@ -121,6 +126,36 @@ class BackendAICredentialList extends PolymerElement {
         this.$.notification.show();
       }
     });
+  }
+
+  async _showKeypairDetail(e) {
+    const controls = e.target.closest('#controls');
+    const access_key = controls.accessKey;
+    try {
+      const data = await this._getKeyData(access_key);
+      this.keypairInfo = data.keypair;
+      this.$['keypair-info-dialog'].open();
+    } catch (err) {
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    }
+  }
+
+  async _getKeyData(accessKey) {
+    let q;
+    let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+      'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
+    q = `query($access_key: String!) {` +
+      `  keypair(access_key: $access_key) {` +
+      `    ${fields.join(" ")}` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey
+    };
+    return window.backendaiclient.gql(q, v);
   }
 
   refresh() {
@@ -400,8 +435,10 @@ class BackendAICredentialList extends PolymerElement {
           <template>
             <div id="controls" class="layout horizontal flex center"
                  access-key="[[item.access_key]]">
-              <paper-icon-button disabled class="fg"
-                                 icon="assignment"></paper-icon-button>
+              <template is="dom-if" if="[[!item.is_admin]]">
+                <paper-icon-button class="fg" icon="assignment"
+                                   on-tap="_showKeypairDetail"></paper-icon-button>
+              </template>
               <template is="dom-if" if="[[_isActive()]]">
                 <template is="dom-if" if="[[!item.is_admin]]">
                   <paper-icon-button class="fg blue controls-running" icon="delete"
@@ -418,6 +455,61 @@ class BackendAICredentialList extends PolymerElement {
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
+      <paper-dialog id="keypair-info-dialog">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
+            <span style="margin-right:15px;">Keypair Detail</span>
+            <template is="dom-if" if="[[keypairInfo.is_admin]]">
+              <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
+            </template>
+            <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
+          <h4>Information</h4>
+          <div role="listbox" style="margin: 0;">
+            <vaadin-item>
+              <div><strong>User ID</strong></div>
+              <div secondary>[[keypairInfo.user_id]]</div>
+            </vaadin-item>
+            <vaadin-item>
+              <div><strong>Access Key</strong></div>
+              <div secondary>[[keypairInfo.access_key]]</div>
+            </vaadin-item>
+            <vaadin-item>
+              <div><strong>Secret Key</strong></div>
+              <div secondary>[[keypairInfo.secret_key]]</div>
+            </vaadin-item>
+            <vaadin-item>
+              <div><strong>Created</strong></div>
+              <div secondary>[[keypairInfo.created_at]]</div>
+            </vaadin-item>
+            <vaadin-item>
+              <div><strong>Last used</strong></div>
+              <div secondary>[[keypairInfo.last_used]]</div>
+            </vaadin-item>
+          </div>
+          <h4>Allocation</h4>
+          <div role="listbox" style="margin: 0;">
+            <vaadin-item>
+              <div><strong>Number of queries</strong></div>
+              <div secondary>[[keypairInfo.num_queries]]</div>
+            </vaadin-item>
+            <vaadin-item>
+              <div><strong>Concurrent Sessions</strong></div>
+              <div secondary>[[keypairInfo.concurrency_used]] active / [[keypairInfo.concurrency_used]] concurrent
+                sessions.
+              </div>
+            </vaadin-item>
+            <vaadin-item>
+              <div><strong>Rate Limit</strong></div>
+              <div secondary>[[keypairInfo.rate_limit]] for 900 seconds.</div>
+            </vaadin-item>
+          </div>
+        </paper-material>
+      </paper-dialog>
     `;
   }
 }
