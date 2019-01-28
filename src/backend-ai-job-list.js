@@ -449,8 +449,8 @@ class BackendAIJobList extends PolymerElement {
               <template is="dom-if" if="[[_isRunning()]]">
                 <paper-icon-button disabled class="fg controls-running"
                                    icon="av:pause"></paper-icon-button>
-                <paper-icon-button class="fg red controls-running" icon="delete"
-                                   on-tap="_terminateKernel"></paper-icon-button>
+                <paper-icon-button class="fg red controls-running"
+                                   on-tap="_terminateKernel" icon="delete"></paper-icon-button>
               </template>
             </div>
           </template>
