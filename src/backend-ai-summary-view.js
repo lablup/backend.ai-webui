@@ -275,8 +275,10 @@ class BackendAISummary extends PolymerElement {
                 CPUs: <span id="progress-value"> [[cpu_used]]</span>/[[cpu_total]] Cores
                 <vaadin-progress-bar id="mem-bar" value="[[mem_used]]" max="[[mem_total]]"></vaadin-progress-bar>
                 Memory: <span id="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
+                <template is="dom-if" if="[[gpu_total]]">
                 <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
                 GPUs: <span id="progress-value"> [[gpu_used]]</span>/[[gpu_total]] vGPUs
+                </template>
               </template>
               <template is="dom-if" if="{{!is_admin}}">
                 <ul>

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {PolymerElement, html} from '@polymer/polymer';
+import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-dialog/paper-dialog';
@@ -15,6 +15,8 @@ import '@polymer/iron-icons/av-icons';
 
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-icons/vaadin-icons';
+
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 import './lablup-piechart.js';
@@ -111,7 +113,6 @@ class BackendAICredentialList extends PolymerElement {
     window.backendaiclient.gql(q, v).then(response => {
       this.keypairs = response;
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
-      console.log(this.keypairs);
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -212,6 +213,19 @@ class BackendAICredentialList extends PolymerElement {
     return Math.floor(value / 1000000);
   }
 
+  _byteToGB(value) {
+    return Math.floor(value / 1000000000);
+  }
+
+  _MBToGB(value) {
+    return value / 1024;
+  }
+
+  _msecToSec(value) {
+    return Number(value / 1000).toFixed(2);
+  }
+
+
   _elapsed(start, end) {
     var startDate = new Date(start);
     if (this.condition == 'active') {
@@ -272,6 +286,12 @@ class BackendAICredentialList extends PolymerElement {
           font-size: 9px;
           margin-right: 5px;
         }
+        div.configuration {
+          width: 70px!important;
+        }
+        div.configuration iron-icon {
+          padding-right:5px;
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
 
@@ -322,21 +342,34 @@ class BackendAICredentialList extends PolymerElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
+        <vaadin-grid-column width="150px" resizable>
           <template class="header">Configuration</template>
           <template>
-            <div class="layout horizontal center flex">
-              <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-              <span>[[item.cpu_slot]]Inf.</span>
-              <span class="indicator">slot</span>
-              <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-              <span>[[item.mem_slot]]Inf.</span>
-              <span class="indicator">MB[[item.mem_unit]]</span>
-              <template is="dom-if" if="[[item.gpu_slot]]">
-                <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                <span>[[item.gpu_slot]]</span>
-                <span class="indicator">vGPU</span>
+            <div class="layout horizontal wrap center">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <span>[[item.cpu_slot]]&infin; </span>
+                <span class="indicator">slot</span>
+              </div>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <span>[[item.mem_slot]]&infin; </span>
+                <span class="indicator">GB[[item.mem_unit]]</span>
+              </div>
+            </div>
+            <div class="layout horizontal wrap center">
+              <template is="dom-if" if="[[!item.gpu_slot]]">
+                <div class="layout horizontal configuration">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>[[item.gpu_slot]]&infin; </span>
+                  <span class="indicator">vGPU</span>
+                </div>
               </template>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
+                <span>[[item.storage_slot]]&infin; </span>
+                <span class="indicator">GB</span>
+              </div>
               <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
               <!-- <span>[[item.storage_capacity]]</span> -->
               <!-- <span class="indicator">[[item.storage_unit]]</span> -->
