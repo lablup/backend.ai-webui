@@ -223,6 +223,7 @@ class BackendAIJobView extends PolymerElement {
     //this.languages = Object.keys(this.supports);
     //this.languages.sort();
     let lang = Object.keys(this.supports);
+    if (lang == undefined) return;
     lang.sort();
     this.languages = [];
     lang.forEach((item, index) => {

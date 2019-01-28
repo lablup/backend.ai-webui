@@ -411,7 +411,7 @@ class BackendAIJobList extends PolymerElement {
             <div class="layout horizontal center flex">
               <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
               <span>[[item.cpu_slot]]</span>
-              <span class="indicator">slot</span>
+              <span class="indicator">core</span>
               <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
               <span>[[_MBToGB(item.mem_slot)]]</span>
               <span class="indicator">GB[[item.mem_unit]]</span>
