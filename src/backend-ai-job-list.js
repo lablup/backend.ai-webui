@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
 import {PolymerElement, html} from '@polymer/polymer';
@@ -163,6 +163,18 @@ class BackendAIJobList extends PolymerElement {
 
   _byteToMB(value) {
     return Math.floor(value / 1000000);
+  }
+
+  _byteToGB(value) {
+    return Math.floor(value / 1000000000);
+  }
+
+  _MBToGB(value) {
+    return value / 1024;
+  }
+
+  _msecToSec(value) {
+    return Number(value / 1000).toFixed(2);
   }
 
   _elapsed(start, end) {
@@ -393,7 +405,7 @@ class BackendAIJobList extends PolymerElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
+        <vaadin-grid-column width="200px" flex-grow="0" resizable>
           <template class="header">Configuration</template>
           <template>
             <div class="layout horizontal center flex">
@@ -401,8 +413,8 @@ class BackendAIJobList extends PolymerElement {
               <span>[[item.cpu_slot]]</span>
               <span class="indicator">slot</span>
               <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-              <span>[[item.mem_slot]]</span>
-              <span class="indicator">MB[[item.mem_unit]]</span>
+              <span>[[_MBToGB(item.mem_slot)]]</span>
+              <span class="indicator">GB[[item.mem_unit]]</span>
               <template is="dom-if" if="[[item.gpu_slot]]">
                 <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                 <span>[[item.gpu_slot]]</span>
@@ -421,8 +433,8 @@ class BackendAIJobList extends PolymerElement {
             <div class="layout horizontal center flex">
               <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
               <div class="vertical start layout">
-                <span>[[item.cpu_used]]</span>
-                <span class="indicator">msec.</span>
+                <span>[[_msecToSec(item.cpu_used)]]</span>
+                <span class="indicator">sec.</span>
               </div>
               <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
               <div class="vertical start layout">
