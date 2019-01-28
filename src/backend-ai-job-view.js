@@ -304,7 +304,6 @@ class BackendAIJobView extends PolymerElement {
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1">
-        <h3 class="paper-material-title">Jobs</h3>
         <h4 class="horizontal center layout">
           <span>Running</span>
           <paper-button id="launch-session" class="fg red">

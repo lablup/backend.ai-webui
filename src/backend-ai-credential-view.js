@@ -188,7 +188,6 @@ class BackendAICredentialView extends PolymerElement {
         }
       </style>
       <paper-material class="item" elevation="1">
-        <h3 class="paper-material-title">Credentials</h3>
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
           <span class="flex"></span>

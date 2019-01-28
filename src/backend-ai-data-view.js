@@ -233,7 +233,6 @@ class BackendAIData extends PolymerElement {
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="paper-material-title">Data</h3>
         <h4 class="horizontal center layout">
           <span>Virtual Folders</span>
           <paper-button id="add-folder" class="fg red">
@@ -311,6 +310,14 @@ class BackendAIData extends PolymerElement {
             </template>
           </vaadin-grid-column>
         </vaadin-grid>
+      </paper-material>
+      <paper-material>
+        <h4 class="horizontal center layout">
+          <span>Public Data</span>
+        </h4>
+        <div class="horizontal center flex layout" style="padding:15px;">
+          <div>No data present.</div>
+        </div>
       </paper-material>
       <paper-dialog id="add-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
