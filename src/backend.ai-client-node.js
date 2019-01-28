@@ -485,7 +485,7 @@ class VFolder {
       'files': files,
       'recursive': recursive,
     };
-    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/delete_files`, body);
+    let rqst = this.client.newSignedRequest('DELETE', `/folders/${name}/delete_files`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -515,7 +515,7 @@ class VFolder {
     }
     let body = {
       'perm': perm,
-      'user_ides': emails
+      'user_ids': emails
     };
     let rqst = this.client.newSignedRequest('POST', `/folders/${name}/invite`, body);
     return this.client._wrapWithPromise(rqst);
@@ -539,7 +539,7 @@ class VFolder {
     let body = {
       'inv_id': inv_id
     };
-    let rqst = this.client.newSignedRequest('POST', `/folders/invitations/delete`, body);
+    let rqst = this.client.newSignedRequest('DELETE', `/folders/invitations/delete`, body);
     return this.client._wrapWithPromise(rqst);
   }
 }
