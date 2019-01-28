@@ -232,6 +232,12 @@ class BackendAIData extends PolymerElement {
         .warning {
           color: red;
         }
+
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
+
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">

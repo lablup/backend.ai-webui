@@ -317,6 +317,10 @@ class BackendAICredentialList extends PolymerElement {
           };
         }
 
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
         div.indicator,
         span.indicator {
           font-size: 9px;
@@ -357,7 +361,9 @@ class BackendAICredentialList extends PolymerElement {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Permission</template>
+          <template class="header">
+            <vaadin-grid-sorter path="is_admin">Permission</vaadin-grid-sorter>
+          </template>
           <template>
             <div class="layout horizontal center flex">
               <template is="dom-if" if="[[item.is_admin]]">
@@ -369,7 +375,9 @@ class BackendAICredentialList extends PolymerElement {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Key age</template>
+          <template class="header">
+            <vaadin-grid-sorter path="created_at">Key age</vaadin-grid-sorter>
+          </template>
           <template>
             <div class="layout vertical">
               <span>[[_elapsed(item.created_at)]] Days</span>
@@ -435,10 +443,8 @@ class BackendAICredentialList extends PolymerElement {
           <template>
             <div id="controls" class="layout horizontal flex center"
                  access-key="[[item.access_key]]">
-              <template is="dom-if" if="[[!item.is_admin]]">
-                <paper-icon-button class="fg" icon="assignment"
-                                   on-tap="_showKeypairDetail"></paper-icon-button>
-              </template>
+              <paper-icon-button class="fg green" icon="assignment"
+                                 on-tap="_showKeypairDetail"></paper-icon-button>
               <template is="dom-if" if="[[_isActive()]]">
                 <template is="dom-if" if="[[!item.is_admin]]">
                   <paper-icon-button class="fg blue controls-running" icon="delete"
