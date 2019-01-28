@@ -27,6 +27,7 @@ import '@polymer/paper-item/paper-item';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
 
+import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
 import {OverlayPatchMixin} from './overlay-patch-mixin.js';
@@ -320,7 +321,8 @@ class BackendAIJobView extends PolymerElement {
           <backend-ai-job-list id="finished-jobs" condition="finished"></backend-ai-job-list>
         </div>
       </paper-material>
-      <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation"
+                    style="padding:0;">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Start a new session</span>
