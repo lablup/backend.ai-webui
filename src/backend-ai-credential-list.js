@@ -112,6 +112,7 @@ class BackendAICredentialList extends PolymerElement {
 
     window.backendaiclient.gql(q, v).then(response => {
       this.keypairs = response;
+      console.log(this.keypairs.keypairs);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -343,7 +344,7 @@ class BackendAICredentialList extends PolymerElement {
         </vaadin-grid-column>
 
         <vaadin-grid-column width="150px" resizable>
-          <template class="header">Configuration</template>
+          <template class="header">Resource Policy</template>
           <template>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">

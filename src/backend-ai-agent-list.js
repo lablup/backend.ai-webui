@@ -3,7 +3,7 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {PolymerElement, html} from '@polymer/polymer';
+import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-dialog/paper-dialog';
@@ -136,7 +136,7 @@ class BackendAIAgentList extends PolymerElement {
   }
 
   _slotToGPU(value) {
-    return Math.floor(value / 1);
+    return Math.floor(value / 3.75);
   }
 
   _elapsed(start, end) {
@@ -271,20 +271,34 @@ class BackendAIAgentList extends PolymerElement {
           <template class="header">Resources</template>
           <template>
             <div class="layout horizontal center flex">
-              <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-              <span>[[_slotToCPU(item.cpu_slots)]]</span>
-              <span class="indicator">cores</span>
-              <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-              <span>[[_MBtoGB(item.mem_slots)]]</span>
-              <span class="indicator">GB[[item.mem_unit]]</span>
+              <div class="layout horizontal center flex">
+                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <span>[[_slotToCPU(item.cpu_slots)]]</span>
+                <span class="indicator">cores</span>
+              </div>
+              <div class="layout horizontal center flex">
+                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <span>[[_MBtoGB(item.mem_slots)]]</span>
+                <span class="indicator">GB[[item.mem_unit]]</span>
+              </div>
+            </div>
+            <div class="layout horizontal center flex">
               <template is="dom-if" if="[[item.gpu_slots]]">
-                <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                <span>[[_slotToGPU(item.gpu_slots)]]</span>
-                <span class="indicator">GPU</span>
+                <div class="layout horizontal center flex">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>[[_slotToGPU(item.gpu_slots)]]</span>
+                  <span class="indicator">GPU</span>
+                </div>
+                <div class="layout horizontal center flex">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>[[item.gpu_slots]]</span>
+                  <span class="indicator">vGPU</span>
+                </div>
               </template>
-              <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
-              <!-- <span>[[item.storage_capacity]]</span> -->
-              <!-- <span class="indicator">[[item.storage_unit]]</span> -->
+            </div>
+            <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
+            <!-- <span>[[item.storage_capacity]]</span> -->
+            <!-- <span class="indicator">[[item.storage_unit]]</span> -->
             </div>
           </template>
         </vaadin-grid-column>

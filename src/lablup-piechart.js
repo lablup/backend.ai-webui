@@ -131,10 +131,6 @@ class LablupPiechart extends PolymerElement {
     // language=HTML
     return html`
       <style is="custom-style" include="iron-flex iron-flex-alignment">
-        :host {
-          @apply(--layout-vertical)
-        }
-
         #chart {
           cursor: pointer;
         }
@@ -143,8 +139,8 @@ class LablupPiechart extends PolymerElement {
            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
            viewBox="0 0 1 1" style="background-color:transparent;">
         <g id="piechart">
-          <circle cx=0.5 cy=0.5 r=0.5/>
-          <circle cx=0.5 cy=0.5 r=0.40 fill="rgba(255,255,255,0.9)"/>
+          <circle cx="0.5" cy="0.5" r="0.5" />
+          <circle cx="0.5" cy="0.5" r="0.40" fill="rgba(255,255,255,0.9)"/>
           <path id="pievalue" stroke="none" fill="rgba(255, 255, 255, 0.75)"/>
           <text id="chart-text" x="0.5" y="0.5" font-family="Roboto" text-anchor="middle"
                 dy="0.1">

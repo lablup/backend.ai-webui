@@ -2,7 +2,7 @@
  * Backend.AI-job-view
  */
 
-import {PolymerElement, html} from '@polymer/polymer';
+import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
@@ -30,7 +30,6 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
-import {OverlayPatchMixin} from './overlay-patch-mixin.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 //class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
@@ -121,6 +120,13 @@ class BackendAIJobView extends PolymerElement {
         this.$['use-gpu-checkbox'].checked = false;
       }
     });
+    this.$['use-gpu-checkbox'].addEventListener('change', () => {
+      if (this.$['use-gpu-checkbox'].checked === true) {
+        this.$['gpu-resource'].disabled = false;
+      } else {
+        this.$['gpu-resource'].disabled = true;
+      }
+    });
   }
 
   updateLanguage() {
@@ -172,7 +178,7 @@ class BackendAIJobView extends PolymerElement {
         this._refreshResourceValues();
       }, true);
     } else { // already connected
-        this._refreshResourceValues();
+      this._refreshResourceValues();
     }
   }
 
@@ -193,6 +199,13 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _launchSessionDialog() {
+    var gpu_resource = this.$['gpu-resource'];
+    this.$['gpu-value'].textContent = gpu_resource.value;
+    if (gpu_resource.value > 0) {
+      this.$['use-gpu-checkbox'].checked = true;
+    } else {
+      this.$['use-gpu-checkbox'].checked = false;
+    }
     this.$['new-session-dialog'].open();
   }
 
@@ -210,6 +223,9 @@ class BackendAIJobView extends PolymerElement {
     config['cpu'] = this.$['cpu-resource'].value;
     config['gpu'] = this.$['gpu-resource'].value;
     config['mem'] = this.$['ram-resource'].value;
+    if (this.$['use-gpu-checkbox'].checked !== true) {
+      config['gpu'] = 0.0;
+    }
     let kernelName = this._generateKernelIndex(kernel, version);
     console.log(kernelName);
 
@@ -357,7 +373,7 @@ class BackendAIJobView extends PolymerElement {
               <div>
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
-              <h4>Resource allocation (Working in progress UI)</h4>
+              <h4>Resource allocation</h4>
               <div class="horizontal center layout">
                 <span>CPU</span>
                 <div class="horizontal end-justified layout caption">
@@ -365,7 +381,7 @@ class BackendAIJobView extends PolymerElement {
                   <span class="caption">Core</span>
                 </div>
                 <paper-slider id="cpu-resource" pin snaps expand
-                              min="1" max="8" value="1" markers="[[ cpu_metric ]]"></paper-slider>
+                              min="1" max="8" value="4" markers="[[ cpu_metric ]]"></paper-slider>
               </div>
               <div class="horizontal center layout">
                 <span>RAM</span>
@@ -383,7 +399,7 @@ class BackendAIJobView extends PolymerElement {
                   <span class="caption">vGPU</span>
                 </div>
                 <paper-slider id="gpu-resource" pin snaps step=0.1
-                              min="0" max="2" markers="{{ gpu_metric }}"></paper-slider>
+                              min="0" max="4" value="1" markers="{{ gpu_metric }}"></paper-slider>
               </div>
               <br/>
               <paper-button class="blue launch-button" type="submit" id="launch-button">
