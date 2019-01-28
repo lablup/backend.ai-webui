@@ -6,15 +6,16 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
-import '@polymer/paper-material/paper-material';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+import '@polymer/paper-icon-button/paper-icon-button';
+import '@polymer/paper-styles/typography';
+import '@polymer/paper-styles/color';
+import '@polymer/paper-material/paper-material';
+import '@polymer/paper-item/paper-item';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-dialog/paper-dialog';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
@@ -323,6 +324,7 @@ class BackendAIData extends PolymerElement {
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
+            <div class="flex"></div>
             <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
               Close
             </paper-icon-button>
@@ -346,6 +348,7 @@ class BackendAIData extends PolymerElement {
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Delete a virtual folder</span>
+            <div class="flex"></div>
             <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
               Close
             </paper-icon-button>
@@ -366,20 +369,47 @@ class BackendAIData extends PolymerElement {
       </paper-dialog>
       <paper-dialog id="info-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>Folder information</span>
+          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
+            <span>[[folderInfo.name]]</span>
+            <div class="flex"></div>
             <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
               Close
             </paper-icon-button>
           </h3>
-          <ul>
-            <li>[[folderInfo.name]]</li>
-            <li>[[folderInfo.id]]</li>
-            <li>[[folderInfo.is_owner]]</li>
-            <li>[[folderInfo.host]]</li>
-            <li>[[folderInfo.numFiles]]</li>
-            <li>[[folderInfo.permission]]</li>
-          </ul>
+          <div role="listbox" style="margin: 0;">
+            <paper-item>
+              <paper-item-body two-line>
+                <div>ID</div>
+                <div secondary>[[folderInfo.id]]</div>
+              </paper-item-body>
+            </paper-item>
+            <paper-item>
+              <paper-item-body two-line>
+                <div>Location</div>
+                <div secondary>[[folderInfo.host]]</div>
+              </paper-item-body>
+            </paper-item>
+            <paper-item>
+              <paper-item-body two-line>
+                <div>Number of Files</div>
+                <div secondary>[[folderInfo.numFiles]]</div>
+              </paper-item-body>
+            </paper-item>
+            <template is="dom-if" if="[[folderInfo.is_owner]]">
+              <paper-item>
+                <paper-item-body two-line>
+                  <div>Ownership</div>
+                  <div secondary>You are the owner of this folder.</div>
+                </paper-item-body>
+              </paper-item>
+            </template>
+            <paper-item>
+              <paper-item-body two-line>
+                <div>Permission</div>
+                <div secondary>[[folderInfo.permission]]</div>
+              </paper-item-body>
+            </paper-item>
+          </div>
         </paper-material>
       </paper-dialog>
       `;
