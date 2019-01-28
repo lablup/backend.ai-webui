@@ -167,11 +167,15 @@ class BackendAICredentialView extends PolymerElement {
       this.test = response;
       //setTimeout(() => { this._refreshJobData(status) }, 5000);
       console.log(this.test);
+      this.$['new-keypair-dialog'].close();
+      this.$.notification.text = "Keypair successfully created.";
+      this.$.notification.show();
       this.$['active-credential-list'].refresh();
       this.$['inactive-credential-list'].refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
+        this.$['new-keypair-dialog'].close();
         this.$.notification.text = err.message;
         this.$.notification.show();
       }
@@ -180,13 +184,13 @@ class BackendAICredentialView extends PolymerElement {
 
   static get template() {
     // language=HTML
-
     return html`
       <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
         paper-button.create-button {
           width: 100%;
         }
       </style>
+      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1">
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
