@@ -6,8 +6,7 @@
   "license": "LGPL-3.0-or-later",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-packager .",
+    "start": "node ./local_proxy.js",
     "test": "node ./local_proxy.js"
   },
   "dependencies": {
@@ -21,8 +20,5 @@
     "underscore": "^1.9.1",
     "websocket": "^1.0.28"
   },
-  "devDependencies": {
-    "electron": "^3.0.8",
-    "electron-packager": "^12.2.0"
-  }
+  "devDependencies": {}
 }
