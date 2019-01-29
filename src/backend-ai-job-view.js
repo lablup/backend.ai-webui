@@ -184,6 +184,7 @@ class BackendAIJobView extends PolymerElement {
 
   _refreshResourceValues() {
     this._refreshImageList();
+    this._updateVirtualFolderList();
     var cpu_resource = this.$['cpu-resource'];
     this.$['cpu-value'].textContent = cpu_resource.value;
     cpu_resource.addEventListener('value-change', () => {
@@ -219,12 +220,16 @@ class BackendAIJobView extends PolymerElement {
   _newSession() {
     let kernel = this.$['environment'].value;
     let version = this.$['version'].value;
+    let vfolder = this.$['vfolder'].value;
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
     config['gpu'] = this.$['gpu-resource'].value;
     config['mem'] = this.$['ram-resource'].value;
     if (this.$['use-gpu-checkbox'].checked !== true) {
       config['gpu'] = 0.0;
+    }
+    if (vfolder !== '') {
+      config['mounts'] = vfolder;
     }
     let kernelName = this._generateKernelIndex(kernel, version);
     console.log(kernelName);
@@ -258,6 +263,13 @@ class BackendAIJobView extends PolymerElement {
     if (this.versions != undefined) {
       this.$.version.value = this.versions[0];
     }
+  }
+
+  _updateVirtualFolderList() {
+    let l = window.backendaiclient.vfolder.list();
+    l.then((value) => {
+      this.vfolders = value;
+    });
   }
 
   _supportLanguages() {
@@ -372,6 +384,16 @@ class BackendAIJobView extends PolymerElement {
               </div>
               <div>
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
+              </div>
+              <h4>Mount virtual folder</h4>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="vfolder" label="vfolder">
+                  <paper-listbox slot="dropdown-content">
+                    <template is="dom-repeat" items="[[ vfolders ]]">
+                      <paper-item id="[[ item.id ]]" label="[[ item.name ]]">[[ item.name ]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
               </div>
               <h4>Resource allocation</h4>
               <div class="horizontal center layout">

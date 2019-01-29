@@ -187,6 +187,9 @@ class Client {
       if (resources['clustersize']) {
         config['clusterSize'] = resources['clustersize'];
       }
+      if (resources['mounts']) {
+        config['mounts'] = [resources['mounts']];
+      }
       params['config'] = config;
     }
     let rqst = this.newSignedRequest('POST', '/kernel/create', params);
