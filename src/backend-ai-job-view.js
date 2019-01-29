@@ -224,8 +224,8 @@ class BackendAIJobView extends PolymerElement {
     let version = this.$['version'].value;
     let vfolder = [];
 
-    forEach(this.$['vfolder'].selectedItems, (index, item) => {
-      vfolder.push(item.value);
+    forEach(this.$['vfolder-items'].selectedItems, (index, item) => {
+      vfolder.push(item.label);
     });
 
     let config = {};
@@ -344,8 +344,8 @@ class BackendAIJobView extends PolymerElement {
           font-family: monospace;
         }
 
-        paper-checkbox {
-          margin-bottom: 0;
+        paper-dropdown-menu {
+          width: 100%;
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
@@ -397,19 +397,14 @@ class BackendAIJobView extends PolymerElement {
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
               <h4>Mount virtual folder</h4>
-              <paper-toggle-button checked="{{vfolder_collapse_opened}}">show virtual folder list</paper-toggle-button>
               <div class="horizontal center layout">
-                <iron-collapse opened="[[vfolder_collapse_opened]]">
-                  <div>
-                    <paper-listbox id="vfolder" multi slot="dropdown-content">
-                      <template is="dom-repeat" items="[[ vfolders ]]">
-                        <paper-checkbox value="[[ item.name ]]">
-                          <paper-item>[[ item.name ]]</paper-item>
-                        </paper-checkbox>
-                      </template>
-                    </paper-listbox>
-                  </div>
-                </iron-collapse>
+                <paper-dropdown-menu id="vfolder" label="vfolder">
+                  <paper-listbox id="vfolder-items" multi slot="dropdown-content">
+                    <template is="dom-repeat" items="[[ vfolders ]]">
+                      <paper-item id="[[ item.id ]]" label="[[ item.name ]]">[[ item.name ]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
               </div>
               <h4>Resource allocation</h4>
               <div class="horizontal center layout">
