@@ -188,7 +188,7 @@ class Client {
         config['clusterSize'] = resources['clustersize'];
       }
       if (resources['mounts']) {
-        config['mounts'] = [resources['mounts']];
+        config['mounts'] = resources['mounts'];
       }
       params['config'] = config;
     }

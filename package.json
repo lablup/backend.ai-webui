@@ -15,6 +15,7 @@
     "@polymer/app-route": "^3.0.2",
     "@polymer/app-storage": "^3.0.2",
     "@polymer/iron-ajax": "^3.0.1",
+    "@polymer/iron-collapse": "^3.0.1",
     "@polymer/iron-icon": "^3.0.1",
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/iron-image": "^3.0.1",

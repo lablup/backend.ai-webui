@@ -220,7 +220,12 @@ class BackendAIJobView extends PolymerElement {
   _newSession() {
     let kernel = this.$['environment'].value;
     let version = this.$['version'].value;
-    let vfolder = this.$['vfolder'].value;
+    let vfolder = [];
+
+    forEach(this.$['vfolder'].selectedItems, (index, item) => {
+      vfolder.push(item.value);
+    });
+
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
     config['gpu'] = this.$['gpu-resource'].value;
@@ -228,7 +233,7 @@ class BackendAIJobView extends PolymerElement {
     if (this.$['use-gpu-checkbox'].checked !== true) {
       config['gpu'] = 0.0;
     }
-    if (vfolder !== '') {
+    if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
     }
     let kernelName = this._generateKernelIndex(kernel, version);
@@ -336,6 +341,10 @@ class BackendAIJobView extends PolymerElement {
         .indicator {
           font-family: monospace;
         }
+
+        paper-checkbox {
+          margin-bottom: 0;
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1">
@@ -387,13 +396,13 @@ class BackendAIJobView extends PolymerElement {
               </div>
               <h4>Mount virtual folder</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="vfolder" label="vfolder">
-                  <paper-listbox slot="dropdown-content">
-                    <template is="dom-repeat" items="[[ vfolders ]]">
-                      <paper-item id="[[ item.id ]]" label="[[ item.name ]]">[[ item.name ]]</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <paper-listbox id="vfolder" multi slot="dropdown-content">
+                  <template is="dom-repeat" items="[[ vfolders ]]">
+                    <paper-checkbox value="[[ item.name ]]">
+                      <paper-item>[[ item.name ]]</paper-item>
+                    </paper-checkbox>
+                  </template>
+                </paper-listbox>
               </div>
               <h4>Resource allocation</h4>
               <div class="horizontal center layout">
