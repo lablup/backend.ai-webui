@@ -10,6 +10,7 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
 import '@polymer/paper-material/paper-material';
+import '@polymer/iron-collapse/iron-collapse';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
@@ -19,6 +20,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-toast/paper-toast';
+import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
@@ -395,14 +397,19 @@ class BackendAIJobView extends PolymerElement {
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
               <h4>Mount virtual folder</h4>
+              <paper-toggle-button checked="{{vfolder_collapse_opened}}">show virtual folder list</paper-toggle-button>
               <div class="horizontal center layout">
-                <paper-listbox id="vfolder" multi slot="dropdown-content">
-                  <template is="dom-repeat" items="[[ vfolders ]]">
-                    <paper-checkbox value="[[ item.name ]]">
-                      <paper-item>[[ item.name ]]</paper-item>
-                    </paper-checkbox>
-                  </template>
-                </paper-listbox>
+                <iron-collapse opened="[[vfolder_collapse_opened]]">
+                  <div>
+                    <paper-listbox id="vfolder" multi slot="dropdown-content">
+                      <template is="dom-repeat" items="[[ vfolders ]]">
+                        <paper-checkbox value="[[ item.name ]]">
+                          <paper-item>[[ item.name ]]</paper-item>
+                        </paper-checkbox>
+                      </template>
+                    </paper-listbox>
+                  </div>
+                </iron-collapse>
               </div>
               <h4>Resource allocation</h4>
               <div class="horizontal center layout">
