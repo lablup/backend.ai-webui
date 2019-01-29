@@ -231,7 +231,9 @@ class BackendAISummary extends PolymerElement {
       return;
     }
   }
-
+  _toInt(value) {
+    return Math.ceil(value);
+  }
   _countObject(obj) {
     return Object.keys(obj).length;
   }
@@ -277,7 +279,7 @@ class BackendAISummary extends PolymerElement {
                 Memory: <span id="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
                 <template is="dom-if" if="[[gpu_total]]">
                 <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
-                GPUs: <span id="progress-value"> [[gpu_used]]</span>/[[gpu_total]] vGPUs
+                GPUs: <span id="progress-value"> [[_toInt(gpu_used)]]</span>/[[gpu_total]] vGPUs
                 </template>
               </template>
               <template is="dom-if" if="{{!is_admin}}">
