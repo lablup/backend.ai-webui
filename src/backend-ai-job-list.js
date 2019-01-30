@@ -477,7 +477,7 @@ class BackendAIJobList extends PolymerElement {
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>No</span>
+                  <span>-</span>
                   <span class="indicator">vGPU</span>
                 </template>
               </div>

@@ -85,16 +85,32 @@ class BackendAIJobView extends PolymerElement {
         value: []
       },
       cpu_metric: {
-        type: Array,
-        value: [1, 2, 3, 4, 8, 16]
+        type: Object,
+        value: {
+          'min': '1',
+          'max': '1'
+        }
       },
-      ram_metric: {
-        type: Array,
-        value: [1, 2, 4, 8, 16]
+      mem_metric: {
+        type: Object,
+        value: {
+          'min': '1',
+          'max': '1'
+        }
       },
       gpu_metric: {
-        type: Array,
-        value: [0, 0.3, 0.6, 1, 1.5, 2, 3, 4]
+        type: Object,
+        value: {
+          'min': '0',
+          'max': '0'
+        }
+      },
+      tpu_metric: {
+        type: Object,
+        value: {
+          'min': '1',
+          'max': '1'
+        }
       },
       images: {
         type: Object,
@@ -229,7 +245,7 @@ class BackendAIJobView extends PolymerElement {
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
     config['gpu'] = this.$['gpu-resource'].value;
-    config['mem'] = String(this.$['ram-resource'].value) + 'm';
+    config['mem'] = String(this.$['ram-resource'].value) + 'g';
     if (this.$['use-gpu-checkbox'].checked !== true) {
       config['gpu'] = 0.0;
     }
@@ -293,6 +309,30 @@ class BackendAIJobView extends PolymerElement {
       let currentVersion = this.$['version'].value;
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
+      currentResource.forEach((item) => {
+        if (item.key == 'cpu') {
+          this.cpu_metric = item;
+          console.log(this.cpu_metric);
+        }
+        if (item.key == 'gpu') {
+          this.gpu_metric = item;
+          console.log(this.gpu_metric);
+        }
+        if (item.key == 'tpu') {
+          this.tpu_metric = item;
+        }
+        if (item.key == 'mem') {
+          this.mem_metric = item;
+        if (item[minmax].substr(-1) === 'g') {
+        } else {
+          return item[minmax] / 1024;
+        }
+        return item[minmax];
+          if
+
+          console.log(this.mem_metric);
+        }
+      });
     }
   }
 
@@ -302,7 +342,11 @@ class BackendAIJobView extends PolymerElement {
 
   _getResourceLimit(name, metric, minmax) {
     this.resourceLimits[name].forEach((item) => {
-      if (item.key == metric) {
+      if (item.key === metric) {
+        if (metric === 'mem' && item[minmax].substr(-1) === 'g') {
+        } else {
+          return item[minmax] / 1024;
+        }
         return item[minmax];
       }
     });
@@ -338,7 +382,6 @@ class BackendAIJobView extends PolymerElement {
       });
       this._updateEnvironment();
     }).catch(err => {
-      console.log(err);
       if (err && err.message) {
         this.$.notification.text = err.message;
         this.$.notification.show();
@@ -439,7 +482,7 @@ class BackendAIJobView extends PolymerElement {
                   <span class="caption">Core</span>
                 </div>
                 <paper-slider id="cpu-resource" pin snaps expand
-                              min="1" max="8" value="4" markers="[[ cpu_metric ]]"></paper-slider>
+                              min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]" value="1"></paper-slider>
               </div>
               <div class="horizontal center layout">
                 <span>RAM</span>
@@ -448,7 +491,7 @@ class BackendAIJobView extends PolymerElement {
                   <span class="caption">GB</span>
                 </div>
                 <paper-slider id="ram-resource" pin snaps
-                              min="1" max="32" value="4" markers="[[ ram_metric ]]"></paper-slider>
+                              min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]" value="[[ mem_metric.max ]]"></paper-slider>
               </div>
               <div class="horizontal center layout">
                 <span>GPU</span>
@@ -457,7 +500,7 @@ class BackendAIJobView extends PolymerElement {
                   <span class="caption">vGPU</span>
                 </div>
                 <paper-slider id="gpu-resource" pin snaps step=0.1
-                              min="0" max="4" value="1" markers="{{ gpu_metric }}"></paper-slider>
+                              min="0" max="[[gpu_metric.max]]" value="1"></paper-slider>
               </div>
               <br/>
               <paper-button class="blue launch-button" type="submit" id="launch-button">
