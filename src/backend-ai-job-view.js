@@ -53,14 +53,10 @@ class BackendAIJobView extends PolymerElement {
       },
       supports: {
         type: Object,
-        /*            value: {
-                        'TensorFlow': ['1.10', '1.11', '1.12', '2.0'],
-                        'Python': ['3.6', '3.7'],
-                        'PyTorch': ['0.2', '0.3', '0.4', '1.0'],
-                        'Chainer': ['3.2', '4.0'],
-                        'R': ['3'],
-                        'Julia': ['1.0']
-                    }*/
+        value: {}
+      },
+      resourceLimits: {
+        type: Object,
         value: {}
       },
       aliases: {
@@ -110,6 +106,7 @@ class BackendAIJobView extends PolymerElement {
     this.$['launch-session'].addEventListener('tap', this._launchSessionDialog.bind(this));
     this.$['launch-button'].addEventListener('tap', this._newSession.bind(this));
     this.$['environment'].addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
+    this.$['version'].addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this._initAliases();
     document.addEventListener('backend-ai-connected', () => {
     }, true);
@@ -232,7 +229,7 @@ class BackendAIJobView extends PolymerElement {
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
     config['gpu'] = this.$['gpu-resource'].value;
-    config['mem'] = this.$['ram-resource'].value;
+    config['mem'] = String(this.$['ram-resource'].value) + 'm';
     if (this.$['use-gpu-checkbox'].checked !== true) {
       config['gpu'] = 0.0;
     }
@@ -270,6 +267,7 @@ class BackendAIJobView extends PolymerElement {
     }
     if (this.versions != undefined) {
       this.$.version.value = this.versions[0];
+      this.updateMetric();
     }
   }
 
@@ -289,8 +287,29 @@ class BackendAIJobView extends PolymerElement {
     return this.supports[lang];
   }
 
+  updateMetric() {
+    if (this.$['environment'].value in this.aliases) {
+      let currentLang = this.aliases[this.$['environment'].value];
+      let currentVersion = this.$['version'].value;
+      let kernelName = currentLang + ':' + currentVersion;
+      let currentResource = this.resourceLimits[kernelName];
+    }
+  }
+
+  updateLanguage() {
+    this._updateVersions(this.$['environment'].selectedItemLabel);
+  }
+
+  _getResourceLimit(name, metric, minmax) {
+    this.resourceLimits[name].forEach((item) => {
+      if (item.key == metric) {
+        return item[minmax];
+      }
+    });
+  }
+
   _refreshImageList() {
-    let fields = ["name", "tag", "hash"];
+    let fields = ["name", "tag", "digest", "resource_limits { key min max }"];
     let q, v;
     q = `query {` +
       `  images { ${fields.join(" ")} }` +
@@ -305,6 +324,7 @@ class BackendAIJobView extends PolymerElement {
         var item = this.images[objectKey];
         if (!(item.name in this.supports)) {
           this.supports[item.name] = [item.tag];
+          this.resourceLimits[item.name + ':' + item.tag] = item.resource_limits;
           if (item.name in this.aliases) {
             this.languages.push(this.aliases[item.name]);
           } else {
@@ -313,6 +333,7 @@ class BackendAIJobView extends PolymerElement {
           console.log(this.languages);
         } else {
           this.supports[item.name].push(item.tag);
+          this.resourceLimits[item.name + ':' + item.tag] = item.resource_limits;
         }
       });
       this._updateEnvironment();

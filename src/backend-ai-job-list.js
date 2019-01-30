@@ -158,10 +158,11 @@ class BackendAIJobList extends PolymerElement {
   _isAppRunning(lang) {
     if (this.condition != 'running') return false;
     let support_kernels = [
-      'python',
-      'python-tensorflow',
-      'ngc-digits',
-      'ngc-tensorflow'
+      'lablup/python',
+      'lablup/python-tensorflow',
+      'lablup/ngc-digits',
+      'lablup/ngc-tensorflow',
+      'lablup/julia'
     ];
     lang = lang.split('/')[1].split(':')[0];
     return this.condition === 'running' && support_kernels.includes(lang);
