@@ -32,6 +32,8 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
+import './component/backend-ai-dropdown-menu'
+
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 //class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
@@ -223,11 +225,9 @@ class BackendAIJobView extends PolymerElement {
   _newSession() {
     let kernel = this.$['environment'].value;
     let version = this.$['version'].value;
-    let vfolder = [];
+    let vfolder = this.$['vfolder'].selectedValues;
 
-    forEach(this.$['vfolder-items'].selectedItems, (index, item) => {
-      vfolder.push(item.name);
-    });
+    console.log(vfolder);
 
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
@@ -325,6 +325,10 @@ class BackendAIJobView extends PolymerElement {
     });
   }
 
+  changed(e) {
+    console.log(e);
+  }
+
   static get template() {
     // language=HTML
     return html`
@@ -346,13 +350,8 @@ class BackendAIJobView extends PolymerElement {
           font-family: monospace;
         }
 
-        paper-dropdown-menu {
+        backend-ai-dropdown-menu {
           width: 100%;
-        }
-
-        paper-checkbox {
-          margin-bottom: 0px;
-          padding-left: 16px;
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
@@ -405,15 +404,11 @@ class BackendAIJobView extends PolymerElement {
               </div>
               <h4>Mount virtual folder</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="vfolder" label="vfolder">
-                  <paper-listbox id="vfolder-items" selected="1" multi slot="dropdown-content">
-                    <template is="dom-repeat" items="[[ vfolders ]]">
-                      <paper-checkbox id="[[ item.id ]]" name="[[ item.name ]]">
-                        <paper-item>[[ item.name ]]</paper-item>
-                      </paper-checkbox>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
+                  <template is="dom-repeat" items="[[ vfolders ]]">
+                    <paper-item value$="[[ item.name ]]">[[ item.name ]]</paper-item>
+                  </template>
+                </backend-ai-dropdown-menu>
               </div>
               <h4>Resource allocation</h4>
               <div class="horizontal center layout">
