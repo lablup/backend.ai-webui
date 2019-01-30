@@ -95,6 +95,7 @@ class BackendAIJobList extends PolymerElement {
     ;
 
     let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
+    //fields =  ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "io_read_bytes", "io_write_bytes"];
     let q, v;
     if (window.backendaiclient.is_admin == true) {
       q = `query($ak:String, $status:String) {` +
@@ -158,13 +159,15 @@ class BackendAIJobList extends PolymerElement {
   _isAppRunning(lang) {
     if (this.condition != 'running') return false;
     let support_kernels = [
-      'lablup/python',
-      'lablup/python-tensorflow',
-      'lablup/ngc-digits',
-      'lablup/ngc-tensorflow',
-      'lablup/julia'
+      'python',
+      'python-tensorflow',
+      'ngc-digits',
+      'ngc-tensorflow',
+      'julia'
     ];
-    lang = lang.split('/')[1].split(':')[0];
+    console.log(lang);
+    lang = lang.split('/')[2].split(':')[0];
+    console.log(lang);
     return this.condition === 'running' && support_kernels.includes(lang);
   }
 
