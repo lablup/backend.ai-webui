@@ -170,16 +170,16 @@ class Client {
     if (resources != {}) {
       let config = {};
       if (resources['cpu']) {
-        config['instanceCores'] = resources['cpu'];
+        config['cpu'] = resources['cpu'];
       }
       if (resources['mem']) {
-        config['instanceMemory'] = resources['mem'];
+        config['mem'] = resources['mem'];
       }
       if (resources['gpu']) {
-        config['instanceGPUs'] = resources['gpu'];
+        config['cuda.device'] = resources['gpu'];
       }
       if (resources['tpu']) {
-        config['instanceTPUs'] = resources['tpu'];
+        config['tpu.device'] = resources['tpu'];
       }
       if (resources['env']) {
         config['environ'] = resources['env'];
@@ -190,7 +190,8 @@ class Client {
       if (resources['mounts']) {
         config['mounts'] = resources['mounts'];
       }
-      params['config'] = config;
+      //params['config'] = {};
+      params['config'] = {resources: config};
     }
     let rqst = this.newSignedRequest('POST', '/kernel/create', params);
     return this._wrapWithPromise(rqst);

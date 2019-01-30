@@ -66,15 +66,16 @@ class BackendAIJobView extends PolymerElement {
       aliases: {
         type: Object,
         value: {
-          'TensorFlow': 'python-tensorflow',
-          'Python': 'python',
-          'PyTorch': 'python-pytorch',
-          'Chainer': 'chainer',
-          'R': 'r',
-          'Julia': 'julia',
-          'DIGITS': 'ngc-digits',
-          'TensorFlow (NGC)': 'ngc-tensorflow',
-          'PyTorch (NGC)': 'ngc-pytorch',
+          'TensorFlow': 'lablup/python-tensorflow',
+          'Python': 'lablup/python',
+          'PyTorch': 'lablup/python-pytorch',
+          'Chainer': 'lablup/chainer',
+          'R': 'lablup/r',
+          'Julia': 'lablup/julia',
+          'Lua': 'lablup/lua',
+          'DIGITS': 'lablup/ngc-digits',
+          'TensorFlow (NGC)': 'lablup/ngc-tensorflow',
+          'PyTorch (NGC)': 'lablup/ngc-pytorch',
         }
       },
       versions: {
@@ -296,6 +297,7 @@ class BackendAIJobView extends PolymerElement {
       '}';
     v = {};
     window.backendaiclient.gql(q, v).then((response) => {
+      console.log(response);
       this.images = response.images;
       this.languages = [];
       this.supports = {};
