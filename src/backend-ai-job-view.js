@@ -312,24 +312,29 @@ class BackendAIJobView extends PolymerElement {
       currentResource.forEach((item) => {
         if (item.key == 'cpu') {
           this.cpu_metric = item;
+          this.cpu_metric.min = parseInt(this.cpu_metric.min);
+          this.cpu_metric.max = parseInt(this.cpu_metric.max);
           console.log(this.cpu_metric);
         }
         if (item.key == 'gpu') {
           this.gpu_metric = item;
+          this.gpu_metric.min = parseInt(this.gpu_metric.min);
+          this.gpu_metric.max = parseInt(this.gpu_metric.max);
           console.log(this.gpu_metric);
         }
         if (item.key == 'tpu') {
           this.tpu_metric = item;
+          this.tpu_metric.min = parseInt(this.tpu_metric.min);
+          this.tpu_metric.max = parseInt(this.tpu_metric.max);
         }
         if (item.key == 'mem') {
           this.mem_metric = item;
-          console.log(item);
-          if (item.min.substr(-1) === 'm') {
+          if (isNaN(item.min) && item.min.substr(-1) === 'm') {
             this.mem_metric.min = parseInt(this.mem_metric.min) / 1024;
           } else {
             this.mem_metric.min = parseInt(this.mem_metric.min);
           }
-          if (item.max.substr(-1) === 'm') {
+          if (isNaN(item.max) && item.max.substr(-1) === 'm') {
             this.mem_metric.max = parseInt(this.mem_metric.max) / 1024;
           } else {
             this.mem_metric.max = parseInt(this.mem_metric.max);
