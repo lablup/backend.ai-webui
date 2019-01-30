@@ -225,7 +225,7 @@ class BackendAIJobView extends PolymerElement {
     let vfolder = [];
 
     forEach(this.$['vfolder-items'].selectedItems, (index, item) => {
-      vfolder.push(item.label);
+      vfolder.push(item.name);
     });
 
     let config = {};
@@ -347,6 +347,11 @@ class BackendAIJobView extends PolymerElement {
         paper-dropdown-menu {
           width: 100%;
         }
+
+        paper-checkbox {
+          margin-bottom: 0px;
+          padding-left: 16px;
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1">
@@ -399,9 +404,11 @@ class BackendAIJobView extends PolymerElement {
               <h4>Mount virtual folder</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="vfolder" label="vfolder">
-                  <paper-listbox id="vfolder-items" multi slot="dropdown-content">
+                  <paper-listbox id="vfolder-items" selected="1" multi slot="dropdown-content">
                     <template is="dom-repeat" items="[[ vfolders ]]">
-                      <paper-item id="[[ item.id ]]" label="[[ item.name ]]">[[ item.name ]]</paper-item>
+                      <paper-checkbox id="[[ item.id ]]" name="[[ item.name ]]">
+                        <paper-item>[[ item.name ]]</paper-item>
+                      </paper-checkbox>
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
