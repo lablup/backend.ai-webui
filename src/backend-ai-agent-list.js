@@ -244,7 +244,7 @@ class BackendAIAgentList extends PolymerElement {
           margin-right: 5px;
         }
       </style>
-      <paper-toast id="notification" text=""></paper-toast>
+      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[agents.agents]]">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>

@@ -231,11 +231,20 @@ class BackendAISummary extends PolymerElement {
       return;
     }
   }
+
   _toInt(value) {
     return Math.ceil(value);
   }
+
   _countObject(obj) {
     return Object.keys(obj).length;
+  }
+
+  _slotToGPU(value) {
+    if (value < 0) {
+      value = 0;
+    }
+    return (value / 3.75).toFixed(2);
   }
 
   static get template() {
@@ -274,12 +283,18 @@ class BackendAISummary extends PolymerElement {
             <div slot="message">
               <template is="dom-if" if="{{is_admin}}">
                 <vaadin-progress-bar id="cpu-bar" value="[[cpu_used]]" max="[[cpu_total]]"></vaadin-progress-bar>
-                CPUs: <span id="progress-value"> [[cpu_used]]</span>/[[cpu_total]] Cores
+                CPUs: <span class="progress-value"> [[cpu_used]]</span>/[[cpu_total]] Cores
                 <vaadin-progress-bar id="mem-bar" value="[[mem_used]]" max="[[mem_total]]"></vaadin-progress-bar>
-                Memory: <span id="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
+                Memory: <span class="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
                 <template is="dom-if" if="[[gpu_total]]">
-                <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
-                GPUs: <span id="progress-value"> [[_toInt(gpu_used)]]</span>/[[gpu_total]] vGPUs
+                  <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
+                  GPUs: <span class="progress-value"> [[_slotToGPU(gpu_used)]]</span>/[[_slotToGPU(gpu_total)]] GPUs
+                  (<span class="progress-value"> [[_toInt(gpu_used)]]</span>/[[gpu_total]] vGPUs)
+                </template>
+                <template is="dom-if" if="[[!gpu_total]]">
+                  <vaadin-progress-bar id="gpu-bar" value="0" max="1"></vaadin-progress-bar>
+                  GPUs: <span class="progress-value"> Not installed</span>
+                  (<span class="progress-value"> 0</span>/0 vGPUs)
                 </template>
               </template>
               <template is="dom-if" if="{{!is_admin}}">
