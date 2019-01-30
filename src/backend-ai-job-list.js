@@ -145,8 +145,14 @@ class BackendAIJobList extends PolymerElement {
   _endProgressDialog() {
     this.$['app-progress-dialog'].close();
   }
+
   _isRunning() {
     return this.condition === 'running';
+  }
+
+  _humanReadableTime(d) {
+    var d = new Date(d);
+    return d.toUTCString();
   }
 
   _isAppRunning(lang) {
@@ -177,6 +183,11 @@ class BackendAIJobList extends PolymerElement {
     return Number(value / 1000).toFixed(2);
   }
 
+  _padding_zeros(n, width) {
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+  }
+
   _elapsed(start, end) {
     var startDate = new Date(start);
     if (this.condition == 'running') {
@@ -184,11 +195,29 @@ class BackendAIJobList extends PolymerElement {
     } else {
       var endDate = new Date(end);
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds_cumulative = seconds_total;
+    var days = Math.floor(seconds_cumulative / 86400);
+    seconds_cumulative = seconds_cumulative - days * 86400;
+    var hours = Math.floor(seconds_cumulative / 3600);
+    seconds_cumulative = seconds_cumulative - hours * 3600;
+    var minutes = Math.floor(seconds_cumulative / 60);
+    seconds_cumulative = seconds_cumulative - minutes * 60;
+    var seconds = seconds_cumulative;
+    var result = '';
+    if (days !== undefined && days > 0) {
+      result = result + String(days) + ' Day ';
+    }
+    if (hours !== undefined) {
+      result = result + this._padding_zeros(hours, 2) + ':';
+    }
+    if (minutes !== undefined) {
+      result = result + this._padding_zeros(minutes, 2) + ':';
+    }
     if (this.condition == 'running') {
-      return 'Running ' + seconds + 'sec.';
+      return result + this._padding_zeros(seconds, 2) + '';
     } else {
-      return 'Reserved for ' + seconds + 'sec.';
+      return result + String(seconds) + '';
     }
     return seconds;
   }
@@ -380,6 +409,14 @@ class BackendAIJobList extends PolymerElement {
           font-size: 9px;
           margin-right: 5px;
         }
+
+        div.configuration {
+          width: 70px !important;
+        }
+
+        div.configuration iron-icon {
+          padding-right: 5px;
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.compute_sessions]]">
@@ -396,42 +433,68 @@ class BackendAIJobList extends PolymerElement {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Starts</template>
+          <template class="header">
+            <vaadin-grid-sorter path="created_at">Starts</vaadin-grid-sorter>
+          </template>
           <template>
             <div class="layout vertical">
-              <span>[[item.created_at]]</span>
-              <span class="indicator">([[_elapsed(item.created_at, item.terminated_at)]])</span>
+              <span>[[_humanReadableTime(item.created_at)]]</span>
             </div>
           </template>
         </vaadin-grid-column>
-
-        <vaadin-grid-column width="200px" flex-grow="0" resizable>
+        <vaadin-grid-column width="100px" flex-grow="0" resizable>
+          <template class="header">
+            Reservation
+          </template>
+          <template>
+            <div class="layout vertical">
+              <span>[[_elapsed(item.created_at, item.terminated_at)]]</span>
+            </div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column width="150px" flex-grow="0" resizable>
           <template class="header">Configuration</template>
           <template>
             <div class="layout horizontal center flex">
-              <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-              <span>[[item.cpu_slot]]</span>
-              <span class="indicator">core</span>
-              <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-              <span>[[_MBToGB(item.mem_slot)]]</span>
-              <span class="indicator">GB[[item.mem_unit]]</span>
-              <template is="dom-if" if="[[item.gpu_slot]]">
-                <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                <span>[[item.gpu_slot]]</span>
-                <span class="indicator">vGPU</span>
-              </template>
-              <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
-              <!-- <span>[[item.storage_capacity]]</span> -->
-              <!-- <span class="indicator">[[item.storage_unit]]</span> -->
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <span>[[item.cpu_slot]]</span>
+                <span class="indicator">core</span>
+              </div>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <span>[[_MBToGB(item.mem_slot)]]</span>
+                <span class="indicator">GB[[item.mem_unit]]</span>
+              </div>
+            </div>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <template is="dom-if" if="[[item.gpu_slot]]">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>[[item.gpu_slot]]</span>
+                  <span class="indicator">vGPU</span>
+                </template>
+                <template is="dom-if" if="[[!item.gpu_slot]]">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>No</span>
+                  <span class="indicator">vGPU</span>
+                </template>
+              </div>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
+                <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
+                <!-- <span>[[item.storage_capacity]]</span> -->
+                <!-- <span class="indicator">[[item.storage_unit]]</span> -->
+              </div>
             </div>
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">Using</template>
+        <vaadin-grid-column width="100px" flex-grow="0" resizable>
+          <template class="header">Usage</template>
           <template>
             <div class="layout horizontal center flex">
-              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+              <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
               <div class="vertical start layout">
                 <span>[[_msecToSec(item.cpu_used)]]</span>
                 <span class="indicator">sec.</span>
