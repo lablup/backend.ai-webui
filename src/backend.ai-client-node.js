@@ -12,6 +12,7 @@ var fetch = require('node-fetch');
 var Headers = fetch.Headers;
 var crypto = require('crypto');
 var FormData = require('form-data');
+
 const querystring = require('querystring');
 
 
@@ -299,6 +300,8 @@ class Client {
    * @param {string} body - an object that will be encoded as JSON in the request body
    */
   newSignedRequest(method, queryString, body) {
+    console.log(body);
+    console.log(body instanceof FormData);
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -307,7 +310,7 @@ class Client {
     if (body === null || body === undefined) {
       requestBody = '';
       authBody = requestBody;
-    } else if (typeof body.getBoundary === 'function') {
+    } else if (typeof body.getBoundary === 'function' || body instanceof FormData) {
       // detect form data input from form-data module
       requestBody = body;
       authBody = '';
@@ -326,7 +329,6 @@ class Client {
 
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = new Headers({
-      "Content-Type": content_type,
       "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
       "X-BackendAI-Version": this._config.apiVersion,
       "X-BackendAI-Date": d.toISOString(),
@@ -335,17 +337,26 @@ class Client {
     if (body != undefined) {
       if (typeof body.getBoundary === 'function') {
         hdrs.set('Content-Type', body.getHeaders()['content-type']);
-      } else {
+      } if (body instanceof FormData) {
+        console.log(content_type);
+      }
+      else {
+        console.log(content_type);
+        hdrs.set('Content-Type', content_type);
         hdrs.set('Content-Length', Buffer.byteLength(authBody));
       }
+    } else { 
+        hdrs.set('Content-Type', content_type);
     }
+    let uri = this._config.endpoint + queryString;
+
 
     let requestInfo = {
       method: method,
       headers: hdrs,
       cache: 'default',
       body: requestBody,
-      uri: this._config.endpoint + queryString,
+      uri: uri
     };
     return requestInfo;
   }
@@ -459,11 +470,16 @@ class VFolder {
     if (name == null) {
       name = this.name;
     }
-    const formData = new FormData();
+    let formData = new FormData();
     formData.append('src', fs, {filepath: path});
     let rqst = this.client.newSignedRequest('POST', `/folders/${name}/upload`, formData)
     return this.client._wrapWithPromise(rqst);
 
+  }
+
+  uploadFormData(fss, name = null) {
+    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/upload`, fss)
+    return this.client._wrapWithPromise(rqst);
   }
 
   mkdir(path, name = null) {

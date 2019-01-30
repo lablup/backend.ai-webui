@@ -20,6 +20,8 @@ import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-dialog/paper-dialog';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-item/vaadin-item.js';
+import '@vaadin/vaadin-upload/vaadin-upload.js';
+
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
@@ -51,7 +53,15 @@ class BackendAIData extends PolymerElement {
       visible: {
         type: Boolean,
         value: false
-      }
+      },
+      files: {
+        type: Object,
+        value: {}
+      },
+      openedFolder: {
+        type: String,
+        value: ''
+      },
     };
   }
 
@@ -118,6 +128,11 @@ class BackendAIData extends PolymerElement {
     this.openDialog('add-folder-dialog');
   }
 
+  _viewFolderDialog() {
+    this.openDialog('view-folder-dialog');
+  }
+
+
   openDialog(id) {
     //var body = document.querySelector('body');
     //body.appendChild(this.$[id]);
@@ -159,6 +174,30 @@ class BackendAIData extends PolymerElement {
     const controls = e.target.closest('#controls');
     return controls.folderId;
   }
+
+  _viewFolder(e) {
+    const folderId = e.target.folderId;
+    let job = window.backendaiclient.vfolder.list_files(".", folderId);
+    job.then(value => {
+      this.files = JSON.parse(value.files);
+      this.openDialog('view-folder-dialog');
+      this.openedFolder = folderId;
+    });
+  }
+
+  _uploadRequest(e) {
+     console.log('upload xhr before open: ', e.detail.xhr);
+    // Prevent the upload request:
+    e.preventDefault();
+    e.detail.xhr.abort();
+    var file = e.detail.file;
+    var fd = new FormData();
+    fd.append("src", file, file.name);
+    let job = window.backendaiclient.vfolder.uploadFormData(fd, this.openedFolder)
+    job.then(resp => {
+      console.log("Done");
+    });
+    }
 
   _infoFolder(e) {
     const folderId = this._getControlId(e);
@@ -259,7 +298,7 @@ class BackendAIData extends PolymerElement {
           <vaadin-grid-column resizable>
             <template class="header">Folder Name</template>
             <template>
-              <div class="indicator">[[item.name]]</div>
+              <div class="indicator" on-tap="_viewFolder" folder-id="[[item.name]]">[[item.name]]</div>
             </template>
           </vaadin-grid-column>
 
@@ -409,6 +448,52 @@ class BackendAIData extends PolymerElement {
             </vaadin-item>
           </div>
         </paper-material>
+      </paper-dialog>
+      <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" on->
+  <h3 class="horizontal center layout" style="width:1000px;border-bottom:1px solid #ddd;">
+            <span> Files [[openedFolder]]</span>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
+  <vaadin-upload id="upload" on-upload-request="_uploadRequest">
+  <iron-icon slot="drop-label-icon" icon="description"></iron-icon>
+  <span slot="drop-label">Drop your files</span>
+</vaadin-upload>
+      <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" items="[[files]]">
+        <vaadin-grid-column width="40px" flex-grow="0" resizable>
+          <template class="header">#</template>
+          <template>[[_indexFrom1(index)]]</template>
+        </vaadin-grid-column>
+        <vaadin-grid-column>
+          <template class="header">Filename</template>
+          <template>
+            <div class="indicator">[[item.filename]]</div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column>
+          <template class="header">Ctime</template>
+          <template>
+            <div class="indicator">[[item.ctime]]</div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column>
+          <template class="header">Mode</template>
+          <template>
+            <div class="indicator">[[item.mode]]</div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column>
+          <template class="header">Size</template>
+          <template>
+            <div class="indicator">[[item.size]]</div>
+          </template>
+        </vaadin-grid-column>
+      </vaadin-grid>
       </paper-dialog>
       `;
   }
