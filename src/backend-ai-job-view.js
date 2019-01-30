@@ -203,6 +203,7 @@ class BackendAIJobView extends PolymerElement {
   _refreshResourceValues() {
     this._refreshImageList();
     this._updateVirtualFolderList();
+    this.updateMetric();
     var cpu_resource = this.$['cpu-resource'];
     this.$['cpu-value'].textContent = cpu_resource.value;
     cpu_resource.addEventListener('value-change', () => {
@@ -309,6 +310,7 @@ class BackendAIJobView extends PolymerElement {
       let currentVersion = this.$['version'].value;
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
+      this.gpu_metric = {};
       currentResource.forEach((item) => {
         if (item.key == 'cpu') {
           this.cpu_metric = item;
@@ -342,6 +344,21 @@ class BackendAIJobView extends PolymerElement {
           console.log(this.mem_metric);
         }
       });
+      console.log(this.cpu_metric);
+      if (this.gpu_metric === {}) {
+        this.gpu_metric = {
+          min: 0,
+          max: 0
+        };
+        this.$['use-gpu-checkbox'].checked = false;
+        this.$['gpu-resource'].disabled = true;
+        this.$['gpu-resource'].value = 0;
+      } else {
+        this.$['use-gpu-checkbox'].checked = true;
+        this.$['gpu-resource'].disabled = false;
+        this.$['gpu-resource'].value = this.gpu_metric.max;
+      }
+      this.$['gpu-value'].textContent = this.$['gpu-resource'].value;
     }
   }
 
@@ -410,6 +427,12 @@ class BackendAIJobView extends PolymerElement {
           width: 100%;
         }
 
+        paper-material h4 {
+          padding: 5px 20px;
+          border-bottom: 1px solid #ddd;
+          font-weight: 100;
+        }
+
         span.caption {
           width: 30px;
           padding-left: 10px;
@@ -475,7 +498,6 @@ class BackendAIJobView extends PolymerElement {
               <div>
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
-              <h4>Mount virtual folder</h4>
               <div class="horizontal center layout">
                 <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
                   <template is="dom-repeat" items="[[ vfolders ]]">
@@ -483,7 +505,9 @@ class BackendAIJobView extends PolymerElement {
                   </template>
                 </backend-ai-dropdown-menu>
               </div>
-              <h4>Resource allocation</h4>
+            </fieldset>
+            <h4>Resource allocation</h4>
+            <fieldset>
               <div class="horizontal center layout">
                 <span>CPU</span>
                 <div class="horizontal end-justified layout caption">
@@ -499,7 +523,7 @@ class BackendAIJobView extends PolymerElement {
                   <span class="indicator" id="ram-value"></span>
                   <span class="caption">GB</span>
                 </div>
-                <paper-slider id="ram-resource" pin snaps
+                <paper-slider id="ram-resource" pin snaps step=0.1
                               min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]"
                               value="[[ mem_metric.max ]]"></paper-slider>
               </div>
