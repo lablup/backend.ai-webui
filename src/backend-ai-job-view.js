@@ -323,13 +323,17 @@ class BackendAIJobView extends PolymerElement {
         }
         if (item.key == 'mem') {
           this.mem_metric = item;
-        if (item[minmax].substr(-1) === 'g') {
-        } else {
-          return item[minmax] / 1024;
-        }
-        return item[minmax];
-          if
-
+          console.log(item);
+          if (item.min.substr(-1) === 'm') {
+            this.mem_metric.min = parseInt(this.mem_metric.min) / 1024;
+          } else {
+            this.mem_metric.min = parseInt(this.mem_metric.min);
+          }
+          if (item.max.substr(-1) === 'm') {
+            this.mem_metric.max = parseInt(this.mem_metric.max) / 1024;
+          } else {
+            this.mem_metric.max = parseInt(this.mem_metric.max);
+          }
           console.log(this.mem_metric);
         }
       });
@@ -491,7 +495,8 @@ class BackendAIJobView extends PolymerElement {
                   <span class="caption">GB</span>
                 </div>
                 <paper-slider id="ram-resource" pin snaps
-                              min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]" value="[[ mem_metric.max ]]"></paper-slider>
+                              min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]"
+                              value="[[ mem_metric.max ]]"></paper-slider>
               </div>
               <div class="horizontal center layout">
                 <span>GPU</span>
