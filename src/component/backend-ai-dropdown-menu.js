@@ -1,6 +1,6 @@
 /**
-* dropdown menu element
-*/
+ * dropdown menu element
+ */
 
 
 import {html, PolymerElement} from '@polymer/polymer';
@@ -226,18 +226,18 @@ class BackendAIDropdownMenu extends PolymerElement {
         }
 
         paper-input iron-icon {
-          /*color: var(--secondary-text-color);*/
+          color: var(--secondary-text-color);
         }
 
         :host([readonly]) paper-input iron-icon {
-          /*color: var(--disabled-text-color);*/
+          color: var(--disabled-text-color);
         }
 
         paper-listbox {
-          /*@apply --shadow-elevation-2dp;*/
+          @apply --shadow-elevation-2dp;
           position: relative;
           border-radius: 2px;
-          /*background-color: var(--primary-background-color);*/
+          background-color: var(--primary-background-color);
         }
       </style>
 
