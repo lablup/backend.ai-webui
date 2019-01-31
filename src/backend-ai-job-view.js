@@ -254,11 +254,20 @@ class BackendAIJobView extends PolymerElement {
       config['mounts'] = vfolder;
     }
     let kernelName = this._generateKernelIndex(kernel, version);
-    console.log(kernelName);
-
+    this.$['launch-button'].disabled = true;
+    this.$.notification.text = 'Preparing session...';
+    this.$.notification.show();
     window.backendaiclient.createKernel(kernelName, undefined, config).then((req) => {
       this.$['running-jobs'].refreshList();
       this.$['new-session-dialog'].close();
+      this.$['launch-button'].disabled = false;
+    }).catch(err => {
+      console.log(err);
+      this.$['launch-button'].disabled = false;
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
     });
   }
 
@@ -387,7 +396,18 @@ class BackendAIJobView extends PolymerElement {
     v = {};
     window.backendaiclient.gql(q, v).then((response) => {
       console.log(response);
-      this.images = response.images;
+      var images = [];
+
+      Object.keys(response.images).map((objectKey, index) => {
+        var item = response.images[objectKey];
+        if (item.installed === true) {
+          images.push(item);
+        }
+      });
+      if (images.length == 0) {
+        return;
+      }
+      this.images = images;
       this.languages = [];
       this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
