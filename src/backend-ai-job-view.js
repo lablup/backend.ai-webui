@@ -542,7 +542,7 @@ class BackendAIJobView extends PolymerElement {
                   <span class="caption">Core</span>
                 </div>
                 <paper-slider id="cpu-resource" pin snaps expand
-                              min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]" value="1"></paper-slider>
+                              min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]" value="[[ cpu_metric.max ]]"></paper-slider>
               </div>
               <div class="horizontal center layout">
                 <span>RAM</span>
