@@ -14,6 +14,7 @@ import '@polymer/iron-icons/hardware-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-toast';
 import './lablup-shields.js';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -84,17 +85,12 @@ class BackendAIAgentList extends PolymerElement {
       default:
         status = 'ALIVE';
     }
-    ;
     let fields = ['id',
       'addr',
       'status',
       'first_contact',
-      'mem_slots',
-      'cpu_slots',
-      'gpu_slots',
-      'used_mem_slots',
-      'used_cpu_slots',
-      'used_gpu_slots']
+      'occupied_slots',
+      'available_slots'];
     let q = `query($status: String) {` +
       `  agents(status: $status) {` +
       `     ${fields.join(" ")}` +
@@ -104,8 +100,29 @@ class BackendAIAgentList extends PolymerElement {
     let v = {'status': status};
 
     window.backendaiclient.gql(q, v).then(response => {
-      this.agents = response;
-      console.log(this.agents);
+      var agents = response.agents;
+      if (agents !== undefined && agents.length != 0) {
+        Object.keys(agents).map((objectKey, index) => {
+          var agent = agents[objectKey];
+          var occupied_slots = JSON.parse(agent.occupied_slots);
+          var available_slots = JSON.parse(agent.available_slots);
+
+          agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
+          agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
+          agents[objectKey].mem_slots = parseInt(available_slots.mem);
+          agents[objectKey].used_mem_slots = parseInt(occupied_slots.mem);
+          agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+          if ('cuda.device' in occupied_slots) {
+            agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
+          }
+          agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
+          if ('cuda.shares' in occupied_slots) {
+            agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
+          }
+        });
+      }
+      this.agents = agents;
+      console.log(agents);
       if (this.visible == true) {
         setTimeout(() => {
           this._loadAgentList(status)
@@ -243,9 +260,14 @@ class BackendAIAgentList extends PolymerElement {
           font-size: 9px;
           margin-right: 5px;
         }
+
+        vaadin-progress-bar {
+          width: 100px;
+          height: 6px;
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[agents.agents]]">
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[agents]]">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
           <template>[[_indexFrom1(index)]]</template>
@@ -270,35 +292,41 @@ class BackendAIAgentList extends PolymerElement {
         <vaadin-grid-column resizable>
           <template class="header">Resources</template>
           <template>
-            <div class="layout horizontal center flex">
+            <div class="layout flex">
               <div class="layout horizontal center flex">
                 <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[_slotToCPU(item.cpu_slots)]]</span>
+                <span>[[ item.cpu_slots ]]</span>
                 <span class="indicator">cores</span>
+                <span class="flex"></span>
+                <vaadin-progress-bar id="cpu-bar" value="[[item.used_cpu_slots]]"
+                                     max="[[item.cpu_slots]]"></vaadin-progress-bar>
               </div>
               <div class="layout horizontal center flex">
                 <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[_MBtoGB(item.mem_slots)]]</span>
-                <span class="indicator">GB[[item.mem_unit]]</span>
+                <span>[[item.mem_slots]]</span>
+                <span class="indicator">GB</span>
+                <span class="flex"></span>
+                <vaadin-progress-bar id="mem-bar" value="[[item.used_mem_slots]]"
+                                     max="[[item.mem_slots]]"></vaadin-progress-bar>
               </div>
-            </div>
-            <div class="layout horizontal center flex">
               <template is="dom-if" if="[[item.gpu_slots]]">
                 <div class="layout horizontal center flex">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[_slotToGPU(item.gpu_slots)]]</span>
+                  <span>[[item.gpu_slots]]</span>
                   <span class="indicator">GPU</span>
+                  <span class="flex"></span>
+                  <vaadin-progress-bar id="gpu-bar" value="[[item.used_gpu_slots]]"
+                                       max="[[item.gpu_slots]]"></vaadin-progress-bar>
                 </div>
                 <div class="layout horizontal center flex">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[item.gpu_slots]]</span>
+                  <span>[[item.vgpu_slots]]</span>
                   <span class="indicator">vGPU</span>
+                  <span class="flex"></span>
+                  <vaadin-progress-bar id="vgpu-bar" value="[[item.used_vgpu_slots]]"
+                                       max="[[item.vgpu_slots]]"></vaadin-progress-bar>
                 </div>
               </template>
-            </div>
-            <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
-            <!-- <span>[[item.storage_capacity]]</span> -->
-            <!-- <span class="indicator">[[item.storage_unit]]</span> -->
             </div>
           </template>
         </vaadin-grid-column>
