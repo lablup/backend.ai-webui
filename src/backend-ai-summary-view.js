@@ -182,9 +182,16 @@ class BackendAISummary extends PolymerElement {
         this.resources.cpu.used = this.resources.cpu.used + parseInt(occupied_slots.cpu);
         this.resources.mem.total = this.resources.mem.total + parseInt(available_slots.mem);
         this.resources.mem.used = this.resources.mem.used + parseInt(occupied_slots.mem);
-        this.resources.gpu.total = this.resources.gpu.total + available_slots.cuda_shares;
-        this.resources.gpu.used = this.resources.gpu.used + occupied_slots.cuda_shares;
+        this.resources.gpu.total = this.resources.gpu.total + parseInt(available_slots['cuda.device']);
+        if ('cuda.device' in occupied_slots) {
+          this.resources.gpu.used = this.resources.gpu.used + parseInt(occupied_slots['cuda.device']);
+        }
+        this.resources.vgpu.total = this.resources.vgpu.total + parseInt(available_slots['cuda.shares']);
+        if ('cuda.shares' in occupied_slots) {
+          this.resources.vgpu.used = this.resources.vgpu.used + parseInt(occupied_slots['cuda.shares']);
+        }
       });
+      console.log(this.resources.vgpu);
       this._sync_resource_values();
       if (this.visible == true) {
         setTimeout(() => {
@@ -209,15 +216,21 @@ class BackendAISummary extends PolymerElement {
     this.resources.gpu = {};
     this.resources.gpu.total = 0;
     this.resources.gpu.used = 0;
+    this.resources.vgpu = {};
+    this.resources.vgpu.total = 0;
+    this.resources.vgpu.used = 0;
   }
 
   _sync_resource_values() {
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = this.resources.mem.total;
     this.gpu_total = this.resources.gpu.total;
+    this.vgpu_total = this.resources.vgpu.total;
+
     this.cpu_used = this.resources.cpu.used;
     this.mem_used = this.resources.mem.used;
     this.gpu_used = this.resources.gpu.used;
+    this.vgpu_used = this.resources.vgpu.used;
   }
 
   _routeChanged(changeRecord) {
@@ -292,13 +305,12 @@ class BackendAISummary extends PolymerElement {
                 Memory: <span class="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
                 <template is="dom-if" if="[[gpu_total]]">
                   <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
-                  GPUs: <span class="progress-value"> [[_slotToGPU(gpu_used)]]</span>/[[_slotToGPU(gpu_total)]] GPUs
-                  (<span class="progress-value"> [[_toInt(gpu_used)]]</span>/[[gpu_total]] vGPUs)
+                  GPUs: <span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs
+                  (<span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs)
                 </template>
                 <template is="dom-if" if="[[!gpu_total]]">
                   <vaadin-progress-bar id="gpu-bar" value="0" max="1"></vaadin-progress-bar>
                   GPUs: <span class="progress-value"> Not installed</span>
-                  (<span class="progress-value"> 0</span>/0 vGPUs)
                 </template>
               </template>
               <template is="dom-if" if="{{!is_admin}}">
