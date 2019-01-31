@@ -62,6 +62,14 @@ class BackendAIData extends PolymerElement {
         type: String,
         value: ''
       },
+      openedPath: {
+        type: String,
+        value: ''
+      },
+      openedPaths: {
+        type: Object,
+        value: []
+      },
     };
   }
 
@@ -192,14 +200,43 @@ class BackendAIData extends PolymerElement {
 
   _viewFolder(e) {
     const folderId = e.target.folderId;
-
-    let job = window.backendaiclient.vfolder.list_files(".", folderId);
-    job.then(value => {
-      this.files = JSON.parse(value.files);
-      this.openDialog('view-folder-dialog');
-      this.openedFolder = folderId;
-    });
+    this.openedFolder = folderId;
+    this.openedPath = '.';
+    this.openedPaths = [];
+    this.openDialog('view-folder-dialog');
+    const grid = this.$['files'];
+    grid.dataProvider = (params, callback) => {
+      var index = params.page * params.pageSize;
+      console.log(params);
+      let job = window.backendaiclient.vfolder.list_files(this.openedPath, this.openedFolder);
+      job.then(value => {
+        this.files = JSON.parse(value.files);
+        callback(this.files, this.files.length);
+      });
+    };
   }
+
+  _isDir(file) {
+    return file.mode.startsWith("d")
+  }
+  _refreshFiles() {
+  }
+
+  _enqueueFolder(e) {
+    const fn = e.target.folderName;
+    this.openedPaths.push(fn);
+    this.openedPath = this.openedPaths.join("/");
+    const grid = this.$['files'];
+    grid.clearCache();
+  }
+
+  _dequeueFolder(e) {
+    this.openedPaths.pop();
+    this.openedPath = this.openedPaths.join("/");
+    const grid = this.$['files'];
+    grid.clearCache();
+  }
+
 
   _uploadRequest(e) {
     console.log('upload xhr before open: ', e.detail.xhr);
@@ -208,9 +245,12 @@ class BackendAIData extends PolymerElement {
     e.detail.xhr.abort();
     var file = e.detail.file;
     var fd = new FormData();
-    fd.append("src", file, file.name);
+    let path = this.openedPaths.join("/") + "/" + file.name;
+    fd.append("src", file, path);
     let job = window.backendaiclient.vfolder.uploadFormData(fd, this.openedFolder)
     job.then(resp => {
+      const grid = this.$['files'];
+      grid.clearCache();
       console.log("Done");
     });
   }
@@ -477,7 +517,7 @@ class BackendAIData extends PolymerElement {
       <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation"
                     on->
         <h3 class="horizontal center layout" style="width:1000px;border-bottom:1px solid #ddd;">
-          <span> Files [[openedFolder]]</span>
+          <span> Files : [[openedFolder]]</span>
           <div class="flex"></div>
           <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
             Close
@@ -487,7 +527,9 @@ class BackendAIData extends PolymerElement {
           <iron-icon slot="drop-label-icon" icon="description"></iron-icon>
           <span slot="drop-label">Drop your files</span>
         </vaadin-upload>
-        <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" items="[[files]]">
+        <vaadin-button raised id="add-btn" on-tap="_dequeueFolder">Up</vaadin-button>
+
+        <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" id="files">
           <vaadin-grid-column width="40px" flex-grow="0" resizable>
             <template class="header">#</template>
             <template>[[_indexFrom1(index)]]</template>
@@ -495,7 +537,16 @@ class BackendAIData extends PolymerElement {
           <vaadin-grid-column>
             <template class="header">Filename</template>
             <template>
-              <div class="indicator">[[item.filename]]</div>
+              <div class="indicator">
+              <template is="dom-if" if="[[_isDir(item)]]">
+                  <paper-icon-button class="fg controls-running" icon="folder-open"
+                                     on-tap="_enqueueFolder" folder-name="[[item.filename]]"></paper-icon-button>
+              [[item.filename]]
+              </template>
+              <template is="dom-if" if="[[!_isDir(item)]]">
+              [[item.filename]]
+              </template>
+              </div>
             </template>
           </vaadin-grid-column>
 
