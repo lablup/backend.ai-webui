@@ -179,6 +179,7 @@ class BackendAIData extends PolymerElement {
 
   _viewFolder(e) {
     const folderId = e.target.folderId;
+
     let job = window.backendaiclient.vfolder.list_files(".", folderId);
     job.then(value => {
       this.files = JSON.parse(value.files);
@@ -362,7 +363,7 @@ class BackendAIData extends PolymerElement {
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
                   <paper-icon-button class="fg controls-running" icon="folder-open"
-                                     on-tap="_viewFolderDialog"></paper-icon-button>
+                                     on-tap="_viewFolder" folder-id="[[item.name]]"></paper-icon-button>
                 </template>
               </div>
             </template>
