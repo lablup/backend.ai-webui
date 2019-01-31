@@ -154,12 +154,6 @@ class BackendAISummary extends PolymerElement {
       'addr',
       'status',
       'first_contact',
-      'mem_slots',
-      'cpu_slots',
-      'gpu_slots',
-      'used_mem_slots',
-      'used_cpu_slots',
-      'used_gpu_slots',
       'occupied_slots',
       'available_slots'];
     let q = `query($status: String) {` +
