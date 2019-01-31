@@ -153,6 +153,7 @@ class BackendAIData extends PolymerElement {
     }
     return false;
   }
+
   _addFolder() {
     let name = this.$['add-folder-name'].value;
     let job = window.backendaiclient.vfolder.create(name);
@@ -169,6 +170,7 @@ class BackendAIData extends PolymerElement {
     });
     this.closeDialog('add-folder-dialog');
   }
+
   _getControlId(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
@@ -186,7 +188,7 @@ class BackendAIData extends PolymerElement {
   }
 
   _uploadRequest(e) {
-     console.log('upload xhr before open: ', e.detail.xhr);
+    console.log('upload xhr before open: ', e.detail.xhr);
     // Prevent the upload request:
     e.preventDefault();
     e.detail.xhr.abort();
@@ -197,7 +199,7 @@ class BackendAIData extends PolymerElement {
     job.then(resp => {
       console.log("Done");
     });
-    }
+  }
 
   _infoFolder(e) {
     const folderId = this._getControlId(e);
@@ -214,11 +216,13 @@ class BackendAIData extends PolymerElement {
       }
     });
   }
+
   _deleteFolderDialog(e) {
     this.deleteFolderId = this._getControlId(e);
     this.$['delete-folder-name'].value = '';
     this.openDialog('delete-folder-dialog');
   }
+
   _deleteFolderWithCheck() {
     let typedDeleteFolderName = this.$['delete-folder-name'].value;
     if (typedDeleteFolderName != this.deleteFolderId) {
@@ -229,6 +233,7 @@ class BackendAIData extends PolymerElement {
     this.closeDialog('delete-folder-dialog');
     this._deleteFolder(this.deleteFolderId);
   }
+
   _deleteFolder(folderId) {
     let job = window.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
@@ -243,6 +248,7 @@ class BackendAIData extends PolymerElement {
       }
     });
   }
+
   static get template() {
     // language=HTML
     return html`
@@ -345,7 +351,7 @@ class BackendAIData extends PolymerElement {
               <div id="controls" class="layout horizontal flex center"
                    folder-id="[[item.name]]">
                 <paper-icon-button class="fg green controls-running" icon="vaadin:info-circle-o"
-                on-tap="_infoFolder"></paper-icon-button>
+                                   on-tap="_infoFolder"></paper-icon-button>
                 <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'w')]]">
@@ -353,6 +359,10 @@ class BackendAIData extends PolymerElement {
                 <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
                   <paper-icon-button class="fg red controls-running" icon="delete"
                                      on-tap="_deleteFolderDialog"></paper-icon-button>
+                </template>
+                <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
+                  <paper-icon-button class="fg controls-running" icon="folder-open"
+                                     on-tap="_viewFolderDialog"></paper-icon-button>
                 </template>
               </div>
             </template>
@@ -378,10 +388,10 @@ class BackendAIData extends PolymerElement {
           </h3>
           <form id="login-form" onSubmit="this._addFolder()">
             <fieldset>
-              <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" 
-                error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-              <paper-input id="add-folder-host" label="Host" pattern="[a-zA-Z0-9_-]*" disabled 
-              error-message="Allows letters, numbers and -_." auto-validate value="local"></paper-input>
+              <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
+                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+              <paper-input id="add-folder-host" label="Host" pattern="[a-zA-Z0-9_-]*" disabled
+                           error-message="Allows letters, numbers and -_." auto-validate value="local"></paper-input>
               <br/>
               <paper-button class="blue add-button" type="submit" id="add-button">
                 <iron-icon icon="rowing"></iron-icon>
@@ -403,8 +413,9 @@ class BackendAIData extends PolymerElement {
           <div class="warning">WARNING: this cannot be undone!</div>
           <form id="login-form" onSubmit="this._addFolder()">
             <fieldset>
-              <paper-input class="red" id="delete-folder-name" label="Type folder name to delete" pattern="[a-zA-Z0-9_-]*" 
-                error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+              <paper-input class="red" id="delete-folder-name" label="Type folder name to delete"
+                           pattern="[a-zA-Z0-9_-]*"
+                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
               <br/>
               <paper-button class="blue delete-button" type="submit" id="delete-button">
                 <iron-icon icon="close"></iron-icon>
@@ -434,68 +445,69 @@ class BackendAIData extends PolymerElement {
             </vaadin-item>
             <vaadin-item>
               <div><strong>Number of Files</strong></div>
-                <div secondary>[[folderInfo.numFiles]]</div>
+              <div secondary>[[folderInfo.numFiles]]</div>
             </vaadin-item>
             <template is="dom-if" if="[[folderInfo.is_owner]]">
               <vaadin-item>
                 <div><strong>Ownership</strong></div>
-                  <div secondary>You are the owner of this folder.</div>
+                <div secondary>You are the owner of this folder.</div>
               </vaadin-item>
             </template>
             <vaadin-item>
               <div><strong>Permission</strong></div>
-                <div secondary>[[folderInfo.permission]]</div>
+              <div secondary>[[folderInfo.permission]]</div>
             </vaadin-item>
           </div>
         </paper-material>
       </paper-dialog>
-      <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" on->
-  <h3 class="horizontal center layout" style="width:1000px;border-bottom:1px solid #ddd;">
-            <span> Files [[openedFolder]]</span>
-            <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
-          </h3>
-  <vaadin-upload id="upload" on-upload-request="_uploadRequest">
-  <iron-icon slot="drop-label-icon" icon="description"></iron-icon>
-  <span slot="drop-label">Drop your files</span>
-</vaadin-upload>
-      <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" items="[[files]]">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[_indexFrom1(index)]]</template>
-        </vaadin-grid-column>
-        <vaadin-grid-column>
-          <template class="header">Filename</template>
-          <template>
-            <div class="indicator">[[item.filename]]</div>
-          </template>
-        </vaadin-grid-column>
+      <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation"
+                    on->
+        <h3 class="horizontal center layout" style="width:1000px;border-bottom:1px solid #ddd;">
+          <span> Files [[openedFolder]]</span>
+          <div class="flex"></div>
+          <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+            Close
+          </paper-icon-button>
+        </h3>
+        <vaadin-upload id="upload" on-upload-request="_uploadRequest">
+          <iron-icon slot="drop-label-icon" icon="description"></iron-icon>
+          <span slot="drop-label">Drop your files</span>
+        </vaadin-upload>
+        <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" items="[[files]]">
+          <vaadin-grid-column width="40px" flex-grow="0" resizable>
+            <template class="header">#</template>
+            <template>[[_indexFrom1(index)]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Filename</template>
+            <template>
+              <div class="indicator">[[item.filename]]</div>
+            </template>
+          </vaadin-grid-column>
 
-        <vaadin-grid-column>
-          <template class="header">Ctime</template>
-          <template>
-            <div class="indicator">[[item.ctime]]</div>
-          </template>
-        </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Ctime</template>
+            <template>
+              <div class="indicator">[[item.ctime]]</div>
+            </template>
+          </vaadin-grid-column>
 
-        <vaadin-grid-column>
-          <template class="header">Mode</template>
-          <template>
-            <div class="indicator">[[item.mode]]</div>
-          </template>
-        </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Mode</template>
+            <template>
+              <div class="indicator">[[item.mode]]</div>
+            </template>
+          </vaadin-grid-column>
 
-        <vaadin-grid-column>
-          <template class="header">Size</template>
-          <template>
-            <div class="indicator">[[item.size]]</div>
-          </template>
-        </vaadin-grid-column>
-      </vaadin-grid>
+          <vaadin-grid-column>
+            <template class="header">Size</template>
+            <template>
+              <div class="indicator">[[item.size]]</div>
+            </template>
+          </vaadin-grid-column>
+        </vaadin-grid>
       </paper-dialog>
-      `;
+    `;
   }
 }
 
