@@ -209,6 +209,9 @@ class Client {
       if (resources['gpu']) {
         config['cuda.device'] = resources['gpu'];
       }
+      if (resources['vgpu']) {
+        config['cuda.shares'] = resources['vgpu'];
+      }
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
       }
