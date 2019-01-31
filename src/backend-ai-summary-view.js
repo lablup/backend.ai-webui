@@ -159,7 +159,9 @@ class BackendAISummary extends PolymerElement {
       'gpu_slots',
       'used_mem_slots',
       'used_cpu_slots',
-      'used_gpu_slots']
+      'used_gpu_slots',
+      'occupied_slots',
+      'available_slots'];
     let q = `query($status: String) {` +
       `  agents(status: $status) {` +
       `     ${fields.join(" ")}` +
@@ -173,13 +175,15 @@ class BackendAISummary extends PolymerElement {
       this._init_resource_values();
       Object.keys(this.agents).map((objectKey, index) => {
         var value = this.agents[objectKey];
+        var occupied_slots = JSON.parse(value.occupied_slots);
+        var available_slots = JSON.parse(value.available_slots);
         console.log(value);
-        this.resources.cpu.total = this.resources.cpu.total + value.cpu_slots;
-        this.resources.cpu.used = this.resources.cpu.used + value.used_cpu_slots;
-        this.resources.mem.total = this.resources.mem.total + value.mem_slots;
-        this.resources.mem.used = this.resources.mem.used + value.used_mem_slots;
-        this.resources.gpu.total = this.resources.gpu.total + value.gpu_slots;
-        this.resources.gpu.used = this.resources.gpu.used + value.used_gpu_slots;
+        this.resources.cpu.total = this.resources.cpu.total + parseInt(available_slots.cpu);
+        this.resources.cpu.used = this.resources.cpu.used + parseInt(occupied_slots.cpu);
+        this.resources.mem.total = this.resources.mem.total + parseInt(available_slots.mem);
+        this.resources.mem.used = this.resources.mem.used + parseInt(occupied_slots.mem);
+        this.resources.gpu.total = this.resources.gpu.total + available_slots.cuda_shares;
+        this.resources.gpu.used = this.resources.gpu.used + occupied_slots.cuda_shares;
       });
       this._sync_resource_values();
       if (this.visible == true) {

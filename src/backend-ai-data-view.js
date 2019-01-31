@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {PolymerElement, html} from '@polymer/polymer';
+import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/iron-icon/iron-icon';
@@ -117,6 +117,19 @@ class BackendAIData extends PolymerElement {
 
   _menuChanged(visible) {
     if (!visible) {
+      return;
+    } else {
+      if (window.backendaiclient == undefined || window.backendaiclient == null) {
+        document.addEventListener('backend-ai-connected', () => {
+          this.is_admin = window.backendaiclient.is_admin;
+          this.authenticated = true;
+          this._refreshFolderList();
+        }, true);
+      } else {
+          this.is_admin = window.backendaiclient.is_admin;
+          this.authenticated = true;
+          this._refreshFolderList();
+      }
     }
   }
 
