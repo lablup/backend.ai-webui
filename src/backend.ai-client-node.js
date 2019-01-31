@@ -188,11 +188,11 @@ class Client {
       if (resources['clustersize']) {
         config['clusterSize'] = resources['clustersize'];
       }
-      if (resources['mounts']) {
-        config['mounts'] = resources['mounts'];
-      }
       //params['config'] = {};
       params['config'] = {resources: config};
+      if (resources['mounts']) {
+        params['config'].mounts = resources['mounts'];
+      }
     }
     let rqst = this.newSignedRequest('POST', '/kernel/create', params);
     return this._wrapWithPromise(rqst);

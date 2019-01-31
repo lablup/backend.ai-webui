@@ -379,7 +379,7 @@ class BackendAIJobView extends PolymerElement {
   }
 
   _refreshImageList() {
-    let fields = ["name", "tag", "digest", "resource_limits { key min max }"];
+    let fields = ["name", "tag", "digest", "installed", "resource_limits { key min max }"];
     let q, v;
     q = `query {` +
       `  images { ${fields.join(" ")} }` +
@@ -392,6 +392,7 @@ class BackendAIJobView extends PolymerElement {
       this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
         var item = this.images[objectKey];
+        console.log(item);
         if (!(item.name in this.supports)) {
           this.supports[item.name] = [item.tag];
           this.resourceLimits[item.name + ':' + item.tag] = item.resource_limits;
