@@ -245,10 +245,10 @@ class BackendAIJobView extends PolymerElement {
 
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
-    config['gpu'] = this.$['gpu-resource'].value;
+    config['vgpu'] = this.$['gpu-resource'].value;
     config['mem'] = String(this.$['ram-resource'].value) + 'g';
     if (this.$['use-gpu-checkbox'].checked !== true) {
-      config['gpu'] = 0.0;
+      config['vgpu'] = 0.0;
     }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
@@ -319,41 +319,48 @@ class BackendAIJobView extends PolymerElement {
       let currentVersion = this.$['version'].value;
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
-      this.gpu_metric = {};
+      console.log(currentResource);
       currentResource.forEach((item) => {
         if (item.key == 'cpu') {
-          this.cpu_metric = item;
-          this.cpu_metric.min = parseInt(this.cpu_metric.min);
-          this.cpu_metric.max = parseInt(this.cpu_metric.max);
+          var cpu_metric = item;
+          cpu_metric.min = parseInt(cpu_metric.min);
+          cpu_metric.max = parseInt(cpu_metric.max);
+          this.cpu_metric = cpu_metric;
           console.log(this.cpu_metric);
         }
-        if (item.key == 'gpu') {
-          this.gpu_metric = item;
-          this.gpu_metric.min = parseInt(this.gpu_metric.min);
-          this.gpu_metric.max = parseInt(this.gpu_metric.max);
+        if (item.key == 'cuda.shares') {
+          var gpu_metric = item;
+          gpu_metric.min = parseInt(gpu_metric.min);
+          gpu_metric.max = parseInt(gpu_metric.max);
+          this.gpu_metric = gpu_metric;
           console.log(this.gpu_metric);
         }
         if (item.key == 'tpu') {
-          this.tpu_metric = item;
-          this.tpu_metric.min = parseInt(this.tpu_metric.min);
-          this.tpu_metric.max = parseInt(this.tpu_metric.max);
+          var tpu_metric = item;
+          tpu_metric.min = parseInt(tpu_metric.min);
+          tpu_metric.max = parseInt(tpu_metric.max);
+          this.tpu_metric = tpu_metric;
         }
         if (item.key == 'mem') {
-          this.mem_metric = item;
+          var mem_metric = item;
           if (isNaN(item.min) && item.min.substr(-1) === 'm') {
-            this.mem_metric.min = parseInt(this.mem_metric.min) / 1024;
+            mem_metric.min = parseInt(mem_metric.min) / 1024;
+          } else if (isNaN(item.min) && item.min.substr(-1) === 'g') {
+            mem_metric.min = parseInt(mem_metric.min);
           } else {
-            this.mem_metric.min = parseInt(this.mem_metric.min);
+            mem_metric.min = parseInt(mem_metric.min) / (1024 * 1024 * 1024);
           }
           if (isNaN(item.max) && item.max.substr(-1) === 'm') {
-            this.mem_metric.max = parseInt(this.mem_metric.max) / 1024;
+            mem_metric.max = parseInt(mem_metric.max) / 1024;
+          } else if (isNaN(item.max) && item.max.substr(-1) === 'g') {
+            mem_metric.max = parseInt(mem_metric.max);
           } else {
-            this.mem_metric.max = parseInt(this.mem_metric.max);
+            mem_metric.max = parseInt(mem_metric.max) / (1024 * 1024 * 1024);
           }
+          this.mem_metric = mem_metric;
           console.log(this.mem_metric);
         }
       });
-      console.log(this.cpu_metric);
       if (this.gpu_metric === {}) {
         this.gpu_metric = {
           min: 0,
@@ -412,7 +419,6 @@ class BackendAIJobView extends PolymerElement {
       this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
         var item = this.images[objectKey];
-        console.log(item);
         if (!(item.name in this.supports)) {
           this.supports[item.name] = [item.tag];
           this.resourceLimits[item.name + ':' + item.tag] = item.resource_limits;

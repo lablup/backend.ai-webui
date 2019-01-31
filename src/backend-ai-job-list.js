@@ -237,7 +237,7 @@ class BackendAIJobList extends PolymerElement {
 
     window.backendaiclient.destroyKernel(kernelId).then((req) => {
       termButton.setAttribute('disabled', '');
-      this.$.notification.text = 'Session will soon be terminated';
+      this.$.notification.text = 'Terminating session...';
       this.$.notification.show();
       setTimeout(() => {
         this.refreshList()
