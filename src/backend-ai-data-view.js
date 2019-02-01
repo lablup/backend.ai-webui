@@ -96,8 +96,8 @@ class BackendAIData extends PolymerElement {
     }, true);
     this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
     this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
-    this.$['add-dir-btn'].addEventListener('tap', this._mkdir.bind(this));
-    this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
+    // this.$['add-dir-btn'].addEventListener('tap', this._mkdir.bind(this));
+    // this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
   }
 
   static get observers() {
@@ -289,6 +289,23 @@ class BackendAIData extends PolymerElement {
     grid.clearCache();
   }
 
+  _gotoFolder(e) {
+    const targetPath = e.target['path-name'] || e.target.innerHTML;
+    console.log(targetPath);
+
+    let tempPathArr = [this.openedFolder, ...this.openedPaths];
+    const index = tempPathArr.indexOf(targetPath);
+
+    if (index === -1) {
+      console.error('path list index out of range error');
+    } else {
+      this.set('openedPaths', index === 0 ? [] : tempPathArr.slice(1, index + 1));
+      this.set('openedPath', this.openedPaths.join("/"));
+      const grid = this.$['files'];
+      grid.clearCache();
+    }
+  }
+
   _isDir(file) {
     return file.mode.startsWith("d")
   }
@@ -431,6 +448,16 @@ class BackendAIData extends PolymerElement {
           color: #222;
           font-size: 2em;
           text-align: center;
+        }
+
+        .path-link {
+          padding: 3px;
+          min-width: 0;
+          color: #637282;
+        }
+
+        .path-link:last-of-type {
+          color: #000;
         }
 
       </style>
@@ -612,10 +639,10 @@ class BackendAIData extends PolymerElement {
       <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation"
                     on->
         <h2 class="horizontal center layout breadcrumb" style="min-width:1000px;">
-          <span class="path">[[openedFolder]]</span>
+          <paper-button class="path-link" path-name="." on-tap="_gotoFolder">[[openedFolder]]</paper-button>
           <template is="dom-repeat" items="[[openedPaths]]">
-            <span>&nbsp;&gt;&nbsp;</span>
-            <span class="path">[[item]]</span>
+            <span>&gt;</span>
+            <paper-button class="path-link" path-name="{{item}}" on-tap="_gotoFolder">[[item]]</paper-button>
           </template>
           <div class="flex"></div>
           <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
@@ -625,7 +652,6 @@ class BackendAIData extends PolymerElement {
 
         <div>
           <vaadin-button raised id="add-btn" on-tap="_fileClick">Upload Files...</vaadin-button>
-          <vaadin-button raised id="add-btn" on-tap="_dequeueFolder">Up</vaadin-button>
         </div>
 
         <div id="upload">
