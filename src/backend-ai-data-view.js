@@ -89,6 +89,7 @@ class BackendAIData extends PolymerElement {
     }, true);
     this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
     this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
+    this.$['add-dir-btn'].addEventListener('tap', this._mkdir.bind(this));
     this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
   }
 
@@ -237,6 +238,21 @@ class BackendAIData extends PolymerElement {
     grid.clearCache();
   }
 
+  _viewMkdirDialog(e) {
+    this.openDialog('mkdir-dialog');
+  }
+  _mkdir(e) {
+    let fn = this.$['add-dir-name'].value;
+    let path = this.openedPaths.join("/") + fn;
+    console.log(path);
+    console.log(this.openedFolder);
+    let job = window.backendaiclient.vfolder.mkdir(path, this.openedFolder)
+    job.then(resp => {
+      const grid = this.$['files'];
+      grid.clearCache();
+      this.closeDialog('mkdir-dialog');
+    });
+  }
 
   _uploadRequest(e) {
     console.log('upload xhr before open: ', e.detail.xhr);
@@ -514,8 +530,29 @@ class BackendAIData extends PolymerElement {
           </div>
         </paper-material>
       </paper-dialog>
-      <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation"
-                    on->
+      <paper-dialog id="mkdir-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span>Create a directory</span>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
+          <form id="form">
+            <fieldset>
+              <paper-input id="add-dir-name" label="Directory name" pattern="[a-zA-Z0-9_-]*"
+                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+              <br/>
+              <paper-button class="blue add-button" type="submit" id="add-dir-btn">
+                <iron-icon icon="rowing"></iron-icon>
+                Create
+              </paper-button>
+            </fieldset>
+          </form>
+        </paper-material>
+      </paper-dialog>
+      <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <h3 class="horizontal center layout" style="width:1000px;border-bottom:1px solid #ddd;">
           <span> Files : [[openedFolder]]</span>
           <div class="flex"></div>
@@ -528,6 +565,7 @@ class BackendAIData extends PolymerElement {
           <span slot="drop-label">Drop your files</span>
         </vaadin-upload>
         <vaadin-button raised id="add-btn" on-tap="_dequeueFolder">Up</vaadin-button>
+        <vaadin-button raised id="add-btn" on-tap="_viewMkdirDialog">New directory</vaadin-button>
 
         <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" id="files">
           <vaadin-grid-column width="40px" flex-grow="0" resizable>
