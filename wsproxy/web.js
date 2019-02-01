@@ -7,7 +7,7 @@ const Client = require("./lib/WstClient"),
 
 function express_app(port) {
   let config;
-  let aiclient
+  let aiclient;
   let proxies = {};
   let {getFreePorts} = require('node-port-check');
 
@@ -22,7 +22,7 @@ function express_app(port) {
     );
     aiclient = new ai.backend.Client(config);
     res.send({})
-  })
+  });
 
   app.get('/test', function (req, res) {
     aiclient.createIfNotExists('app-jupyter', 'appsession')
@@ -30,11 +30,11 @@ function express_app(port) {
       console.log(`my session is created: ${response.kernelId}`);
       res.send({})
     })
-  })
+  });
 
   app.get('/', function (req, res) {
     if(config == undefined) {
-      res.send({"code": 401})
+      res.send({"code": 401});
       return;
     }
     let rtn = [];
@@ -42,18 +42,19 @@ function express_app(port) {
       rtn.push(key);
     }
     res.send(rtn)
-  })
+  });
 
-  app.get('/proxy/:kernelId/add', function (req, res) {
+  app.get('/proxy/:kernelId/add/:appName', function (req, res) {
     if(config == undefined) {
-      res.send({"code": 401})
+      res.send({"code": 401});
       return;
     }
-    let kernelId = req.params["kernelId"]
+    let kernelId = req.params["kernelId"];
+    let appName = req.params["appName"];
     if(!(kernelId in proxies)) {
       let proxy = new Proxy(aiclient._config);
       getFreePorts(1, 'localhost').then((freePortsList) => {
-          proxy.start_proxy(kernelId, "jupyter", freePortsList[0])
+          proxy.start_proxy(kernelId, "jupyter", freePortsList[0]);
           proxies[kernelId] = proxy;
           res.send({"code": 200, "proxy": proxy.host})
       });
@@ -61,7 +62,7 @@ function express_app(port) {
       let proxy = proxies[kernelId];
       res.send({"code": 200, "proxy": proxy.host})
     }
-  })
+  });
 
   app.get('/proxy/:kernelId/delete', function (req, res) {
     if(config == undefined) {
@@ -76,7 +77,7 @@ function express_app(port) {
     } else {
       res.send({"code": 404})
     }
-  })
+  });
 
   app.get('/proxy/:kernelId', function (req, res) {
     if(config == undefined) {
@@ -89,7 +90,7 @@ function express_app(port) {
     } else {
       res.send({"code": 404})
     }
-  })
+  });
   app.listen(port, () => console.log(`Listening on port ${port}!`))
 }
 
