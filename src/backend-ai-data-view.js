@@ -96,7 +96,7 @@ class BackendAIData extends PolymerElement {
     }, true);
     this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
     this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
-    // this.$['add-dir-btn'].addEventListener('tap', this._mkdir.bind(this));
+    this.$['add-dir-btn'].addEventListener('tap', this._mkdir.bind(this));
     // this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
   }
 
@@ -205,24 +205,6 @@ class BackendAIData extends PolymerElement {
     return controls.folderId;
   }
 
-  _viewFolder(e) {
-    const folderId = e.target.folderId;
-    this.openedFolder = folderId;
-    this.openedPath = '.';
-    this.set('openedPaths', []);
-    this.openDialog('view-folder-dialog');
-    const grid = this.$['files'];
-    grid.dataProvider = (params, callback) => {
-      var index = params.page * params.pageSize;
-      console.log(params);
-      let job = window.backendaiclient.vfolder.list_files(this.openedPath, this.openedFolder);
-      job.then(value => {
-        this.files = JSON.parse(value.files);
-        callback(this.files, this.files.length);
-      });
-    };
-  }
-
   _infoFolder(e) {
     const folderId = this._getControlId(e);
     let job = window.backendaiclient.vfolder.info(folderId);
@@ -272,6 +254,24 @@ class BackendAIData extends PolymerElement {
   }
 
   /*explorer*/
+  _viewFolder(e) {
+    const folderId = e.target.folderId;
+    this.openedFolder = folderId;
+    this.openedPath = '.';
+    this.set('openedPaths', []);
+    this.openDialog('view-folder-dialog');
+    const grid = this.$['files'];
+    grid.dataProvider = (params, callback) => {
+      var index = params.page * params.pageSize;
+      console.log(params);
+      let job = window.backendaiclient.vfolder.list_files(this.openedPath, this.openedFolder);
+      job.then(value => {
+        this.files = JSON.parse(value.files);
+        callback(this.files, this.files.length);
+      });
+    };
+  }
+
   _enqueueFolder(e) {
     const fn = e.target.folderName;
     this.push('openedPaths', fn);
@@ -313,7 +313,6 @@ class BackendAIData extends PolymerElement {
   _isDownloadable(file) {
     return file.size < 209715200
   }
-
 
   _addEventListenerDropZone() {
     const dndZoneEl = this.$['view-folder-dialog'];
@@ -414,6 +413,21 @@ class BackendAIData extends PolymerElement {
     });
   }
 
+  _mkdir(e) {
+    let name = this.$['add-dir-name'].value;
+    let path = this.openedPaths.concat(name).join("/");
+    let job = window.backendaiclient.vfolder.mkdir(path , this.openedFolder)
+    job.then(res => {
+      this.closeDialog('add-dir-dialog');
+      const grid = this.$['files'];
+      grid.clearCache();
+      });
+  }
+
+  _mkdirDialog() {
+    this.$['add-dir-name'].value = '';
+    this.openDialog('add-dir-dialog');
+  }
 
 
   static get template() {
@@ -674,11 +688,10 @@ class BackendAIData extends PolymerElement {
             Close
           </paper-icon-button>
         </h2>
-
         <div>
           <vaadin-button raised id="add-btn" on-tap="_fileClick">Upload Files...</vaadin-button>
+          <vaadin-button id="add-dir" on-tap="_mkdirDialog">New Directory</vaadin-button>
         </div>
-
         <div id="upload">
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" on-change="_fileChange" hidden multiple>
@@ -686,7 +699,6 @@ class BackendAIData extends PolymerElement {
             <div><span>[[item]]</span></div>
           </template>
         </div>
-
         <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" id="files">
           <vaadin-grid-column width="40px" flex-grow="0" resizable>
             <template class="header">#</template>
@@ -737,10 +749,30 @@ class BackendAIData extends PolymerElement {
                   </template>
                 </template>
             </template>
-            <template>
           </vaadin-grid-column>
-
         </vaadin-grid>
+      </paper-dialog>
+      <paper-dialog id="add-dir-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span>Create a new virtual folder</span>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
+          <form>
+            <fieldset>
+              <paper-input id="add-dir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
+                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+              <br/>
+              <paper-button class="blue add-button" type="submit" id="add-dir-btn">
+                <iron-icon icon="rowing"></iron-icon>
+                Create
+              </paper-button>
+            </fieldset>
+          </form>
+        </paper-material>
       </paper-dialog>
     `;
   }
