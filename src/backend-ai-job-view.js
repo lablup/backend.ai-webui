@@ -38,7 +38,6 @@ import './component/backend-ai-dropdown-menu'
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
-// class BackendAIJobView extends PolymerElement {
   static get is() {
     return 'backend-ai-job-view';
   }

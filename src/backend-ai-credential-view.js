@@ -28,11 +28,12 @@ import '@vaadin/vaadin-icons/vaadin-icons.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-credential-list.js';
+import {OverlayPatchMixin} from './overlay-patch-mixin.js'
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 
-class BackendAICredentialView extends PolymerElement {
+class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   static get properties() {
     return {
       visible: {
@@ -208,7 +209,8 @@ class BackendAICredentialView extends PolymerElement {
           <backend-ai-credential-list id="inactive-credential-list" condition="inactive"></backend-ai-job-list>
         </div>
       </paper-material>
-      <paper-dialog id="new-keypair-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-dialog id="new-keypair-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Create</h3>
           <form id="login-form" onSubmit="this._addKeyPair()">

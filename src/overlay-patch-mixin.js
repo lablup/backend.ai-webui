@@ -32,6 +32,8 @@ let OverlayPatchMixn = (superClass) => class extends superClass {
       const appPage = this.closest('#app-page');
       appPage.parentElement.insertBefore(dialog.backdropElement, appPage);
     } else {
+      // Attach backdrop element into body (original location). No need to
+      // manually remove the backdrop since it is dealt by paper-dialog.
       const body = document.querySelector('body');
       body.appendChild(dialog.backdropElement);
     }

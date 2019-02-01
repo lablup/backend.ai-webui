@@ -25,9 +25,10 @@ import '@vaadin/vaadin-upload/vaadin-upload.js';
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
+import {OverlayPatchMixin} from './overlay-patch-mixin.js'
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
-class BackendAIData extends PolymerElement {
+class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   static get properties() {
     return {
       folders: {
@@ -592,7 +593,8 @@ class BackendAIData extends PolymerElement {
           <div>No data present.</div>
         </div>
       </paper-material>
-      <paper-dialog id="add-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-dialog id="add-folder-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
@@ -616,7 +618,8 @@ class BackendAIData extends PolymerElement {
           </form>
         </paper-material>
       </paper-dialog>
-      <paper-dialog id="delete-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-dialog id="delete-folder-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Delete a virtual folder</span>
@@ -640,7 +643,8 @@ class BackendAIData extends PolymerElement {
           </form>
         </paper-material>
       </paper-dialog>
-      <paper-dialog id="info-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-dialog id="info-folder-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span>[[folderInfo.name]]</span>
@@ -675,8 +679,8 @@ class BackendAIData extends PolymerElement {
           </div>
         </paper-material>
       </paper-dialog>
-      <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation"
-                    on->
+      <paper-dialog id="view-folder-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <h2 class="horizontal center layout breadcrumb" style="min-width:1000px;">
           <paper-button class="path-link" path-name="." on-tap="_gotoFolder">[[openedFolder]]</paper-button>
           <template is="dom-repeat" items="[[openedPaths]]">
@@ -752,7 +756,8 @@ class BackendAIData extends PolymerElement {
           </vaadin-grid-column>
         </vaadin-grid>
       </paper-dialog>
-      <paper-dialog id="add-dir-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <paper-dialog id="add-dir-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
