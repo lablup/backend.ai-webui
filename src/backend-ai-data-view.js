@@ -70,6 +70,12 @@ class BackendAIData extends PolymerElement {
         type: Object,
         value: []
       },
+      /*upload*/
+      uploadFiles: {
+        type: Array,
+        value: [],
+        observe: true
+      },
     };
   }
 
@@ -82,6 +88,7 @@ class BackendAIData extends PolymerElement {
 
   ready() {
     super.ready();
+    this._addEventListenerDropZone();
     document.addEventListener('backend-ai-connected', () => {
       this.is_admin = window.backendaiclient.is_admin;
       this.authenticated = true;
@@ -134,9 +141,9 @@ class BackendAIData extends PolymerElement {
           this._refreshFolderList();
         }, true);
       } else {
-          this.is_admin = window.backendaiclient.is_admin;
-          this.authenticated = true;
-          this._refreshFolderList();
+        this.is_admin = window.backendaiclient.is_admin;
+        this.authenticated = true;
+        this._refreshFolderList();
       }
     }
   }
@@ -152,7 +159,6 @@ class BackendAIData extends PolymerElement {
   _viewFolderDialog() {
     this.openDialog('view-folder-dialog');
   }
-
 
   openDialog(id) {
     //var body = document.querySelector('body');
@@ -202,7 +208,7 @@ class BackendAIData extends PolymerElement {
     const folderId = e.target.folderId;
     this.openedFolder = folderId;
     this.openedPath = '.';
-    this.openedPaths = [];
+    this.set('openedPaths', []);
     this.openDialog('view-folder-dialog');
     const grid = this.$['files'];
     grid.dataProvider = (params, callback) => {
@@ -214,45 +220,6 @@ class BackendAIData extends PolymerElement {
         callback(this.files, this.files.length);
       });
     };
-  }
-
-  _isDir(file) {
-    return file.mode.startsWith("d")
-  }
-  _refreshFiles() {
-  }
-
-  _enqueueFolder(e) {
-    const fn = e.target.folderName;
-    this.openedPaths.push(fn);
-    this.openedPath = this.openedPaths.join("/");
-    const grid = this.$['files'];
-    grid.clearCache();
-  }
-
-  _dequeueFolder(e) {
-    this.openedPaths.pop();
-    this.openedPath = this.openedPaths.join("/");
-    const grid = this.$['files'];
-    grid.clearCache();
-  }
-
-
-  _uploadRequest(e) {
-    console.log('upload xhr before open: ', e.detail.xhr);
-    // Prevent the upload request:
-    e.preventDefault();
-    e.detail.xhr.abort();
-    var file = e.detail.file;
-    var fd = new FormData();
-    let path = this.openedPaths.join("/") + "/" + file.name;
-    fd.append("src", file, path);
-    let job = window.backendaiclient.vfolder.uploadFormData(fd, this.openedFolder)
-    job.then(resp => {
-      const grid = this.$['files'];
-      grid.clearCache();
-      console.log("Done");
-    });
   }
 
   _infoFolder(e) {
@@ -303,6 +270,109 @@ class BackendAIData extends PolymerElement {
     });
   }
 
+  /*explorer*/
+  _enqueueFolder(e) {
+    const fn = e.target.folderName;
+    this.push('openedPaths', fn);
+    console.log(this.openedPaths);
+    this.set('openedPath', this.openedPaths.join("/"));
+    const grid = this.$['files'];
+    grid.clearCache();
+  }
+
+  _dequeueFolder(e) {
+    console.log(this.openedPath);
+    this.pop('openedPaths');
+    this.set('openedPath', this.openedPaths.join("/"));
+    const grid = this.$['files'];
+    grid.clearCache();
+  }
+
+  _isDir(file) {
+    return file.mode.startsWith("d")
+  }
+
+  _addEventListenerDropZone() {
+    const dndZoneEl = this.$['view-folder-dialog'];
+    console.log(this.$);
+    const dndZonePlaceholderEl = this.$.dropzone;
+
+    dndZonePlaceholderEl.addEventListener('dragleave', () => {
+      dndZonePlaceholderEl.style.display = "none";
+    });
+
+    dndZoneEl.addEventListener('dragover', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      dndZonePlaceholderEl.style.display = "flex";
+      return false;
+    });
+
+    dndZoneEl.addEventListener('drop', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      dndZonePlaceholderEl.style.display = "none";
+
+      let temp = [];
+      for (let i = 0; i < e.dataTransfer.files.length; i++) {
+        const file = e.dataTransfer.files[i];
+        if (file.size > 2 ** 20) {
+          console.log('File size limit (< 1 MiB)');
+        } else {
+          file.progress = 0;
+          file.error = false;
+          file.complete = false;
+          temp.push(file);
+          this.push("uploadFiles", file);
+        }
+      }
+
+      for (let i = 0; i < temp.length; i++) {
+        this.uploadFile(temp[i]);
+      }
+    });
+  }
+
+  _fileClick() {
+    const elem = this.$.fileInput;
+    if (elem && document.createEvent) {  // sanity check
+      const evt = document.createEvent("MouseEvents");
+      evt.initEvent("click", true, false);
+      elem.dispatchEvent(evt);
+    }
+  }
+
+  _fileChange(e) {
+    const length = e.target.files.length;
+    for (let i = 0; i < length; i++) {
+      const file = e.target.files[i];
+      file.progress = 0;
+      file.error = false;
+      file.complete = false;
+      this.push("uploadFiles", file);
+    }
+
+    for (let i = 0; i < length; i++) {
+      this.uploadFile(this.uploadFiles[i]);
+    }
+  }
+
+  uploadFile(fileObj) {
+    var fd = new FormData();
+    let path = this.openedPaths.join("/") + "/" + fileObj.name;
+    fd.append("src", fileObj, path);
+    let job = window.backendaiclient.vfolder.uploadFormData(fd, this.openedFolder)
+    job.then(resp => {
+      const grid = this.$['files'];
+      grid.clearCache();
+      const index = this.uploadFiles.indexOf(fileObj);
+      this.splice('uploadFiles', index, 1);
+      console.log("Done");
+    });
+  }
+
+
   static get template() {
     // language=HTML
     return html`
@@ -336,6 +406,30 @@ class BackendAIData extends PolymerElement {
         vaadin-item {
           font-size: 13px;
           font-weight: 100;
+        }
+
+        div#upload {
+          padding: 16px 24px;
+          overflow: hidden;
+          transition: background-color 0.6s, border-color 0.6s;
+        }
+
+        div#dropzone {
+          display: none;
+          background: rgba(255, 255, 255, 0.8);
+          position: absolute;
+          top: 0;
+          left: -2px;
+          width: 100%;
+          border: 3px dashed darkgray;
+          height: 100%;
+          z-index: 3;
+        }
+
+        div#dropzone p {
+          color: #222;
+          font-size: 2em;
+          text-align: center;
         }
 
       </style>
@@ -516,18 +610,30 @@ class BackendAIData extends PolymerElement {
       </paper-dialog>
       <paper-dialog id="view-folder-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation"
                     on->
-        <h3 class="horizontal center layout" style="width:1000px;border-bottom:1px solid #ddd;">
-          <span> Files : [[openedFolder]]</span>
+        <h2 class="horizontal center layout breadcrumb" style="min-width:1000px;">
+          <span class="path">[[openedFolder]]</span>
+          <template is="dom-repeat" items="[[openedPaths]]">
+            <span>&nbsp;&gt;&nbsp;</span>
+            <span class="path">[[item]]</span>
+          </template>
           <div class="flex"></div>
           <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
             Close
           </paper-icon-button>
-        </h3>
-        <vaadin-upload id="upload" on-upload-request="_uploadRequest">
-          <iron-icon slot="drop-label-icon" icon="description"></iron-icon>
-          <span slot="drop-label">Drop your files</span>
-        </vaadin-upload>
-        <vaadin-button raised id="add-btn" on-tap="_dequeueFolder">Up</vaadin-button>
+        </h2>
+        
+        <div>
+          <vaadin-button raised id="add-btn" on-tap="_fileClick">Upload Files...</vaadin-button>
+          <vaadin-button raised id="add-btn" on-tap="_dequeueFolder">Up</vaadin-button>
+        </div>
+
+        <div id="upload">
+          <div id="dropzone"><p>drag</p></div>
+          <input type="file" id="fileInput" on-change="_fileChange" hidden multiple>
+          <template is="dom-repeat" items="[[uploadFiles]]">
+            <div><span>[[item]]</span></div>
+          </template>
+        </div>
 
         <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" id="files">
           <vaadin-grid-column width="40px" flex-grow="0" resizable>
@@ -538,14 +644,14 @@ class BackendAIData extends PolymerElement {
             <template class="header">Filename</template>
             <template>
               <div class="indicator">
-              <template is="dom-if" if="[[_isDir(item)]]">
+                <template is="dom-if" if="[[_isDir(item)]]">
                   <paper-icon-button class="fg controls-running" icon="folder-open"
                                      on-tap="_enqueueFolder" folder-name="[[item.filename]]"></paper-icon-button>
-              [[item.filename]]
-              </template>
-              <template is="dom-if" if="[[!_isDir(item)]]">
-              [[item.filename]]
-              </template>
+                  [[item.filename]]
+                </template>
+                <template is="dom-if" if="[[!_isDir(item)]]">
+                  [[item.filename]]
+                </template>
               </div>
             </template>
           </vaadin-grid-column>
