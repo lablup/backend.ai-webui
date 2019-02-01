@@ -16,8 +16,3 @@ RUN cd /serving && \
     npm install
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-
-
-
-
