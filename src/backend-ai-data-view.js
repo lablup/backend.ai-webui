@@ -98,7 +98,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
     this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
     this.$['add-dir-btn'].addEventListener('tap', this._mkdir.bind(this));
-    // this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
+    this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
   }
 
   static get observers() {
@@ -576,7 +576,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                   <paper-icon-button class="fg red controls-running" icon="delete"
                                      on-tap="_deleteFolderDialog"></paper-icon-button>
                 </template>
-                <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
+                <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
                   <paper-icon-button class="fg controls-running" icon="folder-open"
                                      on-tap="_viewFolder" folder-id="[[item.name]]"></paper-icon-button>
                 </template>
