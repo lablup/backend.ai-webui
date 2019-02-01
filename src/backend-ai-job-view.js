@@ -71,9 +71,12 @@ class BackendAIJobView extends PolymerElement {
           'R': 'lablup/r',
           'Julia': 'lablup/julia',
           'Lua': 'lablup/lua',
-          'DIGITS': 'lablup/ngc-digits',
-          'TensorFlow (NGC)': 'lablup/ngc-tensorflow',
-          'PyTorch (NGC)': 'lablup/ngc-pytorch',
+          //'DIGITS (NGC)': 'lablup/ngc-digits',
+          //'TensorFlow (NGC)': 'lablup/ngc-tensorflow',
+          //'PyTorch (NGC)': 'lablup/ngc-pytorch',
+          'DIGITS (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-digits',
+          'TensorFlow (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-tensorflow',
+          'PyTorch (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-pytorch',
         }
       },
       versions: {

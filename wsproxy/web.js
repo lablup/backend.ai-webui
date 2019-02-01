@@ -44,13 +44,13 @@ function express_app(port) {
     res.send(rtn)
   });
 
-  app.get('/proxy/:kernelId/add/:appName', function (req, res) {
+  app.get('/proxy/:kernelId/add', function (req, res) {
     if(config == undefined) {
       res.send({"code": 401});
       return;
     }
     let kernelId = req.params["kernelId"];
-    let appName = req.params["appName"];
+    //let appName = req.params["appName"];
     if(!(kernelId in proxies)) {
       let proxy = new Proxy(aiclient._config);
       getFreePorts(1, 'localhost').then((freePortsList) => {

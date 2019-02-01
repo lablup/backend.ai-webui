@@ -167,6 +167,7 @@ class BackendAIJobList extends PolymerElement {
     ];
     console.log(lang);
     lang = lang.split('/')[2].split(':')[0];
+    //lang = lang.split('/')[3].split(':')[0];
     console.log(lang);
     return this.condition === 'running' && support_kernels.includes(lang);
   }
