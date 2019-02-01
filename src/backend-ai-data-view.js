@@ -81,7 +81,7 @@ class BackendAIData extends PolymerElement {
 
   constructor() {
     super();
-    // Resolve warning about scroll performance 
+    // Resolve warning about scroll performance
     // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
     setPassiveTouchGestures(true);
   }
@@ -96,6 +96,7 @@ class BackendAIData extends PolymerElement {
     }, true);
     this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
     this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
+    this.$['add-dir-btn'].addEventListener('tap', this._mkdir.bind(this));
     this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
   }
 
@@ -621,7 +622,7 @@ class BackendAIData extends PolymerElement {
             Close
           </paper-icon-button>
         </h2>
-        
+
         <div>
           <vaadin-button raised id="add-btn" on-tap="_fileClick">Upload Files...</vaadin-button>
           <vaadin-button raised id="add-btn" on-tap="_dequeueFolder">Up</vaadin-button>
