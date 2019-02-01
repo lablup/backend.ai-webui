@@ -243,7 +243,7 @@ class BackendAIData extends PolymerElement {
   }
   _mkdir(e) {
     let fn = this.$['add-dir-name'].value;
-    let path = this.openedPaths.join("/") + fn;
+    let path = this.openedPaths.join("/") + "/" + fn;
     console.log(path);
     console.log(this.openedFolder);
     let job = window.backendaiclient.vfolder.mkdir(path, this.openedFolder)
