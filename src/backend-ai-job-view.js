@@ -32,12 +32,13 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
+import {OverlayPatchMixin} from './overlay-patch-mixin.js'
 import './component/backend-ai-dropdown-menu'
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
-//class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
-class BackendAIJobView extends PolymerElement {
+class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
+// class BackendAIJobView extends PolymerElement {
   static get is() {
     return 'backend-ai-job-view';
   }
@@ -242,9 +243,8 @@ class BackendAIJobView extends PolymerElement {
   _newSession() {
     let kernel = this.$['environment'].value;
     let version = this.$['version'].value;
+    let sessionName = this.$['session-name'].value;
     let vfolder = this.$['vfolder'].selectedValues;
-
-    console.log(vfolder);
 
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
@@ -253,6 +253,9 @@ class BackendAIJobView extends PolymerElement {
     if (this.$['use-gpu-checkbox'].checked !== true) {
       config['vgpu'] = 0.0;
     }
+    if (sessionName.length < 4) {
+      sessionName = undefined;
+    }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
     }
@@ -260,7 +263,7 @@ class BackendAIJobView extends PolymerElement {
     this.$['launch-button'].disabled = true;
     this.$.notification.text = 'Preparing session...';
     this.$.notification.show();
-    window.backendaiclient.createKernel(kernelName, undefined, config).then((req) => {
+    window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
       this.$['running-jobs'].refreshList();
       this.$['new-session-dialog'].close();
       this.$['launch-button'].disabled = false;
@@ -322,7 +325,7 @@ class BackendAIJobView extends PolymerElement {
       let currentVersion = this.$['version'].value;
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
-      console.log(currentResource);
+      if (!currentResource) return;
       currentResource.forEach((item) => {
         if (item.key == 'cpu') {
           var cpu_metric = item;
@@ -497,7 +500,8 @@ class BackendAIJobView extends PolymerElement {
           <backend-ai-job-list id="finished-jobs" condition="finished"></backend-ai-job-list>
         </div>
       </paper-material>
-      <paper-dialog id="new-session-dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation"
+      <paper-dialog id="new-session-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation"
                     style="padding:0;">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
@@ -528,7 +532,11 @@ class BackendAIJobView extends PolymerElement {
               <div>
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
-              <div class="horizontal center layout">
+              <div class="layout vertical">
+                <paper-input id="session-name" label="Session name (optional)"
+                             value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
+                             error-message="4 or more characters">
+                </paper-input>
                 <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
                   <template is="dom-repeat" items="[[ vfolders ]]">
                     <paper-item value$="[[ item.name ]]">[[ item.name ]]</paper-item>
