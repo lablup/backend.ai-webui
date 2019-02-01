@@ -310,6 +310,11 @@ class BackendAIData extends PolymerElement {
     return file.mode.startsWith("d")
   }
 
+  _isDownloadable(file) {
+    return file.size < 209715200
+  }
+
+
   _addEventListenerDropZone() {
     const dndZoneEl = this.$['view-folder-dialog'];
     console.log(this.$);
@@ -389,6 +394,26 @@ class BackendAIData extends PolymerElement {
       console.log("Done");
     });
   }
+
+  _downloadFile(e) {
+    let fn = e.target.filename;
+    let path = this.openedPaths.concat(fn).join("/");
+    let job = window.backendaiclient.vfolder.download(path , this.openedFolder)
+    job.then(res => {
+      var url = window.URL.createObjectURL(res);
+      var a = document.createElement('a');
+      a.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      a.href = url;
+      a.download = fn;
+      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+      a.click();
+      a.remove();  //afterwards we remove the element again
+      URL.revokeObjectURL(url);
+    });
+  }
+
 
 
   static get template() {
@@ -703,6 +728,18 @@ class BackendAIData extends PolymerElement {
               <div class="indicator">[[item.size]]</div>
             </template>
           </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Actions</template>
+            <template>
+                <template is="dom-if" if="[[!_isDir(item)]]">
+                  <template is="dom-if" if="[[_isDownloadable(item)]]">
+                    <paper-icon-button filename="[[item.filename]]" class="fg green controls-running" icon="vaadin:download" on-tap="_downloadFile"></paper-icon-button>
+                  </template>
+                </template>
+            </template>
+            <template>
+          </vaadin-grid-column>
+
         </vaadin-grid>
       </paper-dialog>
     `;

@@ -512,11 +512,12 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
-  download(files, show_progress = false) {
-    let body = {
-      'files': files
+  download(file, name = false) {
+    let params = {
+      'file': file
     };
-    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/download`, body);
+    let q = querystring.stringify(params)
+    let rqst = this.client.newSignedRequest('GET', `/folders/${name}/download_single?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
