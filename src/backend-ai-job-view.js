@@ -64,19 +64,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       aliases: {
         type: Object,
         value: {
-          'TensorFlow': 'lablup/python-tensorflow',
+          'TensorFlow': 'python-tensorflow',
           'Python': 'python',
           'PyTorch': 'python-pytorch',
           'Chainer': 'chainer',
           'R': 'r',
           'Julia': 'julia',
           'Lua': 'lua',
-          'DIGITS (NGC)': 'ngc-digits',
-          'TensorFlow (NGC)': 'lablup/ngc-tensorflow',
-          'PyTorch (NGC)': 'lablup/ngc-pytorch',
-          //'DIGITS (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-digits',
-          //'TensorFlow (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-tensorflow',
-          //'PyTorch (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-pytorch',
         }
       },
       versions: {
@@ -276,20 +270,43 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
+  _guessHumanizedNames(kernelName) {
+    let candidate = {
+      'python-tensorflow': 'TensorFlow',
+      'python': 'Python',
+      'ngc-digits': 'DIGITS (NGC)',
+      'ngc-tensorflow': 'TensorFlow (NGC)',
+      'ngc-pytorch': 'PyTorch (NGC)'
+    };
+    let humanizedName = 'Unknown';
+    Object.keys(candidate).forEach((item, index) => {
+      if (kernelName.includes(item)) {
+        console.log("found");
+        humanizedName = candidate[item];
+      }
+    });
+    return humanizedName;
+  }
+
   _updateEnvironment() {
     //this.languages = Object.keys(this.supports);
     //this.languages.sort();
     let lang = Object.keys(this.supports);
-    if (lang == undefined) return;
+    if (lang === undefined) return;
     lang.sort();
     this.languages = [];
     lang.forEach((item, index) => {
+      if (!(Object.keys(this.aliases).includes(item))) {
+        this.aliases[item] = this._guessHumanizedNames(item);
+      }
       this.languages.push({
         name: item,
         alias: this.aliases[item]
       });
     });
+    this._initAliases();
   }
+
 
   _updateVersions(lang) {
     if (this.aliases[lang] in this.supports) {
