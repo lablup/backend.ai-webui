@@ -273,16 +273,18 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   _guessHumanizedNames(kernelName) {
     let candidate = {
       'python-tensorflow': 'TensorFlow',
+      'python-pytorch': 'PyTorch',
       'python': 'Python',
       'ngc-digits': 'DIGITS (NGC)',
       'ngc-tensorflow': 'TensorFlow (NGC)',
       'ngc-pytorch': 'PyTorch (NGC)'
     };
     let humanizedName = 'Unknown';
+    let matchedString = '';
     Object.keys(candidate).forEach((item, index) => {
-      if (kernelName.includes(item)) {
-        console.log("found");
+      if (kernelName.includes(item) && item.length > matchedString.length) {
         humanizedName = candidate[item];
+        matchedString = item;
       }
     });
     return humanizedName;
@@ -530,7 +532,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               Close
             </paper-icon-button>
           </h3>
-          <form id="login-form" onSubmit="this._launchSession()">
+          <form id="launch-session-form" onSubmit="this._launchSession()">
             <fieldset>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="environment" label="Environments">
