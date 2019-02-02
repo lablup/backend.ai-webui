@@ -81,6 +81,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         type: Array,
         value: []
       },
+      gpu_mode: {
+        type: String,
+        value: 'gpu'
+      },
       cpu_metric: {
         type: Object,
         value: {
@@ -241,10 +245,19 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
-    config['vgpu'] = this.$['gpu-resource'].value;
+    console.log(this.gpu_mode);
+    if (this.gpu_mode == 'vgpu') {
+      config['vgpu'] = this.$['gpu-resource'].value;
+    } else {
+      config['gpu'] = this.$['gpu-resource'].value;
+    }
     config['mem'] = String(this.$['ram-resource'].value) + 'g';
     if (this.$['use-gpu-checkbox'].checked !== true) {
-      config['vgpu'] = 0.0;
+      if (this.gpu_mode == 'vgpu') {
+        config['vgpu'] = 0.0;
+      } else {
+        config['gpu'] = 0.0;
+      }
     }
     if (sessionName.length < 4) {
       sessionName = undefined;
@@ -359,6 +372,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       if (!currentResource) return;
+      this.gpu_mode = 'gpu';
       currentResource.forEach((item) => {
         if (item.key == 'cpu') {
           var cpu_metric = item;
@@ -367,12 +381,20 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           this.cpu_metric = cpu_metric;
           console.log(this.cpu_metric);
         }
-        if (item.key == 'cuda.shares') {
+
+        if (item.key == 'cuda.device') {
           var gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
           gpu_metric.max = parseInt(gpu_metric.max);
           this.gpu_metric = gpu_metric;
           console.log(this.gpu_metric);
+        }
+        if (item.key == 'cuda.shares') {
+          var vgpu_metric = item;
+          vgpu_metric.min = parseInt(vgpu_metric.min);
+          vgpu_metric.max = parseInt(vgpu_metric.max);
+          this.vgpu_metric = vgpu_metric;
+          console.log(this.vgpu_metric);
         }
         if (item.key == 'tpu') {
           var tpu_metric = item;
