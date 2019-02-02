@@ -233,6 +233,7 @@ class BackendAIJobList extends PolymerElement {
   _indexFrom1(index) {
     return index + 1;
   }
+
   _terminateKernel(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
@@ -245,14 +246,22 @@ class BackendAIJobList extends PolymerElement {
     this.$.notification.text = 'Terminating session...';
     this.$.notification.show();
     this.terminationQueue.push(kernelId);
-    window.backendaiclient.destroyKernel(kernelId).then((req) => {
-      setTimeout(() => {
-        this.terminationQueue = [];
-        this.refreshList();
-      }, 1000);
+    this._terminateApp(kernelId).then(() => {
+      window.backendaiclient.destroyKernel(kernelId).then((req) => {
+        setTimeout(() => {
+          this.terminationQueue = [];
+          this.refreshList();
+        }, 1000);
+      }).catch((err) => {
+        this.$.notification.text = 'Problem occurred during termination.';
+        this.$.notification.show();
+      });
     }).catch((err) => {
-      this.$.notification.text = 'Problem occurred during termination.';
-      this.$.notification.show();
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
     });
   }
 
@@ -303,6 +312,29 @@ class BackendAIJobList extends PolymerElement {
       console.log(e);
     }
     return body;
+  }
+
+  _terminateApp(kernelId) {
+    let rqst = {
+      method: 'GET',
+      uri: 'http://127.0.0.1:5050/proxy/' + kernelId
+    };
+    return this.sendRequest(rqst)
+      .then((response) => {
+        if (response.code !== 404) {
+          let rqst = {
+            method: 'GET',
+            uri: 'http://127.0.0.1:5050/proxy/' + kernelId + '/delete'
+          };
+          return this.sendRequest(rqst);
+        }
+      }).catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.$.notification.text = err.message;
+          this.$.notification.show();
+        }
+      });
   }
 
   _runJupyter(e) {
