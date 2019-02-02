@@ -267,7 +267,7 @@ class BackendAiWebConsole extends PolymerElement {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">GUI Console (Alpha)</small>
-                <small class="sidebar-footer" style="font-size:9px;">0.8.20190125</small>
+                <small class="sidebar-footer" style="font-size:9px;">0.9.20190201</small>
               </address>
             </div>
           </app-header-layout>
