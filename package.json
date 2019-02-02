@@ -8,6 +8,7 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-packager .",
+    "lint": "eslint *.js",
     "test": "node ./wsproxy/local_proxy.js && node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
   },
   "dependencies": {
@@ -58,6 +59,8 @@
   },
   "devDependencies": {
     "electron": "^4.0.2",
-    "electron-packager": "^12.2.0"
+    "electron-packager": "^12.2.0",
+    "eslint": "^5.13.0",
+    "eslint-config-google": "^0.12.0"
   }
 }

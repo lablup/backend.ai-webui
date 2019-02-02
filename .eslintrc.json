@@ -1,0 +1,15 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 7,
+    "sourceType": "module",
+    "ecmaFeatures": {
+        "jsx": true
+    }
+  },
+  "extends": "google",
+  "rules": {
+    "comma-dangle": 0,
+    "require-jsdoc" : 0,
+    "max-len": 0
+  }
+}

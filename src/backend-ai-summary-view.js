@@ -63,7 +63,7 @@ class BackendAISummary extends PolymerElement {
 
   constructor() {
     super();
-    // Resolve warning about scroll performance 
+    // Resolve warning about scroll performance
     // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
     setPassiveTouchGestures(true);
   }

@@ -32,8 +32,8 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
-import {OverlayPatchMixin} from './overlay-patch-mixin.js'
-import './component/backend-ai-dropdown-menu'
+import {OverlayPatchMixin} from './overlay-patch-mixin.js';
+import './component/backend-ai-dropdown-menu';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -271,7 +271,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _guessHumanizedNames(kernelName) {
-    let candidate = {
+    const candidate = {
       'python-tensorflow': 'TensorFlow',
       'python-pytorch': 'PyTorch',
       'python': 'Python',
@@ -308,7 +308,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     });
     this._initAliases();
   }
-
 
   _updateVersions(lang) {
     if (this.aliases[lang] in this.supports) {
