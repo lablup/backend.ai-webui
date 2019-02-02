@@ -260,7 +260,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       this.$['running-jobs'].refreshList();
       this.$['new-session-dialog'].close();
       this.$['launch-button'].disabled = false;
-    }).catch(err => {
+    }).catch((err) => {
       console.log(err);
       this.$['launch-button'].disabled = false;
       if (err && err.message) {

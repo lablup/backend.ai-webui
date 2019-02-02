@@ -41,6 +41,10 @@ class BackendAIJobList extends PolymerElement {
       jobs: {
         type: Object,
         value: {}
+      },
+      terminationQueue: {
+        type: Array,
+        value: []
       }
     };
   }
@@ -120,7 +124,6 @@ class BackendAIJobList extends PolymerElement {
         } else {
           refreshTime = 15000;
         }
-        //setTimeout(() => { this._refreshJobData(status) }, refreshTime);
       }
       console.log(this.jobs);
     }).catch(err => {
@@ -230,20 +233,24 @@ class BackendAIJobList extends PolymerElement {
   _indexFrom1(index) {
     return index + 1;
   }
-
   _terminateKernel(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
-
-    window.backendaiclient.destroyKernel(kernelId).then((req) => {
-      termButton.setAttribute('disabled', '');
-      this.$.notification.text = 'Terminating session...';
+    if (this.terminationQueue.includes(kernelId)) {
+      this.$.notification.text = 'Already terminating the session.';
       this.$.notification.show();
+      return false;
+    }
+    this.$.notification.text = 'Terminating session...';
+    this.$.notification.show();
+    this.terminationQueue.push(kernelId);
+    window.backendaiclient.destroyKernel(kernelId).then((req) => {
       setTimeout(() => {
-        this.refreshList()
+        this.terminationQueue = [];
+        this.refreshList();
       }, 1000);
-    }).catch(err => {
+    }).catch((err) => {
       this.$.notification.text = 'Problem occurred during termination.';
       this.$.notification.show();
     });
