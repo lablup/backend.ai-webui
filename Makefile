@@ -17,7 +17,7 @@ web:
 	node ./node_modules/polymer-cli/bin/polymer.js serve --npm
 proxy:
 	node ./wsproxy/local_proxy.js
-all: dep mac win
+all: dep mac win linux
 dep:
 	polymer build
 	mkdir build/electron-app

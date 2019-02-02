@@ -16,7 +16,6 @@ var FormData = require('form-data');
 const querystring = require('querystring');
 
 
-
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint) {
     // fixed configs with this implementation
@@ -95,6 +94,7 @@ class Client {
       this._config = config;
     }
     this.vfolder = new VFolder(this);
+    this.utils = new utils(this);
   }
 
   async _wrapWithPromise(rqst) {
@@ -340,16 +340,16 @@ class Client {
     if (body != undefined) {
       if (typeof body.getBoundary === 'function') {
         hdrs.set('Content-Type', body.getHeaders()['content-type']);
-      } if (body instanceof FormData) {
-        console.log(content_type);
       }
-      else {
+      if (body instanceof FormData) {
+        console.log(content_type);
+      } else {
         console.log(content_type);
         hdrs.set('Content-Type', content_type);
         hdrs.set('Content-Length', Buffer.byteLength(authBody));
       }
-    } else { 
-        hdrs.set('Content-Type', content_type);
+    } else {
+      hdrs.set('Content-Type', content_type);
     }
     let uri = this._config.endpoint + queryString;
 
@@ -439,6 +439,7 @@ class VFolder {
     this.client = client;
     this.name = name;
   }
+
   create(name, host = null) {
     let body = {
       'name': name,
@@ -568,6 +569,28 @@ class VFolder {
   }
 }
 
+class utils {
+  constructor(client) {
+    this.client = client;
+  }
+
+  changeBinaryUnit(value, targetUnit = 'g') {
+    if (value === undefined) {
+      return value;
+    }
+    let sourceUnit;
+    const binaryUnits = ['b', 'k', 'm', 'g', 't'];
+    if (!(binaryUnits.includes(targetUnit))) return false;
+    if (binaryUnits.includes(value.substr(-1))) {
+      sourceUnit = value.substr(-1);
+      value = value.slice(0, -1);
+    } else {
+      sourceUnit = 'b'; // Fallback
+    }
+    return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
+  }
+}
+
 
 // below will become "static const" properties in ES7
 Object.defineProperty(Client, 'ERR_SERVER', {
@@ -588,6 +611,7 @@ Object.defineProperty(Client, 'ERR_REQUEST', {
   enumerable: true,
   configurable: false
 });
+
 
 const backend = {
   Client: Client,
