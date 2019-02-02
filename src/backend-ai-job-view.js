@@ -65,18 +65,18 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         type: Object,
         value: {
           'TensorFlow': 'lablup/python-tensorflow',
-          'Python': 'lablup/python',
-          'PyTorch': 'lablup/python-pytorch',
-          'Chainer': 'lablup/chainer',
-          'R': 'lablup/r',
-          'Julia': 'lablup/julia',
-          'Lua': 'lablup/lua',
-          //'DIGITS (NGC)': 'lablup/ngc-digits',
-          //'TensorFlow (NGC)': 'lablup/ngc-tensorflow',
-          //'PyTorch (NGC)': 'lablup/ngc-pytorch',
-          'DIGITS (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-digits',
-          'TensorFlow (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-tensorflow',
-          'PyTorch (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-pytorch',
+          'Python': 'python',
+          'PyTorch': 'python-pytorch',
+          'Chainer': 'chainer',
+          'R': 'r',
+          'Julia': 'julia',
+          'Lua': 'lua',
+          'DIGITS (NGC)': 'ngc-digits',
+          'TensorFlow (NGC)': 'lablup/ngc-tensorflow',
+          'PyTorch (NGC)': 'lablup/ngc-pytorch',
+          //'DIGITS (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-digits',
+          //'TensorFlow (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-tensorflow',
+          //'PyTorch (NGC)': 'registry.hanacloudia.com/hana_nvidia/ngc-pytorch',
         }
       },
       versions: {
@@ -318,6 +318,18 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     return this.supports[lang];
   }
 
+  _changeBinaryUnit(value, targetUnit = 'g') {
+    let sourceUnit;
+    let binaryUnits = ['b', 'k', 'm', 'g', 't'];
+    if (!(binaryUnits.includes(targetUnit))) return false;
+    if (binaryUnits.includes(value.substr(-1))) {
+      sourceUnit = value.substr(-1);
+    } else {
+      sourceUnit = 'b'; // Fallback
+    }
+    return parseInt(value) * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
+  }
+
   updateMetric() {
     if (this.$['environment'].value in this.aliases) {
       let currentLang = this.aliases[this.$['environment'].value];
@@ -348,22 +360,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
         if (item.key == 'mem') {
           var mem_metric = item;
-          if (isNaN(item.min) && item.min.substr(-1) === 'm') {
-            mem_metric.min = parseInt(mem_metric.min) / 1024;
-          } else if (isNaN(item.min) && item.min.substr(-1) === 'g') {
-            mem_metric.min = parseInt(mem_metric.min);
-          } else {
-            mem_metric.min = parseInt(mem_metric.min) / (1024 * 1024 * 1024);
-          }
-          if (isNaN(item.max) && item.max.substr(-1) === 'm') {
-            mem_metric.max = parseInt(mem_metric.max) / 1024;
-          } else if (isNaN(item.max) && item.max.substr(-1) === 'g') {
-            mem_metric.max = parseInt(mem_metric.max);
-          } else {
-            mem_metric.max = parseInt(mem_metric.max) / (1024 * 1024 * 1024);
-          }
+          mem_metric.min = this._changeBinaryUnit(mem_metric.min, 'g');
+          mem_metric.max = this._changeBinaryUnit(mem_metric.max, 'g');
           this.mem_metric = mem_metric;
-          console.log(this.mem_metric);
+          console.log('mem');
+          console.log(mem_metric);
         }
       });
       if (this.gpu_metric === {}) {
@@ -399,6 +400,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
+  // Manager requests
   _refreshImageList() {
     let fields = ["name", "tag", "digest", "installed", "resource_limits { key min max }"];
     let q, v;
@@ -420,6 +422,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         return;
       }
       this.images = images;
+      console.log(images);
       this.languages = [];
       this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
@@ -552,7 +555,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                   <span class="caption">Core</span>
                 </div>
                 <paper-slider id="cpu-resource" pin snaps expand
-                              min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]" value="[[ cpu_metric.max ]]"></paper-slider>
+                              min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]"
+                              value="[[ cpu_metric.max ]]"></paper-slider>
               </div>
               <div class="horizontal center layout">
                 <span>RAM</span>
