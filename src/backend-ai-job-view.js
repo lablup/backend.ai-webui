@@ -337,15 +337,19 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _changeBinaryUnit(value, targetUnit = 'g') {
+    if (value === undefined) {
+      return value;
+    }
     let sourceUnit;
-    let binaryUnits = ['b', 'k', 'm', 'g', 't'];
+    const binaryUnits = ['b', 'k', 'm', 'g', 't'];
     if (!(binaryUnits.includes(targetUnit))) return false;
     if (binaryUnits.includes(value.substr(-1))) {
       sourceUnit = value.substr(-1);
+      value = value.slice(0, -1);
     } else {
       sourceUnit = 'b'; // Fallback
     }
-    return parseInt(value) * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
+    return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
   }
 
   updateMetric() {

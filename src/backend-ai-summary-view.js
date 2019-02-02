@@ -137,6 +137,21 @@ class BackendAISummary extends PolymerElement {
     });
   }
 
+  _changeBinaryUnit(value, targetUnit = 'g') {
+    if (value === undefined) {
+      return value;
+    }
+    let sourceUnit;
+    const binaryUnits = ['b', 'k', 'm', 'g', 't'];
+    if (!(binaryUnits.includes(targetUnit))) return false;
+    if (binaryUnits.includes(value.substr(-1))) {
+      sourceUnit = value.substr(-1);
+      value = value.slice(0, -1);
+    } else {
+      sourceUnit = 'b'; // Fallback
+    }
+    return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
+  }
   _refreshAgentInformation(status = 'running') {
     switch (this.condition) {
       case 'running':
@@ -174,8 +189,8 @@ class BackendAISummary extends PolymerElement {
         console.log(value);
         this.resources.cpu.total = this.resources.cpu.total + parseInt(available_slots.cpu);
         this.resources.cpu.used = this.resources.cpu.used + parseInt(occupied_slots.cpu);
-        this.resources.mem.total = this.resources.mem.total + parseInt(available_slots.mem);
-        this.resources.mem.used = this.resources.mem.used + parseInt(occupied_slots.mem);
+        this.resources.mem.total = this.resources.mem.total + parseInt(this._changeBinaryUnit(available_slots.mem, 'm'));
+        this.resources.mem.used = this.resources.mem.used + parseInt(this._changeBinaryUnit(occupied_slots.mem, 'm'));
         this.resources.gpu.total = this.resources.gpu.total + parseInt(available_slots['cuda.device']);
         if ('cuda.device' in occupied_slots) {
           this.resources.gpu.used = this.resources.gpu.used + parseInt(occupied_slots['cuda.device']);
@@ -184,6 +199,19 @@ class BackendAISummary extends PolymerElement {
         if ('cuda.shares' in occupied_slots) {
           this.resources.vgpu.used = this.resources.vgpu.used + parseInt(occupied_slots['cuda.shares']);
         }
+        if (isNaN(this.resources.cpu.used)) {
+          this.resources.cpu.used = 0;
+        }
+        if (isNaN(this.resources.mem.used)) {
+          this.resources.mem.used = 0;
+        }
+        if (isNaN(this.resources.gpu.used)) {
+          this.resources.gpu.used = 0;
+        }
+        if (isNaN(this.resources.vgpu.used)) {
+          this.resources.vgpu.used = 0;
+        }
+
       });
       console.log(this.resources.vgpu);
       this._sync_resource_values();
@@ -251,13 +279,6 @@ class BackendAISummary extends PolymerElement {
     return Object.keys(obj).length;
   }
 
-  _slotToGPU(value) {
-    if (value < 0) {
-      value = 0;
-    }
-    return (value / 3.75).toFixed(2);
-  }
-
   static get template() {
     // language=HTML
     return html`
@@ -300,7 +321,12 @@ class BackendAISummary extends PolymerElement {
                 <template is="dom-if" if="[[gpu_total]]">
                   <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
                   GPUs: <span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs
+                  <template is="dom-if" if="[[vgpu_total]]">
                   (<span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs)
+                  </template>
+                  <template is="dom-if" if="[[!vgpu_total]]">
+                  (vGPU disabled)
+                  </template>
                 </template>
                 <template is="dom-if" if="[[!gpu_total]]">
                   <vaadin-progress-bar id="gpu-bar" value="0" max="1"></vaadin-progress-bar>
