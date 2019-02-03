@@ -160,6 +160,7 @@ const template = html`
             }
 
             .portrait-canvas {
+                margin-left: 16px;
                 padding-right: 5px;
             }
 

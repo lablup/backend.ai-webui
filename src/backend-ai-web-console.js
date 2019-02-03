@@ -194,7 +194,8 @@ class BackendAiWebConsole extends PolymerElement {
         <app-drawer swipe-open slot="drawer" class="drawer-menu">
           <app-header-layout has-scrolling-region class="vertical layout">
             <app-header id="portrait-bar" slot="header" effects="waterfall" fixed>
-              <div class="horizontal center layout flex bar">
+              <div class="horizontal center layout flex bar"
+                   onclick="location.reload();" style="cursor:pointer;">
                 <div class="portrait-canvas">
                   <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand.svg"
                               sizing="contain"></iron-image>

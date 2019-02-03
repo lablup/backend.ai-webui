@@ -95,8 +95,7 @@ class BackendAIJobList extends PolymerElement {
       case 'archived':
       default:
         status = 'RUNNING';
-    }
-    ;
+    };
 
     let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
     //fields =  ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "io_read_bytes", "io_write_bytes"];
