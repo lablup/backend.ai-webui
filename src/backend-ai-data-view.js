@@ -383,7 +383,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
 
   uploadFile(fileObj) {
     var fd = new FormData();
-    let path = this.openedPaths.join("/") + "/" + fileObj.name;
+    let path = this.openedPaths.concat(fileObj.name).join("/");
     fd.append("src", fileObj, path);
     let job = window.backendaiclient.vfolder.uploadFormData(fd, this.openedFolder)
     job.then(resp => {
@@ -699,8 +699,15 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         <div id="upload">
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" on-change="_fileChange" hidden multiple>
+          <template is="dom-if" if="[[uploadFiles.length]]">
+          <div style="background-color:#eee; padding:10px;">
+          <h3>Upload Queue</h3>
+          <ul style="background-color:#fff; margin:10px;">
           <template is="dom-repeat" items="[[uploadFiles]]">
-            <div><span>[[item]]</span></div>
+            <li style="list-style-type: circle;">[[item.name]]</li>
+          </template>
+          </ul>
+            </div>
           </template>
         </div>
         <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" id="files">
