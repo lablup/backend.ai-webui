@@ -15,12 +15,68 @@
   <script src="./src/backend-ai-web-console.js" type="module" async></script>
   <script src="./src/backend-ai-login.js" type="module" async></script>
   <title>Backend.AI Console</title>
+  <style>
+    .Loader {
+      -webkit-animation-play-state: running;
+              animation-play-state: running;
+      opacity: 1;
+      position: relative;
+      height: 100vh;
+    }
+    @-webkit-keyframes spinner {
+      0% {
+        -webkit-transform: translate3d(-50%, -50%, 0) rotate(0deg);
+                transform: translate3d(-50%, -50%, 0) rotate(0deg);
+      }
+      100% {
+        -webkit-transform: translate3d(-50%, -50%, 0) rotate(360deg);
+                transform: translate3d(-50%, -50%, 0) rotate(360deg);
+      }
+    }
+    @keyframes spinner {
+      0% {
+        -webkit-transform: translate3d(-50%, -50%, 0) rotate(0deg);
+                transform: translate3d(-50%, -50%, 0) rotate(0deg);
+      }
+      100% {
+        -webkit-transform: translate3d(-50%, -50%, 0) rotate(360deg);
+                transform: translate3d(-50%, -50%, 0) rotate(360deg);
+      }
+    }
+    .Loader {
+      -webkit-animation-play-state: paused;
+              animation-play-state: paused;
+      opacity: 0.2;
+      transition: opacity linear 0.1s;
+    }
+    .Loader {
+      -webkit-animation: 1.5s linear infinite spinner;
+              animation: 1.5s linear infinite spinner;
+      -webkit-animation-play-state: inherit;
+              animation-play-state: inherit;
+      border: solid 10px #dedede;
+      border-bottom-color: rgb(62, 172, 120);
+      border-radius: 50%;
+      content: "";
+      height: 80px;
+      left: 50%;
+      opacity: inherit;
+      position: absolute;
+      top: 50%;
+      -webkit-transform: translate3d(-50%, -50%, 0);
+              transform: translate3d(-50%, -50%, 0);
+      width: 80px;
+      will-change: transform;
+    }
+  </style>
 </head>
+
 <body>
   <backend-ai-web-console>
-    <div id="jsyes" style="position:fixed;bottom:calc(50% - 10px);left:calc(50% - 30px);font-family:monospace;font-size:20px;"></div>
+    <!-- <div id="jsyes" style="position:fixed;bottom:calc(50% - 10px);left:calc(50% - 30px);font-family:monospace;font-size:20px;"></div> -->
+    <div class="Loader"></div>
     <script type="text/javascript">
-      document.getElementById('jsyes').innerHTML='LOADING...'
+      // document.getElementById('jsyes').innerHTML='LOADING...'
     </script>
     <noscript>
       <p>Could not render Backend.AI modules. Check that JavaScript is enabled.</p>
