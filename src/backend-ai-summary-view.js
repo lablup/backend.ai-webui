@@ -164,13 +164,13 @@ class BackendAISummary extends PolymerElement {
 
     let v = {'status': status};
 
-    window.backendaiclient.gql(q, v).then(response => {
+    window.backendaiclient.gql(q, v).then((response) => {
       this.agents = response.agents;
       this._init_resource_values();
       Object.keys(this.agents).map((objectKey, index) => {
-        var value = this.agents[objectKey];
-        var occupied_slots = JSON.parse(value.occupied_slots);
-        var available_slots = JSON.parse(value.available_slots);
+        let value = this.agents[objectKey];
+        let occupied_slots = JSON.parse(value.occupied_slots);
+        let available_slots = JSON.parse(value.available_slots);
         console.log(value);
         this.resources.cpu.total = this.resources.cpu.total + parseInt(available_slots.cpu);
         this.resources.cpu.used = this.resources.cpu.used + parseInt(occupied_slots.cpu);

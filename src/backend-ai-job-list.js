@@ -165,7 +165,9 @@ class BackendAIJobList extends PolymerElement {
       'python-tensorflow',
       'ngc-digits',
       'ngc-tensorflow',
-      'julia'
+      'ngc-pytorch',
+      'julia',
+      'r',
     ];
     console.log(lang);
     lang = lang.split('/')[2].split(':')[0];
