@@ -109,8 +109,8 @@ class BackendAIAgentList extends PolymerElement {
 
           agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
-          agents[objectKey].mem_slots = parseInt(available_slots.mem);
-          agents[objectKey].used_mem_slots = parseInt(occupied_slots.mem);
+          agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
+          agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
           if ('cuda.device' in occupied_slots) {
             agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);

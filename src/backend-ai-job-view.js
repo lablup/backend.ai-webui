@@ -349,22 +349,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     return this.supports[lang];
   }
 
-  _changeBinaryUnit(value, targetUnit = 'g') {
-    if (value === undefined) {
-      return value;
-    }
-    let sourceUnit;
-    const binaryUnits = ['b', 'k', 'm', 'g', 't'];
-    if (!(binaryUnits.includes(targetUnit))) return false;
-    if (binaryUnits.includes(value.substr(-1))) {
-      sourceUnit = value.substr(-1);
-      value = value.slice(0, -1);
-    } else {
-      sourceUnit = 'b'; // Fallback
-    }
-    return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
-  }
-
   updateMetric() {
     if (this.$['environment'].value in this.aliases) {
       let currentLang = this.aliases[this.$['environment'].value];
@@ -404,8 +388,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
         if (item.key == 'mem') {
           var mem_metric = item;
-          mem_metric.min = this._changeBinaryUnit(mem_metric.min, 'g');
-          mem_metric.max = this._changeBinaryUnit(mem_metric.max, 'g');
+          mem_metric.min = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
+          mem_metric.max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g');
           this.mem_metric = mem_metric;
           console.log('mem');
           console.log(mem_metric);

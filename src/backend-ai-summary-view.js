@@ -137,21 +137,6 @@ class BackendAISummary extends PolymerElement {
     });
   }
 
-  _changeBinaryUnit(value, targetUnit = 'g') {
-    if (value === undefined) {
-      return value;
-    }
-    let sourceUnit;
-    const binaryUnits = ['b', 'k', 'm', 'g', 't'];
-    if (!(binaryUnits.includes(targetUnit))) return false;
-    if (binaryUnits.includes(value.substr(-1))) {
-      sourceUnit = value.substr(-1);
-      value = value.slice(0, -1);
-    } else {
-      sourceUnit = 'b'; // Fallback
-    }
-    return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
-  }
   _refreshAgentInformation(status = 'running') {
     switch (this.condition) {
       case 'running':
@@ -189,8 +174,8 @@ class BackendAISummary extends PolymerElement {
         console.log(value);
         this.resources.cpu.total = this.resources.cpu.total + parseInt(available_slots.cpu);
         this.resources.cpu.used = this.resources.cpu.used + parseInt(occupied_slots.cpu);
-        this.resources.mem.total = this.resources.mem.total + parseInt(this._changeBinaryUnit(available_slots.mem, 'm'));
-        this.resources.mem.used = this.resources.mem.used + parseInt(this._changeBinaryUnit(occupied_slots.mem, 'm'));
+        this.resources.mem.total = this.resources.mem.total + parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'm'));
+        this.resources.mem.used = this.resources.mem.used + parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
         this.resources.gpu.total = this.resources.gpu.total + parseInt(available_slots['cuda.device']);
         if ('cuda.device' in occupied_slots) {
           this.resources.gpu.used = this.resources.gpu.used + parseInt(occupied_slots['cuda.device']);
