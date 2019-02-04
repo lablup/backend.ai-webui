@@ -163,6 +163,7 @@ class BackendAIJobList extends PolymerElement {
     let support_kernels = [
       'python',
       'python-tensorflow',
+      'python-pytorch',
       'ngc-digits',
       'ngc-tensorflow',
       'ngc-pytorch',
