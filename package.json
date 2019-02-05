@@ -49,7 +49,6 @@
     "buffer": "^5.2.1",
     "express": "^4.16.4",
     "graphql": "^14.1.1",
-    "iron-lazy-pages": "^3.0.2",
     "log": "^3.2.0",
     "node-fetch": "^2.3.0",
     "node-port-check": "^2.0.1",
