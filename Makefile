@@ -13,7 +13,7 @@ test:
 	cp ./wsproxy/package.json build/electron-app/package.json
 	cd build/electron-app; npm install --only=prod
 	cp ./main.electron-packager.js ./build/electron-app/main.js
-web:
+test_web:
 	node ./node_modules/polymer-cli/bin/polymer.js serve --npm
 proxy:
 	node ./wsproxy/local_proxy.js
@@ -28,7 +28,6 @@ dep: compile
 	rm -rf build/electron-app/wsproxy/node_modules
 	cp ./wsproxy/package.json build/electron-app/package.json
 	cd build/electron-app; npm install --only=prod
-	cp -Rp ./manifest/jupyter.png ./build/electron-app/app/manifest/jupyter.png
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
