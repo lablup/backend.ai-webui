@@ -1,3 +1,5 @@
+# You should build the console for web first
+# via `make compile`
 FROM ubuntu:18.04
 
 RUN apt-get update && \
@@ -6,14 +8,14 @@ RUN apt-get update && \
 
 ADD entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh && \
-    mkdir /serving
-COPY . /serving/
+    mkdir /serving && \
+    mkdir /wsproxy
 
-RUN cd /serving && \
-    npm install -g polymer-cli && \
-    npm install && \
-    cd /serving/wsproxy && \
-    npm install
+COPY ./build/es6-unbundled /serving/
+COPY ./wsproxy /wsproxy/
+
+RUN cd /wsproxy && \
+    npm install --prod 
 
 EXPOSE 8081 5050
 

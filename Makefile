@@ -17,8 +17,10 @@ web:
 	node ./node_modules/polymer-cli/bin/polymer.js serve --npm
 proxy:
 	node ./wsproxy/local_proxy.js
+compile:
+	polymer build
 all: dep mac win linux
-dep:
+dep: compile
 	polymer build
 	mkdir build/electron-app
 	cp -Rp build/es6-unbundled build/electron-app/app
