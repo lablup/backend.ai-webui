@@ -32,7 +32,7 @@ win: dep
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
 linux: dep
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico
-build_docker:
+build_docker: compile
 	docker build -t backend.ai-console:$(BUILD_DATE) . 
 clean:
 	cd app;	rm -rf ./backend*

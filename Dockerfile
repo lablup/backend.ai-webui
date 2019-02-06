@@ -1,5 +1,5 @@
-# You should build the console for web first
-# via `make compile`
+# Use `make build_docker` to build this docker file.
+# Building without Makefile will produce broken images.
 FROM ubuntu:18.04
 
 RUN apt-get update && \
