@@ -15,4 +15,6 @@ RUN cd /serving && \
     cd /serving/wsproxy && \
     npm install
 
+EXPOSE 8081 5050
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
