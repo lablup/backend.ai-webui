@@ -15,7 +15,7 @@ COPY ./build/es6-unbundled /serving/
 COPY ./wsproxy /wsproxy/
 
 RUN cd /wsproxy && \
-    npm install --prod 
+    npm install --only=prod
 
 EXPOSE 8081 5050
 
