@@ -120,6 +120,7 @@ class BackendAIJobList extends PolymerElement {
     }
     window.backendaiclient.gql(q, v).then(response => {
       var sessions = response.compute_sessions;
+      console.log(sessions);
       if (sessions !== undefined && sessions.length != 0) {
         Object.keys(sessions).map((objectKey, index) => {
           var session = sessions[objectKey];

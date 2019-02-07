@@ -248,7 +248,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     console.log(this.gpu_mode);
     if (this.gpu_mode == 'vgpu') {
       config['vgpu'] = this.$['gpu-resource'].value;
-      config['gpu'] = this.$['gpu-resource'].value;
     } else {
       config['gpu'] = this.$['gpu-resource'].value;
     }
