@@ -120,11 +120,13 @@ class BackendAIJobList extends PolymerElement {
     }
     window.backendaiclient.gql(q, v).then(response => {
       var sessions = response.compute_sessions;
+      console.log("asdasdsa");
       console.log(sessions);
       if (sessions !== undefined && sessions.length != 0) {
         Object.keys(sessions).map((objectKey, index) => {
           var session = sessions[objectKey];
           var occupied_slots = JSON.parse(session.occupied_slots);
+          console.log(occupied_slots);
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           if ('cuda.device' in occupied_slots) {
@@ -133,6 +135,7 @@ class BackendAIJobList extends PolymerElement {
           if ('cuda.shares' in occupied_slots) {
             sessions[objectKey].vgpu_slot = parseInt(occupied_slots['cuda.shares']);
           }
+          console.log(sessions[objectKey].mem_slot);
         });
       }
       this.compute_sessions = sessions;
@@ -531,8 +534,8 @@ class BackendAIJobList extends PolymerElement {
               </div>
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[_MBToGB(item.mem_slot)]]</span>
-                <span class="indicator">GB[[item.mem_unit]]</span>
+                <span>[[item.mem_slot]]</span>
+                <span class="indicator">GB</span>
               </div>
             </div>
             <div class="layout horizontal center flex">
@@ -540,12 +543,21 @@ class BackendAIJobList extends PolymerElement {
                 <template is="dom-if" if="[[item.gpu_slot]]">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                   <span>[[item.gpu_slot]]</span>
-                  <span class="indicator">vGPU</span>
+                  <span class="indicator">GPU</span>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>-</span>
-                  <span class="indicator">vGPU</span>
+                  <template is="dom-if" if="[[item.vgpu_slot]]">
+                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <span>[[item.vgpu_slot]]</span>
+                    <span class="indicator">vGPU</span>
+                  </template>
+                </template>
+                <template is="dom-if" if="[[!item.gpu_slot]]">
+                  <template is="dom-if" if="[[!item.vgpu_slot]]">
+                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <span>-</span>
+                    <span class="indicator">GPU</span>
+                  </template>
                 </template>
               </div>
               <div class="layout horizontal configuration">
