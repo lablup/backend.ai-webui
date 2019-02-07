@@ -398,11 +398,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   _downloadFile(e) {
     let fn = e.target.filename;
     let path = this.openedPaths.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.download(path , this.openedFolder)
+    let job = window.backendaiclient.vfolder.download(path, this.openedFolder)
     job.then(res => {
       var url = window.URL.createObjectURL(res);
       var a = document.createElement('a');
-      a.addEventListener('click', function(e) {
+      a.addEventListener('click', function (e) {
         e.stopPropagation();
       });
       a.href = url;
@@ -417,12 +417,12 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   _mkdir(e) {
     let name = this.$['add-dir-name'].value;
     let path = this.openedPaths.concat(name).join("/");
-    let job = window.backendaiclient.vfolder.mkdir(path , this.openedFolder)
+    let job = window.backendaiclient.vfolder.mkdir(path, this.openedFolder)
     job.then(res => {
       this.closeDialog('add-dir-dialog');
       const grid = this.$['files'];
       grid.clearCache();
-      });
+    });
   }
 
   _mkdirDialog() {
@@ -464,6 +464,24 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         vaadin-item {
           font-size: 13px;
           font-weight: 100;
+        }
+
+        #view-folder-dialog {
+          height: 100vh;
+          right: 0;
+          margin: 80px 0 0 0;
+        }
+
+        @media screen and (max-width: 899px) {
+          #view-folder-dialog {
+            left: 0;
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          #view-folder-dialog {
+            left: 200px;
+          }
         }
 
         div#upload {
@@ -679,7 +697,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           </div>
         </paper-material>
       </paper-dialog>
-      <paper-dialog id="view-folder-dialog" with-backdrop
+      <paper-dialog id="view-folder-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <h2 class="horizontal center layout breadcrumb" style="min-width:1000px;">
           <paper-button class="path-link" path-name="." on-tap="_gotoFolder">[[openedFolder]]</paper-button>
@@ -700,13 +718,13 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" on-change="_fileChange" hidden multiple>
           <template is="dom-if" if="[[uploadFiles.length]]">
-          <div style="background-color:#eee; padding:10px;">
-          <h3>Upload Queue</h3>
-          <ul style="background-color:#fff; margin:10px;">
-          <template is="dom-repeat" items="[[uploadFiles]]">
-            <li style="list-style-type: circle;">[[item.name]]</li>
-          </template>
-          </ul>
+            <div style="background-color:#eee; padding:10px;">
+              <h3>Upload Queue</h3>
+              <ul style="background-color:#fff; margin:10px;">
+                <template is="dom-repeat" items="[[uploadFiles]]">
+                  <li style="list-style-type: circle;">[[item.name]]</li>
+                </template>
+              </ul>
             </div>
           </template>
         </div>
@@ -754,11 +772,12 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           <vaadin-grid-column>
             <template class="header">Actions</template>
             <template>
-                <template is="dom-if" if="[[!_isDir(item)]]">
-                  <template is="dom-if" if="[[_isDownloadable(item)]]">
-                    <paper-icon-button filename="[[item.filename]]" class="fg green controls-running" icon="vaadin:download" on-tap="_downloadFile"></paper-icon-button>
-                  </template>
+              <template is="dom-if" if="[[!_isDir(item)]]">
+                <template is="dom-if" if="[[_isDownloadable(item)]]">
+                  <paper-icon-button filename="[[item.filename]]" class="fg green controls-running"
+                                     icon="vaadin:download" on-tap="_downloadFile"></paper-icon-button>
                 </template>
+              </template>
             </template>
           </vaadin-grid-column>
         </vaadin-grid>
