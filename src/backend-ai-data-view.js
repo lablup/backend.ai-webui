@@ -755,7 +755,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                     <vaadin-item class="progress-item">
                       <div>
                         <template is="dom-if" if="[[item.complete]]">
-                          <iron-icon icon="vaadin:check"></iron-icon>
+                          <iron-icon icon="check"></iron-icon>
                         </template>
                       </div>
                     </vaadin-item>
@@ -765,7 +765,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                 <vaadin-grid-column>
                   <template>
                     <vaadin-item>
-                      <h3>[[item.name]]</h3>
+                      <span>[[item.name]]</span>
                       <template is="dom-if" if="[[!item.complete]]">
                         <div>
                           <vaadin-progress-bar indeterminate value="0"></vaadin-progress-bar>
