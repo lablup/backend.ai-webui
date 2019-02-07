@@ -85,6 +85,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         type: String,
         value: 'gpu'
       },
+      gpu_step: {
+        type: Number,
+        value: 0.1
+      },
       cpu_metric: {
         type: Object,
         value: {
@@ -356,10 +360,20 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       if (!currentResource) return;
-      this.gpu_mode = 'vgpu';
+      window.backendaiclient.getResourceSlots().then((response) => {
+        let results = response;
+        if ('cuda.device' in results) {
+          this.gpu_mode = 'gpu';
+          this.gpu_step = 1;
+        }
+        if ('cuda.shares' in results) {
+          this.gpu_mode = 'vgpu';
+          this.gpu_step = 0.1;
+        }
+      });
       currentResource.forEach((item) => {
         if (item.key == 'cpu') {
-          var cpu_metric = item;
+          let cpu_metric = item;
           cpu_metric.min = parseInt(cpu_metric.min);
           cpu_metric.max = parseInt(cpu_metric.max);
           this.cpu_metric = cpu_metric;
@@ -367,28 +381,30 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
 
         if (item.key == 'cuda.device') {
-          var gpu_metric = item;
+          let gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
           gpu_metric.max = parseInt(gpu_metric.max);
           this.gpu_metric = gpu_metric;
           console.log(this.gpu_metric);
         }
         if (item.key == 'cuda.shares') {
-          var vgpu_metric = item;
+          let vgpu_metric = item;
           vgpu_metric.min = parseInt(vgpu_metric.min);
           vgpu_metric.max = parseInt(vgpu_metric.max);
           this.vgpu_metric = vgpu_metric;
-          this.gpu_metric = vgpu_metric;
+          if (vgpu_metric.max > 0) {
+            this.gpu_metric = vgpu_metric;
+          }
           console.log(this.vgpu_metric);
         }
         if (item.key == 'tpu') {
-          var tpu_metric = item;
+          let tpu_metric = item;
           tpu_metric.min = parseInt(tpu_metric.min);
           tpu_metric.max = parseInt(tpu_metric.max);
           this.tpu_metric = tpu_metric;
         }
         if (item.key == 'mem') {
-          var mem_metric = item;
+          let mem_metric = item;
           mem_metric.min = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
           mem_metric.max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g');
           this.mem_metric = mem_metric;
@@ -601,9 +617,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                 <span>GPU</span>
                 <div class="horizontal end-justified layout caption">
                   <span class="indicator" id="gpu-value"></span>
-                  <span class="caption">vGPU</span>
+                  <span class="caption">GPU</span>
                 </div>
-                <paper-slider id="gpu-resource" pin snaps step=0.1
+                <paper-slider id="gpu-resource" pin snaps step="[[gpu_step]]"
                               min="0" max="[[gpu_metric.max]]" value="1"></paper-slider>
               </div>
               <br/>

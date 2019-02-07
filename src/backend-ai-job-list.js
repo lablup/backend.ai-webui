@@ -120,13 +120,10 @@ class BackendAIJobList extends PolymerElement {
     }
     window.backendaiclient.gql(q, v).then(response => {
       var sessions = response.compute_sessions;
-      console.log("asdasdsa");
-      console.log(sessions);
       if (sessions !== undefined && sessions.length != 0) {
         Object.keys(sessions).map((objectKey, index) => {
           var session = sessions[objectKey];
           var occupied_slots = JSON.parse(session.occupied_slots);
-          console.log(occupied_slots);
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           if ('cuda.device' in occupied_slots) {
@@ -247,12 +244,7 @@ class BackendAIJobList extends PolymerElement {
     if (minutes !== undefined) {
       result = result + this._padding_zeros(minutes, 2) + ':';
     }
-    if (this.condition == 'running') {
-      return result + this._padding_zeros(seconds, 2) + '';
-    } else {
-      return result + String(seconds) + '';
-    }
-    return seconds;
+    return result + this._padding_zeros(seconds, 2) + '';
   }
 
   _indexFrom1(index) {
