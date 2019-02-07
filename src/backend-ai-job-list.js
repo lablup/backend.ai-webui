@@ -97,7 +97,7 @@ class BackendAIJobList extends PolymerElement {
         status = 'RUNNING';
     };
 
-    let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
+    let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "occupied_slots", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
     //fields =  ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "io_read_bytes", "io_write_bytes"];
     let q, v;
     if (window.backendaiclient.is_admin == true) {

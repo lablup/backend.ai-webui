@@ -248,6 +248,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     console.log(this.gpu_mode);
     if (this.gpu_mode == 'vgpu') {
       config['vgpu'] = this.$['gpu-resource'].value;
+      config['gpu'] = this.$['gpu-resource'].value;
     } else {
       config['gpu'] = this.$['gpu-resource'].value;
     }
@@ -356,7 +357,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       if (!currentResource) return;
-      this.gpu_mode = 'gpu';
+      this.gpu_mode = 'vgpu';
       currentResource.forEach((item) => {
         if (item.key == 'cpu') {
           var cpu_metric = item;
@@ -378,6 +379,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           vgpu_metric.min = parseInt(vgpu_metric.min);
           vgpu_metric.max = parseInt(vgpu_metric.max);
           this.vgpu_metric = vgpu_metric;
+          this.gpu_metric = vgpu_metric;
           console.log(this.vgpu_metric);
         }
         if (item.key == 'tpu') {
