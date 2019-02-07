@@ -450,7 +450,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           width: 100px;
         }
 
-        paper-button.add-button {
+        paper-button.add-button,
+        paper-button.delete-button {
           width: 100%;
         }
 
