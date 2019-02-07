@@ -802,7 +802,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                 <template is="dom-if" if="[[_isDir(item)]]">
                   <div class="indicator" on-click="_enqueueFolder" name="[[item.filename]]">
                     <paper-icon-button class="fg controls-running" icon="folder-open"
-                                       folder-name="[[item.filename]]"></paper-icon-button>
+                                       name="[[item.filename]]"></paper-icon-button>
                     [[item.filename]]
                   </div>
                 </template>
