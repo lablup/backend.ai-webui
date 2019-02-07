@@ -2,14 +2,9 @@
  * Login implementation of Backend.AI-admin-console
  */
 
-import {
-  PolymerElement,
-  html
-} from '@polymer/polymer';
+import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
-import {
-  setPassiveTouchGestures
-} from '@polymer/polymer/lib/utils/settings';
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
@@ -38,18 +33,12 @@ class BackendAiLogin extends PolymerElement {
     return {
       api_key: {
         type: String
-        //value: ''
-        //value: 'AKIAIOSFODNN7EXAMPLE'
       },
       secret_key: {
         type: String
-        //value:  ''
-        //value: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
       },
       api_endpoint: {
         type: String
-        //value:  ''
-        //value: 'http://127.0.0.1:8082'
       }
     };
   }
@@ -114,7 +103,7 @@ class BackendAiLogin extends PolymerElement {
     );
     this.client = new ai.backend.Client(
       this.clientConfig,
-      `Backend.AI Webconsole.`,
+      `Backend.AI Console.`,
     );
     // Test connection
     let fields = ["user_id", "is_admin"];
@@ -134,10 +123,14 @@ class BackendAiLogin extends PolymerElement {
       var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-    }).catch(err => {   // Connection failed
+    }).catch((err) => {   // Connection failed
       console.log(this.api_key);
       if (this.$['login-panel'].opened != true) {
-        this.$.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+        if (err.message != undefined) {
+          this.$.notification.text = err.message;
+        } else {
+          this.$.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+        }
         this.$.notification.show();
         this.open();
       } else {

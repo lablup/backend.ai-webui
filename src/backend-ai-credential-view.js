@@ -125,7 +125,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   _addKeyPair() {
     let is_active = true;
     let is_admin = false;
-    let resource_policy = null;
+    let resource_policy = {};
     let rate_limit = 5000;
     let concurrency_limit = 1;
     let user_id;
