@@ -95,16 +95,8 @@ class BackendAIAgentList extends PolymerElement {
       'first_contact',
       'occupied_slots',
       'available_slots'];
-    let q = `query($status: String) {` +
-      `  agents(status: $status) {` +
-      `     ${fields.join(" ")}` +
-      `  }` +
-      `}`;
-
-    let v = {'status': status};
-
-    window.backendaiclient.gql(q, v).then(response => {
-      var agents = response.agents;
+    window.backendaiclient.agent.list(status, fields).then(response => {
+      let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         Object.keys(agents).map((objectKey, index) => {
           var agent = agents[objectKey];

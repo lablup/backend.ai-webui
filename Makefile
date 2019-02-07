@@ -33,7 +33,12 @@ win: dep
 linux: dep
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico
 build_docker: compile
-	docker build -t backend.ai-console:$(BUILD_DATE) . 
+	docker build -t backend.ai-console:$(BUILD_DATE) .
+pack:
+	cd app; rm -rf ./backend*.zip
+	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
+	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
+	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
 clean:
 	cd app;	rm -rf ./backend*
 	cd build;rm -rf ./es6-unbundled ./electron-app
