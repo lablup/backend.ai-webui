@@ -394,11 +394,13 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           font-size: 13px;
           font-weight: 100;
         }
+
         #folder-explorer-dialog {
           height: 100vh;
           right: 0;
           margin: 80px 0 0 0;
         }
+
         @media screen and (max-width: 899px) {
           #folder-explorer-dialog {
             left: 0;
@@ -411,6 +413,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             left: 200px;
             width: calc(100% - 200px);
           }
+        }
 
         div.breadcrumb {
           color: #637282;
@@ -457,7 +460,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           #folder-explorer-dialog {
             left: 30%;
             max-width: 50%;
-          } 
+          }
         }
 
       </style>
