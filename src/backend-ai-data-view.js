@@ -55,27 +55,13 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         type: Boolean,
         value: false
       },
-      files: {
+      explorer: {
         type: Object,
-        value: {}
+        value: {},
       },
-      openedFolder: {
-        type: String,
-        value: ''
-      },
-      openedPath: {
-        type: String,
-        value: ''
-      },
-      openedPaths: {
-        type: Object,
-        value: []
-      },
-      /*upload*/
       uploadFiles: {
         type: Array,
         value: [],
-        observe: true
       },
     };
   }
@@ -89,7 +75,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
 
   ready() {
     super.ready();
-    this._addEventListenerDropZone();
     document.addEventListener('backend-ai-connected', () => {
       this.is_admin = window.backendaiclient.is_admin;
       this.authenticated = true;
@@ -97,8 +82,10 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     }, true);
     this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
     this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
-    this.$['add-dir-btn'].addEventListener('tap', this._mkdir.bind(this));
     this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
+
+    this._clearExplorer = this._clearExplorer.bind(this);
+    this._mkdir = this._mkdir.bind(this);
   }
 
   static get observers() {
@@ -158,8 +145,13 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     this.openDialog('add-folder-dialog');
   }
 
-  _viewFolderDialog() {
-    this.openDialog('view-folder-dialog');
+  _folderExplorerDialog() {
+    this.openDialog('folder-explorer-dialog');
+  }
+
+  _mkdirDialog() {
+    this.$['mkdir-name'].value = '';
+    this.openDialog('mkdir-dialog');
   }
 
   openDialog(id) {
@@ -254,110 +246,72 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
-  /*explorer*/
-  _viewFolder(e) {
+  /*Folder Explorer*/
+  _clearExplorer(path = this.explorer.breadcrumb.join('/'),
+                 id = this.explorer.id,
+                 dialog = false) {
+    let job = window.backendaiclient.vfolder.list_files(path, id);
+    job.then(value => {
+      console.log(JSON.parse(value.files));
+      this.set('explorer.files', JSON.parse(value.files));
+
+      if (dialog) {
+        this.openDialog('folder-explorer-dialog');
+      }
+
+    });
+  }
+
+  _folderExplorer(e) {
     const folderId = e.target.folderId;
-    this.openedFolder = folderId;
-    this.openedPath = '.';
-    this.set('openedPaths', []);
-    this.openDialog('view-folder-dialog');
-    const grid = this.$['files'];
-    grid.dataProvider = (params, callback) => {
-      var index = params.page * params.pageSize;
-      console.log(params);
-      let job = window.backendaiclient.vfolder.list_files(this.openedPath, this.openedFolder);
-      job.then(value => {
-        this.files = JSON.parse(value.files);
-        callback(this.files, this.files.length);
-      });
+
+    let explorer = {
+      id: folderId,
+      breadcrumb: ['.'],
     };
+
+    this.set('explorer', explorer);
+    this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
   }
 
   _enqueueFolder(e) {
-    const fn = e.target.folderName;
-    this.push('openedPaths', fn);
-    console.log(this.openedPaths);
-    this.set('openedPath', this.openedPaths.join("/"));
-    const grid = this.$['files'];
-    grid.clearCache();
-  }
-
-  _dequeueFolder(e) {
-    console.log(this.openedPath);
-    this.pop('openedPaths');
-    this.set('openedPath', this.openedPaths.join("/"));
-    const grid = this.$['files'];
-    grid.clearCache();
+    const fn = e.target.name;
+    this.push('explorer.breadcrumb', fn);
+    this._clearExplorer();
   }
 
   _gotoFolder(e) {
-    const targetPath = e.target['path-name'] || e.target.innerHTML;
-    console.log(targetPath);
-
-    let tempPathArr = [this.openedFolder, ...this.openedPaths];
-    const index = tempPathArr.indexOf(targetPath);
+    const dest = e.target.dest;
+    let tempBreadcrumb = this.explorer.breadcrumb;
+    const index = tempBreadcrumb.indexOf(dest);
 
     if (index === -1) {
-      console.error('path list index out of range error');
-    } else {
-      this.set('openedPaths', index === 0 ? [] : tempPathArr.slice(1, index + 1));
-      this.set('openedPath', this.openedPaths.join("/"));
-      const grid = this.$['files'];
-      grid.clearCache();
+      return;
     }
+
+    tempBreadcrumb = tempBreadcrumb.slice(0, index + 1);
+    console.log(tempBreadcrumb);
+
+    this.set('explorer.breadcrumb', tempBreadcrumb);
+    this._clearExplorer(tempBreadcrumb.join('/'), this.explorer.id, false);
+  }
+
+  _mkdir(e) {
+    const newfolder = this.$['mkdir-name'].value;
+    const explorer = this.explorer;
+    let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id);
+    job.then(res => {
+      this.closeDialog('mkdir-dialog');
+      this._clearExplorer();
+    });
   }
 
   _isDir(file) {
-    return file.mode.startsWith("d")
+    return file.mode.startsWith("d");
   }
 
-  _isDownloadable(file) {
-    return file.size < 209715200
-  }
-
-  _addEventListenerDropZone() {
-    const dndZoneEl = this.$['view-folder-dialog'];
-    console.log(this.$);
-    const dndZonePlaceholderEl = this.$.dropzone;
-
-    dndZonePlaceholderEl.addEventListener('dragleave', () => {
-      dndZonePlaceholderEl.style.display = "none";
-    });
-
-    dndZoneEl.addEventListener('dragover', e => {
-      e.stopPropagation();
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'copy';
-      dndZonePlaceholderEl.style.display = "flex";
-      return false;
-    });
-
-    dndZoneEl.addEventListener('drop', e => {
-      e.stopPropagation();
-      e.preventDefault();
-      dndZonePlaceholderEl.style.display = "none";
-
-      let temp = [];
-      for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        const file = e.dataTransfer.files[i];
-        if (file.size > 2 ** 20) {
-          console.log('File size limit (< 1 MiB)');
-        } else {
-          file.progress = 0;
-          file.error = false;
-          file.complete = false;
-          temp.push(file);
-          this.push("uploadFiles", file);
-        }
-      }
-
-      for (let i = 0; i < temp.length; i++) {
-        this.uploadFile(temp[i]);
-      }
-    });
-  }
-
-  _fileClick() {
+  /* File uploader */
+  _uploadFileBtnClick(e) {
     const elem = this.$.fileInput;
     if (elem && document.createEvent) {  // sanity check
       const evt = document.createEvent("MouseEvents");
@@ -366,10 +320,16 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     }
   }
 
-  _fileChange(e) {
+  _uploadFileChange(e) {
     const length = e.target.files.length;
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
+
+      let text = "";
+      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      for (let i = 0; i < 5; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      file.id = text;
       file.progress = 0;
       file.error = false;
       file.complete = false;
@@ -377,59 +337,28 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     }
 
     for (let i = 0; i < length; i++) {
-      this.uploadFile(this.uploadFiles[i]);
+      this.fileUpload(this.uploadFiles[i]);
+      this._clearExplorer();
     }
   }
 
-  uploadFile(fileObj) {
-    var fd = new FormData();
-    let path = this.openedPaths.concat(fileObj.name).join("/");
+  fileUpload(fileObj) {
+    const fd = new FormData();
+    const explorer = this.explorer;
+    const path = explorer.breadcrumb.concat(fileObj.name).join("/");
     fd.append("src", fileObj, path);
-    let job = window.backendaiclient.vfolder.uploadFormData(fd, this.openedFolder)
+    const index = this.uploadFiles.indexOf(fileObj);
+
+    let job = window.backendaiclient.vfolder.uploadFormData(fd, explorer.id);
     job.then(resp => {
-      const grid = this.$['files'];
-      grid.clearCache();
-      const index = this.uploadFiles.indexOf(fileObj);
-      this.splice('uploadFiles', index, 1);
-      console.log("Done");
+      this.set('uploadFiles.' + index + '.complete', true);
+
+      setTimeout(() => {
+        this.splice('uploadFiles', this.uploadFiles.indexOf(fileObj), 1);
+        console.log(this.uploadFiles);
+      }, 1000);
     });
   }
-
-  _downloadFile(e) {
-    let fn = e.target.filename;
-    let path = this.openedPaths.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.download(path, this.openedFolder)
-    job.then(res => {
-      var url = window.URL.createObjectURL(res);
-      var a = document.createElement('a');
-      a.addEventListener('click', function (e) {
-        e.stopPropagation();
-      });
-      a.href = url;
-      a.download = fn;
-      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-      a.click();
-      a.remove();  //afterwards we remove the element again
-      URL.revokeObjectURL(url);
-    });
-  }
-
-  _mkdir(e) {
-    let name = this.$['add-dir-name'].value;
-    let path = this.openedPaths.concat(name).join("/");
-    let job = window.backendaiclient.vfolder.mkdir(path, this.openedFolder)
-    job.then(res => {
-      this.closeDialog('add-dir-dialog');
-      const grid = this.$['files'];
-      grid.clearCache();
-    });
-  }
-
-  _mkdirDialog() {
-    this.$['add-dir-name'].value = '';
-    this.openDialog('add-dir-dialog');
-  }
-
 
   static get template() {
     // language=HTML
@@ -465,57 +394,70 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           font-size: 13px;
           font-weight: 100;
         }
-
-        #view-folder-dialog {
+        #folder-explorer-dialog {
           height: 100vh;
           right: 0;
           margin: 80px 0 0 0;
         }
-
         @media screen and (max-width: 899px) {
-          #view-folder-dialog {
+          #folder-explorer-dialog {
             left: 0;
+            width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
-          #view-folder-dialog {
+          #folder-explorer-dialog {
             left: 200px;
+            width: calc(100% - 200px);
           }
+
+        div.breadcrumb {
+          color: #637282;
+          font-size: 1em;
+        }
+
+        div.breadcrumb span:first-child {
+          display: none;
+        }
+
+        paper-button.goto {
+          margin: 0;
+          padding: 5px;
+          min-width: 0;
+        }
+
+        paper-button.goto:last-of-type {
+          color: #000;
+          font-weight: bold;
         }
 
         div#upload {
-          padding: 16px 24px;
-          overflow: hidden;
-          transition: background-color 0.6s, border-color 0.6s;
+          margin: 0;
+          padding: 0;
         }
 
         div#dropzone {
           display: none;
-          background: rgba(255, 255, 255, 0.8);
           position: absolute;
           top: 0;
-          left: -2px;
-          width: 100%;
-          border: 3px dashed darkgray;
           height: 100%;
-          z-index: 3;
+          width: 100%;
+          z-index: 10;
         }
 
-        div#dropzone p {
-          color: #222;
-          font-size: 2em;
+        div#dropzone, div#dropzone p {
+          margin: 0;
+          padding: 0;
+          background: rgba(211, 211, 211, .5);
           text-align: center;
         }
 
-        .path-link {
-          padding: 3px;
-          min-width: 0;
-          color: #637282;
-        }
-
-        .path-link:last-of-type {
-          color: #000;
+        @media (min-width: 900px) {
+          #folder-explorer-dialog {
+            left: 30%;
+            max-width: 50%;
+          } 
         }
 
       </style>
@@ -538,7 +480,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           <vaadin-grid-column resizable>
             <template class="header">Folder Name</template>
             <template>
-              <div class="indicator" on-tap="_viewFolder" folder-id="[[item.name]]">[[item.name]]</div>
+              <div class="indicator" on-tap="_folderExplorer" folder-id="[[item.name]]">[[item.name]]</div>
             </template>
           </vaadin-grid-column>
 
@@ -596,7 +538,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
                   <paper-icon-button class="fg controls-running" icon="folder-open"
-                                     on-tap="_viewFolder" folder-id="[[item.name]]"></paper-icon-button>
+                                     on-tap="_folderExplorer" folder-id="[[item.name]]"></paper-icon-button>
                 </template>
               </div>
             </template>
@@ -697,96 +639,104 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           </div>
         </paper-material>
       </paper-dialog>
-      <paper-dialog id="view-folder-dialog"
+      <paper-dialog id="folder-explorer-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <h2 class="horizontal center layout breadcrumb" style="min-width:1000px;">
-          <paper-button class="path-link" path-name="." on-tap="_gotoFolder">[[openedFolder]]</paper-button>
-          <template is="dom-repeat" items="[[openedPaths]]">
-            <span>&gt;</span>
-            <paper-button class="path-link" path-name="{{item}}" on-tap="_gotoFolder">[[item]]</paper-button>
-          </template>
-          <div class="flex"></div>
-          <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-            Close
-          </paper-icon-button>
-        </h2>
-        <div>
-          <vaadin-button raised id="add-btn" on-tap="_fileClick">Upload Files...</vaadin-button>
-          <vaadin-button id="add-dir" on-tap="_mkdirDialog">New Directory</vaadin-button>
-        </div>
-        <div id="upload">
-          <div id="dropzone"><p>drag</p></div>
-          <input type="file" id="fileInput" on-change="_fileChange" hidden multiple>
-          <template is="dom-if" if="[[uploadFiles.length]]">
-            <div style="background-color:#eee; padding:10px;">
-              <h3>Upload Queue</h3>
-              <ul style="background-color:#fff; margin:10px;">
-                <template is="dom-repeat" items="[[uploadFiles]]">
-                  <li style="list-style-type: circle;">[[item.name]]</li>
-                </template>
-              </ul>
-            </div>
-          </template>
-        </div>
-        <vaadin-grid theme="row-stripes column-borders" aria-label="Job list" id="files">
-          <vaadin-grid-column width="40px" flex-grow="0" resizable>
-            <template class="header">#</template>
-            <template>[[_indexFrom1(index)]]</template>
-          </vaadin-grid-column>
-          <vaadin-grid-column>
-            <template class="header">Filename</template>
-            <template>
-              <div class="indicator">
-                <template is="dom-if" if="[[_isDir(item)]]">
-                  <paper-icon-button class="fg controls-running" icon="folder-open"
-                                     on-tap="_enqueueFolder" folder-name="[[item.filename]]"></paper-icon-button>
-                  [[item.filename]]
-                </template>
-                <template is="dom-if" if="[[!_isDir(item)]]">
-                  [[item.filename]]
-                </template>
+        <paper-material elevation="1" class="login-panel intro" style="margin: 0;">
+          <h3 class="horizontal center layout" style="font-weight:bold">
+            <span>[[explorer.id]]</span>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
+
+          <div class="breadcrumb">
+            <template is="dom-repeat" items="[[explorer.breadcrumb]]">
+              <span>&gt;</span>
+              <paper-button class="goto" path="item" on-click="_gotoFolder" dest="[[item]]">[[item]]</paper-button>
+            </template>
+          </div>
+
+          <div>
+            <vaadin-button raised id="add-btn" on-tap="_uploadFileBtnClick">Upload Files...</vaadin-button>
+            <vaadin-button id="mkdir" on-click="_mkdirDialog">New Directory</vaadin-button>
+          </div>
+
+          <div id="upload">
+            <div id="dropzone"><p>drag</p></div>
+            <input type="file" id="fileInput" on-change="_uploadFileChange" hidden multiple>
+            <template is="dom-if" if="[[uploadFiles.length]]">
+              <div style="background-color:#eee; padding:10px;">
+                <h3>Upload Queue</h3>
+                <ul style="background-color:#fff; margin:10px;">
+                  <template is="dom-repeat" items="[[uploadFiles]]">
+                    <li style="list-style-type: circle;">[[item.name]]</li>
+                    [[item.complete]]
+                  </template>
+                </ul>
               </div>
             </template>
-          </vaadin-grid-column>
+          </div>
 
-          <vaadin-grid-column>
-            <template class="header">Ctime</template>
-            <template>
-              <div class="indicator">[[item.ctime]]</div>
-            </template>
-          </vaadin-grid-column>
+          <vaadin-grid theme="row-stripes compact" aria-label="Explorer" items="[[explorer.files]]">
+            <vaadin-grid-column width="40px" flex-grow="0" resizable>
+              <template class="header">#</template>
+              <template>[[_indexFrom1(index)]]</template>
+            </vaadin-grid-column>
 
-          <vaadin-grid-column>
-            <template class="header">Mode</template>
-            <template>
-              <div class="indicator">[[item.mode]]</div>
-            </template>
-          </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="2" resizable>
+              <template class="header">Name</template>
+              <template>
+                <template is="dom-if" if="[[_isDir(item)]]">
+                  <div class="indicator" on-click="_enqueueFolder" name="[[item.filename]]">
+                    <paper-icon-button class="fg controls-running" icon="folder-open"
+                                       folder-name="[[item.filename]]"></paper-icon-button>
+                    [[item.filename]]
+                  </div>
+                </template>
 
-          <vaadin-grid-column>
-            <template class="header">Size</template>
-            <template>
-              <div class="indicator">[[item.size]]</div>
-            </template>
-          </vaadin-grid-column>
-          <vaadin-grid-column>
-            <template class="header">Actions</template>
-            <template>
-              <template is="dom-if" if="[[!_isDir(item)]]">
-                <template is="dom-if" if="[[_isDownloadable(item)]]">
-                  <paper-icon-button filename="[[item.filename]]" class="fg green controls-running"
-                                     icon="vaadin:download" on-tap="_downloadFile"></paper-icon-button>
+                <template is="dom-if" if="[[!_isDir(item)]]">
+                  <div class="indicator">
+                    <paper-icon-button class="fg controls-running" icon="insert-drive-file"></paper-icon-button>
+                    [[item.filename]]
+                  </div>
                 </template>
               </template>
-            </template>
-          </vaadin-grid-column>
-        </vaadin-grid>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column flex-grow="2" resizable>
+              <template class="header">CTime</template>
+              <template>
+                <div class="layout vertical">
+                  <span>[[item.ctime]]</span>
+                </div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column flex-grow="1" resizable>
+              <template class="header">Size</template>
+              <template>
+                <div class="layout vertical">
+                  <span>[[item.size]]</span>
+                </div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column flex-grow="2" resizable>
+              <template class="header">Actions</template>
+              <template>
+                <paper-icon-button class="fg controls-running" icon="more-horiz"></paper-icon-button>
+              </template>
+            </vaadin-grid-column>
+          </vaadin-grid>
+        </paper-material>
       </paper-dialog>
-      <paper-dialog id="add-dir-dialog" with-backdrop
+
+      <paper-dialog id="mkdir-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create a new virtual folder</span>
+            <span>Create a new folder</span>
             <div class="flex"></div>
             <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
               Close
@@ -794,10 +744,10 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           </h3>
           <form>
             <fieldset>
-              <paper-input id="add-dir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
+              <paper-input id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
               <br/>
-              <paper-button class="blue add-button" type="submit" id="add-dir-btn">
+              <paper-button class="blue add-button" type="submit" id="mkdir-btn" on-click="_mkdir">
                 <iron-icon icon="rowing"></iron-icon>
                 Create
               </paper-button>
