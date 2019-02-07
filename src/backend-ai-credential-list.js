@@ -92,30 +92,9 @@ class BackendAICredentialList extends PolymerElement {
       default:
         is_active = false;
     }
-    ;
-    let q;
     let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-
-    if (user_id == null) {
-      q = `query($is_active: Boolean) {` +
-        `  keypairs(is_active: $is_active) {` +
-        `    ${fields.join(" ")}` +
-        `  }` +
-        `}`;
-    } else {
-      q = `query($user_id: String!, $is_active: Boolean) {` +
-        `  keypairs(user_id: $user_id, is_active: $is_active) {` +
-        `    ${fields.join(" ")}` +
-        `  }` +
-        `}`;
-    }
-    let v = {
-      'user_id': user_id,
-      'is_active': is_active,
-    }
-
-    window.backendaiclient.gql(q, v).then(response => {
+    window.backendaiclient.keypair.list(user_id, fields, is_active).then(response => {
       this.keypairs = response;
       console.log(this.keypairs.keypairs);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
@@ -144,18 +123,9 @@ class BackendAICredentialList extends PolymerElement {
   }
 
   async _getKeyData(accessKey) {
-    let q;
     let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-    q = `query($access_key: String!) {` +
-      `  keypair(access_key: $access_key) {` +
-      `    ${fields.join(" ")}` +
-      `  }` +
-      `}`;
-    let v = {
-      'access_key': accessKey
-    };
-    return window.backendaiclient.gql(q, v);
+    return window.backendaiclient.keypair.info(accessKey, fields);
   }
 
   refresh() {
@@ -179,17 +149,8 @@ class BackendAICredentialList extends PolymerElement {
   _deleteKey(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
-    const access_key = controls.accessKey;
-    let q = `mutation($access_key: String!) {` +
-      `  delete_keypair(access_key: $access_key) {` +
-      `    ok msg` +
-      `  }` +
-      `}`;
-    let v = {
-      'access_key': access_key,
-    };
-
-    window.backendaiclient.gql(q, v).then(response => {
+    const accessKey = controls.accessKey;
+    window.backendaiclient.keypair.delete(accessKey).then(response => {
       this.refresh();
     }).catch(err => {
       console.log(err);
@@ -211,26 +172,17 @@ class BackendAICredentialList extends PolymerElement {
   _mutateKey(e, is_active) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
-    const access_key = controls.accessKey;
-    let original = this.keypairs.keypairs.find(this._findKeyItem, access_key)
-    console.log(original);
-    let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
-      `  modify_keypair(access_key: $access_key, props: $input) {` +
-      `    ok msg` +
-      `  }` +
-      `}`;
-    let v = {
-      'access_key': access_key,
-      'input': {
-        'is_active': is_active,
-        'is_admin': original.is_admin,
-        'resource_policy': original.resource_policy,
-        'rate_limit': original.rate_limit,
-        'concurrency_limit': original.concurrency_limit,
-      },
+    const accessKey = controls.accessKey;
+    let original = this.keypairs.keypairs.find(this._findKeyItem, accessKey);
+    let input = {
+      'is_active': is_active,
+      'is_admin': original.is_admin,
+      'resource_policy': original.resource_policy,
+      'rate_limit': original.rate_limit,
+      'concurrency_limit': original.concurrency_limit,
     };
-    window.backendaiclient.gql(q, v).then(response => {
-      var event = new CustomEvent("backend-ai-credential-refresh", {"detail": this});
+    window.backendaiclient.keypair.mutate(accessKey, input).then((response) => {
+      let event = new CustomEvent("backend-ai-credential-refresh", {"detail": this});
       document.dispatchEvent(event);
     }).catch(err => {
       console.log(err);
@@ -260,7 +212,6 @@ class BackendAICredentialList extends PolymerElement {
   _msecToSec(value) {
     return Number(value / 1000).toFixed(2);
   }
-
 
   _elapsed(start, end) {
     var startDate = new Date(start);

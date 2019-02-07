@@ -95,6 +95,7 @@ class Client {
     }
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
+    this.keypair = new Keypair(this);
     this.utils = new utils(this);
   }
 
@@ -575,6 +576,95 @@ class VFolder {
   }
 }
 
+class Agent {
+  constructor(client, name = null) {
+    this.client = client;
+    this.name = name;
+  }
+
+  list(status = 'ALIVE', fields = ['id', 'addr', 'status', 'first_contact', 'occupied_slots', 'available_slots']) {
+    if (['ALIVE', 'TERMINATED'].includes(status) === false) {
+      return resolve(false);
+    }
+    let q = `query($status: String) {` +
+      `  agents(status: $status) {` +
+      `     ${fields.join(" ")}` +
+      `  }` +
+      `}`;
+    let v = {'status': status};
+    return this.client.gql(q, v);
+  }
+}
+
+class Keypair {
+  constructor(client, name = null) {
+    this.client = client;
+    this.name = name;
+  }
+
+  info(accessKey, fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
+    let q = `query($access_key: String!) {` +
+      `  keypair(access_key: $access_key) {` +
+      `    ${fields.join(" ")}` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey
+    };
+    return this.client.gql(q, v);
+  }
+
+  list(user_id = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
+
+    let q;
+    if (user_id == null) {
+      q = `query($is_active: Boolean) {` +
+        `  keypairs(is_active: $is_active) {` +
+        `    ${fields.join(" ")}` +
+        `  }` +
+        `}`;
+    } else {
+      q = `query($user_id: String!, $is_active: Boolean) {` +
+        `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+        `    ${fields.join(" ")}` +
+        `  }` +
+        `}`;
+    }
+    let v = {
+      'user_id': user_id,
+      'is_active': isActive,
+    };
+    return this.client.gql(q, v);
+  }
+
+  mutate(accessKey, input) {
+    let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
+      `  modify_keypair(access_key: $access_key, props: $input) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey,
+      'input': input,
+    };
+    return this.client.gql(q, v);
+  }
+
+  delete(accessKey) {
+    let q = `mutation($access_key: String!) {` +
+      `  delete_keypair(access_key: $access_key) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey,
+    };
+    return this.client.gqp(q, v);
+  }
+}
+
 class utils {
   constructor(client) {
     this.client = client;
@@ -629,26 +719,6 @@ class utils {
   _padding_zeros(n, width) {
     n = n + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
-  }
-}
-
-class Agent {
-  constructor(client, name = null) {
-    this.client = client;
-    this.name = name;
-  }
-
-  list(status = 'ALIVE', fields = ['id', 'addr', 'status', 'first_contact', 'occupied_slots', 'available_slots']) {
-    if (['ALIVE', 'TERMINATED'].includes(status) === false) {
-      return resolve(false);
-    }
-    let q = `query($status: String) {` +
-      `  agents(status: $status) {` +
-      `     ${fields.join(" ")}` +
-      `  }` +
-      `}`;
-    let v = {'status': status};
-    return this.client.gql(q, v);
   }
 }
 
