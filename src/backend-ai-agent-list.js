@@ -74,6 +74,10 @@ class BackendAIAgentList extends PolymerElement {
   }
 
   _loadAgentList(status = 'running') {
+    if (this.visible !== true) {
+      return;
+    }
+
     switch (this.condition) {
       case 'running':
         status = 'ALIVE';
@@ -111,11 +115,15 @@ class BackendAIAgentList extends PolymerElement {
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
           agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
           agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
-          agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+          if ('cuda.device' in available_slots) {
+            agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+          }
+          if ('cuda.shares' in available_slots) {
+            agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
+          }
           if ('cuda.device' in occupied_slots) {
             agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
           }
-          agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
           if ('cuda.shares' in occupied_slots) {
             agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
           }
@@ -196,30 +204,6 @@ class BackendAIAgentList extends PolymerElement {
         return 'blue';
     }
     ;
-  }
-
-  _terminateAgent(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
-    const kernelId = controls.kernelId;
-
-    this._requestBot.url = '/job/kernel/terminate/' + kernelId;
-    this._requestBot.method = 'delete';
-    const req = this._requestBot.generateRequest();
-    req.completes.then((req) => {
-      termButton.setAttribute('disabled', '');
-      this.$.notification.text = 'Session will soon be terminated';
-      this.$.notification.show();
-    }).catch((err) => {
-      if (response && response.error_msg) {
-        this.$.notification.text = response.error_msg;
-        this.$.notification.show();
-      } else {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-    this._requestBot.method = 'post';
   }
 
   static get template() {
@@ -318,6 +302,8 @@ class BackendAIAgentList extends PolymerElement {
                   <vaadin-progress-bar id="gpu-bar" value="[[item.used_gpu_slots]]"
                                        max="[[item.gpu_slots]]"></vaadin-progress-bar>
                 </div>
+              </template>
+              <template is="dom-if" if="[[item.vgpu_slots]]">
                 <div class="layout horizontal center flex">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                   <span>[[item.vgpu_slots]]</span>

@@ -306,16 +306,13 @@ class BackendAISummary extends PolymerElement {
                 <template is="dom-if" if="[[gpu_total]]">
                   <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
                   GPUs: <span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs
-                  <template is="dom-if" if="[[vgpu_total]]">
-                  (<span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs)
-                  </template>
-                  <template is="dom-if" if="[[!vgpu_total]]">
-                  (vGPU disabled)
-                  </template>
                 </template>
-                <template is="dom-if" if="[[!gpu_total]]">
-                  <vaadin-progress-bar id="gpu-bar" value="0" max="1"></vaadin-progress-bar>
-                  GPUs: <span class="progress-value"> Not installed</span>
+                <template is="dom-if" if="[[vgpu_total]]">
+                <vaadin-progress-bar id="gpu-bar" value="[[vgpu_used]]" max="[[vgpu_total]]"></vaadin-progress-bar>
+                vGPUs: <span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs
+                </template>
+                <template is="dom-if" if="[[!vgpu_total]]">
+                (vGPU disabled)
                 </template>
               </template>
               <template is="dom-if" if="{{!is_admin}}">
