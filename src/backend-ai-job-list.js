@@ -135,7 +135,6 @@ class BackendAIJobList extends PolymerElement {
           if ('cuda.shares' in occupied_slots) {
             sessions[objectKey].vgpu_slot = parseInt(occupied_slots['cuda.shares']);
           }
-          console.log(sessions[objectKey].mem_slot);
         });
       }
       this.compute_sessions = sessions;
@@ -151,7 +150,6 @@ class BackendAIJobList extends PolymerElement {
           refreshTime = 15000;
         }
       }
-      console.log(this.jobs);
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
