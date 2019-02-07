@@ -18,6 +18,8 @@ import '@polymer/paper-material/paper-material';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-dialog/paper-dialog';
+import '@polymer/neon-animation/animations/slide-from-right-animation.js';
+import '@polymer/neon-animation/animations/slide-right-animation.js';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-item/vaadin-item.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js';
@@ -723,7 +725,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         </paper-material>
       </paper-dialog>
       <paper-dialog id="folder-explorer-dialog"
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+                    entry-animation="slide-from-right-animation" exit-animation="slide-right-animation">
         <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>[[explorer.id]]</span>
