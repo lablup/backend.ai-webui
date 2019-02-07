@@ -74,6 +74,10 @@ class BackendAIAgentList extends PolymerElement {
   }
 
   _loadAgentList(status = 'running') {
+    if (this.visible !== true) {
+      return;
+    }
+
     switch (this.condition) {
       case 'running':
         status = 'ALIVE';
@@ -200,30 +204,6 @@ class BackendAIAgentList extends PolymerElement {
         return 'blue';
     }
     ;
-  }
-
-  _terminateAgent(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
-    const kernelId = controls.kernelId;
-
-    this._requestBot.url = '/job/kernel/terminate/' + kernelId;
-    this._requestBot.method = 'delete';
-    const req = this._requestBot.generateRequest();
-    req.completes.then((req) => {
-      termButton.setAttribute('disabled', '');
-      this.$.notification.text = 'Session will soon be terminated';
-      this.$.notification.show();
-    }).catch((err) => {
-      if (response && response.error_msg) {
-        this.$.notification.text = response.error_msg;
-        this.$.notification.show();
-      } else {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-    this._requestBot.method = 'post';
   }
 
   static get template() {

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {PolymerElement, html} from '@polymer/polymer';
+import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/iron-icon/iron-icon';
@@ -39,6 +39,10 @@ class BackendAIJobList extends PolymerElement {
         default: 'running'  // finished, running, archived
       },
       jobs: {
+        type: Object,
+        value: {}
+      },
+      compute_sessions: {
         type: Object,
         value: {}
       },
@@ -84,6 +88,9 @@ class BackendAIJobList extends PolymerElement {
   }
 
   _refreshJobData() {
+    if (this.visible !== true) {
+      return;
+    }
     let status = 'RUNNING';
     switch (this.condition) {
       case 'running':
@@ -95,10 +102,10 @@ class BackendAIJobList extends PolymerElement {
       case 'archived':
       default:
         status = 'RUNNING';
-    };
+    }
+    ;
 
-    let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "mem_slot", "cpu_slot", "occupied_slots", "gpu_slot", "cpu_used", "io_read_bytes", "io_write_bytes"];
-    //fields =  ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "io_read_bytes", "io_write_bytes"];
+    let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "io_read_bytes", "io_write_bytes"];
     let q, v;
     if (window.backendaiclient.is_admin == true) {
       q = `query($ak:String, $status:String) {` +
@@ -112,9 +119,25 @@ class BackendAIJobList extends PolymerElement {
       v = {'status': status};
     }
     window.backendaiclient.gql(q, v).then(response => {
-      this.jobs = response;
+      var sessions = response.compute_sessions;
+      if (sessions !== undefined && sessions.length != 0) {
+        Object.keys(sessions).map((objectKey, index) => {
+          var session = sessions[objectKey];
+          var occupied_slots = JSON.parse(session.occupied_slots);
+          sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
+          sessions[objectKey].mem_slot = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
+          if ('cuda.device' in occupied_slots) {
+            sessions[objectKey].gpu_slot = parseInt(occupied_slots['cuda.device']);
+          }
+          if ('cuda.shares' in occupied_slots) {
+            sessions[objectKey].vgpu_slot = parseInt(occupied_slots['cuda.shares']);
+          }
+        });
+      }
+      this.compute_sessions = sessions;
+      //this.jobs = response;
       let refreshTime;
-      if (this.visible == true) {
+      if (this.visible === true) {
         if (this.condition === 'running') {
           refreshTime = 5000;
           setTimeout(() => {
@@ -170,10 +193,8 @@ class BackendAIJobList extends PolymerElement {
       'julia',
       'r',
     ];
-    console.log(lang);
     lang = lang.split('/')[2].split(':')[0];
     //lang = lang.split('/')[3].split(':')[0];
-    console.log(lang);
     return this.condition === 'running' && support_kernels.includes(lang);
   }
 
@@ -465,7 +486,7 @@ class BackendAIJobList extends PolymerElement {
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[jobs.compute_sessions]]">
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[compute_sessions]]">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
           <template>[[_indexFrom1(index)]]</template>
