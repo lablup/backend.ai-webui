@@ -522,7 +522,7 @@ class VFolder {
     let params = {
       'file': file
     };
-    let q = querystring.stringify(params)
+    let q = querystring.stringify(params);
     let rqst = this.client.newSignedRequest('GET', `/folders/${name}/download_single?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }

@@ -408,7 +408,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   _downloadFile(e) {
     let fn = e.target.filename;
     let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.download(path);
+    let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
     job.then(res => {
       const url = window.URL.createObjectURL(res);
       let a = document.createElement('a');
