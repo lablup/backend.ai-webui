@@ -609,7 +609,7 @@ class utils {
     this.client = client;
   }
 
-  changeBinaryUnit(value, targetUnit = 'g') {
+  changeBinaryUnit(value, targetUnit = 'g', defaultUnit = 'b') {
     if (value === undefined) {
       return value;
     }
@@ -621,7 +621,7 @@ class utils {
       sourceUnit = value.substr(-1);
       value = value.slice(0, -1);
     } else {
-      sourceUnit = 'b'; // Fallback
+      sourceUnit = defaultUnit; // Fallback
     }
     return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
   }

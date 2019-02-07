@@ -207,6 +207,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   _refreshResourceValues() {
     this._refreshImageList();
+    this._updateGPUMode();
     this._updateVirtualFolderList();
     this.updateMetric();
     var cpu_resource = this.$['cpu-resource'];
@@ -234,6 +235,20 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.$['new-session-dialog'].open();
   }
 
+  _updateGPUMode() {
+    window.backendaiclient.getResourceSlots().then((response) => {
+      let results = response;
+      if ('cuda.device' in results) {
+        this.gpu_mode = 'gpu';
+        this.gpu_step = 1;
+      }
+      if ('cuda.shares' in results) {
+        this.gpu_mode = 'vgpu';
+        this.gpu_step = 0.1;
+      }
+    });
+  }
+
   _generateKernelIndex(kernel, version) {
     if (kernel in this.aliases) {
       return this.aliases[kernel] + ':' + version;
@@ -249,7 +264,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
     let config = {};
     config['cpu'] = this.$['cpu-resource'].value;
-    console.log(this.gpu_mode);
     if (this.gpu_mode == 'vgpu') {
       config['vgpu'] = this.$['gpu-resource'].value;
     } else {
@@ -368,34 +382,21 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       if (!currentResource) return;
-      window.backendaiclient.getResourceSlots().then((response) => {
-        let results = response;
-        if ('cuda.device' in results) {
-          this.gpu_mode = 'gpu';
-          this.gpu_step = 1;
-        }
-        if ('cuda.shares' in results) {
-          this.gpu_mode = 'vgpu';
-          this.gpu_step = 0.1;
-        }
-      });
       currentResource.forEach((item) => {
-        if (item.key == 'cpu') {
+        if (item.key === 'cpu') {
           let cpu_metric = item;
           cpu_metric.min = parseInt(cpu_metric.min);
           cpu_metric.max = parseInt(cpu_metric.max);
           this.cpu_metric = cpu_metric;
-          console.log(this.cpu_metric);
         }
 
-        if (item.key == 'cuda.device') {
+        if (item.key === 'cuda.device') {
           let gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
           gpu_metric.max = parseInt(gpu_metric.max);
           this.gpu_metric = gpu_metric;
-          console.log(this.gpu_metric);
         }
-        if (item.key == 'cuda.shares') {
+        if (item.key === 'cuda.shares') {
           let vgpu_metric = item;
           vgpu_metric.min = parseInt(vgpu_metric.min);
           vgpu_metric.max = parseInt(vgpu_metric.max);
@@ -403,21 +404,18 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           if (vgpu_metric.max > 0) {
             this.gpu_metric = vgpu_metric;
           }
-          console.log(this.vgpu_metric);
         }
-        if (item.key == 'tpu') {
+        if (item.key === 'tpu') {
           let tpu_metric = item;
           tpu_metric.min = parseInt(tpu_metric.min);
           tpu_metric.max = parseInt(tpu_metric.max);
           this.tpu_metric = tpu_metric;
         }
-        if (item.key == 'mem') {
+        if (item.key === 'mem') {
           let mem_metric = item;
-          mem_metric.min = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
-          mem_metric.max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g');
+          mem_metric.min = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
+          mem_metric.max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           this.mem_metric = mem_metric;
-          console.log('mem');
-          console.log(mem_metric);
         }
       });
       if (this.gpu_metric === {}) {
@@ -441,18 +439,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this._updateVersions(this.$['environment'].selectedItemLabel);
   }
 
-  _getResourceLimit(name, metric, minmax) {
-    this.resourceLimits[name].forEach((item) => {
-      if (item.key === metric) {
-        if (metric === 'mem' && item[minmax].substr(-1) === 'g') {
-        } else {
-          return item[minmax] / 1024;
-        }
-        return item[minmax];
-      }
-    });
-  }
-
   // Manager requests
   _refreshImageList() {
     let fields = ["name", "tag", "digest", "installed", "resource_limits { key min max }"];
@@ -462,7 +448,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       '}';
     v = {};
     window.backendaiclient.gql(q, v).then((response) => {
-      console.log(response);
       var images = [];
 
       Object.keys(response.images).map((objectKey, index) => {
@@ -475,7 +460,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         return;
       }
       this.images = images;
-      console.log(images);
       this.languages = [];
       this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
@@ -488,7 +472,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           } else {
             this.languages.push(item.name);
           }
-          console.log(this.languages);
         } else {
           this.supports[item.name].push(item.tag);
           this.resourceLimits[item.name + ':' + item.tag] = item.resource_limits;
