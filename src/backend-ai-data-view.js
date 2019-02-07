@@ -441,6 +441,13 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           text-align: center;
         }
 
+        @media (min-width: 900px) {
+          #folder-explorer-dialog {
+            left: 30%;
+            max-width: 50%;
+          } 
+        }
+
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
