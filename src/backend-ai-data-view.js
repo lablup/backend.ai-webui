@@ -386,6 +386,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       this.fileUpload(this.uploadFiles[i]);
       this._clearExplorer();
     }
+
+    this.$.fileInput.value = '';
   }
 
   fileUpload(fileObj) {
