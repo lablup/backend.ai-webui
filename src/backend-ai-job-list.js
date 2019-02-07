@@ -197,54 +197,12 @@ class BackendAIJobList extends PolymerElement {
     return this.condition === 'running' && support_kernels.includes(lang);
   }
 
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  _byteToGB(value) {
-    return Math.floor(value / 1000000000);
-  }
-
-  _MBToGB(value) {
-    return value / 1024;
-  }
-
   _msecToSec(value) {
     return Number(value / 1000).toFixed(2);
   }
 
-  _padding_zeros(n, width) {
-    n = n + '';
-    return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
-  }
-
   _elapsed(start, end) {
-    var startDate = new Date(start);
-    if (this.condition == 'running') {
-      var endDate = new Date();
-    } else {
-      var endDate = new Date(end);
-    }
-    var seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
-    var seconds_cumulative = seconds_total;
-    var days = Math.floor(seconds_cumulative / 86400);
-    seconds_cumulative = seconds_cumulative - days * 86400;
-    var hours = Math.floor(seconds_cumulative / 3600);
-    seconds_cumulative = seconds_cumulative - hours * 3600;
-    var minutes = Math.floor(seconds_cumulative / 60);
-    seconds_cumulative = seconds_cumulative - minutes * 60;
-    var seconds = seconds_cumulative;
-    var result = '';
-    if (days !== undefined && days > 0) {
-      result = result + String(days) + ' Day ';
-    }
-    if (hours !== undefined) {
-      result = result + this._padding_zeros(hours, 2) + ':';
-    }
-    if (minutes !== undefined) {
-      result = result + this._padding_zeros(minutes, 2) + ':';
-    }
-    return result + this._padding_zeros(seconds, 2) + '';
+    return window.backendaiclient.utils.elapsedTime(start, end);
   }
 
   _indexFrom1(index) {
