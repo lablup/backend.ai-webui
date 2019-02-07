@@ -387,6 +387,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   }
 
   fileUpload(fileObj) {
+    console.log(fileObj);
     const fd = new FormData();
     const explorer = this.explorer;
     const path = explorer.breadcrumb.concat(fileObj.name).join("/");
@@ -530,6 +531,15 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             left: 30%;
             max-width: 50%;
           }
+        }
+
+        .progress {
+          padding: 30px 10px;
+          border: 1px solid lightgray;
+        }
+
+        .progress-item {
+          padding: 10px 30px;
         }
 
       </style>
@@ -738,15 +748,33 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             <div id="dropzone"><p>drag</p></div>
             <input type="file" id="fileInput" on-change="_uploadFileChange" hidden multiple>
             <template is="dom-if" if="[[uploadFiles.length]]">
-              <div style="background-color:#eee; padding:10px;">
-                <h3>Upload Queue</h3>
-                <ul style="background-color:#fff; margin:10px;">
-                  <template is="dom-repeat" items="[[uploadFiles]]">
-                    <li style="list-style-type: circle;">[[item.name]]</li>
-                    [[item.complete]]
+              <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" items="[[uploadFiles]]"
+                           height-by-rows>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                  <template>
+                    <vaadin-item class="progress-item">
+                      <div>
+                        <template is="dom-if" if="[[item.complete]]">
+                          <iron-icon icon="vaadin:check"></iron-icon>
+                        </template>
+                      </div>
+                    </vaadin-item>
                   </template>
-                </ul>
-              </div>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template>
+                    <vaadin-item>
+                      <h3>[[item.name]]</h3>
+                      <template is="dom-if" if="[[!item.complete]]">
+                        <div>
+                          <vaadin-progress-bar indeterminate value="0"></vaadin-progress-bar>
+                        </div>
+                      </template>
+                    </vaadin-item>
+                  </template>
+                </vaadin-grid-column>
+              </vaadin-grid>
             </template>
           </div>
 
