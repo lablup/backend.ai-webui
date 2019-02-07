@@ -365,7 +365,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     return html`
       <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
         vaadin-grid {
-          border: 0;
+          border: 0 !important;
           font-size: 12px;
         }
 
@@ -398,6 +398,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         #folder-explorer-dialog {
           height: 100vh;
           right: 0;
+          top: 0;
+          position: fixed;
           margin: 80px 0 0 0;
         }
 
@@ -411,7 +413,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         @media screen and (min-width: 900px) {
           #folder-explorer-dialog {
             left: 200px;
-            width: calc(100% - 200px);
           }
         }
 
@@ -608,7 +609,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       </paper-dialog>
       <paper-dialog id="info-folder-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <paper-material elevation="1" class="intro centered" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span>[[folderInfo.name]]</span>
             <div class="flex"></div>
@@ -644,7 +645,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       </paper-dialog>
       <paper-dialog id="folder-explorer-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="login-panel intro" style="margin: 0;">
+        <paper-material elevation="1" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>[[explorer.id]]</span>
             <div class="flex"></div>
