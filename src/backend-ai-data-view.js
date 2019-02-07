@@ -645,7 +645,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       </paper-dialog>
       <paper-dialog id="folder-explorer-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="intro" style="margin: 0;">
+        <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>[[explorer.id]]</span>
             <div class="flex"></div>
