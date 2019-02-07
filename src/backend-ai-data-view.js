@@ -398,6 +398,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
 
     let job = window.backendaiclient.vfolder.uploadFormData(fd, explorer.id);
     job.then(resp => {
+      this._clearExplorer();
       this.set('uploadFiles.' + index + '.complete', true);
 
       setTimeout(() => {
