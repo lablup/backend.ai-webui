@@ -111,11 +111,15 @@ class BackendAIAgentList extends PolymerElement {
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
           agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
           agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
-          agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+          if ('cuda.device' in available_slots) {
+            agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+          }
+          if ('cuda.shares' in available_slots) {
+            agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
+          }
           if ('cuda.device' in occupied_slots) {
             agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
           }
-          agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
           if ('cuda.shares' in occupied_slots) {
             agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
           }
@@ -318,6 +322,8 @@ class BackendAIAgentList extends PolymerElement {
                   <vaadin-progress-bar id="gpu-bar" value="[[item.used_gpu_slots]]"
                                        max="[[item.gpu_slots]]"></vaadin-progress-bar>
                 </div>
+              </template>
+              <template is="dom-if" if="[[item.vgpu_slots]]">
                 <div class="layout horizontal center flex">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                   <span>[[item.vgpu_slots]]</span>
