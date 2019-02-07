@@ -197,6 +197,18 @@ class BackendAIJobList extends PolymerElement {
     return this.condition === 'running' && support_kernels.includes(lang);
   }
 
+  _byteToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
+  _byteToGB(value) {
+    return Math.floor(value / 1000000000);
+  }
+
+  _MBToGB(value) {
+    return value / 1024;
+  }
+
   _msecToSec(value) {
     return Number(value / 1000).toFixed(2);
   }

@@ -586,6 +586,7 @@ class utils {
     let sourceUnit;
     const binaryUnits = ['b', 'k', 'm', 'g', 't'];
     if (!(binaryUnits.includes(targetUnit))) return false;
+    value = value.toString();
     if (binaryUnits.includes(value.substr(-1))) {
       sourceUnit = value.substr(-1);
       value = value.slice(0, -1);
