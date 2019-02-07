@@ -310,7 +310,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     return file.mode.startsWith("d");
   }
 
-  /* File uploader */
+  /* File upload and download */
   _uploadFileBtnClick(e) {
     const elem = this.$.fileInput;
     if (elem && document.createEvent) {  // sanity check
@@ -358,6 +358,29 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         console.log(this.uploadFiles);
       }, 1000);
     });
+  }
+
+  _downloadFile(e) {
+    let fn = e.target.filename;
+    let path = this.explorer.breadcrumb.concat(fn).join("/");
+    let job = window.backendaiclient.vfolder.download(path);
+    job.then(res => {
+      const url = window.URL.createObjectURL(res);
+      let a = document.createElement('a');
+      a.addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+      a.href = url;
+      a.download = fn;
+      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+      a.click();
+      a.remove();  //afterwards we remove the element again
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  _isDownloadable(file) {
+    return file.size < 209715200
   }
 
   static get template() {
@@ -729,7 +752,13 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             <vaadin-grid-column flex-grow="2" resizable>
               <template class="header">Actions</template>
               <template>
-                <paper-icon-button class="fg controls-running" icon="more-horiz"></paper-icon-button>
+                <template is="dom-if" if="[[!_isDir(item)]]">
+                  <template is="dom-if" if="[[_isDownloadable(item)]]">
+                    <vaadin-button raised id="download-btn" filename="[[item.filename]]" on-tap="_downloadFile">
+                      Download
+                    </vaadin-button>
+                  </template>
+                </template>
               </template>
             </vaadin-grid-column>
           </vaadin-grid>
