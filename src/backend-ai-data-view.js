@@ -467,11 +467,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         }
 
         #folder-explorer-dialog {
-          height: 100vh;
+          height: calc(100vh - 80px);
           right: 0;
           top: 0;
           position: fixed;
-          margin: 80px 0 0 0;
+          margin: 70px 0 0 0;
         }
 
         @media screen and (max-width: 899px) {
@@ -484,6 +484,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         @media screen and (min-width: 900px) {
           #folder-explorer-dialog {
             left: 200px;
+            width: calc(100% - 200px);
           }
         }
 
@@ -527,13 +528,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           width: 100%;
           background: rgba(211, 211, 211, .5);
           text-align: center;
-        }
-
-        @media (min-width: 900px) {
-          #folder-explorer-dialog {
-            left: 30%;
-            max-width: 50%;
-          }
         }
 
         .progress {
