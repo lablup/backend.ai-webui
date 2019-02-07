@@ -124,6 +124,7 @@ class Client {
       this._config = config;
     }
     this.vfolder = new VFolder(this);
+    this.agent = new Agent(this);
     this.utils = new utils(this);
   }
 
@@ -552,7 +553,7 @@ class VFolder {
     let params = {
       'file': file
     };
-    let q = querystring.stringify(params)
+    let q = querystring.stringify(params);
     let rqst = this.client.newSignedRequest('GET', `/folders/${name}/download_single?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -661,6 +662,25 @@ class utils {
   }
 }
 
+  class Agent {
+    constructor(client, name = null) {
+      this.client = client;
+      this.name = name;
+    }
+
+    list(status = 'ALIVE', fields = ['id', 'addr', 'status', 'first_contact', 'occupied_slots', 'available_slots']) {
+      if (['ALIVE', 'TERMINATED'].includes(status) === false) {
+        return resolve(false);
+      }
+      let q = `query($status: String) {` +
+        `  agents(status: $status) {` +
+        `     ${fields.join(" ")}` +
+        `  }` +
+        `}`;
+      let v = {'status': status};
+      return this.client.gql(q, v);
+    }
+  }
 
 // below will become "static const" properties in ES7
 Object.defineProperty(Client, 'ERR_SERVER', {
