@@ -357,7 +357,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         this.splice('uploadFiles', this.uploadFiles.indexOf(fileObj), 1);
         console.log(this.uploadFiles);
       }, 1000);
-
     });
   }
 
@@ -395,10 +394,23 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           font-size: 13px;
           font-weight: 100;
         }
-
         #folder-explorer-dialog {
-          width: 100%;
+          height: 100vh;
+          right: 0;
+          margin: 80px 0 0 0;
         }
+        @media screen and (max-width: 899px) {
+          #folder-explorer-dialog {
+            left: 0;
+            width: 100%;
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          #folder-explorer-dialog {
+            left: 200px;
+            width: calc(100% - 200px);
+          }
 
         div.breadcrumb {
           color: #637282;
@@ -627,7 +639,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           </div>
         </paper-material>
       </paper-dialog>
-      <paper-dialog id="folder-explorer-dialog" with-backdrop
+      <paper-dialog id="folder-explorer-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="font-weight:bold">

@@ -153,6 +153,11 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
+  getResourceSlots() {
+    let rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
+    return this._wrapWithPromise(rqst);
+  }
+
   /**
    * Create a compute session if the session for the given sessionId does not exists.
    * It returns the information for the existing session otherwise, without error.
