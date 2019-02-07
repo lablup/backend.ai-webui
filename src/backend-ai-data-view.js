@@ -75,6 +75,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
 
   ready() {
     super.ready();
+    this._addEventListenerDropZone();
     document.addEventListener('backend-ai-connected', () => {
       this.is_admin = window.backendaiclient.is_admin;
       this.authenticated = true;
@@ -311,6 +312,49 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   }
 
   /* File upload and download */
+  _addEventListenerDropZone() {
+    const dndZoneEl = this.$['folder-explorer-dialog'];
+    console.log(this.$);
+    const dndZonePlaceholderEl = this.$.dropzone;
+
+    dndZonePlaceholderEl.addEventListener('dragleave', () => {
+      dndZonePlaceholderEl.style.display = "none";
+    });
+
+    dndZoneEl.addEventListener('dragover', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      dndZonePlaceholderEl.style.display = "flex";
+      return false;
+    });
+
+    dndZoneEl.addEventListener('drop', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      dndZonePlaceholderEl.style.display = "none";
+
+      let temp = [];
+      for (let i = 0; i < e.dataTransfer.files.length; i++) {
+        const file = e.dataTransfer.files[i];
+        if (file.size > 2 ** 20) {
+          console.log('File size limit (< 1 MiB)');
+        } else {
+          file.progress = 0;
+          file.error = false;
+          file.complete = false;
+          temp.push(file);
+          this.push("uploadFiles", file);
+        }
+      }
+
+      for (let i = 0; i < temp.length; i++) {
+        this.fileUpload(temp[i]);
+        this._clearExplorer();
+      }
+    });
+  }
+
   _uploadFileBtnClick(e) {
     const elem = this.$.fileInput;
     if (elem && document.createEvent) {  // sanity check
@@ -476,6 +520,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         div#dropzone, div#dropzone p {
           margin: 0;
           padding: 0;
+          width: 100%;
           background: rgba(211, 211, 211, .5);
           text-align: center;
         }
@@ -668,7 +713,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       </paper-dialog>
       <paper-dialog id="folder-explorer-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none">
+        <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>[[explorer.id]]</span>
             <div class="flex"></div>
