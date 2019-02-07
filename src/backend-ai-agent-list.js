@@ -89,12 +89,7 @@ class BackendAIAgentList extends PolymerElement {
       default:
         status = 'ALIVE';
     }
-    let fields = ['id',
-      'addr',
-      'status',
-      'first_contact',
-      'occupied_slots',
-      'available_slots'];
+    let fields = ['id', 'status', 'addr', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'];
     window.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
@@ -105,6 +100,8 @@ class BackendAIAgentList extends PolymerElement {
 
           agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
+          agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
+          agents[objectKey].current_mem = window.backendaiclient.utils.changeBinaryUnit(agent.mem_cur_bytes, 'g');
           agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
           agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           if ('cuda.device' in available_slots) {
@@ -253,6 +250,7 @@ class BackendAIAgentList extends PolymerElement {
           <template class="header">Endpoint</template>
           <template>
             <div class="indicator">[[item.addr]]</div>
+            <div class="indicator">[[item.region]]</div>
           </template>
         </vaadin-grid-column>
 

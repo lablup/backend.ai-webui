@@ -427,6 +427,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
+  _humanReadableTime(d) {
+    var d = new Date(d * 1000);
+    return d.toUTCString();
+  }
+
   _isDownloadable(file) {
     return file.size < 209715200
   }
@@ -456,6 +461,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         paper-button.add-button,
         paper-button.delete-button {
           width: 100%;
+        }
+
+        paper-icon-button.tiny {
+          width: 35px;
+          height: 35px;
         }
 
         .warning {
@@ -783,7 +793,9 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             </vaadin-grid-column>
 
             <vaadin-grid-column flex-grow="2" resizable>
-              <template class="header">Name</template>
+              <template class="header">
+                <vaadin-grid-sorter path="filename">Name</vaadin-grid-sorter>
+              </template>
               <template>
                 <template is="dom-if" if="[[_isDir(item)]]">
                   <div class="indicator" on-click="_enqueueFolder" name="[[item.filename]]">
@@ -803,16 +815,20 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             </vaadin-grid-column>
 
             <vaadin-grid-column flex-grow="2" resizable>
-              <template class="header">CTime</template>
+              <template class="header">
+                <vaadin-grid-sorter path="ctime">Created</vaadin-grid-sorter>
+              </template>
               <template>
                 <div class="layout vertical">
-                  <span>[[item.ctime]]</span>
+                  <span>[[_humanReadableTime(item.ctime)]]</span>
                 </div>
               </template>
             </vaadin-grid-column>
 
             <vaadin-grid-column flex-grow="1" resizable>
-              <template class="header">Size</template>
+              <template class="header">
+                <vaadin-grid-sorter path="size">Size</vaadin-grid-sorter>
+              </template>
               <template>
                 <div class="layout vertical">
                   <span>[[item.size]]</span>
@@ -825,9 +841,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <template>
                 <template is="dom-if" if="[[!_isDir(item)]]">
                   <template is="dom-if" if="[[_isDownloadable(item)]]">
-                    <vaadin-button raised id="download-btn" filename="[[item.filename]]" on-tap="_downloadFile">
-                      Download
-                    </vaadin-button>
+                    <paper-icon-button id="download-btn" class="tiny fg red" icon="vaadin:download"
+                                       filename="[[item.filename]]" on-tap="_downloadFile"></paper-icon-button>
                   </template>
                 </template>
               </template>
