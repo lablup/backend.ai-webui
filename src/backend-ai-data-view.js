@@ -175,6 +175,9 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     if (item.permission.includes(perm)) {
       return true;
     }
+    if (item.permission.includes('w') && perm === 'r') {
+      return true;
+    }
     return false;
   }
 
@@ -621,16 +624,14 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                 <paper-icon-button class="fg green controls-running" icon="vaadin:info-circle-o"
                                    on-tap="_infoFolder"></paper-icon-button>
                 <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
+                  <paper-icon-button class="fg blue controls-running" icon="folder-open"
+                                     on-tap="_folderExplorer" folder-id="[[item.name]]"></paper-icon-button>
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'w')]]">
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
                   <paper-icon-button class="fg red controls-running" icon="delete"
                                      on-tap="_deleteFolderDialog"></paper-icon-button>
-                </template>
-                <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
-                  <paper-icon-button class="fg controls-running" icon="folder-open"
-                                     on-tap="_folderExplorer" folder-id="[[item.name]]"></paper-icon-button>
                 </template>
               </div>
             </template>
