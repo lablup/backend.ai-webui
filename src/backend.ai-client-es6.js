@@ -609,169 +609,189 @@ class VFolder {
   }
 }
 
-  class Agent {
-    constructor(client) {
-      this.client = client;
-    }
-
-    list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
-      if (['ALIVE', 'TERMINATED'].includes(status) === false) {
-        return resolve(false);
-      }
-      let q = `query($status: String) {` +
-        `  agents(status: $status) {` +
-        `     ${fields.join(" ")}` +
-        `  }` +
-        `}`;
-      let v = {'status': status};
-      return this.client.gql(q, v);
-    }
+class Agent {
+  constructor(client) {
+    this.client = client;
   }
 
-  class Keypair {
-    constructor(client, name = null) {
-      this.client = client;
-      this.name = name;
+  list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
+    if (['ALIVE', 'TERMINATED'].includes(status) === false) {
+      return resolve(false);
     }
+    let q = `query($status: String) {` +
+      `  agents(status: $status) {` +
+      `     ${fields.join(" ")}` +
+      `  }` +
+      `}`;
+    let v = {'status': status};
+    return this.client.gql(q, v);
+  }
+}
 
-    info(accessKey, fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-      'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
-      let q = `query($access_key: String!) {` +
-        `  keypair(access_key: $access_key) {` +
+class Keypair {
+  constructor(client, name = null) {
+    this.client = client;
+    this.name = name;
+  }
+
+  info(accessKey, fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
+    let q = `query($access_key: String!) {` +
+      `  keypair(access_key: $access_key) {` +
+      `    ${fields.join(" ")}` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey
+    };
+    return this.client.gql(q, v);
+  }
+
+  list(userId = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
+
+    let q;
+    if (userId == null) {
+      q = `query($is_active: Boolean) {` +
+        `  keypairs(is_active: $is_active) {` +
         `    ${fields.join(" ")}` +
         `  }` +
         `}`;
-      let v = {
-        'access_key': accessKey
-      };
-      return this.client.gql(q, v);
-    }
-
-    list(userId = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-      'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
-
-      let q;
-      if (userId == null) {
-        q = `query($is_active: Boolean) {` +
-          `  keypairs(is_active: $is_active) {` +
-          `    ${fields.join(" ")}` +
-          `  }` +
-          `}`;
-      } else {
-        q = `query($user_id: String!, $is_active: Boolean) {` +
-          `  keypairs(user_id: $user_id, is_active: $is_active) {` +
-          `    ${fields.join(" ")}` +
-          `  }` +
-          `}`;
-      }
-      let v = {
-        'user_id': userId,
-        'is_active': isActive,
-      };
-      return this.client.gql(q, v);
-    }
-
-    mutate(accessKey, input) {
-      let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
-        `  modify_keypair(access_key: $access_key, props: $input) {` +
-        `    ok msg` +
+    } else {
+      q = `query($user_id: String!, $is_active: Boolean) {` +
+        `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+        `    ${fields.join(" ")}` +
         `  }` +
         `}`;
-      let v = {
-        'access_key': accessKey,
-        'input': input,
-      };
-      return this.client.gql(q, v);
     }
-
-    delete(accessKey) {
-      let q = `mutation($access_key: String!) {` +
-        `  delete_keypair(access_key: $access_key) {` +
-        `    ok msg` +
-        `  }` +
-        `}`;
-      let v = {
-        'access_key': accessKey,
-      };
-      return this.client.gql(q, v);
-    }
+    let v = {
+      'user_id': userId,
+      'is_active': isActive,
+    };
+    return this.client.gql(q, v);
   }
 
+  add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
+      rateLimit = 1000, concurrencyLimit = 1) {
+    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
+      `  create_keypair(user_id: $user_id, props: $input) {` +
+      `    ok msg keypair { ${fields.join(" ")} }` +
+      `  }` +
+      `}`;
+    let v = {
+      'user_id': userId,
+      'input': {
+        'is_active': isActive,
+        'is_admin': isAdmin,
+        'resource_policy': resourcePolicy,
+        'rate_limit': rateLimit,
+        'concurrency_limit': concurrencyLimit,
+      },
+    };
+    return this.client.gql(q, v);
+  }
 
-  class ResourcePolicy {
-    constructor(client) {
-      this.client = client;
-    }
+  mutate(accessKey, input) {
+    let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
+      `  modify_keypair(access_key: $access_key, props: $input) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey,
+      'input': input,
+    };
+    return this.client.gql(q, v);
+  }
 
-    get(name = null, fields = ['name',
-      'created_at',
-      'default_for_unspecified',
-      'total_resource_slots',
-      'max_concurrent_sessions',
-      'max_containers_per_session',
-      'max_vfolder_count',
-      'max_vfolder_size',
-      'allowed_vfolder_hosts']) {
-      let q, v;
-      if (this.client.is_admin === true) {
-        if (name === null) {
-          q = `query {` +
-            `  keypair_resource_policies { ${fields.join(" ")} }` +
-            '}';
-          v = {'n': name};
-        } else {
-        q = `query($n:String) {` +
+  delete(accessKey) {
+    let q = `mutation($access_key: String!) {` +
+      `  delete_keypair(access_key: $access_key) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey,
+    };
+    return this.client.gql(q, v);
+  }
+}
+
+
+class ResourcePolicy {
+  constructor(client) {
+    this.client = client;
+  }
+
+  get(name = null, fields = ['name',
+    'created_at',
+    'default_for_unspecified',
+    'total_resource_slots',
+    'max_concurrent_sessions',
+    'max_containers_per_session',
+    'max_vfolder_count',
+    'max_vfolder_size',
+    'allowed_vfolder_hosts']) {
+    let q, v;
+    if (this.client.is_admin === true) {
+      if (name === null) {
+        q = `query {` +
+          `  keypair_resource_policies { ${fields.join(" ")} }` +
+          '}';
+        v = {'n': name};
+      } else {
+        q = `query($n:String!) {` +
           `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
           '}';
         v = {'n': name};
-        }
-      } else {
-        return resolve(false);
       }
-      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
     }
+    return this.client.gql(q, v);
+  }
+}
+
+class Image {
+  constructor(client) {
+    this.client = client;
   }
 
-  class Image {
-    constructor(client) {
-      this.client = client;
-    }
+  list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
+    let q, v;
+    q = `query {` +
+      `  images { ${fields.join(" ")} }` +
+      '}';
+    v = {};
+    return this.client.gql(q, v);
+  }
+}
 
-    list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
-      let q, v;
-      q = `query {` +
-        `  images { ${fields.join(" ")} }` +
+class ComputeSession {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+       status = 'RUNNING', accessKey = null) {
+    let q, v;
+    if (this.client.is_admin === true) {
+      if (accessKey == null) {
+        accessKey = this.client._config.accessKey;
+      }
+      q = `query($ak:String, $status:String) {` +
+        `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
         '}';
-      v = {};
-      return this.client.gql(q, v);
+      v = {'status': status, 'ak': accessKey};
+    } else {
+      q = `query($status:String) {` +
+        `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
+        '}';
+      v = {'status': status};
     }
+    return this.client.gql(q, v);
   }
-
-  class ComputeSession {
-    constructor(client) {
-      this.client = client;
-    }
-
-    list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
-         status = 'RUNNING', accessKey = null) {
-      let q, v;
-      if (this.client.is_admin === true) {
-        if (accessKey == null) {
-          accessKey = this.client._config.accessKey;
-        }
-        q = `query($ak:String, $status:String) {` +
-          `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
-          '}';
-        v = {'status': status, 'ak': accessKey};
-      } else {
-        q = `query($status:String) {` +
-          `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
-          '}';
-        v = {'status': status};
-      }
-      return this.client.gql(q, v);
-    }
-  }
+}
 
 class utils {
   constructor(client) {

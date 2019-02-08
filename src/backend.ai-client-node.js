@@ -710,7 +710,7 @@ class ResourcePolicy {
           '}';
         v = {'n': name};
       } else {
-        q = `query($n:String) {` +
+        q = `query($n:String!) {` +
           `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
           '}';
         v = {'n': name};

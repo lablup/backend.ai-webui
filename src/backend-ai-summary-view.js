@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {PolymerElement, html} from '@polymer/polymer';
+import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -137,6 +137,15 @@ class BackendAISummary extends PolymerElement {
     });
   }
 
+  _refreshResourceInformation() {
+    console.log(window.backendaiclient.resource_policy);
+    return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
+      let rp = response.keypair_resource_policies;
+      this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+
+    });
+  }
+
   _refreshAgentInformation(status = 'running') {
     switch (this.condition) {
       case 'running':
@@ -156,15 +165,7 @@ class BackendAISummary extends PolymerElement {
       'first_contact',
       'occupied_slots',
       'available_slots'];
-    let q = `query($status: String) {` +
-      `  agents(status: $status) {` +
-      `     ${fields.join(" ")}` +
-      `  }` +
-      `}`;
-
-    let v = {'status': status};
-
-    window.backendaiclient.gql(q, v).then((response) => {
+    window.backendaiclient.agent.list(status, fields).then((response) => {
       this.agents = response.agents;
       this._init_resource_values();
       Object.keys(this.agents).map((objectKey, index) => {
@@ -180,9 +181,9 @@ class BackendAISummary extends PolymerElement {
         if ('cuda.device' in occupied_slots) {
           this.resources.gpu.used = this.resources.gpu.used + parseInt(Number(occupied_slots['cuda.device']));
         }
-        this.resources.vgpu.total = this.resources.vgpu.total + parseInt(available_slots['cuda.shares']);
+        this.resources.vgpu.total = this.resources.vgpu.total + parseFloat(available_slots['cuda.shares']);
         if ('cuda.shares' in occupied_slots) {
-          this.resources.vgpu.used = this.resources.vgpu.used + parseInt(occupied_slots['cuda.shares']);
+          this.resources.vgpu.used = this.resources.vgpu.used + parseFloat(occupied_slots['cuda.shares']);
         }
         if (isNaN(this.resources.cpu.used)) {
           this.resources.cpu.used = 0;
@@ -296,7 +297,7 @@ class BackendAISummary extends PolymerElement {
             </div>
           </lablup-activity-panel>
 
-          <lablup-activity-panel title="Loads" elevation="1">
+          <lablup-activity-panel title="System Loads" elevation="1">
             <div slot="message">
               <template is="dom-if" if="{{is_admin}}">
                 <vaadin-progress-bar id="cpu-bar" value="[[cpu_used]]" max="[[cpu_total]]"></vaadin-progress-bar>
@@ -308,11 +309,11 @@ class BackendAISummary extends PolymerElement {
                   GPUs: <span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs
                 </template>
                 <template is="dom-if" if="[[vgpu_total]]">
-                <vaadin-progress-bar id="gpu-bar" value="[[vgpu_used]]" max="[[vgpu_total]]"></vaadin-progress-bar>
-                vGPUs: <span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs
+                  <vaadin-progress-bar id="gpu-bar" value="[[vgpu_used]]" max="[[vgpu_total]]"></vaadin-progress-bar>
+                  vGPUs: <span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs
                 </template>
                 <template is="dom-if" if="[[!vgpu_total]]">
-                (vGPU disabled)
+                  (vGPU disabled)
                 </template>
               </template>
               <template is="dom-if" if="{{!is_admin}}">
@@ -320,6 +321,10 @@ class BackendAISummary extends PolymerElement {
                   <li>Login with administrator privileges required.</li>
                 </ul>
               </template>
+            </div>
+          </lablup-activity-panel>
+          <lablup-activity-panel title="My Resources" elevation="1">
+            <div slot="message">
             </div>
           </lablup-activity-panel>
         </div>

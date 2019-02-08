@@ -129,7 +129,7 @@ class BackendAiWebConsole extends PolymerElement {
         this.$['sidebar-menu'].selected = 0;
         break;
       case 'job':
-        this.menuTitle = 'Jobs';
+        this.menuTitle = 'Sessions';
         this.$['sidebar-menu'].selected = 1;
         break;
       case 'agent':
@@ -141,7 +141,7 @@ class BackendAiWebConsole extends PolymerElement {
         }
         break;
       case 'credential':
-        this.menuTitle = 'Credentials';
+        this.menuTitle = 'Credentials & Policies';
         if (this.is_admin) {
           this.$['sidebar-menu'].selected = 3;
         } else {
@@ -217,7 +217,7 @@ class BackendAiWebConsole extends PolymerElement {
               <a href="/job" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg red" icon="icons:subject"></iron-icon>
-                  Jobs
+                  Sessions
                 </paper-item>
               </a>
               <template is="dom-if" if="{{is_admin}}">

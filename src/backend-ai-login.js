@@ -106,7 +106,7 @@ class BackendAiLogin extends PolymerElement {
       `Backend.AI Console.`,
     );
     // Test connection
-    let fields = ["user_id", "is_admin"];
+    let fields = ["user_id", "is_admin", "resource_policy"];
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {}
 
@@ -114,12 +114,13 @@ class BackendAiLogin extends PolymerElement {
       window.backendaiclient = this.client;
       let email = response['keypair'].user_id;
       let is_admin = response['keypair'].is_admin;
+      let resource_policy = response['keypair'].resource_policy;
       if (this.email != email) {
         this.email = email;
       }
       window.backendaiclient.email = this.email;
       window.backendaiclient.is_admin = is_admin;
-      console.log(window.backendaiclient.email);
+      window.backendaiclient.resource_policy = resource_policy;
       var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();

@@ -173,6 +173,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1">
+        <h3>Credentials</h3>
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
           <span class="flex"></span>
@@ -191,8 +192,9 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       </paper-material>
 
       <paper-material class="item" elevation="1">
+        <h3>Resource policies</h3>
         <h4 class="horizontal flex center center-justified layout">
-          <span>Resource Policies</span>
+          <span>Policy groups</span>
           <span class="flex"></span>
           <paper-button id="add-policy" slot="suffix" class="fg red">
             <iron-icon icon="add" class="fg red"></iron-icon>
