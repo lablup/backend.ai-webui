@@ -285,19 +285,25 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     }
     let kernelName = this._generateKernelIndex(kernel, version);
     this.$['launch-button'].disabled = true;
+    this.$['launch-button-msg'].textContent = 'Preparing...';
     this.$.notification.text = 'Preparing session...';
     this.$.notification.show();
     window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
       this.$['running-jobs'].refreshList();
       this.$['new-session-dialog'].close();
       this.$['launch-button'].disabled = false;
+      this.$['launch-button-msg'].textContent = 'Launch';
     }).catch((err) => {
       console.log(err);
-      this.$['launch-button'].disabled = false;
       if (err && err.message) {
         this.$.notification.text = err.message;
         this.$.notification.show();
+      } else if (err && err.title) {
+        this.$.notification.text = err.title;
+        this.$.notification.show();
       }
+      this.$['launch-button'].disabled = false;
+      this.$['launch-button-msg'].textContent = 'Launch';
     });
   }
 
@@ -611,7 +617,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               <br/>
               <paper-button class="blue launch-button" type="submit" id="launch-button">
                 <iron-icon icon="rowing"></iron-icon>
-                Launch
+                <span id="launch-button-msg">Launch</span>
               </paper-button>
             </fieldset>
           </form>
