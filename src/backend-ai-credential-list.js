@@ -319,6 +319,14 @@ class BackendAICredentialList extends PolymerElement {
           };
         }
 
+        paper-material h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          border-bottom: 1px solid #DDD;
+        }
+
         vaadin-item {
           font-size: 13px;
           font-weight: 100;
@@ -482,7 +490,7 @@ class BackendAICredentialList extends PolymerElement {
         </vaadin-grid-column>
       </vaadin-grid>
       <paper-dialog id="keypair-info-dialog">
-        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <paper-material elevation="1" class="login-panel intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span style="margin-right:15px;">Keypair Detail</span>
             <template is="dom-if" if="[[keypairInfo.is_admin]]">
@@ -494,45 +502,55 @@ class BackendAICredentialList extends PolymerElement {
               Close
             </paper-icon-button>
           </h3>
-          <h4>Information</h4>
-          <div role="listbox" style="margin: 0;">
-            <vaadin-item>
-              <div><strong>User ID</strong></div>
-              <div secondary>[[keypairInfo.user_id]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Access Key</strong></div>
-              <div secondary>[[keypairInfo.access_key]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Secret Key</strong></div>
-              <div secondary>[[keypairInfo.secret_key]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Created</strong></div>
-              <div secondary>[[keypairInfo.created_at]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Last used</strong></div>
-              <div secondary>[[keypairInfo.last_used]]</div>
-            </vaadin-item>
-          </div>
-          <h4>Allocation</h4>
-          <div role="listbox" style="margin: 0;">
-            <vaadin-item>
-              <div><strong>Number of queries</strong></div>
-              <div secondary>[[keypairInfo.num_queries]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Concurrent Sessions</strong></div>
-              <div secondary>[[keypairInfo.concurrency_used]] active / [[keypairInfo.concurrency_used]] concurrent
-                sessions.
+          <div class="horizontal layout">
+            <div style="width:335px;">
+              <h4>Information</h4>
+              <div role="listbox" style="margin: 0;">
+                <vaadin-item>
+                  <div><strong>User ID</strong></div>
+                  <div secondary>[[keypairInfo.user_id]]</div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Access Key</strong></div>
+                  <div secondary>[[keypairInfo.access_key]]</div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Secret Key</strong></div>
+                  <div secondary>[[keypairInfo.secret_key]]</div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Created</strong></div>
+                  <div secondary>[[keypairInfo.created_at]]</div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Last used</strong></div>
+                  <div secondary>[[keypairInfo.last_used]]</div>
+                </vaadin-item>
               </div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Rate Limit</strong></div>
-              <div secondary>[[keypairInfo.rate_limit]] for 900 seconds.</div>
-            </vaadin-item>
+            </div>
+            <div style="width:335px;">
+              <h4>Allocation</h4>
+              <div role="listbox" style="margin: 0;">
+                <vaadin-item>
+                  <div><strong>Resource Policy</strong></div>
+                  <div secondary>[[keypairInfo.resource_policy]]</div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Number of queries</strong></div>
+                  <div secondary>[[keypairInfo.num_queries]]</div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Concurrent Sessions</strong></div>
+                  <div secondary>[[keypairInfo.concurrency_used]] active / [[keypairInfo.concurrency_used]] concurrent
+                    sessions.
+                  </div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Rate Limit</strong></div>
+                  <div secondary>[[keypairInfo.rate_limit]] for 900 seconds.</div>
+                </vaadin-item>
+              </div>
+            </div>
           </div>
         </paper-material>
       </paper-dialog>
