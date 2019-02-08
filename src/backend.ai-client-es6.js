@@ -126,6 +126,7 @@ class Client {
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
     this.keypair = new Keypair(this);
+    this.image = new Image(this);
     this.utils = new utils(this);
   }
 
@@ -607,12 +608,11 @@ class VFolder {
 }
 
   class Agent {
-    constructor(client, name = null) {
+    constructor(client) {
       this.client = client;
-      this.name = name;
     }
 
-    list(status = 'ALIVE', fields = ['id', 'addr', 'status', 'first_contact', 'occupied_slots', 'available_slots']) {
+    list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
       if (['ALIVE', 'TERMINATED'].includes(status) === false) {
         return resolve(false);
       }
@@ -645,11 +645,11 @@ class VFolder {
       return this.client.gql(q, v);
     }
 
-    list(user_id = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+    list(userId = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
 
       let q;
-      if (user_id == null) {
+      if (userId == null) {
         q = `query($is_active: Boolean) {` +
           `  keypairs(is_active: $is_active) {` +
           `    ${fields.join(" ")}` +
@@ -663,7 +663,7 @@ class VFolder {
           `}`;
       }
       let v = {
-        'user_id': user_id,
+        'user_id': userId,
         'is_active': isActive,
       };
       return this.client.gql(q, v);
@@ -692,6 +692,21 @@ class VFolder {
         'access_key': accessKey,
       };
       return this.client.gqp(q, v);
+    }
+  }
+
+  class Image {
+    constructor(client) {
+      this.client = client;
+    }
+
+    list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
+      let q, v;
+      q = `query {` +
+        `  images { ${fields.join(" ")} }` +
+        '}';
+      v = {};
+      return this.client.gql(q, v);
     }
   }
 
