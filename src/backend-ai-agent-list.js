@@ -98,20 +98,20 @@ class BackendAIAgentList extends PolymerElement {
           var occupied_slots = JSON.parse(agent.occupied_slots);
           var available_slots = JSON.parse(agent.available_slots);
 
-          agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
-          agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
+          agents[objectKey].cpu_slots = parseInt(Number(available_slots.cpu));
+          agents[objectKey].used_cpu_slots = parseInt(Number(occupied_slots.cpu));
           agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
           agents[objectKey].current_mem = window.backendaiclient.utils.changeBinaryUnit(agent.mem_cur_bytes, 'g');
           agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
           agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           if ('cuda.device' in available_slots) {
-            agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+            agents[objectKey].gpu_slots = parseInt(Number(available_slots['cuda.device']));
           }
           if ('cuda.shares' in available_slots) {
             agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
           }
           if ('cuda.device' in occupied_slots) {
-            agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
+            agents[objectKey].used_gpu_slots = parseInt(Number(occupied_slots['cuda.device']));
           }
           if ('cuda.shares' in occupied_slots) {
             agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);

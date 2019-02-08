@@ -172,13 +172,13 @@ class BackendAISummary extends PolymerElement {
         let occupied_slots = JSON.parse(value.occupied_slots);
         let available_slots = JSON.parse(value.available_slots);
         console.log(value);
-        this.resources.cpu.total = this.resources.cpu.total + parseInt(available_slots.cpu);
-        this.resources.cpu.used = this.resources.cpu.used + parseInt(occupied_slots.cpu);
+        this.resources.cpu.total = this.resources.cpu.total + parseInt(Number(available_slots.cpu));
+        this.resources.cpu.used = this.resources.cpu.used + parseInt(Number(occupied_slots.cpu));
         this.resources.mem.total = this.resources.mem.total + parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'm'));
         this.resources.mem.used = this.resources.mem.used + parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
-        this.resources.gpu.total = this.resources.gpu.total + parseInt(available_slots['cuda.device']);
+        this.resources.gpu.total = this.resources.gpu.total + parseInt(Number(available_slots['cuda.device']));
         if ('cuda.device' in occupied_slots) {
-          this.resources.gpu.used = this.resources.gpu.used + parseInt(occupied_slots['cuda.device']);
+          this.resources.gpu.used = this.resources.gpu.used + parseInt(Number(occupied_slots['cuda.device']));
         }
         this.resources.vgpu.total = this.resources.vgpu.total + parseInt(available_slots['cuda.shares']);
         if ('cuda.shares' in occupied_slots) {
