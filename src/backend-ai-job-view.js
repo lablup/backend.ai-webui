@@ -441,15 +441,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   // Manager requests
   _refreshImageList() {
-    let fields = ["name", "tag", "digest", "installed", "resource_limits { key min max }"];
-    let q, v;
-    q = `query {` +
-      `  images { ${fields.join(" ")} }` +
-      '}';
-    v = {};
-    window.backendaiclient.gql(q, v).then((response) => {
-      var images = [];
+    let fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"];
 
+    window.backendaiclient.image.list(fields).then((response) => {
+      var images = [];
       Object.keys(response.images).map((objectKey, index) => {
         var item = response.images[objectKey];
         if (item.installed === true) {
@@ -465,8 +460,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       Object.keys(this.images).map((objectKey, index) => {
         var item = this.images[objectKey];
         if (!(item.name in this.supports)) {
-          this.supports[item.name] = [item.tag];
-          this.resourceLimits[item.name + ':' + item.tag] = item.resource_limits;
+          this.supports[item.registry + '/' + item.name] = [item.tag];
+          this.resourceLimits[item.registry + '/' + item.name + ':' + item.tag] = item.resource_limits;
           if (item.name in this.aliases) {
             this.languages.push(this.aliases[item.name]);
           } else {
@@ -474,7 +469,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           }
         } else {
           this.supports[item.name].push(item.tag);
-          this.resourceLimits[item.name + ':' + item.tag] = item.resource_limits;
+          this.resourceLimits[item.registry + '/' + item.name + ':' + item.tag] = item.resource_limits;
         }
       });
       this._updateEnvironment();

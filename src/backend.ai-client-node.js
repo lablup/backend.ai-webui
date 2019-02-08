@@ -96,6 +96,7 @@ class Client {
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
     this.keypair = new Keypair(this);
+    this.image = new Image(this);
     this.utils = new utils(this);
   }
 
@@ -577,9 +578,8 @@ class VFolder {
 }
 
 class Agent {
-  constructor(client, name = null) {
+  constructor(client) {
     this.client = client;
-    this.name = name;
   }
 
   list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
@@ -662,6 +662,21 @@ class Keypair {
       'access_key': accessKey,
     };
     return this.client.gqp(q, v);
+  }
+}
+
+class Image {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
+    let q, v;
+    q = `query {` +
+      `  images { ${fields.join(" ")} }` +
+      '}';
+    v = {};
+    return this.client.gql(q, v);
   }
 }
 
