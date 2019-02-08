@@ -448,7 +448,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   // Manager requests
   _refreshImageList() {
     let fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"];
-
     window.backendaiclient.image.list(fields).then((response) => {
       var images = [];
       Object.keys(response.images).map((objectKey, index) => {

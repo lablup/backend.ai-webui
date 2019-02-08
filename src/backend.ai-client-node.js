@@ -98,6 +98,7 @@ class Client {
     this.keypair = new Keypair(this);
     this.image = new Image(this);
     this.utils = new utils(this);
+    this.computeSession = new ComputeSession(this);
   }
 
   async _wrapWithPromise(rqst) {
@@ -676,6 +677,32 @@ class Image {
       `  images { ${fields.join(" ")} }` +
       '}';
     v = {};
+    return this.client.gql(q, v);
+  }
+}
+
+class ComputeSession {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+       status = 'RUNNING', accessKey = null) {
+    let q, v;
+    if (this.client.is_admin === true) {
+      if (accessKey == null) {
+        accessKey = this.client._config.accessKey;
+      }
+      q = `query($ak:String, $status:String) {` +
+        `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
+        '}';
+      v = {'status': status, 'ak': accessKey};
+    } else {
+      q = `query($status:String) {` +
+        `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
+        '}';
+      v = {'status': status};
+    }
     return this.client.gql(q, v);
   }
 }

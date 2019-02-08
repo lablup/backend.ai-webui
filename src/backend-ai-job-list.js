@@ -103,22 +103,9 @@ class BackendAIJobList extends PolymerElement {
       default:
         status = 'RUNNING';
     }
-    ;
 
     let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"];
-    let q, v;
-    if (window.backendaiclient.is_admin == true) {
-      q = `query($ak:String, $status:String) {` +
-        `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
-        '}';
-      v = {'status': status, 'ak': window.backendaiclient._config.accessKey};
-    } else {
-      q = `query($status:String) {` +
-        `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
-        '}';
-      v = {'status': status};
-    }
-    window.backendaiclient.gql(q, v).then(response => {
+    window.backendaiclient.computeSession.list(fields, status).then((response) => {
       var sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
         Object.keys(sessions).map((objectKey, index) => {
