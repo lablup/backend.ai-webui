@@ -55,9 +55,8 @@ $ polymer build
 Prerequistics : electron, electron-packager
 
 ```
-$ make all (build win/mac app) 
+$ make all (build win/mac/linux app) 
 $ make test (build only (for polymer serving test)) 
-$ make linux (not yet working)
 ```
 
 ### Manual run (using local Electron)
@@ -68,4 +67,12 @@ $ cd build/es6-unbundled
 $ npm install --only=prod
 $ cd ../..
 $ npm start
+```
+
+## Package
+
+```
+$ make clean
+$ make all
+$ make pack
 ```
