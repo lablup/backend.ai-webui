@@ -45,6 +45,10 @@ class BackendAICredentialList extends PolymerElement {
         type: Object,
         value: {}
       },
+      resourcePolicy: {
+        type: Object,
+        value: {}
+      },
       keypairInfo: {
         type: Object,
         value: {}
@@ -82,7 +86,7 @@ class BackendAICredentialList extends PolymerElement {
     }
   }
 
-  _refreshKeyData(user_id) {
+  async _refreshKeyData(user_id) {
     let status = 'active';
     let is_active = true;
     switch (this.condition) {
@@ -94,9 +98,21 @@ class BackendAICredentialList extends PolymerElement {
     }
     let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-    window.backendaiclient.keypair.list(user_id, fields, is_active).then(response => {
-      this.keypairs = response;
-      console.log(this.keypairs.keypairs);
+    return window.backendaiclient.keypair.list(user_id, fields, is_active).then(response => {
+      let keypairs = response.keypairs;
+
+      Object.keys(keypairs).map((objectKey, index) => {
+        var keypair = keypairs[objectKey];
+        if (keypair.resource_policy in this.resourcePolicy) {
+          for (var k in this.resourcePolicy[keypair.resource_policy]) {
+            keypair[k] = this.resourcePolicy[keypair.resource_policy][k];
+          }
+        } else {
+          console.log(window.backendaiclient.resourcePolicy.get(keypair.resource_policy));
+        }
+      });
+      this.keypairs = keypairs;
+      console.log(this.keypairs);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -272,22 +288,25 @@ class BackendAICredentialList extends PolymerElement {
           font-size: 13px;
           font-weight: 100;
         }
+
         div.indicator,
         span.indicator {
           font-size: 9px;
           margin-right: 5px;
         }
+
         div.configuration {
-          width: 70px!important;
+          width: 70px !important;
         }
+
         div.configuration iron-icon {
-          padding-right:5px;
+          padding-right: 5px;
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
-                   items="[[keypairs.keypairs]]">
+                   items="[[keypairs]]">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
           <template>[[_indexFrom1(index)]]</template>
@@ -377,8 +396,9 @@ class BackendAICredentialList extends PolymerElement {
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">
-                <div style="font-size:11px;width:40px;">[[item.concurrency_used]] / 
-                [[item.concurrency_limit]]</div>
+                <div style="font-size:11px;width:40px;">[[item.concurrency_used]] /
+                  [[item.concurrency_limit]]
+                </div>
                 <span class="indicator">Sess.</span>
               </div>
               <div class="vertical start layout">
