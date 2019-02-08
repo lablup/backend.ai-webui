@@ -86,7 +86,7 @@ class BackendAICredentialList extends PolymerElement {
     }
   }
 
-  async _refreshKeyData(user_id) {
+  _refreshKeyData(user_id) {
     let status = 'active';
     let is_active = true;
     switch (this.condition) {
@@ -96,19 +96,46 @@ class BackendAICredentialList extends PolymerElement {
       default:
         is_active = false;
     }
-    let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-      'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-    return window.backendaiclient.keypair.list(user_id, fields, is_active).then(response => {
-      let keypairs = response.keypairs;
 
+    return window.backendaiclient.resourcePolicy.get().then((response) => {
+      let rp = response.keypair_resource_policies;
+      this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+    }).then(() => {
+      let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+        'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
+      return window.backendaiclient.keypair.list(user_id, fields, is_active);
+    }).then((response) => {
+      let keypairs = response.keypairs;
       Object.keys(keypairs).map((objectKey, index) => {
         var keypair = keypairs[objectKey];
         if (keypair.resource_policy in this.resourcePolicy) {
           for (var k in this.resourcePolicy[keypair.resource_policy]) {
             keypair[k] = this.resourcePolicy[keypair.resource_policy][k];
+            if (k === 'total_resource_slots') {
+              keypair['total_resource_slots'] = JSON.parse(this.resourcePolicy[keypair.resource_policy][k]);
+            }
           }
-        } else {
-          console.log(window.backendaiclient.resourcePolicy.get(keypair.resource_policy));
+          if ('cpu' in keypair['total_resource_slots']) {
+          } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].cpu = '-';
+          }
+          if ('mem' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].mem = parseFloat(keypair['total_resource_slots'].mem);
+          } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].mem = '-';
+          }
+          if ('cuda.device' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].cuda_device = keypair['total_resource_slots']['cuda.device'];
+          }
+          if ('cuda.shares' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].cuda_shares = keypair['total_resource_slots']['cuda.shares'];
+          }
+          if (('cuda_device' in keypair['total_resource_slots']) === false &&
+            ('cuda_shares' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].cuda_shares = '-';
+            keypair['total_resource_slots'].cuda_device = '-';
+          }
         }
       });
       this.keypairs = keypairs;
@@ -250,6 +277,14 @@ class BackendAICredentialList extends PolymerElement {
     return index + 1;
   }
 
+  _markIfUnlimited(value) {
+    if (['-', 0].includes(value)) {
+      return '∞';
+    } else {
+      return value;
+    }
+  }
+
   static get template() {
     // language=HTML
 
@@ -362,27 +397,41 @@ class BackendAICredentialList extends PolymerElement {
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[item.cpu_slot]]&infin; </span>
+                <span>[[_markIfUnlimited(item.total_resource_slots.cpu)]]</span>
                 <span class="indicator">cores</span>
               </div>
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[item.mem_slot]]&infin; </span>
-                <span class="indicator">GB[[item.mem_unit]]</span>
+                <span>[[_markIfUnlimited(item.total_resource_slots.mem)]]</span>
+                <span class="indicator">GB</span>
               </div>
             </div>
             <div class="layout horizontal wrap center">
-              <template is="dom-if" if="[[!item.gpu_slot]]">
+              <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
                 <div class="layout horizontal configuration">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[item.gpu_slot]]&infin; </span>
+                  <span>[[item.total_resource_slots.cuda_device]]</span>
+                  <span class="indicator">GPU</span>
+                </div>
+              </template>
+              <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
+                <div class="layout horizontal configuration">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>[[item.total_resource_slots.cuda_shares]]</span>
                   <span class="indicator">vGPU</span>
                 </div>
               </template>
+            </div>
+            <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
-                <span>[[item.storage_slot]]&infin; </span>
+                <span>[[_markIfUnlimited(item.max_vfolder_size)]]</span>
                 <span class="indicator">GB</span>
+              </div>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:folder"></iron-icon>
+                <span>[[_markIfUnlimited(item.max_vfolder_count)]]</span>
+                <span class="indicator">Folders</span>
               </div>
               <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
               <!-- <span>[[item.storage_capacity]]</span> -->

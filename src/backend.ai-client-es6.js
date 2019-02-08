@@ -703,7 +703,7 @@ class VFolder {
       this.client = client;
     }
 
-    get(name, fields = ['name',
+    get(name = null, fields = ['name',
       'created_at',
       'default_for_unspecified',
       'total_resource_slots',
@@ -711,13 +711,20 @@ class VFolder {
       'max_containers_per_session',
       'max_vfolder_count',
       'max_vfolder_size',
-      'allow_vfolder_hosts']) {
+      'allowed_vfolder_hosts']) {
       let q, v;
       if (this.client.is_admin === true) {
+        if (name === null) {
+          q = `query {` +
+            `  keypair_resource_policies { ${fields.join(" ")} }` +
+            '}';
+          v = {'n': name};
+        } else {
         q = `query($n:String) {` +
-          `  keypair_resource_policies(name: $n) { ${fields.join(" ")} }` +
+          `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
           '}';
         v = {'n': name};
+        }
       } else {
         return resolve(false);
       }
@@ -829,6 +836,14 @@ class utils {
   _padding_zeros(n, width) {
     n = n + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+  }
+
+  gqlToObject(array, key) {
+    let result = {};
+    array.forEach(function (element) {
+      result[element[key]] = element;
+    });
+    return result;
   }
 }
 
