@@ -2,7 +2,7 @@
  * Backend.AI-job-view
  */
 
-import {PolymerElement, html} from '@polymer/polymer';
+import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
@@ -125,7 +125,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   _addKeyPair() {
     let is_active = true;
     let is_admin = false;
-    let resource_policy = {};
+    let resource_policy = 'default';
     let rate_limit = 5000;
     let concurrency_limit = 1;
     let user_id;
@@ -146,28 +146,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     concurrency_limit = this.$['concurrency-limit'].value;
     rate_limit = this.$['rate-limit'].value;
 
-    //user_id = window.backendaiclient.email;
-    let fields = ["access_key", "secret_key"]
-    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
-      `  create_keypair(user_id: $user_id, props: $input) {` +
-      `    ok msg keypair { ${fields.join(" ")} }` +
-      `  }` +
-      `}`;
-    let v = {
-      'user_id': user_id,
-      'input': {
-        'is_active': is_active,
-        'is_admin': is_admin,
-        'resource_policy': resource_policy,
-        'rate_limit': rate_limit,
-        'concurrency_limit': concurrency_limit,
-      },
-    };
-
-    window.backendaiclient.gql(q, v).then(response => {
-      this.test = response;
-      //setTimeout(() => { this._refreshJobData(status) }, 5000);
-      console.log(this.test);
+    window.backendaiclient.keypairs.add(user_id, is_active, is_admin,
+      resource_policy, rate_limit, concurrency_limit).then(response => {
       this.$['new-keypair-dialog'].close();
       this.$.notification.text = "Keypair successfully created.";
       this.$.notification.show();
@@ -209,6 +189,21 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
           <backend-ai-credential-list id="inactive-credential-list" condition="inactive"></backend-ai-job-list>
         </div>
       </paper-material>
+
+      <paper-material class="item" elevation="1">
+        <h4 class="horizontal flex center center-justified layout">
+          <span>Resource Policies</span>
+          <span class="flex"></span>
+          <paper-button id="add-policy" slot="suffix" class="fg red">
+            <iron-icon icon="add" class="fg red"></iron-icon>
+            Add
+          </paper-button>
+        </h4>
+        <div>
+        </div>
+      </paper-material>
+
+
       <paper-dialog id="new-keypair-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">

@@ -641,6 +641,26 @@ class Keypair {
     return this.client.gql(q, v);
   }
 
+  add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
+      rateLimit = 1000, concurrencyLimit = 1) {
+    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
+      `  create_keypair(user_id: $user_id, props: $input) {` +
+      `    ok msg keypair { ${fields.join(" ")} }` +
+      `  }` +
+      `}`;
+    let v = {
+      'user_id': userId,
+      'input': {
+        'is_active': isActive,
+        'is_admin': isAdmin,
+        'resource_policy': resourcePolicy,
+        'rate_limit': rateLimit,
+        'concurrency_limit': concurrencyLimit,
+      },
+    };
+    return this.client.gql(q, v);
+  }
+
   mutate(accessKey, input) {
     let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
       `  modify_keypair(access_key: $access_key, props: $input) {` +
