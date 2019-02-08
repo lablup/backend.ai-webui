@@ -691,8 +691,17 @@ class utils {
     }
     let sourceUnit;
     const binaryUnits = ['b', 'k', 'm', 'g', 't'];
+    const bBinaryUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
     if (!(binaryUnits.includes(targetUnit))) return false;
     value = value.toString();
+    if (value.indexOf(' ') >= 0) { // Has string
+      let v = value.split(/(\s+)/);
+      if (bBinaryUnits.includes(v[2])) {
+        value = v[0] + binaryUnits[bBinaryUnits.indexOf(v[2])];
+      } else {
+        value = v[0];
+      }
+    }
     if (binaryUnits.includes(value.substr(-1))) {
       sourceUnit = value.substr(-1);
       value = value.slice(0, -1);
