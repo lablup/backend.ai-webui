@@ -74,5 +74,5 @@ $ npm start
 ```
 $ make clean
 $ make all
-$ make pack
+$ make pack # To create an zip-packed files
 ```
