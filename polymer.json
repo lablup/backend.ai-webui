@@ -15,11 +15,11 @@
   ],
   "builds": [
     { 
-      "name": "es6-unbundled",
+      "name": "unbundle",
       "preset": "es6-unbundled"
     },
     {
-      "name": "es6-bundled",
+      "name": "bundle",
       "preset": "es6-bundled"
     }
   ],

@@ -7,7 +7,7 @@ current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 test:
 	polymer build
 	mkdir -p build/electron-app/wsproxy
-	cp -Rp build/es6-unbundled build/electron-app/app
+	cp -Rp build/unbundle build/electron-app/app
 	rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
 	cp ./wsproxy/package.json build/electron-app/package.json
 	cd build/electron-app; npm install --only=prod
@@ -17,11 +17,11 @@ test_web:
 proxy:
 	node ./wsproxy/local_proxy.js
 compile:
-	polymer build
+	polymer build 
 all: dep mac win linux
 dep: compile
 	mkdir -p build/electron-app/wsproxy
-	cp -Rp build/es6-unbundled build/electron-app/app
+	cp -Rp build/unbundle build/electron-app/app
 	rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
 	cp ./wsproxy/package.json build/electron-app/package.json
 	cd build/electron-app; npm install --only=prod
@@ -41,4 +41,4 @@ pack:
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
 clean:
 	cd app;	rm -rf ./backend*
-	cd build;rm -rf ./es6-unbundled ./electron-app
+	cd build;rm -rf ./unbundle ./bundle ./electron-app
