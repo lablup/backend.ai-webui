@@ -21,11 +21,11 @@ compile:
 all: dep mac win linux
 dep: compile
 	mkdir -p build/electron-app/wsproxy
-	cp -Rp build/unbundle build/electron-app/app
 	rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
 	cp ./wsproxy/package.json build/electron-app/package.json
 	cd build/electron-app; npm install --only=prod
 	cp ./main.electron-packager.js ./build/electron-app/main.js
+	cp -Rp build/bundle build/electron-app/app
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
 win: dep
