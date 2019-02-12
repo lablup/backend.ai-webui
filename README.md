@@ -26,6 +26,7 @@ $ npm install
 $ polymer serve --npm
 ```
 
+
 ### Running websocket with node.js 
 
 This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
@@ -63,11 +64,18 @@ $ make test (build only (for polymer serving test))
 
 ```
 $ polymer build
-$ cd build/es6-unbundled
+$ cd build/unbundled
 $ npm install --only=prod
 $ cd ../..
 $ npm start
 ```
+
+OR
+
+```
+$ make test
+```
+
 
 ## Package
 
