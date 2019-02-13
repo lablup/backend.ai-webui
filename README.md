@@ -62,6 +62,7 @@ $ make test (build only (for polymer serving test))
 
 ### Manual run (using local Electron)
 
+Hard way:
 ```
 $ polymer build
 $ cd build/unbundled
@@ -70,10 +71,13 @@ $ cd ../..
 $ npm start
 ```
 
-OR
+OR,
+
+Easy way:
 
 ```
 $ make test
+$ electron .
 ```
 
 
