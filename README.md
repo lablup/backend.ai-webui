@@ -14,6 +14,7 @@ Backend.AI GUI console. Supports both app / web mode.
     * Set default resources for runs
  * Experiments
  * Virtual Folder management
+ * Manager settings
  * Proxy mode to support various app environments (with Electron)
 
 ## Develop and Test
