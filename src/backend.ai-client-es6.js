@@ -746,6 +746,7 @@ class ResourcePolicy {
         v = {'n': name};
       }
     } else {
+      console.log("not admin");
       return resolve(false);
     }
     return this.client.gql(q, v);

@@ -28,7 +28,8 @@ import '@vaadin/vaadin-icons/vaadin-icons.js';
 
 import './backend-ai-styles.js';
 import './backend-ai-credential-list.js';
-import {OverlayPatchMixin} from './overlay-patch-mixin.js'
+import './backend-ai-resource-policy-list.js';
+import {OverlayPatchMixin} from './overlay-patch-mixin.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -111,10 +112,12 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     if (!visible) {
       this.$['active-credential-list'].visible = false;
       this.$['inactive-credential-list'].visible = false;
+      this.$['resource-policy-list'].visible = false;
       return;
     } else {
       this.$['active-credential-list'].visible = true;
       this.$['inactive-credential-list'].visible = true;
+      this.$['resource-policy-list'].visible = true;
     }
   }
 
@@ -202,6 +205,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
           </paper-button>
         </h4>
         <div>
+          <backend-ai-resource-policy-list id="resource-policy-list" condition="inactive"></backend-ai-resource-policy-list>
         </div>
       </paper-material>
 

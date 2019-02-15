@@ -37,10 +37,6 @@ class BackendAIResourcePolicyList extends PolymerElement {
         type: Boolean,
         value: false
       },
-      condition: {
-        type: String,
-        default: 'active'  // active, inactive
-      },
       keypairs: {
         type: Object,
         value: {}
@@ -79,68 +75,49 @@ class BackendAIResourcePolicyList extends PolymerElement {
     // If disconnected
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
-        this._refreshKeyData();
+        this._refreshPolicyData();
       }, true);
     } else { // already connected
-      this._refreshKeyData();
+      this._refreshPolicyData();
     }
   }
 
-  _refreshKeyData(user_id) {
-    let status = 'active';
-    let is_active = true;
-    switch (this.condition) {
-      case 'active':
-        is_active = true;
-        break;
-      default:
-        is_active = false;
-    }
-
+  _refreshPolicyData() {
+    console.log("read policy");
     return window.backendaiclient.resourcePolicy.get().then((response) => {
+      console.log(response);
       let rp = response.keypair_resource_policies;
-      this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
-    }).then(() => {
-      let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-        'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-      return window.backendaiclient.keypair.list(user_id, fields, is_active);
+      let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      return rp;
     }).then((response) => {
-      let keypairs = response.keypairs;
-      Object.keys(keypairs).map((objectKey, index) => {
-        var keypair = keypairs[objectKey];
-        if (keypair.resource_policy in this.resourcePolicy) {
-          for (var k in this.resourcePolicy[keypair.resource_policy]) {
-            keypair[k] = this.resourcePolicy[keypair.resource_policy][k];
-            if (k === 'total_resource_slots') {
-              keypair['total_resource_slots'] = JSON.parse(this.resourcePolicy[keypair.resource_policy][k]);
-            }
-          }
-          if ('cpu' in keypair['total_resource_slots']) {
-          } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
-            keypair['total_resource_slots'].cpu = '-';
-          }
-          if ('mem' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].mem = parseFloat(keypair['total_resource_slots'].mem);
-          } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
-            keypair['total_resource_slots'].mem = '-';
-          }
-          if ('cuda.device' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].cuda_device = keypair['total_resource_slots']['cuda.device'];
-          }
-          if ('cuda.shares' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].cuda_shares = keypair['total_resource_slots']['cuda.shares'];
-          }
-          if (('cuda_device' in keypair['total_resource_slots']) === false &&
-            ('cuda_shares' in keypair['total_resource_slots']) === false &&
-            keypair['default_for_unspecified'] === 'UNLIMITED') {
-            keypair['total_resource_slots'].cuda_shares = '-';
-            keypair['total_resource_slots'].cuda_device = '-';
-          }
+      let resourcePolicies = response;
+      Object.keys(resourcePolicies).map((objectKey, index) => {
+        var policy = resourcePolicies[objectKey];
+        policy['total_resource_slots'] = JSON.parse(policy['total_resource_slots']);
+        if ('cpu' in policy['total_resource_slots']) {
+        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
+          policy['total_resource_slots'].cpu = '-';
         }
+        if ('mem' in policy['total_resource_slots']) {
+          policy['total_resource_slots'].mem = parseFloat(policy['total_resource_slots'].mem);
+        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
+          policy['total_resource_slots'].mem = '-';
+        }
+        if ('cuda.device' in policy['total_resource_slots']) {
+          policy['total_resource_slots'].cuda_device = policy['total_resource_slots']['cuda.device'];
+        }
+        if ('cuda.shares' in policy['total_resource_slots']) {
+          policy['total_resource_slots'].cuda_shares = policy['total_resource_slots']['cuda.shares'];
+        }
+        if (('cuda_device' in policy['total_resource_slots']) === false &&
+          ('cuda_shares' in policy['total_resource_slots']) === false &&
+          policy['default_for_unspecified'] === 'UNLIMITED') {
+          policy['total_resource_slots'].cuda_shares = '-';
+          policy['total_resource_slots'].cuda_device = '-';
+        }
+
       });
-      this.keypairs = keypairs;
-      console.log(this.keypairs);
-      //setTimeout(() => { this._refreshKeyData(status) }, 5000);
+      this.resourcePolicy = resourcePolicies;
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -150,31 +127,10 @@ class BackendAIResourcePolicyList extends PolymerElement {
     });
   }
 
-  async _showKeypairDetail(e) {
-    const controls = e.target.closest('#controls');
-    const access_key = controls.accessKey;
-    try {
-      const data = await this._getKeyData(access_key);
-      this.keypairInfo = data.keypair;
-      this.$['keypair-info-dialog'].open();
-    } catch (err) {
-      if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    }
-  }
-
-  async _getKeyData(accessKey) {
-    let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-      'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-    return window.backendaiclient.keypair.info(accessKey, fields);
-  }
-
   refresh() {
     //let user_id = window.backendaiclient_email;
     let user_id = null;
-    this._refreshKeyData();
+    this._refreshPolicyData();
   }
 
   _isActive() {
@@ -195,38 +151,6 @@ class BackendAIResourcePolicyList extends PolymerElement {
     const accessKey = controls.accessKey;
     window.backendaiclient.keypair.delete(accessKey).then(response => {
       this.refresh();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-  }
-
-  _revokeKey(e) {
-    this._mutateKey(e, false);
-  }
-
-  _reuseKey(e) {
-    this._mutateKey(e, true);
-  }
-
-  _mutateKey(e, is_active) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
-    const accessKey = controls.accessKey;
-    let original = this.keypairs.keypairs.find(this._findKeyItem, accessKey);
-    let input = {
-      'is_active': is_active,
-      'is_admin': original.is_admin,
-      'resource_policy': original.resource_policy,
-      'rate_limit': original.rate_limit,
-      'concurrency_limit': original.concurrency_limit,
-    };
-    window.backendaiclient.keypair.mutate(accessKey, input).then((response) => {
-      let event = new CustomEvent("backend-ai-credential-refresh", {"detail": this});
-      document.dispatchEvent(event);
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -340,8 +264,8 @@ class BackendAIResourcePolicyList extends PolymerElement {
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
 
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
-                   items="[[keypairs]]">
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
+                   items="[[resourcePolicy]]">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
           <template>[[_indexFrom1(index)]]</template>
@@ -349,50 +273,17 @@ class BackendAIResourcePolicyList extends PolymerElement {
 
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="user_id">User ID</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.user_id]]</div>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">Access Key</template>
-          <template>
-            <div class="indicator">[[item.access_key]]</div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="is_admin">Permission</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout horizontal center flex">
-              <template is="dom-if" if="[[item.is_admin]]">
-                <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
-              </template>
-              <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="created_at">Key age</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[_elapsed(item.created_at)]] Days</span>
-              <span class="indicator">([[_humanReadableTime(item.created_at)]])</span>
+              <div class="indicator">[[item.name]]</div>
             </div>
           </template>
         </vaadin-grid-column>
 
         <vaadin-grid-column width="150px" resizable>
-          <template class="header">Resource Policy</template>
+          <template class="header">Resources</template>
           <template>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
@@ -410,14 +301,14 @@ class BackendAIResourcePolicyList extends PolymerElement {
               <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
                 <div class="layout horizontal configuration">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[item.total_resource_slots.cuda_device]]</span>
+                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_device)]]</span>
                   <span class="indicator">GPU</span>
                 </div>
               </template>
               <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
                 <div class="layout horizontal configuration">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[item.total_resource_slots.cuda_shares]]</span>
+                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_shares)]]</span>
                   <span class="indicator">vGPU</span>
                 </div>
               </template>
@@ -441,18 +332,31 @@ class BackendAIResourcePolicyList extends PolymerElement {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Allocation</template>
+          <template class="header">
+            <vaadin-grid-sorter path="max_concurrent_sessions">Concurrency</vaadin-grid-sorter>
+          </template>
+          <template>
+            <div class="indicator">[[item.max_concurrent_sessions]]
+            </div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column resizable>
+          <template class="header">
+            <vaadin-grid-sorter path="max_containers_per_session">Bundle limit</vaadin-grid-sorter>
+          </template>
+          <template>
+            <div>[[item.max_containers_per_session]]</div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column resizable>
+          <template class="header">Allowed Hosts</template>
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">
-                <div style="font-size:11px;width:40px;">[[item.concurrency_used]] /
-                  [[item.concurrency_limit]]
+                <div>[[item.allowed_vfolder_hosts]]
                 </div>
-                <span class="indicator">Sess.</span>
-              </div>
-              <div class="vertical start layout">
-                <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15m.</span></span>
-                <span style="font-size:8px">[[item.num_queries]] <span class="indicator">queries</span></span>
               </div>
             </div>
           </template>
@@ -461,81 +365,9 @@ class BackendAIResourcePolicyList extends PolymerElement {
         <vaadin-grid-column resizable>
           <template class="header">Control</template>
           <template>
-            <div id="controls" class="layout horizontal flex center"
-                 access-key="[[item.access_key]]">
-              <paper-icon-button class="fg green" icon="assignment"
-                                 on-tap="_showKeypairDetail"></paper-icon-button>
-              <template is="dom-if" if="[[_isActive()]]">
-                <template is="dom-if" if="[[!item.is_admin]]">
-                  <paper-icon-button class="fg blue controls-running" icon="delete"
-                                     on-tap="_revokeKey"></paper-icon-button>
-                  <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                     on-tap="_deleteKey"></paper-icon-button>
-                </template>
-              </template>
-              <template is="dom-if" if="[[!_isActive()]]">
-                <paper-icon-button class="fg blue controls-running" icon="icons:redo"
-                                   on-tap="_reuseKey"></paper-icon-button>
-              </template>
-            </div>
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-      <paper-dialog id="keypair-info-dialog">
-        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span style="margin-right:15px;">Keypair Detail</span>
-            <template is="dom-if" if="[[keypairInfo.is_admin]]">
-              <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
-            </template>
-            <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-            <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
-          </h3>
-          <h4>Information</h4>
-          <div role="listbox" style="margin: 0;">
-            <vaadin-item>
-              <div><strong>User ID</strong></div>
-              <div secondary>[[keypairInfo.user_id]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Access Key</strong></div>
-              <div secondary>[[keypairInfo.access_key]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Secret Key</strong></div>
-              <div secondary>[[keypairInfo.secret_key]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Created</strong></div>
-              <div secondary>[[keypairInfo.created_at]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Last used</strong></div>
-              <div secondary>[[keypairInfo.last_used]]</div>
-            </vaadin-item>
-          </div>
-          <h4>Allocation</h4>
-          <div role="listbox" style="margin: 0;">
-            <vaadin-item>
-              <div><strong>Number of queries</strong></div>
-              <div secondary>[[keypairInfo.num_queries]]</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Concurrent Sessions</strong></div>
-              <div secondary>[[keypairInfo.concurrency_used]] active / [[keypairInfo.concurrency_used]] concurrent
-                sessions.
-              </div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>Rate Limit</strong></div>
-              <div secondary>[[keypairInfo.rate_limit]] for 900 seconds.</div>
-            </vaadin-item>
-          </div>
-        </paper-material>
-      </paper-dialog>
     `;
   }
 }

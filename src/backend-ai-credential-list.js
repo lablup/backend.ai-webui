@@ -139,7 +139,6 @@ class BackendAICredentialList extends PolymerElement {
         }
       });
       this.keypairs = keypairs;
-      console.log(this.keypairs);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -185,8 +184,6 @@ class BackendAICredentialList extends PolymerElement {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
-
-    console.log(accessKey);
   }
 
   _deleteKey(e) {
