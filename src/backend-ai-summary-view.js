@@ -255,6 +255,7 @@ class BackendAISummary extends PolymerElement {
     if (!visible) {
       return;
     }
+    this._refreshHealthPanel();
   }
 
   _toInt(value) {
