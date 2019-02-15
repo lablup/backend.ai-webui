@@ -433,8 +433,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   }
 
   _humanReadableTime(d) {
-    var d = new Date(d * 1000);
-    return d.toUTCString();
+    const date = new Date(d * 1000);
+    const offset = date.getTimezoneOffset() / 60;
+    const hours = date.getHours();
+    date.setHours(hours - offset);
+    return date.toUTCString();
   }
 
   _isDownloadable(file) {
