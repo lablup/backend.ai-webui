@@ -87,5 +87,5 @@ $ electron .
 ```
 $ make clean
 $ make all
-$ make pack # To create an zip-packed files
+$ make pack # To create an zip-packed files (works on macOS)
 ```
