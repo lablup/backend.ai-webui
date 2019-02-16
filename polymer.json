@@ -14,10 +14,6 @@
     "node_modules/web-animations-js/**"
   ],
   "builds": [
-    { 
-      "name": "unbundle",
-      "preset": "es6-unbundled"
-    },
     {
       "name": "bundle",
       "preset": "es6-bundled"
