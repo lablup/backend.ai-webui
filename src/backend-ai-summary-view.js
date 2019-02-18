@@ -18,6 +18,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-toast/paper-toast';
 
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
+import '@polymer/paper-progress/paper-progress';
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
@@ -151,6 +152,8 @@ class BackendAISummary extends PolymerElement {
       'addr',
       'status',
       'first_contact',
+      'cpu_cur_pct',
+      'mem_cur_bytes',
       'occupied_slots',
       'available_slots'];
 
@@ -161,11 +164,14 @@ class BackendAISummary extends PolymerElement {
         let value = this.agents[objectKey];
         let occupied_slots = JSON.parse(value.occupied_slots);
         let available_slots = JSON.parse(value.available_slots);
-        console.log(value);
         this.resources.cpu.total = this.resources.cpu.total + parseInt(Number(available_slots.cpu));
         this.resources.cpu.used = this.resources.cpu.used + parseInt(Number(occupied_slots.cpu));
+        this.resources.cpu.percent = this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
+
         this.resources.mem.total = this.resources.mem.total + parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'm'));
-        this.resources.mem.used = this.resources.mem.used + parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
+        this.resources.mem.allocated = this.resources.mem.allocated + parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
+        this.resources.mem.used = this.resources.mem.used + parseInt(window.backendaiclient.utils.changeBinaryUnit(value.mem_cur_bytes, 'm'));
+
         this.resources.gpu.total = this.resources.gpu.total + parseInt(Number(available_slots['cuda.device']));
         if ('cuda.device' in occupied_slots) {
           this.resources.gpu.used = this.resources.gpu.used + parseInt(Number(occupied_slots['cuda.device']));
@@ -207,8 +213,10 @@ class BackendAISummary extends PolymerElement {
     this.resources.cpu = {};
     this.resources.cpu.total = 0;
     this.resources.cpu.used = 0;
+    this.resources.cpu.percent = 0;
     this.resources.mem = {};
     this.resources.mem.total = 0;
+    this.resources.mem.allocated = 0;
     this.resources.mem.used = 0;
     this.resources.gpu = {};
     this.resources.gpu.total = 0;
@@ -228,6 +236,14 @@ class BackendAISummary extends PolymerElement {
     this.mem_used = this.resources.mem.used;
     this.gpu_used = this.resources.gpu.used;
     this.vgpu_used = this.resources.vgpu.used;
+
+    this.cpu_percent = this.resources.cpu.percent;
+    this.mem_allocated = this.resources.mem.allocated;
+    this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
+    this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
+    this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
+    this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
+    this.mem_current_usage_percent = (this.mem_current_usage_ratio / this.mem_total_usage_ratio * 100.0).toFixed(2);
   }
 
   _routeChanged(changeRecord) {
@@ -284,6 +300,17 @@ class BackendAISummary extends PolymerElement {
         span.indicator {
           width: 100px;
         }
+
+        paper-progress {
+          width: 190px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677EB;
+          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
@@ -303,10 +330,26 @@ class BackendAISummary extends PolymerElement {
           <lablup-activity-panel title="Resource Allocation" elevation="1">
             <div slot="message">
               <template is="dom-if" if="{{is_admin}}">
-                <vaadin-progress-bar id="cpu-bar" value="[[cpu_used]]" max="[[cpu_total]]"></vaadin-progress-bar>
-                CPUs: <span class="progress-value"> [[cpu_used]]</span>/[[cpu_total]] Cores
-                <vaadin-progress-bar id="mem-bar" value="[[mem_used]]" max="[[mem_total]]"></vaadin-progress-bar>
-                Memory: <span class="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
+                <div class="layout horizontal center flex" style="margin-bottom:5px;">
+                  <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                  <div class="layout vertical start" style="padding-left:15px;">
+                    <paper-progress id="cpu-usage-bar" value="[[cpu_current_usage_ratio]]"
+                                    secondary-progress="[[cpu_total_usage_ratio]]"></paper-progress>
+                    <div>CPUs: <span class="progress-value"> [[cpu_used]]</span>/[[cpu_total]] Cores reserved.</div>
+                    <div>Using <span class="progress-value"> [[cpu_percent]]</span>%.</div>
+                  </div>
+                </div>
+                <div class="layout horizontal center flex" style="margin-bottom:5px;">
+                  <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                  <div class="layout vertical start" style="padding-left:15px;">
+                    <paper-progress id="mem-usage-bar" value="[[mem_current_usage_ratio]]"
+                                    secondary-progress="[[mem_total_usage_ratio]]"></paper-progress>
+                    <div><span class="progress-value"> [[mem_allocated]]</span>/[[mem_total]] MB reserved.</div>
+                    <div>Using <span class="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
+                      ([[mem_current_usage_percent]] %)
+                    </div>
+                  </div>
+                </div>
                 <template is="dom-if" if="[[gpu_total]]">
                   <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
                   GPUs: <span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs
@@ -316,7 +359,7 @@ class BackendAISummary extends PolymerElement {
                   vGPUs: <span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs
                 </template>
                 <template is="dom-if" if="[[!vgpu_total]]">
-                  (vGPU disabled)
+                  <div>vGPU disabled on this cluster.</div>
                 </template>
               </template>
               <template is="dom-if" if="{{!is_admin}}">
