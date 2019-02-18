@@ -244,6 +244,9 @@ class BackendAISummary extends PolymerElement {
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
     this.mem_current_usage_percent = (this.mem_current_usage_ratio / this.mem_total_usage_ratio * 100.0).toFixed(2);
+    if (isNaN(this.mem_current_usage_percent)) {
+      this.mem_current_usage_percent = 0;
+    }
   }
 
   _routeChanged(changeRecord) {
@@ -301,6 +304,10 @@ class BackendAISummary extends PolymerElement {
           width: 100px;
         }
 
+        div.big.indicator {
+          font-size: 48px;
+        }
+
         paper-progress {
           width: 190px;
           border-radius: 3px;
@@ -318,12 +325,18 @@ class BackendAISummary extends PolymerElement {
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="Health" elevation="1">
             <div slot="message">
-              <ul>
+              <div class="horizontal justified layout wrap">
                 <template is="dom-if" if="{{is_admin}}">
-                  <li>Connected nodes: [[_countObject(agents)]]</li>
+                  <div class="vertical layout center">
+                    <div class="big indicator">[[_countObject(agents)]]</div>
+                    <span>Connected nodes</span>
+                  </div>
                 </template>
-                <li>Active sessions: [[_countObject(sessions)]]</li>
-              </ul>
+                <div class="vertical layout center">
+                  <div class="big indicator">[[_countObject(sessions)]]</div>
+                  <span>Active sessions</span>
+                </div>
+              </div>
             </div>
           </lablup-activity-panel>
 
