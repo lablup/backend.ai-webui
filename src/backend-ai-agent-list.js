@@ -100,8 +100,17 @@ class BackendAIAgentList extends PolymerElement {
 
           agents[objectKey].cpu_slots = parseInt(Number(available_slots.cpu));
           agents[objectKey].used_cpu_slots = parseInt(Number(occupied_slots.cpu));
-          agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
-          agents[objectKey].current_mem = window.backendaiclient.utils.changeBinaryUnit(agent.mem_cur_bytes, 'g');
+          if (agent.cpu_cur_pct !== null) {
+            agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
+          } else {
+            agents[objectKey].current_cpu_percent = 0;
+          }
+          if (agent.mem_cur_bytes !== null) {
+            agents[objectKey].current_mem_bytes = agent.mem_cur_bytes;
+          } else {
+            agents[objectKey].current_mem_bytes = 0;
+          }
+          agents[objectKey].current_mem = window.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
           agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
           agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
 
