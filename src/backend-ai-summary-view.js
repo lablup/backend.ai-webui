@@ -308,6 +308,11 @@ class BackendAISummary extends PolymerElement {
           font-size: 48px;
         }
 
+        vaadin-progress-bar {
+          width: 190px;
+          height: 10px;
+        }
+
         paper-progress {
           width: 190px;
           border-radius: 3px;
@@ -364,12 +369,23 @@ class BackendAISummary extends PolymerElement {
                   </div>
                 </div>
                 <template is="dom-if" if="[[gpu_total]]">
-                  <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
-                  GPUs: <span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs
+                  <div class="layout horizontal center flex" style="margin-bottom:5px;">
+                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <div class="layout vertical start" style="padding-left:15px;">
+                      <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
+                      <div><span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs</div>
+                    </div>
+                  </div>
                 </template>
                 <template is="dom-if" if="[[vgpu_total]]">
-                  <vaadin-progress-bar id="gpu-bar" value="[[vgpu_used]]" max="[[vgpu_total]]"></vaadin-progress-bar>
-                  vGPUs: <span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs
+                  <div class="layout horizontal center flex" style="margin-bottom:5px;">
+                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <div class="layout vertical start" style="padding-left:15px;">
+                      <vaadin-progress-bar id="vgpu-bar" value="[[vgpu_used]]"
+                                           max="[[vgpu_total]]"></vaadin-progress-bar>
+                      <div><span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs</div>
+                    </div>
+                  </div>
                 </template>
                 <template is="dom-if" if="[[!vgpu_total]]">
                   <div>vGPU disabled on this cluster.</div>
