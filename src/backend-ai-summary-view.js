@@ -293,14 +293,14 @@ class BackendAISummary extends PolymerElement {
             <div slot="message">
               <ul>
                 <template is="dom-if" if="{{is_admin}}">
-                  <li>Connected agents: [[_countObject(agents)]]</li>
+                  <li>Connected nodes: [[_countObject(agents)]]</li>
                 </template>
                 <li>Active sessions: [[_countObject(sessions)]]</li>
               </ul>
             </div>
           </lablup-activity-panel>
 
-          <lablup-activity-panel title="System Loads" elevation="1">
+          <lablup-activity-panel title="Resource Allocation" elevation="1">
             <div slot="message">
               <template is="dom-if" if="{{is_admin}}">
                 <vaadin-progress-bar id="cpu-bar" value="[[cpu_used]]" max="[[cpu_total]]"></vaadin-progress-bar>
