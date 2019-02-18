@@ -438,9 +438,6 @@ class BackendAICredentialList extends PolymerElement {
                 <span>[[_markIfUnlimited(item.max_vfolder_count)]]</span>
                 <span class="indicator">Folders</span>
               </div>
-              <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
-              <!-- <span>[[item.storage_capacity]]</span> -->
-              <!-- <span class="indicator">[[item.storage_unit]]</span> -->
             </div>
           </template>
         </vaadin-grid-column>
@@ -487,7 +484,7 @@ class BackendAICredentialList extends PolymerElement {
         </vaadin-grid-column>
       </vaadin-grid>
       <paper-dialog id="keypair-info-dialog">
-        <paper-material elevation="1" class="login-panel intro" style="margin: 0;">
+        <paper-material elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span style="margin-right:15px;">Keypair Detail</span>
             <template is="dom-if" if="[[keypairInfo.is_admin]]">
