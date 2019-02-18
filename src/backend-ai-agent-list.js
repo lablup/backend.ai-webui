@@ -15,7 +15,7 @@ import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-toast';
 import './lablup-shields.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
-
+import '@polymer/paper-progress/paper-progress';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 
@@ -102,8 +102,13 @@ class BackendAIAgentList extends PolymerElement {
           agents[objectKey].used_cpu_slots = parseInt(Number(occupied_slots.cpu));
           if (agent.cpu_cur_pct !== null) {
             agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
+            agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots * 100.0;
+            agents[objectKey].cpu_current_usage_ratio = agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots;
+            agents[objectKey].current_cpu_percent = agents[objectKey].current_cpu_percent.toFixed(2);
           } else {
             agents[objectKey].current_cpu_percent = 0;
+            agents[objectKey].cpu_total_usage_ratio = 0;
+            agents[objectKey].cpu_current_usage_ratio = 0;
           }
           if (agent.mem_cur_bytes !== null) {
             agents[objectKey].current_mem_bytes = agent.mem_cur_bytes;
@@ -113,7 +118,9 @@ class BackendAIAgentList extends PolymerElement {
           agents[objectKey].current_mem = window.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
           agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
           agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
-
+          agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots * 100.0;
+          agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots * 100.0;
+          agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
           if ('cuda.device' in available_slots) {
             agents[objectKey].gpu_slots = parseInt(Number(available_slots['cuda.device']));
           }
@@ -152,14 +159,6 @@ class BackendAIAgentList extends PolymerElement {
 
   _MBtoGB(value) {
     return Math.floor(value / 1024);
-  }
-
-  _slotToCPU(value) {
-    return Math.floor(value / 1);
-  }
-
-  _slotToGPU(value) {
-    return Math.floor(value / 3.75);
   }
 
   _elapsed(start, end) {
@@ -247,6 +246,17 @@ class BackendAIAgentList extends PolymerElement {
           width: 100px;
           height: 6px;
         }
+
+        paper-progress {
+          width: 100px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677EB;
+          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[agents]]">
@@ -278,19 +288,36 @@ class BackendAIAgentList extends PolymerElement {
             <div class="layout flex">
               <div class="layout horizontal center flex">
                 <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[ item.cpu_slots ]]</span>
-                <span class="indicator">cores</span>
+                <div class="layout vertical start" style="padding-left:5px;">
+                  <div class="layout horizontal start">
+                    <span>[[ item.cpu_slots ]]</span>
+                    <span class="indicator">cores</span>
+                  </div>
+                  <div class="layout horizontal start">
+                    <span>[[item.current_cpu_percent]]</span>
+                    <span class="indicator">%</span>
+                  </div>
+                </div>
                 <span class="flex"></span>
-                <vaadin-progress-bar id="cpu-bar" value="[[item.used_cpu_slots]]"
-                                     max="[[item.cpu_slots]]"></vaadin-progress-bar>
+                <paper-progress id="cpu-usage-bar" value="[[item.cpu_current_usage_ratio]]"
+                                secondary-progress="[[item.cpu_total_usage_ratio]]"></paper-progress>
               </div>
               <div class="layout horizontal center flex">
                 <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[item.mem_slots]]</span>
-                <span class="indicator">GB</span>
+                <div class="layout vertical start" style="padding-left:5px;">
+                  <div class="layout horizontal start">
+                    <span>[[item.mem_slots]]</span>
+                    <span class="indicator">GB</span>
+                  </div>
+                  <div class="layout horizontal start">
+                    <span>[[item.current_mem]]</span>
+                    <span class="indicator">GB</span>
+                  </div>
+                </div>
                 <span class="flex"></span>
-                <vaadin-progress-bar id="mem-bar" value="[[item.used_mem_slots]]"
-                                     max="[[item.mem_slots]]"></vaadin-progress-bar>
+                <paper-progress id="mem-usage-bar" value="[[item.mem_current_usage_ratio]]"
+                                secondary-progress="[[item.mem_total_usage_ratio]]"></paper-progress>
+
               </div>
               <template is="dom-if" if="[[item.gpu_slots]]">
                 <div class="layout horizontal center flex">
@@ -315,10 +342,10 @@ class BackendAIAgentList extends PolymerElement {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="80px" flex-grow="0" resizable>
+        <vaadin-grid-column width="100px" flex-grow="0" resizable>
           <template class="header">Status</template>
           <template>
-            <div>
+            <div class="layout horizontal justified wrap">
               <lablup-shields app="" color="[[_heartbeatColor(item.status)]]"
                               description="[[_heartbeatStatus(item.status)]]" ui="flat"></lablup-shields>
             </div>

@@ -133,7 +133,7 @@ class BackendAiWebConsole extends PolymerElement {
         this.$['sidebar-menu'].selected = 1;
         break;
       case 'agent':
-        this.menuTitle = 'Agents';
+        this.menuTitle = 'Computation Resources';
         if (this.is_admin) {
           this.$['sidebar-menu'].selected = 2;
         } else {
@@ -224,7 +224,7 @@ class BackendAiWebConsole extends PolymerElement {
                 <a href="/agent" tabindex="-1" role="menuitem">
                   <paper-item link>
                     <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                    Agents
+                    Resources
                   </paper-item>
                 </a>
               </template>
