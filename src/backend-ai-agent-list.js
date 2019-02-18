@@ -104,6 +104,7 @@ class BackendAIAgentList extends PolymerElement {
           agents[objectKey].current_mem = window.backendaiclient.utils.changeBinaryUnit(agent.mem_cur_bytes, 'g');
           agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
           agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
+
           if ('cuda.device' in available_slots) {
             agents[objectKey].gpu_slots = parseInt(Number(available_slots['cuda.device']));
           }
@@ -119,7 +120,6 @@ class BackendAIAgentList extends PolymerElement {
         });
       }
       this.agents = agents;
-      console.log(agents);
       if (this.visible == true) {
         setTimeout(() => {
           this._loadAgentList(status)

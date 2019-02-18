@@ -70,12 +70,6 @@ class BackendAISummary extends PolymerElement {
 
   ready() {
     super.ready();
-    document.addEventListener('backend-ai-connected', () => {
-      this._init_resource_values();
-      this.is_admin = window.backendaiclient.is_admin;
-      this.authenticated = true;
-      this._refreshHealthPanel();
-    }, true);
   }
 
   static get observers() {
@@ -250,7 +244,20 @@ class BackendAISummary extends PolymerElement {
     if (!visible) {
       return;
     }
-    this._refreshHealthPanel();
+//    this._refreshHealthPanel();
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._init_resource_values();
+        this.is_admin = window.backendaiclient.is_admin;
+        this.authenticated = true;
+        this._refreshHealthPanel();
+      }, true);
+    } else {
+      this._init_resource_values();
+      this.is_admin = window.backendaiclient.is_admin;
+      this.authenticated = true;
+      this._refreshHealthPanel();
+    }
   }
 
   _toInt(value) {
