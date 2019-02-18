@@ -114,14 +114,8 @@ class BackendAISummary extends PolymerElement {
         status = 'RUNNING';
     }
     ;
-
     let fields = ["sess_id"];
-    let q = `query($status:String) {` +
-      `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
-      '}';
-    let v = {'status': status};
-
-    window.backendaiclient.gql(q, v).then(response => {
+    window.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.jobs = response;
       this.sessions = response.compute_sessions;
       if (this.visible == true) {
@@ -165,6 +159,7 @@ class BackendAISummary extends PolymerElement {
       'first_contact',
       'occupied_slots',
       'available_slots'];
+
     window.backendaiclient.agent.list(status, fields).then((response) => {
       this.agents = response.agents;
       this._init_resource_values();
