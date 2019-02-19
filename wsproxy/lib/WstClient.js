@@ -72,7 +72,10 @@ module.exports = (wst_client = class wst_client extends require('events').EventE
 
   _wsConnect(wsHostUrl, remoteAddr, get_hdrs, cb) {
     let optionalHeaders = get_hdrs()
-    const wsClient = createWsClient();
+    const wsClient = createWsClient({
+        keepalive: true,
+        keepaliveInterval: 10000
+    });
     wsClient.connect(wsHostUrl, undefined, undefined, optionalHeaders
                      , { agent: null } );
     wsClient.on('connectFailed', error => cb(error));

@@ -24,14 +24,6 @@ function express_app(port) {
     res.send({})
   });
 
-  app.get('/test', function (req, res) {
-    aiclient.createIfNotExists('app-jupyter', 'appsession')
-    .then(response => {
-      console.log(`my session is created: ${response.kernelId}`);
-      res.send({})
-    })
-  });
-
   app.get('/', function (req, res) {
     if(config == undefined) {
       res.send({"code": 401});
@@ -44,13 +36,25 @@ function express_app(port) {
     res.send(rtn);
   });
 
+  app.get('/proxy/:kernelId', function (req, res) {
+    if(config == undefined) {
+      res.send({"code": 401})
+      return;
+    }
+    let kernelId = req.params["kernelId"];
+    if(kernelId in proxies) {
+      res.send({"code": 200})
+    } else {
+      res.send({"code": 404})
+    }
+  });
+
   app.get('/proxy/:kernelId/add', function (req, res) {
     if(config == undefined) {
       res.send({"code": 401});
       return;
     }
     let kernelId = req.params["kernelId"];
-    //let appName = req.params["appName"];
     if(!(kernelId in proxies)) {
       let proxy = new Proxy(aiclient._config);
       getFreePorts(1, 'localhost').then((freePortsList) => {
@@ -79,18 +83,6 @@ function express_app(port) {
     }
   });
 
-  app.get('/proxy/:kernelId', function (req, res) {
-    if(config == undefined) {
-      res.send({"code": 401})
-      return;
-    }
-    let kernelId = req.params["kernelId"];
-    if(kernelId in proxies) {
-      res.send({"code": 200})
-    } else {
-      res.send({"code": 404})
-    }
-  });
   app.listen(port, () => console.log(`Listening on port ${port}!`));
 }
 

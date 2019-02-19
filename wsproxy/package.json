@@ -19,5 +19,9 @@
     "underscore": "^1.9.1",
     "websocket": "^1.0.28"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3",
+    "webpack-node-externals": "^1.7.2"
+  }
 }
