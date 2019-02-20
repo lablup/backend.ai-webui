@@ -1,7 +1,7 @@
 'use babel';
 /*
-Backend.AI Cloud Javascript API Library (v19.01a1)
-==================================================
+Backend.AI Node.JS / Javascript ES6 API Library (v19.03b9)
+==========================================================
 
 (C) Copyright 2016-2019 Lablup Inc.
 Licensed under MIT

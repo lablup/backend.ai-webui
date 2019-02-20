@@ -33,7 +33,7 @@ import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
 import {OverlayPatchMixin} from './overlay-patch-mixin.js';
-import './component/backend-ai-dropdown-menu';
+import './components/backend-ai-dropdown-menu';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 

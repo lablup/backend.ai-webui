@@ -12,8 +12,11 @@
   <script src="./node_modules/web-animations-js/web-animations-next-lite.min.js"></script>
   <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js" async></script>
   <script src="manifest/app.js" async></script>
-  <script src="./src/backend-ai-web-console.js" type="module" async></script>
+  <script src="./src/backend-ai-console.js" type="module" async></script>
   <script src="./src/backend-ai-login.js" type="module" async></script>
+  <script>
+    window.process = {env: {NODE_ENV: 'production'}};
+  </script>
   <title>Backend.AI Console</title>
   <style>
     .loading-message {
@@ -133,7 +136,7 @@
 </head>
 
 <body>
-<backend-ai-web-console>
+<backend-ai-console>
   <div class="sk-folding-cube">
     <div class="sk-cube1 sk-cube"></div>
     <div class="sk-cube2 sk-cube"></div>
@@ -143,7 +146,7 @@
   <noscript>
     <p>Could not render Backend.AI modules. Check that JavaScript is enabled.</p>
   </noscript>
-</backend-ai-web-console>
+</backend-ai-console>
 <backend-ai-login id="login-panel"></backend-ai-login>
 </body>
 </html>

@@ -263,7 +263,6 @@ class BackendAISummary extends PolymerElement {
     if (!visible) {
       return;
     }
-//    this._refreshHealthPanel();
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
         this._init_resource_values();
