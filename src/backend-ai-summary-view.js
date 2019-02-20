@@ -75,8 +75,6 @@ class BackendAISummary extends PolymerElement {
 
   static get observers() {
     return [
-      '_routeChanged(route.*)',
-      '_viewChanged(routeData.view)',
       '_refreshHealthPanel(window.backendaiclient)',
       '_menuChanged(active)'
     ]
@@ -250,6 +248,7 @@ class BackendAISummary extends PolymerElement {
   }
 
   _menuChanged(active) {
+    console.log("summary menu:", active);
     if (!active) {
       return;
     }
