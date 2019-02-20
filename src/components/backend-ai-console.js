@@ -42,7 +42,7 @@ import '../backend.ai-client-es6.js';
 
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
-import {IronFlex, IronFlexAlignment, IronPositioning} from '../layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment, IronPositioning, IronFlexFactors} from '../layout/iron-flex-layout-classes';
 import '../backend-ai-offline-indicator.js';
 import '../backend-ai-login.js';
 
@@ -144,39 +144,21 @@ class BackendAiConsole extends connect(store)(LitElement) {
       switch (view) {
         case 'summary':
           this.menuTitle = 'Summary';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 0;
           break;
         case 'job':
           this.menuTitle = 'Sessions';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 1;
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          if (this.is_admin) {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 2;
-          } else {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 0;
-          }
           break;
         case 'credential':
           this.menuTitle = 'Credentials & Policies';
-          if (this.is_admin) {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 3;
-          } else {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 2;
-          }
           break;
         case 'data':
           this.menuTitle = 'Data';
-          if (this.is_admin) {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 5;
-          } else {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 3;
-          }
           break;
         default:
-          this.menuTitle = 'Summary';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 0;
+          this.menuTitle = 'LOGIN REQUIRED';
       }
     }
   }
@@ -196,6 +178,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
+      IronFlexFactors,
       IronPositioning,
       css`
         paper-icon-button {
@@ -341,7 +324,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this._drawerOpened = state.app.drawerOpened;
     console.log("state changed");
     console.log(this._page);
-    console.log(this.offline);
   }
 }
 
