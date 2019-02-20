@@ -95,6 +95,10 @@ class BackendAISummary extends PolymerElement {
     }
   }
 
+  shouldUpdate() {
+    return this.active;
+  }
+
   _refreshSessionInformation() {
     let status = 'RUNNING';
     switch (this.condition) {
@@ -249,16 +253,6 @@ class BackendAISummary extends PolymerElement {
     }
   }
 
-  _routeChanged(changeRecord) {
-    if (changeRecord.path === 'path') {
-      console.log('Path changed!');
-    }
-  }
-
-  _viewChanged(view) {
-    // load data for view
-  }
-
   _menuChanged(active) {
     console.log('changed summary visibility:');
     console.log(active);
@@ -266,6 +260,7 @@ class BackendAISummary extends PolymerElement {
     if (!active) {
       return;
     }
+
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
         this._init_resource_values();

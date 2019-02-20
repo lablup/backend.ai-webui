@@ -51,6 +51,12 @@ export const BackendAiStyles =
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --app-drawer-width: 190px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --layout-fixed-bottom: {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      };
     }
 
     body {
@@ -307,7 +313,10 @@ export const BackendAiStyles =
     }
 
     #sidebar-navbar-footer {
-      @apply --layout-fixed-bottom;
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
       left: 0;
       right: 0;
       bottom: 120px !important; /* Workaround to prevent miscalculated height */
@@ -320,10 +329,11 @@ export const BackendAiStyles =
     }
 
     #app-navbar-footer {
-      @apply --layout-fixed-bottom;
-      text-align: left;
-      left: 0;
+      position: fixed;
       right: 0;
+      bottom: 0;
+      left: 0;
+      text-align: left;
       height: 245px;
       width: 100%;
       border-top: 1px solid #eee;
@@ -584,7 +594,9 @@ export const BackendAiStyles =
 
     @media screen and (max-width: 899px) {
       .item div.layout {
-        @apply --layout-center-justified;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
       }
     }
 
@@ -608,7 +620,10 @@ export const BackendAiStyles =
 
     paper-material .commands.float {
       border-top: none;
-      @apply --layout-fixed-bottom;
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
     }
 
     paper-material .commands a {
@@ -658,8 +673,15 @@ export const BackendAiStyles =
     .commands-float a {
       display: block;
       margin: 5px;
-      @apply --layout-inline;
-      @apply --layout-center-center;
+      display: -ms-inline-flexbox;
+      display: -webkit-inline-flex;
+      display: inline-flex;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -ms-flex-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
       margin-left: auto;
     }
 
@@ -686,7 +708,12 @@ export const BackendAiStyles =
 
     .line {
       margin-bottom: 10px;
-      @apply --layout-horizontal;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -ms-flex-direction: row;
+      -webkit-flex-direction: row;
+      flex-direction: row;
     }
 
     .line span {
@@ -694,7 +721,12 @@ export const BackendAiStyles =
     }
 
     .icon-box {
-      @apply --layout-horizontal;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -ms-flex-direction: row;
+      -webkit-flex-direction: row;
+      flex-direction: row;
     }
 
     .icon-box iron-icon {
@@ -703,7 +735,11 @@ export const BackendAiStyles =
     }
 
     .icon-box p {
-      @apply --layout-flex;
+      -ms-flex: 1 1 0.000000001px;
+      -webkit-flex: 1;
+      flex: 1;
+      -webkit-flex-basis: 0.000000001px;
+      flex-basis: 0.000000001px;
       margin: 0;
       padding: 5px;
     }

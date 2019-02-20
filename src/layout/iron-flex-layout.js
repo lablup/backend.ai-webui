@@ -81,7 +81,6 @@ export const IronFlexLayout =
     }
 
     html {
-
       --layout: {
         display: -ms-flexbox;
         display: -webkit-flex;

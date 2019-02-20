@@ -337,7 +337,7 @@ class BackendAiConsole extends LitElement {
     this._offline = state.app.offline;
     this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
     this._drawerOpened = state.app.drawerOpened;
-    console.log("test");
+    console.log("state changed");
     console.log(this._page);
     console.log(this.offline);
   }

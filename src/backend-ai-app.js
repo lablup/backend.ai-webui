@@ -17,7 +17,7 @@ export const navigate = (path) => (dispatch) => {
 };
 
 const loadPage = (page) => (dispatch) => {
-  console.log(page);
+  console.log("LOAD PAGE :", page);
   switch(page) {
     case 'summary':
       import('./backend-ai-summary-view.js').then((module) => {
