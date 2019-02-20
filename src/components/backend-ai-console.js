@@ -134,24 +134,43 @@ class BackendAiConsole extends connect(store)(LitElement) {
         this.route.path = '/' + view;
         this.$['app-page'].selected = view;
       }*/
+      console.log(view);
       switch (view) {
         case 'summary':
           this.menuTitle = 'Summary';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 0;
           break;
         case 'job':
           this.menuTitle = 'Sessions';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 1;
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
+          if (this.is_admin) {
+            this.shadowRoot.getElementById('sidebar-menu').selected = 2;
+          } else {
+            this.shadowRoot.getElementById('sidebar-menu').selected = 0;
+          }
           break;
         case 'credential':
           this.menuTitle = 'Credentials & Policies';
+          if (this.is_admin) {
+            this.shadowRoot.getElementById('sidebar-menu').selected = 3;
+          } else {
+            this.shadowRoot.getElementById('sidebar-menu').selected = 2;
+          }
           break;
         case 'data':
           this.menuTitle = 'Data';
+          if (this.is_admin) {
+            this.shadowRoot.getElementById('sidebar-menu').selected = 5;
+          } else {
+            this.shadowRoot.getElementById('sidebar-menu').selected = 3;
+          }
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 0;
       }
     }
   }
@@ -324,8 +343,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this._offline = state.app.offline;
     this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
     this._drawerOpened = state.app.drawerOpened;
-    console.log("state changed");
-    console.log(this._page);
   }
 }
 

@@ -30,8 +30,8 @@ exports.Response = global.Response;
 (function (process,Buffer){
 'use babel';
 /*
-Backend.AI Cloud Javascript API Library (v19.01a1)
-==================================================
+Backend.AI Node.JS / Javascript ES6 API Library (v19.03b9)
+==========================================================
 
 (C) Copyright 2016-2019 Lablup Inc.
 Licensed under MIT
@@ -136,7 +136,6 @@ class Client {
     let errorType = Client.ERR_REQUEST;
     let errorMsg;
     let resp, body;
-    console.log(rqst.method);
     try {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
@@ -343,8 +342,6 @@ class Client {
    * @param {string} body - an object that will be encoded as JSON in the request body
    */
   newSignedRequest(method, queryString, body) {
-    console.log(body);
-    console.log(body instanceof FormData);
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -382,9 +379,7 @@ class Client {
         hdrs.set('Content-Type', body.getHeaders()['content-type']);
       }
       if (body instanceof FormData) {
-        console.log(content_type);
       } else {
-        console.log(content_type);
         hdrs.set('Content-Type', content_type);
         hdrs.set('Content-Length', Buffer.byteLength(authBody));
       }
@@ -746,7 +741,6 @@ class ResourcePolicy {
         v = {'n': name};
       }
     } else {
-      console.log("not admin");
       return resolve(false);
     }
     return this.client.gql(q, v);
@@ -18467,13 +18461,13 @@ var X509Certificate = asn.define('X509Certificate', function () {
 module.exports = X509Certificate
 
 },{"asn1.js":4}],112:[function(require,module,exports){
-(function (Buffer){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r\+\/\=]+)[\n\r]+/m
-var startRegex = /^-----BEGIN ((?:.* KEY)|CERTIFICATE)-----/m
-var fullRegex = /^-----BEGIN ((?:.* KEY)|CERTIFICATE)-----([0-9A-z\n\r\+\/\=]+)-----END \1-----$/m
+    var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
+    var fullRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----([0-9A-z\n\r\+\/\=]+)-----END \1-----$/m
 var evp = require('evp_bytestokey')
 var ciphers = require('browserify-aes')
+    var Buffer = require('safe-buffer').Buffer
 module.exports = function (okey, password) {
   var key = okey.toString()
   var match = key.match(findProc)
@@ -18483,8 +18477,8 @@ module.exports = function (okey, password) {
     decrypted = new Buffer(match2[2].replace(/[\r\n]/g, ''), 'base64')
   } else {
     var suite = 'aes' + match[1]
-    var iv = new Buffer(match[2], 'hex')
-    var cipherText = new Buffer(match[3].replace(/[\r\n]/g, ''), 'base64')
+    var iv = Buffer.from(match[2], 'hex')
+    var cipherText = Buffer.from(match[3].replace(/[\r\n]/g, ''), 'base64')
     var cipherKey = evp(password, iv.slice(0, 8), parseInt(match[1], 10)).key
     var out = []
     var cipher = ciphers.createDecipheriv(suite, cipherKey, iv)
@@ -18499,8 +18493,7 @@ module.exports = function (okey, password) {
   }
 }
 
-}).call(this,require("buffer").Buffer)
-},{"browserify-aes":24,"buffer":51,"evp_bytestokey":87}],113:[function(require,module,exports){
+  }, {"browserify-aes": 24, "evp_bytestokey": 87, "safe-buffer": 148}], 113: [function (require, module, exports) {
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
