@@ -106,7 +106,6 @@ class Client {
     let errorType = Client.ERR_REQUEST;
     let errorMsg;
     let resp, body;
-    console.log(rqst.method);
     try {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
@@ -313,8 +312,6 @@ class Client {
    * @param {string} body - an object that will be encoded as JSON in the request body
    */
   newSignedRequest(method, queryString, body) {
-    console.log(body);
-    console.log(body instanceof FormData);
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -352,9 +349,7 @@ class Client {
         hdrs.set('Content-Type', body.getHeaders()['content-type']);
       }
       if (body instanceof FormData) {
-        console.log(content_type);
       } else {
-        console.log(content_type);
         hdrs.set('Content-Type', content_type);
         hdrs.set('Content-Length', Buffer.byteLength(authBody));
       }

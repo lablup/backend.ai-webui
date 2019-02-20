@@ -124,11 +124,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.api_endpoint = window.backendaiclient._config.endpoint;
   }
 
-  _routeChanged(changeRecord) {
-    if (changeRecord.path === "route" && changeRecord.value.path == '/') {
-    }
-  }
-
   updated(changedProps) {
     if (changedProps.has('_page')) {
       let view = this._page;

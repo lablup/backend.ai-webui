@@ -112,7 +112,6 @@ class BackendAISummary extends PolymerElement {
       default:
         status = 'RUNNING';
     }
-    ;
     let fields = ["sess_id"];
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.jobs = response;
@@ -151,7 +150,6 @@ class BackendAISummary extends PolymerElement {
       default:
         status = 'ALIVE';
     }
-    ;
     let fields = ['id',
       'addr',
       'status',
@@ -254,9 +252,6 @@ class BackendAISummary extends PolymerElement {
   }
 
   _menuChanged(active) {
-    console.log('changed summary visibility:');
-    console.log(active);
-
     if (!active) {
       return;
     }
