@@ -1,5 +1,4 @@
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
 module.exports = {
   mode: 'production',
   target: "node",
@@ -9,7 +8,5 @@ module.exports = {
   output: {
     libraryTarget: 'commonjs2',
     filename: "wsproxy.js",
-    path: path.resolve(__dirname, ".."),
-  },
-  externals: [nodeExternals()],
+  }
 };
