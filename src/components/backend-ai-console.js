@@ -7,6 +7,8 @@
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 // PWA components
+import {connect} from 'pwa-helpers/connect-mixin.js';
+import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installRouter} from 'pwa-helpers/router.js';
 import {store} from '../store.js';
@@ -45,7 +47,7 @@ import '../backend-ai-offline-indicator.js';
 import '../backend-ai-login.js';
 
 
-class BackendAiConsole extends LitElement {
+class BackendAiConsole extends connect(store)(LitElement) {
   static get is() {
     return 'backend-ai-console';
   }
@@ -108,7 +110,7 @@ class BackendAiConsole extends LitElement {
   }
 
   refreshPage() {
-    //this.$['sign-button'].icon = 'icons:exit-to-app';
+    this.shadowRoot.getElementById('sign-button').icon = 'icons:exit-to-app';
     this.is_connected = true;
     if (window.backendaiclient != undefined && window.backendaiclient != null && window.backendaiclient.is_admin != undefined && window.backendaiclient.is_admin == true) {
       this.is_admin = true;
@@ -142,39 +144,39 @@ class BackendAiConsole extends LitElement {
       switch (view) {
         case 'summary':
           this.menuTitle = 'Summary';
-          this.$['sidebar-menu'].selected = 0;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 0;
           break;
         case 'job':
           this.menuTitle = 'Sessions';
-          this.$['sidebar-menu'].selected = 1;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 1;
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
           if (this.is_admin) {
-            this.$['sidebar-menu'].selected = 2;
+            this.shadowRoot.getElementById('sidebar-menu').selected = 2;
           } else {
-            this.$['sidebar-menu'].selected = 0;
+            this.shadowRoot.getElementById('sidebar-menu').selected = 0;
           }
           break;
         case 'credential':
           this.menuTitle = 'Credentials & Policies';
           if (this.is_admin) {
-            this.$['sidebar-menu'].selected = 3;
+            this.shadowRoot.getElementById('sidebar-menu').selected = 3;
           } else {
-            this.$['sidebar-menu'].selected = 2;
+            this.shadowRoot.getElementById('sidebar-menu').selected = 2;
           }
           break;
         case 'data':
           this.menuTitle = 'Data';
           if (this.is_admin) {
-            this.$['sidebar-menu'].selected = 5;
+            this.shadowRoot.getElementById('sidebar-menu').selected = 5;
           } else {
-            this.$['sidebar-menu'].selected = 3;
+            this.shadowRoot.getElementById('sidebar-menu').selected = 3;
           }
           break;
         default:
           this.menuTitle = 'Summary';
-          this.$['sidebar-menu'].selected = 0;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 0;
       }
     }
   }

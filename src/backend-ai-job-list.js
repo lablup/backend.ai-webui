@@ -15,6 +15,7 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-progress/paper-progress';
 
 import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';

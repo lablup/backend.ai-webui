@@ -51,12 +51,6 @@ export const BackendAiStyles =
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --app-drawer-width: 190px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --layout-fixed-bottom: {
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        left: 0;
-      };
     }
 
     body {
@@ -926,7 +920,9 @@ export const BackendAiStyles =
       margin: 0 0 10px 0;
       display: block;
       border-bottom: 1px solid #DDD;
-      @apply --layout-justified;
+      -ms-flex-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
     }
 
     paper-material .flex {
@@ -1138,7 +1134,11 @@ export const BackendAiStyles =
 
     /* Layout */
     .flex-1-container {
-      @apply --layout-flex;
+      -ms-flex: 1 1 0.000000001px;
+      -webkit-flex: 1;
+      flex: 1;
+      -webkit-flex-basis: 0.000000001px;
+      flex-basis: 0.000000001px;
     }
 
     .centered {
