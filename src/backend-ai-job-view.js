@@ -168,6 +168,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
+  shouldUpdate() {
+    return this.active;
+  }
+
   static get observers() {
     return [
       '_routeChanged(route.*)',

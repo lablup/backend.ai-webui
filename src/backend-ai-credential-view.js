@@ -68,6 +68,10 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     return 'backend-ai-credential-view';
   }
 
+  shouldUpdate() {
+    return this.active;
+  }
+
   constructor() {
     super();
     setPassiveTouchGestures(true);

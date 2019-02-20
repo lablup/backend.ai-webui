@@ -64,6 +64,10 @@ class BackendAIJobList extends PolymerElement {
     });
   }
 
+  shouldUpdate() {
+    return this.active;
+  }
+
   static get observers() {
     return [
       '_menuChanged(active)'

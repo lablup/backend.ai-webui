@@ -105,6 +105,10 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
+  shouldUpdate() {
+    return this.active;
+  }
+
   _refreshFolderList() {
     let l = window.backendaiclient.vfolder.list();
     l.then((value) => {

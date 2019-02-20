@@ -35,6 +35,10 @@ class BackendAIAgentView extends PolymerElement {
     super.ready();
   }
 
+  shouldUpdate() {
+    return this.active;
+  }
+
   static get observers() {
     return [
       '_routeChanged(route.*)',

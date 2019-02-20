@@ -217,8 +217,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
               </div>
             </app-header>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
-              <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1">
-                <paper-item link role="menuitem">
+              <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
+                <paper-item link>
                   <iron-icon id="activities-icon" class="fg orange" icon="icons:view-quilt"></iron-icon>
                   Summary
                 </paper-item>

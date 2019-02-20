@@ -88,15 +88,15 @@ class BackendAISummary extends PolymerElement {
     });
   }
 
+  shouldUpdate() {
+    return this.active;
+  }
+
   _refreshHealthPanel() {
     this._refreshSessionInformation();
     if (this.is_admin) {
       this._refreshAgentInformation();
     }
-  }
-
-  shouldUpdate() {
-    return this.active;
   }
 
   _refreshSessionInformation() {
