@@ -139,7 +139,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
         this.route.path = '/' + view;
         this.$['app-page'].selected = view;
       }*/
-      console.log(view);
       switch (view) {
         case 'summary':
           this.menuTitle = 'Summary';
@@ -303,7 +302,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
           <div class="content">
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
             <section role="main" id="content" class="container layout vertical center">
-              <div>
+              <div id="app-page">
                 <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
                 <backend-ai-job-view class="page" name="job" ?active="${this._page === 'job'}"></backend-ai-job-view>
                 <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
