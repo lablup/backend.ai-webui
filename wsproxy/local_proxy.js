@@ -6,6 +6,6 @@ if(DEBUG) {
   web = require('./web'); //your express app
 } else {
   console.log("packed");
-  web = require('./dist/back'); //your express app
+  web = require('../wsproxy'); //your express app
 }
 web(port);
