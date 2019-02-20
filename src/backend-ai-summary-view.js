@@ -55,7 +55,7 @@ class BackendAISummary extends PolymerElement {
         type: Boolean,
         value: false
       },
-      visible: {
+      active: {
         type: Boolean,
         value: false
       }
@@ -78,7 +78,7 @@ class BackendAISummary extends PolymerElement {
       '_routeChanged(route.*)',
       '_viewChanged(routeData.view)',
       '_refreshHealthPanel(window.backendaiclient)',
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
@@ -259,8 +259,11 @@ class BackendAISummary extends PolymerElement {
     // load data for view
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
+  _menuChanged(active) {
+    console.log('changed summary visibility:');
+    console.log(active);
+
+    if (!active) {
       return;
     }
     if (window.backendaiclient == undefined || window.backendaiclient == null) {

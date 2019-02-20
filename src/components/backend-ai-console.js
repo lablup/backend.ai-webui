@@ -7,16 +7,11 @@
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 // PWA components
-import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installRouter} from 'pwa-helpers/router.js';
-import {store} from './store.js';
+import {store} from '../store.js';
 
-import {
-  navigate,
-  updateOffline,
-  updateDrawerState
-} from './backend-ai-app.js';
+import {navigate, updateOffline} from '../backend-ai-app.js';
 
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/app-layout/app-layout';
@@ -41,13 +36,13 @@ import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 
-import './backend.ai-client-es6.js';
+import '../backend.ai-client-es6.js';
 
 
-import {BackendAiStyles} from './backend-ai-console-styles.js';
-import {IronFlex, IronFlexAlignment, IronPositioning} from './layout/iron-flex-layout-classes';
-import './backend-ai-offline-indicator.js';
-import './backend-ai-login.js';
+import {BackendAiStyles} from '../backend-ai-console-styles.js';
+import {IronFlex, IronFlexAlignment, IronPositioning} from '../layout/iron-flex-layout-classes';
+import '../backend-ai-offline-indicator.js';
+import '../backend-ai-login.js';
 
 
 class BackendAiConsole extends LitElement {
@@ -121,7 +116,6 @@ class BackendAiConsole extends LitElement {
       this.is_admin = false;
     }
     this._refreshUserInfoPanel();
-
   }
 
   _refreshUserInfoPanel() {
@@ -134,50 +128,54 @@ class BackendAiConsole extends LitElement {
     }
   }
 
-  _viewChanged(view) {
-    // load data for view
-    if (['summary', 'job', 'agent', 'credential', 'data'].includes(view) != true) { // Fallback for Windows OS
-      view = this.route.path.split(/[\/]+/).pop();
-      this.routeData.view = view;
-      this.route.path = '/' + view;
-      this.$['app-page'].selected = view;
-    }
-    switch (view) {
-      case 'summary':
-        this.menuTitle = 'Summary';
-        this.$['sidebar-menu'].selected = 0;
-        break;
-      case 'job':
-        this.menuTitle = 'Sessions';
-        this.$['sidebar-menu'].selected = 1;
-        break;
-      case 'agent':
-        this.menuTitle = 'Computation Resources';
-        if (this.is_admin) {
-          this.$['sidebar-menu'].selected = 2;
-        } else {
+  updated(changedProps) {
+    if (changedProps.has('_page')) {
+      let view = this._page;
+      // load data for view
+      /*if (['summary', 'job', 'agent', 'credential', 'data'].includes(view) != true) { // Fallback for Windows OS
+        view = this.route.path.split(/[\/]+/).pop();
+        this.routeData.view = view;
+        this.route.path = '/' + view;
+        this.$['app-page'].selected = view;
+      }*/
+      console.log(view);
+      switch (view) {
+        case 'summary':
+          this.menuTitle = 'Summary';
           this.$['sidebar-menu'].selected = 0;
-        }
-        break;
-      case 'credential':
-        this.menuTitle = 'Credentials & Policies';
-        if (this.is_admin) {
-          this.$['sidebar-menu'].selected = 3;
-        } else {
-          this.$['sidebar-menu'].selected = 2;
-        }
-        break;
-      case 'data':
-        this.menuTitle = 'Data';
-        if (this.is_admin) {
-          this.$['sidebar-menu'].selected = 5;
-        } else {
-          this.$['sidebar-menu'].selected = 3;
-        }
-        break;
-      default:
-        this.menuTitle = 'Summary';
-        this.$['sidebar-menu'].selected = 0;
+          break;
+        case 'job':
+          this.menuTitle = 'Sessions';
+          this.$['sidebar-menu'].selected = 1;
+          break;
+        case 'agent':
+          this.menuTitle = 'Computation Resources';
+          if (this.is_admin) {
+            this.$['sidebar-menu'].selected = 2;
+          } else {
+            this.$['sidebar-menu'].selected = 0;
+          }
+          break;
+        case 'credential':
+          this.menuTitle = 'Credentials & Policies';
+          if (this.is_admin) {
+            this.$['sidebar-menu'].selected = 3;
+          } else {
+            this.$['sidebar-menu'].selected = 2;
+          }
+          break;
+        case 'data':
+          this.menuTitle = 'Data';
+          if (this.is_admin) {
+            this.$['sidebar-menu'].selected = 5;
+          } else {
+            this.$['sidebar-menu'].selected = 3;
+          }
+          break;
+        default:
+          this.menuTitle = 'Summary';
+          this.$['sidebar-menu'].selected = 0;
+      }
     }
   }
 
@@ -314,7 +312,7 @@ class BackendAiConsole extends LitElement {
           <div class="content">
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
             <section role="main" id="content" class="container layout vertical center">
-                <backend-ai-summary-view name="summary" ?active="${this._page === 'summary'}"</backend-ai-summary-view>
+                <backend-ai-summary-view name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
                 <backend-ai-job-view name="job" ?active="${this._page === 'job'}"></backend-ai-job-view>
                 <backend-ai-credential-view name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
                 <backend-ai-agent-view name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
@@ -339,6 +337,9 @@ class BackendAiConsole extends LitElement {
     this._offline = state.app.offline;
     this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
     this._drawerOpened = state.app.drawerOpened;
+    console.log("test");
+    console.log(this._page);
+    console.log(this.offline);
   }
 }
 

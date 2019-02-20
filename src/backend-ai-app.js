@@ -6,7 +6,7 @@ export const CLOSE_OFFLINE_INDICATOR = 'CLOSE_OFFLINE_INDICATOR';
 
 export const navigate = (path) => (dispatch) => {
   // Extract the page name from path.
-  const page = path === '/' ? 'view1' : path.slice(1);
+  const page = path === '/' ? 'summary' : path.slice(1);
 
   // Any other info you might want to extract from the path (like page type),
   // you can do here
@@ -17,6 +17,7 @@ export const navigate = (path) => (dispatch) => {
 };
 
 const loadPage = (page) => (dispatch) => {
+  console.log(page);
   switch(page) {
     case 'summary':
       import('./backend-ai-summary-view.js').then((module) => {
@@ -37,8 +38,6 @@ const loadPage = (page) => (dispatch) => {
       import('./backend-ai-agent-view.js');
       break;
     default:
-      page = 'view404';
-      import('../components/my-view404.js');
   }
 
   dispatch(updatePage(page));
@@ -51,7 +50,7 @@ const updatePage = (page) => {
   };
 };
 
-let snackbarTimer;
+let offlineTimer;
 
 export const showOffline = () => (dispatch) => {
   dispatch({
