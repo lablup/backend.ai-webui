@@ -17,15 +17,16 @@ test_web:
 proxy:
 	node ./wsproxy/local_proxy.js
 compile:
-	polymer build 
+	polymer build
+	cd wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
 dep: compile
-	mkdir -p build/electron-app/wsproxy
-	rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
-	#cp ./wsproxy/package.json build/electron-app/package.json
-	#cd build/electron-app; npm install --only=prod
+	mkdir -p build/electron-app
+	#rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
+	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/bundle build/electron-app/app
+	cp ./wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy.js
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
 win: dep
