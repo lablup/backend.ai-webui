@@ -1,6 +1,6 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/backend-ai-web-console.js",
+  "shell": "src/components/backend-ai-console.js",
   "fragments": [
   ],
   "sources": [

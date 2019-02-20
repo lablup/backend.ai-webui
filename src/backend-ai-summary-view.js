@@ -130,7 +130,6 @@ class BackendAISummary extends PolymerElement {
   }
 
   _refreshResourceInformation() {
-    console.log(window.backendaiclient.resource_policy);
     return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
       let rp = response.keypair_resource_policies;
       this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -196,7 +195,6 @@ class BackendAISummary extends PolymerElement {
         }
 
       });
-      console.log(this.resources.vgpu);
       this._sync_resource_values();
       if (this.active == true) {
         setTimeout(() => {
