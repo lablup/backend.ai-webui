@@ -53,7 +53,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         type: String,
         value: ''
       },
-      visible: {
+      active: {
         type: Boolean,
         value: false
       },
@@ -95,7 +95,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     return [
       '_routeChanged(route.*)',
       '_viewChanged(routeData.view)',
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
@@ -122,8 +122,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     // load data for view
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
+  _menuChanged(active) {
+    if (!active) {
       return;
     } else {
       if (window.backendaiclient == undefined || window.backendaiclient == null) {

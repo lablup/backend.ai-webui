@@ -34,7 +34,7 @@ class BackendAIAgentList extends PolymerElement {
         type: Object,
         value: {}
       },
-      visible: {
+      active: {
         type: Boolean,
         value: false
       }
@@ -53,12 +53,12 @@ class BackendAIAgentList extends PolymerElement {
 
   static get observers() {
     return [
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
+  _menuChanged(active) {
+    if (!active) {
       return;
     }
     // If disconnected
@@ -74,7 +74,7 @@ class BackendAIAgentList extends PolymerElement {
   }
 
   _loadAgentList(status = 'running') {
-    if (this.visible !== true) {
+    if (this.active !== true) {
       return;
     }
 
@@ -136,7 +136,7 @@ class BackendAIAgentList extends PolymerElement {
         });
       }
       this.agents = agents;
-      if (this.visible == true) {
+      if (this.active == true) {
         setTimeout(() => {
           this._loadAgentList(status)
         }, 5000);

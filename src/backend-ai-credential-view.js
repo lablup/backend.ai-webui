@@ -37,7 +37,7 @@ import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   static get properties() {
     return {
-      visible: {
+      active: {
         type: Boolean,
         value: false
       },
@@ -94,7 +94,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     return [
       '_routeChanged(route.*)',
       '_viewChanged(routeData.view)',
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
@@ -108,16 +108,16 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     // load data for view
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
-      this.$['active-credential-list'].visible = false;
-      this.$['inactive-credential-list'].visible = false;
-      this.$['resource-policy-list'].visible = false;
+  _menuChanged(active) {
+    if (!active) {
+      this.$['active-credential-list'].active = false;
+      this.$['inactive-credential-list'].active = false;
+      this.$['resource-policy-list'].active = false;
       return;
     } else {
-      this.$['active-credential-list'].visible = true;
-      this.$['inactive-credential-list'].visible = true;
-      this.$['resource-policy-list'].visible = true;
+      this.$['active-credential-list'].active = true;
+      this.$['inactive-credential-list'].active = true;
+      this.$['resource-policy-list'].active = true;
     }
   }
 

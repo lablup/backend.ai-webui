@@ -8,7 +8,6 @@ import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin.js';
-import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installRouter} from 'pwa-helpers/router.js';
 import {store} from '../store.js';
@@ -42,7 +41,7 @@ import '../backend.ai-client-es6.js';
 
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
-import {IronFlex, IronFlexAlignment, IronPositioning, IronFlexFactors} from '../layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 import '../backend-ai-offline-indicator.js';
 import '../backend-ai-login.js';
 
@@ -188,6 +187,13 @@ class BackendAiConsole extends connect(store)(LitElement) {
         app-drawer-layout:not([narrow]) [drawer-toggle] {
           display: none;
         }
+        .page {
+          display: none;
+        }
+
+        .page[active] {
+          display: block;
+        }
       `];
   }
 
@@ -297,11 +303,13 @@ class BackendAiConsole extends connect(store)(LitElement) {
           <div class="content">
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
             <section role="main" id="content" class="container layout vertical center">
-                <backend-ai-summary-view name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
-                <backend-ai-job-view name="job" ?active="${this._page === 'job'}"></backend-ai-job-view>
-                <backend-ai-credential-view name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
-                <backend-ai-agent-view name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
-                <backend-ai-data-view name="data" ?active="${this._page === 'data'}"></backend-ai-data-view>
+              <div>
+                <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
+                <backend-ai-job-view class="page" name="job" ?active="${this._page === 'job'}"></backend-ai-job-view>
+                <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
+                <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
+                <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"></backend-ai-data-view>
+              </div>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>

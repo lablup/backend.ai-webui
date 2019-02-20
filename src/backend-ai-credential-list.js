@@ -33,7 +33,7 @@ class BackendAICredentialList extends PolymerElement {
 
   static get properties() {
     return {
-      visible: {
+      active: {
         type: Boolean,
         value: false
       },
@@ -68,12 +68,12 @@ class BackendAICredentialList extends PolymerElement {
 
   static get observers() {
     return [
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
+  _menuChanged(active) {
+    if (!active) {
       return;
     }
     // If disconnected

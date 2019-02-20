@@ -117,7 +117,7 @@ class BackendAISummary extends PolymerElement {
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.jobs = response;
       this.sessions = response.compute_sessions;
-      if (this.visible == true) {
+      if (this.active == true) {
         setTimeout(() => {
           this._refreshSessionInformation()
         }, 15000);
@@ -200,7 +200,7 @@ class BackendAISummary extends PolymerElement {
       });
       console.log(this.resources.vgpu);
       this._sync_resource_values();
-      if (this.visible == true) {
+      if (this.active == true) {
         setTimeout(() => {
           this._refreshAgentInformation(status)
         }, 15000);

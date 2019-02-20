@@ -49,7 +49,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   static get properties() {
     return {
-      visible: {
+      active: {
         type: Boolean,
         value: false
       },
@@ -172,7 +172,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     return [
       '_routeChanged(route.*)',
       '_viewChanged(routeData.view)',
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
@@ -187,14 +187,14 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     // load data for view
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
-      this.$['running-jobs'].visible = false;
-      this.$['finished-jobs'].visible = false;
+  _menuChanged(active) {
+    if (!active) {
+      this.$['running-jobs'].active = false;
+      this.$['finished-jobs'].active = false;
       return;
     }
-    this.$['running-jobs'].visible = true;
-    this.$['finished-jobs'].visible = true;
+    this.$['running-jobs'].active = true;
+    this.$['finished-jobs'].active = true;
     // If disconnected
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {

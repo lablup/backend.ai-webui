@@ -580,7 +580,7 @@ export const BackendAiStyles =
 
     @media screen and (min-width: 450px) {
       #content > paper-material,
-      #content > iron-pages,
+      #content > div,
       #content > iron-lazy-pages {
         width: 95%;
       }

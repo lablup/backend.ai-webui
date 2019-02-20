@@ -31,7 +31,7 @@ class BackendAIJobList extends PolymerElement {
 
   static get properties() {
     return {
-      visible: {
+      active: {
         type: Boolean,
         value: false
       },
@@ -66,12 +66,12 @@ class BackendAIJobList extends PolymerElement {
 
   static get observers() {
     return [
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
+  _menuChanged(active) {
+    if (!active) {
       return;
     }
     // If disconnected
@@ -89,7 +89,7 @@ class BackendAIJobList extends PolymerElement {
   }
 
   _refreshJobData() {
-    if (this.visible !== true) {
+    if (this.active !== true) {
       return;
     }
     let status = 'RUNNING';
@@ -125,7 +125,7 @@ class BackendAIJobList extends PolymerElement {
       this.compute_sessions = sessions;
       //this.jobs = response;
       let refreshTime;
-      if (this.visible === true) {
+      if (this.active === true) {
         if (this.condition === 'running') {
           refreshTime = 5000;
           setTimeout(() => {

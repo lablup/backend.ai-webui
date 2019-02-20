@@ -19,7 +19,7 @@ import './backend-ai-agent-list.js';
 class BackendAIAgentView extends PolymerElement {
   static get properties() {
     return {
-      visible: {
+      active: {
         type: Boolean,
         value: false
       }
@@ -39,7 +39,7 @@ class BackendAIAgentView extends PolymerElement {
     return [
       '_routeChanged(route.*)',
       '_viewChanged(routeData.view)',
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
@@ -53,14 +53,14 @@ class BackendAIAgentView extends PolymerElement {
     // load data for view
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
-      this.$['running-agents'].visible = false;
-      this.$['finished-agents'].visible = false;
+  _menuChanged(active) {
+    if (!active) {
+      this.$['running-agents'].active = false;
+      this.$['finished-agents'].active = false;
       return;
     }
-    this.$['running-agents'].visible = true;
-    this.$['finished-agents'].visible = true;
+    this.$['running-agents'].active = true;
+    this.$['finished-agents'].active = true;
   }
 
   static get template() {
