@@ -128,12 +128,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view = this._page;
       // load data for view
-      /*if (['summary', 'job', 'agent', 'credential', 'data'].includes(view) != true) { // Fallback for Windows OS
-        view = this.route.path.split(/[\/]+/).pop();
-        this.routeData.view = view;
-        this.route.path = '/' + view;
-        this.$['app-page'].selected = view;
-      }*/
+      if (['summary', 'job', 'agent', 'credential', 'data'].includes(view) != true) { // Fallback for Windows OS
+        view = view.split(/[\/]+/).pop();
+        this._page = view;
+      }
       console.log(view);
       switch (view) {
         case 'summary':

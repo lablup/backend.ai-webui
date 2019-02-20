@@ -17,8 +17,13 @@ export const navigate = (path) => (dispatch) => {
 };
 
 const loadPage = (page) => (dispatch) => {
+  let view = page;
+  // load data for view
+  if (['summary', 'job', 'agent', 'credential', 'data'].includes(view) != true) { // Fallback for Windows OS
+    page = view.split(/[\/]+/).pop();
+  }
   console.log("LOAD PAGE :", page);
-  switch(page) {
+  switch (page) {
     case 'summary':
       import('./backend-ai-summary-view.js').then((module) => {
         // Put code in here that you want to run every time when
@@ -58,7 +63,7 @@ export const showOffline = () => (dispatch) => {
   });
   window.clearTimeout(offlineTimer);
   offlineTimer = window.setTimeout(() =>
-    dispatch({ type: CLOSE_OFFLINE_INDICATOR }), 3000);
+    dispatch({type: CLOSE_OFFLINE_INDICATOR}), 3000);
 };
 
 export const updateOffline = (offline) => (dispatch, getState) => {

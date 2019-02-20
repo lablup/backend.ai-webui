@@ -1,5 +1,5 @@
 /**
- * Login implementation of Backend.AI-admin-console
+ * Login implementation of Backend.AI-console
  */
 
 import {html, PolymerElement} from '@polymer/polymer';
