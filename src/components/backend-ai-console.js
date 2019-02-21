@@ -38,7 +38,7 @@ import '@polymer/app-route/app-route.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 
 import '../backend.ai-client-es6.js';
-
+import '../backend-ai-summary-view.js';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
@@ -89,7 +89,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
-      document.querySelector('#login-panel').login();
+      this.shadowRoot.querySelector('#login-panel').login();
     }
   }
 
@@ -333,6 +333,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
+      <backend-ai-login id="login-panel"></backend-ai-login>
     `;
   }
 
