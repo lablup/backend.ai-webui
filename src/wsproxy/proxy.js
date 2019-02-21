@@ -8,7 +8,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     let d = new Date();
     console.log(d)
     let signKey = this.getSignKey(this._config.secretKey, d);
-    let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody);
+    let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody, "application/json");
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = {
       "Content-Type": "application/json",
