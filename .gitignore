@@ -73,3 +73,6 @@ app
 # IDEA
 .idea
 .vscode
+
+# webpack
+dist
