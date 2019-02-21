@@ -3,9 +3,9 @@ const port = process.env.PORT|| 5050;
 let web = null;
 if(DEBUG) {
   console.log("unpacked");
-  web = require('./web'); //your express app
+  web = require('./web');
 } else {
   console.log("packed");
-  web = require('./dist/wsproxy'); //your express app
+  web = require('./dist/wsproxy');
 }
 web(port);

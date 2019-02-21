@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const {app, Menu, shell, BrowserWindow} = require('electron');
-const web = require('./wsproxy/web.js');
+const web = require('./src/wsproxy/web.js');
 const url = require('url');
 const path = require('path');
 

@@ -68,6 +68,7 @@
     "eslint": "^5.14.1",
     "eslint-config-google": "^0.12.0",
     "webpack": "^4.29.3",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.2.3",
+    "websocket": "^1.0.28"
   }
 }
