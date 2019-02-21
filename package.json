@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-console",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "repository": "https://github.com/lablup/backend.ai-console.git",
   "author": "Jeongkyu Shin",
   "license": "LGPL-3.0-or-later",
@@ -10,8 +10,8 @@
     "build": "make all",
     "lint": "eslint *.js",
     "test": "node ./src/wsproxy/local_proxy.js",
-    "test-wsproxy": "node ./src/wsproxy/local_proxy.js",
-    "test-polymer": "node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
+    "wsproxy": "node ./src/wsproxy/local_proxy.js",
+    "polymer": "node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
   },
   "dependencies": {
     "@polymer/app-layout": "^3.0.2",
