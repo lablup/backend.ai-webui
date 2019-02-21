@@ -63,7 +63,7 @@
   "devDependencies": {
     "electron": "^4.0.5",
     "electron-packager": "^12.2.0",
-    "eslint": "^5.14.0",
+    "eslint": "^5.14.1",
     "eslint-config-google": "^0.12.0"
   }
 }
