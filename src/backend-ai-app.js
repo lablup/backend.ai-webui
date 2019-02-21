@@ -6,8 +6,13 @@ export const CLOSE_OFFLINE_INDICATOR = 'CLOSE_OFFLINE_INDICATOR';
 
 export const navigate = (path) => (dispatch) => {
   // Extract the page name from path.
+  if (['/summary', '/job', '/agent', '/credential', '/data'].includes(path) != true) { // Fallback for Electron Shell/Windows OS
+    path = path.split(/[\/]+/).pop();
+  }
+  if (path === 'index.html') {
+    path = '/';
+  }
   const page = path === '/' ? 'summary' : path.slice(1);
-
   // Any other info you might want to extract from the path (like page type),
   // you can do here
   dispatch(loadPage(page));
@@ -18,11 +23,6 @@ export const navigate = (path) => (dispatch) => {
 
 const loadPage = (page) => (dispatch) => {
   let view = page;
-  // load data for view
-  if (['summary', 'job', 'agent', 'credential', 'data'].includes(view) != true) { // Fallback for Windows OS
-    page = view.split(/[\/]+/).pop();
-  }
-  console.log("LOAD PAGE :", page);
   switch (page) {
     case 'summary':
       import('./backend-ai-summary-view.js').then((module) => {
@@ -43,6 +43,9 @@ const loadPage = (page) => (dispatch) => {
       import('./backend-ai-agent-view.js');
       break;
     default:
+      import('./backend-ai-summary-view.js').then((module) => {
+      });
+      break;
   }
 
   dispatch(updatePage(page));

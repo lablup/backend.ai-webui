@@ -3,7 +3,6 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-//import {PolymerElement, html} from '@polymer/polymer';
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 // PWA components
@@ -38,12 +37,13 @@ import '@polymer/app-route/app-route.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 
 import '../backend.ai-client-es6.js';
-import '../backend-ai-summary-view.js';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 import '../backend-ai-offline-indicator.js';
 import '../backend-ai-login.js';
+
+//import '../backend-ai-summary-view.js';
 
 
 class BackendAiConsole extends connect(store)(LitElement) {
@@ -83,6 +83,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.api_endpoint = 'CLICK TO CONNECT';
     this.is_connected = false;
     this.is_admin = false;
+    this._page = '';
   }
 
   firstUpdated() {
@@ -117,6 +118,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       this.is_admin = false;
     }
     this._refreshUserInfoPanel();
+    //this._loadPageElement();
   }
 
   _refreshUserInfoPanel() {
@@ -124,6 +126,13 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.api_endpoint = window.backendaiclient._config.endpoint;
   }
 
+  _loadPageElement() {
+    console.log("load-=--", this._page);
+    if (this._page === 'index.html' || this._page === '') {
+      this._page = 'summary';
+      navigate(decodeURIComponent('/'));
+    }
+  }
   updated(changedProps) {
     if (changedProps.has('_page')) {
       let view = this._page;
