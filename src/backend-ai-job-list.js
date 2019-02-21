@@ -116,6 +116,7 @@ class BackendAIJobList extends PolymerElement {
         Object.keys(sessions).map((objectKey, index) => {
           var session = sessions[objectKey];
           var occupied_slots = JSON.parse(session.occupied_slots);
+          const kernelImage = sessions[objectKey].lang.split('/')[2];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           if ('cuda.device' in occupied_slots) {
@@ -124,6 +125,7 @@ class BackendAIJobList extends PolymerElement {
           if ('cuda.shares' in occupied_slots) {
             sessions[objectKey].vgpu_slot = parseFloat(occupied_slots['cuda.shares']);
           }
+          sessions[objectKey].kernel_image = kernelImage;
         });
       }
       this.compute_sessions = sessions;
@@ -452,6 +454,7 @@ class BackendAIJobList extends PolymerElement {
           <template class="header">Job ID</template>
           <template>
             <div class="indicator">[[item.sess_id]]</div>
+            <div class="indicator">([[item.kernel_image]])</div>
           </template>
         </vaadin-grid-column>
 
