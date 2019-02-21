@@ -407,7 +407,7 @@ class Client {
     return requestInfo;
   }
 
-  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type) {
+  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
     let bodyHash = crypto.createHash(this._config.hashType)
       .update(bodyValue).digest('hex');
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
