@@ -221,6 +221,16 @@ class Client {
   }
 
   /**
+   * Obtain the session information by given sessionId.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  getLogs(sessionId) {
+    let rqst = this.newSignedRequest('GET', `/kernel/${sessionId}/logs`, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Terminate and destroy the kernel session.
    *
    * @param {string} sessionId - the sessionId given when created

@@ -197,6 +197,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       this.$['finished-jobs'].active = false;
       return;
     }
+    this._refreshResourcePolicy();
     this.$['running-jobs'].active = true;
     this.$['finished-jobs'].active = true;
     // If disconnected
@@ -207,6 +208,23 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     } else { // already connected
       this._refreshResourceValues();
     }
+  }
+
+  _refreshResourcePolicy() {
+    window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy']).then((response) => {
+      let policyName = response.keypair.resource_policy;
+      return window.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
+        'total_resource_slots',
+        'max_concurrent_sessions',
+        'max_containers_per_session',
+      ]);
+    }).then((response) => {
+      let resource_policy = response.keypair_resource_policy;
+      if (resource_policy.default_for_unspecified === 'UNLIMITED') {
+
+      }
+      console.log(response.keypair_resource_policy);
+    });
   }
 
   _refreshResourceValues() {
@@ -397,6 +415,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let cpu_metric = item;
           cpu_metric.min = parseInt(cpu_metric.min);
           cpu_metric.max = parseInt(cpu_metric.max);
+          if (cpu_metric.min > cpu_metric.max) {
+            // TODO: dynamic maximum per user policy
+          }
           this.cpu_metric = cpu_metric;
         }
 
@@ -404,12 +425,20 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
           gpu_metric.max = parseInt(gpu_metric.max);
+          if (gpu_metric.min > gpu_metric.max) {
+            // TODO: dynamic maximum per user policy
+
+          }
           this.gpu_metric = gpu_metric;
         }
         if (item.key === 'cuda.shares') {
           let vgpu_metric = item;
           vgpu_metric.min = parseInt(vgpu_metric.min);
           vgpu_metric.max = parseInt(vgpu_metric.max);
+          if (vgpu_metric.min > vgpu_metric.max) {
+            // TODO: dynamic maximum per user policy
+
+          }
           this.vgpu_metric = vgpu_metric;
           if (vgpu_metric.max > 0) {
             this.gpu_metric = vgpu_metric;
@@ -419,12 +448,20 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let tpu_metric = item;
           tpu_metric.min = parseInt(tpu_metric.min);
           tpu_metric.max = parseInt(tpu_metric.max);
+          if (tpu_metric.min > tpu_metric.max) {
+            // TODO: dynamic maximum per user policy
+
+          }
           this.tpu_metric = tpu_metric;
         }
         if (item.key === 'mem') {
           let mem_metric = item;
           mem_metric.min = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
           mem_metric.max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
+          if (mem_metric.min > mem_metric.max) {
+            // TODO: dynamic maximum per user policy
+
+          }
           this.mem_metric = mem_metric;
         }
       });
