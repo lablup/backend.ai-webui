@@ -10,14 +10,21 @@
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500" rel="stylesheet">
   <base href="">
-  <script src="./node_modules/web-animations-js/web-animations-next-lite.min.js"></script>
-  <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js" async></script>
   <script src="manifest/app.js" async></script>
-  <script src="./src/components/backend-ai-console.js" type="module" async></script>
+  <title>Backend.AI Console</title>
   <script>
+    // Load and register pre-caching Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('service-worker.js', {
+          scope: '/',
+        });
+      });
+    }
     window.process = {env: {NODE_ENV: 'production'}};
   </script>
-  <title>Backend.AI Console</title>
+
+
   <style>
     .loading-message {
       position: absolute;
@@ -143,9 +150,12 @@
     <div class="sk-cube4 sk-cube"></div>
     <div class="sk-cube3 sk-cube"></div>
   </div>
-  <noscript>
-    <p>Could not render Backend.AI modules. Check that JavaScript is enabled.</p>
-  </noscript>
 </backend-ai-console>
+  <noscript>
+    <p>Could not render Backend.AI console. Check that JavaScript is enabled.</p>
+  </noscript>
+<script src="./node_modules/web-animations-js/web-animations-next-lite.min.js"></script>
+<script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+<script src="./src/components/backend-ai-console.js" type="module"></script>
 </body>
 </html>
