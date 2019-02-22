@@ -6,15 +6,34 @@ const Client = require("./lib/WstClient"),
       Proxy = require("./proxy");
 const proxyHost = "52.78.225.155"
 const proxyProtocol = "http"
-const portRange = [10000, 10100];
 
 function express_app(port) {
   let aiclients = {};
   let proxies = {};
-  let {getFreePorts} = require('node-port-check');
+  let {isFreePort} = require('node-port-check');
   let ports = [];
-  for (let i=portRange[0]; i<=portRange[1]; i++) {
-    ports.push(i)
+  
+  function refreshPorts() {
+    console.log("PortRefresh");
+    for (let i=0; i<100; i++) {
+      ports.push(Math.floor(Math.random()*20000) + 10000)
+    }
+  }
+
+  function getPort() {
+    return new Promise(function(resolve, reject) {
+      if(ports.length == 0) {
+        refreshPorts();
+      }
+      var port = ports.shift();
+      isFreePort(port).then((v) => {
+        if(v[2] == true) {
+          resolve(v[0]);
+        } else {
+          getPort().then((v) => {resolve(v)});
+        }
+      });
+    });
   }
 
   app.use(express.json());
@@ -64,13 +83,13 @@ function express_app(port) {
     if(!(kernelId in proxies)) {
       let client = aiclients[access_key];
       let proxy = new Proxy(client._config);
-      getFreePorts(1, 'localhost', ports).then((freePortsList) => {
-        let port = freePortsList[0];
+      getPort().then((port) => {
         let proxy_url = proxyHost + ":" + port;
         proxy.start_proxy(kernelId, app, port, proxy_url);
         proxies[kernelId] = proxy;
         res.send({"code": 200, "proxy": proxy.base_url});
       });
+
     } else {
       let proxy = proxies[kernelId];
       res.send({"code": 200, "proxy": proxy.base_url});
