@@ -296,16 +296,18 @@ class BackendAIJobList extends PolymerElement {
   }
 
   _terminateApp(kernelId) {
+    let accessKey = window.backendaiclient._config.accessKey;
     let rqst = {
       method: 'GET',
-      uri: window.backendaiclient.proxyURL + 'proxy/' + kernelId
+      uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId
     };
     return this.sendRequest(rqst)
       .then((response) => {
+        let accessKey = window.backendaiclient._config.accessKey;
         if (response.code !== 404) {
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + kernelId + '/delete'
+            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId + '/delete'
           };
           return this.sendRequest(rqst);
         }
@@ -327,17 +329,19 @@ class BackendAIJobList extends PolymerElement {
       this._open_wsproxy()
         .then((response) => {
           this.$.indicator.set(40, 'Preparing connection...');
+          let accessKey = window.backendaiclient._config.accessKey;
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + kernelId
+            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId 
           };
           return this.sendRequest(rqst)
         })
         .then((response) => {
           this.$.indicator.set(80, 'Adding kernel to socket queue...');
+          let accessKey = window.backendaiclient._config.accessKey;
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + kernelId + '/add'
+            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId + "/add"
           };
           return this.sendRequest(rqst);
         })
@@ -361,6 +365,7 @@ class BackendAIJobList extends PolymerElement {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
+    let accessKey = window.backendaiclient._config.accessKey;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
       this._open_wsproxy()
@@ -368,7 +373,7 @@ class BackendAIJobList extends PolymerElement {
           this.$.indicator.set(40, 'Preparing connection...');
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + kernelId
+            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId
           };
           return this.sendRequest(rqst)
         })
@@ -376,7 +381,7 @@ class BackendAIJobList extends PolymerElement {
           this.$.indicator.set(80, 'Adding kernel to socket queue...');
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + kernelId + '/add'
+            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId + '/add'
           };
           return this.sendRequest(rqst);
         })

@@ -20,9 +20,10 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     return hdrs;
   }
 
-  start_proxy(kernelId, app, port) {
+  start_proxy(kernelId, app, port, url) {
+	  this.base_url = url;
     this.port = port;
-    this.host = "localhost:" + port;
+    this.host = "0.0.0.0:" + port;
     let queryString = '/stream/kernel/' + kernelId + "/httpproxy?app=" + app;
     let uri = this._config.endpoint + queryString;
     uri = uri.replace(/^http/, "ws")
