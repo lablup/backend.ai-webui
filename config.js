@@ -1,1 +1,1 @@
-window.proxyURL = 'http://kcd2019.backend.ai:5050/';
+window.proxyURL = 'https://kcd2019.backend.ai/proxy/';

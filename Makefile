@@ -27,7 +27,7 @@ dep: compile
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/bundle build/electron-app/app
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy.js
-deploy:
+prod:
 	cd deploy; rm -rf ./*
 	cp -Rp build/bundle/* deploy
 mac: dep
