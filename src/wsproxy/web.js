@@ -4,12 +4,19 @@ const app = express()
 const Client = require("./lib/WstClient"),
       ai = require('../backend.ai-client-node'),
       Proxy = require("./proxy");
+const proxyHost = "52.78.225.155"
+const proxyProtocol = "http"
+const portRange = [10000, 10100];
 
 function express_app(port) {
   let config;
   let aiclient;
   let proxies = {};
   let {getFreePorts} = require('node-port-check');
+  let ports = [];
+  for (let i=portRange[0]; i<=portRange[1]; i++) {
+    port.push(i)
+  }
 
   app.use(express.json());
   app.use(cors());
@@ -58,10 +65,12 @@ function express_app(port) {
     let app = req.query.app || "jupyter"
     if(!(kernelId in proxies)) {
       let proxy = new Proxy(aiclient._config);
-      getFreePorts(1, 'localhost', [ 10001, 10002, 10003, 10004]).then((freePortsList) => {
-          proxy.start_proxy(kernelId, app, freePortsList[0]);
-          proxies[kernelId] = proxy;
-          res.send({"code": 200, "proxy": proxy.host});
+      getFreePorts(1, 'localhost', ports).then((freePortsList) => {
+        let port = freePortsList[0];
+        let proxy_url = proxyProtocol + "://" + proxyHost + ":" + port;
+        proxy.start_proxy(kernelId, app, port);
+        proxies[kernelId] = proxy;
+        res.send({"code": 200, "proxy": proxy_url});
       });
     } else {
       let proxy = proxies[kernelId];
