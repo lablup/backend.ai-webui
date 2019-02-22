@@ -62,7 +62,7 @@ class BackendAiLogin extends PolymerElement {
   ready() {
     super.ready();
     this.$['login-button'].addEventListener('tap', this._login.bind(this));
-    import( '../../config.js').then((config) => {
+    import( '../config.js').then((config) => {
       if (typeof config.apiEndpoint === "undefined" || config.apiEndpoint === '') {
       } else {
         this.api_endpoint = config.apiEndpoint;
