@@ -84,7 +84,6 @@ function express_app(port) {
       res.send({"code": 401})
       return;
     }
-    let kernelId = req.params["kernelId"];
     if(kernelId in proxies) {
       proxies[kernelId].stop_proxy();
       res.send({"code": 200});
