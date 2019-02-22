@@ -9,7 +9,7 @@ export const navigate = (path) => (dispatch) => {
   if (['/summary', '/job', '/agent', '/credential', '/data'].includes(path) != true) { // Fallback for Electron Shell/Windows OS
     path = path.split(/[\/]+/).pop();
   }
-  if (path === 'index.html') {
+  if (path === 'index.html' || path === '') {
     path = '/';
   }
   const page = path === '/' ? 'summary' : path.slice(1);
