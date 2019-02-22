@@ -15,6 +15,8 @@ import '@polymer/paper-toast/paper-toast';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
+import '@polymer/paper-input/paper-input';
+
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
 
@@ -39,6 +41,10 @@ class BackendAiLogin extends PolymerElement {
       },
       api_endpoint: {
         type: String
+      },
+      proxyURL: {
+        type: String,
+        value: ''
       }
     };
   }
@@ -55,6 +61,19 @@ class BackendAiLogin extends PolymerElement {
   ready() {
     super.ready();
     this.$['login-button'].addEventListener('tap', this._login.bind(this));
+    import( '../../config.js').then((module) => { // from config.js
+      console.log(module.default);
+      if (typeof module.default.proxyURL === "undefined" || module.default.proxyURL === '') {
+        this.proxyURL = 'http://127.0.0.1:5050/';
+      } else {
+        this.proxyURL = module.default.proxyURL;
+      }
+      if (typeof module.default.apiEndpoint === "undefined" || module.default.apiEndpoint === '') {
+      } else {
+        this.api_endpoint = module.default.apiEndpoint;
+        this.$['id_api_endpoint'].disabled = true;
+      }
+    });
   }
 
   open() {
@@ -118,14 +137,7 @@ class BackendAiLogin extends PolymerElement {
       window.backendaiclient.email = this.email;
       window.backendaiclient.is_admin = is_admin;
       window.backendaiclient.resource_policy = resource_policy;
-      return import( '../../config.js');
-    }).then((module) => {
-      console.log(module.default);
-      if (typeof module.default.proxyURL === "undefined" || module.default.proxyURL === '') { // from config
-        window.backendaiclient.proxyURL = 'http://127.0.0.1:5050/';
-      } else {
-        window.backendaiclient.proxyURL = module.default.proxyURL;
-      }
+      window.backendaiclient.proxyURL = this.proxyURL;
       var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
@@ -155,6 +167,10 @@ class BackendAiLogin extends PolymerElement {
 
         app-drawer-layout:not([narrow]) [drawer-toggle] {
           display: none;
+        }
+
+        #login-panel {
+          width: 400px;
         }
 
         fieldset input {
@@ -188,12 +204,12 @@ class BackendAiLogin extends PolymerElement {
           <h3>Console login</h3>
           <form id="login-form" onSubmit="this._login()">
             <fieldset>
-              <input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
-                     placeholder="API Key" value="{{api_key}}"/>
-              <input type="password" name="secret_key" id="id_secret_key"
-                     placeholder="Secret Key" value="{{secret_key}}"/>
-              <input type="text" name="api_endpoint" id="id_api_endpoint"
-                     placeholder="API Endpoint" value="{{api_endpoint}}"/>
+              <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
+                           label="API Key" value="{{api_key}}"></paper-input>
+              <paper-input type="password" name="secret_key" id="id_secret_key"
+                           label="Secret Key" value="{{secret_key}}"></paper-input>
+              <paper-input type="text" name="api_endpoint" id="id_api_endpoint"
+                           label="API Endpoint" value="{{api_endpoint}}"></paper-input>
               <br/><br/>
               <paper-button dialog-confirm class="blue" type="submit" id="login-button">
                 <iron-icon icon="check"></iron-icon>
