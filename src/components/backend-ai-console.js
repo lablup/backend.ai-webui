@@ -221,7 +221,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                               sizing="contain"></iron-image>
                 </div>
                 <div class="vertical start-justified layout">
-                  <span class="site-name"><span class="bold">backend</span>.AI</span>
+                  <span class="site-name"><span class="bold">Backend</span>.AI</span>
                   <span class="site-name" style="font-size:13px;">console</span>
                 </div>
                 <span class="flex"></span>
