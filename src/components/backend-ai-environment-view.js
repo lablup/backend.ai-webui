@@ -1,6 +1,8 @@
 /**
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+
+
  */
 
 import {css, html, LitElement} from "lit-element";
@@ -8,9 +10,6 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
-import {installOfflineWatcher, installRouter} from "pwa-helpers";
-import {store} from "../store";
-import {navigate, updateOffline} from "../backend-ai-app";
 
 
 class BackendAiEnvironmentView extends LitElement {
@@ -35,9 +34,20 @@ class BackendAiEnvironmentView extends LitElement {
     return html``;
   }
 
+  static get properties() {
+    return {
+      active: {
+        type: Boolean
+      }
+    }
+  }
   constructor() {
     super();
     setPassiveTouchGestures(true);
+  }
+
+  shouldUpdate() {
+    return this.active;
   }
 
   firstUpdated() {

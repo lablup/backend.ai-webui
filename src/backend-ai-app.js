@@ -6,7 +6,7 @@ export const CLOSE_OFFLINE_INDICATOR = 'CLOSE_OFFLINE_INDICATOR';
 
 export const navigate = (path) => (dispatch) => {
   // Extract the page name from path.
-  if (['/summary', '/job', '/agent', '/credential', '/data'].includes(path) != true) { // Fallback for Electron Shell/Windows OS
+  if (['/summary', '/job', '/agent', '/credential', '/data', '/environment'].includes(path) != true) { // Fallback for Electron Shell/Windows OS
     path = path.split(/[\/]+/).pop();
   }
   if (path === 'index.html' || path === '') {
@@ -33,14 +33,17 @@ const loadPage = (page) => (dispatch) => {
     case 'job':
       import('./backend-ai-job-view.js');
       break;
-    case 'credential':
-      import('./backend-ai-credential-view.js');
-      break;
     case 'data':
       import('./backend-ai-data-view.js');
       break;
     case 'agent':
       import('./backend-ai-agent-view.js');
+      break;
+    case 'credential':
+      import('./backend-ai-credential-view.js');
+      break;
+    case 'environment':
+      import('./components/backend-ai-environment-view.js');
       break;
     default:
       import('./backend-ai-summary-view.js').then((module) => {

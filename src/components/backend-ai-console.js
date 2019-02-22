@@ -155,11 +155,15 @@ class BackendAiConsole extends connect(store)(LitElement) {
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 5;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
           break;
         case 'credential':
           this.menuTitle = 'Credentials & Policies';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 7;
+          break;
+        case 'environment':
+          this.menuTitle = 'Environments';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 8;
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
@@ -253,6 +257,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 </paper-item>
               ${this.is_admin ?
       html`
+              <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
+
               <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
@@ -272,9 +278,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       html``}
               ${this.is_admin ?
       html`
-                <a ?selected="${this._page === 'environment'}" tabindex="-1" role="menuitem">
-                  <paper-item link disabled>
-                    <iron-icon icon="icons:extension"></iron-icon>
+                <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
+                  <paper-item link>
+                    <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
                     Environments
                   </paper-item>
                 </a>

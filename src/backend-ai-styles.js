@@ -75,11 +75,6 @@ const template = html`
                 background-color: var(--general-background-color, #fafafa);
             }
 
-            #lablup-loading-spinner:unresolved {
-                display: block;
-                visibility: visible;
-            }
-
             neon-animated-pages .iron-selected {
                 position: static;
             }
