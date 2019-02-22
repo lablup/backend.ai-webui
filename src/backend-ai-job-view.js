@@ -153,10 +153,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
-  updateLanguage() {
-    this._updateVersions(this.$['environment'].selectedItemLabel);
-  }
-
   _initAliases() {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
@@ -165,7 +161,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   connectedCallback() {
     super.connectedCallback();
-    afterNextRender(this, function () {
+    afterNextRender(this, function() {
     });
   }
 
@@ -320,25 +316,32 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   _guessHumanizedNames(kernelName) {
     const candidate = {
-      'python-tensorflow': 'TensorFlow',
-      'python-pytorch': 'PyTorch',
-      'python': 'Python',
-      'r': 'R',
-      'julia': 'Julia',
       'cpp': 'C++',
-      'rust': 'Rust',
+      'gcc': 'C',
       'go': 'Go',
+      'haskell': 'Haskell',
       'java': 'Java',
-      'javascript': 'JavaScript',
-      'nodejs': 'Node.js',
+      'julia': 'Julia',
+      'lua': 'Lua',
       'ngc-digits': 'DIGITS (NGC)',
+      'ngc-pytorch': 'PyTorch (NGC)',
       'ngc-tensorflow': 'TensorFlow (NGC)',
-      'ngc-pytorch': 'PyTorch (NGC)'
+      'nodejs': 'Node.js',
+      'octave': 'Octave',
+      'php': 'PHP',
+      'python': 'Python',
+      'python-cntk': 'CNTK',
+      'python-pytorch': 'PyTorch',
+      'python-tensorflow': 'TensorFlow',
+      'r-base': 'R',
+      'rust': 'Rust',
+      'scala': 'Scala',
+      'scheme': 'Scheme',
     };
-    let humanizedName = 'Unknown';
-    let matchedString = '';
+    let humanizedName = null;
+    let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
     Object.keys(candidate).forEach((item, index) => {
-      if (kernelName.includes(item) && item.length > matchedString.length) {
+      if (kernelName.endsWith(item) && item.length < matchedString.length) {
         humanizedName = candidate[item];
         matchedString = item;
       }
@@ -347,20 +350,23 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _updateEnvironment() {
-    //this.languages = Object.keys(this.supports);
-    //this.languages.sort();
-    let lang = Object.keys(this.supports);
-    if (lang === undefined) return;
-    lang.sort();
+    // this.languages = Object.keys(this.supports);
+    // this.languages.sort();
+    const langs = Object.keys(this.supports);
+    if (langs === undefined) return;
+    langs.sort();
     this.languages = [];
-    lang.forEach((item, index) => {
+    langs.forEach((item, index) => {
       if (!(Object.keys(this.aliases).includes(item))) {
-        this.aliases[item] = this._guessHumanizedNames(item);
+        const humanizedName = this._guessHumanizedNames(item);
+        if (humanizedName !== null) {
+          this.aliases[item] = humanizedName;
+        }
       }
-      this.languages.push({
-        name: item,
-        alias: this.aliases[item]
-      });
+      const alias = this.aliases[item];
+      if (alias !== undefined) {
+        this.languages.push({name: item, alias: alias});
+      }
     });
     this._initAliases();
   }
@@ -370,7 +376,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       this.versions = this.supports[this.aliases[lang]];
       this.versions = this.versions.sort();
     }
-    if (this.versions != undefined) {
+    if (this.versions !== undefined) {
       this.$.version.value = this.versions[0];
       this.updateMetric();
     }
