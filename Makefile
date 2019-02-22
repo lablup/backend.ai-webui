@@ -28,8 +28,8 @@ dep: compile
 	cp -Rp build/bundle build/electron-app/app
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy.js
 deploy: compile
-    cd deploy; rm -rf ./*
-    cp -Rp build/bundle deploy
+	cd deploy; rm -rf ./*
+	cp -Rp build/bundle deploy
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
 win: dep
