@@ -180,17 +180,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     ]
   }
 
-  _routeChanged(changeRecord) {
-    if (changeRecord.path === 'path') {
-      console.log('Path changed!');
-    }
-  }
-
-  _viewChanged(view) {
-    console.log('View changed!');
-    // load data for view
-  }
-
   _menuChanged(active) {
     if (!active) {
       this.$['running-jobs'].active = false;
@@ -223,7 +212,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       if (resource_policy.default_for_unspecified === 'UNLIMITED') {
 
       }
-      console.log(response.keypair_resource_policy);
     });
   }
 

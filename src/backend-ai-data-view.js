@@ -21,6 +21,7 @@ import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
 import '@vaadin/vaadin-item/vaadin-item.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js';
 
@@ -116,16 +117,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
-  _routeChanged(changeRecord) {
-    if (changeRecord.path === 'path') {
-      console.log('Path changed!');
-    }
-  }
-
-  _viewChanged(view) {
-    // load data for view
-  }
-
   _menuChanged(active) {
     if (!active) {
       return;
@@ -214,7 +205,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     job.then((value) => {
       this.folderInfo = value;
       this.openDialog('info-folder-dialog');
-      console.log(value);
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -262,7 +252,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                  dialog = false) {
     let job = window.backendaiclient.vfolder.list_files(path, id);
     job.then(value => {
-      console.log(JSON.parse(value.files));
       this.set('explorer.files', JSON.parse(value.files));
 
       if (dialog) {
@@ -300,7 +289,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     }
 
     tempBreadcrumb = tempBreadcrumb.slice(0, index + 1);
-    console.log(tempBreadcrumb);
 
     this.set('explorer.breadcrumb', tempBreadcrumb);
     this._clearExplorer(tempBreadcrumb.join('/'), this.explorer.id, false);
@@ -323,7 +311,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   /* File upload and download */
   _addEventListenerDropZone() {
     const dndZoneEl = this.$['folder-explorer-dialog'];
-    console.log(this.$);
     const dndZonePlaceholderEl = this.$.dropzone;
 
     dndZonePlaceholderEl.addEventListener('dragleave', () => {
@@ -398,7 +385,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   }
 
   fileUpload(fileObj) {
-    console.log(fileObj);
     const fd = new FormData();
     const explorer = this.explorer;
     const path = explorer.breadcrumb.concat(fileObj.name).join("/");
@@ -412,7 +398,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
 
       setTimeout(() => {
         this.splice('uploadFiles', this.uploadFiles.indexOf(fileObj), 1);
-        console.log(this.uploadFiles);
       }, 1000);
     });
   }

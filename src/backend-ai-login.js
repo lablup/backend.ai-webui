@@ -70,9 +70,7 @@ class BackendAiLogin extends PolymerElement {
     this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
     this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
 
-    console.log(this.api_key);
     if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      console.log('trying to connect to server.');
       this._connect();
     } else {
       this.open();
@@ -95,7 +93,6 @@ class BackendAiLogin extends PolymerElement {
   }
 
   _connect() {
-    console.log(ai);
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
       this.secret_key,
@@ -125,7 +122,6 @@ class BackendAiLogin extends PolymerElement {
       document.dispatchEvent(event);
       this.close();
     }).catch((err) => {   // Connection failed
-      console.log(this.api_key);
       if (this.$['login-panel'].opened != true) {
         if (err.message != undefined) {
           this.$.notification.text = err.message;

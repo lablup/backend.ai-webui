@@ -248,7 +248,6 @@ class BackendAISummary extends PolymerElement {
   }
 
   _menuChanged(active) {
-    console.log("summary menu:", active);
     if (!active) {
       return;
     }

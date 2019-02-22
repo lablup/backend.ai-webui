@@ -105,7 +105,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   attributeChangedCallback(name, oldval, newval) {
-    console.log('attribute change: ', name, newval);
     super.attributeChangedCallback(name, oldval, newval);
   }
 
@@ -127,7 +126,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   _loadPageElement() {
-    console.log("load-=--", this._page);
     if (this._page === 'index.html' || this._page === '') {
       this._page = 'summary';
       navigate(decodeURIComponent('/'));
@@ -141,7 +139,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
         view = view.split(/[\/]+/).pop();
         this._page = view;
       }
-      console.log(view);
       switch (view) {
         case 'summary':
           this.menuTitle = 'Summary';
