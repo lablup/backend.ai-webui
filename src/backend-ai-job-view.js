@@ -293,7 +293,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
     }
-    let kernelName = this._generateKernelIndex(kernel, version);
+    const kernelName = this._generateKernelIndex(kernel, version);
     this.$['launch-button'].disabled = true;
     this.$['launch-button-msg'].textContent = 'Preparing...';
     this.$.notification.text = 'Preparing session...';
@@ -476,38 +476,34 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   // Manager requests
   _refreshImageList() {
-    let fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"];
+    const fields = [
+      'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
+      'resource_limits { key min max }'
+    ];
     window.backendaiclient.image.list(fields).then((response) => {
-      var images = [];
+      const images = [];
       Object.keys(response.images).map((objectKey, index) => {
-        var item = response.images[objectKey];
+        const item = response.images[objectKey];
         if (item.installed === true) {
           images.push(item);
         }
       });
-      if (images.length == 0) {
+      if (images.length === 0) {
         return;
       }
       this.images = images;
-      this.languages = [];
       this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
-        var item = this.images[objectKey];
-        if (!(item.name in this.supports)) {
-          this.supports[item.registry + '/' + item.name] = [item.tag];
-          this.resourceLimits[item.registry + '/' + item.name + ':' + item.tag] = item.resource_limits;
-          if (item.name in this.aliases) {
-            this.languages.push(this.aliases[item.name]);
-          } else {
-            this.languages.push(item.name);
-          }
-        } else {
-          this.supports[item.name].push(item.tag);
-          this.resourceLimits[item.registry + '/' + item.name + ':' + item.tag] = item.resource_limits;
+        const item = this.images[objectKey];
+        const supportsKey = `${item.registry}/${item.name}`;
+        if (!(supportsKey in this.supports)) {
+          this.supports[supportsKey] = [];
         }
+        this.supports[supportsKey].push(item.tag);
+        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
       });
       this._updateEnvironment();
-    }).catch(err => {
+    }).catch((err) => {
       if (err && err.message) {
         this.$.notification.text = err.message;
         this.$.notification.show();

@@ -267,7 +267,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       html``}
               ${this.is_admin ?
       html`
-  
+
                 <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                   <paper-item link ?disabled="${!this.is_admin}">
                     <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
@@ -290,7 +290,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                     <span class="flex"></span>
                   </paper-item>
                 </a>
-                <a ?selected="${this._page === 'maintenance'}" tabindex="-1" role="menuitem"> 
+                <a ?selected="${this._page === 'maintenance'}" tabindex="-1" role="menuitem">
                   <paper-item disabled>
                     <iron-icon icon="icons:build"></iron-icon>
                     Maintenance
