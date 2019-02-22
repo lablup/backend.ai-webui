@@ -148,29 +148,17 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.menuTitle = 'Sessions';
           this.shadowRoot.getElementById('sidebar-menu').selected = 1;
           break;
+        case 'data':
+          this.menuTitle = 'Data';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 3;
+          break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          if (this.is_admin) {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 2;
-          } else {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 0;
-          }
+          this.shadowRoot.getElementById('sidebar-menu').selected = 5;
           break;
         case 'credential':
           this.menuTitle = 'Credentials & Policies';
-          if (this.is_admin) {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 3;
-          } else {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 2;
-          }
-          break;
-        case 'data':
-          this.menuTitle = 'Data';
-          if (this.is_admin) {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 5;
-          } else {
-            this.shadowRoot.getElementById('sidebar-menu').selected = 3;
-          }
+          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
@@ -247,24 +235,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Sessions
                 </paper-item>
               </a>
-              ${this.is_admin ?
-      html`
-              <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                  Resources
-                </paper-item>
-              </a>` :
-      html``}
-              ${this.is_admin ?
-      html`
-              <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
-                  Credentials
-                </paper-item>
-              </a>` :
-      html``}
                 <paper-item disabled>
                   <iron-icon icon="icons:pageview"></iron-icon>
                   Experiments
@@ -279,36 +249,65 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   <iron-icon icon="icons:assessment"></iron-icon>
                   Statistics
                 </paper-item>
-                <paper-item disabled>
-                  <iron-icon icon="icons:build"></iron-icon>
-                  Settings
-                  <span class="flex"></span>
+              ${this.is_admin ?
+      html`
+              <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
+                <paper-item link ?disabled="${!this.is_admin}">
+                  <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
+                  Resources
                 </paper-item>
-              </paper-listbox>
-              <footer>
-                <div class="terms-of-use" style="margin-bottom:50px;">
-                  <small style="font-size:11px;">
-                    <a href="https://cloud.backend.ai/@lablupinc/terms-of-service-payment">Terms of Service</a>
-                    ·
-                    <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
-                  </small>
+              </a>` :
+      html``}
+              ${this.is_admin ?
+      html`
+  
+                <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
+                  <paper-item link ?disabled="${!this.is_admin}">
+                    <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
+                    Credentials
+                  </paper-item>
+                </a>` : 
+      html``}
+              ${this.is_admin ?
+      html`
+  
+                <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
+                  <paper-item link disabled>
+                    <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
+                    Environments
+                  </paper-item>
+                </a>` :
+      html``}
+                  <paper-item disabled>
+                    <iron-icon icon="icons:build"></iron-icon>
+                    Settings
+                    <span class="flex"></span>
+                  </paper-item>
+                </paper-listbox>
+                <footer>
+                  <div class="terms-of-use" style="margin-bottom:50px;">
+                    <small style="font-size:11px;">
+                      <a href="https://cloud.backend.ai/@lablupinc/terms-of-service-payment">Terms of Service</a>
+                      ·
+                      <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
+                    </small>
+                  </div>
+                </footer>
+                <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
+                  <address>
+                    <small class="sidebar-footer">GUI Console (Alpha)</small>
+                    <small class="sidebar-footer" style="font-size:9px;">0.9.20190218</small>
+                  </address>
                 </div>
-              </footer>
-              <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
-                <address>
-                  <small class="sidebar-footer">GUI Console (Alpha)</small>
-                  <small class="sidebar-footer" style="font-size:9px;">0.9.20190218</small>
-                </address>
-              </div>
-            </app-header-layout>
-          </app-drawer>
-          <app-header-layout main id="main-panel">
-            <app-header slot="header" id="main-toolbar" condenses reveals
-                        effects="waterfall blend-background"
-                        effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
-              <app-toolbar primary style="height:48px;" class="bar">
-                <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                <span title id="main-panel-toolbar-title">${this.menuTitle}</span>
+              </app-header-layout>
+            </app-drawer>
+            <app-header-layout main id="main-panel">
+              <app-header slot="header" id="main-toolbar" condenses reveals
+                          effects="waterfall blend-background"
+                          effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
+                <app-toolbar primary style="height:48px;" class="bar">
+                  <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                  <span title id="main-panel-toolbar-title">${this.menuTitle}</span>
               <span class="flex"></span>
               <div style="vertical end-justified flex layout">
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
