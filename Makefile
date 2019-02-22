@@ -17,7 +17,7 @@ test_web:
 proxy:
 	node ./src/wsproxy/local_proxy.js
 compile:
-	polymer build
+	node ./node_modules/polymer-cli/bin/polymer.js build
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
 dep: compile
