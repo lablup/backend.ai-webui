@@ -58,7 +58,7 @@ function express_app(port) {
     let app = req.query.app || "jupyter"
     if(!(kernelId in proxies)) {
       let proxy = new Proxy(aiclient._config);
-      getFreePorts(1, 'localhost').then((freePortsList) => {
+      getFreePorts(1, 'localhost', [ 10001, 10002, 10003, 10004]).then((freePortsList) => {
           proxy.start_proxy(kernelId, app, freePortsList[0]);
           proxies[kernelId] = proxy;
           res.send({"code": 200, "proxy": proxy.host});
@@ -84,7 +84,7 @@ function express_app(port) {
     }
   });
 
-  app.listen(port, '0,0,0,0', () => console.log(`Listening on port ${port}!`));
+  app.listen(port, () => console.log(`Listening on port ${port}!`));
 }
 
 module.exports = express_app;
