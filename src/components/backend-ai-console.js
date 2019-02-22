@@ -131,6 +131,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       navigate(decodeURIComponent('/'));
     }
   }
+
   updated(changedProps) {
     if (changedProps.has('_page')) {
       let view = this._page;
@@ -184,6 +185,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
+      // language=CSS
       css`
         paper-icon-button {
           --paper-icon-button-ink-color: white;
@@ -266,23 +268,31 @@ class BackendAiConsole extends connect(store)(LitElement) {
                     <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
                     Credentials
                   </paper-item>
-                </a>` : 
+                </a>` :
       html``}
               ${this.is_admin ?
       html`
-  
-                <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
+                <a ?selected="${this._page === 'environment'}" tabindex="-1" role="menuitem">
                   <paper-item link disabled>
-                    <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
+                    <iron-icon icon="icons:extension"></iron-icon>
                     Environments
                   </paper-item>
-                </a>` :
-      html``}
+                </a>
+                <a ?selected="${this._page === 'settings'}" tabindex="-1" role="menuitem">
                   <paper-item disabled>
-                    <iron-icon icon="icons:build"></iron-icon>
+                    <iron-icon icon="icons:settings"></iron-icon>
                     Settings
                     <span class="flex"></span>
                   </paper-item>
+                </a>
+                <a ?selected="${this._page === 'maintenance'}" tabindex="-1" role="menuitem"> 
+                  <paper-item disabled>
+                    <iron-icon icon="icons:build"></iron-icon>
+                    Maintenance
+                    <span class="flex"></span>
+                  </paper-item>
+                 </a>
+` : html``}
                 </paper-listbox>
                 <footer>
                   <div class="terms-of-use" style="margin-bottom:50px;">
