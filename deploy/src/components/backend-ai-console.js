@@ -5945,12 +5945,12 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
       --general-sidebar-item-even-background-color: transparent;
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --app-drawer-width: 190px;
-      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
     }
 
     body {
       background-color: var(--general-background-color, #fafafa);
-      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       font-weight: 400;
       font-size: 14px;
       color: #222;
@@ -5980,7 +5980,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
 
     body,
     .fonts-loaded body {
-      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Sans KR", "Noto Sans", AppleSDGothic, NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Sans KR", "Noto Sans", AppleSDGothic, NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
     }
 
     section {
@@ -6019,7 +6019,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
       line-height: 16px;
       font-size: 16px;
       font-weight: 100;
-      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
     }
 
     .site-name > .bold {
@@ -6033,7 +6033,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
       line-height: 16px;
       font-size: 12px;
       font-weight: 100;
-      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
     }
 
     .welcome-username {
@@ -7531,12 +7531,12 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
                 --general-sidebar-item-even-background-color: transparent;
                 --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
                 --app-drawer-width: 190px;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+                font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
             }
 
             body {
                 background-color: var(--general-background-color, #fafafa);
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+                font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
                 font-weight: 400;
                 font-size: 14px;
                 color: #222;
@@ -7565,7 +7565,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
             }
             body,
             .fonts-loaded body {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Sans KR", "Noto Sans", AppleSDGothic, NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+                font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Sans KR", "Noto Sans", AppleSDGothic, NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
             }
 
             section {
@@ -7604,7 +7604,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
                 line-height: 16px;
                 font-size: 16px;
                 font-weight: 100;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+                font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
             }
 
             .site-name > .bold {
@@ -7618,7 +7618,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
                 line-height: 16px;
                 font-size: 12px;
                 font-weight: 100;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+                font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
             }
 
             .welcome-username {
@@ -9030,7 +9030,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
             }
         </style>
     </template>
-</dom-module>`;template$e.setAttribute("style","display:none;");document.head.appendChild(template$e.content);class BackendAiLogin extends PolymerElement{static get is(){return"backend-ai-login"}static get properties(){return{api_key:{type:String},secret_key:{type:String},api_endpoint:{type:String},proxyURL:{type:String,value:""}}}_getStoredKeys(key){return""}constructor(){super();setPassiveTouchGestures(!0)}ready(){super.ready();this.$["login-button"].addEventListener("tap",this._login.bind(this));new Promise((res,rej)=>_require.default(["../../../config.js"],res,rej)).then(bundle=>bundle&&bundle.$config||{}).then(module=>{console.log(module.default);if("undefined"===typeof module.default.proxyURL||""===module.default.proxyURL){this.proxyURL="http://127.0.0.1:5050/"}else{this.proxyURL=module.default.proxyURL}if("undefined"===typeof module.default.apiEndpoint||""===module.default.apiEndpoint){}else{this.api_endpoint=module.default.apiEndpoint;this.$.id_api_endpoint.disabled=!0}})}open(){this.$["login-panel"].open()}close(){this.$["login-panel"].close()}login(){this.api_key=JSON.parse(localStorage.getItem("backendaiconsole.api_key"));this.secret_key=JSON.parse(localStorage.getItem("backendaiconsole.secret_key"));this.api_endpoint=JSON.parse(localStorage.getItem("backendaiconsole.api_endpoint"));if(this._validate_data(this.api_key)&&this._validate_data(this.secret_key)&&this._validate_data(this.api_endpoint)){this._connect()}else{this.open()}}_validate_data(value){if(value!=void 0&&null!=value&&""!=value){return!0}return!1}_login(){this.api_key=this.$.id_api_key.value;this.secret_key=this.$.id_secret_key.value;this.api_endpoint=this.$.id_api_endpoint.value;this.api_endpoint=this.api_endpoint.replace(/\/+$/,"");this._connect()}_connect(){this.clientConfig=new ai.backend.ClientConfig(this.api_key,this.secret_key,this.api_endpoint);this.client=new ai.backend.Client(this.clientConfig,`Backend.AI Console.`);let fields=["user_id","is_admin","resource_policy"],q=`query { keypair { ${fields.join(" ")} } }`,v={};this.client.gql(q,v).then(response=>{window.backendaiclient=this.client;let email=response.keypair.user_id,is_admin=response.keypair.is_admin,resource_policy=response.keypair.resource_policy;if(this.email!=email){this.email=email}window.backendaiclient.email=this.email;window.backendaiclient.is_admin=is_admin;window.backendaiclient.resource_policy=resource_policy;window.backendaiclient.proxyURL=this.proxyURL;var event=new CustomEvent("backend-ai-connected",{detail:this.client});document.dispatchEvent(event);this.close()}).catch(err=>{if(!0!=this.$["login-panel"].opened){if(err.message!=void 0){this.$.notification.text=err.message}else{this.$.notification.text="Login information mismatch. If the information is correct, logout and login again."}this.$.notification.show();this.open()}else{this.$.notification.text="Login failed. Check login information.";this.$.notification.show()}})}static get template(){return html$1`
+</dom-module>`;template$e.setAttribute("style","display:none;");document.head.appendChild(template$e.content);class BackendAiLogin extends PolymerElement{static get is(){return"backend-ai-login"}static get properties(){return{api_key:{type:String},secret_key:{type:String},api_endpoint:{type:String},proxyURL:{type:String,value:""}}}_getStoredKeys(key){return""}constructor(){super();setPassiveTouchGestures(!0)}ready(){super.ready();this.$["login-button"].addEventListener("tap",this._login.bind(this));new Promise((res,rej)=>_require.default(["../../../config.js"],res,rej)).then(bundle=>bundle&&bundle.$config||{}).then(config=>{if("undefined"===typeof config.proxyURL||""===config.proxyURL){this.proxyURL="http://127.0.0.1:5050/"}else{this.proxyURL=config.proxyURL}if("undefined"===typeof config.apiEndpoint||""===config.apiEndpoint){}else{this.api_endpoint=config.apiEndpoint;this.$.id_api_endpoint.disabled=!0}}).catch(err=>{this.proxyURL="http://127.0.0.1:5050/"})}open(){this.$["login-panel"].open()}close(){this.$["login-panel"].close()}login(){this.api_key=JSON.parse(localStorage.getItem("backendaiconsole.api_key"));this.secret_key=JSON.parse(localStorage.getItem("backendaiconsole.secret_key"));this.api_endpoint=JSON.parse(localStorage.getItem("backendaiconsole.api_endpoint"));if(this._validate_data(this.api_key)&&this._validate_data(this.secret_key)&&this._validate_data(this.api_endpoint)){this._connect()}else{this.open()}}_validate_data(value){if(value!=void 0&&null!=value&&""!=value){return!0}return!1}_login(){this.api_key=this.$.id_api_key.value;this.secret_key=this.$.id_secret_key.value;this.api_endpoint=this.$.id_api_endpoint.value;this.api_endpoint=this.api_endpoint.replace(/\/+$/,"");this._connect()}_connect(){this.clientConfig=new ai.backend.ClientConfig(this.api_key,this.secret_key,this.api_endpoint);this.client=new ai.backend.Client(this.clientConfig,`Backend.AI Console.`);let fields=["user_id","is_admin","resource_policy"],q=`query { keypair { ${fields.join(" ")} } }`,v={};this.client.gql(q,v).then(response=>{window.backendaiclient=this.client;let email=response.keypair.user_id,is_admin=response.keypair.is_admin,resource_policy=response.keypair.resource_policy;if(this.email!=email){this.email=email}window.backendaiclient.email=this.email;window.backendaiclient.is_admin=is_admin;window.backendaiclient.resource_policy=resource_policy;window.backendaiclient.proxyURL=this.proxyURL;var event=new CustomEvent("backend-ai-connected",{detail:this.client});document.dispatchEvent(event);this.close()}).catch(err=>{if(!0!=this.$["login-panel"].opened){if(err.message!=void 0){this.$.notification.text=err.message}else{this.$.notification.text="Login information mismatch. If the information is correct, logout and login again."}this.$.notification.show();this.open()}else{this.$.notification.text="Login failed. Check login information.";this.$.notification.show()}})}static get template(){return html$1`
       <style is="custom-style" include="backend-ai-styles">
         paper-icon-button {
           --paper-icon-button-ink-color: white;
@@ -9522,7 +9522,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
                               sizing="contain"></iron-image>
                 </div>
                 <div class="vertical start-justified layout">
-                  <span class="site-name"><span class="bold">backend</span>.AI</span>
+                  <span class="site-name"><span class="bold">Backend</span>.AI</span>
                   <span class="site-name" style="font-size:13px;">console</span>
                 </div>
                 <span class="flex"></span>
