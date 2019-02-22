@@ -9,8 +9,7 @@ const proxyProtocol = "http"
 const portRange = [10000, 10100];
 
 function express_app(port) {
-  let config;
-  let aiclient;
+  let aiclients = {};
   let proxies = {};
   let {getFreePorts} = require('node-port-check');
   let ports = [];
@@ -22,20 +21,17 @@ function express_app(port) {
   app.use(cors());
 
   app.put('/conf', function (req, res) {
-    config = new ai.backend.ClientConfig(
+    let config = new ai.backend.ClientConfig(
       req.body.access_key,
       req.body.secret_key,
       req.body.endpoint,
     );
-    aiclient = new ai.backend.Client(config);
+    let aiclient = new ai.backend.Client(config);
+    aiclients[req.body.access_key] = aiclient;
     res.send({})
   });
 
   app.get('/', function (req, res) {
-    if(config == undefined) {
-      res.send({"code": 401});
-      return;
-    }
     let rtn = [];
     for (var key in proxies) {
       rtn.push(key);
@@ -43,12 +39,13 @@ function express_app(port) {
     res.send(rtn);
   });
 
-  app.get('/proxy/:kernelId', function (req, res) {
-    if(config == undefined) {
+  app.get('/proxy/:accessKey/:kernelId', function (req, res) {
+    let kernelId = req.params["kernelId"];
+    let access_key = req.params["accessKey"];
+    if(!access_key in aiclients) {
       res.send({"code": 401})
       return;
     }
-    let kernelId = req.params["kernelId"];
     if(kernelId in proxies) {
       res.send({"code": 200})
     } else {
@@ -56,15 +53,17 @@ function express_app(port) {
     }
   });
 
-  app.get('/proxy/:kernelId/add', function (req, res) {
-    if(config == undefined) {
-      res.send({"code": 401});
+  app.get('/proxy/:accessKey/:kernelId/add', function (req, res) {
+    let kernelId = req.params["kernelId"];
+    let access_key = req.params["accessKey"];
+    if(!access_key in aiclients) {
+      res.send({"code": 401})
       return;
     }
-    let kernelId = req.params["kernelId"];
     let app = req.query.app || "jupyter"
     if(!(kernelId in proxies)) {
-      let proxy = new Proxy(aiclient._config);
+      let client = aiclients[access_key];
+      let proxy = new Proxy(client._config);
       getFreePorts(1, 'localhost', ports).then((freePortsList) => {
         let port = freePortsList[0];
         let proxy_url = proxyHost + ":" + port;
@@ -78,9 +77,11 @@ function express_app(port) {
     }
   });
 
-  app.get('/proxy/:kernelId/delete', function (req, res) {
-    if(config == undefined) {
-      res.send({"code": 401});
+  app.get('/proxy/:accessKey/:kernelId/delete', function (req, res) {
+    let kernelId = req.params["kernelId"];
+    let access_key = req.params["accessKey"];
+    if(!access_key in aiclients) {
+      res.send({"code": 401})
       return;
     }
     let kernelId = req.params["kernelId"];
