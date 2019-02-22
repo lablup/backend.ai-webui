@@ -61,16 +61,15 @@ class BackendAiLogin extends PolymerElement {
   ready() {
     super.ready();
     this.$['login-button'].addEventListener('tap', this._login.bind(this));
-    import( '../../config.js').then((module) => { // from config.js
-      console.log(module.default);
-      if (typeof module.default.proxyURL === "undefined" || module.default.proxyURL === '') {
+    import( '../../config.js').then((config) => { // from config.js
+      if (typeof config.proxyURL === "undefined" || config.proxyURL === '') {
         this.proxyURL = 'http://127.0.0.1:5050/';
       } else {
-        this.proxyURL = module.default.proxyURL;
+        this.proxyURL = config.proxyURL;
       }
-      if (typeof module.default.apiEndpoint === "undefined" || module.default.apiEndpoint === '') {
+      if (typeof config.apiEndpoint === "undefined" || config.apiEndpoint === '') {
       } else {
-        this.api_endpoint = module.default.apiEndpoint;
+        this.api_endpoint = config.apiEndpoint;
         this.$['id_api_endpoint'].disabled = true;
       }
     });
