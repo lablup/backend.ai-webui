@@ -15,7 +15,7 @@ function express_app(port) {
   let {getFreePorts} = require('node-port-check');
   let ports = [];
   for (let i=portRange[0]; i<=portRange[1]; i++) {
-    port.push(i)
+    ports.push(i)
   }
 
   app.use(express.json());
@@ -67,14 +67,14 @@ function express_app(port) {
       let proxy = new Proxy(aiclient._config);
       getFreePorts(1, 'localhost', ports).then((freePortsList) => {
         let port = freePortsList[0];
-        let proxy_url = proxyProtocol + "://" + proxyHost + ":" + port;
-        proxy.start_proxy(kernelId, app, port);
+        let proxy_url = proxyHost + ":" + port;
+        proxy.start_proxy(kernelId, app, port, proxy_url);
         proxies[kernelId] = proxy;
-        res.send({"code": 200, "proxy": proxy_url});
+        res.send({"code": 200, "proxy": proxy.base_url});
       });
     } else {
       let proxy = proxies[kernelId];
-      res.send({"code": 200, "proxy": proxy.host});
+      res.send({"code": 200, "proxy": proxy.base_url});
     }
   });
 
