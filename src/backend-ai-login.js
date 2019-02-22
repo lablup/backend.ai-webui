@@ -72,6 +72,8 @@ class BackendAiLogin extends PolymerElement {
         this.api_endpoint = config.apiEndpoint;
         this.$['id_api_endpoint'].disabled = true;
       }
+    }).catch((err) => {   // No file
+      this.proxyURL = 'http://127.0.0.1:5050/';
     });
   }
 
