@@ -48,6 +48,10 @@ class ClientConfig {
     return this._endpoint;
   }
 
+  get proxyURL() {
+    return this._proxyURL;
+  }
+
   get endpointHost() {
     return this._endpointHost;
   }
