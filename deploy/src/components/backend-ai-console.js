@@ -9058,7 +9058,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
           border-bottom: 1.5px solid #0d47a1;
         }
 
-        paper-button {
+        mwc-button {
           width: 100%;
         }
       </style>
@@ -9082,10 +9082,8 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
               <paper-input type="text" name="api_endpoint" id="id_api_endpoint"
                            label="API Endpoint" value="{{api_endpoint}}"></paper-input>
               <br/><br/>
-              <paper-button dialog-confirm class="blue" type="submit" id="login-button">
-                <iron-icon icon="check"></iron-icon>
-                Login
-              </paper-button>
+              <mwc-button class="fg red" id="login-button" outlined label="Login" icon="check" type="submit"
+                          dialog-confirm></mwc-button>
             </fieldset>
           </form>
         </paper-material>
