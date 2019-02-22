@@ -4,14 +4,16 @@ const app = express()
 const Client = require("./lib/WstClient"),
       ai = require('../backend.ai-client-node'),
       Proxy = require("./proxy");
-const proxyHost = "52.78.225.155"
-const proxyProtocol = "http"
 
-function express_app(port) {
+function express_app(listen_ip, port, proxyBaseURL) {
   let aiclients = {};
   let proxies = {};
   let {isFreePort} = require('node-port-check');
   let ports = [];
+
+  //FIXME: !!
+  //proxyBaseURL = "http://52.78.225.155"
+  listen_ip = "0.0.0.0"
   
   function refreshPorts() {
     console.log("PortRefresh");
@@ -84,8 +86,8 @@ function express_app(port) {
       let client = aiclients[access_key];
       let proxy = new Proxy(client._config);
       getPort().then((port) => {
-        let proxy_url = proxyHost + ":" + port;
-        proxy.start_proxy(kernelId, app, port, proxy_url);
+        let proxy_url = proxyBaseURL + ":" + port;
+        proxy.start_proxy(kernelId, app, listen_ip, port, proxy_url);
         proxies[kernelId] = proxy;
         res.send({"code": 200, "proxy": proxy.base_url});
       });

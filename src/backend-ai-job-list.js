@@ -347,10 +347,10 @@ class BackendAIJobList extends PolymerElement {
         })
         .then((response) => {
           if (response.proxy) {
-            console.log('http://' + response.proxy + '/tree');
+            console.log(response.proxy + '/tree');
             this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
-              window.open('http://' + response.proxy + '/tree', '_blank');
+              window.open(response.proxy + '/tree', '_blank');
               this.$.indicator.end();
               //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
             }, 1000);
@@ -387,11 +387,11 @@ class BackendAIJobList extends PolymerElement {
         })
         .then((response) => {
           if (response.proxy) {
-            console.log('http://' + response.proxy + '/terminals/1');
+            console.log(response.proxy + '/terminals/1');
             this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               this.$.indicator.end();
-              window.open('http://' + response.proxy + '/terminals/1', '_blank');
+              window.open(response.proxy + '/terminals/1', '_blank');
               //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
             }, 1000);
           }

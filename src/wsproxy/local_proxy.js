@@ -3,4 +3,4 @@ const port = process.env.PORT|| 5050;
 let web = null;
 console.log("unpacked");
 web = require('./web');
-web(port);
+web("0.0.0.0", port, "http://localhost");
