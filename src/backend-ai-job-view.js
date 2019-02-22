@@ -132,8 +132,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.$['environment'].addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.$['version'].addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this._initAliases();
-    document.addEventListener('backend-ai-connected', () => {
-    }, true);
     var gpu_resource = this.$['gpu-resource'];
     this.$['gpu-value'].textContent = gpu_resource.value;
     gpu_resource.addEventListener('value-change', () => {
@@ -171,8 +169,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   static get observers() {
     return [
-      '_routeChanged(route.*)',
-      '_viewChanged(routeData.view)',
       '_menuChanged(active)'
     ]
   }
