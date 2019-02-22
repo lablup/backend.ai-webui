@@ -118,6 +118,11 @@ class BackendAiLogin extends PolymerElement {
       window.backendaiclient.email = this.email;
       window.backendaiclient.is_admin = is_admin;
       window.backendaiclient.resource_policy = resource_policy;
+      if (proxyURL != undefined) {
+        window.backendaiclient._config.proxyURL = proxyURL;
+      } else {
+        window.backendaiclient._config.proxyURL = 'http://127.0.0.1:5050/';
+      }
       var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();

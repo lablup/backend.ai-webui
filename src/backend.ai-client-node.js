@@ -33,6 +33,7 @@ class ClientConfig {
     this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
     this._accessKey = accessKey;
     this._secretKey = secretKey;
+    this._proxyURL = null;
   }
 
   get accessKey() {
