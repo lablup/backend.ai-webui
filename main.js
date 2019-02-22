@@ -11,7 +11,7 @@ var mainIndex = 'build/electron-app/app/index.html';
 
 app.once('ready', function() {
   let port = 5050;
-  web(port);
+  web("127.0.0.1", port, "http://localhost");
 
   var template;
   if (process.platform == 'darwin') {
