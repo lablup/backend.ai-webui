@@ -11,6 +11,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
+import '@material/mwc-button';
 
 class BackendAiEnvironmentView extends LitElement {
   static get is() {
@@ -31,7 +32,11 @@ class BackendAiEnvironmentView extends LitElement {
 
   render() {
     // language=HTML
-    return html``;
+    return html`
+      <div>
+        <mwc-button class="green wide" raised="" label="Preparing now" icon="code"></mwc-button>
+      </div>
+    `;
   }
 
   static get properties() {
@@ -41,6 +46,7 @@ class BackendAiEnvironmentView extends LitElement {
       }
     }
   }
+
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -51,6 +57,7 @@ class BackendAiEnvironmentView extends LitElement {
   }
 
   firstUpdated() {
+    console.log('loaded');
   }
 
   connectedCallback() {

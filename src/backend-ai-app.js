@@ -23,6 +23,7 @@ export const navigate = (path) => (dispatch) => {
 
 const loadPage = (page) => (dispatch) => {
   let view = page;
+  console.log(page);
   switch (page) {
     case 'summary':
       import('./backend-ai-summary-view.js').then((module) => {

@@ -25,6 +25,7 @@ import '@polymer/paper-item/paper-item';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
+import '@material/mwc-button';
 
 import './backend-ai-styles.js';
 import './backend-ai-credential-list.js';
@@ -184,10 +185,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
           <span class="flex"></span>
-          <paper-button id="add-keypair" slot="suffix" class="fg red">
-            <iron-icon icon="add" class="fg red"></iron-icon>
-            Add
-          </paper-button>
+          <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
@@ -203,10 +201,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal flex center center-justified layout">
           <span>Policy groups</span>
           <span class="flex"></span>
-          <paper-button id="add-policy" slot="suffix" class="fg red">
-            <iron-icon icon="add" class="fg red"></iron-icon>
-            Add
-          </paper-button>
+          <mwc-button class="fg red" id="add-policy" outlined label="Add policy" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-resource-policy-list id="resource-policy-list" condition="inactive"></backend-ai-resource-policy-list>

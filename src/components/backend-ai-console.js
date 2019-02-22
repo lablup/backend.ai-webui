@@ -134,7 +134,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data'].includes(view) != true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'environment'].includes(view) != true) { // Fallback for Windows OS
         view = view.split(/[\/]+/).pop();
         this._page = view;
       }
@@ -340,6 +340,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
                 <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
                 <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"></backend-ai-data-view>
+                <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"></backend-ai-environment-view>
+
               </div>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">

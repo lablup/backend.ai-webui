@@ -34,6 +34,7 @@ import './backend-ai-styles.js';
 import './backend-ai-job-list.js';
 import {OverlayPatchMixin} from './overlay-patch-mixin.js';
 import './components/backend-ai-dropdown-menu';
+import '@material/mwc-button';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -550,10 +551,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       <paper-material class="item" elevation="1">
         <h4 class="horizontal center layout">
           <span>Running</span>
-          <paper-button id="launch-session" class="fg red">
-            <iron-icon icon="add"></iron-icon>
-            Launch
-          </paper-button>
+          <mwc-button class="fg red" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-job-list id="running-jobs" condition="running"></backend-ai-job-list>
