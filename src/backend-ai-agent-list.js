@@ -326,7 +326,7 @@ class BackendAIAgentList extends PolymerElement {
               <template is="dom-if" if="[[item.gpu_slots]]">
                 <div class="layout horizontal center flex">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[item.gpu_slots]]</span>
+                  <span style="padding-left:5px;">[[item.gpu_slots]]</span>
                   <span class="indicator">GPU</span>
                   <span class="flex"></span>
                   <vaadin-progress-bar id="gpu-bar" value="[[item.used_gpu_slots]]"
@@ -336,7 +336,7 @@ class BackendAIAgentList extends PolymerElement {
               <template is="dom-if" if="[[item.vgpu_slots]]">
                 <div class="layout horizontal center flex">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[item.vgpu_slots]]</span>
+                  <span style="padding-left:5px;">[[item.vgpu_slots]]</span>
                   <span class="indicator">vGPU</span>
                   <span class="flex"></span>
                   <vaadin-progress-bar id="vgpu-bar" value="[[item.used_vgpu_slots]]"
