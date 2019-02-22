@@ -1,1 +1,1 @@
-define(["exports"],function(_exports){"use strict";Object.defineProperty(_exports,"__esModule",{value:!0});_exports.$configDefault=_exports.$config=void 0;var config={};_exports.$configDefault=config;var config$1={default:config};_exports.$config=config$1});
+define(["exports"],function(_exports){"use strict";Object.defineProperty(_exports,"__esModule",{value:!0});_exports.$configDefault=_exports.$config=void 0;var config={proxyURL:"http://52.78.225.155/"};_exports.$configDefault=config;var config$1={default:config};_exports.$config=config$1});
