@@ -11,8 +11,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 import {
   UPDATE_PAGE,
   UPDATE_OFFLINE,
-  OPEN_OFFLINE_INDICATOR,
-  CLOSE_OFFLINE_INDICATOR,
+  OPEN_SNACKBAR,
+  CLOSE_SNACKBAR,
   UPDATE_DRAWER_STATE
 } from '../backend-ai-app.js';
 
@@ -40,12 +40,12 @@ const app = (state = INITIAL_STATE, action) => {
         ...state,
         drawerOpened: action.opened
       };
-    case OPEN_OFFLINE_INDICATOR:
+    case OPEN_SNACKBAR:
       return {
         ...state,
         offlineIndicatorOpened: true
       };
-    case CLOSE_OFFLINE_INDICATOR:
+    case CLOSE_SNACKBAR:
       return {
         ...state,
         offlineIndicatorOpened: false

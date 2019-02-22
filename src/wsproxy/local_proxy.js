@@ -1,11 +1,6 @@
 const DEBUG = process.env.DEBUG|| false;
 const port = process.env.PORT|| 5050;
 let web = null;
-if(DEBUG) {
-  console.log("unpacked");
-  web = require('./web');
-} else {
-  console.log("packed");
-  web = require('./dist/wsproxy');
-}
+console.log("unpacked");
+web = require('./web');
 web(port);

@@ -1,8 +1,8 @@
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
 export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
-export const OPEN_OFFLINE_INDICATOR = 'OPEN_OFFLINE_INDICATOR';
-export const CLOSE_OFFLINE_INDICATOR = 'CLOSE_OFFLINE_INDICATOR';
+export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
+export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path) => (dispatch) => {
   // Extract the page name from path.
@@ -65,11 +65,11 @@ let offlineTimer;
 
 export const showOffline = () => (dispatch) => {
   dispatch({
-    type: OPEN_OFFLINE_INDICATOR
+    type: OPEN_SNACKBAR
   });
   window.clearTimeout(offlineTimer);
   offlineTimer = window.setTimeout(() =>
-    dispatch({type: CLOSE_OFFLINE_INDICATOR}), 3000);
+    dispatch({type: CLOSE_SNACKBAR}), 3000);
 };
 
 export const updateOffline = (offline) => (dispatch, getState) => {

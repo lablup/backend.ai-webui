@@ -14,6 +14,7 @@
     "polymer": "node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
   },
   "dependencies": {
+    "@material/elevation": "^0.44.1",
     "@polymer/app-layout": "^3.0.2",
     "@polymer/app-route": "^3.0.2",
     "@polymer/app-storage": "^3.0.2",
