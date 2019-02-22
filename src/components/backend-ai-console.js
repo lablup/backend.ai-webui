@@ -35,9 +35,6 @@ import '@polymer/iron-pages/iron-pages';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
-
-
-import '../../config';
 import '../backend.ai-client-es6.js';
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
@@ -199,6 +196,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
         app-drawer-layout:not([narrow]) [drawer-toggle] {
           display: none;
         }
+
         .page {
           display: none;
         }
