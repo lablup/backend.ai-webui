@@ -34,7 +34,7 @@ class BackendAiEnvironmentView extends LitElement {
     // language=HTML
     return html`
       <div>
-        <mwc-button class="green wide" raised="" label="Preparing now" icon="code"></mwc-button>
+        <mwc-button class="green wide" label="Preparing now" icon="code"></mwc-button>
       </div>
     `;
   }
