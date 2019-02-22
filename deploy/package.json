@@ -14,6 +14,8 @@
     "polymer": "node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
   },
   "dependencies": {
+    "@material/elevation": "^0.44.1",
+    "@material/mwc-button": "^0.3.6",
     "@polymer/app-layout": "^3.0.2",
     "@polymer/app-route": "^3.0.2",
     "@polymer/app-storage": "^3.0.2",
@@ -48,6 +50,7 @@
     "@vaadin/vaadin-progress-bar": "^1.1.0",
     "@vaadin/vaadin-upload": "^4.2.1",
     "@webcomponents/webcomponentsjs": "^2.2.7",
+    "i18n-element": "^3.0.0-rc.1",
     "polymer-cli": "^1.9.6"
   },
   "devDependencies": {

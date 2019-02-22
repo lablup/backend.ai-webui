@@ -450,10 +450,7 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
           <span class="flex"></span>
-          <paper-button id="add-keypair" slot="suffix" class="fg red">
-            <iron-icon icon="add" class="fg red"></iron-icon>
-            Add
-          </paper-button>
+          <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
@@ -469,10 +466,7 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
         <h4 class="horizontal flex center center-justified layout">
           <span>Policy groups</span>
           <span class="flex"></span>
-          <paper-button id="add-policy" slot="suffix" class="fg red">
-            <iron-icon icon="add" class="fg red"></iron-icon>
-            Add
-          </paper-button>
+          <mwc-button class="fg red" id="add-policy" outlined label="Add policy" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-resource-policy-list id="resource-policy-list" condition="inactive"></backend-ai-resource-policy-list>

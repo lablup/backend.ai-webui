@@ -64,8 +64,8 @@ define(["exports","./components/backend-ai-console.js"],function(_exports,_backe
         <slot name="suffix"></slot>
       </div>
     </div>
-    <button id="button" type="button"></button>
-`}static get is(){return"vaadin-button"}static get version(){return"2.1.2"}ready(){super.ready();this.setAttribute("role","button");this.$.button.setAttribute("role","presentation");this._addActiveListeners()}disconnectedCallback(){super.disconnectedCallback();if(this.hasAttribute("active")){this.removeAttribute("active")}}_addActiveListeners(){(0,_backendAiConsole.addListener)(this,"down",()=>!this.disabled&&this.setAttribute("active",""));(0,_backendAiConsole.addListener)(this,"up",()=>this.removeAttribute("active"));this.addEventListener("keydown",e=>!this.disabled&&0<=[13,32].indexOf(e.keyCode)&&this.setAttribute("active",""));this.addEventListener("keyup",()=>this.removeAttribute("active"));this.addEventListener("blur",()=>this.removeAttribute("active"))}get focusElement(){return this.$.button}}_exports.ButtonElement=ButtonElement;customElements.define(ButtonElement.is,ButtonElement);var vaadinButton={ButtonElement:ButtonElement};_exports.$vaadinButton=vaadinButton;const $_documentContainer=_backendAiConsole.html$2`<dom-module id="lumo-button" theme-for="vaadin-button">
+    <button id="button" type="button" aria-label\$="[[_ariaLabel]]"></button>
+`}static get is(){return"vaadin-button"}static get version(){return"2.1.3"}static get properties(){return{_ariaLabel:{type:String}}}static get observedAttributes(){return super.observedAttributes.concat(["aria-label"])}ready(){super.ready();this.setAttribute("role","button");this.$.button.setAttribute("role","presentation");this._addActiveListeners();this._updateAriaLabel(this.getAttribute("aria-label"))}disconnectedCallback(){super.disconnectedCallback();if(this.hasAttribute("active")){this.removeAttribute("active")}}attributeChangedCallback(attr,oldVal,newVal){super.attributeChangedCallback(attr,oldVal,newVal);if("aria-label"===attr){this._updateAriaLabel(newVal)}}_addActiveListeners(){(0,_backendAiConsole.addListener)(this,"down",()=>!this.disabled&&this.setAttribute("active",""));(0,_backendAiConsole.addListener)(this,"up",()=>this.removeAttribute("active"));this.addEventListener("keydown",e=>!this.disabled&&0<=[13,32].indexOf(e.keyCode)&&this.setAttribute("active",""));this.addEventListener("keyup",()=>this.removeAttribute("active"));this.addEventListener("blur",()=>this.removeAttribute("active"))}_updateAriaLabel(ariaLabel){this._ariaLabel=ariaLabel!==void 0&&null!==ariaLabel?ariaLabel:this.innerText}get focusElement(){return this.$.button}}_exports.ButtonElement=ButtonElement;customElements.define(ButtonElement.is,ButtonElement);var vaadinButton={ButtonElement:ButtonElement};_exports.$vaadinButton=vaadinButton;const $_documentContainer=_backendAiConsole.html$2`<dom-module id="lumo-button" theme-for="vaadin-button">
   <template>
     <style>
       :host {
@@ -728,10 +728,7 @@ define(["exports","./components/backend-ai-console.js"],function(_exports,_backe
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h4 class="horizontal center layout">
           <span>Virtual Folders</span>
-          <paper-button id="add-folder" class="fg red">
-            <iron-icon icon="add"></iron-icon>
-            Add new folder
-          </paper-button>
+          <mwc-button class="fg red" id="add-folder" outlined label="Add new folder" icon="add"></mwc-button>
         </h4>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Folder list" items="[[folders]]">
