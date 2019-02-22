@@ -18,6 +18,9 @@ import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@polymer/paper-toast/paper-toast';
+import '@polymer/neon-animation/animations/slide-from-right-animation.js';
+import '@polymer/neon-animation/animations/slide-right-animation.js';
+
 import './backend-ai-styles.js';
 import './backend-ai-indicator.js';
 
@@ -332,7 +335,7 @@ class BackendAIJobList extends PolymerElement {
           let accessKey = window.backendaiclient._config.accessKey;
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId 
+            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId
           };
           return this.sendRequest(rqst)
         })
@@ -391,6 +394,8 @@ class BackendAIJobList extends PolymerElement {
             this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               this.$.indicator.end();
+              //this.$['work-area'].setAttribute('src', response.proxy + '/terminals/1');
+              //this.$['work-dialog'].open();
               window.open(response.proxy + '/terminals/1', '_blank');
               //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
             }, 1000);
@@ -432,6 +437,33 @@ class BackendAIJobList extends PolymerElement {
             padding: 3px;
             margin-right: 5px;
           };
+        }
+
+        #work-dialog {
+          height: calc(100vh - 80px);
+          right: 0;
+          top: 0;
+          position: fixed;
+          margin: 70px 0 0 0;
+        }
+
+        @media screen and (max-width: 899px) {
+          #work-dialog {
+            left: 0;
+            width: 100%;
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          #work-dialog {
+            left: 200px;
+            width: calc(100% - 200px);
+          }
+        }
+
+        #work-area {
+          width: 100%;
+          height: 100vh;
         }
 
         div.indicator,
@@ -572,6 +604,20 @@ class BackendAIJobList extends PolymerElement {
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
+      <paper-dialog id="work-dialog"
+                    entry-animation="slide-from-right-animation" exit-animation="slide-right-animation"
+                    style="padding:0;">
+        <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
+          <h3 class="horizontal center layout" style="font-weight:bold">
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
+          <iframe id="work-area" frameborder="0" border="0" cellspacing="0"
+                  style="border-style: none;width: 100%;"></iframe>
+        </paper-material>
+      </paper-dialog>
     `;
   }
 }
