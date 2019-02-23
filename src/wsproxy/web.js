@@ -49,7 +49,7 @@ function express_app(listen_ip, port, proxyBaseURL) {
     );
     let aiclient = new ai.backend.Client(config);
     aiclients[req.body.access_key] = aiclient;
-    res.send({})
+    res.send({});
   });
 
   app.get('/', function (req, res) {

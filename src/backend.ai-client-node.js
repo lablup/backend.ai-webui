@@ -730,6 +730,28 @@ class ResourcePolicy {
     }
     return this.client.gql(q, v);
   }
+
+  add(name = null, input) {
+    let q, v;
+    /*let fields = ['name',
+    'created_at',
+    'default_for_unspecified',
+    'total_resource_slots',
+    'max_concurrent_sessions',
+    'max_containers_per_session',
+    'max_vfolder_count',
+    'max_vfolder_size',
+    'allowed_vfolder_hosts'];*/
+    if (this.client.is_admin === true && name !== null) {
+      q = `mutation($n:String!) {` +
+        `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
+        '}';
+      v = {'n': name};
+    } else {
+      return resolve(false);
+    }
+    return this.client.gql(q, v);
+  }
 }
 
 class Image {

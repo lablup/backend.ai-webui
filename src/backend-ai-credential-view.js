@@ -62,6 +62,14 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         type: Array,
         value: [1, 2, 3, 4, 5, 10]
       },
+      vfolder_capacity_metric: {
+        type: Array,
+        value: [1, 2, 3, 4, 5, 10, 50, 100]
+      },
+      vfolder_count_metric: {
+        type: Array,
+        value: [1, 2, 3, 4, 5, 10, 30, 50]
+      }
     }
   }
 
@@ -171,6 +179,45 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
+  _addResourcePolicy() {
+    let is_active = true;
+    let is_admin = false;
+    let user_id;
+    if (this.$['id_new_policy_name'].value != '') {
+      if (this.$['id_new_policy_name'].invalid == true) {
+        return;
+      }
+      user_id = this.$['id__policy_name'].value;
+    } else {
+      return;
+    }
+
+    let cpu_resource = this.$['cpu-resource'].value;
+    let ram_resource = this.$['ram-resource'].value;
+    let gpu_resource = this.$['gpu-resource'].value;
+
+    let concurrency_limit = this.$['concurrency-limit'].value;
+    let vfolder_count_limit = this.$['vfolder-count-limit'].value;
+    let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
+    let rate_limit = this.$['rate-limit'].value;
+
+    window.backendaiclient.keypairs.add(user_id, is_active, is_admin,
+      resource_policy, rate_limit, concurrency_limit).then(response => {
+      this.$['new-keypair-dialog'].close();
+      this.$.notification.text = "Keypair successfully created.";
+      this.$.notification.show();
+      this.$['active-credential-list'].refresh();
+      this.$['inactive-credential-list'].refresh();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$['new-keypair-dialog'].close();
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+  }
+
   static get template() {
     // language=HTML
     return html`
@@ -219,6 +266,26 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                            auto-validate></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
+              </div>
+              <br/><br/>
+              <paper-button class="blue create-button" type="submit" id="create-button">
+                <iron-icon icon="vaadin:key-o"></iron-icon>
+                Create credential
+              </paper-button>
+            </fieldset>
+          </form>
+        </paper-material>
+      </paper-dialog>
+      <paper-dialog id="new-policy-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3>Create</h3>
+          <form id="login-form" onSubmit="this._addKeyPair()">
+            <fieldset>
+              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
+                           auto-validate></paper-input>
+              <h4>Resource Policy</h4>
+              <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ cpu_metric }}">
@@ -256,11 +323,25 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+                <paper-dropdown-menu id="vfolder-capacity-limit" label="Virtual Folder Capacity">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="vfolder-count-limit" label="Max. Virtual Folders">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vfloder_count_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
               </div>
               <br/><br/>
               <paper-button class="blue create-button" type="submit" id="create-button">
                 <iron-icon icon="vaadin:key-o"></iron-icon>
-                Create credential
+                Create policy
               </paper-button>
             </fieldset>
           </form>
