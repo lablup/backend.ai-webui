@@ -323,10 +323,31 @@ class BackendAIJobList extends PolymerElement {
       });
   }
 
+  _showLogs(e) {
+    const controls = e.target.closest('#controls');
+    const kernelId = controls.kernelId;
+    window.backendaiclient.getLogs(kernelId).then((req) => {
+      setTimeout(() => {
+        const logWindow = window.open('', '_blank', 'width=600,height=800');
+        logWindow.document.head.innerHTML = `<title>${kernelId}</title>`;
+        logWindow.document.body.innerHTML = `<pre>${req.result.logs}</pre>` || 'No logs.';
+      }, 100);
+    }).catch((err) => {
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      } else if (err && err.title) {
+        this.$.notification.text = err.title;
+        this.$.notification.show();
+      }
+    });
+  }
+
   _runJupyter(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
+    return;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
       this._open_wsproxy()
@@ -585,8 +606,10 @@ class BackendAIJobList extends PolymerElement {
           <template>
             <div id="controls" class="layout horizontal flex center"
                  kernel-id="[[item.sess_id]]">
-              <paper-icon-button disabled class="fg"
-                                 icon="assignment"></paper-icon-button>
+              <template is="dom-if" if="[[_isRunning()]]">
+                <paper-icon-button class="fg controls-running" icon="assignment"
+                                   on-tap="_showLogs"></paper-icon-button>
+              </template>
               <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
                 <paper-icon-button class="fg controls-running orange"
                                    on-tap="_runJupyter" icon="vaadin:notebook"></paper-icon-button>
