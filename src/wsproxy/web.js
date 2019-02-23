@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const app = express()
+const app = express();
 const Client = require("./lib/WstClient"),
       ai = require('../backend.ai-client-node'),
       Proxy = require("./proxy");
@@ -64,13 +64,13 @@ function express_app(listen_ip, port, proxyBaseURL) {
     let kernelId = req.params["kernelId"];
     let access_key = req.params["accessKey"];
     if(!access_key in aiclients) {
-      res.send({"code": 401})
+      res.send({"code": 401});
       return;
     }
     if(kernelId in proxies) {
-      res.send({"code": 200})
+      res.send({"code": 200});
     } else {
-      res.send({"code": 404})
+      res.send({"code": 404});
     }
   });
 
@@ -78,10 +78,10 @@ function express_app(listen_ip, port, proxyBaseURL) {
     let kernelId = req.params["kernelId"];
     let access_key = req.params["accessKey"];
     if(!access_key in aiclients) {
-      res.send({"code": 401})
+      res.send({"code": 401});
       return;
     }
-    let app = req.query.app || "jupyter"
+    let app = req.query.app || "jupyter";
     if(!(kernelId in proxies)) {
       let client = aiclients[access_key];
       let proxy = new Proxy(client._config);
@@ -102,7 +102,7 @@ function express_app(listen_ip, port, proxyBaseURL) {
     let kernelId = req.params["kernelId"];
     let access_key = req.params["accessKey"];
     if(!access_key in aiclients) {
-      res.send({"code": 401})
+      res.send({"code": 401});
       return;
     }
     if(kernelId in proxies) {

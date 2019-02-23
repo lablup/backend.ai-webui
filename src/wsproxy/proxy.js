@@ -6,7 +6,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     let method = "GET";
     let requestBody = '';
     let d = new Date();
-    console.log(d)
+    console.log(d);
     let signKey = this.getSignKey(this._config.secretKey, d);
     let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody, "application/json");
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
@@ -26,11 +26,13 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     this.host = ip + ":" + port;
     let queryString = '/stream/kernel/' + kernelId + "/httpproxy?app=" + app;
     let uri = this._config.endpoint + queryString;
-    uri = uri.replace(/^http/, "ws")
+    uri = uri.replace(/^http/, "ws");
 
-    let hdrs = () => {return this.get_header(queryString);}
-    this.c = new Client()
-    this.c.verbose()
+    let hdrs = () => {
+      return this.get_header(queryString);
+    };
+    this.c = new Client();
+    this.c.verbose();
     this.c.start(this.host, uri, undefined, hdrs);
   }
 
