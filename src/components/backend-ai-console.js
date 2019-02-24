@@ -90,24 +90,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
   firstUpdated() {
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
-    import( '../../config.js').then((config) => {
-      if (typeof config.proxyURL === "undefined" || config.proxyURL === '') {
-        this.proxy_url = 'http://127.0.0.1:5050/';
-      } else {
-        this.proxy_url = config.proxyURL;
-      }
-      if (typeof config.apiEndpoint === "undefined" || config.apiEndpoint === '') {
-      } else {
-        this.api_endpoint = config.apiEndpoint;
-        this.$['id_api_endpoint'].disabled = true;
-      }
-    }).catch((err) => {   // No file
-      this.proxy_url = 'http://127.0.0.1:5050/';
-    });
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       this.shadowRoot.querySelector('#login-panel').login();
-    } else {
-      window.backendaiclient.proxyURL = this.proxy_url;
     }
   }
 
