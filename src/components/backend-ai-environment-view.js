@@ -17,6 +17,7 @@ import '@vaadin/vaadin-grid/theme/material/vaadin-grid.js';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid-sorter.js';
 
 import '@material/mwc-button';
+import '@material/mwc-checkbox';
 
 class BackendAiEnvironmentView extends LitElement {
   static get is() {
@@ -58,9 +59,25 @@ class BackendAiEnvironmentView extends LitElement {
         </h3>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid">
+          <vaadin-grid-column width="40px">
+            <template class="header">
+              <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
+            </template>
+            <template>
+              <div class="layout vertical" style="margin:0; padding:0;">
+                <template is="dom-if" if="[[item.installed]]">
+                  <mwc-checkbox checked></mwc-checkbox>
+                </template>
+                <template is="dom-if" if="[[!item.installed]]">
+                  <mwc-checkbox></mwc-checkbox>
+                </template>
+              </div>
+            </template>
+          </vaadin-grid-column>
+
           <vaadin-grid-column width="80px" resizable>
             <template class="header">
-              <vaadin-grid-sorter path="created_at">Registry</vaadin-grid-sorter>
+              <vaadin-grid-sorter path="registry">Registry</vaadin-grid-sorter>
             </template>
             <template>
               <div class="layout vertical">
@@ -287,6 +304,21 @@ class BackendAiEnvironmentView extends LitElement {
       'lua': 'Lua',
       'r': 'R',
       'julia': 'Julia',
+      'rust': 'Rust',
+      'cpp': 'C++',
+      'gcc': 'GCC',
+      'go': 'Go',
+      'tester': 'Tester',
+      'haskell': 'Haskell',
+      'java': 'Java',
+      'php': 'PHP',
+      'octave': 'Octave',
+      'nodejs': 'Node.js',
+      'caffe': 'Caffe',
+      'scheme': 'Scheme',
+      'scala': 'Scala',
+      'base': 'Base',
+      'cntk': 'CNTK',
       'digits': 'DIGITS',
       'py3': 'Python 3',
       'py2': 'Python 2',

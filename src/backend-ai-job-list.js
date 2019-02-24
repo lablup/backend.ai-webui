@@ -347,7 +347,6 @@ class BackendAIJobList extends PolymerElement {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
-    return;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
       this._open_wsproxy()
@@ -607,7 +606,7 @@ class BackendAIJobList extends PolymerElement {
             <div id="controls" class="layout horizontal flex center"
                  kernel-id="[[item.sess_id]]">
               <template is="dom-if" if="[[_isRunning()]]">
-                <paper-icon-button class="fg controls-running" icon="assignment"
+                <paper-icon-button class="fg blue controls-running" icon="assignment"
                                    on-tap="_showLogs"></paper-icon-button>
               </template>
               <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
