@@ -438,7 +438,7 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-    `}}customElements.define(BackendAIResourcePolicyList.is,BackendAIResourcePolicyList);class BackendAICredentialView extends(0,_backendAiConsole.OverlayPatchMixin)(_backendAiConsole.PolymerElement){static get properties(){return{active:{type:Boolean,value:!1},cpu_metric:{type:Array,value:[1,2,3,4,8,16]},ram_metric:{type:Array,value:[1,2,4,8,16]},gpu_metric:{type:Array,value:[0,.3,.6,1,1.5,2]},rate_metric:{type:Array,value:[1e3,2e3,3e3,4e3,5e3,1e4]},concurrency_metric:{type:Array,value:[1,2,3,4,5,10]}}}static get is(){return"backend-ai-credential-view"}shouldUpdate(){return this.active}constructor(){super();(0,_backendAiConsole.setPassiveTouchGestures)(!0)}ready(){super.ready();this.$["add-keypair"].addEventListener("tap",this._launchKeyPairDialog.bind(this));this.$["create-button"].addEventListener("tap",this._addKeyPair.bind(this));document.addEventListener("backend-ai-credential-refresh",()=>{this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()},!0)}connectedCallback(){super.connectedCallback();(0,_backendAiConsole.afterNextRender)(this,function(){})}static get observers(){return["_routeChanged(route.*)","_viewChanged(routeData.view)","_menuChanged(active)"]}_routeChanged(changeRecord){if("path"===changeRecord.path){console.log("Path changed!")}}_viewChanged(view){}_menuChanged(active){if(!active){this.$["active-credential-list"].active=!1;this.$["inactive-credential-list"].active=!1;this.$["resource-policy-list"].active=!1;return}else{this.$["active-credential-list"].active=!0;this.$["inactive-credential-list"].active=!0;this.$["resource-policy-list"].active=!0}}_launchKeyPairDialog(){this.$["new-keypair-dialog"].open()}_addKeyPair(){let is_active=!0,is_admin=!1,resource_policy="default",rate_limit=5e3,concurrency_limit=1,user_id;if(""!=this.$.id_new_user_id.value){if(!0==this.$.id_new_user_id.invalid){return}user_id=this.$.id_new_user_id.value}else{user_id=window.backendaiclient.email}console.log(user_id);let cpu_resource=this.$["cpu-resource"].value,ram_resource=this.$["ram-resource"].value,gpu_resource=this.$["gpu-resource"].value;concurrency_limit=this.$["concurrency-limit"].value;rate_limit=this.$["rate-limit"].value;window.backendaiclient.keypairs.add(user_id,is_active,is_admin,resource_policy,rate_limit,concurrency_limit).then(response=>{this.$["new-keypair-dialog"].close();this.$.notification.text="Keypair successfully created.";this.$.notification.show();this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-keypair-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}static get template(){return _backendAiConsole.html`
+    `}}customElements.define(BackendAIResourcePolicyList.is,BackendAIResourcePolicyList);class BackendAICredentialView extends(0,_backendAiConsole.OverlayPatchMixin)(_backendAiConsole.PolymerElement){static get properties(){return{active:{type:Boolean,value:!1},cpu_metric:{type:Array,value:[1,2,3,4,8,16]},ram_metric:{type:Array,value:[1,2,4,8,16]},gpu_metric:{type:Array,value:[0,.3,.6,1,1.5,2]},rate_metric:{type:Array,value:[1e3,2e3,3e3,4e3,5e3,1e4]},concurrency_metric:{type:Array,value:[1,2,3,4,5,10]},vfolder_capacity_metric:{type:Array,value:[1,2,3,4,5,10,50,100]},vfolder_count_metric:{type:Array,value:[1,2,3,4,5,10,30,50]}}}static get is(){return"backend-ai-credential-view"}shouldUpdate(){return this.active}constructor(){super();(0,_backendAiConsole.setPassiveTouchGestures)(!0)}ready(){super.ready();this.$["add-keypair"].addEventListener("tap",this._launchKeyPairDialog.bind(this));this.$["create-button"].addEventListener("tap",this._addKeyPair.bind(this));document.addEventListener("backend-ai-credential-refresh",()=>{this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()},!0)}connectedCallback(){super.connectedCallback();(0,_backendAiConsole.afterNextRender)(this,function(){})}static get observers(){return["_routeChanged(route.*)","_viewChanged(routeData.view)","_menuChanged(active)"]}_routeChanged(changeRecord){if("path"===changeRecord.path){console.log("Path changed!")}}_viewChanged(view){}_menuChanged(active){if(!active){this.$["active-credential-list"].active=!1;this.$["inactive-credential-list"].active=!1;this.$["resource-policy-list"].active=!1;return}else{this.$["active-credential-list"].active=!0;this.$["inactive-credential-list"].active=!0;this.$["resource-policy-list"].active=!0}}_launchKeyPairDialog(){this.$["new-keypair-dialog"].open()}_addKeyPair(){let is_active=!0,is_admin=!1,resource_policy="default",rate_limit=5e3,concurrency_limit=1,user_id;if(""!=this.$.id_new_user_id.value){if(!0==this.$.id_new_user_id.invalid){return}user_id=this.$.id_new_user_id.value}else{user_id=window.backendaiclient.email}console.log(user_id);let cpu_resource=this.$["cpu-resource"].value,ram_resource=this.$["ram-resource"].value,gpu_resource=this.$["gpu-resource"].value;concurrency_limit=this.$["concurrency-limit"].value;rate_limit=this.$["rate-limit"].value;window.backendaiclient.keypairs.add(user_id,is_active,is_admin,resource_policy,rate_limit,concurrency_limit).then(response=>{this.$["new-keypair-dialog"].close();this.$.notification.text="Keypair successfully created.";this.$.notification.show();this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-keypair-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}_addResourcePolicy(){let is_active=!0,is_admin=!1,user_id;if(""!=this.$.id_new_policy_name.value){if(!0==this.$.id_new_policy_name.invalid){return}user_id=this.$.id__policy_name.value}else{return}let cpu_resource=this.$["cpu-resource"].value,ram_resource=this.$["ram-resource"].value,gpu_resource=this.$["gpu-resource"].value,concurrency_limit=this.$["concurrency-limit"].value,vfolder_count_limit=this.$["vfolder-count-limit"].value,vfolder_capacity_limit=this.$["vfolder-capacity-limit"].value,rate_limit=this.$["rate-limit"].value;window.backendaiclient.keypairs.add(user_id,is_active,is_admin,resource_policy,rate_limit,concurrency_limit).then(response=>{this.$["new-keypair-dialog"].close();this.$.notification.text="Keypair successfully created.";this.$.notification.show();this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-keypair-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}static get template(){return _backendAiConsole.html`
       <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
         paper-button.create-button {
           width: 100%;
@@ -484,6 +484,26 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
                            auto-validate></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
+              </div>
+              <br/><br/>
+              <paper-button class="blue create-button" type="submit" id="create-button">
+                <iron-icon icon="vaadin:key-o"></iron-icon>
+                Create credential
+              </paper-button>
+            </fieldset>
+          </form>
+        </paper-material>
+      </paper-dialog>
+      <paper-dialog id="new-policy-dialog" with-backdrop
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3>Create</h3>
+          <form id="login-form" onSubmit="this._addKeyPair()">
+            <fieldset>
+              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
+                           auto-validate></paper-input>
+              <h4>Resource Policy</h4>
+              <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ cpu_metric }}">
@@ -521,11 +541,25 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+                <paper-dropdown-menu id="vfolder-capacity-limit" label="Virtual Folder Capacity">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="vfolder-count-limit" label="Max. Virtual Folders">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vfloder_count_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
               </div>
               <br/><br/>
               <paper-button class="blue create-button" type="submit" id="create-button">
                 <iron-icon icon="vaadin:key-o"></iron-icon>
-                Create credential
+                Create policy
               </paper-button>
             </fieldset>
           </form>
