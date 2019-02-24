@@ -6,7 +6,7 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path) => (dispatch) => {
   // Extract the page name from path.
-  if (['/summary', '/job', '/agent', '/credential', '/data', '/environment'].includes(path) != true) { // Fallback for Electron Shell/Windows OS
+  if (['/summary', '/job', '/agent', '/credential', '/data', '/environment', '/settings', '/maintenance'].includes(path) != true) { // Fallback for Electron Shell/Windows OS
     path = path.split(/[\/]+/).pop();
   }
   if (path === 'index.html' || path === '') {
@@ -45,6 +45,12 @@ const loadPage = (page) => (dispatch) => {
       break;
     case 'environment':
       import('./components/backend-ai-environment-view.js');
+      break;
+    case 'settings':
+      import('./components/backend-ai-settings-view.js');
+      break;
+    case 'maintenance':
+      import('./components/backend-ai-maintenance-view.js');
       break;
     default:
       import('./backend-ai-summary-view.js').then((module) => {

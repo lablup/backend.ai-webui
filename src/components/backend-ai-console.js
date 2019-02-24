@@ -152,7 +152,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'environment'].includes(view) != true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance'].includes(view) != true) { // Fallback for Windows OS
         view = view.split(/[\/]+/).pop();
         this._page = view;
       }
@@ -180,6 +180,14 @@ class BackendAiConsole extends connect(store)(LitElement) {
         case 'environment':
           this.menuTitle = 'Environments';
           this.shadowRoot.getElementById('sidebar-menu').selected = 8;
+          break;
+        case 'settings':
+          this.menuTitle = 'Settings';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 9;
+          break;
+        case 'maintenance':
+          this.menuTitle = 'Maintenance';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 10;
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
@@ -301,16 +309,16 @@ class BackendAiConsole extends connect(store)(LitElement) {
                     Environments
                   </paper-item>
                 </a>
-                <a ?selected="${this._page === 'settings'}" tabindex="-1" role="menuitem">
-                  <paper-item disabled>
-                    <iron-icon icon="icons:settings"></iron-icon>
+                <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
+                  <paper-item link>
+                    <iron-icon class="fg green" icon="icons:settings"></iron-icon>
                     Settings
                     <span class="flex"></span>
                   </paper-item>
                 </a>
-                <a ?selected="${this._page === 'maintenance'}" tabindex="-1" role="menuitem">
-                  <paper-item disabled>
-                    <iron-icon icon="icons:build"></iron-icon>
+                <a ?selected="${this._page === 'maintenance'}" href="/maintenance" tabindex="-1" role="menuitem">
+                  <paper-item link>
+                    <iron-icon class="fg pink" icon="icons:build"></iron-icon>
                     Maintenance
                     <span class="flex"></span>
                   </paper-item>
@@ -359,7 +367,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
                 <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"></backend-ai-data-view>
                 <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"></backend-ai-environment-view>
-
+                <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"></backend-ai-settings-view>
+                <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"></backend-ai-maintenance-view>
               </div>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">

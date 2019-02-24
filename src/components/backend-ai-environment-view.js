@@ -156,6 +156,8 @@ class BackendAiEnvironmentView extends LitElement {
             <template>
               <div id="controls" class="layout horizontal flex center"
                    kernel-id="[[item.digest]]">
+                <paper-icon-button class="fg blue controls-running" disabled
+                                   on-tap="_modifyImage" icon="icons:settings"></paper-icon-button>
                 <paper-icon-button class="fg red controls-running" disabled
                                    on-tap="_deleteImage" icon="delete"></paper-icon-button>
               </div>

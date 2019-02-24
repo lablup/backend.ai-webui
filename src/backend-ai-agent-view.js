@@ -46,17 +46,6 @@ class BackendAIAgentView extends PolymerElement {
       '_menuChanged(active)'
     ]
   }
-
-  _routeChanged(changeRecord) {
-    if (changeRecord.path === 'path') {
-      console.log('Path changed!');
-    }
-  }
-
-  _viewChanged(view) {
-    // load data for view
-  }
-
   _menuChanged(active) {
     if (!active) {
       this.$['running-agents'].active = false;
