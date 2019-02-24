@@ -63,6 +63,7 @@ class ClientConfig {
     this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
     this._accessKey = accessKey;
     this._secretKey = secretKey;
+    this._proxyURL = null;
   }
 
   get accessKey() {
@@ -75,6 +76,10 @@ class ClientConfig {
 
   get endpoint() {
     return this._endpoint;
+  }
+
+  get proxyURL() {
+    return this._proxyURL;
   }
 
   get endpointHost() {
@@ -251,6 +256,16 @@ class Client {
   }
 
   /**
+   * Obtain the session information by given sessionId.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  getLogs(sessionId) {
+    let rqst = this.newSignedRequest('GET', `/kernel/${sessionId}/logs`, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Terminate and destroy the kernel session.
    *
    * @param {string} sessionId - the sessionId given when created
@@ -290,16 +305,6 @@ class Client {
       "options": opts,
     };
     let rqst = this.newSignedRequest('POST', `/kernel/${sessionId}`, params);
-    return this._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Get session container logs.
-   *
-   * @param {string} sessionId - the sessionId given when created
-   */
-  getLogs(sessionId) {
-    let rqst = this.newSignedRequest('GET', `/kernel/${sessionId}/logs`, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -437,7 +442,7 @@ class Client {
     return requestInfo;
   }
 
-  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type) {
+  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
     let bodyHash = crypto.createHash(this._config.hashType)
       .update(bodyValue).digest('hex');
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
@@ -750,6 +755,28 @@ class ResourcePolicy {
           '}';
         v = {'n': name};
       }
+    } else {
+      return resolve(false);
+    }
+    return this.client.gql(q, v);
+  }
+
+  add(name = null, input) {
+    let q, v;
+    /*let fields = ['name',
+    'created_at',
+    'default_for_unspecified',
+    'total_resource_slots',
+    'max_concurrent_sessions',
+    'max_containers_per_session',
+    'max_vfolder_count',
+    'max_vfolder_size',
+    'allowed_vfolder_hosts'];*/
+    if (this.client.is_admin === true && name !== null) {
+      q = `mutation($n:String!) {` +
+        `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
+        '}';
+      v = {'n': name};
     } else {
       return resolve(false);
     }
@@ -23367,13 +23394,13 @@ Script.prototype.runInContext = function (context) {
         throw new TypeError("needs a 'context' argument.");
     }
 
-    var iframe = document.createElement('iframe');
+  var iframe = document.createElement('iframe');
     if (!iframe.style) iframe.style = {};
     iframe.style.display = 'none';
 
-    document.body.appendChild(iframe);
+  document.body.appendChild(iframe);
 
-    var win = iframe.contentWindow;
+  var win = iframe.contentWindow;
     var wEval = win.eval, wExecScript = win.execScript;
 
     if (!wEval && wExecScript) {
@@ -23382,7 +23409,7 @@ Script.prototype.runInContext = function (context) {
         wEval = win.eval;
     }
 
-    forEach(Object_keys(context), function (key) {
+  forEach(Object_keys(context), function (key) {
         win[key] = context[key];
     });
     forEach(globals, function (key) {
@@ -23391,11 +23418,11 @@ Script.prototype.runInContext = function (context) {
         }
     });
 
-    var winKeys = Object_keys(win);
+  var winKeys = Object_keys(win);
 
     var res = wEval.call(win, this.code);
 
-    forEach(Object_keys(win), function (key) {
+  forEach(Object_keys(win), function (key) {
         // Avoid copying circular objects like `top` and `window` by only
         // updating existing context properties or new properties in the `win`
         // that was only introduced after the eval.
@@ -23410,9 +23437,9 @@ Script.prototype.runInContext = function (context) {
         }
     });
 
-    document.body.removeChild(iframe);
+  document.body.removeChild(iframe);
 
-    return res;
+  return res;
 };
 
 Script.prototype.runInThisContext = function () {
