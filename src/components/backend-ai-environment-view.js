@@ -143,7 +143,6 @@ class BackendAiEnvironmentView extends LitElement {
                   <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
                   <span>[[item.mem_limit_min]]</span> ~
                   <span>[[item.mem_limit_max]]</span>
-                  <span class="indicator">GB</span>
                 </div>
               </div>
               <template is="dom-if" if="[[item.cuda_device_limit_min]]">
