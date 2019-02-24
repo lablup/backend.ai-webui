@@ -58,7 +58,7 @@ class BackendAiEnvironmentView extends LitElement {
         </h3>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid">
-          <vaadin-grid-column width="50px" resizable>
+          <vaadin-grid-column width="80px" resizable>
             <template class="header">
               <vaadin-grid-sorter path="created_at">Registry</vaadin-grid-sorter>
             </template>
@@ -81,20 +81,20 @@ class BackendAiEnvironmentView extends LitElement {
               <div>[[item.lang]]</div>
             </template>
           </vaadin-grid-column>
-          <vaadin-grid-column width="50px" resizable>
+          <vaadin-grid-column width="40px" resizable>
             <template class="header">Version</template>
             <template>
               <div>[[item.baseversion]]</div>
             </template>
           </vaadin-grid-column>
-          <vaadin-grid-column width="50px" resizable>
+          <vaadin-grid-column width="60px" resizable>
             <template class="header">Base</template>
             <template>
-              <div>[[item.baseimage]]</div>
+              <div class="wrapnames" style="word-wrap: break-word;white-space:normal;">[[item.baseimage]]</div>
             </template>
           </vaadin-grid-column>
           <vaadin-grid-column width="50px" resizable>
-            <template class="header">Addi</template>
+            <template class="header">Constraint</template>
             <template>
               <div>[[item.additional_req]]</div>
             </template>
@@ -211,7 +211,6 @@ class BackendAiEnvironmentView extends LitElement {
   }
 
   _getImages() {
-    console.log("test");
     window.backendaiclient.image.list().then((response) => {
       let images = response.images;
       images.forEach((image) => {
@@ -232,6 +231,17 @@ class BackendAiEnvironmentView extends LitElement {
         } else {
           image.lang = image.names;
         }
+        let langs = image.lang.split('-');
+        if (langs[1] !== undefined) {
+          image.lang = langs[1];
+          if (langs[0] === 'ngc') {
+            langs[0] = 'NVidia GPU Cloud';
+          }
+          image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
+        }
+        image.baseimage = this._humanizeName(image.baseimage);
+        image.lang = this._humanizeName(image.lang);
+
         var resource_limit = image.resource_limits;
         resource_limit.forEach((resource) => {
           if (resource.max == 0) {
@@ -248,7 +258,6 @@ class BackendAiEnvironmentView extends LitElement {
         });
       });
       this.images = images;
-      console.log(images);
 
       this.shadowRoot.querySelector('#testgrid').items = this.images;
     });
@@ -266,6 +275,33 @@ class BackendAiEnvironmentView extends LitElement {
       return value.slice(0, -1) + 'TB';
     }
     return value;
+  }
+
+  _humanizeName(value) {
+    this.alias = {
+      'python': 'Python',
+      'tensorflow': 'TensorFlow',
+      'pytorch': 'PyTorch',
+      'lua': 'Lua',
+      'r': 'R',
+      'julia': 'Julia',
+      'digits': 'DIGITS',
+      'py3': 'Python 3',
+      'py2': 'Python 2',
+      'py27': 'Python 2.7',
+      'py35': 'Python 3.5',
+      'py36': 'Python 3.6',
+      'py37': 'Python 3.7',
+      'ubuntu16.04': 'Ubuntu 16.04',
+      'ubuntu18.04': 'Ubuntu 18.04',
+      'anaconda2018.12': 'Anaconda 2018.12',
+      'alpine3.8': 'Alpine Lunux 3.8'
+    };
+    if (value in this.alias) {
+      return this.alias[value];
+    } else {
+      return value;
+    }
   }
 
   _indexFrom1(index) {
