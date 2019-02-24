@@ -6,13 +6,22 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path) => (dispatch) => {
   // Extract the page name from path.
+
   if (['/summary', '/job', '/agent', '/credential', '/data', '/environment', '/settings', '/maintenance'].includes(path) != true) { // Fallback for Electron Shell/Windows OS
     path = path.split(/[\/]+/).pop();
   }
   if (path === 'index.html' || path === '') {
     path = '/';
   }
-  const page = path === '/' ? 'summary' : path.slice(1);
+  let page;
+  if (path === '/') {
+    page = 'summary';
+  } else if (path[0] === '/') {
+    page = path.slice(1);
+  } else {
+    page = path;
+  }
+  //const page = path === '/' ? 'summary' : path.slice(1);
   // Any other info you might want to extract from the path (like page type),
   // you can do here
   dispatch(loadPage(page));

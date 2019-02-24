@@ -253,6 +253,9 @@ class BackendAIJobList extends PolymerElement {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       return false;
     }
+    if (window.backendaiclient.proxyURL === undefined) {
+      window.backendaiclient.proxyURL = 'http://127.0.0.1:5050/';
+    }
     let param = {
       access_key: window.backendaiclient._config.accessKey,
       secret_key: window.backendaiclient._config.secretKey,

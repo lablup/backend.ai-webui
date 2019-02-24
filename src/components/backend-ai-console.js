@@ -106,6 +106,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
     });
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       this.shadowRoot.querySelector('#login-panel').login();
+    } else {
+      window.backendaiclient.proxyURL = this.proxy_url;
     }
   }
 

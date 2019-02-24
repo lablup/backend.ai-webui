@@ -40,12 +40,12 @@ class BackendAiLogin extends PolymerElement {
       secret_key: {
         type: String
       },
+      proxy_url: {
+        type: String,
+        value: 'http://127.0.0.1:5050/'
+      },
       api_endpoint: {
         type: String
-      },
-      proxyURL: {
-        type: String,
-        value: ''
       }
     };
   }
@@ -63,6 +63,11 @@ class BackendAiLogin extends PolymerElement {
     super.ready();
     this.$['login-button'].addEventListener('tap', this._login.bind(this));
     import( '../config.js').then((config) => {
+      if (typeof config.proxyURL === "undefined" || config.proxyURL === '') {
+        this.proxy_url = 'http://127.0.0.1:5050/';
+      } else {
+        this.proxy_url = config.proxyURL;
+      }
       if (typeof config.apiEndpoint === "undefined" || config.apiEndpoint === '') {
       } else {
         this.api_endpoint = config.apiEndpoint;
@@ -133,6 +138,7 @@ class BackendAiLogin extends PolymerElement {
       window.backendaiclient.email = this.email;
       window.backendaiclient.is_admin = is_admin;
       window.backendaiclient.resource_policy = resource_policy;
+      window.backendaiclient.proxyURL = this.proxy_url;
       var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
