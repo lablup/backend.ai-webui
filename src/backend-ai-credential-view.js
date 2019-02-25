@@ -52,6 +52,10 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       },
       gpu_metric: {
         type: Array,
+        value: [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16]
+      },
+      vgpu_metric: {
+        type: Array,
         value: [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16]
       },
       rate_metric: {
@@ -61,6 +65,14 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       concurrency_metric: {
         type: Array,
         value: [1, 2, 3, 4, 5, 10, 50]
+      },
+      container_per_session_metric: {
+        type: Array,
+        value: [1, 2, 3, 4, 8]
+      },
+      idle_timeout_metric: {
+        type: Array,
+        value: [60, 180, 540, 900, 1800, 3600]
       },
       vfolder_capacity_metric: {
         type: Array,
@@ -211,20 +223,30 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   _addResourcePolicy() {
     let is_active = true;
     let is_admin = false;
-    let user_id;
+    let name;
     if (this.$['id_new_policy_name'].value != '') {
       if (this.$['id_new_policy_name'].invalid == true) {
         return;
       }
-      user_id = this.$['id__policy_name'].value;
+      name = this.$['id_new_policy_name'].value;
     } else {
+      this.$.notification.text = "Please input policy name";
+      this.$.notification.show();
       return;
     }
 
     let cpu_resource = this.$['cpu-resource'].value;
     let ram_resource = this.$['ram-resource'].value;
     let gpu_resource = this.$['gpu-resource'].value;
+    let vgpu_resource = this.$['vgpu-resource'].value;
 
+    let total_resource_slots = {
+      "cpu": cpu_resource,
+      "mem": ram_resource + 'g',
+      "cuda.device": parseInt(gpu_resource),
+      "cuda.shares": parseFloat(vgpu_resource)
+    };
+    let vfolder_hosts = ["local"];
     let concurrency_limit = this.$['concurrency-limit'].value;
     let containers_per_session_limit = this.$['container-per-session-limit'].value;
     let vfolder_count_limit = this.$['vfolder-count-limit'].value;
@@ -233,7 +255,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     let idle_timeout = this.$['idle-timeout'].value;
     let input = {
       'name': name,
-      'default_for_unspecified': 'default',
+      'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': total_resource_slots,
       'max_concurrent_sessions': concurrency_limit,
       'max_containers_per_session': containers_per_session_limit,
@@ -242,6 +264,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
     };
+    console.log(input);
+    return;
     window.backendaiclient.resource_policy.add(name, input).then(response => {
       this.$['new-policy-dialog'].close();
       this.$.notification.text = "Resource policy successfully created.";
@@ -327,10 +351,12 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Create</h3>
-          <form id="login-form" onSubmit="this._addKeyPair()">
+          <form id="login-form" onSubmit="this._addResourcePolicy()">
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           auto-validate></paper-input>
+                           auto-validate required
+                           pattern="[a-zA-Z]*"
+                           error-message="Policy name only accepts letters"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
@@ -347,6 +373,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+              </div>
+              <div class="horizontal center layout">
                 <paper-dropdown-menu id="gpu-resource" label="GPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ gpu_metric }}">
@@ -354,7 +382,32 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vgpu_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
               </div>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ container_per_session_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="idle-timeout" label="Idle timeout (sec.)">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ idle_timeout_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
                   <paper-listbox slot="dropdown-content" selected="0">
