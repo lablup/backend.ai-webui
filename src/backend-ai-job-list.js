@@ -64,6 +64,7 @@ class BackendAIJobList extends PolymerElement {
 
   ready() {
     super.ready();
+    this.refreshTimer = null;
     if (this.condition !== 'running' || !window.backendaiclient.is_admin) {
       this.$['access-key-filter'].parentNode.removeChild(this.$['access-key-filter']);
     }
@@ -149,7 +150,7 @@ class BackendAIJobList extends PolymerElement {
       if (this.active === true) {
         if (this.condition === 'running') {
           refreshTime = 5000;
-          setTimeout(() => {
+          this.refreshTimer = setTimeout(() => {
             this._refreshJobData(status)
           }, refreshTime);
         } else {
@@ -443,6 +444,8 @@ class BackendAIJobList extends PolymerElement {
 
   _updateFilterAccessKey(e) {
     this.filterAccessKey = e.target.value;
+    clearTimeout(this.refreshTimer);
+    this._refreshJobData();
   }
 
   static get template() {
@@ -533,7 +536,7 @@ class BackendAIJobList extends PolymerElement {
         <span class="flex"></span>
         <paper-input id="access-key-filter" type="search" size=30
                      label="access key" no-label-float value="[[filterAccessKey]]"
-                     on-input="_updateFilterAccessKey">
+                     on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[compute_sessions]]">
