@@ -11,6 +11,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dialog/paper-dialog';
+import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-progress/paper-progress';
 
@@ -53,12 +54,19 @@ class BackendAIJobList extends PolymerElement {
       terminationQueue: {
         type: Array,
         value: []
+      },
+      filterAccessKey: {
+        type: String,
+        value: ''
       }
     };
   }
 
   ready() {
     super.ready();
+    if (this.condition !== 'running' || !window.backendaiclient.is_admin) {
+      this.$['access-key-filter'].parentNode.removeChild(this.$['access-key-filter']);
+    }
   }
 
   connectedCallback() {
@@ -112,8 +120,12 @@ class BackendAIJobList extends PolymerElement {
         status = 'RUNNING';
     }
 
-    let fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"];
-    window.backendaiclient.computeSession.list(fields, status).then((response) => {
+    let fields = [
+      "sess_id", "lang", "created_at", "terminated_at", "status",
+      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"
+    ];
+    window.backendaiclient.computeSession.list(fields, status,
+        this.filterAccessKey).then((response) => {
       var sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
         Object.keys(sessions).map((objectKey, index) => {
@@ -429,6 +441,10 @@ class BackendAIJobList extends PolymerElement {
     }
   }
 
+  _updateFilterAccessKey(e) {
+    this.filterAccessKey = e.target.value;
+  }
+
   static get template() {
     // language=HTML
     return html`
@@ -502,8 +518,24 @@ class BackendAIJobList extends PolymerElement {
         div.configuration iron-icon {
           padding-right: 5px;
         }
+
+        div.filters #access-key-filter {
+          --paper-input-container-input: {
+            font-size: small;
+          }
+          --paper-input-container-label: {
+            font-size: small;
+          }
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <div class="layout horizontal center filters">
+        <span class="flex"></span>
+        <paper-input id="access-key-filter" type="search" size=30
+                     label="access key" no-label-float value="[[filterAccessKey]]"
+                     on-input="_updateFilterAccessKey">
+        </paper-input>
+      </div>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[compute_sessions]]">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
