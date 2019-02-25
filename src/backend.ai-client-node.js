@@ -867,6 +867,15 @@ class utils {
     });
     return result;
   }
+  
+  gqlToList(array, key) {
+    let result = [];
+    array.forEach(function (element) {
+      result.push(element[key]);
+    });
+    return result;
+  }
+
 }
 
 // below will become "static const" properties in ES7
