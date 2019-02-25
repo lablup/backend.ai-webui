@@ -653,6 +653,13 @@ class Keypair {
 
   add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
       rateLimit = 1000, concurrencyLimit = 1) {
+    let fields = [
+      'is_active',
+      'is_admin',
+      'resource_policy',
+      'concurrency_limit',
+      'rate_limit'
+    ];
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
       `  create_keypair(user_id: $user_id, props: $input) {` +
       `    ok msg keypair { ${fields.join(" ")} }` +

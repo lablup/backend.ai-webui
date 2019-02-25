@@ -187,9 +187,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   _addKeyPair() {
     let is_active = true;
     let is_admin = false;
-    let resource_policy = 'default';
     let rate_limit = 5000;
-    let concurrency_limit = 1;
+    let concurrency_limit = 10;
     let user_id;
     if (this.$['id_new_user_id'].value != '') {
       if (this.$['id_new_user_id'].invalid == true) {
@@ -200,21 +199,15 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       user_id = window.backendaiclient.email;
     }
     console.log(user_id);
+    let resource_policy = this.$['resource-policy'].value;
+
     // Read resources
-    let cpu_resource = this.$['cpu-resource'].value;
-    let ram_resource = this.$['ram-resource'].value;
-    let gpu_resource = this.$['gpu-resource'].value;
-
-    concurrency_limit = this.$['concurrency-limit'].value;
-    rate_limit = this.$['rate-limit'].value;
-
-    window.backendaiclient.keypairs.add(user_id, is_active, is_admin,
+    window.backendaiclient.keypair.add(user_id, is_active, is_admin,
       resource_policy, rate_limit, concurrency_limit).then(response => {
       this.$['new-keypair-dialog'].close();
       this.$.notification.text = "Keypair successfully created.";
       this.$.notification.show();
       this.$['active-credential-list'].refresh();
-      this.$['inactive-credential-list'].refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -359,7 +352,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
               <paper-input type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
                            auto-validate></paper-input>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="resource-policies" label="Resource Policy">
+                <paper-dropdown-menu id="resource-policy" label="Resource Policy">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ resource_policy_names }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>

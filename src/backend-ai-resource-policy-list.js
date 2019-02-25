@@ -86,10 +86,9 @@ class BackendAIResourcePolicyList extends PolymerElement {
   _launchResourcePolicyDialog() {
     this.$['new-policy-dialog'].open();
   }
+
   _refreshPolicyData() {
-    console.log("read policy");
     return window.backendaiclient.resourcePolicy.get().then((response) => {
-      console.log(response);
       let rp = response.keypair_resource_policies;
       let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
       return rp;

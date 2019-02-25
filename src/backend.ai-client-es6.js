@@ -683,6 +683,13 @@ class Keypair {
 
   add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
       rateLimit = 1000, concurrencyLimit = 1) {
+    let fields = [
+      'is_active',
+      'is_admin',
+      'resource_policy',
+      'concurrency_limit',
+      'rate_limit'
+    ];
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
       `  create_keypair(user_id: $user_id, props: $input) {` +
       `    ok msg keypair { ${fields.join(" ")} }` +
@@ -764,18 +771,45 @@ class ResourcePolicy {
 
   add(name = null, input) {
     let fields = ['name',
-    'created_at',
-    'default_for_unspecified',
-    'total_resource_slots',
-    'max_concurrent_sessions',
-    'max_containers_per_session',
-    'max_vfolder_count',
-    'max_vfolder_size',
+      'created_at',
+      'default_for_unspecified',
+      'total_resource_slots',
+      'max_concurrent_sessions',
+      'max_containers_per_session',
+      'max_vfolder_count',
+      'max_vfolder_size',
       'allowed_vfolder_hosts',
       'idle_timeout'];
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
         `  create_keypair_resource_policy(name: $name, props: $input) {` +
+        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': name,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+
+  mutate(name = null, input) {
+    let fields = ['name',
+      'created_at',
+      'default_for_unspecified',
+      'total_resource_slots',
+      'max_concurrent_sessions',
+      'max_containers_per_session',
+      'max_vfolder_count',
+      'max_vfolder_size',
+      'allowed_vfolder_hosts',
+      'idle_timeout'];
+    if (this.client.is_admin === true && name !== null) {
+      let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
+        `  modify_keypair_resource_policy(name: $name, props: $input) {` +
         `    ok msg resource_policy { ${fields.join(" ")} }` +
         `  }` +
         `}`;
