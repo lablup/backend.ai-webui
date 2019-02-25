@@ -734,18 +734,45 @@ class ResourcePolicy {
 
   add(name = null, input) {
     let fields = ['name',
-    'created_at',
-    'default_for_unspecified',
-    'total_resource_slots',
-    'max_concurrent_sessions',
-    'max_containers_per_session',
-    'max_vfolder_count',
-    'max_vfolder_size',
+      'created_at',
+      'default_for_unspecified',
+      'total_resource_slots',
+      'max_concurrent_sessions',
+      'max_containers_per_session',
+      'max_vfolder_count',
+      'max_vfolder_size',
       'allowed_vfolder_hosts',
       'idle_timeout'];
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
         `  create_keypair_resource_policy(name: $name, props: $input) {` +
+        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': name,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+
+  mutate(name = null, input) {
+    let fields = ['name',
+      'created_at',
+      'default_for_unspecified',
+      'total_resource_slots',
+      'max_concurrent_sessions',
+      'max_containers_per_session',
+      'max_vfolder_count',
+      'max_vfolder_size',
+      'allowed_vfolder_hosts',
+      'idle_timeout'];
+    if (this.client.is_admin === true && name !== null) {
+      let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
+        `  modify_keypair_resource_policy(name: $name, props: $input) {` +
         `    ok msg resource_policy { ${fields.join(" ")} }` +
         `  }` +
         `}`;

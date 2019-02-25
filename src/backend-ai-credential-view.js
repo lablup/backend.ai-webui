@@ -166,6 +166,11 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     this.$['new-policy-dialog'].open();
   }
 
+  _launchModifyResourcePolicyDialog() {
+
+    this.$['new-policy-dialog'].open();
+  }
+
   _getResourcePolicies() {
     return window.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
       'total_resource_slots',
@@ -220,21 +225,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
-  _addResourcePolicy() {
-    let is_active = true;
-    let is_admin = false;
-    let name;
-    if (this.$['id_new_policy_name'].value != '') {
-      if (this.$['id_new_policy_name'].invalid == true) {
-        return;
-      }
-      name = this.$['id_new_policy_name'].value;
-    } else {
-      this.$.notification.text = "Please input policy name";
-      this.$.notification.show();
-      return;
-    }
-
+  _readResourcePolicyInput() {
     let cpu_resource = this.$['cpu-resource'].value;
     let ram_resource = this.$['ram-resource'].value;
     let gpu_resource = this.$['gpu-resource'].value;
@@ -263,11 +254,48 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
     };
-    console.log(input);
-    //return;
+  }
+
+  _addResourcePolicy() {
+    let is_active = true;
+    let is_admin = false;
+    let name;
+    if (this.$['id_new_policy_name'].value != '') {
+      if (this.$['id_new_policy_name'].invalid == true) {
+        return;
+      }
+      name = this.$['id_new_policy_name'].value;
+    } else {
+      this.$.notification.text = "Please input policy name";
+      this.$.notification.show();
+      return;
+    }
+    let input = this._readResourcePolicyInput();
+
     window.backendaiclient.resourcePolicy.add(name, input).then(response => {
       this.$['new-policy-dialog'].close();
       this.$.notification.text = "Resource policy successfully created.";
+      this.$.notification.show();
+      this.$['resource-policy-list'].refresh();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$['new-policy-dialog'].close();
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+  }
+
+  _modifyResourcePolicy() {
+    let is_active = true;
+    let is_admin = false;
+    let name = this.$['id_new_policy_name'].value;
+    let input = this._readResourcePolicyInput();
+
+    window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
+      this.$['new-policy-dialog'].close();
+      this.$.notification.text = "Resource policy successfully updated.";
       this.$.notification.show();
       this.$['resource-policy-list'].refresh();
     }).catch(err => {
