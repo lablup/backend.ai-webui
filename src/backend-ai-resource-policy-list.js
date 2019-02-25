@@ -104,18 +104,23 @@ class BackendAIResourcePolicyList extends PolymerElement {
           policy['total_resource_slots'].mem = '-';
         }
         if ('cuda.device' in policy['total_resource_slots']) {
-          policy['total_resource_slots'].cuda_device = policy['total_resource_slots']['cuda.device'];
-        }
-        if ('cuda.shares' in policy['total_resource_slots']) {
-          policy['total_resource_slots'].cuda_shares = policy['total_resource_slots']['cuda.shares'];
-        }
-        if (('cuda_device' in policy['total_resource_slots']) === false &&
-          ('cuda_shares' in policy['total_resource_slots']) === false &&
-          policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cuda_shares = '-';
+          if (policy['total_resource_slots']['cuda.device'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
+            policy['total_resource_slots'].cuda_device = '-';
+          } else {
+            policy['total_resource_slots'].cuda_device = policy['total_resource_slots']['cuda.device'];
+          }
+        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
           policy['total_resource_slots'].cuda_device = '-';
         }
-
+        if ('cuda.shares' in policy['total_resource_slots']) {
+          if (policy['total_resource_slots']['cuda.shares'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
+            policy['total_resource_slots'].cuda_shares = '-';
+          } else {
+            policy['total_resource_slots'].cuda_shares = policy['total_resource_slots']['cuda.shares'];
+          }
+        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
+          policy['total_resource_slots'].cuda_shares = '-';
+        }
       });
       this.resourcePolicy = resourcePolicies;
     }).catch(err => {

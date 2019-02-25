@@ -254,9 +254,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     let rate_limit = this.$['rate-limit'].value;
     let idle_timeout = this.$['idle-timeout'].value;
     let input = {
-      'name': name,
       'default_for_unspecified': 'UNLIMITED',
-      'total_resource_slots': total_resource_slots,
+      'total_resource_slots': JSON.stringify(total_resource_slots),
       'max_concurrent_sessions': concurrency_limit,
       'max_containers_per_session': containers_per_session_limit,
       'idle_timeout': idle_timeout,
@@ -265,8 +264,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       'allowed_vfolder_hosts': vfolder_hosts
     };
     console.log(input);
-    return;
-    window.backendaiclient.resource_policy.add(name, input).then(response => {
+    //return;
+    window.backendaiclient.resourcePolicy.add(name, input).then(response => {
       this.$['new-policy-dialog'].close();
       this.$.notification.text = "Resource policy successfully created.";
       this.$.notification.show();
@@ -355,8 +354,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
                            auto-validate required
-                           pattern="[a-zA-Z]*"
-                           error-message="Policy name only accepts letters"></paper-input>
+                           pattern="[a-zA-Z0-9]*"
+                           error-message="Policy name only accepts letters and numbers"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">

@@ -744,7 +744,7 @@ class ResourcePolicy {
       'allowed_vfolder_hosts',
       'idle_timeout'];
     if (this.client.is_admin === true && name !== null) {
-      let q = `mutation($name: String!, $input: KeyPairResourcePolicy!) {` +
+      let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
         `  create_keypair_resource_policy(name: $name, props: $input) {` +
         `    ok msg resource_policy { ${fields.join(" ")} }` +
         `  }` +
