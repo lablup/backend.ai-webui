@@ -444,8 +444,10 @@ class BackendAIJobList extends PolymerElement {
 
   _updateFilterAccessKey(e) {
     this.filterAccessKey = e.target.value;
-    clearTimeout(this.refreshTimer);
-    this._refreshJobData();
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this._refreshJobData();
+    }
   }
 
   static get template() {
