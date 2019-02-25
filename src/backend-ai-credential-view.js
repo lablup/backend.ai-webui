@@ -265,7 +265,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="add-keypair" outlined label="Create credential" icon="add"></mwc-button>
+          <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
@@ -281,11 +281,10 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal flex center center-justified layout">
           <span>Policy groups</span>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="add-policy" outlined label="Add policy" icon="add"></mwc-button>
+          <mwc-button class="fg red" id="add-policy" outlined label="Create policy" icon="add"></mwc-button>
         </h4>
         <div>
-          <backend-ai-resource-policy-list id="resource-policy-list"
-                                           condition="inactive"></backend-ai-resource-policy-list>
+          <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
         </div>
       </paper-material>
 
@@ -293,7 +292,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       <paper-dialog id="new-keypair-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Create credential</h3>
+          <h3>Add credential</h3>
           <form id="login-form" onSubmit="this._addKeyPair()">
             <fieldset>
               <paper-input type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
@@ -308,7 +307,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <mwc-button class="fg blue create-button" id="create-keypair-button" outlined label="Create"
+              <mwc-button class="fg blue create-button" id="create-keypair-button" outlined label="Add"
                           icon="add"></mwc-button>
             </fieldset>
           </form>

@@ -64,12 +64,12 @@ class BackendAIResourcePolicyList extends PolymerElement {
 
   static get observers() {
     return [
-      '_menuChanged(visible)'
+      '_menuChanged(active)'
     ]
   }
 
-  _menuChanged(visible) {
-    if (!visible) {
+  _menuChanged(active) {
+    if (!active) {
       return;
     }
     // If disconnected
