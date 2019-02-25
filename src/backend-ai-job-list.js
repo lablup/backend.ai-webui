@@ -65,7 +65,8 @@ class BackendAIJobList extends PolymerElement {
   ready() {
     super.ready();
     this.refreshTimer = null;
-    if (this.condition !== 'running' || !window.backendaiclient.is_admin) {
+    if (this.condition !== 'running' || !window.backendaiclient ||
+        !window.backendaiclient.is_admin) {
       this.$['access-key-filter'].parentNode.removeChild(this.$['access-key-filter']);
     }
   }
@@ -262,7 +263,7 @@ class BackendAIJobList extends PolymerElement {
     });
   }
 
-  async _open_wsproxy() {
+  async _openwsproxy() {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       return false;
     }
