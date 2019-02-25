@@ -44,31 +44,35 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       },
       cpu_metric: {
         type: Array,
-        value: [1, 2, 3, 4, 8, 16]
+        value: [1, 2, 3, 4, 8, 16, 24]
       },
       ram_metric: {
         type: Array,
-        value: [1, 2, 4, 8, 16]
+        value: [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512]
       },
       gpu_metric: {
         type: Array,
-        value: [0, 0.3, 0.6, 1, 1.5, 2]
+        value: [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16]
       },
       rate_metric: {
         type: Array,
-        value: [1000, 2000, 3000, 4000, 5000, 10000]
+        value: [1000, 2000, 3000, 4000, 5000, 10000, 50000]
       },
       concurrency_metric: {
         type: Array,
-        value: [1, 2, 3, 4, 5, 10]
+        value: [1, 2, 3, 4, 5, 10, 50]
       },
       vfolder_capacity_metric: {
         type: Array,
-        value: [1, 2, 3, 4, 5, 10, 50, 100]
+        value: [1, 2, 5, 10, 50, 100, 200, 1000]
       },
       vfolder_count_metric: {
         type: Array,
-        value: [1, 2, 3, 4, 5, 10, 30, 50]
+        value: [1, 2, 3, 4, 5, 10, 30, 50, 100]
+      },
+      resource_policy_name: {
+        type: Array,
+        value: []
       }
     }
   }
@@ -89,7 +93,10 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   ready() {
     super.ready();
     this.$['add-keypair'].addEventListener('tap', this._launchKeyPairDialog.bind(this));
-    this.$['create-button'].addEventListener('tap', this._addKeyPair.bind(this));
+    this.$['create-keypair-button'].addEventListener('tap', this._addKeyPair.bind(this));
+
+    this.$['add-policy'].addEventListener('tap', this._launchResourcePolicyDialog.bind(this));
+    this.$['create-policy-button'].addEventListener('tap', this._addResourcePolicy.bind(this));
 
     document.addEventListener('backend-ai-credential-refresh', () => {
       this.$['active-credential-list'].refresh();
@@ -135,7 +142,24 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _launchKeyPairDialog() {
+    console.log(this._getResourcePolicies());
     this.$['new-keypair-dialog'].open();
+  }
+
+  _launchResourcePolicyDialog() {
+    this.$['new-policy-dialog'].open();
+  }
+
+  _getResourcePolicies() {
+    return window.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
+      'total_resource_slots',
+      'max_concurrent_sessions',
+      'max_containers_per_session',
+    ]).then((response) => {
+      let policies = window.backendaiclient.utils.gqlToObject(response.keypair_resource_policies, 'name');
+      console.log(policies);
+
+    });
   }
 
   _addKeyPair() {
@@ -251,7 +275,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
           <mwc-button class="fg red" id="add-policy" outlined label="Add policy" icon="add"></mwc-button>
         </h4>
         <div>
-          <backend-ai-resource-policy-list id="resource-policy-list" condition="inactive"></backend-ai-resource-policy-list>
+          <backend-ai-resource-policy-list id="resource-policy-list"
+                                           condition="inactive"></backend-ai-resource-policy-list>
         </div>
       </paper-material>
 
@@ -268,7 +293,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
               <div class="horizontal center layout">
               </div>
               <br/><br/>
-              <paper-button class="blue create-button" type="submit" id="create-button">
+              <paper-button class="blue create-button" type="submit" id="create-keypair-button">
                 <iron-icon icon="vaadin:key-o"></iron-icon>
                 Create credential
               </paper-button>
@@ -323,6 +348,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+              </div>
+              <div class="horizontal center layout">
                 <paper-dropdown-menu id="vfolder-capacity-limit" label="Virtual Folder Capacity">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
@@ -332,14 +359,14 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="vfolder-count-limit" label="Max. Virtual Folders">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vfloder_count_metric }}">
+                    <template is="dom-repeat" items="{{ vfolder_count_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <paper-button class="blue create-button" type="submit" id="create-button">
+              <paper-button class="blue create-button" type="submit" id="create-policy-button">
                 <iron-icon icon="vaadin:key-o"></iron-icon>
                 Create policy
               </paper-button>
