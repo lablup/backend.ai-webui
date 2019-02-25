@@ -70,7 +70,11 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         type: Array,
         value: [1, 2, 3, 4, 5, 10, 30, 50, 100]
       },
-      resource_policy_name: {
+      resource_policies: {
+        type: Object,
+        value: {}
+      },
+      resource_policy_names: {
         type: Array,
         value: []
       }
@@ -157,8 +161,9 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       'max_containers_per_session',
     ]).then((response) => {
       let policies = window.backendaiclient.utils.gqlToObject(response.keypair_resource_policies, 'name');
-      console.log(policies);
-
+      let policyNames = window.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
+      this.resource_policies = policies;
+      this.resource_policy_names = policyNames;
     });
   }
 
@@ -246,8 +251,12 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     // language=HTML
     return html`
       <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
-        paper-button.create-button {
+        mwc-button.create-button {
           width: 100%;
+        }
+
+        #new-keypair-dialog {
+          min-width: 350px;
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
@@ -256,7 +265,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
+          <mwc-button class="fg red" id="add-keypair" outlined label="Create credential" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
@@ -284,19 +293,23 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       <paper-dialog id="new-keypair-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Create</h3>
+          <h3>Create credential</h3>
           <form id="login-form" onSubmit="this._addKeyPair()">
             <fieldset>
               <paper-input type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
                            auto-validate></paper-input>
-              <h4>Resource Policy</h4>
               <div class="horizontal center layout">
+                <paper-dropdown-menu id="resource-policies" label="Resource Policy">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ resource_policy_names }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <paper-button class="blue create-button" type="submit" id="create-keypair-button">
-                <iron-icon icon="vaadin:key-o"></iron-icon>
-                Create credential
-              </paper-button>
+              <mwc-button class="fg blue create-button" id="create-keypair-button" outlined label="Create"
+                          icon="add"></mwc-button>
             </fieldset>
           </form>
         </paper-material>
