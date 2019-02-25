@@ -226,21 +226,31 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     let gpu_resource = this.$['gpu-resource'].value;
 
     let concurrency_limit = this.$['concurrency-limit'].value;
+    let containers_per_session_limit = this.$['container-per-session-limit'].value;
     let vfolder_count_limit = this.$['vfolder-count-limit'].value;
     let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
     let rate_limit = this.$['rate-limit'].value;
-
-    window.backendaiclient.keypairs.add(user_id, is_active, is_admin,
-      resource_policy, rate_limit, concurrency_limit).then(response => {
-      this.$['new-keypair-dialog'].close();
-      this.$.notification.text = "Keypair successfully created.";
+    let idle_timeout = this.$['idle-timeout'].value;
+    let input = {
+      'name': name,
+      'default_for_unspecified': 'default',
+      'total_resource_slots': total_resource_slots,
+      'max_concurrent_sessions': concurrency_limit,
+      'max_containers_per_session': containers_per_session_limit,
+      'idle_timeout': idle_timeout,
+      'max_vfolder_count': vfolder_count_limit,
+      'max_vfolder_size': vfolder_capacity_limit,
+      'allowed_vfolder_hosts': vfolder_hosts
+    };
+    window.backendaiclient.resource_policy.add(name, input).then(response => {
+      this.$['new-policy-dialog'].close();
+      this.$.notification.text = "Resource policy successfully created.";
       this.$.notification.show();
-      this.$['active-credential-list'].refresh();
-      this.$['inactive-credential-list'].refresh();
+      this.$['resource-policy-list'].refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$['new-keypair-dialog'].close();
+        this.$['new-policy-dialog'].close();
         this.$.notification.text = err.message;
         this.$.notification.show();
       }
@@ -378,10 +388,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <paper-button class="blue create-button" type="submit" id="create-policy-button">
-                <iron-icon icon="vaadin:key-o"></iron-icon>
-                Create policy
-              </paper-button>
+              <mwc-button class="fg blue create-button" id="create-policy-button" outlined label="Create"
+                          icon="add"></mwc-button>
             </fieldset>
           </form>
         </paper-material>
