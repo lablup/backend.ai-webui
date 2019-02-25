@@ -263,7 +263,7 @@ class BackendAIJobList extends PolymerElement {
     });
   }
 
-  async _openwsproxy() {
+  async _open_wsproxy() {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       return false;
     }
