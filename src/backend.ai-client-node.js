@@ -711,7 +711,8 @@ class ResourcePolicy {
     'max_containers_per_session',
     'max_vfolder_count',
     'max_vfolder_size',
-    'allowed_vfolder_hosts']) {
+    'allowed_vfolder_hosts',
+    'idle_timeout']) {
     let q, v;
     if (this.client.is_admin === true) {
       if (name === null) {
@@ -732,8 +733,7 @@ class ResourcePolicy {
   }
 
   add(name = null, input) {
-    let q, v;
-    /*let fields = ['name',
+    let fields = ['name',
     'created_at',
     'default_for_unspecified',
     'total_resource_slots',
@@ -741,16 +741,22 @@ class ResourcePolicy {
     'max_containers_per_session',
     'max_vfolder_count',
     'max_vfolder_size',
-    'allowed_vfolder_hosts'];*/
+      'allowed_vfolder_hosts',
+      'idle_timeout'];
     if (this.client.is_admin === true && name !== null) {
-      q = `mutation($n:String!) {` +
-        `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
-        '}';
-      v = {'n': name};
+      let q = `mutation($name: String!, $input: KeyPairResourcePolicy!) {` +
+        `  create_keypair_resource_policy(name: $name, props: $input) {` +
+        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': name,
+        'input': input
+      };
+      return this.client.gql(q, v);
     } else {
       return resolve(false);
     }
-    return this.client.gql(q, v);
   }
 }
 
@@ -867,7 +873,7 @@ class utils {
     });
     return result;
   }
-  
+
   gqlToList(array, key) {
     let result = [];
     array.forEach(function (element) {
