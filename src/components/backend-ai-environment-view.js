@@ -10,9 +10,9 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
-
 //import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-material';
+import '../lablup-shields';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid.js';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid-sorter.js';
 
@@ -107,13 +107,17 @@ class BackendAiEnvironmentView extends LitElement {
           <vaadin-grid-column width="60px" resizable>
             <template class="header">Base</template>
             <template>
-              <div class="wrapnames" style="word-wrap: break-word;white-space:normal;">[[item.baseimage]]</div>
+              <template is="dom-repeat" items="[[ item.baseimage ]]">
+                <lablup-shields app="" color="blue" description="[[item]]"></lablup-shields>
+              </template>
             </template>
           </vaadin-grid-column>
           <vaadin-grid-column width="50px" resizable>
             <template class="header">Constraint</template>
             <template>
-              <div>[[item.additional_req]]</div>
+              <template is="dom-if" if="[[item.additional_req]]">
+                <lablup-shields app="" color="green" description="[[item.additional_req]]"></lablup-shields>
+              </template>
             </template>
           </vaadin-grid-column>
           <vaadin-grid-column width="150px" flex-grow="0" resizable>
@@ -250,11 +254,13 @@ class BackendAiEnvironmentView extends LitElement {
           image.lang = image.names;
         }
         let langs = image.lang.split('-');
+        let baseimage = [this._humanizeName(image.baseimage)];
         if (langs[1] !== undefined) {
           image.lang = langs[1];
-          image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
+          baseimage.push(this._humanizeName(langs[0]));
+          //image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
         }
-        image.baseimage = this._humanizeName(image.baseimage);
+        image.baseimage = baseimage;//this._humanizeName(image.baseimage);
         image.lang = this._humanizeName(image.lang);
 
         var resource_limit = image.resource_limits;
