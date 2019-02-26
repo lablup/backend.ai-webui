@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-//import {PolymerElement, html} from '@polymer/polymer';
 import {css, html, LitElement} from "lit-element";
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "./layout/iron-flex-layout-classes";
 
