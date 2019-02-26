@@ -11,6 +11,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dialog/paper-dialog';
+import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-progress/paper-progress';
@@ -66,7 +67,7 @@ class BackendAIJobList extends PolymerElement {
     super.ready();
     this.refreshTimer = null;
     if (this.condition !== 'running' || !window.backendaiclient ||
-        !window.backendaiclient.is_admin) {
+      !window.backendaiclient.is_admin) {
       this.$['access-key-filter'].parentNode.removeChild(this.$['access-key-filter']);
     }
   }
@@ -127,7 +128,7 @@ class BackendAIJobList extends PolymerElement {
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"
     ];
     window.backendaiclient.computeSession.list(fields, status,
-        this.filterAccessKey).then((response) => {
+      this.filterAccessKey).then((response) => {
       var sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
         Object.keys(sessions).map((objectKey, index) => {
@@ -263,31 +264,8 @@ class BackendAIJobList extends PolymerElement {
     });
   }
 
-  async _open_wsproxy() {
-    if (window.backendaiclient == undefined || window.backendaiclient == null) {
-      return false;
-    }
-    if (window.backendaiclient.proxyURL === undefined) {
-      window.backendaiclient.proxyURL = 'http://127.0.0.1:5050/';
-    }
-    let param = {
-      access_key: window.backendaiclient._config.accessKey,
-      secret_key: window.backendaiclient._config.secretKey,
-      endpoint: window.backendaiclient._config.endpoint
-    };
-    let rqst = {
-      method: 'PUT',
-      body: JSON.stringify(param),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      uri: window.backendaiclient.proxyURL + 'conf'
-    };
-    return this.sendRequest(rqst);
-  }
-
   async sendRequest(rqst) {
+    console.log('qweqweqwe');
     let resp, body;
     try {
       if (rqst.method == 'GET') {
@@ -345,9 +323,9 @@ class BackendAIJobList extends PolymerElement {
     const kernelId = controls.kernelId;
     window.backendaiclient.getLogs(kernelId).then((req) => {
       setTimeout(() => {
-        const logWindow = window.open('', '_blank', 'width=600,height=800');
-        logWindow.document.head.innerHTML = `<title>${kernelId}</title>`;
-        logWindow.document.body.innerHTML = `<pre>${req.result.logs}</pre>` || 'No logs.';
+        this.$['work-title'].innerHTML = `${kernelId}`;
+        this.$['work-area'].innerHTML = `<pre>${req.result.logs}</pre>` || 'No logs.';
+        this.$['work-dialog'].open();
       }, 100);
     }).catch((err) => {
       if (err && err.message) {
@@ -360,31 +338,55 @@ class BackendAIJobList extends PolymerElement {
     });
   }
 
+  async _open_wsproxy(kernelId, app = 'jupyter') {
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      return false;
+    }
+    if (window.backendaiclient.proxyURL === undefined) {
+      window.backendaiclient.proxyURL = 'http://127.0.0.1:5050/';
+    }
+    let param = {
+      access_key: window.backendaiclient._config.accessKey,
+      secret_key: window.backendaiclient._config.secretKey,
+      endpoint: window.backendaiclient._config.endpoint
+    };
+    let rqst = {
+      method: 'PUT',
+      body: JSON.stringify(param),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      uri: window.backendaiclient.proxyURL + 'conf'
+    };
+    try {
+      let response = await this.sendRequest(rqst);
+      this.$.indicator.set(40, 'Preparing connection...');
+      let accessKey = window.backendaiclient._config.accessKey;
+      rqst = {
+        method: 'GET',
+        uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId
+      };
+      response = await this.sendRequest(rqst);
+      this.$.indicator.set(80, 'Adding kernel to socket queue...');
+      rqst = {
+        method: 'GET',
+        app: app,
+        uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId + "/add"
+      };
+      return await this.sendRequest(rqst);
+    } catch (err) {
+      throw err;
+    }
+  }
+
   _runJupyter(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
-      this._open_wsproxy()
-        .then((response) => {
-          this.$.indicator.set(40, 'Preparing connection...');
-          let accessKey = window.backendaiclient._config.accessKey;
-          let rqst = {
-            method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId
-          };
-          return this.sendRequest(rqst)
-        })
-        .then((response) => {
-          this.$.indicator.set(80, 'Adding kernel to socket queue...');
-          let accessKey = window.backendaiclient._config.accessKey;
-          let rqst = {
-            method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId + "/add"
-          };
-          return this.sendRequest(rqst);
-        })
+      this._open_wsproxy(kernelId, 'jupyter')
         .then((response) => {
           if (response.proxy) {
             console.log(response.proxy + '/tree');
@@ -393,11 +395,34 @@ class BackendAIJobList extends PolymerElement {
               window.open(response.proxy + '/tree', '_blank');
               this.$.indicator.end();
               //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
+              console.log("Jupyter proxy loaded: ");
+              console.log(kernelId);
             }, 1000);
           }
         });
-      console.log("Jupyter proxy loaded: ");
-      console.log(kernelId);
+    }
+  }
+
+  _runJupyterLab(e) {
+    const termButton = e.target;
+    const controls = e.target.closest('#controls');
+    const kernelId = controls.kernelId;
+    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+      this.$.indicator.start();
+      this._open_wsproxy(kernelId, 'jupyterlab')
+        .then((response) => {
+          if (response.proxy) {
+            console.log(response.proxy + '/lab');
+            this.$.indicator.set(100, 'Prepared.');
+            setTimeout(() => {
+              window.open(response.proxy + '/lab', '_blank');
+              this.$.indicator.end();
+              //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
+              console.log("JupyterLab proxy loaded: ");
+              console.log(kernelId);
+            }, 1000);
+          }
+        });
     }
   }
 
@@ -408,23 +433,7 @@ class BackendAIJobList extends PolymerElement {
     let accessKey = window.backendaiclient._config.accessKey;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
-      this._open_wsproxy()
-        .then((response) => {
-          this.$.indicator.set(40, 'Preparing connection...');
-          let rqst = {
-            method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId
-          };
-          return this.sendRequest(rqst)
-        })
-        .then((response) => {
-          this.$.indicator.set(80, 'Adding kernel to socket queue...');
-          let rqst = {
-            method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId + '/add'
-          };
-          return this.sendRequest(rqst);
-        })
+      this._open_wsproxy(kernelId, 'jupyter')
         .then((response) => {
           if (response.proxy) {
             console.log(response.proxy + '/terminals/1');
@@ -435,11 +444,11 @@ class BackendAIJobList extends PolymerElement {
               //this.$['work-dialog'].open();
               window.open(response.proxy + '/terminals/1', '_blank');
               //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
+              console.log("Jupyter proxy loaded: ");
+              console.log(kernelId);
             }, 1000);
           }
         });
-      console.log("Jupyter proxy loaded: ");
-      console.log(kernelId);
     }
   }
 
@@ -551,7 +560,7 @@ class BackendAIJobList extends PolymerElement {
         <vaadin-grid-column resizable>
           <template class="header">Job ID</template>
           <template>
-            <div class="indicator">[[item.sess_id]]</div>
+            <div>[[item.sess_id]]</div>
             <div class="indicator">([[item.kernel_image]])</div>
           </template>
         </vaadin-grid-column>
@@ -653,6 +662,8 @@ class BackendAIJobList extends PolymerElement {
               <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
                 <paper-icon-button class="fg controls-running orange"
                                    on-tap="_runJupyter" icon="vaadin:notebook"></paper-icon-button>
+                <paper-icon-button class="fg controls-running orange"
+                                   on-tap="_runJupyterLab" icon="vaadin:flask"></paper-icon-button>
                 <paper-icon-button class="fg controls-running"
                                    on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
               </template>
@@ -672,13 +683,16 @@ class BackendAIJobList extends PolymerElement {
                     style="padding:0;">
         <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
+            <span id="work-title"></span>
             <div class="flex"></div>
             <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
               Close
             </paper-icon-button>
           </h3>
-          <iframe id="work-area" frameborder="0" border="0" cellspacing="0"
+          <paper-dialog-scrollable id="work-area" style="overflow:scroll;"></paper-dialog-scrollable>
+          <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                   style="border-style: none;width: 100%;"></iframe>
+
         </paper-material>
       </paper-dialog>
     `;

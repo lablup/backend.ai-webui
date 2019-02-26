@@ -4,156 +4,177 @@ function isAuthenticated() {
   const api_endpoint = localStorage.getItem('backendaiconsole.api_endpoint');
   let authenticated = false;
   if (api_key && secret_key && api_endpoint &&
-      api_key !== 'null' && secret_key !== 'null' && api_endpoint !== 'null') {
+    api_key !== 'null' && secret_key !== 'null' && api_endpoint !== 'null') {
     authenticated = true;
   }
   return authenticated;
 }
 
 function backToPreviousPage(e) {
-    window.history.back();
+  window.history.back();
 }
 
 function setNotification(text) {
-    document.querySelector('#lablup-notification').text = text;
-    document.querySelector('#lablup-notification').show();
+  document.querySelector('#lablup-notification').text = text;
+  document.querySelector('#lablup-notification').show();
 }
+
 function setNotificationNavbar(text, timeout) {
-    document.querySelector('#lablup-notification-navbar').innerText = text;
-    if (timeout != 0) {
-        setTimeout(function () {
-            document.querySelector('#lablup-notification-navbar').innerText = '';
-        }, timeout);
-    }
+  document.querySelector('#lablup-notification-navbar').innerText = text;
+  if (timeout != 0) {
+    setTimeout(function () {
+      document.querySelector('#lablup-notification-navbar').innerText = '';
+    }, timeout);
+  }
 }
 
 function closeNotification() {
-    document.querySelector('#lablup-notification').visible = false;
+  document.querySelector('#lablup-notification').visible = false;
 }
+
 function popAlert(html) {
-    var alert = document.querySelector('lablup-alert');
-    alert.text = html;
-    alert.show();
+  var alert = document.querySelector('lablup-alert');
+  alert.text = html;
+  alert.show();
 }
+
 function closeAlert() {
-    document.getElementById('lablup-alert').close();
+  document.getElementById('lablup-alert').close();
 }
+
 function activateSpinner() {
-    var spinner = document.querySelector('#lablup-loading-spinner');
-    spinner.style.display = 'block';
-    spinner.active = true;
+  var spinner = document.querySelector('#lablup-loading-spinner');
+  spinner.style.display = 'block';
+  spinner.active = true;
 }
+
 function deactivateSpinner() {
-    var spinner = document.querySelector('#lablup-loading-spinner');
-    setTimeout(function () { spinner.style.display = 'none'; }, 500);
-    spinner.active = false;
+  var spinner = document.querySelector('#lablup-loading-spinner');
+  setTimeout(function () {
+    spinner.style.display = 'none';
+  }, 500);
+  spinner.active = false;
 }
+
 function toggleSpinner() {
-    var spinner = document.querySelector('#lablup-loading-spinner');
-    spinner.active = !spinner.active;
+  var spinner = document.querySelector('#lablup-loading-spinner');
+  spinner.active = !spinner.active;
 }
+
 function confirmHrefAction(link, message) {
-    var dialog = document.querySelector('#confirmDialog');
-    dialog.querySelector('#confirmDialog-message').innerHTML = message;
-    dialog.querySelector('#confirmDialog-confirm').href = link;
-    dialog.open();
+  var dialog = document.querySelector('#confirmDialog');
+  dialog.querySelector('#confirmDialog-message').innerHTML = message;
+  dialog.querySelector('#confirmDialog-confirm').href = link;
+  dialog.open();
 }
+
 function confirmJSAction(js, message) {
-    var dialog = document.querySelector('#confirmDialog');
-    dialog.querySelector('#confirmDialog-message').innerHTML = message;
-    dialog.querySelector('#confirmDialog-confirm').setAttribute('onclick', js);
-    dialog.open();
+  var dialog = document.querySelector('#confirmDialog');
+  dialog.querySelector('#confirmDialog-message').innerHTML = message;
+  dialog.querySelector('#confirmDialog-confirm').setAttribute('onclick', js);
+  dialog.open();
 }
+
 function notificationDialog(message) {
-    var dialog = document.querySelector('#notificationDialog');
-    dialog.querySelector('#notificationDialog-message').innerHTML = message;
-    dialog.open();
+  var dialog = document.querySelector('#notificationDialog');
+  dialog.querySelector('#notificationDialog-message').innerHTML = message;
+  dialog.open();
 }
+
 function resetInputForm(event) {
-    Polymer.dom(event).localTarget.errorMessage = '';
-    Polymer.dom(event).localTarget.invalid = false;
+  Polymer.dom(event).localTarget.errorMessage = '';
+  Polymer.dom(event).localTarget.invalid = false;
 }
+
 function warnInputForm(response) {
-    if (!response.error_msg) {
-        for (var key in response) {
-            if (document.getElementById("id_" + key) != undefined) {
-                if (document.getElementById("id_" + key).errorMessage == undefined) {
-                    document.getElementById("id_" + key).errorMessage = '';
-                }
-                for (var message in response[key]) {
-                    document.getElementById("id_" + key).errorMessage = response[key][message].message;
-                    document.getElementById("id_" + key).invalid = true;
-                }
-            }
+  if (!response.error_msg) {
+    for (var key in response) {
+      if (document.getElementById("id_" + key) != undefined) {
+        if (document.getElementById("id_" + key).errorMessage == undefined) {
+          document.getElementById("id_" + key).errorMessage = '';
         }
+        for (var message in response[key]) {
+          document.getElementById("id_" + key).errorMessage = response[key][message].message;
+          document.getElementById("id_" + key).invalid = true;
+        }
+      }
     }
-    return true;
+  }
+  return true;
 }
+
 function sendData(id) {
-    document.getElementById(id).submit();
+  document.getElementById(id).submit();
 }
+
 function mapToggleButtonValue(e) {
-    if (Polymer.dom(e).localTarget.checked) {
-        Polymer.dom(e).localTarget.value = "checked";
-    } else {
-        Polymer.dom(e).localTarget.value = undefined;
-    }
+  if (Polymer.dom(e).localTarget.checked) {
+    Polymer.dom(e).localTarget.value = "checked";
+  } else {
+    Polymer.dom(e).localTarget.value = undefined;
+  }
 }
 
 function moveTo(url) {
-    activateSpinner();
-    window.location.href = url;
+  activateSpinner();
+  window.location.href = url;
 }
 
 function lablupRequest(successHandler, errorHandler, finalHandler) {
-    // Simplify ajax request, especially with help omitting error handling.
-    // Usage: global 'requestBot' is assumed to be exist.
-    //   - Set requestBot parameters (e.g. body, method, etc)
-    //   - Define 'successHandler', 'errorHandler', and 'finalHandler'.
-    //   - Call 'lablupRequest' with those handlers as parameters.
-    if (requestBot.loading) {
-        setNotification("Handling previous request...");
-        return;
+  // Simplify ajax request, especially with help omitting error handling.
+  // Usage: global 'requestBot' is assumed to be exist.
+  //   - Set requestBot parameters (e.g. body, method, etc)
+  //   - Define 'successHandler', 'errorHandler', and 'finalHandler'.
+  //   - Call 'lablupRequest' with those handlers as parameters.
+  if (requestBot.loading) {
+    setNotification("Handling previous request...");
+    return;
+  }
+  const req = requestBot.generateRequest();
+  if (!successHandler) successHandler = () => {
+  };
+  if (!errorHandler) {
+    errorHandler = (err) => {
+      if (req.response && req.response.error_msg) {
+        setNotification(req.response.error_msg);
+      } else {
+        setNotification(err);
+      }
     }
-    const req = requestBot.generateRequest();
-    if (!successHandler) successHandler = () => {};
-    if (!errorHandler) {
-        errorHandler = (err) => {
-            if (req.response && req.response.error_msg) {
-                setNotification(req.response.error_msg);
-            } else {
-                setNotification(err);
-            }
-        }
-    }
-    if (!finalHandler) finalHandler = () => {};
-    req.completes.then(successHandler)
-                 .catch(errorHandler)
-                 .finally(finalHandler);
+  }
+  if (!finalHandler) finalHandler = () => {
+  };
+  req.completes.then(successHandler)
+    .catch(errorHandler)
+    .finally(finalHandler);
 }
 
 function toggleDisplayElement(e) {
-    var o = document.getElementById(e);
-    if (o.style.display == '' || o.style.display == undefined || o.style.display != 'block') {
-        o.style.display = 'block';
-    } else {
-        o.style.display = 'none';
-    }
+  var o = document.getElementById(e);
+  if (o.style.display == '' || o.style.display == undefined || o.style.display != 'block') {
+    o.style.display = 'block';
+  } else {
+    o.style.display = 'none';
+  }
 }
 
 function toggleVisibilityElement(e) {
-    var o = document.getElementById(e);
-    if (o.classList.contains('visible')) {
-        o.classList.remove('visible');
-        o.classList.add("invisible");
-    } else {
-        o.classList.remove("invisible");
-        o.classList.add('visible');
-    }
+  var o = document.getElementById(e);
+  if (o.classList.contains('visible')) {
+    o.classList.remove('visible');
+    o.classList.add("invisible");
+  } else {
+    o.classList.remove("invisible");
+    o.classList.add('visible');
+  }
+}
+
+function isElectron() {
+  return (typeof process !== "undefined") && process.versions && (process.versions.electron !== undefined);
 }
 
 var forEach = function (array, callback, scope) {
-    for (var i = 0; i < array.length; i++) {
-        callback.call(scope, i, array[i]);
-    }
+  for (var i = 0; i < array.length; i++) {
+    callback.call(scope, i, array[i]);
+  }
 };

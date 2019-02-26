@@ -252,9 +252,6 @@ class BackendAiEnvironmentView extends LitElement {
         let langs = image.lang.split('-');
         if (langs[1] !== undefined) {
           image.lang = langs[1];
-          if (langs[0] === 'ngc') {
-            langs[0] = 'NVidia GPU Cloud';
-          }
           image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
         }
         image.baseimage = this._humanizeName(image.baseimage);
@@ -275,6 +272,10 @@ class BackendAiEnvironmentView extends LitElement {
           image[resource.key + '_limit_max'] = this._addUnit(resource.max);
         });
       });
+      let image_keys = Object.keys(images);
+      console.log(image_keys);
+      let sorted_images = {};
+      image_keys.sort();
       this.images = images;
 
       this.shadowRoot.querySelector('#testgrid').items = this.images;
@@ -328,7 +329,8 @@ class BackendAiEnvironmentView extends LitElement {
       'ubuntu16.04': 'Ubuntu 16.04',
       'ubuntu18.04': 'Ubuntu 18.04',
       'anaconda2018.12': 'Anaconda 2018.12',
-      'alpine3.8': 'Alpine Lunux 3.8'
+      'alpine3.8': 'Alpine Lunux 3.8',
+      'ngc': 'NVidia GPU Cloud'
     };
     if (value in this.alias) {
       return this.alias[value];
