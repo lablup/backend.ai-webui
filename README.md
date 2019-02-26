@@ -29,12 +29,12 @@ $ polymer serve --npm
 ```
 
 
-### Running websocket with node.js 
+### Running websocket with node.js
 
 This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
 
 ```
-$ cd wsproxy
+$ cd src/wsproxy
 $ npm install
 $ node ./local_proxy.js
 ```
@@ -58,8 +58,8 @@ $ polymer build
 Prerequistics : electron, electron-packager
 
 ```
-$ make all (build win/mac/linux app) 
-$ make test (build only (for polymer serving test)) 
+$ make all (build win/mac/linux app)
+$ make test (build only (for polymer serving test))
 ```
 
 ### Manual run (using local Electron)

@@ -5,13 +5,13 @@
 
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html, LitElement} from 'lit-element';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
-//import '@vaadin/vaadin-grid/vaadin-grid.js';
+// import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-material';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid.js';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid-sorter.js';
@@ -171,7 +171,7 @@ class BackendAiSettingsView extends LitElement {
         type: Object,
         hasChanged: () => true
       }
-    }
+    };
   }
 
   constructor() {
@@ -195,7 +195,6 @@ class BackendAiSettingsView extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-
   }
 
   disconnectedCallback() {
@@ -205,7 +204,6 @@ class BackendAiSettingsView extends LitElement {
   _indexFrom1(index) {
     return index + 1;
   }
-
 }
 
 customElements.define(BackendAiSettingsView.is, BackendAiSettingsView);
