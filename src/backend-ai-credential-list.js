@@ -114,6 +114,9 @@ class BackendAICredentialList extends PolymerElement {
         var keypair = keypairs[objectKey];
         if (keypair.resource_policy in this.resourcePolicy) {
           for (var k in this.resourcePolicy[keypair.resource_policy]) {
+            if (k === 'created_at') {
+              continue;
+            }
             keypair[k] = this.resourcePolicy[keypair.resource_policy][k];
             if (k === 'total_resource_slots') {
               keypair['total_resource_slots'] = JSON.parse(this.resourcePolicy[keypair.resource_policy][k]);
@@ -271,8 +274,7 @@ class BackendAICredentialList extends PolymerElement {
   }
 
   _humanReadableTime(d) {
-    var d = new Date(d);
-    return d.toUTCString();
+    return new Date(d).toUTCString();
   }
 
   _indexFrom1(index) {
