@@ -13,8 +13,8 @@ import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../
 //import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@polymer/paper-material';
 import '../lablup-shields';
-import '@vaadin/vaadin-grid/theme/material/vaadin-grid.js';
-import '@vaadin/vaadin-grid/theme/material/vaadin-grid-sorter.js';
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox';

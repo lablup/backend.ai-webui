@@ -579,7 +579,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             </template>
           </vaadin-grid-column>
 
-          <vaadin-grid-column resizable>
+          <vaadin-grid-column width="85px" flex-grow="0" resizable>
             <template class="header">Location</template>
             <template>
               <div class="layout vertical">

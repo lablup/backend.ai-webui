@@ -13,7 +13,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 
-import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -337,7 +337,7 @@ class BackendAIResourcePolicyList extends PolymerElement {
           </template>
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.name]]</div>
+              <div>[[item.name]]</div>
             </div>
           </template>
         </vaadin-grid-column>
@@ -396,7 +396,7 @@ class BackendAIResourcePolicyList extends PolymerElement {
             <vaadin-grid-sorter path="max_concurrent_sessions">Concurrency</vaadin-grid-sorter>
           </template>
           <template>
-            <div class="indicator">[[item.max_concurrent_sessions]]
+            <div>[[item.max_concurrent_sessions]]
             </div>
           </template>
         </vaadin-grid-column>
@@ -411,7 +411,7 @@ class BackendAIResourcePolicyList extends PolymerElement {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Allowed Hosts</template>
+          <template class="header">Data Nodes</template>
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 import {css, html, LitElement} from "lit-element";
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "./layout/iron-flex-layout-classes";
 
 /**
@@ -59,7 +60,7 @@ class LablupShields extends LitElement {
   static get properties() {
     return {
       app: {
-        type: String,
+        type: String
       },
       description: {
         type: String
@@ -96,12 +97,12 @@ class LablupShields extends LitElement {
 
   constructor() {
     super();
+    setPassiveTouchGestures(true);
     this.app = '';
     this.description = '';
     this.color = 'green';
     this.appColor = 'grey';
     this.ui = 'flat';
-    this._formatItem();
   }
 
   firstUpdated() {
@@ -116,10 +117,6 @@ class LablupShields extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._createPropertyObserver('description', '_descriptionChanged', true);
-    this._createPropertyObserver('color', '_colorChanged', true);
-    this._createPropertyObserver('appColor', '_appColorChanged', true);
-    this._createPropertyObserver('ui', '_formatItem', true);
   }
 
   _classChanged() {
