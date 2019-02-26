@@ -1,6 +1,4 @@
-const _ = require("underscore");
 const log = require("log");
-const debug = require("./debug");
 let _n = 0;
 
 const name = stream => stream._sig || "tcp";
@@ -11,11 +9,7 @@ module.exports = function(s1, s2) {
   const llog = (stream, msg) => log(`${n} ${name(stream)} ${msg}`);
 
   // debug log if set in environment
-  if (debug.isDebug) {
-    dlog = llog;
-  } else {
-    dlog = function() {};
-  }
+  dlog = llog;
 
   // add stop:  end() once wrapper
   const stop = function() {
@@ -56,5 +50,5 @@ module.exports = function(s1, s2) {
     return s1.pipe(s2, {end}).pipe(s1, {end});
   };
 
-  autoPipe();
+  manualPipe();
 };

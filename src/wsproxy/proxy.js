@@ -6,7 +6,6 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     let method = "GET";
     let requestBody = '';
     let d = new Date();
-    console.log(d);
     let signKey = this.getSignKey(this._config.secretKey, d);
     let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody, "application/json");
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');

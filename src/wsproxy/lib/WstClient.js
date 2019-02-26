@@ -52,7 +52,9 @@ module.exports = (wst_client = class wst_client extends require('events').EventE
     }
     if (localHost == null) { localHost = '127.0.0.1'; }
 
+    log("New Server with " + localHost + localPort)
     this.tcpServer.listen(localPort, localHost, cb);
+
     return this.tcpServer.on("connection", tcpConn => {
       const bind = (s, tcp) => {
         require("./bindStream")(s, tcp);
@@ -63,8 +65,8 @@ module.exports = (wst_client = class wst_client extends require('events').EventE
         if (!error) {
           return bind(wsStream, tcpConn);
         } else {
-          this.emit('connectFailed', error);
-          log("FAIL")
+          tcpConn.destroy()
+          log("Close server with error")
         }
       });
     });
