@@ -145,7 +145,6 @@ class BackendAICredentialList extends PolymerElement {
           }
         }
       });
-      console.log(keypairs);
       this.keypairs = keypairs;
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
