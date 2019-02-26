@@ -1,14 +1,13 @@
 /**
  @license
- Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {PolymerElement, html} from '@polymer/polymer';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-flex-layout/iron-flex-layout';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+//import {PolymerElement, html} from '@polymer/polymer';
+import {css, html, LitElement} from "lit-element";
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "./layout/iron-flex-layout-classes";
 
 /**
- `<lablup-shields>` is a complement dom-module of shields.io
+ `<lablup-shields>` is a complement lit-element of shields.io
 
  Example:
  <lablup-shields app="test" description="0.1" ui="flat"></lablup-shields>
@@ -16,14 +15,15 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
  @group Lablup Elements
  @element lablup-shields
  */
-class LablupShields extends PolymerElement {
-  static get template() {
-    // language=HTML
-    return html`
-      <style is="custom-style" include="iron-flex iron-flex-alignment">
-        .shields {
-        }
-
+class LablupShields extends LitElement {
+  static get styles() {
+    return [
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
         .text {
           font-family: 'DejaVu Sans', Verdana, Geneva, sans-serif;
           font-size: 11px;
@@ -36,14 +36,19 @@ class LablupShields extends PolymerElement {
         .round {
           border-radius: 4px;
         }
-      </style>
+      `];
+  }
+
+  render() {
+    // language=HTML
+    return html`
       <div class="shields layout horizontal flex">
         <div class="app horizontal layout center">
           <slot name="app-icon"></slot>
-          <span id="app-text" class="text app-text">{{ app }}</span></div>
+          <span id="app-text" class="text app-text">${this.app}</span></div>
         <div class="desc horizontal layout center">
           <slot name="desc-icon"></slot>
-          <span id="desc-text" class="text desc-text">{{ description }}</span></div>
+          <span id="desc-text" class="text desc-text">${this.description}</span></div>
       </div>
     `;
   }
@@ -56,23 +61,18 @@ class LablupShields extends PolymerElement {
     return {
       app: {
         type: String,
-        value: ''
       },
       description: {
-        type: String,
-        value: ''
+        type: String
       },
       color: {
-        type: String,
-        value: 'green'
+        type: String
       },
       appColor: {
-        type: String,
-        value: 'grey'
+        type: String
       },
       ui: {
-        type: String,
-        value: 'flat'
+        type: String
       }
     }
   }
@@ -97,17 +97,21 @@ class LablupShields extends PolymerElement {
 
   constructor() {
     super();
+    this.app = '';
+    this.description = '';
+    this.color = 'green';
+    this.appColor = 'grey';
+    this.ui = 'flat';
     this._formatItem();
   }
 
-  ready() {
-    super.ready();
+  firstUpdated() {
     this._colorChanged();
     this._appColorChanged();
     this._formatItem();
     this._descriptionChanged();
     if (this.app == '') {
-      this.$['app-text'].style.display = 'none';
+      this.shadowRoot.querySelector('#app-text').style.display = 'none';
     }
   }
 
@@ -144,7 +148,7 @@ class LablupShields extends PolymerElement {
   }
 
   _descriptionChanged() {
-    if (this.description == 'undefined' || this.description === '') {
+    if (typeof this.description == 'undefined' || this.description == 'undefined' || this.description === '') {
       this.shadowRoot.querySelector('.desc').style.display = 'none';
     } else {
       this.shadowRoot.querySelector('.desc').style.display = 'block';
