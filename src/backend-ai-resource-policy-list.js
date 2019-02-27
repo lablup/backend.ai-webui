@@ -25,8 +25,9 @@ import './lablup-piechart.js';
 import './lablup-shields.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import {OverlayPatchMixin} from "./overlay-patch-mixin";
 
-class BackendAIResourcePolicyList extends PolymerElement {
+class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
 
   static get is() {
     return 'backend-ai-resource-policy-list';
@@ -83,10 +84,63 @@ class BackendAIResourcePolicyList extends PolymerElement {
     }
   }
 
-  _launchResourcePolicyDialog() {
-    this.$['new-policy-dialog'].open();
+  _launchResourcePolicyDialog(e) {
+    this.updateCurrentPolicyToDialog(e);
+    this.$['modify-policy-dialog'].open();
   }
 
+  updateCurrentPolicyToDialog(e) {
+    console.log(e.target);
+    const controls = e.target.closest('#controls');
+    const policyName = controls.policyName;
+    console.log(policyName);
+    let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
+    let resourcePolicy = resourcePolicies[policyName];
+    console.log(resourcePolicy);
+    //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
+    this.$['cpu-resource'].value = resourcePolicy.total_resource_slots.cpu;
+    this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda.device'];
+    this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda.shares'];
+    this.$['ram-resource'].value = resourcePolicy.total_resource_slots['mem'];
+
+    this.$['concurrency-limit'].value = resourcePolicy.max_concurrent_sessions;
+    this.$['container-per-session-limit'].value = resourcePolicy.max_containers_per_session;
+    this.$['vfolder-count-limit'].value = resourcePolicy.max_vfolder_count;
+    this.$['vfolder-capacity-limit'].value = resourcePolicy.max_vfolder_size;
+    this.$['idle-timeout'].value = resourcePolicy.idle_timeout;
+
+
+    /*
+    let cpu_resource = this.$['cpu-resource'].value;
+    let ram_resource = this.$['ram-resource'].value;
+    let gpu_resource = this.$['gpu-resource'].value;
+    let vgpu_resource = this.$['vgpu-resource'].value;
+
+    let total_resource_slots = {
+      "cpu": cpu_resource,
+      "mem": ram_resource + 'g',
+      "cuda.device": parseInt(gpu_resource),
+      "cuda.shares": parseFloat(vgpu_resource)
+    };
+    let vfolder_hosts = ["local"];
+    let concurrency_limit = this.$['concurrency-limit'].value;
+    let containers_per_session_limit = this.$['container-per-session-limit'].value;
+    let vfolder_count_limit = this.$['vfolder-count-limit'].value;
+    let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
+    let rate_limit = this.$['rate-limit'].value;
+    let idle_timeout = this.$['idle-timeout'].value;
+    let input = {
+      'default_for_unspecified': 'UNLIMITED',
+      'total_resource_slots': JSON.stringify(total_resource_slots),
+      'max_concurrent_sessions': concurrency_limit,
+      'max_containers_per_session': containers_per_session_limit,
+      'idle_timeout': idle_timeout,
+      'max_vfolder_count': vfolder_count_limit,
+      'max_vfolder_size': vfolder_capacity_limit,
+      'allowed_vfolder_hosts': vfolder_hosts
+    };
+*/
+  }
   _refreshPolicyData() {
     return window.backendaiclient.resourcePolicy.get().then((response) => {
       let rp = response.keypair_resource_policies;
@@ -384,9 +438,6 @@ class BackendAIResourcePolicyList extends PolymerElement {
                 <span>[[_markIfUnlimited(item.max_vfolder_count)]]</span>
                 <span class="indicator">Folders</span>
               </div>
-              <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
-              <!-- <span>[[item.storage_capacity]]</span> -->
-              <!-- <span class="indicator">[[item.storage_unit]]</span> -->
             </div>
           </template>
         </vaadin-grid-column>
@@ -427,16 +478,16 @@ class BackendAIResourcePolicyList extends PolymerElement {
           <template>
             <div id="controls" class="layout horizontal flex center"
                  policy-name="[[item.name]]">
-              <paper-icon-button class="controls-running" icon="settings" disabled
+              <paper-icon-button class="controls-running" icon="settings"
                                  on-tap="_launchResourcePolicyDialog"></paper-icon-button>
             </div>
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-      <paper-dialog id="new-policy-dialog" with-backdrop
+      <paper-dialog id="modify-policy-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Create</h3>
+          <h3>Modify</h3>
           <form id="login-form" onSubmit="this._modifyResourcePolicy()">
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
@@ -498,13 +549,6 @@ class BackendAIResourcePolicyList extends PolymerElement {
                 <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ concurrency_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="rate-limit" label="Rate Limit (for 15 min.)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ rate_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
                     </template>
                   </paper-listbox>

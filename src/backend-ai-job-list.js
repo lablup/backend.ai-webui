@@ -147,6 +147,7 @@ class BackendAIJobList extends PolymerElement {
         });
       }
       this.compute_sessions = sessions;
+      console.log(sessions);
       //this.jobs = response;
       let refreshTime;
       if (this.active === true) {

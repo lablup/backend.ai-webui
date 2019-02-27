@@ -169,10 +169,6 @@ function toggleVisibilityElement(e) {
   }
 }
 
-function isElectron() {
-  return (typeof process !== "undefined") && process.versions && (process.versions.electron !== undefined);
-}
-
 var forEach = function (array, callback, scope) {
   for (var i = 0; i < array.length; i++) {
     callback.call(scope, i, array[i]);
