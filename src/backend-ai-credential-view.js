@@ -187,8 +187,6 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   _addKeyPair() {
     let is_active = true;
     let is_admin = false;
-    let rate_limit = 5000;
-    let concurrency_limit = 10;
     let user_id;
     if (this.$['id_new_user_id'].value != '') {
       if (this.$['id_new_user_id'].invalid == true) {
@@ -200,10 +198,11 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     }
     console.log(user_id);
     let resource_policy = this.$['resource-policy'].value;
+    let rate_limit = this.$['rate-limit'].value;
 
     // Read resources
     window.backendaiclient.keypair.add(user_id, is_active, is_admin,
-      resource_policy, rate_limit, concurrency_limit).then(response => {
+      resource_policy, rate_limit).then(response => {
       this.$['new-keypair-dialog'].close();
       this.$.notification.text = "Keypair successfully created.";
       this.$.notification.show();
@@ -235,7 +234,6 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     let containers_per_session_limit = this.$['container-per-session-limit'].value;
     let vfolder_count_limit = this.$['vfolder-count-limit'].value;
     let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
-    let rate_limit = this.$['rate-limit'].value;
     let idle_timeout = this.$['idle-timeout'].value;
     let input = {
       'default_for_unspecified': 'UNLIMITED',
@@ -359,6 +357,13 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+                <paper-dropdown-menu id="rate-limit" label="Rate Limit (for 15 min.)">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ rate_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
               </div>
               <br/><br/>
               <mwc-button class="fg blue create-button" id="create-keypair-button" outlined label="Add"
@@ -432,13 +437,6 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                 <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ concurrency_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="rate-limit" label="Rate Limit (for 15 min.)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ rate_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
                     </template>
                   </paper-listbox>

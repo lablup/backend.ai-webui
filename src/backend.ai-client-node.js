@@ -628,7 +628,7 @@ class Keypair {
   }
 
   list(userId = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
+    'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
 
     let q;
     if (userId == null) {
@@ -652,7 +652,7 @@ class Keypair {
   }
 
   add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
-      rateLimit = 1000, concurrencyLimit = 1) {
+      rateLimit = 1000) {
     let fields = [
       'is_active',
       'is_admin',
