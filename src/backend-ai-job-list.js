@@ -88,6 +88,10 @@ class BackendAIJobList extends PolymerElement {
     ]
   }
 
+  is_admin() {
+    return window.backendaiclient.is_admin;
+  }
+
   _menuChanged(active) {
     if (!active) {
       return;
@@ -125,7 +129,7 @@ class BackendAIJobList extends PolymerElement {
 
     let fields = [
       "sess_id", "lang", "created_at", "terminated_at", "status",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"
+      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     window.backendaiclient.computeSession.list(fields, status,
       this.filterAccessKey).then((response) => {
@@ -557,7 +561,18 @@ class BackendAIJobList extends PolymerElement {
           <template class="header">#</template>
           <template>[[_indexFrom1(index)]]</template>
         </vaadin-grid-column>
-
+        <template is="dom-if" if="{{is_admin}}">
+          <vaadin-grid-column resizable width="100px" flex-grow="0">
+            <template class="header">
+              <vaadin-grid-sorter path="access_key">API Key</vaadin-grid-sorter>
+            </template>
+            <template>
+              <div class="layout vertical">
+                <span class="indicator">{{item.access_key}}</span>
+              </div>
+            </template>
+          </vaadin-grid-column>
+        </template>
         <vaadin-grid-column resizable>
           <template class="header">Job ID</template>
           <template>
