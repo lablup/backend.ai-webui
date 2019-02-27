@@ -671,8 +671,7 @@ class Keypair {
         'is_active': isActive,
         'is_admin': isAdmin,
         'resource_policy': resourcePolicy,
-        'rate_limit': rateLimit,
-        'concurrency_limit': concurrencyLimit,
+        'rate_limit': rateLimit
       },
     };
     return this.client.gql(q, v);
