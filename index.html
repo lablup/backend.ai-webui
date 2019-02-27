@@ -22,10 +22,13 @@
         });
       });
     }
+    if ((typeof process !== "undefined") && process.versions && (process.versions.electron !== undefined)) {
+      window.isElectron = true;
+    } else {
+      window.isElectron = false;
+    }
     window.process = {env: {NODE_ENV: 'production'}};
   </script>
-
-
   <style>
     .loading-message {
       position: absolute;

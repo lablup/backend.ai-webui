@@ -88,6 +88,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
+    console.log("Electron shell mode: ", window.isElectron);
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
