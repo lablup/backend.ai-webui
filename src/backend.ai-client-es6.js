@@ -895,7 +895,7 @@ class utils {
 
   elapsedTime(start, end) {
     var startDate = new Date(start);
-    if (this.condition == 'running') {
+    if (end === null) {
       var endDate = new Date();
     } else {
       var endDate = new Date(end);

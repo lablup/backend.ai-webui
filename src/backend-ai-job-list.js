@@ -151,7 +151,6 @@ class BackendAIJobList extends PolymerElement {
         });
       }
       this.compute_sessions = sessions;
-      console.log(sessions);
       //this.jobs = response;
       let refreshTime;
       if (this.active === true) {
@@ -194,7 +193,7 @@ class BackendAIJobList extends PolymerElement {
 
   _humanReadableTime(d) {
     var d = new Date(d);
-    return d.toUTCString();
+    return d.toLocaleString();
   }
 
   _isAppRunning(lang) {
@@ -270,7 +269,6 @@ class BackendAIJobList extends PolymerElement {
   }
 
   async sendRequest(rqst) {
-    console.log('qweqweqwe');
     let resp, body;
     try {
       if (rqst.method == 'GET') {
