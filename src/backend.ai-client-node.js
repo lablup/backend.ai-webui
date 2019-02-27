@@ -818,9 +818,7 @@ class ComputeSession {
        status = 'RUNNING', accessKey = null) {
     let q, v;
     if (this.client.is_admin === true) {
-      if (accessKey == null) {
-        accessKey = this.client._config.accessKey;
-      }
+      if (!accessKey) accessKey = null;
       q = `query($ak:String, $status:String) {` +
         `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
         '}';
