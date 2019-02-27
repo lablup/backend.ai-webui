@@ -19,7 +19,7 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
           </text>
         </g>
       </svg>
-    `}}customElements.define(LablupPiechart.is,LablupPiechart);class BackendAICredentialList extends _backendAiConsole.PolymerElement{static get is(){return"backend-ai-credential-list"}static get properties(){return{active:{type:Boolean,value:!1},condition:{type:String,default:"active"},keypairs:{type:Object,value:{}},resourcePolicy:{type:Object,value:{}},keypairInfo:{type:Object,value:{}}}}ready(){super.ready()}connectedCallback(){super.connectedCallback();(0,_backendAiConsole.afterNextRender)(this,function(){})}shouldUpdate(){return this.active}static get observers(){return["_menuChanged(active)"]}_menuChanged(active){if(!active){return}if(window.backendaiclient==void 0||null==window.backendaiclient){document.addEventListener("backend-ai-connected",()=>{this._refreshKeyData()},!0)}else{this._refreshKeyData()}}_refreshKeyData(user_id){let status="active",is_active=!0;switch(this.condition){case"active":is_active=!0;break;default:is_active=!1;}return window.backendaiclient.resourcePolicy.get().then(response=>{let rp=response.keypair_resource_policies;this.resourcePolicy=window.backendaiclient.utils.gqlToObject(rp,"name")}).then(()=>{let fields=["access_key","is_active","is_admin","user_id","created_at","last_used","concurrency_limit","concurrency_used","rate_limit","num_queries","resource_policy"];return window.backendaiclient.keypair.list(user_id,fields,is_active)}).then(response=>{let keypairs=response.keypairs;Object.keys(keypairs).map((objectKey,index)=>{var keypair=keypairs[objectKey];if(keypair.resource_policy in this.resourcePolicy){for(var k in this.resourcePolicy[keypair.resource_policy]){keypair[k]=this.resourcePolicy[keypair.resource_policy][k];if("total_resource_slots"===k){keypair.total_resource_slots=JSON.parse(this.resourcePolicy[keypair.resource_policy][k])}}if("cpu"in keypair.total_resource_slots){}else if("UNLIMITED"===keypair.default_for_unspecified){keypair.total_resource_slots.cpu="-"}if("mem"in keypair.total_resource_slots){keypair.total_resource_slots.mem=parseFloat(keypair.total_resource_slots.mem)}else if("UNLIMITED"===keypair.default_for_unspecified){keypair.total_resource_slots.mem="-"}if("cuda.device"in keypair.total_resource_slots){keypair.total_resource_slots.cuda_device=keypair.total_resource_slots["cuda.device"]}if("cuda.shares"in keypair.total_resource_slots){keypair.total_resource_slots.cuda_shares=keypair.total_resource_slots["cuda.shares"]}if(!1==="cuda_device"in keypair.total_resource_slots&&!1==="cuda_shares"in keypair.total_resource_slots&&"UNLIMITED"===keypair.default_for_unspecified){keypair.total_resource_slots.cuda_shares="-";keypair.total_resource_slots.cuda_device="-"}}});this.keypairs=keypairs}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}_showKeypairDetail(e){var _this=this;return babelHelpers.asyncToGenerator(function*(){const controls=e.target.closest("#controls"),access_key=controls.accessKey;try{const data=yield _this._getKeyData(access_key);_this.keypairInfo=data.keypair;_this.$["keypair-info-dialog"].open()}catch(err){if(err&&err.message){_this.$.notification.text=err.message;_this.$.notification.show()}}})()}_getKeyData(accessKey){return babelHelpers.asyncToGenerator(function*(){let fields=["access_key","secret_key","is_active","is_admin","user_id","created_at","last_used","concurrency_limit","concurrency_used","rate_limit","num_queries","resource_policy"];return window.backendaiclient.keypair.info(accessKey,fields)})()}refresh(){let user_id=null;this._refreshKeyData()}_isActive(){return"active"===this.condition}_revokeKey2(e){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey}_deleteKey(e){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey;window.backendaiclient.keypair.delete(accessKey).then(response=>{this.refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}_revokeKey(e){this._mutateKey(e,!1)}_reuseKey(e){this._mutateKey(e,!0)}_mutateKey(e,is_active){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey;let original=this.keypairs.keypairs.find(this._findKeyItem,accessKey),input={is_active:is_active,is_admin:original.is_admin,resource_policy:original.resource_policy,rate_limit:original.rate_limit,concurrency_limit:original.concurrency_limit};window.backendaiclient.keypair.mutate(accessKey,input).then(response=>{let event=new CustomEvent("backend-ai-credential-refresh",{detail:this});document.dispatchEvent(event)}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}_findKeyItem(element){return element.access_key=this}_byteToMB(value){return _Mathfloor(value/1e6)}_byteToGB(value){return _Mathfloor(value/1e9)}_MBToGB(value){return value/1024}_msecToSec(value){return(+(value/1e3)).toFixed(2)}_elapsed(start,end){var startDate=new Date(start);if("active"==this.condition){var endDate=new Date}else{var endDate=new Date}var seconds=_Mathfloor((endDate.getTime()-startDate.getTime())/1e3,-1),days=_Mathfloor(seconds/86400);return days}_humanReadableTime(d){var d=new Date(d);return d.toUTCString()}_indexFrom1(index){return index+1}_markIfUnlimited(value){if(["-",0].includes(value)){return"\u221E"}else{return value}}static get template(){return _backendAiConsole.html`
+    `}}customElements.define(LablupPiechart.is,LablupPiechart);class BackendAICredentialList extends _backendAiConsole.PolymerElement{static get is(){return"backend-ai-credential-list"}static get properties(){return{active:{type:Boolean,value:!1},condition:{type:String,default:"active"},keypairs:{type:Object,value:{}},resourcePolicy:{type:Object,value:{}},keypairInfo:{type:Object,value:{}}}}ready(){super.ready()}connectedCallback(){super.connectedCallback();(0,_backendAiConsole.afterNextRender)(this,function(){})}shouldUpdate(){return this.active}static get observers(){return["_menuChanged(active)"]}_menuChanged(active){if(!active){return}if(window.backendaiclient==void 0||null==window.backendaiclient){document.addEventListener("backend-ai-connected",()=>{this._refreshKeyData()},!0)}else{this._refreshKeyData()}}_refreshKeyData(user_id){let status="active",is_active=!0;switch(this.condition){case"active":is_active=!0;break;default:is_active=!1;}return window.backendaiclient.resourcePolicy.get().then(response=>{let rp=response.keypair_resource_policies;this.resourcePolicy=window.backendaiclient.utils.gqlToObject(rp,"name")}).then(()=>{let fields=["access_key","is_active","is_admin","user_id","created_at","last_used","concurrency_limit","concurrency_used","rate_limit","num_queries","resource_policy"];return window.backendaiclient.keypair.list(user_id,fields,is_active)}).then(response=>{let keypairs=response.keypairs;Object.keys(keypairs).map((objectKey,index)=>{var keypair=keypairs[objectKey];if(keypair.resource_policy in this.resourcePolicy){for(var k in this.resourcePolicy[keypair.resource_policy]){if("created_at"===k){continue}keypair[k]=this.resourcePolicy[keypair.resource_policy][k];if("total_resource_slots"===k){keypair.total_resource_slots=JSON.parse(this.resourcePolicy[keypair.resource_policy][k])}}if("cpu"in keypair.total_resource_slots){}else if("UNLIMITED"===keypair.default_for_unspecified){keypair.total_resource_slots.cpu="-"}if("mem"in keypair.total_resource_slots){keypair.total_resource_slots.mem=parseFloat(keypair.total_resource_slots.mem)}else if("UNLIMITED"===keypair.default_for_unspecified){keypair.total_resource_slots.mem="-"}if("cuda.device"in keypair.total_resource_slots){keypair.total_resource_slots.cuda_device=keypair.total_resource_slots["cuda.device"]}if("cuda.shares"in keypair.total_resource_slots){keypair.total_resource_slots.cuda_shares=keypair.total_resource_slots["cuda.shares"]}if(!1==="cuda_device"in keypair.total_resource_slots&&!1==="cuda_shares"in keypair.total_resource_slots&&"UNLIMITED"===keypair.default_for_unspecified){keypair.total_resource_slots.cuda_shares="-";keypair.total_resource_slots.cuda_device="-"}}});this.keypairs=keypairs}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}_showKeypairDetail(e){var _this=this;return babelHelpers.asyncToGenerator(function*(){const controls=e.target.closest("#controls"),access_key=controls.accessKey;try{const data=yield _this._getKeyData(access_key);_this.keypairInfo=data.keypair;_this.$["keypair-info-dialog"].open()}catch(err){if(err&&err.message){_this.$.notification.text=err.message;_this.$.notification.show()}}})()}_getKeyData(accessKey){return babelHelpers.asyncToGenerator(function*(){let fields=["access_key","secret_key","is_active","is_admin","user_id","created_at","last_used","concurrency_limit","concurrency_used","rate_limit","num_queries","resource_policy"];return window.backendaiclient.keypair.info(accessKey,fields)})()}refresh(){let user_id=null;this._refreshKeyData()}_isActive(){return"active"===this.condition}_revokeKey2(e){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey}_deleteKey(e){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey;window.backendaiclient.keypair.delete(accessKey).then(response=>{this.refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}_revokeKey(e){this._mutateKey(e,!1)}_reuseKey(e){this._mutateKey(e,!0)}_mutateKey(e,is_active){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey;let original=this.keypairs.find(this._findKeyItem,accessKey),input={is_active:is_active,is_admin:original.is_admin,resource_policy:original.resource_policy,rate_limit:original.rate_limit,concurrency_limit:original.concurrency_limit};window.backendaiclient.keypair.mutate(accessKey,input).then(response=>{let event=new CustomEvent("backend-ai-credential-refresh",{detail:this});document.dispatchEvent(event)}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}_findKeyItem(element){return element.access_key=this}_byteToMB(value){return _Mathfloor(value/1e6)}_byteToGB(value){return _Mathfloor(value/1e9)}_MBToGB(value){return value/1024}_msecToSec(value){return(+(value/1e3)).toFixed(2)}_elapsed(start,end){var startDate=new Date(start);if("active"==this.condition){var endDate=new Date}else{var endDate=new Date}var seconds=_Mathfloor((endDate.getTime()-startDate.getTime())/1e3,-1),days=_Mathfloor(seconds/86400);return days}_humanReadableTime(d){return new Date(d).toUTCString()}_indexFrom1(index){return index+1}_markIfUnlimited(value){if(["-",0].includes(value)){return"\u221E"}else{return value}}static get template(){return _backendAiConsole.html`
       <style include="backend-ai-styles iron-flex iron-flex-alignment">
         vaadin-grid {
           border: 0;
@@ -282,7 +282,7 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
           </div>
         </paper-material>
       </paper-dialog>
-    `}}customElements.define(BackendAICredentialList.is,BackendAICredentialList);class BackendAIResourcePolicyList extends _backendAiConsole.PolymerElement{static get is(){return"backend-ai-resource-policy-list"}static get properties(){return{visible:{type:Boolean,value:!1},keypairs:{type:Object,value:{}},resourcePolicy:{type:Object,value:{}},keypairInfo:{type:Object,value:{}}}}ready(){super.ready()}connectedCallback(){super.connectedCallback();(0,_backendAiConsole.afterNextRender)(this,function(){})}static get observers(){return["_menuChanged(visible)"]}_menuChanged(visible){if(!visible){return}if(window.backendaiclient==void 0||null==window.backendaiclient){document.addEventListener("backend-ai-connected",()=>{this._refreshPolicyData()},!0)}else{this._refreshPolicyData()}}_refreshPolicyData(){console.log("read policy");return window.backendaiclient.resourcePolicy.get().then(response=>{console.log(response);let rp=response.keypair_resource_policies,resourcePolicy=window.backendaiclient.utils.gqlToObject(rp,"name");return rp}).then(response=>{let resourcePolicies=response;Object.keys(resourcePolicies).map((objectKey,index)=>{var policy=resourcePolicies[objectKey];policy.total_resource_slots=JSON.parse(policy.total_resource_slots);if("cpu"in policy.total_resource_slots){}else if("UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.cpu="-"}if("mem"in policy.total_resource_slots){policy.total_resource_slots.mem=parseFloat(policy.total_resource_slots.mem)}else if("UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.mem="-"}if("cuda.device"in policy.total_resource_slots){policy.total_resource_slots.cuda_device=policy.total_resource_slots["cuda.device"]}if("cuda.shares"in policy.total_resource_slots){policy.total_resource_slots.cuda_shares=policy.total_resource_slots["cuda.shares"]}if(!1==="cuda_device"in policy.total_resource_slots&&!1==="cuda_shares"in policy.total_resource_slots&&"UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.cuda_shares="-";policy.total_resource_slots.cuda_device="-"}});this.resourcePolicy=resourcePolicies}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}refresh(){let user_id=null;this._refreshPolicyData()}_isActive(){return"active"===this.condition}_revokeKey2(e){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey;console.log(accessKey)}_deleteKey(e){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey;window.backendaiclient.keypair.delete(accessKey).then(response=>{this.refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}_findKeyItem(element){return element.access_key=this}_byteToMB(value){return _Mathfloor(value/1e6)}_byteToGB(value){return _Mathfloor(value/1e9)}_MBToGB(value){return value/1024}_msecToSec(value){return(+(value/1e3)).toFixed(2)}_elapsed(start,end){var startDate=new Date(start);if("active"==this.condition){var endDate=new Date}else{var endDate=new Date}var seconds=_Mathfloor((endDate.getTime()-startDate.getTime())/1e3,-1),days=_Mathfloor(seconds/86400);return days}_humanReadableTime(d){var d=new Date(d);return d.toUTCString()}_indexFrom1(index){return index+1}_markIfUnlimited(value){if(["-",0].includes(value)){return"\u221E"}else{return value}}static get template(){return _backendAiConsole.html`
+    `}}customElements.define(BackendAICredentialList.is,BackendAICredentialList);class BackendAIResourcePolicyList extends(0,_backendAiConsole.OverlayPatchMixin)(_backendAiConsole.PolymerElement){static get is(){return"backend-ai-resource-policy-list"}static get properties(){return{visible:{type:Boolean,value:!1},keypairs:{type:Object,value:{}},resourcePolicy:{type:Object,value:{}},keypairInfo:{type:Object,value:{}}}}ready(){super.ready()}connectedCallback(){super.connectedCallback();(0,_backendAiConsole.afterNextRender)(this,function(){})}static get observers(){return["_menuChanged(active)"]}_menuChanged(active){if(!active){return}if(window.backendaiclient==void 0||null==window.backendaiclient){document.addEventListener("backend-ai-connected",()=>{this._refreshPolicyData()},!0)}else{this._refreshPolicyData()}}_launchResourcePolicyDialog(e){this.updateCurrentPolicyToDialog(e);this.$["modify-policy-dialog"].open()}updateCurrentPolicyToDialog(e){console.log(e.target);const controls=e.target.closest("#controls"),policyName=controls.policyName;console.log(policyName);let resourcePolicies=window.backendaiclient.utils.gqlToObject(this.resourcePolicy,"name"),resourcePolicy=resourcePolicies[policyName];console.log(resourcePolicy);this.$["cpu-resource"].value=resourcePolicy.total_resource_slots.cpu;this.$["gpu-resource"].value=resourcePolicy.total_resource_slots["cuda.device"];this.$["vgpu-resource"].value=resourcePolicy.total_resource_slots["cuda.shares"];this.$["ram-resource"].value=resourcePolicy.total_resource_slots.mem;this.$["concurrency-limit"].value=resourcePolicy.max_concurrent_sessions;this.$["container-per-session-limit"].value=resourcePolicy.max_containers_per_session;this.$["vfolder-count-limit"].value=resourcePolicy.max_vfolder_count;this.$["vfolder-capacity-limit"].value=resourcePolicy.max_vfolder_size;this.$["idle-timeout"].value=resourcePolicy.idle_timeout}_refreshPolicyData(){return window.backendaiclient.resourcePolicy.get().then(response=>{let rp=response.keypair_resource_policies,resourcePolicy=window.backendaiclient.utils.gqlToObject(rp,"name");return rp}).then(response=>{let resourcePolicies=response;Object.keys(resourcePolicies).map((objectKey,index)=>{var policy=resourcePolicies[objectKey];policy.total_resource_slots=JSON.parse(policy.total_resource_slots);if("cpu"in policy.total_resource_slots){}else if("UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.cpu="-"}if("mem"in policy.total_resource_slots){policy.total_resource_slots.mem=parseFloat(policy.total_resource_slots.mem)}else if("UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.mem="-"}if("cuda.device"in policy.total_resource_slots){if(0===policy.total_resource_slots["cuda.device"]&&"UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.cuda_device="-"}else{policy.total_resource_slots.cuda_device=policy.total_resource_slots["cuda.device"]}}else if("UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.cuda_device="-"}if("cuda.shares"in policy.total_resource_slots){if(0===policy.total_resource_slots["cuda.shares"]&&"UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.cuda_shares="-"}else{policy.total_resource_slots.cuda_shares=policy.total_resource_slots["cuda.shares"]}}else if("UNLIMITED"===policy.default_for_unspecified){policy.total_resource_slots.cuda_shares="-"}});this.resourcePolicy=resourcePolicies}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}refresh(){let user_id=null;this._refreshPolicyData()}_isActive(){return"active"===this.condition}_readResourcePolicyInput(){let cpu_resource=this.$["cpu-resource"].value,ram_resource=this.$["ram-resource"].value,gpu_resource=this.$["gpu-resource"].value,vgpu_resource=this.$["vgpu-resource"].value,total_resource_slots={cpu:cpu_resource,mem:ram_resource+"g","cuda.device":parseInt(gpu_resource),"cuda.shares":parseFloat(vgpu_resource)},vfolder_hosts=["local"],concurrency_limit=this.$["concurrency-limit"].value,containers_per_session_limit=this.$["container-per-session-limit"].value,vfolder_count_limit=this.$["vfolder-count-limit"].value,vfolder_capacity_limit=this.$["vfolder-capacity-limit"].value,rate_limit=this.$["rate-limit"].value,idle_timeout=this.$["idle-timeout"].value,input={default_for_unspecified:"UNLIMITED",total_resource_slots:JSON.stringify(total_resource_slots),max_concurrent_sessions:concurrency_limit,max_containers_per_session:containers_per_session_limit,idle_timeout:idle_timeout,max_vfolder_count:vfolder_count_limit,max_vfolder_size:vfolder_capacity_limit,allowed_vfolder_hosts:vfolder_hosts}}_modifyResourcePolicy(){let is_active=!0,is_admin=!1,name=this.$.id_new_policy_name.value,input=this._readResourcePolicyInput();window.backendaiclient.resourcePolicy.mutate(name,input).then(response=>{this.$["new-policy-dialog"].close();this.$.notification.text="Resource policy successfully updated.";this.$.notification.show();this.$["resource-policy-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-policy-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}_revokeKey2(e){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey;console.log(accessKey)}_deleteKey(e){const termButton=e.target,controls=e.target.closest("#controls"),accessKey=controls.accessKey;window.backendaiclient.keypair.delete(accessKey).then(response=>{this.refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$.notification.text=err.message;this.$.notification.show()}})}_findKeyItem(element){return element.access_key=this}_byteToMB(value){return _Mathfloor(value/1e6)}_byteToGB(value){return _Mathfloor(value/1e9)}_MBToGB(value){return value/1024}_msecToSec(value){return(+(value/1e3)).toFixed(2)}_elapsed(start,end){var startDate=new Date(start);if("active"==this.condition){var endDate=new Date}else{var endDate=new Date}var seconds=_Mathfloor((endDate.getTime()-startDate.getTime())/1e3,-1),days=_Mathfloor(seconds/86400);return days}_humanReadableTime(d){var d=new Date(d);return d.toUTCString()}_indexFrom1(index){return index+1}_markIfUnlimited(value){if(["-",0].includes(value)){return"\u221E"}else{return value}}static get template(){return _backendAiConsole.html`
       <style include="backend-ai-styles iron-flex iron-flex-alignment">
         vaadin-grid {
           border: 0;
@@ -347,7 +347,7 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
           </template>
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.name]]</div>
+              <div>[[item.name]]</div>
             </div>
           </template>
         </vaadin-grid-column>
@@ -394,9 +394,6 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
                 <span>[[_markIfUnlimited(item.max_vfolder_count)]]</span>
                 <span class="indicator">Folders</span>
               </div>
-              <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
-              <!-- <span>[[item.storage_capacity]]</span> -->
-              <!-- <span class="indicator">[[item.storage_unit]]</span> -->
             </div>
           </template>
         </vaadin-grid-column>
@@ -406,14 +403,14 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
             <vaadin-grid-sorter path="max_concurrent_sessions">Concurrency</vaadin-grid-sorter>
           </template>
           <template>
-            <div class="indicator">[[item.max_concurrent_sessions]]
+            <div>[[item.max_concurrent_sessions]]
             </div>
           </template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="max_containers_per_session">Bundle limit</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="max_containers_per_session">Cluster size</vaadin-grid-sorter>
           </template>
           <template>
             <div>[[item.max_containers_per_session]]</div>
@@ -421,7 +418,7 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Allowed Hosts</template>
+          <template class="header">Data Nodes</template>
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">
@@ -435,13 +432,115 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
         <vaadin-grid-column resizable>
           <template class="header">Control</template>
           <template>
+            <div id="controls" class="layout horizontal flex center"
+                 policy-name="[[item.name]]">
+              <paper-icon-button class="controls-running" icon="settings"
+                                 on-tap="_launchResourcePolicyDialog"></paper-icon-button>
+            </div>
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-    `}}customElements.define(BackendAIResourcePolicyList.is,BackendAIResourcePolicyList);class BackendAICredentialView extends(0,_backendAiConsole.OverlayPatchMixin)(_backendAiConsole.PolymerElement){static get properties(){return{active:{type:Boolean,value:!1},cpu_metric:{type:Array,value:[1,2,3,4,8,16]},ram_metric:{type:Array,value:[1,2,4,8,16]},gpu_metric:{type:Array,value:[0,.3,.6,1,1.5,2]},rate_metric:{type:Array,value:[1e3,2e3,3e3,4e3,5e3,1e4]},concurrency_metric:{type:Array,value:[1,2,3,4,5,10]},vfolder_capacity_metric:{type:Array,value:[1,2,3,4,5,10,50,100]},vfolder_count_metric:{type:Array,value:[1,2,3,4,5,10,30,50]}}}static get is(){return"backend-ai-credential-view"}shouldUpdate(){return this.active}constructor(){super();(0,_backendAiConsole.setPassiveTouchGestures)(!0)}ready(){super.ready();this.$["add-keypair"].addEventListener("tap",this._launchKeyPairDialog.bind(this));this.$["create-button"].addEventListener("tap",this._addKeyPair.bind(this));document.addEventListener("backend-ai-credential-refresh",()=>{this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()},!0)}connectedCallback(){super.connectedCallback();(0,_backendAiConsole.afterNextRender)(this,function(){})}static get observers(){return["_routeChanged(route.*)","_viewChanged(routeData.view)","_menuChanged(active)"]}_routeChanged(changeRecord){if("path"===changeRecord.path){console.log("Path changed!")}}_viewChanged(view){}_menuChanged(active){if(!active){this.$["active-credential-list"].active=!1;this.$["inactive-credential-list"].active=!1;this.$["resource-policy-list"].active=!1;return}else{this.$["active-credential-list"].active=!0;this.$["inactive-credential-list"].active=!0;this.$["resource-policy-list"].active=!0}}_launchKeyPairDialog(){this.$["new-keypair-dialog"].open()}_addKeyPair(){let is_active=!0,is_admin=!1,resource_policy="default",rate_limit=5e3,concurrency_limit=1,user_id;if(""!=this.$.id_new_user_id.value){if(!0==this.$.id_new_user_id.invalid){return}user_id=this.$.id_new_user_id.value}else{user_id=window.backendaiclient.email}console.log(user_id);let cpu_resource=this.$["cpu-resource"].value,ram_resource=this.$["ram-resource"].value,gpu_resource=this.$["gpu-resource"].value;concurrency_limit=this.$["concurrency-limit"].value;rate_limit=this.$["rate-limit"].value;window.backendaiclient.keypairs.add(user_id,is_active,is_admin,resource_policy,rate_limit,concurrency_limit).then(response=>{this.$["new-keypair-dialog"].close();this.$.notification.text="Keypair successfully created.";this.$.notification.show();this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-keypair-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}_addResourcePolicy(){let is_active=!0,is_admin=!1,user_id;if(""!=this.$.id_new_policy_name.value){if(!0==this.$.id_new_policy_name.invalid){return}user_id=this.$.id__policy_name.value}else{return}let cpu_resource=this.$["cpu-resource"].value,ram_resource=this.$["ram-resource"].value,gpu_resource=this.$["gpu-resource"].value,concurrency_limit=this.$["concurrency-limit"].value,vfolder_count_limit=this.$["vfolder-count-limit"].value,vfolder_capacity_limit=this.$["vfolder-capacity-limit"].value,rate_limit=this.$["rate-limit"].value;window.backendaiclient.keypairs.add(user_id,is_active,is_admin,resource_policy,rate_limit,concurrency_limit).then(response=>{this.$["new-keypair-dialog"].close();this.$.notification.text="Keypair successfully created.";this.$.notification.show();this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-keypair-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}static get template(){return _backendAiConsole.html`
+      <paper-dialog id="modify-policy-dialog"
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3>Modify</h3>
+          <form id="login-form" onSubmit="this._modifyResourcePolicy()">
+            <fieldset>
+              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
+                           auto-validate required
+                           pattern="[a-zA-Z0-9]*"
+                           error-message="Policy name only accepts letters and numbers"></paper-input>
+              <h4>Resource Policy</h4>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="cpu-resource" label="CPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ cpu_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ ram_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="gpu-resource" label="GPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ gpu_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vgpu_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
+              </div>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ container_per_session_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="idle-timeout" label="Idle timeout (sec.)">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ idle_timeout_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ concurrency_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="vfolder-capacity-limit" label="Virtual Folder Capacity">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="vfolder-count-limit" label="Max. Virtual Folders">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vfolder_count_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <br/><br/>
+              <mwc-button class="fg blue create-button" id="create-policy-button" outlined label="Create"
+                          icon="add"></mwc-button>
+            </fieldset>
+          </form>
+        </paper-material>
+      </paper-dialog>
+    `}}customElements.define(BackendAIResourcePolicyList.is,BackendAIResourcePolicyList);class BackendAICredentialView extends(0,_backendAiConsole.OverlayPatchMixin)(_backendAiConsole.PolymerElement){static get properties(){return{active:{type:Boolean,value:!1},cpu_metric:{type:Array,value:[1,2,3,4,8,16,24]},ram_metric:{type:Array,value:[1,2,4,8,16,24,32,64,128,256,512]},gpu_metric:{type:Array,value:[0,1,2,3,4,5,6,7,8,12,16]},vgpu_metric:{type:Array,value:[0,.3,.6,1,1.5,2,3,4,5,6,7,8,12,16]},rate_metric:{type:Array,value:[1e3,2e3,3e3,4e3,5e3,1e4,5e4]},concurrency_metric:{type:Array,value:[1,2,3,4,5,10,50]},container_per_session_metric:{type:Array,value:[1,2,3,4,8]},idle_timeout_metric:{type:Array,value:[60,180,540,900,1800,3600]},vfolder_capacity_metric:{type:Array,value:[1,2,5,10,50,100,200,1e3]},vfolder_count_metric:{type:Array,value:[1,2,3,4,5,10,30,50,100]},resource_policies:{type:Object,value:{}},resource_policy_names:{type:Array,value:[]}}}static get is(){return"backend-ai-credential-view"}shouldUpdate(){return this.active}constructor(){super();(0,_backendAiConsole.setPassiveTouchGestures)(!0)}ready(){super.ready();this.$["add-keypair"].addEventListener("tap",this._launchKeyPairDialog.bind(this));this.$["create-keypair-button"].addEventListener("tap",this._addKeyPair.bind(this));this.$["add-policy"].addEventListener("tap",this._launchResourcePolicyDialog.bind(this));this.$["create-policy-button"].addEventListener("tap",this._addResourcePolicy.bind(this));document.addEventListener("backend-ai-credential-refresh",()=>{this.$["active-credential-list"].refresh();this.$["inactive-credential-list"].refresh()},!0)}connectedCallback(){super.connectedCallback();(0,_backendAiConsole.afterNextRender)(this,function(){})}static get observers(){return["_routeChanged(route.*)","_viewChanged(routeData.view)","_menuChanged(active)"]}_routeChanged(changeRecord){if("path"===changeRecord.path){console.log("Path changed!")}}_viewChanged(view){}_menuChanged(active){if(!active){this.$["active-credential-list"].active=!1;this.$["inactive-credential-list"].active=!1;this.$["resource-policy-list"].active=!1;return}else{this.$["active-credential-list"].active=!0;this.$["inactive-credential-list"].active=!0;this.$["resource-policy-list"].active=!0}}_launchKeyPairDialog(){console.log(this._getResourcePolicies());this.$["new-keypair-dialog"].open()}_launchResourcePolicyDialog(){this.$["new-policy-dialog"].open()}_launchModifyResourcePolicyDialog(){this.$["new-policy-dialog"].open()}_getResourcePolicies(){return window.backendaiclient.resourcePolicy.get(null,["name","default_for_unspecified","total_resource_slots","max_concurrent_sessions","max_containers_per_session"]).then(response=>{let policies=window.backendaiclient.utils.gqlToObject(response.keypair_resource_policies,"name"),policyNames=window.backendaiclient.utils.gqlToList(response.keypair_resource_policies,"name");this.resource_policies=policies;this.resource_policy_names=policyNames})}_addKeyPair(){let is_active=!0,is_admin=!1,rate_limit=5e3,concurrency_limit=10,user_id;if(""!=this.$.id_new_user_id.value){if(!0==this.$.id_new_user_id.invalid){return}user_id=this.$.id_new_user_id.value}else{user_id=window.backendaiclient.email}console.log(user_id);let resource_policy=this.$["resource-policy"].value;window.backendaiclient.keypair.add(user_id,is_active,is_admin,resource_policy,rate_limit,concurrency_limit).then(response=>{this.$["new-keypair-dialog"].close();this.$.notification.text="Keypair successfully created.";this.$.notification.show();this.$["active-credential-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-keypair-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}_readResourcePolicyInput(){let cpu_resource=this.$["cpu-resource"].value,ram_resource=this.$["ram-resource"].value,gpu_resource=this.$["gpu-resource"].value,vgpu_resource=this.$["vgpu-resource"].value,total_resource_slots={cpu:cpu_resource,mem:ram_resource+"g","cuda.device":parseInt(gpu_resource),"cuda.shares":parseFloat(vgpu_resource)},vfolder_hosts=["local"],concurrency_limit=this.$["concurrency-limit"].value,containers_per_session_limit=this.$["container-per-session-limit"].value,vfolder_count_limit=this.$["vfolder-count-limit"].value,vfolder_capacity_limit=this.$["vfolder-capacity-limit"].value,rate_limit=this.$["rate-limit"].value,idle_timeout=this.$["idle-timeout"].value,input={default_for_unspecified:"UNLIMITED",total_resource_slots:JSON.stringify(total_resource_slots),max_concurrent_sessions:concurrency_limit,max_containers_per_session:containers_per_session_limit,idle_timeout:idle_timeout,max_vfolder_count:vfolder_count_limit,max_vfolder_size:vfolder_capacity_limit,allowed_vfolder_hosts:vfolder_hosts}}_addResourcePolicy(){let is_active=!0,is_admin=!1,name;if(""!=this.$.id_new_policy_name.value){if(!0==this.$.id_new_policy_name.invalid){return}name=this.$.id_new_policy_name.value}else{this.$.notification.text="Please input policy name";this.$.notification.show();return}let input=this._readResourcePolicyInput();window.backendaiclient.resourcePolicy.add(name,input).then(response=>{this.$["new-policy-dialog"].close();this.$.notification.text="Resource policy successfully created.";this.$.notification.show();this.$["resource-policy-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-policy-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}_modifyResourcePolicy(){let is_active=!0,is_admin=!1,name=this.$.id_new_policy_name.value,input=this._readResourcePolicyInput();window.backendaiclient.resourcePolicy.mutate(name,input).then(response=>{this.$["new-policy-dialog"].close();this.$.notification.text="Resource policy successfully updated.";this.$.notification.show();this.$["resource-policy-list"].refresh()}).catch(err=>{console.log(err);if(err&&err.message){this.$["new-policy-dialog"].close();this.$.notification.text=err.message;this.$.notification.show()}})}static get template(){return _backendAiConsole.html`
       <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
-        paper-button.create-button {
+        mwc-button.create-button {
           width: 100%;
+        }
+
+        #new-keypair-dialog {
+          min-width: 350px;
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
@@ -466,10 +565,10 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
         <h4 class="horizontal flex center center-justified layout">
           <span>Policy groups</span>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="add-policy" outlined label="Add policy" icon="add"></mwc-button>
+          <mwc-button class="fg red" id="add-policy" outlined label="Create policy" icon="add"></mwc-button>
         </h4>
         <div>
-          <backend-ai-resource-policy-list id="resource-policy-list" condition="inactive"></backend-ai-resource-policy-list>
+          <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
         </div>
       </paper-material>
 
@@ -477,19 +576,23 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
       <paper-dialog id="new-keypair-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Create</h3>
+          <h3>Add credential</h3>
           <form id="login-form" onSubmit="this._addKeyPair()">
             <fieldset>
               <paper-input type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
                            auto-validate></paper-input>
-              <h4>Resource Policy</h4>
               <div class="horizontal center layout">
+                <paper-dropdown-menu id="resource-policy" label="Resource Policy">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ resource_policy_names }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <paper-button class="blue create-button" type="submit" id="create-button">
-                <iron-icon icon="vaadin:key-o"></iron-icon>
-                Create credential
-              </paper-button>
+              <mwc-button class="fg blue create-button" id="create-keypair-button" outlined label="Add"
+                          icon="add"></mwc-button>
             </fieldset>
           </form>
         </paper-material>
@@ -498,10 +601,12 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Create</h3>
-          <form id="login-form" onSubmit="this._addKeyPair()">
+          <form id="login-form" onSubmit="this._addResourcePolicy()">
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           auto-validate></paper-input>
+                           auto-validate required
+                           pattern="[a-zA-Z0-9]*"
+                           error-message="Policy name only accepts letters and numbers"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
@@ -518,6 +623,8 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+              </div>
+              <div class="horizontal center layout">
                 <paper-dropdown-menu id="gpu-resource" label="GPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ gpu_metric }}">
@@ -525,7 +632,32 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vgpu_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
               </div>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ container_per_session_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="idle-timeout" label="Idle timeout (sec.)">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ idle_timeout_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
                   <paper-listbox slot="dropdown-content" selected="0">
@@ -541,6 +673,8 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
+              </div>
+              <div class="horizontal center layout">
                 <paper-dropdown-menu id="vfolder-capacity-limit" label="Virtual Folder Capacity">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
@@ -550,17 +684,15 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="vfolder-count-limit" label="Max. Virtual Folders">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vfloder_count_metric }}">
+                    <template is="dom-repeat" items="{{ vfolder_count_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <paper-button class="blue create-button" type="submit" id="create-button">
-                <iron-icon icon="vaadin:key-o"></iron-icon>
-                Create policy
-              </paper-button>
+              <mwc-button class="fg blue create-button" id="create-policy-button" outlined label="Create"
+                          icon="add"></mwc-button>
             </fieldset>
           </form>
         </paper-material>

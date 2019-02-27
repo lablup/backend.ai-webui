@@ -165,7 +165,7 @@ define(["./components/backend-ai-console.js"],function(_backendAiConsole){"use s
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-    `}}customElements.define(BackendAIAgentList.is,BackendAIAgentList);class BackendAIAgentView extends _backendAiConsole.PolymerElement{static get properties(){return{active:{type:Boolean,value:!1}}}constructor(){super();(0,_backendAiConsole.setPassiveTouchGestures)(!0)}ready(){super.ready()}shouldUpdate(){return this.active}static get observers(){return["_routeChanged(route.*)","_viewChanged(routeData.view)","_menuChanged(active)"]}_routeChanged(changeRecord){if("path"===changeRecord.path){console.log("Path changed!")}}_viewChanged(view){}_menuChanged(active){if(!active){this.$["running-agents"].active=!1;this.$["finished-agents"].active=!1;return}this.$["running-agents"].active=!0;this.$["finished-agents"].active=!0}static get template(){return _backendAiConsole.html`
+    `}}customElements.define(BackendAIAgentList.is,BackendAIAgentList);class BackendAIAgentView extends _backendAiConsole.PolymerElement{static get properties(){return{active:{type:Boolean,value:!1}}}constructor(){super();(0,_backendAiConsole.setPassiveTouchGestures)(!0)}ready(){super.ready()}shouldUpdate(){return this.active}static get observers(){return["_routeChanged(route.*)","_viewChanged(routeData.view)","_menuChanged(active)"]}_menuChanged(active){if(!active){this.$["running-agents"].active=!1;this.$["finished-agents"].active=!1;return}this.$["running-agents"].active=!0;this.$["finished-agents"].active=!0}static get template(){return _backendAiConsole.html`
       <style is="custom-style" include="backend-ai-styles">
       </style>
       <paper-material class="item" elevation="1">
