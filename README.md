@@ -59,7 +59,6 @@ Prerequistics : electron, electron-packager
 
 ```
 $ make all (build win/mac/linux app)
-$ make test (build only (for polymer serving test))
 ```
 
 ### Manual run (using local Electron)
@@ -89,4 +88,11 @@ $ electron .
 $ make clean
 $ make all
 $ make pack # To create an zip-packed files (works on macOS)
+```
+
+## Serve (Web)
+
+```
+$ make dep
+$ make web
 ```
