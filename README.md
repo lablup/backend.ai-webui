@@ -25,7 +25,8 @@ Backend.AI GUI console. Supports both app / web mode.
 ```
 $ npm install -g polymer-cli
 $ npm install
-$ polymer serve --npm
+$ npm run polymer
+$ npm run wsproxy
 ```
 
 
