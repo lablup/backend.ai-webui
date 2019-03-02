@@ -46,7 +46,7 @@ Will be prepared soon.
 
 ## Build (Web)
 
-Default setup will build `es6-unbundled` version.
+Default setup will build `es6-bundled` version.
 
 ```
 $ polymer build
