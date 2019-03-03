@@ -5,8 +5,6 @@ Backend.AI GUI console. Supports both app / web mode.
  * Administration mode
  * User mode
 
- Each mode is chosen with keypair.
-
 ## Features
  * Key management
     * Allocate resource limitation for keys
@@ -15,15 +13,15 @@ Backend.AI GUI console. Supports both app / web mode.
  * Experiments
  * Virtual Folder management
     * Upload  / download files
+ * Kernel managements
  * Manager settings
- * Proxy mode to support various app environments (with Electron)
+ * Proxy mode to support various app environments (with node.js (web), electron (app) )
 
 ## Develop and Test
 
 ### Running polymer-based web UI
 
 ```
-$ npm install -g polymer-cli
 $ npm install
 $ npm run polymer
 $ npm run wsproxy

@@ -5,7 +5,7 @@ mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 test:
-	polymer build
+	node ./node_modules/polymer-cli/bin/polymer.js build
 	mkdir -p build/electron-app/wsproxy
 	cp -Rp build/unbundle build/electron-app/app
 	rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
