@@ -1,6 +1,6 @@
 const DEBUG = process.env.DEBUG || false;
 const port = process.env.PORT || 5050;
-const proxyListenIP = process.env.PROXYLISTENIP || '0.0.0.0';
+const proxyListenIP = process.env.PROXYLISTENIP || '127.0.0.1';
 const proxyBaseURL = process.env.PROXYBASEURL || 'http://localhost';
 let web = null;
 console.log("unpacked");

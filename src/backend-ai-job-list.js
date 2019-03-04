@@ -369,18 +369,12 @@ class BackendAIJobList extends PolymerElement {
     };
     try {
       let response = await this.sendRequest(rqst);
-      this.$.indicator.set(40, 'Preparing connection...');
-      let accessKey = window.backendaiclient._config.accessKey;
-      rqst = {
-        method: 'GET',
-        uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId
-      };
-      response = await this.sendRequest(rqst);
-      this.$.indicator.set(80, 'Adding kernel to socket queue...');
+      let token = response.token;
+      this.$.indicator.set(50, 'Adding kernel to socket queue...');
       rqst = {
         method: 'GET',
         app: app,
-        uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId + "/add"
+        uri: window.backendaiclient._config.proxyURL + 'proxy/' + token + "/" + kernelId + "/add"
       };
       return await this.sendRequest(rqst);
     } catch (err) {
@@ -396,16 +390,14 @@ class BackendAIJobList extends PolymerElement {
       this.$.indicator.start();
       this._open_wsproxy(kernelId, 'jupyter')
         .then((response) => {
-          if (response.proxy) {
-            console.log(response.proxy + '/tree');
+          if (response.url) {
             this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
-              window.open(response.proxy + '/tree', '_blank');
+              window.open(response.url + "&redirect=/tree", '_blank');
               this.$.indicator.end();
-              //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
               console.log("Jupyter proxy loaded: ");
               console.log(kernelId);
-            }, 1000);
+              }, 1000);
           }
         });
     }
@@ -419,18 +411,16 @@ class BackendAIJobList extends PolymerElement {
       this.$.indicator.start();
       this._open_wsproxy(kernelId, 'jupyterlab')
         .then((response) => {
-          if (response.proxy) {
-            console.log(response.proxy + '/lab');
+          if (response.url) {
             this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
-              window.open(response.proxy + '/lab', '_blank');
+              window.open(response.url + "&redirect=/lab", '_blank');
               this.$.indicator.end();
-              //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
-              console.log("JupyterLab proxy loaded: ");
+              console.log("Jupyter proxy loaded: ");
               console.log(kernelId);
-            }, 1000);
+              }, 1000);
           }
-        });
+      });
     }
   }
 
@@ -443,20 +433,16 @@ class BackendAIJobList extends PolymerElement {
       this.$.indicator.start();
       this._open_wsproxy(kernelId, 'jupyter')
         .then((response) => {
-          if (response.proxy) {
-            console.log(response.proxy + '/terminals/1');
+          if (response.url) {
             this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
+              window.open(response.url + "&redirect=/terminals/1", '_blank');
               this.$.indicator.end();
-              //this.$['work-area'].setAttribute('src', response.proxy + '/terminals/1');
-              //this.$['work-dialog'].open();
-              window.open(response.proxy + '/terminals/1', '_blank');
-              //window.open('http://'+response.proxy + '/tree', '_blank', 'nodeIntegration=no');
               console.log("Jupyter proxy loaded: ");
               console.log(kernelId);
-            }, 1000);
+              }, 1000);
           }
-        });
+      });
     }
   }
 

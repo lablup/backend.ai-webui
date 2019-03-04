@@ -6,10 +6,11 @@ const Client = require("./lib/WstClient"),
   Proxy = require("./proxy");
 
 function express_app(listen_ip, port, proxyBaseURL) {
-  let aiclients = {};
+  let aiclient = undefined;
   let proxies = {};
   let {isFreePort} = require('node-port-check');
   let ports = [];
+  let baseURL = "http://" + listen_ip + ":" + port;
 
   //FIXME: !!
   //proxyBaseURL = "http://52.78.225.155"
@@ -49,9 +50,8 @@ function express_app(listen_ip, port, proxyBaseURL) {
       req.body.secret_key,
       req.body.endpoint,
     );
-    let aiclient = new ai.backend.Client(config);
-    aiclients[req.body.access_key] = aiclient;
-    res.send({});
+    aiclient = new ai.backend.Client(config);
+    res.send({"token": "local"});
   });
 
   app.get('/', function (req, res) {
@@ -62,10 +62,9 @@ function express_app(listen_ip, port, proxyBaseURL) {
     res.send(rtn);
   });
 
-  app.get('/proxy/:accessKey/:kernelId', function (req, res) {
+  app.get('/proxy/local/:kernelId', function (req, res) {
     let kernelId = req.params["kernelId"];
-    let access_key = req.params["accessKey"];
-    if (!access_key in aiclients) {
+    if (!aiclient){
       res.send({"code": 401});
       return;
     }
@@ -76,34 +75,32 @@ function express_app(listen_ip, port, proxyBaseURL) {
     }
   });
 
-  app.get('/proxy/:accessKey/:kernelId/add', function (req, res) {
+  app.get('/proxy/local/:kernelId/add', function (req, res) {
     let kernelId = req.params["kernelId"];
-    let access_key = req.params["accessKey"];
-    if (!access_key in aiclients) {
+    if (!aiclient){
       res.send({"code": 401});
       return;
     }
     let app = req.query.app || "jupyter";
-    if (!(kernelId in proxies)) {
-      let client = aiclients[access_key];
-      let proxy = new Proxy(client._config);
+    let p = kernelId + "|" + app;
+    if (!(p in proxies)) {
+      let proxy = new Proxy(aiclient._config);
       getPort().then((port) => {
         let proxy_url = proxyBaseURL + ":" + port;
         proxy.start_proxy(kernelId, app, listen_ip, port, proxy_url);
-        proxies[kernelId] = proxy;
-        res.send({"code": 200, "proxy": proxy.base_url});
+        proxies[p] = proxy;
+        res.send({"code": 200, "proxy": proxy.base_url, "url": baseURL + "/redirect?port=" + port});
       });
 
     } else {
-      let proxy = proxies[kernelId];
-      res.send({"code": 200, "proxy": proxy.base_url});
+      let proxy = proxies[p];
+      res.send({"code": 200, "proxy": proxy.base_url, "url": baseURL + "/redirect?port=" + proxy.port});
     }
   });
 
-  app.get('/proxy/:accessKey/:kernelId/delete', function (req, res) {
+  app.get('/proxy/local/:kernelId/delete', function (req, res) {
     let kernelId = req.params["kernelId"];
-    let access_key = req.params["accessKey"];
-    if (!access_key in aiclients) {
+    if (!aiclient){
       res.send({"code": 401});
       return;
     }
@@ -114,6 +111,12 @@ function express_app(listen_ip, port, proxyBaseURL) {
     } else {
       res.send({"code": 404});
     }
+  });
+
+  app.get('/redirect', function (req, res) {
+    let port = req.query.port;
+    let path = req.query.redirect || "";
+    res.redirect("http://" + listen_ip + ":" + port + path)
   });
 
   app.listen(port, () => console.log(`Listening on port ${port}!`));
