@@ -15,7 +15,7 @@ import '@polymer/paper-material';
 import '../lablup-shields';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-
+import './lablup-loading-indicator';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
 
@@ -51,6 +51,7 @@ class BackendAiEnvironmentView extends LitElement {
   render() {
     // language=HTML
     return html`
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <paper-material elevation="1">
         <h3 class="horizontal center layout">
           <span>Images</span>
@@ -233,6 +234,7 @@ class BackendAiEnvironmentView extends LitElement {
   }
 
   _getImages() {
+    this.shadowRoot.querySelector('#loading-indicator').show();
     window.backendaiclient.image.list().then((response) => {
       let images = response.images;
       images.forEach((image) => {
@@ -279,12 +281,13 @@ class BackendAiEnvironmentView extends LitElement {
         });
       });
       let image_keys = Object.keys(images);
-      console.log(image_keys);
-      let sorted_images = {};
-      image_keys.sort();
+      //console.log(image_keys);
+      //let sorted_images = {};
+      //image_keys.sort();
       this.images = images;
-
       this.shadowRoot.querySelector('#testgrid').items = this.images;
+      this.shadowRoot.querySelector('#loading-indicator').hide();
+
     });
   }
 
