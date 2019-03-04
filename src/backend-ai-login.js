@@ -148,7 +148,7 @@ class BackendAiLogin extends PolymerElement {
       window.backendaiclient.email = this.email;
       window.backendaiclient.is_admin = is_admin;
       window.backendaiclient.resource_policy = resource_policy;
-      window.backendaiclient.proxyURL = this.proxy_url;
+      window.backendaiclient._config._proxyURL = this.proxy_url;
       var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();

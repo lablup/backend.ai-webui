@@ -349,8 +349,9 @@ class BackendAIJobList extends PolymerElement {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       return false;
     }
-    if (window.backendaiclient.proxyURL === undefined) {
-      window.backendaiclient.proxyURL = 'http://127.0.0.1:5050/';
+
+    if (window.backendaiclient._config.proxyURL === undefined) {
+      window.backendaiclient._config.proxyURL = 'http://127.0.0.1:5050/';
     }
     let param = {
       access_key: window.backendaiclient._config.accessKey,
@@ -364,7 +365,7 @@ class BackendAIJobList extends PolymerElement {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      uri: window.backendaiclient.proxyURL + 'conf'
+      uri: window.backendaiclient._config.proxyURL + 'conf'
     };
     try {
       let response = await this.sendRequest(rqst);
@@ -372,14 +373,14 @@ class BackendAIJobList extends PolymerElement {
       let accessKey = window.backendaiclient._config.accessKey;
       rqst = {
         method: 'GET',
-        uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId
+        uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId
       };
       response = await this.sendRequest(rqst);
       this.$.indicator.set(80, 'Adding kernel to socket queue...');
       rqst = {
         method: 'GET',
         app: app,
-        uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId + "/add"
+        uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId + "/add"
       };
       return await this.sendRequest(rqst);
     } catch (err) {
