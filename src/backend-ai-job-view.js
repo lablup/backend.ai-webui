@@ -179,15 +179,16 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       this.$['finished-jobs'].active = false;
       return;
     }
-    this._refreshResourcePolicy();
     this.$['running-jobs'].active = true;
     this.$['finished-jobs'].active = true;
     // If disconnected
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
+        this._refreshResourcePolicy();
         this._refreshResourceValues();
       }, true);
     } else { // already connected
+      this._refreshResourcePolicy();
       this._refreshResourceValues();
     }
   }
