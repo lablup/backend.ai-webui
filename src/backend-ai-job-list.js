@@ -527,12 +527,6 @@ class BackendAIJobList extends PolymerElement {
           height: 100vh;
         }
 
-        #loading-indicator {
-          position: fixed;
-          top: calc(50vh - 24px);
-          left: calc(50% - 24px);
-        }
-
         div.indicator,
         span.indicator {
           font-size: 9px;
@@ -564,6 +558,9 @@ class BackendAIJobList extends PolymerElement {
           --paper-spinner-stroke-width: 6px;
           width: 48px;
           height: 48px;
+          position: fixed;
+          top: calc(50vh - 24px);
+          left: calc(50% - 24px);
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
