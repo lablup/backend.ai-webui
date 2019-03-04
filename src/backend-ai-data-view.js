@@ -17,6 +17,8 @@ import '@polymer/paper-styles/color';
 import '@polymer/paper-material/paper-material';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-toast/paper-toast';
+import '@polymer/paper-spinner/paper-spinner-lite';
+
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
@@ -113,8 +115,10 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   }
 
   _refreshFolderList() {
+    this.shadowRoot.querySelector('#loading-indicator').active = true;
     let l = window.backendaiclient.vfolder.list();
     l.then((value) => {
+      this.shadowRoot.querySelector('#loading-indicator').active = false;
       this.folders = value;
     });
   }
@@ -549,8 +553,22 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           padding: 10px 30px;
         }
 
+        paper-spinner-lite.indicator {
+          --paper-spinner-layer-1-color: var(--paper-purple-500);
+          --paper-spinner-layer-2-color: var(--paper-cyan-500);
+          --paper-spinner-layer-3-color: var(--paper-blue-grey-500);
+          --paper-spinner-layer-4-color: var(--paper-amber-500);
+          --paper-spinner-stroke-width: 6px;
+          width: 48px;
+          height: 48px;
+          position: fixed;
+          top: calc(50vh - 24px);
+          left: calc(50% - 24px);
+        }
+
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <paper-spinner-lite class="indicator" id="loading-indicator"></paper-spinner-lite>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h4 class="horizontal center layout">
           <span>Virtual Folders</span>

@@ -16,6 +16,7 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-toast/paper-toast';
+import '@polymer/paper-spinner/paper-spinner-lite';
 
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-progress/paper-progress';
@@ -155,8 +156,10 @@ class BackendAISummary extends PolymerElement {
       'mem_cur_bytes',
       'occupied_slots',
       'available_slots'];
-
+    this.shadowRoot.querySelector('#loading-indicator').active = true;
     window.backendaiclient.agent.list(status, fields).then((response) => {
+      this.shadowRoot.querySelector('#loading-indicator').active = false;
+
       this.agents = response.agents;
       this._init_resource_values();
       Object.keys(this.agents).map((objectKey, index) => {
@@ -311,8 +314,22 @@ class BackendAISummary extends PolymerElement {
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
         }
+
+        paper-spinner-lite.indicator {
+          --paper-spinner-layer-1-color: var(--paper-purple-500);
+          --paper-spinner-layer-2-color: var(--paper-cyan-500);
+          --paper-spinner-layer-3-color: var(--paper-blue-grey-500);
+          --paper-spinner-layer-4-color: var(--paper-amber-500);
+          --paper-spinner-stroke-width: 6px;
+          width: 48px;
+          height: 48px;
+          position: fixed;
+          top: calc(50vh - 24px);
+          left: calc(50% - 24px);
+        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <paper-spinner-lite class="indicator" id="loading-indicator"></paper-spinner-lite>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="paper-material-title">Statistics</h3>
         <div class="horizontal wrap layout">
