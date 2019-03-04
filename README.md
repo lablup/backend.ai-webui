@@ -34,7 +34,6 @@ This is only needed with pure ES6 dev. environment / browser. With `Electron`, w
 
 ```
 $ cd src/wsproxy
-$ npm install
 $ node ./local_proxy.js
 ```
 
