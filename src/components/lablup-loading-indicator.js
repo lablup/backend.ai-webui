@@ -28,7 +28,18 @@ class LablupLoadingIndicator extends LitElement {
           height: 48px;
           position: fixed;
           top: calc(50vh - 24px);
-          left: calc(50% - 24px);
+        }
+
+        @media screen and (max-width: 899px) {
+          paper-spinner-lite {
+            left: calc(50% - 24px);
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          paper-spinner-lite {
+            left: calc(50% + 71px);
+          }
         }
       `];
   }
