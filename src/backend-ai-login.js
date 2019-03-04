@@ -69,12 +69,21 @@ class BackendAiLogin extends PolymerElement {
         this.proxy_url = config.proxyURL;
       }
       if (typeof config.apiEndpoint === "undefined" || config.apiEndpoint === '') {
+        this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'none';
       } else {
         this.api_endpoint = config.apiEndpoint;
+        if (typeof config.apiEndpointText === "undefined" || config.apiEndpointText === '') {
+          this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'none';
+        } else {
+          this.shadowRoot.querySelector('#id_api_endpoint').style.display = 'none';
+          this.shadowRoot.querySelector('#id_api_endpoint_humanized').value = config.apiEndpointText;
+        }
         this.$['id_api_endpoint'].disabled = true;
+        this.$['id_api_endpoint_humanized'].disabled = true;
       }
     }).catch((err) => {   // No file
       this.proxy_url = 'http://127.0.0.1:5050/';
+      this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'none';
     });
   }
 
@@ -211,6 +220,8 @@ class BackendAiLogin extends PolymerElement {
               <paper-input type="password" name="secret_key" id="id_secret_key"
                            label="Secret Key" value="{{secret_key}}"></paper-input>
               <paper-input type="text" name="api_endpoint" id="id_api_endpoint"
+                           label="API Endpoint" value="{{api_endpoint}}"></paper-input>
+              <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            label="API Endpoint" value="{{api_endpoint}}"></paper-input>
               <br/><br/>
               <mwc-button class="fg red" id="login-button" outlined label="Login" icon="check" type="submit"
