@@ -99,6 +99,7 @@ class BackendAISummary extends PolymerElement {
   }
 
   _refreshSessionInformation() {
+    this.shadowRoot.querySelector('#loading-indicator').show();
     let status = 'RUNNING';
     switch (this.condition) {
       case 'running':
@@ -113,6 +114,8 @@ class BackendAISummary extends PolymerElement {
     }
     let fields = ["sess_id"];
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
+      this.shadowRoot.querySelector('#loading-indicator').hide();
+
       this.jobs = response;
       this.sessions = response.compute_sessions;
       if (this.active == true) {
