@@ -9423,7 +9423,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
               <paper-input type="text" name="api_endpoint" id="id_api_endpoint"
                            label="API Endpoint" value="{{api_endpoint}}"></paper-input>
               <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
-                           label="API Endpoint" value="{{api_endpoint}}"></paper-input>
+                           label="API Endpoint" value=""></paper-input>
               <br/><br/>
               <mwc-button class="fg red" id="login-button" outlined label="Login" icon="check" type="submit"
                           dialog-confirm></mwc-button>

@@ -199,6 +199,8 @@ class BackendAISummary extends PolymerElement {
         }
 
       });
+      this.resources.vgpu.used = this.resources.vgpu.used.toFixed(2);
+      this.resources.vgpu.total = this.resources.vgpu.total.toFixed(2);
       this._sync_resource_values();
       if (this.active == true) {
         setTimeout(() => {
