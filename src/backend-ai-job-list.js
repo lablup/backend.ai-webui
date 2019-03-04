@@ -15,6 +15,7 @@ import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-progress/paper-progress';
+import './components/lablup-loading-indicator';
 import '@polymer/paper-spinner/paper-spinner-lite';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -112,7 +113,7 @@ class BackendAIJobList extends PolymerElement {
   }
 
   _refreshJobData() {
-    this.shadowRoot.querySelector('#loading-indicator').active = true;
+    this.shadowRoot.querySelector('#loading-indicator').show();
     if (this.active !== true) {
       return;
     }
@@ -135,7 +136,7 @@ class BackendAIJobList extends PolymerElement {
     ];
     window.backendaiclient.computeSession.list(fields, status,
       this.filterAccessKey).then((response) => {
-      this.shadowRoot.querySelector('#loading-indicator').active = false;
+      this.shadowRoot.querySelector('#loading-indicator').hide();
 
       var sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
@@ -549,22 +550,9 @@ class BackendAIJobList extends PolymerElement {
             font-size: small;
           }
         }
-
-        paper-spinner-lite.indicator {
-          --paper-spinner-layer-1-color: var(--paper-purple-500);
-          --paper-spinner-layer-2-color: var(--paper-cyan-500);
-          --paper-spinner-layer-3-color: var(--paper-blue-grey-500);
-          --paper-spinner-layer-4-color: var(--paper-amber-500);
-          --paper-spinner-stroke-width: 6px;
-          width: 48px;
-          height: 48px;
-          position: fixed;
-          top: calc(50vh - 24px);
-          left: calc(50% - 24px);
-        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <paper-spinner-lite class="indicator" id="loading-indicator"></paper-spinner-lite>
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
         <span class="flex"></span>
         <paper-input id="access-key-filter" type="search" size=30
