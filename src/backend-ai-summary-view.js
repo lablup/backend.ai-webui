@@ -283,6 +283,11 @@ class BackendAISummary extends PolymerElement {
     return Object.keys(obj).length;
   }
 
+  _addComma(num) {
+    var regexp = /\B(?=(\d{3})+(?!\d))/g;
+    return num.toString().replace(regexp, ',');
+  }
+
   static get template() {
     // language=HTML
     return html`
@@ -350,7 +355,9 @@ class BackendAISummary extends PolymerElement {
                   <div class="layout vertical start" style="padding-left:15px;">
                     <paper-progress id="cpu-usage-bar" value="[[cpu_current_usage_ratio]]"
                                     secondary-progress="[[cpu_total_usage_ratio]]"></paper-progress>
-                    <div>CPUs: <span class="progress-value"> [[cpu_used]]</span>/[[cpu_total]] Cores reserved.</div>
+                    <div>CPUs: <span class="progress-value"> [[_addComma(cpu_used)]]</span>/[[_addComma(cpu_total)]]
+                      Cores reserved.
+                    </div>
                     <div>Using <span class="progress-value"> [[cpu_percent]]</span>%.</div>
                   </div>
                 </div>
@@ -359,8 +366,10 @@ class BackendAISummary extends PolymerElement {
                   <div class="layout vertical start" style="padding-left:15px;">
                     <paper-progress id="mem-usage-bar" value="[[mem_current_usage_ratio]]"
                                     secondary-progress="[[mem_total_usage_ratio]]"></paper-progress>
-                    <div><span class="progress-value"> [[mem_allocated]]</span>/[[mem_total]] MB reserved.</div>
-                    <div>Using <span class="progress-value"> [[mem_used]]</span>/[[mem_total]] MB
+                    <div><span class="progress-value"> [[_addComma(mem_allocated)]]</span>/[[_addComma(mem_total)]] MB
+                      reserved.
+                    </div>
+                    <div>Using <span class="progress-value"> [[_addComma(mem_used)]]</span>/[[_addComma(mem_total)]] MB
                       ([[mem_current_usage_percent]] %)
                     </div>
                   </div>
