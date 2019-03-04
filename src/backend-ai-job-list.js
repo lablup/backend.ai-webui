@@ -16,7 +16,6 @@ import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-progress/paper-progress';
 import './components/lablup-loading-indicator';
-import '@polymer/paper-spinner/paper-spinner-lite';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';

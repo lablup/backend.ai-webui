@@ -13,6 +13,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-spinner/paper-spinner-lite';
+import './components/lablup-loading-indicator';
 
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -92,7 +93,7 @@ class BackendAICredentialList extends PolymerElement {
   }
 
   _refreshKeyData(user_id) {
-    this.shadowRoot.querySelector('#loading-indicator').active = true;
+    this.shadowRoot.querySelector('#loading-indicator').show();
 
     let status = 'active';
     let is_active = true;
@@ -105,7 +106,7 @@ class BackendAICredentialList extends PolymerElement {
     }
 
     return window.backendaiclient.resourcePolicy.get().then((response) => {
-      this.shadowRoot.querySelector('#loading-indicator').active = false;
+      this.shadowRoot.querySelector('#loading-indicator').hide();
       let rp = response.keypair_resource_policies;
       this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
     }).then(() => {
@@ -353,22 +354,9 @@ class BackendAICredentialList extends PolymerElement {
           padding-right: 5px;
         }
 
-        paper-spinner-lite.indicator {
-          --paper-spinner-layer-1-color: var(--paper-purple-500);
-          --paper-spinner-layer-2-color: var(--paper-cyan-500);
-          --paper-spinner-layer-3-color: var(--paper-blue-grey-500);
-          --paper-spinner-layer-4-color: var(--paper-amber-500);
-          --paper-spinner-stroke-width: 6px;
-          width: 48px;
-          height: 48px;
-          position: fixed;
-          top: calc(50vh - 24px);
-          left: calc(50% - 24px);
-        }
-
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <paper-spinner-lite class="indicator" id="loading-indicator"></paper-spinner-lite>
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
                    items="[[keypairs]]">

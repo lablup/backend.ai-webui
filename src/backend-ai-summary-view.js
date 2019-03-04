@@ -156,9 +156,9 @@ class BackendAISummary extends PolymerElement {
       'mem_cur_bytes',
       'occupied_slots',
       'available_slots'];
-    this.shadowRoot.querySelector('#loading-indicator').active = true;
+    this.shadowRoot.querySelector('#loading-indicator').show();
     window.backendaiclient.agent.list(status, fields).then((response) => {
-      this.shadowRoot.querySelector('#loading-indicator').active = false;
+      this.shadowRoot.querySelector('#loading-indicator').hide();
 
       this.agents = response.agents;
       this._init_resource_values();
@@ -314,22 +314,9 @@ class BackendAISummary extends PolymerElement {
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
         }
-
-        paper-spinner-lite.indicator {
-          --paper-spinner-layer-1-color: var(--paper-purple-500);
-          --paper-spinner-layer-2-color: var(--paper-cyan-500);
-          --paper-spinner-layer-3-color: var(--paper-blue-grey-500);
-          --paper-spinner-layer-4-color: var(--paper-amber-500);
-          --paper-spinner-stroke-width: 6px;
-          width: 48px;
-          height: 48px;
-          position: fixed;
-          top: calc(50vh - 24px);
-          left: calc(50% - 24px);
-        }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <paper-spinner-lite class="indicator" id="loading-indicator"></paper-spinner-lite>
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <paper-material class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="paper-material-title">Statistics</h3>
         <div class="horizontal wrap layout">
