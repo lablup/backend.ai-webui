@@ -842,8 +842,8 @@ class utils {
       return value;
     }
     let sourceUnit;
-    const binaryUnits = ['b', 'k', 'm', 'g', 't'];
-    const bBinaryUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
+    const binaryUnits = ['b', 'k', 'm', 'g', 't', 'p', 'auto'];
+    const bBinaryUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
     if (!(binaryUnits.includes(targetUnit))) return false;
     value = value.toString();
     if (value.indexOf(' ') >= 0) { // Has string
@@ -859,6 +859,9 @@ class utils {
       value = value.slice(0, -1);
     } else {
       sourceUnit = defaultUnit; // Fallback
+    }
+    if (targetUnit == 'auto') {
+
     }
     return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
   }
