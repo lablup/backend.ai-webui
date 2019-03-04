@@ -43,7 +43,7 @@ typings/
 .npm
 
 # npm
-package-lock.js
+package-lock.json
 
 # Optional eslint cache
 .eslintcache
