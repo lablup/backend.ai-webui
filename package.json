@@ -54,6 +54,7 @@
     "@vaadin/vaadin-upload": "^4.2.1",
     "@webcomponents/webcomponentsjs": "^2.2.7",
     "electron-tabs": "^0.9.5",
+    "forever": "^0.15.3",
     "i18n-element": "^3.0.0-rc.1",
     "polymer-cli": "^1.9.6"
   },
