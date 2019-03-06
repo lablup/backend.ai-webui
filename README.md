@@ -56,7 +56,7 @@ $ polymer build
 Prerequistics : electron, electron-packager
 
 ```
-$ make all (build win/mac/linux app)
+$ make all (build win64/macos/linux app)
 ```
 
 ### Manual run (using local Electron)
