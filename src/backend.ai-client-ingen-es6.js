@@ -23310,14 +23310,24 @@ class Keypair {
 
   info(accessKey, fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
     'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
-    let q = `query($access_key: String!) {` +
-      `  keypair(access_key: $access_key) {` +
-      `    ${fields.join(" ")}` +
-      `  }` +
-      `}`;
-    let v = {
-      'access_key': accessKey
-    };
+    let q, v;
+    if (this.client.is_admin) {
+      q = `query($access_key: String!) {` +
+        `  keypair(access_key: $access_key) {` +
+        `    ${fields.join(" ")}` +
+        `  }` +
+        `}`;
+      v = {
+        'access_key': accessKey
+      };
+    } else {
+      q = `query {` +
+        `  keypair {` +
+        `    ${fields.join(" ")}` +
+        `  }` +
+        `}`;
+      v = {};
+    }
     return this.client.gql(q, v);
   }
 
