@@ -545,6 +545,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           font-weight: 100;
         }
 
+        paper-slider {
+          width: 200px;
+        }
+
         paper-slider.red {
           --paper-slider-knob-color: var(--paper-red-500);
           --paper-slider-active-color: var(--paper-red-500);
@@ -558,6 +562,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         paper-slider.blue {
           --paper-slider-knob-color: var(--paper-light-blue-500);
           --paper-slider-active-color: var(--paper-light-blue-500);
+        }
+
+        paper-slider paper-input {
+          width: 40px;
         }
 
         span.caption {
@@ -638,7 +646,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             <h4>Resource allocation</h4>
             <fieldset>
               <div class="horizontal center layout">
-                <span>CPU</span>
+                <span style="width:30px;">CPU</span>
                 <div class="horizontal end-justified layout caption">
                   <span class="indicator" id="cpu-value"></span>
                   <span class="caption">Core</span>
@@ -649,7 +657,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                               value="[[ cpu_metric.max ]]"></paper-slider>
               </div>
               <div class="horizontal center layout">
-                <span>RAM</span>
+                <span style="width:30px;">RAM</span>
                 <div class="horizontal end-justified layout caption">
                   <span class="indicator" id="ram-value"></span>
                   <span class="caption">GB</span>
@@ -660,7 +668,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                               value="[[ mem_metric.max ]]"></paper-slider>
               </div>
               <div class="horizontal center layout">
-                <span>GPU</span>
+                <span style="width:30px;">GPU</span>
                 <div class="horizontal end-justified layout caption">
                   <span class="indicator" id="gpu-value"></span>
                   <span class="caption">GPU</span>
