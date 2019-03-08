@@ -19,6 +19,11 @@ class IngenClientConfig extends clientNode.ClientConfig {
 }
 
 class IngenClient extends clientNode.Client {
+  constructor(config, agentSignature) {
+    super(config, agentSignature);
+    this.vfolder.urlPrefix = '/ingen/folders';
+  }
+
   /* GraphQL requests */
   gql(q, v) {
     const query = {'query': q, 'variables': v};

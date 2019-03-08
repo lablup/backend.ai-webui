@@ -458,6 +458,7 @@ class VFolder {
   constructor(client, name = null) {
     this.client = client;
     this.name = name;
+    this.urlPrefix = '/folders'
   }
 
   create(name, host = null) {
@@ -465,12 +466,12 @@ class VFolder {
       'name': name,
       'host': host
     };
-    let rqst = this.client.newSignedRequest('POST', `/folders`, body);
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
   list() {
-    let rqst = this.client.newSignedRequest('GET', `/folders`, null);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -478,7 +479,7 @@ class VFolder {
     if (name == null) {
       name = this.name;
     }
-    let rqst = this.client.newSignedRequest('GET', `/folders/${name}`, null);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -486,7 +487,7 @@ class VFolder {
     if (name == null) {
       name = this.name;
     }
-    let rqst = this.client.newSignedRequest('DELETE', `/folders/${name}`, null);
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -496,13 +497,13 @@ class VFolder {
     }
     let formData = new FormData();
     formData.append('src', fs, {filepath: path});
-    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/upload`, formData)
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData)
     return this.client._wrapWithPromise(rqst);
 
   }
 
   uploadFormData(fss, name = null) {
-    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/upload`, fss)
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss)
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -513,7 +514,7 @@ class VFolder {
     let body = {
       'path': path
     };
-    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/mkdir`, body);
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -529,7 +530,7 @@ class VFolder {
       'files': files,
       'recursive': recursive,
     };
-    let rqst = this.client.newSignedRequest('DELETE', `/folders/${name}/delete_files`, body);
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/delete_files`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -538,7 +539,7 @@ class VFolder {
       'file': file
     };
     let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `/folders/${name}/download_single?${q}`, null);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -550,7 +551,7 @@ class VFolder {
       'path': path
     };
     let q = querystring.stringify(params)
-    let rqst = this.client.newSignedRequest('GET', `/folders/${name}/files?${q}`, null);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -562,12 +563,12 @@ class VFolder {
       'perm': perm,
       'user_ids': emails
     };
-    let rqst = this.client.newSignedRequest('POST', `/folders/${name}/invite`, body);
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/invite`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
   invitations() {
-    let rqst = this.client.newSignedRequest('GET', `/folders/invitations/list`, null);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/invitations/list`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -576,7 +577,7 @@ class VFolder {
       'inv_id': inv_id,
       'inv_ak': inv_ak
     };
-    let rqst = this.client.newSignedRequest('POST', `/folders/invitations/accept`, body);
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/invitations/accept`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -584,7 +585,7 @@ class VFolder {
     let body = {
       'inv_id': inv_id
     };
-    let rqst = this.client.newSignedRequest('DELETE', `/folders/invitations/delete`, body);
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/invitations/delete`, body);
     return this.client._wrapWithPromise(rqst);
   }
 }
