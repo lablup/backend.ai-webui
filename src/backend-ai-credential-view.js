@@ -229,7 +229,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       "cuda.device": parseInt(gpu_resource),
       "cuda.shares": parseFloat(vgpu_resource)
     };
-    let vfolder_hosts = ["local"];
+    //let vfolder_hosts = ["local"];
+    let vfolder_hosts = ["cephfs"];
     let concurrency_limit = this.$['concurrency-limit'].value;
     let containers_per_session_limit = this.$['container-per-session-limit'].value;
     let vfolder_count_limit = this.$['vfolder-count-limit'].value;
