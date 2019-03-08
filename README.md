@@ -16,6 +16,7 @@ Backend.AI GUI console. Supports both app / web mode.
  * Kernel managements
  * Manager settings
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
+	* backend.ai-wsproxy package
 
 ## Develop and Test
 
