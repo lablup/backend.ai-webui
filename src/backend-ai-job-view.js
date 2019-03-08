@@ -133,9 +133,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.$['version'].addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this._initAliases();
     var gpu_resource = this.$['gpu-resource'];
-    this.$['gpu-value'].textContent = gpu_resource.value;
+    //this.$['gpu-value'].textContent = gpu_resource.value;
     gpu_resource.addEventListener('value-change', () => {
-      this.$['gpu-value'].textContent = gpu_resource.value;
+      //this.$['gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
         this.$['use-gpu-checkbox'].checked = true;
       } else {
@@ -226,22 +226,24 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this._updateVirtualFolderList();
     this.updateMetric();
     var cpu_resource = this.$['cpu-resource'];
+    var ram_resource = this.$['ram-resource'];
+    var gpu_resource = this.$['gpu-resource'];
+    /*
     this.$['cpu-value'].textContent = cpu_resource.value;
     cpu_resource.addEventListener('value-change', () => {
       this.$['cpu-value'].textContent = cpu_resource.value;
     });
-    var ram_resource = this.$['ram-resource'];
     this.$['ram-value'].textContent = ram_resource.value;
     ram_resource.addEventListener('value-change', () => {
       this.$['ram-value'].textContent = ram_resource.value;
     });
-    var gpu_resource = this.$['gpu-resource'];
     this.$['gpu-value'].textContent = gpu_resource.value;
+    */
   }
 
   _launchSessionDialog() {
     var gpu_resource = this.$['gpu-resource'];
-    this.$['gpu-value'].textContent = gpu_resource.value;
+    //this.$['gpu-value'].textContent = gpu_resource.value;
     if (gpu_resource.value > 0) {
       this.$['use-gpu-checkbox'].checked = true;
     } else {
@@ -482,7 +484,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         this.$['gpu-resource'].disabled = false;
         this.$['gpu-resource'].value = this.gpu_metric.max;
       }
-      this.$['gpu-value'].textContent = this.$['gpu-resource'].value;
+      //this.$['gpu-value'].textContent = this.$['gpu-resource'].value;
     }
   }
 
@@ -546,26 +548,25 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
 
         paper-slider {
-          width: 200px;
+          width: 300px;
+          --paper-slider-input: {
+            width: 70px;
+          };
         }
 
         paper-slider.red {
-          --paper-slider-knob-color: var(--paper-red-500);
-          --paper-slider-active-color: var(--paper-red-500);
+          --paper-slider-knob-color: var(--paper-red-400);
+          --paper-slider-active-color: var(--paper-red-400);
         }
 
         paper-slider.green {
-          --paper-slider-knob-color: var(--paper-green-500);
-          --paper-slider-active-color: var(--paper-green-500);
+          --paper-slider-knob-color: var(--paper-green-400);
+          --paper-slider-active-color: var(--paper-green-400);
         }
 
         paper-slider.blue {
-          --paper-slider-knob-color: var(--paper-light-blue-500);
-          --paper-slider-active-color: var(--paper-light-blue-500);
-        }
-
-        paper-slider paper-input {
-          width: 40px;
+          --paper-slider-knob-color: var(--paper-light-blue-400);
+          --paper-slider-active-color: var(--paper-light-blue-400);
         }
 
         span.caption {
@@ -647,35 +648,27 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             <fieldset>
               <div class="horizontal center layout">
                 <span style="width:30px;">CPU</span>
-                <div class="horizontal end-justified layout caption">
-                  <span class="indicator" id="cpu-value"></span>
-                  <span class="caption">Core</span>
-                </div>
                 <paper-slider id="cpu-resource" class="green"
                               pin snaps expand editable
                               min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]"
                               value="[[ cpu_metric.max ]]"></paper-slider>
+                <span class="caption">Core</span>
+
               </div>
               <div class="horizontal center layout">
                 <span style="width:30px;">RAM</span>
-                <div class="horizontal end-justified layout caption">
-                  <span class="indicator" id="ram-value"></span>
-                  <span class="caption">GB</span>
-                </div>
                 <paper-slider id="ram-resource" class="red"
                               pin snaps step=0.1 editable
                               min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]"
                               value="[[ mem_metric.max ]]"></paper-slider>
+                <span class="caption">GB</span>
               </div>
               <div class="horizontal center layout">
                 <span style="width:30px;">GPU</span>
-                <div class="horizontal end-justified layout caption">
-                  <span class="indicator" id="gpu-value"></span>
-                  <span class="caption">GPU</span>
-                </div>
                 <paper-slider id="gpu-resource" class="blue"
                               pin snaps editable step="[[ gpu_step ]]"
                               min="0.0" max="[[gpu_metric.max]]" value="1.0"></paper-slider>
+                <span class="caption">GPU</span>
               </div>
               <br/>
               <paper-button class="blue launch-button" type="submit" id="launch-button">
