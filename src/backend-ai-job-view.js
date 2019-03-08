@@ -506,7 +506,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             let user_mem_max = window.window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
             mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max));
           } else {
-            mem_metric.max = parseFloat(window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g'));
+            mem_metric.max = parseFloat(window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g'));
           }
           if (mem_metric.min > mem_metric.max) {
             // TODO: dynamic maximum per user policy
@@ -591,7 +591,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
 
         paper-slider {
-          width: 300px;
+          width: 285px;
           --paper-slider-input: {
             width: 70px;
           };
