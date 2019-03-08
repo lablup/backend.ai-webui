@@ -744,7 +744,7 @@ class ResourcePolicy {
         v = {'n': name};
       }
     } else {
-      return resolve(false);
+      throw new Error("Admin privilege is required.")
     }
     return this.client.gql(q, v);
   }

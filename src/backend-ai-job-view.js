@@ -202,9 +202,20 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         'max_containers_per_session',
       ]);
     }).then((response) => {
+      console.log(response);
       let resource_policy = response.keypair_resource_policy;
       if (resource_policy.default_for_unspecified === 'UNLIMITED') {
 
+      }
+      console.log(resource_policy);
+    }).catch((err) => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      } else if (err && err.title) {
+        this.$.notification.text = err.title;
+        this.$.notification.show();
       }
     });
   }
@@ -401,6 +412,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let currentVersion = this.$['version'].value;
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
+      let userResource = {};
       if (!currentResource) return;
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
