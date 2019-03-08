@@ -88,7 +88,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       },
       gpu_step: {
         type: Number,
-        value: 0.1
+        value: 0.05
       },
       cpu_metric: {
         type: Object,
@@ -159,7 +159,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   connectedCallback() {
     super.connectedCallback();
-    afterNextRender(this, function() {
+    afterNextRender(this, function () {
     });
   }
 
@@ -259,7 +259,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       }
       if ('cuda.shares' in results) {
         this.gpu_mode = 'vgpu';
-        this.gpu_step = 0.1;
+        this.gpu_step = 0.05;
       }
     });
   }
@@ -545,6 +545,21 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           font-weight: 100;
         }
 
+        paper-slider.red {
+          --paper-slider-knob-color: var(--paper-red-500);
+          --paper-slider-active-color: var(--paper-red-500);
+        }
+
+        paper-slider.green {
+          --paper-slider-knob-color: var(--paper-green-500);
+          --paper-slider-active-color: var(--paper-green-500);
+        }
+
+        paper-slider.blue {
+          --paper-slider-knob-color: var(--paper-light-blue-500);
+          --paper-slider-active-color: var(--paper-light-blue-500);
+        }
+
         span.caption {
           width: 30px;
           padding-left: 10px;
@@ -628,7 +643,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                   <span class="indicator" id="cpu-value"></span>
                   <span class="caption">Core</span>
                 </div>
-                <paper-slider id="cpu-resource" pin snaps expand
+                <paper-slider id="cpu-resource" class="green"
+                              pin snaps expand editable
                               min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]"
                               value="[[ cpu_metric.max ]]"></paper-slider>
               </div>
@@ -638,7 +654,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                   <span class="indicator" id="ram-value"></span>
                   <span class="caption">GB</span>
                 </div>
-                <paper-slider id="ram-resource" pin snaps step=0.1
+                <paper-slider id="ram-resource" class="red"
+                              pin snaps step=0.1 editable
                               min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]"
                               value="[[ mem_metric.max ]]"></paper-slider>
               </div>
@@ -648,8 +665,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                   <span class="indicator" id="gpu-value"></span>
                   <span class="caption">GPU</span>
                 </div>
-                <paper-slider id="gpu-resource" pin snaps step="[[gpu_step]]"
-                              min="0" max="[[gpu_metric.max]]" value="1"></paper-slider>
+                <paper-slider id="gpu-resource" class="blue"
+                              pin snaps editable step="[[ gpu_step ]]"
+                              min="0.0" max="[[gpu_metric.max]]" value="1.0"></paper-slider>
               </div>
               <br/>
               <paper-button class="blue launch-button" type="submit" id="launch-button">
