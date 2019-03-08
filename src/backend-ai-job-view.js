@@ -62,6 +62,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         type: Object,
         value: {}
       },
+      userResourceLimit: {
+        type: Object,
+        value: {}
+      },
       aliases: {
         type: Object,
         value: {
@@ -196,17 +200,39 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   _refreshResourcePolicy() {
     window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy']).then((response) => {
       let policyName = response.keypair.resource_policy;
-      return window.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
-        'total_resource_slots',
-        'max_concurrent_sessions',
-        'max_containers_per_session',
-      ]);
+      // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
+      // TODO: Fix it to use API-based resource max.
+      if (policyName === 'student') {
+        return new Promise(function (resolve, reject) {
+          var resource = {
+            "cpu": 4,
+            "mem": '8g',
+            "cuda.shares": 0.25
+          };
+          var result = {
+            keypair_resource_policy: {
+              'default_for_unspecified': 'LIMITED',
+              'total_resource_slots': JSON.stringify(resource),
+              'max_concurrent_sessions': 3,
+              'max_containers_per_session': 1
+            }
+          };
+          resolve(result);
+        });
+      } else {
+        return window.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
+          'total_resource_slots',
+          'max_concurrent_sessions',
+          'max_containers_per_session',
+        ]);
+      }
     }).then((response) => {
       console.log(response);
       let resource_policy = response.keypair_resource_policy;
       if (resource_policy.default_for_unspecified === 'UNLIMITED') {
 
       }
+      this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       console.log(resource_policy);
     }).catch((err) => {
       console.log(err);
@@ -420,7 +446,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         if (item.key === 'cpu') {
           let cpu_metric = item;
           cpu_metric.min = parseInt(cpu_metric.min);
-          cpu_metric.max = parseInt(cpu_metric.max);
+          cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu));
           if (cpu_metric.min > cpu_metric.max) {
             // TODO: dynamic maximum per user policy
           }
@@ -430,7 +456,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         if (item.key === 'cuda.device') {
           let gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
-          gpu_metric.max = parseInt(gpu_metric.max);
+          //gpu_metric.max = parseInt(gpu_metric.max);
+          gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']));
           if (gpu_metric.min > gpu_metric.max) {
             // TODO: dynamic maximum per user policy
 
@@ -440,10 +467,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         if (item.key === 'cuda.shares') {
           let vgpu_metric = item;
           vgpu_metric.min = parseInt(vgpu_metric.min);
-          vgpu_metric.max = parseInt(vgpu_metric.max);
+          //vgpu_metric.max = parseInt(vgpu_metric.max);
+          vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']));
           if (vgpu_metric.min > vgpu_metric.max) {
             // TODO: dynamic maximum per user policy
-
           }
           this.vgpu_metric = vgpu_metric;
           if (vgpu_metric.max > 0) {
@@ -463,10 +490,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         if (item.key === 'mem') {
           let mem_metric = item;
           mem_metric.min = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
-          mem_metric.max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
+          let image_mem_max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
+          let user_mem_max = window.window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
+          mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max));
           if (mem_metric.min > mem_metric.max) {
             // TODO: dynamic maximum per user policy
-
           }
           this.mem_metric = mem_metric;
         }
