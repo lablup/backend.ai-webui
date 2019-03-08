@@ -552,21 +552,22 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           --paper-slider-input: {
             width: 70px;
           };
+          --paper-slider-height: 3px;
         }
 
-        paper-slider.red {
-          --paper-slider-knob-color: var(--paper-red-400);
-          --paper-slider-active-color: var(--paper-red-400);
+        paper-slider.mem {
+          --paper-slider-knob-color: var(--paper-orange-400);
+          --paper-slider-active-color: var(--paper-orange-400);
         }
 
-        paper-slider.green {
-          --paper-slider-knob-color: var(--paper-green-400);
-          --paper-slider-active-color: var(--paper-green-400);
+        paper-slider.cpu {
+          --paper-slider-knob-color: var(--paper-light-green-400);
+          --paper-slider-active-color: var(--paper-light-green-400);
         }
 
-        paper-slider.blue {
-          --paper-slider-knob-color: var(--paper-light-blue-400);
-          --paper-slider-active-color: var(--paper-light-blue-400);
+        paper-slider.gpu {
+          --paper-slider-knob-color: var(--paper-cyan-400);
+          --paper-slider-active-color: var(--paper-cyan-400);
         }
 
         span.caption {
@@ -648,7 +649,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             <fieldset>
               <div class="horizontal center layout">
                 <span style="width:30px;">CPU</span>
-                <paper-slider id="cpu-resource" class="green"
+                <paper-slider id="cpu-resource" class="cpu"
                               pin snaps expand editable
                               min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]"
                               value="[[ cpu_metric.max ]]"></paper-slider>
@@ -657,7 +658,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               </div>
               <div class="horizontal center layout">
                 <span style="width:30px;">RAM</span>
-                <paper-slider id="ram-resource" class="red"
+                <paper-slider id="ram-resource" class="mem"
                               pin snaps step=0.1 editable
                               min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]"
                               value="[[ mem_metric.max ]]"></paper-slider>
@@ -665,7 +666,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               </div>
               <div class="horizontal center layout">
                 <span style="width:30px;">GPU</span>
-                <paper-slider id="gpu-resource" class="blue"
+                <paper-slider id="gpu-resource" class="gpu"
                               pin snaps editable step="[[ gpu_step ]]"
                               min="0.0" max="[[gpu_metric.max]]" value="1.0"></paper-slider>
                 <span class="caption">GPU</span>
