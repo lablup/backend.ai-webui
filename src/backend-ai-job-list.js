@@ -304,7 +304,7 @@ class BackendAIJobList extends PolymerElement {
     let accessKey = window.backendaiclient._config.accessKey;
     let rqst = {
       method: 'GET',
-      uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId
+      uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -312,7 +312,7 @@ class BackendAIJobList extends PolymerElement {
         if (response.code !== 404) {
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient.proxyURL + 'proxy/' + accessKey + "/" + kernelId + '/delete'
+            uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId + '/delete'
           };
           return this.sendRequest(rqst);
         }
