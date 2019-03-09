@@ -54,6 +54,10 @@ class BackendAICredentialList extends PolymerElement {
       keypairInfo: {
         type: Object,
         value: {}
+      },
+      isAdmin: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -86,9 +90,11 @@ class BackendAICredentialList extends PolymerElement {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshKeyData();
+        this.isAdmin = window.backendaiclient.is_admin;
       }, true);
     } else { // already connected
       this._refreshKeyData();
+      this.isAdmin = window.backendaiclient.is_admin;
     }
   }
 
@@ -480,17 +486,19 @@ class BackendAICredentialList extends PolymerElement {
                  access-key="[[item.access_key]]">
               <paper-icon-button class="fg green" icon="assignment"
                                  on-tap="_showKeypairDetail"></paper-icon-button>
-              <template is="dom-if" if="[[_isActive()]]">
-                <template is="dom-if" if="[[!item.is_admin]]">
-                  <paper-icon-button class="fg blue controls-running" icon="delete"
-                                     on-tap="_revokeKey"></paper-icon-button>
-                  <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                     on-tap="_deleteKey"></paper-icon-button>
+              <template is="dom-if" if="[[isAdmin]]">
+                <template is="dom-if" if="[[_isActive()]]">
+                  <template is="dom-if" if="[[!item.is_admin]]">
+                    <paper-icon-button class="fg blue controls-running" icon="delete"
+                                       on-tap="_revokeKey"></paper-icon-button>
+                    <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
+                                       on-tap="_deleteKey"></paper-icon-button>
+                  </template>
                 </template>
-              </template>
-              <template is="dom-if" if="[[!_isActive()]]">
-                <paper-icon-button class="fg blue controls-running" icon="icons:redo"
-                                   on-tap="_reuseKey"></paper-icon-button>
+                <template is="dom-if" if="[[!_isActive()]]">
+                  <paper-icon-button class="fg blue controls-running" icon="icons:redo"
+                                     on-tap="_reuseKey"></paper-icon-button>
+                </template>
               </template>
             </div>
           </template>

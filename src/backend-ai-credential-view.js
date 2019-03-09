@@ -112,7 +112,9 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
 
   ready() {
     super.ready();
-    this.$['add-keypair'].addEventListener('tap', this._launchKeyPairDialog.bind(this));
+    if (this.$['add-keypair']) {
+      this.$['add-keypair'].addEventListener('tap', this._launchKeyPairDialog.bind(this));
+    }
     this.$['create-keypair-button'].addEventListener('tap', this._addKeyPair.bind(this));
 
     if (this.$['add-policy']) {
@@ -324,7 +326,9 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
+          <template is="dom-if" if="[[is_admin]]">
+            <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
+          </template>
         </h4>
         <div>
           <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
