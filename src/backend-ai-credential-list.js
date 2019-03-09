@@ -107,7 +107,7 @@ class BackendAICredentialList extends PolymerElement {
 
     return window.backendaiclient.resourcePolicy.get().then((response) => {
       this.shadowRoot.querySelector('#loading-indicator').hide();
-      let rp = response.keypair_resource_policies;
+      let rp = response.keypair_resource_policies || [response.keypair_resource_policy];
       this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
     }).then(() => {
       let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',

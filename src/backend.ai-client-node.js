@@ -744,7 +744,10 @@ class ResourcePolicy {
         v = {'n': name};
       }
     } else {
-      throw new Error("Admin privilege is required.")
+      q = `query {` +
+        `  keypair_resource_policy { ${fields.join(" ")} }` +
+        '}';
+      v = {};
     }
     return this.client.gql(q, v);
   }
