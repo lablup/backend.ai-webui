@@ -89,6 +89,10 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       resource_policy_names: {
         type: Array,
         value: []
+      },
+      is_admin: {
+        type: Boolean,
+        value: false
       }
     }
   }
@@ -155,6 +159,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       this.$['inactive-credential-list'].active = true;
       this.$['resource-policy-list'].active = true;
     }
+    this.is_admin = window.backendaiclient.is_admin;
   }
 
   _launchKeyPairDialog() {
@@ -334,7 +339,9 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal flex center center-justified layout">
           <span>Policy groups</span>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="add-policy" outlined label="Create policy" icon="add"></mwc-button>
+          <template is="dom-if" if="[[is_admin]]">
+            <mwc-button class="fg red" id="add-policy" outlined label="Create policy" icon="add"></mwc-button>
+          </template>
         </h4>
         <div>
           <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>

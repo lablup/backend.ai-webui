@@ -50,6 +50,10 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
       keypairInfo: {
         type: Object,
         value: {}
+      },
+      is_admin: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -78,9 +82,11 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshPolicyData();
+        this.is_admin = window.backendaiclient.is_admin;
       }, true);
     } else { // already connected
       this._refreshPolicyData();
+      this.is_admin = window.backendaiclient.is_admin;
     }
   }
 
@@ -479,8 +485,10 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
           <template>
             <div id="controls" class="layout horizontal flex center"
                  policy-name="[[item.name]]">
-              <paper-icon-button class="controls-running" icon="settings"
-                                 on-tap="_launchResourcePolicyDialog"></paper-icon-button>
+              <template is="dom-if" if="[[is_admin]]">
+                <paper-icon-button class="controls-running" icon="settings"
+                                   on-tap="_launchResourcePolicyDialog"></paper-icon-button>
+              </template>
             </div>
           </template>
         </vaadin-grid-column>
