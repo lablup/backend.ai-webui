@@ -165,7 +165,6 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _launchKeyPairDialog() {
-    console.log(this._getResourcePolicies());
     this.$['new-keypair-dialog'].open();
   }
 

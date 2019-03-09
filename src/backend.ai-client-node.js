@@ -739,23 +739,16 @@ class ResourcePolicy {
     'allowed_vfolder_hosts',
     'idle_timeout']) {
     let q, v;
-    if (this.client.is_admin === true) {
-      if (name === null) {
-        q = `query {` +
-          `  keypair_resource_policies { ${fields.join(" ")} }` +
-          '}';
-        v = {'n': name};
-      } else {
-        q = `query($n:String!) {` +
-          `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
-          '}';
-        v = {'n': name};
-      }
-    } else {
+    if (name === null) {
       q = `query {` +
-        `  keypair_resource_policy { ${fields.join(" ")} }` +
+        `  keypair_resource_policies { ${fields.join(" ")} }` +
         '}';
-      v = {};
+      v = {'n': name};
+    } else {
+      q = `query($n:String!) {` +
+        `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
+        '}';
+      v = {'n': name};
     }
     return this.client.gql(q, v);
   }

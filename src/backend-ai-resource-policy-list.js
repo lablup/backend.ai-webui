@@ -149,7 +149,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
   }
   _refreshPolicyData() {
     return window.backendaiclient.resourcePolicy.get().then((response) => {
-      let rp = response.keypair_resource_policies || [response.keypair_resource_policy];
+      let rp = response.keypair_resource_policies;
       let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
       return rp;
     }).then((response) => {
