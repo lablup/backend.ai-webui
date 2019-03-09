@@ -115,7 +115,9 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     this.$['add-keypair'].addEventListener('tap', this._launchKeyPairDialog.bind(this));
     this.$['create-keypair-button'].addEventListener('tap', this._addKeyPair.bind(this));
 
-    this.$['add-policy'].addEventListener('tap', this._launchResourcePolicyDialog.bind(this));
+    if (this.$['add-policy']) {
+      this.$['add-policy'].addEventListener('tap', this._launchResourcePolicyDialog.bind(this));
+    }
     this.$['create-policy-button'].addEventListener('tap', this._addResourcePolicy.bind(this));
 
     document.addEventListener('backend-ai-credential-refresh', () => {
