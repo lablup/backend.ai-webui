@@ -642,12 +642,20 @@ class Keypair {
     'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
 
     let q;
-    if (userId == null) {
-      q = `query($is_active: Boolean) {` +
-        `  keypairs(is_active: $is_active) {` +
-        `    ${fields.join(" ")}` +
-        `  }` +
-        `}`;
+    if (this.client.is_admin) {
+      if (userId == null) {
+        q = `query($is_active: Boolean) {` +
+          `  keypairs(is_active: $is_active) {` +
+          `    ${fields.join(" ")}` +
+          `  }` +
+          `}`;
+      } else {
+        q = `query($user_id: String!, $is_active: Boolean) {` +
+          `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+          `    ${fields.join(" ")}` +
+          `  }` +
+          `}`;
+      }
     } else {
       q = `query($user_id: String!, $is_active: Boolean) {` +
         `  keypairs(user_id: $user_id, is_active: $is_active) {` +
@@ -656,7 +664,7 @@ class Keypair {
         `}`;
     }
     let v = {
-      'user_id': userId,
+      'user_id': userId || this.client.email,
       'is_active': isActive,
     };
     return this.client.gql(q, v);
