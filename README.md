@@ -27,7 +27,7 @@ $ npm install
 $ npm run polymer
 $ npm run wsproxy
 ```
-
+If you need to serve with nginx, please install backend.ai-wsproxy.
 
 ### Running websocket with node.js
 
