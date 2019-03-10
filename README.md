@@ -29,6 +29,9 @@ $ npm run wsproxy
 ```
 If you need to serve with nginx, please install backend.ai-wsproxy.
 
+#### nginx configuration example
+
+
 ### Running websocket with node.js
 
 This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
