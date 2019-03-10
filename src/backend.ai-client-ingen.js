@@ -21,6 +21,7 @@ class IngenClientConfig extends clientNode.ClientConfig {
 class IngenClient extends clientNode.Client {
   constructor(config, agentSignature) {
     super(config, agentSignature);
+    this.kernelPrefix = '/ingen/kernel';
     this.vfolder.urlPrefix = '/ingen/folders';
   }
 
