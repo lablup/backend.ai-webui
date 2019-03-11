@@ -96,13 +96,10 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
   }
 
   updateCurrentPolicyToDialog(e) {
-    console.log(e.target);
     const controls = e.target.closest('#controls');
     const policyName = controls.policyName;
-    console.log(policyName);
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
-    console.log(resourcePolicy);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
     this.$['cpu-resource'].value = resourcePolicy.total_resource_slots.cpu;
     this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda.device'];
@@ -262,8 +259,6 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
-
-    console.log(accessKey);
   }
 
   _deleteKey(e) {
