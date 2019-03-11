@@ -44,11 +44,39 @@ class IngenClient extends clientNode.Client {
    * @return {Object} requestInfo - ingen request information
    */
   newSignedRequest(method, queryString, body) {
-    const requestBody = !body ? '' : JSON.stringify(body);
+    let requestBody;
+    let contentType = 'application/json';
+    if (body === null || body === undefined) {
+      requestBody = '';
+    } else if (typeof body.getBoundary === 'function' || body instanceof FormData) {
+      // detect form data input from form-data module
+      requestBody = body;
+      contentType = 'multipart/form-data';
+    } else {
+      requestBody = JSON.stringify(body);
+    }
+
+    const hdrs = new Headers();
+    if (body != undefined) {
+      if (typeof body.getBoundary === 'function') {
+        hdrs.set('Content-Type', body.getHeaders()['content-type']);
+      }
+      if (body instanceof FormData) {
+      } else {
+        hdrs.set('Content-Type', content_type);
+        hdrs.set('Content-Length', Buffer.byteLength(authBody));
+      }
+    } else {
+      hdrs.set('Content-Type', contentType);
+    }
+    const uri = queryString; // endpoint will be determined in inge
+
     const requestInfo = {
       method: method,
+      headers: hdrs,
+      cache: 'default',
       body: requestBody,
-      uri: queryString // endpoint will be determined in inge
+      uri: uri
     };
     return requestInfo;
   }
