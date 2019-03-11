@@ -1,1142 +1,15 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.ai = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-    /* eslint-env browser */
-    module.exports = typeof self == 'object' ? self.FormData : window.FormData;
-
-  }, {}],
-  2: [function (require, module, exports) {
-    (function (global) {
-      "use strict";
-
-// ref: https://github.com/tc39/proposal-global
-      var getGlobal = function () {
-        // the only reliable means to get the global object is
-        // `Function('return this')()`
-        // However, this causes CSP violations in Chrome apps.
-        if (typeof self !== 'undefined') {
-          return self;
-        }
-        if (typeof window !== 'undefined') {
-          return window;
-        }
-        if (typeof global !== 'undefined') {
-          return global;
-        }
-        throw new Error('unable to locate global object');
-      }
-
-      var global = getGlobal();
-
-      module.exports = exports = global.fetch;
-
-// Needed for TypeScript and Webpack.
-      exports.default = global.fetch.bind(global);
-
-      exports.Headers = global.Headers;
-      exports.Request = global.Request;
-      exports.Response = global.Response;
-    }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-  }, {}],
-  3: [function (require, module, exports) {
-    (function (Buffer) {
-      'use babel';
-      /*
-Backend.AI Node.JS / Javascript ES6 API Proxy Library for Ingen (v19.03b9)
-==========================================================================
-
-(C) Copyright 2016-2019 Lablup Inc.
-Licensed under MIT
-*/
-      /* jshint esnext: true */
-
-      const clientNode = require('./backend.ai-client-node');
-
-
-      class IngenClientConfig extends clientNode.ClientConfig {
-        constructor(accessKey, secretKey, endpoint) {
-          accessKey = secretKey = endpoint = '';
-          super(accessKey, secretKey, endpoint);
-        }
-      }
-
-      class IngenClient extends clientNode.Client {
-        constructor(config, agentSignature) {
-          super(config, agentSignature);
-          this.kernelPrefix = '/ingen/kernel';
-          this.vfolder.urlPrefix = '/ingen/folders';
-        }
-
-        /* GraphQL requests */
-        gql(q, v) {
-          const query = {'query': q, 'variables': v};
-          const rqst = this.newSignedRequest('POST', '/ingen/graphql', query);
-          return this._wrapWithPromise(rqst);
-        }
-
-        /**
-         * Generate a RequestInfo object that can be passed to fetch() API.
-         * We don't need signing process since it will be dealt in ingen server,
-         * but we keep the method name to follow the parent's interface.
-         *
-         * @param {string} method - the HTTP method
-         * @param {string} queryString - the URI path and GET parameters
-         * @param {string} body - an object that will be encoded as JSON in the request body
-         *
-         * @return {Object} requestInfo - ingen request information
-         */
-        newSignedRequest(method, queryString, body) {
-          let requestBody;
-          let contentType = 'application/json';
-          if (body === null || body === undefined) {
-            requestBody = '';
-          } else if (typeof body.getBoundary === 'function' || body instanceof FormData) {
-            // detect form data input from form-data module
-            requestBody = body;
-            contentType = 'multipart/form-data';
-          } else {
-            requestBody = JSON.stringify(body);
-          }
-
-          const hdrs = new Headers();
-          if (body != undefined) {
-            if (typeof body.getBoundary === 'function') {
-              hdrs.set('Content-Type', body.getHeaders()['content-type']);
-            }
-            if (body instanceof FormData) {
-            } else {
-              hdrs.set('Content-Type', content_type);
-              hdrs.set('Content-Length', Buffer.byteLength(authBody));
-            }
-          } else {
-            hdrs.set('Content-Type', contentType);
-          }
-          const uri = queryString; // endpoint will be determined in inge
-
-          const requestInfo = {
-            method: method,
-            headers: hdrs,
-            cache: 'default',
-            body: requestBody,
-            uri: uri
-          };
-          return requestInfo;
-        }
-
-        hello() {
-          const rqst = this.newSignedRequest('GET', '/ingen');
-          return this._wrapWithPromise(rqst);
-        }
-      }
-
-
-      const backend = {
-        Client: IngenClient,
-        ClientConfig: IngenClientConfig,
-      };
-
-      module.exports.backend = backend;
-// for classical uses
-      module.exports.Client = IngenClient;
-      module.exports.ClientConfig = IngenClientConfig;
-// legacy aliases
-      module.exports.BackendAIClient = IngenClient;
-      module.exports.BackendAIClientConfig = IngenClientConfig;
-
-    }).call(this, require("buffer").Buffer)
-  }, {"./backend.ai-client-node": 4, "buffer": 52}],
-  4: [function (require, module, exports) {
-    (function (process, Buffer) {
-      'use babel';
-      /*
-Backend.AI Node.JS / Javascript ES6 API Library (v19.03b9)
-==========================================================
-
-(C) Copyright 2016-2019 Lablup Inc.
-Licensed under MIT
-*/
-      /*jshint esnext: true */
-
-      var fetch = require('node-fetch');
-      var Headers = fetch.Headers;
-      var crypto = require('crypto');
-      var FormData = require('form-data');
-
-      const querystring = require('querystring');
-
-
-      class ClientConfig {
-        constructor(accessKey, secretKey, endpoint) {
-          // fixed configs with this implementation
-          this._apiVersionMajor = 'v4';
-          this._apiVersion = 'v4.20190115';
-          this._hashType = 'sha256';
-          // dynamic configs
-          if (accessKey === undefined || accessKey === null)
-            throw 'You must set accessKey! (either as argument or environment variable)';
-          if (secretKey === undefined || secretKey === null)
-            throw 'You must set secretKey! (either as argument or environment variable)';
-          if (endpoint === undefined || endpoint === null)
-            endpoint = 'https://api.backend.ai';
-          this._endpoint = endpoint;
-          this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
-          this._accessKey = accessKey;
-          this._secretKey = secretKey;
-          this._proxyURL = null;
-        }
-
-        get accessKey() {
-          return this._accessKey;
-        }
-
-        get secretKey() {
-          return this._secretKey;
-        }
-
-        get endpoint() {
-          return this._endpoint;
-        }
-
-        get proxyURL() {
-          return this._proxyURL;
-        }
-
-        get endpointHost() {
-          return this._endpointHost;
-        }
-
-        get apiVersion() {
-          return this._apiVersion;
-        }
-
-        get apiVersionMajor() {
-          return this._apiVersionMajor;
-        }
-
-        get hashType() {
-          return this._hashType;
-        }
-
-        /**
-         * Create a ClientConfig object from environment variables.
-         */
-        static createFromEnv() {
-          return new this(
-            process.env.BACKEND_ACCESS_KEY,
-            process.env.BACKEND_SECRET_KEY,
-            process.env.BACKEND_ENDPOINT
-          );
-        }
-      }
-
-      class Client {
-        /**
-         * The client API wrapper.
-         *
-         * @param {ClientConfig} config - the API client-side configuration
-         * @param {string} agentSignature - an extra string that will be appended to User-Agent headers when making API requests
-         */
-        constructor(config, agentSignature) {
-          this.code = null;
-          this.kernelId = null;
-          this.kernelType = null;
-          this.clientVersion = '0.4.0';  // TODO: read from package.json?
-          this.agentSignature = agentSignature;
-          if (config === undefined) {
-            this._config = ClientConfig.createFromEnv();
-          } else {
-            this._config = config;
-          }
-          this.kernelPrefix = '/kernel'
-          this.vfolder = new VFolder(this);
-          this.agent = new Agent(this);
-          this.keypair = new Keypair(this);
-          this.image = new Image(this);
-          this.utils = new utils(this);
-          this.computeSession = new ComputeSession(this);
-          this.resourcePolicy = new ResourcePolicy(this);
-        }
-
-        async _wrapWithPromise(rqst) {
-          let errorType = Client.ERR_REQUEST;
-          let errorMsg;
-          let resp, body;
-          try {
-            if (rqst.method == 'GET') {
-              rqst.body = undefined;
-            }
-            resp = await fetch(rqst.uri, rqst);
-            errorType = Client.ERR_RESPONSE;
-            let contentType = resp.headers.get('Content-Type');
-            if (contentType.startsWith('application/json') ||
-              contentType.startsWith('application/problem+json')) {
-              body = await resp.json();
-            } else if (contentType.startsWith('text/')) {
-              body = await resp.text();
-            } else {
-              if (resp.blob === undefined)
-                body = await resp.buffer();  // for node-fetch
-              else
-                body = await resp.blob();
-            }
-            errorType = Client.ERR_SERVER;
-            if (!resp.ok) {
-              throw body;
-            }
-          } catch (err) {
-            switch (errorType) {
-              case Client.ERR_REQUEST:
-                errorMsg = `sending request has failed: ${err}`;
-                break;
-              case Client.ERR_RESPONSE:
-                errorMsg = `reading response has failed: ${err}`;
-                break;
-              case Client.ERR_SERVER:
-                errorMsg = 'server responded failure: '
-                  + `${resp.status} ${resp.statusText} - ${body.title}`;
-                break;
-            }
-            throw {
-              type: errorType,
-              message: errorMsg,
-            };
-          }
-          return body;
-        }
-
-        /**
-         * Return the server-side API version.
-         */
-        getServerVersion() {
-          let rqst = this.newPublicRequest('GET', '', null, '');
-          return this._wrapWithPromise(rqst);
-        }
-
-        getResourceSlots() {
-          let rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
-          return this._wrapWithPromise(rqst);
-        }
-
-        /**
-         * Create a compute session if the session for the given sessionId does not exists.
-         * It returns the information for the existing session otherwise, without error.
-         *
-         * @param {string} kernelType - the kernel type (usually language runtimes)
-         * @param {string} sessionId - user-defined session ID
-         * @param {object} resources - Per-session resource
-         */
-        createIfNotExists(kernelType, sessionId, resources = {}) {
-          if (sessionId === undefined)
-            sessionId = this.generateSessionId();
-          let params = {
-            "lang": kernelType,
-            "clientSessionToken": sessionId,
-          };
-          if (resources != {}) {
-            let config = {};
-            if (resources['cpu']) {
-              config['cpu'] = resources['cpu'];
-            }
-            if (resources['mem']) {
-              config['mem'] = resources['mem'];
-            }
-            if (resources['gpu']) {
-              config['cuda.device'] = resources['gpu'];
-            }
-            if (resources['vgpu']) {
-              config['cuda.shares'] = resources['vgpu'];
-            }
-            if (resources['tpu']) {
-              config['tpu.device'] = resources['tpu'];
-            }
-            if (resources['env']) {
-              config['environ'] = resources['env'];
-            }
-            if (resources['clustersize']) {
-              config['clusterSize'] = resources['clustersize'];
-            }
-            //params['config'] = {};
-            params['config'] = {resources: config};
-            if (resources['mounts']) {
-              params['config'].mounts = resources['mounts'];
-            }
-          }
-          let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
-          return this._wrapWithPromise(rqst);
-        }
-
-        /**
-         * Obtain the session information by given sessionId.
-         *
-         * @param {string} sessionId - the sessionId given when created
-         */
-        getInformation(sessionId) {
-          let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}`, null);
-          return this._wrapWithPromise(rqst);
-        }
-
-        /**
-         * Obtain the session information by given sessionId.
-         *
-         * @param {string} sessionId - the sessionId given when created
-         */
-        getLogs(sessionId) {
-          let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/logs`, null);
-          return this._wrapWithPromise(rqst);
-        }
-
-        /**
-         * Terminate and destroy the kernel session.
-         *
-         * @param {string} sessionId - the sessionId given when created
-         */
-        destroy(sessionId) {
-          let rqst = this.newSignedRequest('DELETE', `${this.kernelPrefix}/${sessionId}`, null);
-          return this._wrapWithPromise(rqst);
-        }
-
-        /**
-         * Restart the kernel session keeping its work directory and volume mounts.
-         *
-         * @param {string} sessionId - the sessionId given when created
-         */
-        restart(sessionId) {
-          let rqst = this.newSignedRequest('PATCH', `${this.kernelPrefix}/${sessionId}`, null);
-          return this._wrapWithPromise(rqst);
-        }
-
-        // TODO: interrupt
-
-        // TODO: auto-complete
-
-        /**
-         * Execute a code snippet or schedule batch-mode executions.
-         *
-         * @param {string} sessionId - the sessionId given when created
-         * @param {string} runId - a random ID to distinguish each continuation until finish (the length must be between 8 to 64 bytes inclusively)
-         * @param {string} mode - either "query", "batch", "input", or "continue"
-         * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
-         */
-        execute(sessionId, runId, mode, code, opts) {
-          let params = {
-            "mode": mode,
-            "code": code,
-            "runId": runId,
-            "options": opts,
-          };
-          let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
-          return this._wrapWithPromise(rqst);
-        }
-
-        // legacy aliases
-        createKernel(kernelType, sessionId = undefined, resources = {}) {
-          return this.createIfNotExists(kernelType, sessionId, resources);
-        }
-
-        destroyKernel(kernelId) {
-          return this.destroy(kernelId);
-        }
-
-        refreshKernel(kernelId) {
-          return this.restart(kernelId);
-        }
-
-        runCode(code, kernelId, runId, mode) {
-          return this.execute(kernelId, runId, mode, code, {});
-        }
-
-        upload(sessionId, path, fs) {
-          const formData = new FormData();
-          formData.append('src', fs, {filepath: path});
-          let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData)
-          return this._wrapWithPromise(rqst);
-        }
-
-        mangleUserAgentSignature() {
-          let uaSig = this.clientVersion
-            + (this.agentSignature ? ('; ' + this.agentSignature) : '');
-          return uaSig;
-        }
-
-        /* GraphQL requests */
-        gql(q, v) {
-          let query = {
-            'query': q,
-            'variables': v
-          }
-          let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
-          return this._wrapWithPromise(rqst);
-        }
-
-        /**
-         * Generate a RequestInfo object that can be passed to fetch() API,
-         * which includes a properly signed header with the configured auth information.
-         *
-         * @param {string} method - the HTTP method
-         * @param {string} queryString - the URI path and GET parameters
-         * @param {string} body - an object that will be encoded as JSON in the request body
-         */
-        newSignedRequest(method, queryString, body) {
-          let content_type = "application/json";
-          let requestBody;
-          let authBody;
-          let d = new Date();
-          let signKey = this.getSignKey(this._config.secretKey, d);
-          if (body === null || body === undefined) {
-            requestBody = '';
-            authBody = requestBody;
-          } else if (typeof body.getBoundary === 'function' || body instanceof FormData) {
-            // detect form data input from form-data module
-            requestBody = body;
-            authBody = '';
-            content_type = "multipart/form-data";
-          } else {
-            requestBody = JSON.stringify(body);
-            authBody = requestBody;
-          }
-          //queryString = '/' + this._config.apiVersionMajor + queryString;
-          let aStr;
-          if (this._config._apiVersion[1] < 4) {
-            aStr = this.getAuthenticationString(method, queryString, d.toISOString(), authBody, content_type);
-          } else {
-            aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
-          }
-
-          let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
-          let hdrs = new Headers({
-            "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-            "X-BackendAI-Version": this._config.apiVersion,
-            "X-BackendAI-Date": d.toISOString(),
-            "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
-          });
-          if (body != undefined) {
-            if (typeof body.getBoundary === 'function') {
-              hdrs.set('Content-Type', body.getHeaders()['content-type']);
-            }
-            if (body instanceof FormData) {
-            } else {
-              hdrs.set('Content-Type', content_type);
-              hdrs.set('Content-Length', Buffer.byteLength(authBody));
-            }
-          } else {
-            hdrs.set('Content-Type', content_type);
-          }
-          let uri = this._config.endpoint + queryString;
-
-
-          let requestInfo = {
-            method: method,
-            headers: hdrs,
-            cache: 'default',
-            body: requestBody,
-            uri: uri
-          };
-          return requestInfo;
-        }
-
-        /**
-         * Same to newRequest() method but it does not sign the request.
-         * Use this for unauthorized public APIs.
-         */
-
-        newUnsignedRequest(method, queryString, body) {
-          return this.newPublicRequest(method, queryString, body, this._config.apiVersionMajor);
-        }
-
-        newPublicRequest(method, queryString, body, urlPrefix) {
-          let d = new Date();
-          let hdrs = new Headers({
-            "Content-Type": "application/json",
-            "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-            "X-BackendAI-Version": this._config.apiVersion,
-            "X-BackendAI-Date": d.toISOString()
-          });
-          //queryString = '/' + urlPrefix + queryString;
-          let requestInfo = {
-            method: method,
-            headers: hdrs,
-            mode: 'cors',
-            cache: 'default',
-            uri: this._config.endpoint + queryString,
-          };
-          return requestInfo;
-        }
-
-        getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
-          let bodyHash = crypto.createHash(this._config.hashType)
-            .update(bodyValue).digest('hex');
-          return (method + '\n' + queryString + '\n' + dateValue + '\n'
-            + 'host:' + this._config.endpointHost + '\n'
-            + 'content-type:' + content_type + '\n'
-            + 'x-backendai-version:' + this._config.apiVersion + '\n'
-            + bodyHash);
-        }
-
-        getCurrentDate(now) {
-          let year = (`0000${now.getUTCFullYear()}`).slice(-4);
-          let month = (`0${now.getUTCMonth() + 1}`).slice(-2);
-          let day = (`0${now.getUTCDate()}`).slice(-2);
-          let t = year + month + day;
-          return t;
-        }
-
-        sign(key, key_encoding, msg, digest_type) {
-          let kbuf = new Buffer(key, key_encoding);
-          let hmac = crypto.createHmac(this._config.hashType, kbuf);
-          hmac.update(msg, 'utf8');
-          return hmac.digest(digest_type);
-        }
-
-        getSignKey(secret_key, now) {
-          let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
-          let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
-          return k2;
-        }
-
-        generateSessionId() {
-          var text = "backend-ai-SDK-js-";
-          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-          for (var i = 0; i < 8; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-          return text;
-        }
-      }
-
-      class VFolder {
-        // https://github.com/lablup/backend.ai-client-py/blob/master/src/ai/backend/client/vfolder.py
-
-        constructor(client, name = null) {
-          this.client = client;
-          this.name = name;
-          this.urlPrefix = '/folders'
-        }
-
-        create(name, host = null) {
-          let body = {
-            'name': name,
-            'host': host
-          };
-          let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        list() {
-          let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        info(name = null) {
-          if (name == null) {
-            name = this.name;
-          }
-          let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`, null);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        delete(name = null) {
-          if (name == null) {
-            name = this.name;
-          }
-          let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}`, null);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        upload(path, fs, name = null) {
-          if (name == null) {
-            name = this.name;
-          }
-          let formData = new FormData();
-          formData.append('src', fs, {filepath: path});
-          let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData)
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        uploadFormData(fss, name = null) {
-          let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss)
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        mkdir(path, name = null) {
-          if (name == null) {
-            name = this.name;
-          }
-          let body = {
-            'path': path
-          };
-          let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        delete_files(files, recursive = null, name = null) {
-
-          if (name == null) {
-            name = this.name;
-          }
-          if (recursive == null) {
-            recursive = false;
-          }
-          let body = {
-            'files': files,
-            'recursive': recursive,
-          };
-          let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/delete_files`, body);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        download(file, name = false) {
-          let params = {
-            'file': file
-          };
-          let q = querystring.stringify(params);
-          let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        list_files(path, name = null) {
-          if (name == null) {
-            name = this.name;
-          }
-          let params = {
-            'path': path
-          };
-          let q = querystring.stringify(params)
-          let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        invite(perm, emails, name = null) {
-          if (name == null) {
-            name = this.name;
-          }
-          let body = {
-            'perm': perm,
-            'user_ids': emails
-          };
-          let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/invite`, body);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        invitations() {
-          let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/invitations/list`, null);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        accept_invitation(inv_id, inv_ak) {
-          let body = {
-            'inv_id': inv_id,
-            'inv_ak': inv_ak
-          };
-          let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/invitations/accept`, body);
-          return this.client._wrapWithPromise(rqst);
-        }
-
-        delete_invitation(inv_id) {
-          let body = {
-            'inv_id': inv_id
-          };
-          let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/invitations/delete`, body);
-          return this.client._wrapWithPromise(rqst);
-        }
-      }
-
-      class Agent {
-        constructor(client) {
-          this.client = client;
-        }
-
-        list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
-          if (['ALIVE', 'TERMINATED'].includes(status) === false) {
-            return resolve(false);
-          }
-          let q = `query($status: String) {` +
-            `  agents(status: $status) {` +
-            `     ${fields.join(" ")}` +
-            `  }` +
-            `}`;
-          let v = {'status': status};
-          return this.client.gql(q, v);
-        }
-      }
-
-      class Keypair {
-        constructor(client, name = null) {
-          this.client = client;
-          this.name = name;
-        }
-
-        info(accessKey, fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-          'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
-          let q, v;
-          if (this.client.is_admin) {
-            q = `query($access_key: String!) {` +
-              `  keypair(access_key: $access_key) {` +
-              `    ${fields.join(" ")}` +
-              `  }` +
-              `}`;
-            v = {
-              'access_key': accessKey
-            };
-          } else {
-            q = `query {` +
-              `  keypair {` +
-              `    ${fields.join(" ")}` +
-              `  }` +
-              `}`;
-            v = {};
-          }
-          return this.client.gql(q, v);
-        }
-
-        list(userId = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-          'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
-
-          let q;
-          if (this.client.is_admin) {
-            if (userId == null) {
-              q = `query($is_active: Boolean) {` +
-                `  keypairs(is_active: $is_active) {` +
-                `    ${fields.join(" ")}` +
-                `  }` +
-                `}`;
-            } else {
-              q = `query($user_id: String!, $is_active: Boolean) {` +
-                `  keypairs(user_id: $user_id, is_active: $is_active) {` +
-                `    ${fields.join(" ")}` +
-                `  }` +
-                `}`;
-            }
-          } else {
-            q = `query($user_id: String!, $is_active: Boolean) {` +
-              `  keypairs(user_id: $user_id, is_active: $is_active) {` +
-              `    ${fields.join(" ")}` +
-              `  }` +
-              `}`;
-          }
-          let v = {
-            'user_id': userId || this.client.email,
-            'is_active': isActive,
-          };
-          return this.client.gql(q, v);
-        }
-
-        add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
-            rateLimit = 1000) {
-          let fields = [
-            'is_active',
-            'is_admin',
-            'resource_policy',
-            'concurrency_limit',
-            'rate_limit'
-          ];
-          let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
-            `  create_keypair(user_id: $user_id, props: $input) {` +
-            `    ok msg keypair { ${fields.join(" ")} }` +
-            `  }` +
-            `}`;
-          let v = {
-            'user_id': userId,
-            'input': {
-              'is_active': isActive,
-              'is_admin': isAdmin,
-              'resource_policy': resourcePolicy,
-              'rate_limit': rateLimit
-            },
-          };
-          return this.client.gql(q, v);
-        }
-
-        mutate(accessKey, input) {
-          let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
-            `  modify_keypair(access_key: $access_key, props: $input) {` +
-            `    ok msg` +
-            `  }` +
-            `}`;
-          let v = {
-            'access_key': accessKey,
-            'input': input,
-          };
-          return this.client.gql(q, v);
-        }
-
-        delete(accessKey) {
-          let q = `mutation($access_key: String!) {` +
-            `  delete_keypair(access_key: $access_key) {` +
-            `    ok msg` +
-            `  }` +
-            `}`;
-          let v = {
-            'access_key': accessKey,
-          };
-          return this.client.gql(q, v);
-        }
-      }
-
-
-      class ResourcePolicy {
-        constructor(client) {
-          this.client = client;
-        }
-
-        get(name = null, fields = ['name',
-          'created_at',
-          'default_for_unspecified',
-          'total_resource_slots',
-          'max_concurrent_sessions',
-          'max_containers_per_session',
-          'max_vfolder_count',
-          'max_vfolder_size',
-          'allowed_vfolder_hosts',
-          'idle_timeout']) {
-          let q, v;
-          if (name === null) {
-            q = `query {` +
-              `  keypair_resource_policies { ${fields.join(" ")} }` +
-              '}';
-            v = {'n': name};
-          } else {
-            q = `query($n:String!) {` +
-              `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
-              '}';
-            v = {'n': name};
-          }
-          return this.client.gql(q, v);
-        }
-
-        add(name = null, input) {
-          let fields = ['name',
-            'created_at',
-            'default_for_unspecified',
-            'total_resource_slots',
-            'max_concurrent_sessions',
-            'max_containers_per_session',
-            'max_vfolder_count',
-            'max_vfolder_size',
-            'allowed_vfolder_hosts',
-            'idle_timeout'];
-          if (this.client.is_admin === true && name !== null) {
-            let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
-              `  create_keypair_resource_policy(name: $name, props: $input) {` +
-              `    ok msg resource_policy { ${fields.join(" ")} }` +
-              `  }` +
-              `}`;
-            let v = {
-              'name': name,
-              'input': input
-            };
-            return this.client.gql(q, v);
-          } else {
-            return resolve(false);
-          }
-        }
-
-        mutate(name = null, input) {
-          let fields = ['name',
-            'created_at',
-            'default_for_unspecified',
-            'total_resource_slots',
-            'max_concurrent_sessions',
-            'max_containers_per_session',
-            'max_vfolder_count',
-            'max_vfolder_size',
-            'allowed_vfolder_hosts',
-            'idle_timeout'];
-          if (this.client.is_admin === true && name !== null) {
-            let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
-              `  modify_keypair_resource_policy(name: $name, props: $input) {` +
-              `    ok msg resource_policy { ${fields.join(" ")} }` +
-              `  }` +
-              `}`;
-            let v = {
-              'name': name,
-              'input': input
-            };
-            return this.client.gql(q, v);
-          } else {
-            return resolve(false);
-          }
-        }
-      }
-
-      class Image {
-        constructor(client) {
-          this.client = client;
-        }
-
-        list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
-          let q, v;
-          q = `query {` +
-            `  images { ${fields.join(" ")} }` +
-            '}';
-          v = {};
-          return this.client.gql(q, v);
-        }
-      }
-
-      class ComputeSession {
-        constructor(client) {
-          this.client = client;
-        }
-
-        list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
-             status = 'RUNNING', accessKey = null) {
-          let q, v;
-          if (this.client.is_admin === true) {
-            if (!accessKey) accessKey = null;
-            q = `query($ak:String, $status:String) {` +
-              `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
-              '}';
-            v = {'status': status, 'ak': accessKey};
-          } else {
-            q = `query($status:String) {` +
-              `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
-              '}';
-            v = {'status': status};
-          }
-          return this.client.gql(q, v);
-        }
-      }
-
-      class utils {
-        constructor(client) {
-          this.client = client;
-        }
-
-        changeBinaryUnit(value, targetUnit = 'g', defaultUnit = 'b') {
-          if (value === undefined) {
-            return value;
-          }
-          let sourceUnit;
-          const binaryUnits = ['b', 'k', 'm', 'g', 't', 'p', 'auto'];
-          const bBinaryUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
-          if (!(binaryUnits.includes(targetUnit))) return false;
-          value = value.toString();
-          if (value.indexOf(' ') >= 0) { // Has string
-            let v = value.split(/(\s+)/);
-            if (bBinaryUnits.includes(v[2])) {
-              value = v[0] + binaryUnits[bBinaryUnits.indexOf(v[2])];
-            } else {
-              value = v[0];
-            }
-          }
-          if (binaryUnits.includes(value.substr(-1))) {
-            sourceUnit = value.substr(-1);
-            value = value.slice(0, -1);
-          } else {
-            sourceUnit = defaultUnit; // Fallback
-          }
-          if (targetUnit == 'auto') {
-
-          }
-          return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
-        }
-
-        elapsedTime(start, end) {
-          var startDate = new Date(start);
-          if (end === null) {
-            var endDate = new Date();
-          } else {
-            var endDate = new Date(end);
-          }
-          var seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
-          var seconds_cumulative = seconds_total;
-          var days = Math.floor(seconds_cumulative / 86400);
-          seconds_cumulative = seconds_cumulative - days * 86400;
-          var hours = Math.floor(seconds_cumulative / 3600);
-          seconds_cumulative = seconds_cumulative - hours * 3600;
-          var minutes = Math.floor(seconds_cumulative / 60);
-          seconds_cumulative = seconds_cumulative - minutes * 60;
-          var seconds = seconds_cumulative;
-          var result = '';
-          if (days !== undefined && days > 0) {
-            result = result + String(days) + ' Day ';
-          }
-          if (hours !== undefined) {
-            result = result + this._padding_zeros(hours, 2) + ':';
-          }
-          if (minutes !== undefined) {
-            result = result + this._padding_zeros(minutes, 2) + ':';
-          }
-          return result + this._padding_zeros(seconds, 2) + '';
-        }
-
-        _padding_zeros(n, width) {
-          n = n + '';
-          return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
-        }
-
-        gqlToObject(array, key) {
-          let result = {};
-          array.forEach(function (element) {
-            result[element[key]] = element;
-          });
-          return result;
-        }
-
-        gqlToList(array, key) {
-          let result = [];
-          array.forEach(function (element) {
-            result.push(element[key]);
-          });
-          return result;
-        }
-
-      }
-
-// below will become "static const" properties in ES7
-      Object.defineProperty(Client, 'ERR_SERVER', {
-        value: 0,
-        writable: false,
-        enumerable: true,
-        configurable: false
-      });
-      Object.defineProperty(Client, 'ERR_RESPONSE', {
-        value: 1,
-        writable: false,
-        enumerable: true,
-        configurable: false
-      });
-      Object.defineProperty(Client, 'ERR_REQUEST', {
-        value: 2,
-        writable: false,
-        enumerable: true,
-        configurable: false
-      });
-
-
-      const backend = {
-        Client: Client,
-        ClientConfig: ClientConfig,
-      }
-
-// for use like "ai.backend.Client"
-      module.exports.backend = backend;
-// for classical uses
-      module.exports.Client = Client;
-      module.exports.ClientConfig = ClientConfig;
-// legacy aliases
-      module.exports.BackendAIClient = Client;
-      module.exports.BackendAIClientConfig = ClientConfig;
-
-    }).call(this, require('_process'), require("buffer").Buffer)
-  }, {"_process": 121, "buffer": 52, "crypto": 60, "form-data": 1, "node-fetch": 2, "querystring": 130}],
-  5: [function (require, module, exports) {
 var asn1 = exports;
 
-    asn1.bignum = require('bn.js');
+asn1.bignum = require('bn.js');
 
-    asn1.define = require('./asn1/api').define;
+asn1.define = require('./asn1/api').define;
 asn1.base = require('./asn1/base');
 asn1.constants = require('./asn1/constants');
 asn1.decoders = require('./asn1/decoders');
 asn1.encoders = require('./asn1/encoders');
 
-  }, {
-    "./asn1/api": 6,
-    "./asn1/base": 8,
-    "./asn1/constants": 12,
-    "./asn1/decoders": 14,
-    "./asn1/encoders": 17,
-    "bn.js": 20
-  }],
-  6: [function (require, module, exports) {
+},{"./asn1/api":2,"./asn1/base":4,"./asn1/constants":8,"./asn1/decoders":10,"./asn1/encoders":13,"bn.js":16}],2:[function(require,module,exports){
 var asn1 = require('../asn1');
 var inherits = require('inherits');
 
@@ -1199,8 +72,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-  }, {"../asn1": 5, "inherits": 104, "vm": 161}],
-  7: [function (require, module, exports) {
+},{"../asn1":1,"inherits":99,"vm":157}],3:[function(require,module,exports){
 var inherits = require('inherits');
 var Reporter = require('../base').Reporter;
 var Buffer = require('buffer').Buffer;
@@ -1318,8 +190,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-  }, {"../base": 8, "buffer": 52, "inherits": 104}],
-  8: [function (require, module, exports) {
+},{"../base":4,"buffer":47,"inherits":99}],4:[function(require,module,exports){
 var base = exports;
 
 base.Reporter = require('./reporter').Reporter;
@@ -1327,8 +198,7 @@ base.DecoderBuffer = require('./buffer').DecoderBuffer;
 base.EncoderBuffer = require('./buffer').EncoderBuffer;
 base.Node = require('./node');
 
-  }, {"./buffer": 7, "./node": 9, "./reporter": 10}],
-  9: [function (require, module, exports) {
+},{"./buffer":3,"./node":5,"./reporter":6}],5:[function(require,module,exports){
 var Reporter = require('../base').Reporter;
 var EncoderBuffer = require('../base').EncoderBuffer;
 var DecoderBuffer = require('../base').DecoderBuffer;
@@ -1964,8 +834,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '\(\)\+,\-\.\/:=\?]*$/.test(str);
 };
 
-  }, {"../base": 8, "minimalistic-assert": 108}],
-  10: [function (require, module, exports) {
+},{"../base":4,"minimalistic-assert":104}],6:[function(require,module,exports){
 var inherits = require('inherits');
 
 function Reporter(options) {
@@ -2088,8 +957,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-  }, {"inherits": 104}],
-  11: [function (require, module, exports) {
+},{"inherits":99}],7:[function(require,module,exports){
 var constants = require('../constants');
 
 exports.tagClass = {
@@ -2133,8 +1001,7 @@ exports.tag = {
 };
 exports.tagByName = constants._reverse(exports.tag);
 
-  }, {"../constants": 12}],
-  12: [function (require, module, exports) {
+},{"../constants":8}],8:[function(require,module,exports){
 var constants = exports;
 
 // Helper
@@ -2155,8 +1022,7 @@ constants._reverse = function reverse(map) {
 
 constants.der = require('./der');
 
-  }, {"./der": 11}],
-  13: [function (require, module, exports) {
+},{"./der":7}],9:[function(require,module,exports){
 var inherits = require('inherits');
 
 var asn1 = require('../../asn1');
@@ -2482,15 +1348,13 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-  }, {"../../asn1": 5, "inherits": 104}],
-  14: [function (require, module, exports) {
+},{"../../asn1":1,"inherits":99}],10:[function(require,module,exports){
 var decoders = exports;
 
 decoders.der = require('./der');
 decoders.pem = require('./pem');
 
-  }, {"./der": 13, "./pem": 15}],
-  15: [function (require, module, exports) {
+},{"./der":9,"./pem":11}],11:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -2541,8 +1405,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-  }, {"./der": 13, "buffer": 52, "inherits": 104}],
-  16: [function (require, module, exports) {
+},{"./der":9,"buffer":47,"inherits":99}],12:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -2839,15 +1702,13 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-  }, {"../../asn1": 5, "buffer": 52, "inherits": 104}],
-  17: [function (require, module, exports) {
+},{"../../asn1":1,"buffer":47,"inherits":99}],13:[function(require,module,exports){
 var encoders = exports;
 
 encoders.der = require('./der');
 encoders.pem = require('./pem');
 
-  }, {"./der": 16, "./pem": 18}],
-  18: [function (require, module, exports) {
+},{"./der":12,"./pem":14}],14:[function(require,module,exports){
 var inherits = require('inherits');
 
 var DEREncoder = require('./der');
@@ -2870,8 +1731,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-  }, {"./der": 16, "inherits": 104}],
-  19: [function (require, module, exports) {
+},{"./der":12,"inherits":99}],15:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -3024,8 +1884,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-  }, {}],
-  20: [function (require, module, exports) {
+},{}],16:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -6454,8 +5313,7 @@ function fromByteArray (uint8) {
   };
 })(typeof module === 'undefined' || module, this);
 
-  }, {"buffer": 22}],
-  21: [function (require, module, exports) {
+},{"buffer":18}],17:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -6522,11 +5380,9 @@ if (typeof self === 'object') {
   }
 }
 
-  }, {"crypto": 22}],
-  22: [function (require, module, exports) {
+},{"crypto":18}],18:[function(require,module,exports){
 
-  }, {}],
-  23: [function (require, module, exports) {
+},{}],19:[function(require,module,exports){
 // based on the aes implimentation in triple sec
 // https://github.com/keybase/triplesec
 // which is in turn based on the one from crypto-js
@@ -6756,8 +5612,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-  }, {"safe-buffer": 149}],
-  24: [function (require, module, exports) {
+},{"safe-buffer":144}],20:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -6876,16 +5731,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-  }, {
-    "./aes": 23,
-    "./ghash": 28,
-    "./incr32": 29,
-    "buffer-xor": 51,
-    "cipher-base": 53,
-    "inherits": 104,
-    "safe-buffer": 149
-  }],
-  25: [function (require, module, exports) {
+},{"./aes":19,"./ghash":24,"./incr32":25,"buffer-xor":46,"cipher-base":48,"inherits":99,"safe-buffer":144}],21:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -6900,8 +5746,7 @@ exports.createDecipher = exports.Decipher = deciphers.createDecipher
 exports.createDecipheriv = exports.Decipheriv = deciphers.createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-  }, {"./decrypter": 26, "./encrypter": 27, "./modes/list.json": 37}],
-  26: [function (require, module, exports) {
+},{"./decrypter":22,"./encrypter":23,"./modes/list.json":33}],22:[function(require,module,exports){
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
 var MODES = require('./modes')
@@ -7027,17 +5872,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-  }, {
-    "./aes": 23,
-    "./authCipher": 24,
-    "./modes": 36,
-    "./streamCipher": 39,
-    "cipher-base": 53,
-    "evp_bytestokey": 88,
-    "inherits": 104,
-    "safe-buffer": 149
-  }],
-  27: [function (require, module, exports) {
+},{"./aes":19,"./authCipher":20,"./modes":32,"./streamCipher":35,"cipher-base":48,"evp_bytestokey":83,"inherits":99,"safe-buffer":144}],23:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -7153,17 +5988,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-  }, {
-    "./aes": 23,
-    "./authCipher": 24,
-    "./modes": 36,
-    "./streamCipher": 39,
-    "cipher-base": 53,
-    "evp_bytestokey": 88,
-    "inherits": 104,
-    "safe-buffer": 149
-  }],
-  28: [function (require, module, exports) {
+},{"./aes":19,"./authCipher":20,"./modes":32,"./streamCipher":35,"cipher-base":48,"evp_bytestokey":83,"inherits":99,"safe-buffer":144}],24:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -7254,8 +6079,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-  }, {"safe-buffer": 149}],
-  29: [function (require, module, exports) {
+},{"safe-buffer":144}],25:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -7272,8 +6096,7 @@ function incr32 (iv) {
 }
 module.exports = incr32
 
-  }, {}],
-  30: [function (require, module, exports) {
+},{}],26:[function(require,module,exports){
 var xor = require('buffer-xor')
 
 exports.encrypt = function (self, block) {
@@ -7292,8 +6115,7 @@ exports.decrypt = function (self, block) {
   return xor(out, pad)
 }
 
-  }, {"buffer-xor": 51}],
-  31: [function (require, module, exports) {
+},{"buffer-xor":46}],27:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var xor = require('buffer-xor')
 
@@ -7328,8 +6150,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-  }, {"buffer-xor": 51, "safe-buffer": 149}],
-  32: [function (require, module, exports) {
+},{"buffer-xor":46,"safe-buffer":144}],28:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -7373,8 +6194,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-  }, {"safe-buffer": 149}],
-  33: [function (require, module, exports) {
+},{"safe-buffer":144}],29:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -7401,8 +6221,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-  }, {"safe-buffer": 149}],
-  34: [function (require, module, exports) {
+},{"safe-buffer":144}],30:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -7434,8 +6253,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-  }, {"../incr32": 29, "buffer-xor": 51, "safe-buffer": 149}],
-  35: [function (require, module, exports) {
+},{"../incr32":25,"buffer-xor":46,"safe-buffer":144}],31:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -7444,8 +6262,7 @@ exports.decrypt = function (self, block) {
   return self._cipher.decryptBlock(block)
 }
 
-  }, {}],
-  36: [function (require, module, exports) {
+},{}],32:[function(require,module,exports){
 var modeModules = {
   ECB: require('./ecb'),
   CBC: require('./cbc'),
@@ -7465,8 +6282,7 @@ for (var key in modes) {
 
 module.exports = modes
 
-  }, {"./cbc": 30, "./cfb": 31, "./cfb1": 32, "./cfb8": 33, "./ctr": 34, "./ecb": 35, "./list.json": 37, "./ofb": 38}],
-  37: [function (require, module, exports) {
+},{"./cbc":26,"./cfb":27,"./cfb1":28,"./cfb8":29,"./ctr":30,"./ecb":31,"./list.json":33,"./ofb":34}],33:[function(require,module,exports){
 module.exports={
   "aes-128-ecb": {
     "cipher": "AES",
@@ -7659,8 +6475,7 @@ module.exports={
   }
 }
 
-  }, {}],
-  38: [function (require, module, exports) {
+},{}],34:[function(require,module,exports){
 (function (Buffer){
 var xor = require('buffer-xor')
 
@@ -7680,8 +6495,7 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this,require("buffer").Buffer)
-  }, {"buffer": 52, "buffer-xor": 51}],
-  39: [function (require, module, exports) {
+},{"buffer":47,"buffer-xor":46}],35:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -7710,8 +6524,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-  }, {"./aes": 23, "cipher-base": 53, "inherits": 104, "safe-buffer": 149}],
-  40: [function (require, module, exports) {
+},{"./aes":19,"cipher-base":48,"inherits":99,"safe-buffer":144}],36:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -7780,14 +6593,7 @@ exports.createDecipher = exports.Decipher = createDecipher
 exports.createDecipheriv = exports.Decipheriv = createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-  }, {
-    "browserify-aes/browser": 25,
-    "browserify-aes/modes": 36,
-    "browserify-des": 41,
-    "browserify-des/modes": 42,
-    "evp_bytestokey": 88
-  }],
-  41: [function (require, module, exports) {
+},{"browserify-aes/browser":21,"browserify-aes/modes":32,"browserify-des":37,"browserify-des/modes":38,"evp_bytestokey":83}],37:[function(require,module,exports){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
 var inherits = require('inherits')
@@ -7839,8 +6645,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-  }, {"cipher-base": 53, "des.js": 61, "inherits": 104, "safe-buffer": 149}],
-  42: [function (require, module, exports) {
+},{"cipher-base":48,"des.js":56,"inherits":99,"safe-buffer":144}],38:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -7866,8 +6671,7 @@ exports['des-ede'] = {
   iv: 0
 }
 
-  }, {}],
-  43: [function (require, module, exports) {
+},{}],39:[function(require,module,exports){
 (function (Buffer){
 var bn = require('bn.js');
 var randomBytes = require('randombytes');
@@ -7911,12 +6715,10 @@ function getr(priv) {
 }
 
 }).call(this,require("buffer").Buffer)
-  }, {"bn.js": 20, "buffer": 52, "randombytes": 131}],
-  44: [function (require, module, exports) {
+},{"bn.js":16,"buffer":47,"randombytes":127}],40:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
-  }, {"./browser/algorithms.json": 45}],
-  45: [function (require, module, exports) {
+},{"./browser/algorithms.json":41}],41:[function(require,module,exports){
 module.exports={
   "sha224WithRSAEncryption": {
     "sign": "rsa",
@@ -8070,8 +6872,7 @@ module.exports={
   }
 }
 
-  }, {}],
-  46: [function (require, module, exports) {
+},{}],42:[function(require,module,exports){
 module.exports={
   "1.3.132.0.10": "secp256k1",
   "1.3.132.0.33": "p224",
@@ -8081,8 +6882,7 @@ module.exports={
   "1.3.132.0.35": "p521"
 }
 
-  }, {}],
-  47: [function (require, module, exports) {
+},{}],43:[function(require,module,exports){
 (function (Buffer){
 var createHash = require('create-hash')
 var stream = require('stream')
@@ -8177,16 +6977,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-  }, {
-    "./algorithms.json": 45,
-    "./sign": 48,
-    "./verify": 49,
-    "buffer": 52,
-    "create-hash": 56,
-    "inherits": 104,
-    "stream": 158
-  }],
-  48: [function (require, module, exports) {
+},{"./algorithms.json":41,"./sign":44,"./verify":45,"buffer":47,"create-hash":51,"inherits":99,"stream":153}],44:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var createHmac = require('create-hmac')
@@ -8335,16 +7126,7 @@ module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
 }).call(this,require("buffer").Buffer)
-  }, {
-    "./curves.json": 46,
-    "bn.js": 20,
-    "browserify-rsa": 43,
-    "buffer": 52,
-    "create-hmac": 58,
-    "elliptic": 71,
-    "parse-asn1": 114
-  }],
-  49: [function (require, module, exports) {
+},{"./curves.json":42,"bn.js":16,"browserify-rsa":39,"buffer":47,"create-hmac":53,"elliptic":66,"parse-asn1":110}],45:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var BN = require('bn.js')
@@ -8431,317 +7213,7 @@ function checkValue (b, q) {
 module.exports = verify
 
 }).call(this,require("buffer").Buffer)
-  }, {"./curves.json": 46, "bn.js": 20, "buffer": 52, "elliptic": 71, "parse-asn1": 114}],
-  50: [function (require, module, exports) {
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-    'use strict';
-
-    /*<replacement>*/
-
-    var Buffer = require('safe-buffer').Buffer;
-    /*</replacement>*/
-
-    var isEncoding = Buffer.isEncoding || function (encoding) {
-      encoding = '' + encoding;
-      switch (encoding && encoding.toLowerCase()) {
-        case 'hex':
-        case 'utf8':
-        case 'utf-8':
-        case 'ascii':
-        case 'binary':
-        case 'base64':
-        case 'ucs2':
-        case 'ucs-2':
-        case 'utf16le':
-        case 'utf-16le':
-        case 'raw':
-          return true;
-        default:
-          return false;
-      }
-    };
-
-    function _normalizeEncoding(enc) {
-      if (!enc) return 'utf8';
-      var retried;
-      while (true) {
-        switch (enc) {
-          case 'utf8':
-          case 'utf-8':
-            return 'utf8';
-          case 'ucs2':
-          case 'ucs-2':
-          case 'utf16le':
-          case 'utf-16le':
-            return 'utf16le';
-          case 'latin1':
-          case 'binary':
-            return 'latin1';
-          case 'base64':
-          case 'ascii':
-          case 'hex':
-            return enc;
-          default:
-            if (retried) return; // undefined
-            enc = ('' + enc).toLowerCase();
-            retried = true;
-        }
-      }
-    };
-
-// Do not cache `Buffer.isEncoding` when checking encoding names as some
-// modules monkey-patch it to support additional encodings
-    function normalizeEncoding(enc) {
-      var nenc = _normalizeEncoding(enc);
-      if (typeof nenc !== 'string' && (Buffer.isEncoding === isEncoding || !isEncoding(enc))) throw new Error('Unknown encoding: ' + enc);
-      return nenc || enc;
-    }
-
-// StringDecoder provides an interface for efficiently splitting a series of
-// buffers into a series of JS strings without breaking apart multi-byte
-// characters.
-    exports.StringDecoder = StringDecoder;
-
-    function StringDecoder(encoding) {
-      this.encoding = normalizeEncoding(encoding);
-      var nb;
-      switch (this.encoding) {
-        case 'utf16le':
-          this.text = utf16Text;
-          this.end = utf16End;
-          nb = 4;
-          break;
-        case 'utf8':
-          this.fillLast = utf8FillLast;
-          nb = 4;
-          break;
-        case 'base64':
-          this.text = base64Text;
-          this.end = base64End;
-          nb = 3;
-          break;
-        default:
-          this.write = simpleWrite;
-          this.end = simpleEnd;
-          return;
-      }
-      this.lastNeed = 0;
-      this.lastTotal = 0;
-      this.lastChar = Buffer.allocUnsafe(nb);
-    }
-
-    StringDecoder.prototype.write = function (buf) {
-      if (buf.length === 0) return '';
-      var r;
-      var i;
-      if (this.lastNeed) {
-        r = this.fillLast(buf);
-        if (r === undefined) return '';
-        i = this.lastNeed;
-        this.lastNeed = 0;
-      } else {
-        i = 0;
-      }
-      if (i < buf.length) return r ? r + this.text(buf, i) : this.text(buf, i);
-      return r || '';
-    };
-
-    StringDecoder.prototype.end = utf8End;
-
-// Returns only complete characters in a Buffer
-    StringDecoder.prototype.text = utf8Text;
-
-// Attempts to complete a partial non-UTF-8 character using bytes from a Buffer
-    StringDecoder.prototype.fillLast = function (buf) {
-      if (this.lastNeed <= buf.length) {
-        buf.copy(this.lastChar, this.lastTotal - this.lastNeed, 0, this.lastNeed);
-        return this.lastChar.toString(this.encoding, 0, this.lastTotal);
-      }
-      buf.copy(this.lastChar, this.lastTotal - this.lastNeed, 0, buf.length);
-      this.lastNeed -= buf.length;
-    };
-
-// Checks the type of a UTF-8 byte, whether it's ASCII, a leading byte, or a
-// continuation byte. If an invalid byte is detected, -2 is returned.
-    function utf8CheckByte(byte) {
-      if (byte <= 0x7F) return 0; else if (byte >> 5 === 0x06) return 2; else if (byte >> 4 === 0x0E) return 3; else if (byte >> 3 === 0x1E) return 4;
-      return byte >> 6 === 0x02 ? -1 : -2;
-    }
-
-// Checks at most 3 bytes at the end of a Buffer in order to detect an
-// incomplete multi-byte UTF-8 character. The total number of bytes (2, 3, or 4)
-// needed to complete the UTF-8 character (if applicable) are returned.
-    function utf8CheckIncomplete(self, buf, i) {
-      var j = buf.length - 1;
-      if (j < i) return 0;
-      var nb = utf8CheckByte(buf[j]);
-      if (nb >= 0) {
-        if (nb > 0) self.lastNeed = nb - 1;
-        return nb;
-      }
-      if (--j < i || nb === -2) return 0;
-      nb = utf8CheckByte(buf[j]);
-      if (nb >= 0) {
-        if (nb > 0) self.lastNeed = nb - 2;
-        return nb;
-      }
-      if (--j < i || nb === -2) return 0;
-      nb = utf8CheckByte(buf[j]);
-      if (nb >= 0) {
-        if (nb > 0) {
-          if (nb === 2) nb = 0; else self.lastNeed = nb - 3;
-        }
-        return nb;
-      }
-      return 0;
-    }
-
-// Validates as many continuation bytes for a multi-byte UTF-8 character as
-// needed or are available. If we see a non-continuation byte where we expect
-// one, we "replace" the validated continuation bytes we've seen so far with
-// a single UTF-8 replacement character ('\ufffd'), to match v8's UTF-8 decoding
-// behavior. The continuation byte check is included three times in the case
-// where all of the continuation bytes for a character exist in the same buffer.
-// It is also done this way as a slight performance increase instead of using a
-// loop.
-    function utf8CheckExtraBytes(self, buf, p) {
-      if ((buf[0] & 0xC0) !== 0x80) {
-        self.lastNeed = 0;
-        return '\ufffd';
-      }
-      if (self.lastNeed > 1 && buf.length > 1) {
-        if ((buf[1] & 0xC0) !== 0x80) {
-          self.lastNeed = 1;
-          return '\ufffd';
-        }
-        if (self.lastNeed > 2 && buf.length > 2) {
-          if ((buf[2] & 0xC0) !== 0x80) {
-            self.lastNeed = 2;
-            return '\ufffd';
-          }
-        }
-      }
-    }
-
-// Attempts to complete a multi-byte UTF-8 character using bytes from a Buffer.
-    function utf8FillLast(buf) {
-      var p = this.lastTotal - this.lastNeed;
-      var r = utf8CheckExtraBytes(this, buf, p);
-      if (r !== undefined) return r;
-      if (this.lastNeed <= buf.length) {
-        buf.copy(this.lastChar, p, 0, this.lastNeed);
-        return this.lastChar.toString(this.encoding, 0, this.lastTotal);
-      }
-      buf.copy(this.lastChar, p, 0, buf.length);
-      this.lastNeed -= buf.length;
-    }
-
-// Returns all complete UTF-8 characters in a Buffer. If the Buffer ended on a
-// partial character, the character's bytes are buffered until the required
-// number of bytes are available.
-    function utf8Text(buf, i) {
-      var total = utf8CheckIncomplete(this, buf, i);
-      if (!this.lastNeed) return buf.toString('utf8', i);
-      this.lastTotal = total;
-      var end = buf.length - (total - this.lastNeed);
-      buf.copy(this.lastChar, 0, end);
-      return buf.toString('utf8', i, end);
-    }
-
-// For UTF-8, a replacement character is added when ending on a partial
-// character.
-    function utf8End(buf) {
-      var r = buf && buf.length ? this.write(buf) : '';
-      if (this.lastNeed) return r + '\ufffd';
-      return r;
-    }
-
-// UTF-16LE typically needs two bytes per character, but even if we have an even
-// number of bytes available, we need to check if we end on a leading/high
-// surrogate. In that case, we need to wait for the next two bytes in order to
-// decode the last character properly.
-    function utf16Text(buf, i) {
-      if ((buf.length - i) % 2 === 0) {
-        var r = buf.toString('utf16le', i);
-        if (r) {
-          var c = r.charCodeAt(r.length - 1);
-          if (c >= 0xD800 && c <= 0xDBFF) {
-            this.lastNeed = 2;
-            this.lastTotal = 4;
-            this.lastChar[0] = buf[buf.length - 2];
-            this.lastChar[1] = buf[buf.length - 1];
-            return r.slice(0, -1);
-          }
-        }
-        return r;
-      }
-      this.lastNeed = 1;
-      this.lastTotal = 2;
-      this.lastChar[0] = buf[buf.length - 1];
-      return buf.toString('utf16le', i, buf.length - 1);
-    }
-
-// For UTF-16LE we do not explicitly append special replacement characters if we
-// end on a partial character, we simply let v8 handle that.
-    function utf16End(buf) {
-      var r = buf && buf.length ? this.write(buf) : '';
-      if (this.lastNeed) {
-        var end = this.lastTotal - this.lastNeed;
-        return r + this.lastChar.toString('utf16le', 0, end);
-      }
-      return r;
-    }
-
-    function base64Text(buf, i) {
-      var n = (buf.length - i) % 3;
-      if (n === 0) return buf.toString('base64', i);
-      this.lastNeed = 3 - n;
-      this.lastTotal = 3;
-      if (n === 1) {
-        this.lastChar[0] = buf[buf.length - 1];
-      } else {
-        this.lastChar[0] = buf[buf.length - 2];
-        this.lastChar[1] = buf[buf.length - 1];
-      }
-      return buf.toString('base64', i, buf.length - n);
-    }
-
-    function base64End(buf) {
-      var r = buf && buf.length ? this.write(buf) : '';
-      if (this.lastNeed) return r + this.lastChar.toString('base64', 0, 3 - this.lastNeed);
-      return r;
-    }
-
-// Pass bytes on through for single-byte encodings (e.g. ascii, latin1, hex)
-    function simpleWrite(buf) {
-      return buf.toString(this.encoding);
-    }
-
-    function simpleEnd(buf) {
-      return buf && buf.length ? this.write(buf) : '';
-    }
-  }, {"safe-buffer": 149}],
-  51: [function (require, module, exports) {
+},{"./curves.json":42,"bn.js":16,"buffer":47,"elliptic":66,"parse-asn1":110}],46:[function(require,module,exports){
 (function (Buffer){
 module.exports = function xor (a, b) {
   var length = Math.min(a.length, b.length)
@@ -8755,8 +7227,7 @@ module.exports = function xor (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-  }, {"buffer": 52}],
-  52: [function (require, module, exports) {
+},{"buffer":47}],47:[function(require,module,exports){
 (function (Buffer){
 /*!
  * The buffer module from node.js, for the browser.
@@ -10537,8 +9008,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-  }, {"base64-js": 19, "buffer": 52, "ieee754": 103}],
-  53: [function (require, module, exports) {
+},{"base64-js":15,"buffer":47,"ieee754":98}],48:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
 var StringDecoder = require('string_decoder').StringDecoder
@@ -10639,8 +9109,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-  }, {"inherits": 104, "safe-buffer": 149, "stream": 158, "string_decoder": 50}],
-  54: [function (require, module, exports) {
+},{"inherits":99,"safe-buffer":144,"stream":153,"string_decoder":154}],49:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -10751,8 +9220,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-  }, {"../../is-buffer/index.js": 105}],
-  55: [function (require, module, exports) {
+},{"../../is-buffer/index.js":100}],50:[function(require,module,exports){
 (function (Buffer){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -10880,8 +9348,7 @@ function formatReturnValue (bn, enc, len) {
 }
 
 }).call(this,require("buffer").Buffer)
-  }, {"bn.js": 20, "buffer": 52, "elliptic": 71}],
-  56: [function (require, module, exports) {
+},{"bn.js":16,"buffer":47,"elliptic":66}],51:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var MD5 = require('md5.js')
@@ -10913,16 +9380,14 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-  }, {"cipher-base": 53, "inherits": 104, "md5.js": 106, "ripemd160": 148, "sha.js": 151}],
-  57: [function (require, module, exports) {
+},{"cipher-base":48,"inherits":99,"md5.js":102,"ripemd160":143,"sha.js":146}],52:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
-  }, {"md5.js": 106}],
-  58: [function (require, module, exports) {
+},{"md5.js":102}],53:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Legacy = require('./legacy')
@@ -10986,16 +9451,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-  }, {
-    "./legacy": 59,
-    "cipher-base": 53,
-    "create-hash/md5": 57,
-    "inherits": 104,
-    "ripemd160": 148,
-    "safe-buffer": 149,
-    "sha.js": 151
-  }],
-  59: [function (require, module, exports) {
+},{"./legacy":54,"cipher-base":48,"create-hash/md5":52,"inherits":99,"ripemd160":143,"safe-buffer":144,"sha.js":146}],54:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -11043,8 +9499,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-  }, {"cipher-base": 53, "inherits": 104, "safe-buffer": 149}],
-  60: [function (require, module, exports) {
+},{"cipher-base":48,"inherits":99,"safe-buffer":144}],55:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -11143,20 +9598,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-  }, {
-    "browserify-cipher": 40,
-    "browserify-sign": 47,
-    "browserify-sign/algos": 44,
-    "create-ecdh": 55,
-    "create-hash": 56,
-    "create-hmac": 58,
-    "diffie-hellman": 67,
-    "pbkdf2": 115,
-    "public-encrypt": 122,
-    "randombytes": 131,
-    "randomfill": 132
-  }],
-  61: [function (require, module, exports) {
+},{"browserify-cipher":36,"browserify-sign":43,"browserify-sign/algos":40,"create-ecdh":50,"create-hash":51,"create-hmac":53,"diffie-hellman":62,"pbkdf2":111,"public-encrypt":118,"randombytes":127,"randomfill":128}],56:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -11165,8 +9607,7 @@ exports.DES = require('./des/des');
 exports.CBC = require('./des/cbc');
 exports.EDE = require('./des/ede');
 
-  }, {"./des/cbc": 62, "./des/cipher": 63, "./des/des": 64, "./des/ede": 65, "./des/utils": 66}],
-  62: [function (require, module, exports) {
+},{"./des/cbc":57,"./des/cipher":58,"./des/des":59,"./des/ede":60,"./des/utils":61}],57:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -11233,8 +9674,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-  }, {"inherits": 104, "minimalistic-assert": 108}],
-  63: [function (require, module, exports) {
+},{"inherits":99,"minimalistic-assert":104}],58:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -11377,8 +9817,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-  }, {"minimalistic-assert": 108}],
-  64: [function (require, module, exports) {
+},{"minimalistic-assert":104}],59:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -11523,8 +9962,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-  }, {"../des": 61, "inherits": 104, "minimalistic-assert": 108}],
-  65: [function (require, module, exports) {
+},{"../des":56,"inherits":99,"minimalistic-assert":104}],60:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -11581,8 +10019,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-  }, {"../des": 61, "inherits": 104, "minimalistic-assert": 108}],
-  66: [function (require, module, exports) {
+},{"../des":56,"inherits":99,"minimalistic-assert":104}],61:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -11840,8 +10277,7 @@ exports.padSplit = function padSplit(num, size, group) {
   return out.join(' ');
 };
 
-  }, {}],
-  67: [function (require, module, exports) {
+},{}],62:[function(require,module,exports){
 (function (Buffer){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -11887,8 +10323,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this,require("buffer").Buffer)
-  }, {"./lib/dh": 68, "./lib/generatePrime": 69, "./lib/primes.json": 70, "buffer": 52}],
-  68: [function (require, module, exports) {
+},{"./lib/dh":63,"./lib/generatePrime":64,"./lib/primes.json":65,"buffer":47}],63:[function(require,module,exports){
 (function (Buffer){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -12056,8 +10491,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this,require("buffer").Buffer)
-  }, {"./generatePrime": 69, "bn.js": 20, "buffer": 52, "miller-rabin": 107, "randombytes": 131}],
-  69: [function (require, module, exports) {
+},{"./generatePrime":64,"bn.js":16,"buffer":47,"miller-rabin":103,"randombytes":127}],64:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -12164,8 +10598,7 @@ function findPrime(bits, gen) {
 
 }
 
-  }, {"bn.js": 20, "miller-rabin": 107, "randombytes": 131}],
-  70: [function (require, module, exports) {
+},{"bn.js":16,"miller-rabin":103,"randombytes":127}],65:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -12200,8 +10633,7 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-  }, {}],
-  71: [function (require, module, exports) {
+},{}],66:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -12216,16 +10648,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-  }, {
-    "../package.json": 86,
-    "./elliptic/curve": 74,
-    "./elliptic/curves": 77,
-    "./elliptic/ec": 78,
-    "./elliptic/eddsa": 81,
-    "./elliptic/utils": 85,
-    "brorand": 21
-  }],
-  72: [function (require, module, exports) {
+},{"../package.json":81,"./elliptic/curve":69,"./elliptic/curves":72,"./elliptic/ec":73,"./elliptic/eddsa":76,"./elliptic/utils":80,"brorand":17}],67:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -12602,8 +11025,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-  }, {"../../elliptic": 71, "bn.js": 20}],
-  73: [function (require, module, exports) {
+},{"../../elliptic":66,"bn.js":16}],68:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -13038,8 +11460,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-  }, {"../../elliptic": 71, "../curve": 74, "bn.js": 20, "inherits": 104}],
-  74: [function (require, module, exports) {
+},{"../../elliptic":66,"../curve":69,"bn.js":16,"inherits":99}],69:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -13049,8 +11470,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-  }, {"./base": 72, "./edwards": 73, "./mont": 75, "./short": 76}],
-  75: [function (require, module, exports) {
+},{"./base":67,"./edwards":68,"./mont":70,"./short":71}],70:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -13232,8 +11652,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-  }, {"../../elliptic": 71, "../curve": 74, "bn.js": 20, "inherits": 104}],
-  76: [function (require, module, exports) {
+},{"../../elliptic":66,"../curve":69,"bn.js":16,"inherits":99}],71:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -14172,8 +12591,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-  }, {"../../elliptic": 71, "../curve": 74, "bn.js": 20, "inherits": 104}],
-  77: [function (require, module, exports) {
+},{"../../elliptic":66,"../curve":69,"bn.js":16,"inherits":99}],72:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -14380,8 +12798,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-  }, {"../elliptic": 71, "./precomputed/secp256k1": 84, "hash.js": 90}],
-  78: [function (require, module, exports) {
+},{"../elliptic":66,"./precomputed/secp256k1":79,"hash.js":85}],73:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -14623,8 +13040,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-  }, {"../../elliptic": 71, "./key": 79, "./signature": 80, "bn.js": 20, "hmac-drbg": 102}],
-  79: [function (require, module, exports) {
+},{"../../elliptic":66,"./key":74,"./signature":75,"bn.js":16,"hmac-drbg":97}],74:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -14745,8 +13161,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-  }, {"../../elliptic": 71, "bn.js": 20}],
-  80: [function (require, module, exports) {
+},{"../../elliptic":66,"bn.js":16}],75:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -14883,8 +13298,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-  }, {"../../elliptic": 71, "bn.js": 20}],
-  81: [function (require, module, exports) {
+},{"../../elliptic":66,"bn.js":16}],76:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -15004,8 +13418,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-  }, {"../../elliptic": 71, "./key": 82, "./signature": 83, "hash.js": 90}],
-  82: [function (require, module, exports) {
+},{"../../elliptic":66,"./key":77,"./signature":78,"hash.js":85}],77:[function(require,module,exports){
 'use strict';
 
 var elliptic = require('../../elliptic');
@@ -15103,8 +13516,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-  }, {"../../elliptic": 71}],
-  83: [function (require, module, exports) {
+},{"../../elliptic":66}],78:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -15172,8 +13584,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-  }, {"../../elliptic": 71, "bn.js": 20}],
-  84: [function (require, module, exports) {
+},{"../../elliptic":66,"bn.js":16}],79:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -15955,8 +14366,7 @@ module.exports = {
   }
 };
 
-  }, {}],
-  85: [function (require, module, exports) {
+},{}],80:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -16078,40 +14488,51 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-  }, {"bn.js": 20, "minimalistic-assert": 108, "minimalistic-crypto-utils": 109}],
-  86: [function (require, module, exports) {
+},{"bn.js":16,"minimalistic-assert":104,"minimalistic-crypto-utils":105}],81:[function(require,module,exports){
 module.exports={
-  "name": "elliptic",
-  "version": "6.4.1",
-  "description": "EC cryptography",
-  "main": "lib/elliptic.js",
-  "files": [
-    "lib"
-  ],
-  "scripts": {
-    "jscs": "jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js",
-    "jshint": "jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js",
-    "lint": "npm run jscs && npm run jshint",
-    "unit": "istanbul test _mocha --reporter=spec test/index.js",
-    "test": "npm run lint && npm run unit",
-    "version": "grunt dist && git add dist/"
+  "_from": "elliptic@^6.0.0",
+  "_id": "elliptic@6.4.1",
+  "_inBundle": false,
+  "_integrity": "sha512-BsXLz5sqX8OHcsh7CqBMztyXARmGQ3LWPtGjJi6DiJHq5C/qvi9P3OqgswKSDftbu8+IoI/QDTAm2fFnQ9SZSQ==",
+  "_location": "/browserify/elliptic",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "elliptic@^6.0.0",
+    "name": "elliptic",
+    "escapedName": "elliptic",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:indutny/elliptic"
-  },
-  "keywords": [
-    "EC",
-    "Elliptic",
-    "curve",
-    "Cryptography"
+  "_requiredBy": [
+    "/browserify/browserify-sign",
+    "/browserify/create-ecdh"
   ],
-  "author": "Fedor Indutny <fedor@indutny.com>",
-  "license": "MIT",
+  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
+  "_shasum": "c2d0b7776911b86722c632c3c06c60f2f819939a",
+  "_spec": "elliptic@^6.0.0",
+  "_where": "/Users/adrysn/.nvm/versions/node/v8.11.2/lib/node_modules/browserify/node_modules/browserify-sign",
+  "author": {
+    "name": "Fedor Indutny",
+    "email": "fedor@indutny.com"
+  },
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "homepage": "https://github.com/indutny/elliptic",
+  "bundleDependencies": false,
+  "dependencies": {
+    "bn.js": "^4.4.0",
+    "brorand": "^1.0.1",
+    "hash.js": "^1.0.0",
+    "hmac-drbg": "^1.0.0",
+    "inherits": "^2.0.1",
+    "minimalistic-assert": "^1.0.0",
+    "minimalistic-crypto-utils": "^1.0.0"
+  },
+  "deprecated": false,
+  "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^1.4.3",
     "coveralls": "^2.11.3",
@@ -16128,19 +14549,35 @@ module.exports={
     "jshint": "^2.6.0",
     "mocha": "^2.1.0"
   },
-  "dependencies": {
-    "bn.js": "^4.4.0",
-    "brorand": "^1.0.1",
-    "hash.js": "^1.0.0",
-    "hmac-drbg": "^1.0.0",
-    "inherits": "^2.0.1",
-    "minimalistic-assert": "^1.0.0",
-    "minimalistic-crypto-utils": "^1.0.0"
-  }
+  "files": [
+    "lib"
+  ],
+  "homepage": "https://github.com/indutny/elliptic",
+  "keywords": [
+    "EC",
+    "Elliptic",
+    "curve",
+    "Cryptography"
+  ],
+  "license": "MIT",
+  "main": "lib/elliptic.js",
+  "name": "elliptic",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/indutny/elliptic.git"
+  },
+  "scripts": {
+    "jscs": "jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js",
+    "jshint": "jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js",
+    "lint": "npm run jscs && npm run jshint",
+    "test": "npm run lint && npm run unit",
+    "unit": "istanbul test _mocha --reporter=spec test/index.js",
+    "version": "grunt dist && git add dist/"
+  },
+  "version": "6.4.1"
 }
 
-  }, {}],
-  87: [function (require, module, exports) {
+},{}],82:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16665,8 +15102,7 @@ function functionBindPolyfill(context) {
   };
 }
 
-  }, {}],
-  88: [function (require, module, exports) {
+},{}],83:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var MD5 = require('md5.js')
 
@@ -16713,8 +15149,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-  }, {"md5.js": 106, "safe-buffer": 149}],
-  89: [function (require, module, exports) {
+},{"md5.js":102,"safe-buffer":144}],84:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
@@ -16811,8 +15246,7 @@ HashBase.prototype._digest = function () {
 
 module.exports = HashBase
 
-  }, {"inherits": 104, "safe-buffer": 149, "stream": 158}],
-  90: [function (require, module, exports) {
+},{"inherits":99,"safe-buffer":144,"stream":153}],85:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -16829,8 +15263,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-  }, {"./hash/common": 91, "./hash/hmac": 92, "./hash/ripemd": 93, "./hash/sha": 94, "./hash/utils": 101}],
-  91: [function (require, module, exports) {
+},{"./hash/common":86,"./hash/hmac":87,"./hash/ripemd":88,"./hash/sha":89,"./hash/utils":96}],86:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -16924,8 +15357,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-  }, {"./utils": 101, "minimalistic-assert": 108}],
-  92: [function (require, module, exports) {
+},{"./utils":96,"minimalistic-assert":104}],87:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -16974,8 +15406,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-  }, {"./utils": 101, "minimalistic-assert": 108}],
-  93: [function (require, module, exports) {
+},{"./utils":96,"minimalistic-assert":104}],88:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -17123,8 +15554,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-  }, {"./common": 91, "./utils": 101}],
-  94: [function (require, module, exports) {
+},{"./common":86,"./utils":96}],89:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -17133,8 +15563,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-  }, {"./sha/1": 95, "./sha/224": 96, "./sha/256": 97, "./sha/384": 98, "./sha/512": 99}],
-  95: [function (require, module, exports) {
+},{"./sha/1":90,"./sha/224":91,"./sha/256":92,"./sha/384":93,"./sha/512":94}],90:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -17210,8 +15639,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-  }, {"../common": 91, "../utils": 101, "./common": 100}],
-  96: [function (require, module, exports) {
+},{"../common":86,"../utils":96,"./common":95}],91:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -17243,8 +15671,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-  }, {"../utils": 101, "./256": 97}],
-  97: [function (require, module, exports) {
+},{"../utils":96,"./256":92}],92:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -17351,8 +15778,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-  }, {"../common": 91, "../utils": 101, "./common": 100, "minimalistic-assert": 108}],
-  98: [function (require, module, exports) {
+},{"../common":86,"../utils":96,"./common":95,"minimalistic-assert":104}],93:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -17389,8 +15815,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-  }, {"../utils": 101, "./512": 99}],
-  99: [function (require, module, exports) {
+},{"../utils":96,"./512":94}],94:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -17722,8 +16147,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-  }, {"../common": 91, "../utils": 101, "minimalistic-assert": 108}],
-  100: [function (require, module, exports) {
+},{"../common":86,"../utils":96,"minimalistic-assert":104}],95:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -17774,8 +16198,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-  }, {"../utils": 101}],
-  101: [function (require, module, exports) {
+},{"../utils":96}],96:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -18055,8 +16478,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-  }, {"inherits": 104, "minimalistic-assert": 108}],
-  102: [function (require, module, exports) {
+},{"inherits":99,"minimalistic-assert":104}],97:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -18171,8 +16593,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-  }, {"hash.js": 90, "minimalistic-assert": 108, "minimalistic-crypto-utils": 109}],
-  103: [function (require, module, exports) {
+},{"hash.js":85,"minimalistic-assert":104,"minimalistic-crypto-utils":105}],98:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -18258,8 +16679,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-  }, {}],
-  104: [function (require, module, exports) {
+},{}],99:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -18284,8 +16704,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-  }, {}],
-  105: [function (require, module, exports) {
+},{}],100:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -18308,8 +16727,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-  }, {}],
-  106: [function (require, module, exports) {
+},{}],101:[function(require,module,exports){
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+},{}],102:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var HashBase = require('hash-base')
@@ -18457,8 +16882,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-  }, {"hash-base": 89, "inherits": 104, "safe-buffer": 149}],
-  107: [function (require, module, exports) {
+},{"hash-base":84,"inherits":99,"safe-buffer":144}],103:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -18575,8 +16999,7 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-  }, {"bn.js": 20, "brorand": 21}],
-  108: [function (require, module, exports) {
+},{"bn.js":16,"brorand":17}],104:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -18589,8 +17012,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-  }, {}],
-  109: [function (require, module, exports) {
+},{}],105:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -18650,8 +17072,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-  }, {}],
-  110: [function (require, module, exports) {
+},{}],106:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -18665,8 +17086,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-  }, {}],
-  111: [function (require, module, exports) {
+},{}],107:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 'use strict'
@@ -18790,8 +17210,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-  }, {"./certificate": 112, "asn1.js": 5}],
-  112: [function (require, module, exports) {
+},{"./certificate":108,"asn1.js":1}],108:[function(require,module,exports){
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
@@ -18882,8 +17301,7 @@ var X509Certificate = asn.define('X509Certificate', function () {
 
 module.exports = X509Certificate
 
-  }, {"asn1.js": 5}],
-  113: [function (require, module, exports) {
+},{"asn1.js":1}],109:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r\+\/\=]+)[\n\r]+/m
 var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
@@ -18916,8 +17334,7 @@ module.exports = function (okey, password) {
   }
 }
 
-  }, {"browserify-aes": 25, "evp_bytestokey": 88, "safe-buffer": 149}],
-  114: [function (require, module, exports) {
+},{"browserify-aes":21,"evp_bytestokey":83,"safe-buffer":144}],110:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -19026,13 +17443,11 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-  }, {"./aesid.json": 110, "./asn1": 111, "./fixProc": 113, "browserify-aes": 25, "pbkdf2": 115, "safe-buffer": 149}],
-  115: [function (require, module, exports) {
+},{"./aesid.json":106,"./asn1":107,"./fixProc":109,"browserify-aes":21,"pbkdf2":111,"safe-buffer":144}],111:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
-  }, {"./lib/async": 116, "./lib/sync": 119}],
-  116: [function (require, module, exports) {
+},{"./lib/async":112,"./lib/sync":115}],112:[function(require,module,exports){
 (function (process,global){
 var checkParameters = require('./precondition')
 var defaultEncoding = require('./default-encoding')
@@ -19136,8 +17551,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-  }, {"./default-encoding": 117, "./precondition": 118, "./sync": 119, "_process": 121, "safe-buffer": 149}],
-  117: [function (require, module, exports) {
+},{"./default-encoding":113,"./precondition":114,"./sync":115,"_process":117,"safe-buffer":144}],113:[function(require,module,exports){
 (function (process){
 var defaultEncoding
 /* istanbul ignore next */
@@ -19151,8 +17565,7 @@ if (process.browser) {
 module.exports = defaultEncoding
 
 }).call(this,require('_process'))
-  }, {"_process": 121}],
-  118: [function (require, module, exports) {
+},{"_process":117}],114:[function(require,module,exports){
 (function (Buffer){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
@@ -19184,8 +17597,7 @@ module.exports = function (password, salt, iterations, keylen) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-  }, {"../../is-buffer/index.js": 105}],
-  119: [function (require, module, exports) {
+},{"../../is-buffer/index.js":100}],115:[function(require,module,exports){
 var md5 = require('create-hash/md5')
 var RIPEMD160 = require('ripemd160')
 var sha = require('sha.js')
@@ -19291,15 +17703,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-  }, {
-    "./default-encoding": 117,
-    "./precondition": 118,
-    "create-hash/md5": 57,
-    "ripemd160": 148,
-    "safe-buffer": 149,
-    "sha.js": 151
-  }],
-  120: [function (require, module, exports) {
+},{"./default-encoding":113,"./precondition":114,"create-hash/md5":52,"ripemd160":143,"safe-buffer":144,"sha.js":146}],116:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -19347,8 +17751,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this,require('_process'))
-  }, {"_process": 121}],
-  121: [function (require, module, exports) {
+},{"_process":117}],117:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -19534,8 +17937,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-  }, {}],
-  122: [function (require, module, exports) {
+},{}],118:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -19547,8 +17949,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-  }, {"./privateDecrypt": 124, "./publicEncrypt": 125}],
-  123: [function (require, module, exports) {
+},{"./privateDecrypt":120,"./publicEncrypt":121}],119:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -19569,8 +17970,7 @@ function i2ops (c) {
   return out
 }
 
-  }, {"create-hash": 56, "safe-buffer": 149}],
-  124: [function (require, module, exports) {
+},{"create-hash":51,"safe-buffer":144}],120:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -19677,17 +18077,7 @@ function compare (a, b) {
   return dif
 }
 
-  }, {
-    "./mgf": 123,
-    "./withPublic": 126,
-    "./xor": 127,
-    "bn.js": 20,
-    "browserify-rsa": 43,
-    "create-hash": 56,
-    "parse-asn1": 114,
-    "safe-buffer": 149
-  }],
-  125: [function (require, module, exports) {
+},{"./mgf":119,"./withPublic":122,"./xor":123,"bn.js":16,"browserify-rsa":39,"create-hash":51,"parse-asn1":110,"safe-buffer":144}],121:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -19777,18 +18167,7 @@ function nonZero (len) {
   return out
 }
 
-  }, {
-    "./mgf": 123,
-    "./withPublic": 126,
-    "./xor": 127,
-    "bn.js": 20,
-    "browserify-rsa": 43,
-    "create-hash": 56,
-    "parse-asn1": 114,
-    "randombytes": 131,
-    "safe-buffer": 149
-  }],
-  126: [function (require, module, exports) {
+},{"./mgf":119,"./withPublic":122,"./xor":123,"bn.js":16,"browserify-rsa":39,"create-hash":51,"parse-asn1":110,"randombytes":127,"safe-buffer":144}],122:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -19802,8 +18181,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-  }, {"bn.js": 20, "safe-buffer": 149}],
-  127: [function (require, module, exports) {
+},{"bn.js":16,"safe-buffer":144}],123:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -19813,8 +18191,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-  }, {}],
-  128: [function (require, module, exports) {
+},{}],124:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19900,8 +18277,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-  }, {}],
-  129: [function (require, module, exports) {
+},{}],125:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19988,15 +18364,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-  }, {}],
-  130: [function (require, module, exports) {
+},{}],126:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-  }, {"./decode": 128, "./encode": 129}],
-  131: [function (require, module, exports) {
+},{"./decode":124,"./encode":125}],127:[function(require,module,exports){
 (function (process,global){
 'use strict'
 
@@ -20050,8 +18424,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-  }, {"_process": 121, "safe-buffer": 149}],
-  132: [function (require, module, exports) {
+},{"_process":117,"safe-buffer":144}],128:[function(require,module,exports){
 (function (process,global){
 'use strict'
 
@@ -20163,12 +18536,10 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-  }, {"_process": 121, "randombytes": 131, "safe-buffer": 149}],
-  133: [function (require, module, exports) {
+},{"_process":117,"randombytes":127,"safe-buffer":144}],129:[function(require,module,exports){
 module.exports = require('./lib/_stream_duplex.js');
 
-  }, {"./lib/_stream_duplex.js": 134}],
-  134: [function (require, module, exports) {
+},{"./lib/_stream_duplex.js":130}],130:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -20300,14 +18671,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-  }, {
-    "./_stream_readable": 136,
-    "./_stream_writable": 138,
-    "core-util-is": 54,
-    "inherits": 104,
-    "process-nextick-args": 120
-  }],
-  135: [function (require, module, exports) {
+},{"./_stream_readable":132,"./_stream_writable":134,"core-util-is":49,"inherits":99,"process-nextick-args":116}],131:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -20355,8 +18719,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-  }, {"./_stream_transform": 137, "core-util-is": 54, "inherits": 104}],
-  136: [function (require, module, exports) {
+},{"./_stream_transform":133,"core-util-is":49,"inherits":99}],132:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -21378,22 +19741,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-  }, {
-    "./_stream_duplex": 134,
-    "./internal/streams/BufferList": 139,
-    "./internal/streams/destroy": 140,
-    "./internal/streams/stream": 141,
-    "_process": 121,
-    "core-util-is": 54,
-    "events": 87,
-    "inherits": 104,
-    "isarray": 142,
-    "process-nextick-args": 120,
-    "safe-buffer": 149,
-    "string_decoder/": 143,
-    "util": 22
-  }],
-  137: [function (require, module, exports) {
+},{"./_stream_duplex":130,"./internal/streams/BufferList":135,"./internal/streams/destroy":136,"./internal/streams/stream":137,"_process":117,"core-util-is":49,"events":82,"inherits":99,"isarray":101,"process-nextick-args":116,"safe-buffer":144,"string_decoder/":138,"util":18}],133:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -21608,8 +19956,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-  }, {"./_stream_duplex": 134, "core-util-is": 54, "inherits": 104}],
-  138: [function (require, module, exports) {
+},{"./_stream_duplex":130,"core-util-is":49,"inherits":99}],134:[function(require,module,exports){
 (function (process,global,setImmediate){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -22299,19 +20646,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-  }, {
-    "./_stream_duplex": 134,
-    "./internal/streams/destroy": 140,
-    "./internal/streams/stream": 141,
-    "_process": 121,
-    "core-util-is": 54,
-    "inherits": 104,
-    "process-nextick-args": 120,
-    "safe-buffer": 149,
-    "timers": 159,
-    "util-deprecate": 160
-  }],
-  139: [function (require, module, exports) {
+},{"./_stream_duplex":130,"./internal/streams/destroy":136,"./internal/streams/stream":137,"_process":117,"core-util-is":49,"inherits":99,"process-nextick-args":116,"safe-buffer":144,"timers":155,"util-deprecate":156}],135:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22391,8 +20726,7 @@ if (util && util.inspect && util.inspect.custom) {
     return this.constructor.name + ' ' + obj;
   };
 }
-  }, {"safe-buffer": 149, "util": 22}],
-  140: [function (require, module, exports) {
+},{"safe-buffer":144,"util":18}],136:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -22467,27 +20801,310 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-  }, {"process-nextick-args": 120}],
-  141: [function (require, module, exports) {
+},{"process-nextick-args":116}],137:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-  }, {"events": 87}],
-  142: [function (require, module, exports) {
-    var toString = {}.toString;
+},{"events":82}],138:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-    module.exports = Array.isArray || function (arr) {
-      return toString.call(arr) == '[object Array]';
-    };
+'use strict';
 
-  }, {}],
-  143: [function (require, module, exports) {
-    arguments[4][50][0].apply(exports, arguments)
-  }, {"dup": 50, "safe-buffer": 149}],
-  144: [function (require, module, exports) {
+/*<replacement>*/
+
+var Buffer = require('safe-buffer').Buffer;
+/*</replacement>*/
+
+var isEncoding = Buffer.isEncoding || function (encoding) {
+  encoding = '' + encoding;
+  switch (encoding && encoding.toLowerCase()) {
+    case 'hex':case 'utf8':case 'utf-8':case 'ascii':case 'binary':case 'base64':case 'ucs2':case 'ucs-2':case 'utf16le':case 'utf-16le':case 'raw':
+      return true;
+    default:
+      return false;
+  }
+};
+
+function _normalizeEncoding(enc) {
+  if (!enc) return 'utf8';
+  var retried;
+  while (true) {
+    switch (enc) {
+      case 'utf8':
+      case 'utf-8':
+        return 'utf8';
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return 'utf16le';
+      case 'latin1':
+      case 'binary':
+        return 'latin1';
+      case 'base64':
+      case 'ascii':
+      case 'hex':
+        return enc;
+      default:
+        if (retried) return; // undefined
+        enc = ('' + enc).toLowerCase();
+        retried = true;
+    }
+  }
+};
+
+// Do not cache `Buffer.isEncoding` when checking encoding names as some
+// modules monkey-patch it to support additional encodings
+function normalizeEncoding(enc) {
+  var nenc = _normalizeEncoding(enc);
+  if (typeof nenc !== 'string' && (Buffer.isEncoding === isEncoding || !isEncoding(enc))) throw new Error('Unknown encoding: ' + enc);
+  return nenc || enc;
+}
+
+// StringDecoder provides an interface for efficiently splitting a series of
+// buffers into a series of JS strings without breaking apart multi-byte
+// characters.
+exports.StringDecoder = StringDecoder;
+function StringDecoder(encoding) {
+  this.encoding = normalizeEncoding(encoding);
+  var nb;
+  switch (this.encoding) {
+    case 'utf16le':
+      this.text = utf16Text;
+      this.end = utf16End;
+      nb = 4;
+      break;
+    case 'utf8':
+      this.fillLast = utf8FillLast;
+      nb = 4;
+      break;
+    case 'base64':
+      this.text = base64Text;
+      this.end = base64End;
+      nb = 3;
+      break;
+    default:
+      this.write = simpleWrite;
+      this.end = simpleEnd;
+      return;
+  }
+  this.lastNeed = 0;
+  this.lastTotal = 0;
+  this.lastChar = Buffer.allocUnsafe(nb);
+}
+
+StringDecoder.prototype.write = function (buf) {
+  if (buf.length === 0) return '';
+  var r;
+  var i;
+  if (this.lastNeed) {
+    r = this.fillLast(buf);
+    if (r === undefined) return '';
+    i = this.lastNeed;
+    this.lastNeed = 0;
+  } else {
+    i = 0;
+  }
+  if (i < buf.length) return r ? r + this.text(buf, i) : this.text(buf, i);
+  return r || '';
+};
+
+StringDecoder.prototype.end = utf8End;
+
+// Returns only complete characters in a Buffer
+StringDecoder.prototype.text = utf8Text;
+
+// Attempts to complete a partial non-UTF-8 character using bytes from a Buffer
+StringDecoder.prototype.fillLast = function (buf) {
+  if (this.lastNeed <= buf.length) {
+    buf.copy(this.lastChar, this.lastTotal - this.lastNeed, 0, this.lastNeed);
+    return this.lastChar.toString(this.encoding, 0, this.lastTotal);
+  }
+  buf.copy(this.lastChar, this.lastTotal - this.lastNeed, 0, buf.length);
+  this.lastNeed -= buf.length;
+};
+
+// Checks the type of a UTF-8 byte, whether it's ASCII, a leading byte, or a
+// continuation byte. If an invalid byte is detected, -2 is returned.
+function utf8CheckByte(byte) {
+  if (byte <= 0x7F) return 0;else if (byte >> 5 === 0x06) return 2;else if (byte >> 4 === 0x0E) return 3;else if (byte >> 3 === 0x1E) return 4;
+  return byte >> 6 === 0x02 ? -1 : -2;
+}
+
+// Checks at most 3 bytes at the end of a Buffer in order to detect an
+// incomplete multi-byte UTF-8 character. The total number of bytes (2, 3, or 4)
+// needed to complete the UTF-8 character (if applicable) are returned.
+function utf8CheckIncomplete(self, buf, i) {
+  var j = buf.length - 1;
+  if (j < i) return 0;
+  var nb = utf8CheckByte(buf[j]);
+  if (nb >= 0) {
+    if (nb > 0) self.lastNeed = nb - 1;
+    return nb;
+  }
+  if (--j < i || nb === -2) return 0;
+  nb = utf8CheckByte(buf[j]);
+  if (nb >= 0) {
+    if (nb > 0) self.lastNeed = nb - 2;
+    return nb;
+  }
+  if (--j < i || nb === -2) return 0;
+  nb = utf8CheckByte(buf[j]);
+  if (nb >= 0) {
+    if (nb > 0) {
+      if (nb === 2) nb = 0;else self.lastNeed = nb - 3;
+    }
+    return nb;
+  }
+  return 0;
+}
+
+// Validates as many continuation bytes for a multi-byte UTF-8 character as
+// needed or are available. If we see a non-continuation byte where we expect
+// one, we "replace" the validated continuation bytes we've seen so far with
+// a single UTF-8 replacement character ('\ufffd'), to match v8's UTF-8 decoding
+// behavior. The continuation byte check is included three times in the case
+// where all of the continuation bytes for a character exist in the same buffer.
+// It is also done this way as a slight performance increase instead of using a
+// loop.
+function utf8CheckExtraBytes(self, buf, p) {
+  if ((buf[0] & 0xC0) !== 0x80) {
+    self.lastNeed = 0;
+    return '\ufffd';
+  }
+  if (self.lastNeed > 1 && buf.length > 1) {
+    if ((buf[1] & 0xC0) !== 0x80) {
+      self.lastNeed = 1;
+      return '\ufffd';
+    }
+    if (self.lastNeed > 2 && buf.length > 2) {
+      if ((buf[2] & 0xC0) !== 0x80) {
+        self.lastNeed = 2;
+        return '\ufffd';
+      }
+    }
+  }
+}
+
+// Attempts to complete a multi-byte UTF-8 character using bytes from a Buffer.
+function utf8FillLast(buf) {
+  var p = this.lastTotal - this.lastNeed;
+  var r = utf8CheckExtraBytes(this, buf, p);
+  if (r !== undefined) return r;
+  if (this.lastNeed <= buf.length) {
+    buf.copy(this.lastChar, p, 0, this.lastNeed);
+    return this.lastChar.toString(this.encoding, 0, this.lastTotal);
+  }
+  buf.copy(this.lastChar, p, 0, buf.length);
+  this.lastNeed -= buf.length;
+}
+
+// Returns all complete UTF-8 characters in a Buffer. If the Buffer ended on a
+// partial character, the character's bytes are buffered until the required
+// number of bytes are available.
+function utf8Text(buf, i) {
+  var total = utf8CheckIncomplete(this, buf, i);
+  if (!this.lastNeed) return buf.toString('utf8', i);
+  this.lastTotal = total;
+  var end = buf.length - (total - this.lastNeed);
+  buf.copy(this.lastChar, 0, end);
+  return buf.toString('utf8', i, end);
+}
+
+// For UTF-8, a replacement character is added when ending on a partial
+// character.
+function utf8End(buf) {
+  var r = buf && buf.length ? this.write(buf) : '';
+  if (this.lastNeed) return r + '\ufffd';
+  return r;
+}
+
+// UTF-16LE typically needs two bytes per character, but even if we have an even
+// number of bytes available, we need to check if we end on a leading/high
+// surrogate. In that case, we need to wait for the next two bytes in order to
+// decode the last character properly.
+function utf16Text(buf, i) {
+  if ((buf.length - i) % 2 === 0) {
+    var r = buf.toString('utf16le', i);
+    if (r) {
+      var c = r.charCodeAt(r.length - 1);
+      if (c >= 0xD800 && c <= 0xDBFF) {
+        this.lastNeed = 2;
+        this.lastTotal = 4;
+        this.lastChar[0] = buf[buf.length - 2];
+        this.lastChar[1] = buf[buf.length - 1];
+        return r.slice(0, -1);
+      }
+    }
+    return r;
+  }
+  this.lastNeed = 1;
+  this.lastTotal = 2;
+  this.lastChar[0] = buf[buf.length - 1];
+  return buf.toString('utf16le', i, buf.length - 1);
+}
+
+// For UTF-16LE we do not explicitly append special replacement characters if we
+// end on a partial character, we simply let v8 handle that.
+function utf16End(buf) {
+  var r = buf && buf.length ? this.write(buf) : '';
+  if (this.lastNeed) {
+    var end = this.lastTotal - this.lastNeed;
+    return r + this.lastChar.toString('utf16le', 0, end);
+  }
+  return r;
+}
+
+function base64Text(buf, i) {
+  var n = (buf.length - i) % 3;
+  if (n === 0) return buf.toString('base64', i);
+  this.lastNeed = 3 - n;
+  this.lastTotal = 3;
+  if (n === 1) {
+    this.lastChar[0] = buf[buf.length - 1];
+  } else {
+    this.lastChar[0] = buf[buf.length - 2];
+    this.lastChar[1] = buf[buf.length - 1];
+  }
+  return buf.toString('base64', i, buf.length - n);
+}
+
+function base64End(buf) {
+  var r = buf && buf.length ? this.write(buf) : '';
+  if (this.lastNeed) return r + this.lastChar.toString('base64', 0, 3 - this.lastNeed);
+  return r;
+}
+
+// Pass bytes on through for single-byte encodings (e.g. ascii, latin1, hex)
+function simpleWrite(buf) {
+  return buf.toString(this.encoding);
+}
+
+function simpleEnd(buf) {
+  return buf && buf.length ? this.write(buf) : '';
+}
+},{"safe-buffer":144}],139:[function(require,module,exports){
 module.exports = require('./readable').PassThrough
 
-  }, {"./readable": 145}],
-  145: [function (require, module, exports) {
+},{"./readable":140}],140:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -22496,22 +21113,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-  }, {
-    "./lib/_stream_duplex.js": 134,
-    "./lib/_stream_passthrough.js": 135,
-    "./lib/_stream_readable.js": 136,
-    "./lib/_stream_transform.js": 137,
-    "./lib/_stream_writable.js": 138
-  }],
-  146: [function (require, module, exports) {
+},{"./lib/_stream_duplex.js":130,"./lib/_stream_passthrough.js":131,"./lib/_stream_readable.js":132,"./lib/_stream_transform.js":133,"./lib/_stream_writable.js":134}],141:[function(require,module,exports){
 module.exports = require('./readable').Transform
 
-  }, {"./readable": 145}],
-  147: [function (require, module, exports) {
+},{"./readable":140}],142:[function(require,module,exports){
 module.exports = require('./lib/_stream_writable.js');
 
-  }, {"./lib/_stream_writable.js": 138}],
-  148: [function (require, module, exports) {
+},{"./lib/_stream_writable.js":134}],143:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -22676,8 +21284,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-  }, {"buffer": 52, "hash-base": 89, "inherits": 104}],
-  149: [function (require, module, exports) {
+},{"buffer":47,"hash-base":84,"inherits":99}],144:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -22741,8 +21348,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-  }, {"buffer": 52}],
-  150: [function (require, module, exports) {
+},{"buffer":47}],145:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -22825,8 +21431,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-  }, {"safe-buffer": 149}],
-  151: [function (require, module, exports) {
+},{"safe-buffer":144}],146:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -22843,8 +21448,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-  }, {"./sha": 152, "./sha1": 153, "./sha224": 154, "./sha256": 155, "./sha384": 156, "./sha512": 157}],
-  152: [function (require, module, exports) {
+},{"./sha":147,"./sha1":148,"./sha224":149,"./sha256":150,"./sha384":151,"./sha512":152}],147:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -22940,8 +21544,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-  }, {"./hash": 150, "inherits": 104, "safe-buffer": 149}],
-  153: [function (require, module, exports) {
+},{"./hash":145,"inherits":99,"safe-buffer":144}],148:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -23042,8 +21645,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-  }, {"./hash": 150, "inherits": 104, "safe-buffer": 149}],
-  154: [function (require, module, exports) {
+},{"./hash":145,"inherits":99,"safe-buffer":144}],149:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -23098,8 +21700,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-  }, {"./hash": 150, "./sha256": 155, "inherits": 104, "safe-buffer": 149}],
-  155: [function (require, module, exports) {
+},{"./hash":145,"./sha256":150,"inherits":99,"safe-buffer":144}],150:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -23236,8 +21837,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-  }, {"./hash": 150, "inherits": 104, "safe-buffer": 149}],
-  156: [function (require, module, exports) {
+},{"./hash":145,"inherits":99,"safe-buffer":144}],151:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -23296,8 +21896,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-  }, {"./hash": 150, "./sha512": 157, "inherits": 104, "safe-buffer": 149}],
-  157: [function (require, module, exports) {
+},{"./hash":145,"./sha512":152,"inherits":99,"safe-buffer":144}],152:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -23559,8 +22158,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-  }, {"./hash": 150, "inherits": 104, "safe-buffer": 149}],
-  158: [function (require, module, exports) {
+},{"./hash":145,"inherits":99,"safe-buffer":144}],153:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -23689,16 +22287,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-  }, {
-    "events": 87,
-    "inherits": 104,
-    "readable-stream/duplex.js": 133,
-    "readable-stream/passthrough.js": 144,
-    "readable-stream/readable.js": 145,
-    "readable-stream/transform.js": 146,
-    "readable-stream/writable.js": 147
-  }],
-  159: [function (require, module, exports) {
+},{"events":82,"inherits":99,"readable-stream/duplex.js":129,"readable-stream/passthrough.js":139,"readable-stream/readable.js":140,"readable-stream/transform.js":141,"readable-stream/writable.js":142}],154:[function(require,module,exports){
+arguments[4][138][0].apply(exports,arguments)
+},{"dup":138,"safe-buffer":144}],155:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -23777,8 +22368,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-  }, {"process/browser.js": 121, "timers": 159}],
-  160: [function (require, module, exports) {
+},{"process/browser.js":117,"timers":155}],156:[function(require,module,exports){
 (function (global){
 
 /**
@@ -23849,8 +22439,7 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-  }, {}],
-  161: [function (require, module, exports) {
+},{}],157:[function(require,module,exports){
 var indexOf = function (xs, item) {
     if (xs.indexOf) return xs.indexOf(item);
     else for (var i = 0; i < xs.length; i++) {
@@ -23910,14 +22499,14 @@ Script.prototype.runInContext = function (context) {
     if (!(context instanceof Context)) {
         throw new TypeError("needs a 'context' argument.");
     }
-
-  var iframe = document.createElement('iframe');
+    
+    var iframe = document.createElement('iframe');
     if (!iframe.style) iframe.style = {};
     iframe.style.display = 'none';
-
-  document.body.appendChild(iframe);
-
-  var win = iframe.contentWindow;
+    
+    document.body.appendChild(iframe);
+    
+    var win = iframe.contentWindow;
     var wEval = win.eval, wExecScript = win.execScript;
 
     if (!wEval && wExecScript) {
@@ -23925,8 +22514,8 @@ Script.prototype.runInContext = function (context) {
         wExecScript.call(win, 'null');
         wEval = win.eval;
     }
-
-  forEach(Object_keys(context), function (key) {
+    
+    forEach(Object_keys(context), function (key) {
         win[key] = context[key];
     });
     forEach(globals, function (key) {
@@ -23934,12 +22523,12 @@ Script.prototype.runInContext = function (context) {
             win[key] = context[key];
         }
     });
-
-  var winKeys = Object_keys(win);
+    
+    var winKeys = Object_keys(win);
 
     var res = wEval.call(win, this.code);
-
-  forEach(Object_keys(win), function (key) {
+    
+    forEach(Object_keys(win), function (key) {
         // Avoid copying circular objects like `top` and `window` by only
         // updating existing context properties or new properties in the `win`
         // that was only introduced after the eval.
@@ -23953,10 +22542,10 @@ Script.prototype.runInContext = function (context) {
             defineProp(context, key, win[key]);
         }
     });
-
-  document.body.removeChild(iframe);
-
-  return res;
+    
+    document.body.removeChild(iframe);
+    
+    return res;
 };
 
 Script.prototype.runInThisContext = function () {
@@ -24001,6 +22590,1111 @@ exports.createContext = Script.createContext = function (context) {
     return copy;
 };
 
-  }, {}]
-}, {}, [3])(3)
+},{}],158:[function(require,module,exports){
+/* eslint-env browser */
+module.exports = typeof self == 'object' ? self.FormData : window.FormData;
+
+},{}],159:[function(require,module,exports){
+(function (global){
+"use strict";
+
+// ref: https://github.com/tc39/proposal-global
+var getGlobal = function () {
+	// the only reliable means to get the global object is
+	// `Function('return this')()`
+	// However, this causes CSP violations in Chrome apps.
+	if (typeof self !== 'undefined') { return self; }
+	if (typeof window !== 'undefined') { return window; }
+	if (typeof global !== 'undefined') { return global; }
+	throw new Error('unable to locate global object');
+}
+
+var global = getGlobal();
+
+module.exports = exports = global.fetch;
+
+// Needed for TypeScript and Webpack.
+exports.default = global.fetch.bind(global);
+
+exports.Headers = global.Headers;
+exports.Request = global.Request;
+exports.Response = global.Response;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],160:[function(require,module,exports){
+'use babel';
+/*
+Backend.AI Node.JS / Javascript ES6 API Proxy Library for Ingen (v19.03b9)
+==========================================================================
+
+(C) Copyright 2016-2019 Lablup Inc.
+Licensed under MIT
+*/
+/* jshint esnext: true */
+
+const clientNode = require('./backend.ai-client-node');
+
+
+class IngenClientConfig extends clientNode.ClientConfig {
+  constructor(accessKey, secretKey, endpoint) {
+    accessKey = secretKey = endpoint = '';
+    super(accessKey, secretKey, endpoint);
+  }
+}
+
+class IngenClient extends clientNode.Client {
+  constructor(config, agentSignature) {
+    super(config, agentSignature);
+    this.kernelPrefix = '/ingen/kernel';
+    this.vfolder.urlPrefix = '/ingen/folders';
+  }
+
+  /* GraphQL requests */
+  gql(q, v) {
+    const query = {'query': q, 'variables': v};
+    const rqst = this.newSignedRequest('POST', '/ingen/graphql', query);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Generate a RequestInfo object that can be passed to fetch() API.
+   * We don't need signing process since it will be dealt in ingen server,
+   * but we keep the method name to follow the parent's interface.
+   *
+   * @param {string} method - the HTTP method
+   * @param {string} queryString - the URI path and GET parameters
+   * @param {string} body - an object that will be encoded as JSON in the request body
+   *
+   * @return {Object} requestInfo - ingen request information
+   */
+  newSignedRequest(method, queryString, body) {
+    let requestBody;
+    let contentType = 'application/json';
+    if (body === null || body === undefined) {
+      requestBody = '';
+    } else if (typeof body.getBoundary === 'function' || body instanceof FormData) {
+      // detect form data input from form-data module
+      requestBody = body;
+      contentType = 'multipart/form-data';
+    } else {
+      requestBody = JSON.stringify(body);
+    }
+
+    const hdrs = new Headers();
+    if (body != undefined) {
+      if (typeof body.getBoundary === 'function') {
+        hdrs.set('Content-Type', body.getHeaders()['content-type']);
+      }
+      if (body instanceof FormData) {
+      } else {
+        hdrs.set('Content-Type', contentType);
+      }
+    } else {
+      hdrs.set('Content-Type', contentType);
+    }
+    const uri = queryString; // endpoint will be determined in inge
+
+    const requestInfo = {
+      method: method,
+      headers: hdrs,
+      cache: 'default',
+      body: requestBody,
+      uri: uri
+    };
+    return requestInfo;
+  }
+
+  hello() {
+    const rqst = this.newSignedRequest('GET', '/ingen');
+    return this._wrapWithPromise(rqst);
+  }
+}
+
+
+const backend = {
+  Client: IngenClient,
+  ClientConfig: IngenClientConfig,
+};
+
+module.exports.backend = backend;
+// for classical uses
+module.exports.Client = IngenClient;
+module.exports.ClientConfig = IngenClientConfig;
+// legacy aliases
+module.exports.BackendAIClient = IngenClient;
+module.exports.BackendAIClientConfig = IngenClientConfig;
+
+},{"./backend.ai-client-node":161}],161:[function(require,module,exports){
+(function (process,Buffer){
+'use babel';
+/*
+Backend.AI Node.JS / Javascript ES6 API Library (v19.03b9)
+==========================================================
+
+(C) Copyright 2016-2019 Lablup Inc.
+Licensed under MIT
+*/
+/*jshint esnext: true */
+
+var fetch = require('node-fetch');
+var Headers = fetch.Headers;
+var crypto = require('crypto');
+var FormData = require('form-data');
+
+const querystring = require('querystring');
+
+
+class ClientConfig {
+  constructor(accessKey, secretKey, endpoint) {
+    // fixed configs with this implementation
+    this._apiVersionMajor = 'v4';
+    this._apiVersion = 'v4.20190115';
+    this._hashType = 'sha256';
+    // dynamic configs
+    if (accessKey === undefined || accessKey === null)
+      throw 'You must set accessKey! (either as argument or environment variable)';
+    if (secretKey === undefined || secretKey === null)
+      throw 'You must set secretKey! (either as argument or environment variable)';
+    if (endpoint === undefined || endpoint === null)
+      endpoint = 'https://api.backend.ai';
+    this._endpoint = endpoint;
+    this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
+    this._accessKey = accessKey;
+    this._secretKey = secretKey;
+    this._proxyURL = null;
+  }
+
+  get accessKey() {
+    return this._accessKey;
+  }
+
+  get secretKey() {
+    return this._secretKey;
+  }
+
+  get endpoint() {
+    return this._endpoint;
+  }
+
+  get proxyURL() {
+    return this._proxyURL;
+  }
+
+  get endpointHost() {
+    return this._endpointHost;
+  }
+
+  get apiVersion() {
+    return this._apiVersion;
+  }
+
+  get apiVersionMajor() {
+    return this._apiVersionMajor;
+  }
+
+  get hashType() {
+    return this._hashType;
+  }
+
+  /**
+   * Create a ClientConfig object from environment variables.
+   */
+  static createFromEnv() {
+    return new this(
+      process.env.BACKEND_ACCESS_KEY,
+      process.env.BACKEND_SECRET_KEY,
+      process.env.BACKEND_ENDPOINT
+    );
+  }
+}
+
+class Client {
+  /**
+   * The client API wrapper.
+   *
+   * @param {ClientConfig} config - the API client-side configuration
+   * @param {string} agentSignature - an extra string that will be appended to User-Agent headers when making API requests
+   */
+  constructor(config, agentSignature) {
+    this.code = null;
+    this.kernelId = null;
+    this.kernelType = null;
+    this.clientVersion = '0.4.0';  // TODO: read from package.json?
+    this.agentSignature = agentSignature;
+    if (config === undefined) {
+      this._config = ClientConfig.createFromEnv();
+    } else {
+      this._config = config;
+    }
+    this.kernelPrefix = '/kernel'
+    this.vfolder = new VFolder(this);
+    this.agent = new Agent(this);
+    this.keypair = new Keypair(this);
+    this.image = new Image(this);
+    this.utils = new utils(this);
+    this.computeSession = new ComputeSession(this);
+    this.resourcePolicy = new ResourcePolicy(this);
+  }
+
+  async _wrapWithPromise(rqst) {
+    let errorType = Client.ERR_REQUEST;
+    let errorMsg;
+    let resp, body;
+    try {
+      if (rqst.method == 'GET') {
+        rqst.body = undefined;
+      }
+      resp = await fetch(rqst.uri, rqst);
+      errorType = Client.ERR_RESPONSE;
+      let contentType = resp.headers.get('Content-Type');
+      if (contentType.startsWith('application/json') ||
+        contentType.startsWith('application/problem+json')) {
+        body = await resp.json();
+      } else if (contentType.startsWith('text/')) {
+        body = await resp.text();
+      } else {
+        if (resp.blob === undefined)
+          body = await resp.buffer();  // for node-fetch
+        else
+          body = await resp.blob();
+      }
+      errorType = Client.ERR_SERVER;
+      if (!resp.ok) {
+        throw body;
+      }
+    } catch (err) {
+      switch (errorType) {
+        case Client.ERR_REQUEST:
+          errorMsg = `sending request has failed: ${err}`;
+          break;
+        case Client.ERR_RESPONSE:
+          errorMsg = `reading response has failed: ${err}`;
+          break;
+        case Client.ERR_SERVER:
+          errorMsg = 'server responded failure: '
+            + `${resp.status} ${resp.statusText} - ${body.title}`;
+          break;
+      }
+      throw {
+        type: errorType,
+        message: errorMsg,
+      };
+    }
+    return body;
+  }
+
+  /**
+   * Return the server-side API version.
+   */
+  getServerVersion() {
+    let rqst = this.newPublicRequest('GET', '', null, '');
+    return this._wrapWithPromise(rqst);
+  }
+
+  getResourceSlots() {
+    let rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Create a compute session if the session for the given sessionId does not exists.
+   * It returns the information for the existing session otherwise, without error.
+   *
+   * @param {string} kernelType - the kernel type (usually language runtimes)
+   * @param {string} sessionId - user-defined session ID
+   * @param {object} resources - Per-session resource
+   */
+  createIfNotExists(kernelType, sessionId, resources = {}) {
+    if (sessionId === undefined)
+      sessionId = this.generateSessionId();
+    let params = {
+      "lang": kernelType,
+      "clientSessionToken": sessionId,
+    };
+    if (resources != {}) {
+      let config = {};
+      if (resources['cpu']) {
+        config['cpu'] = resources['cpu'];
+      }
+      if (resources['mem']) {
+        config['mem'] = resources['mem'];
+      }
+      if (resources['gpu']) {
+        config['cuda.device'] = resources['gpu'];
+      }
+      if (resources['vgpu']) {
+        config['cuda.shares'] = resources['vgpu'];
+      }
+      if (resources['tpu']) {
+        config['tpu.device'] = resources['tpu'];
+      }
+      if (resources['env']) {
+        config['environ'] = resources['env'];
+      }
+      if (resources['clustersize']) {
+        config['clusterSize'] = resources['clustersize'];
+      }
+      //params['config'] = {};
+      params['config'] = {resources: config};
+      if (resources['mounts']) {
+        params['config'].mounts = resources['mounts'];
+      }
+    }
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Obtain the session information by given sessionId.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  getInformation(sessionId) {
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}`, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Obtain the session information by given sessionId.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  getLogs(sessionId) {
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/logs`, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Terminate and destroy the kernel session.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  destroy(sessionId) {
+    let rqst = this.newSignedRequest('DELETE', `${this.kernelPrefix}/${sessionId}`, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Restart the kernel session keeping its work directory and volume mounts.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  restart(sessionId) {
+    let rqst = this.newSignedRequest('PATCH', `${this.kernelPrefix}/${sessionId}`, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  // TODO: interrupt
+
+  // TODO: auto-complete
+
+  /**
+   * Execute a code snippet or schedule batch-mode executions.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   * @param {string} runId - a random ID to distinguish each continuation until finish (the length must be between 8 to 64 bytes inclusively)
+   * @param {string} mode - either "query", "batch", "input", or "continue"
+   * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
+   */
+  execute(sessionId, runId, mode, code, opts) {
+    let params = {
+      "mode": mode,
+      "code": code,
+      "runId": runId,
+      "options": opts,
+    };
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
+    return this._wrapWithPromise(rqst);
+  }
+
+  // legacy aliases
+  createKernel(kernelType, sessionId = undefined, resources = {}) {
+    return this.createIfNotExists(kernelType, sessionId, resources);
+  }
+
+  destroyKernel(kernelId) {
+    return this.destroy(kernelId);
+  }
+
+  refreshKernel(kernelId) {
+    return this.restart(kernelId);
+  }
+
+  runCode(code, kernelId, runId, mode) {
+    return this.execute(kernelId, runId, mode, code, {});
+  }
+
+  upload(sessionId, path, fs) {
+    const formData = new FormData();
+    formData.append('src', fs, {filepath: path});
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData)
+    return this._wrapWithPromise(rqst);
+  }
+
+  mangleUserAgentSignature() {
+    let uaSig = this.clientVersion
+      + (this.agentSignature ? ('; ' + this.agentSignature) : '');
+    return uaSig;
+  }
+
+  /* GraphQL requests */
+  gql(q, v) {
+    let query = {
+      'query': q,
+      'variables': v
+    }
+    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Generate a RequestInfo object that can be passed to fetch() API,
+   * which includes a properly signed header with the configured auth information.
+   *
+   * @param {string} method - the HTTP method
+   * @param {string} queryString - the URI path and GET parameters
+   * @param {string} body - an object that will be encoded as JSON in the request body
+   */
+  newSignedRequest(method, queryString, body) {
+    let content_type = "application/json";
+    let requestBody;
+    let authBody;
+    let d = new Date();
+    let signKey = this.getSignKey(this._config.secretKey, d);
+    if (body === null || body === undefined) {
+      requestBody = '';
+      authBody = requestBody;
+    } else if (typeof body.getBoundary === 'function' || body instanceof FormData) {
+      // detect form data input from form-data module
+      requestBody = body;
+      authBody = '';
+      content_type = "multipart/form-data";
+    } else {
+      requestBody = JSON.stringify(body);
+      authBody = requestBody;
+    }
+    //queryString = '/' + this._config.apiVersionMajor + queryString;
+    let aStr;
+    if (this._config._apiVersion[1] < 4) {
+      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), authBody, content_type);
+    } else {
+      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
+    }
+
+    let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
+    let hdrs = new Headers({
+      "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+      "X-BackendAI-Version": this._config.apiVersion,
+      "X-BackendAI-Date": d.toISOString(),
+      "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
+    });
+    if (body != undefined) {
+      if (typeof body.getBoundary === 'function') {
+        hdrs.set('Content-Type', body.getHeaders()['content-type']);
+      }
+      if (body instanceof FormData) {
+      } else {
+        hdrs.set('Content-Type', content_type);
+        hdrs.set('Content-Length', Buffer.byteLength(authBody));
+      }
+    } else {
+      hdrs.set('Content-Type', content_type);
+    }
+    let uri = this._config.endpoint + queryString;
+
+
+    let requestInfo = {
+      method: method,
+      headers: hdrs,
+      cache: 'default',
+      body: requestBody,
+      uri: uri
+    };
+    return requestInfo;
+  }
+
+  /**
+   * Same to newRequest() method but it does not sign the request.
+   * Use this for unauthorized public APIs.
+   */
+
+  newUnsignedRequest(method, queryString, body) {
+    return this.newPublicRequest(method, queryString, body, this._config.apiVersionMajor);
+  }
+
+  newPublicRequest(method, queryString, body, urlPrefix) {
+    let d = new Date();
+    let hdrs = new Headers({
+      "Content-Type": "application/json",
+      "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+      "X-BackendAI-Version": this._config.apiVersion,
+      "X-BackendAI-Date": d.toISOString()
+    });
+    //queryString = '/' + urlPrefix + queryString;
+    let requestInfo = {
+      method: method,
+      headers: hdrs,
+      mode: 'cors',
+      cache: 'default',
+      uri: this._config.endpoint + queryString,
+    };
+    return requestInfo;
+  }
+
+  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
+    let bodyHash = crypto.createHash(this._config.hashType)
+      .update(bodyValue).digest('hex');
+    return (method + '\n' + queryString + '\n' + dateValue + '\n'
+      + 'host:' + this._config.endpointHost + '\n'
+      + 'content-type:' + content_type + '\n'
+      + 'x-backendai-version:' + this._config.apiVersion + '\n'
+      + bodyHash);
+  }
+
+  getCurrentDate(now) {
+    let year = (`0000${now.getUTCFullYear()}`).slice(-4);
+    let month = (`0${now.getUTCMonth() + 1}`).slice(-2);
+    let day = (`0${now.getUTCDate()}`).slice(-2);
+    let t = year + month + day;
+    return t;
+  }
+
+  sign(key, key_encoding, msg, digest_type) {
+    let kbuf = new Buffer(key, key_encoding);
+    let hmac = crypto.createHmac(this._config.hashType, kbuf);
+    hmac.update(msg, 'utf8');
+    return hmac.digest(digest_type);
+  }
+
+  getSignKey(secret_key, now) {
+    let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
+    let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
+    return k2;
+  }
+
+  generateSessionId() {
+    var text = "backend-ai-SDK-js-";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 8; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+  }
+}
+
+class VFolder {
+  // https://github.com/lablup/backend.ai-client-py/blob/master/src/ai/backend/client/vfolder.py
+
+  constructor(client, name = null) {
+    this.client = client;
+    this.name = name;
+    this.urlPrefix = '/folders'
+  }
+
+  create(name, host = null) {
+    let body = {
+      'name': name,
+      'host': host
+    };
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  list() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  info(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  delete(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  upload(path, fs, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let formData = new FormData();
+    formData.append('src', fs, {filepath: path});
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData)
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  uploadFormData(fss, name = null) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss)
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  mkdir(path, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let body = {
+      'path': path
+    };
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  delete_files(files, recursive = null, name = null) {
+
+    if (name == null) {
+      name = this.name;
+    }
+    if (recursive == null) {
+      recursive = false;
+    }
+    let body = {
+      'files': files,
+      'recursive': recursive,
+    };
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/delete_files`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  download(file, name = false) {
+    let params = {
+      'file': file
+    };
+    let q = querystring.stringify(params);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  list_files(path, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let params = {
+      'path': path
+    };
+    let q = querystring.stringify(params)
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  invite(perm, emails, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let body = {
+      'perm': perm,
+      'user_ids': emails
+    };
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/invite`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  invitations() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/invitations/list`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  accept_invitation(inv_id, inv_ak) {
+    let body = {
+      'inv_id': inv_id,
+      'inv_ak': inv_ak
+    };
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/invitations/accept`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  delete_invitation(inv_id) {
+    let body = {
+      'inv_id': inv_id
+    };
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/invitations/delete`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+class Agent {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
+    if (['ALIVE', 'TERMINATED'].includes(status) === false) {
+      return resolve(false);
+    }
+    let q = `query($status: String) {` +
+      `  agents(status: $status) {` +
+      `     ${fields.join(" ")}` +
+      `  }` +
+      `}`;
+    let v = {'status': status};
+    return this.client.gql(q, v);
+  }
+}
+
+class Keypair {
+  constructor(client, name = null) {
+    this.client = client;
+    this.name = name;
+  }
+
+  info(accessKey, fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
+    let q, v;
+    if (this.client.is_admin) {
+      q = `query($access_key: String!) {` +
+        `  keypair(access_key: $access_key) {` +
+        `    ${fields.join(" ")}` +
+        `  }` +
+        `}`;
+      v = {
+        'access_key': accessKey
+      };
+    } else {
+      q = `query {` +
+        `  keypair {` +
+        `    ${fields.join(" ")}` +
+        `  }` +
+        `}`;
+      v = {};
+    }
+    return this.client.gql(q, v);
+  }
+
+  list(userId = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+    'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
+
+    let q;
+    if (this.client.is_admin) {
+      if (userId == null) {
+        q = `query($is_active: Boolean) {` +
+          `  keypairs(is_active: $is_active) {` +
+          `    ${fields.join(" ")}` +
+          `  }` +
+          `}`;
+      } else {
+        q = `query($user_id: String!, $is_active: Boolean) {` +
+          `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+          `    ${fields.join(" ")}` +
+          `  }` +
+          `}`;
+      }
+    } else {
+      q = `query($user_id: String!, $is_active: Boolean) {` +
+        `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+        `    ${fields.join(" ")}` +
+        `  }` +
+        `}`;
+    }
+    let v = {
+      'user_id': userId || this.client.email,
+      'is_active': isActive,
+    };
+    return this.client.gql(q, v);
+  }
+
+  add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
+      rateLimit = 1000) {
+    let fields = [
+      'is_active',
+      'is_admin',
+      'resource_policy',
+      'concurrency_limit',
+      'rate_limit'
+    ];
+    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
+      `  create_keypair(user_id: $user_id, props: $input) {` +
+      `    ok msg keypair { ${fields.join(" ")} }` +
+      `  }` +
+      `}`;
+    let v = {
+      'user_id': userId,
+      'input': {
+        'is_active': isActive,
+        'is_admin': isAdmin,
+        'resource_policy': resourcePolicy,
+        'rate_limit': rateLimit
+      },
+    };
+    return this.client.gql(q, v);
+  }
+
+  mutate(accessKey, input) {
+    let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
+      `  modify_keypair(access_key: $access_key, props: $input) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey,
+      'input': input,
+    };
+    return this.client.gql(q, v);
+  }
+
+  delete(accessKey) {
+    let q = `mutation($access_key: String!) {` +
+      `  delete_keypair(access_key: $access_key) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
+    let v = {
+      'access_key': accessKey,
+    };
+    return this.client.gql(q, v);
+  }
+}
+
+
+class ResourcePolicy {
+  constructor(client) {
+    this.client = client;
+  }
+
+  get(name = null, fields = ['name',
+    'created_at',
+    'default_for_unspecified',
+    'total_resource_slots',
+    'max_concurrent_sessions',
+    'max_containers_per_session',
+    'max_vfolder_count',
+    'max_vfolder_size',
+    'allowed_vfolder_hosts',
+    'idle_timeout']) {
+    let q, v;
+    if (name === null) {
+      q = `query {` +
+        `  keypair_resource_policies { ${fields.join(" ")} }` +
+        '}';
+      v = {'n': name};
+    } else {
+      q = `query($n:String!) {` +
+        `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
+        '}';
+      v = {'n': name};
+    }
+    return this.client.gql(q, v);
+  }
+
+  add(name = null, input) {
+    let fields = ['name',
+      'created_at',
+      'default_for_unspecified',
+      'total_resource_slots',
+      'max_concurrent_sessions',
+      'max_containers_per_session',
+      'max_vfolder_count',
+      'max_vfolder_size',
+      'allowed_vfolder_hosts',
+      'idle_timeout'];
+    if (this.client.is_admin === true && name !== null) {
+      let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
+        `  create_keypair_resource_policy(name: $name, props: $input) {` +
+        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': name,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+
+  mutate(name = null, input) {
+    let fields = ['name',
+      'created_at',
+      'default_for_unspecified',
+      'total_resource_slots',
+      'max_concurrent_sessions',
+      'max_containers_per_session',
+      'max_vfolder_count',
+      'max_vfolder_size',
+      'allowed_vfolder_hosts',
+      'idle_timeout'];
+    if (this.client.is_admin === true && name !== null) {
+      let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
+        `  modify_keypair_resource_policy(name: $name, props: $input) {` +
+        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': name,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+}
+
+class Image {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
+    let q, v;
+    q = `query {` +
+      `  images { ${fields.join(" ")} }` +
+      '}';
+    v = {};
+    return this.client.gql(q, v);
+  }
+}
+
+class ComputeSession {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+       status = 'RUNNING', accessKey = null) {
+    let q, v;
+    if (this.client.is_admin === true) {
+      if (!accessKey) accessKey = null;
+      q = `query($ak:String, $status:String) {` +
+        `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
+        '}';
+      v = {'status': status, 'ak': accessKey};
+    } else {
+      q = `query($status:String) {` +
+        `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
+        '}';
+      v = {'status': status};
+    }
+    return this.client.gql(q, v);
+  }
+}
+
+class utils {
+  constructor(client) {
+    this.client = client;
+  }
+
+  changeBinaryUnit(value, targetUnit = 'g', defaultUnit = 'b') {
+    if (value === undefined) {
+      return value;
+    }
+    let sourceUnit;
+    const binaryUnits = ['b', 'k', 'm', 'g', 't', 'p', 'auto'];
+    const bBinaryUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+    if (!(binaryUnits.includes(targetUnit))) return false;
+    value = value.toString();
+    if (value.indexOf(' ') >= 0) { // Has string
+      let v = value.split(/(\s+)/);
+      if (bBinaryUnits.includes(v[2])) {
+        value = v[0] + binaryUnits[bBinaryUnits.indexOf(v[2])];
+      } else {
+        value = v[0];
+      }
+    }
+    if (binaryUnits.includes(value.substr(-1))) {
+      sourceUnit = value.substr(-1);
+      value = value.slice(0, -1);
+    } else {
+      sourceUnit = defaultUnit; // Fallback
+    }
+    if (targetUnit == 'auto') {
+
+    }
+    return value * Math.pow(1024, parseInt(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
+  }
+
+  elapsedTime(start, end) {
+    var startDate = new Date(start);
+    if (end === null) {
+      var endDate = new Date();
+    } else {
+      var endDate = new Date(end);
+    }
+    var seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds_cumulative = seconds_total;
+    var days = Math.floor(seconds_cumulative / 86400);
+    seconds_cumulative = seconds_cumulative - days * 86400;
+    var hours = Math.floor(seconds_cumulative / 3600);
+    seconds_cumulative = seconds_cumulative - hours * 3600;
+    var minutes = Math.floor(seconds_cumulative / 60);
+    seconds_cumulative = seconds_cumulative - minutes * 60;
+    var seconds = seconds_cumulative;
+    var result = '';
+    if (days !== undefined && days > 0) {
+      result = result + String(days) + ' Day ';
+    }
+    if (hours !== undefined) {
+      result = result + this._padding_zeros(hours, 2) + ':';
+    }
+    if (minutes !== undefined) {
+      result = result + this._padding_zeros(minutes, 2) + ':';
+    }
+    return result + this._padding_zeros(seconds, 2) + '';
+  }
+
+  _padding_zeros(n, width) {
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+  }
+
+  gqlToObject(array, key) {
+    let result = {};
+    array.forEach(function (element) {
+      result[element[key]] = element;
+    });
+    return result;
+  }
+
+  gqlToList(array, key) {
+    let result = [];
+    array.forEach(function (element) {
+      result.push(element[key]);
+    });
+    return result;
+  }
+
+}
+
+// below will become "static const" properties in ES7
+Object.defineProperty(Client, 'ERR_SERVER', {
+  value: 0,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+Object.defineProperty(Client, 'ERR_RESPONSE', {
+  value: 1,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+Object.defineProperty(Client, 'ERR_REQUEST', {
+  value: 2,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+
+
+const backend = {
+  Client: Client,
+  ClientConfig: ClientConfig,
+}
+
+// for use like "ai.backend.Client"
+module.exports.backend = backend;
+// for classical uses
+module.exports.Client = Client;
+module.exports.ClientConfig = ClientConfig;
+// legacy aliases
+module.exports.BackendAIClient = Client;
+module.exports.BackendAIClientConfig = ClientConfig;
+
+}).call(this,require('_process'),require("buffer").Buffer)
+},{"_process":117,"buffer":47,"crypto":55,"form-data":158,"node-fetch":159,"querystring":126}]},{},[160])(160)
 });
