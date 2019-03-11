@@ -126,6 +126,18 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       this.$['active-credential-list'].refresh();
       this.$['inactive-credential-list'].refresh();
     }, true);
+
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      document.addEventListener('backend-ai-connected', () => {
+        if (window.backendaiclient.is_admin !== true) {
+          this.disablePage();
+        }
+      });
+    } else {
+      if (window.backendaiclient.is_admin !== true) {
+        this.disablePage();
+      }
+    }
   }
 
   connectedCallback() {
@@ -166,7 +178,8 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     this.is_admin = window.backendaiclient.is_admin;
   }
 
-  _launchKeyPairDialog() {
+  async _launchKeyPairDialog() {
+    await this._getResourcePolicies();
     this.$['new-keypair-dialog'].open();
   }
 
@@ -179,7 +192,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     this.$['new-policy-dialog'].open();
   }
 
-  _getResourcePolicies() {
+  async _getResourcePolicies() {
     return window.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
       'total_resource_slots',
       'max_concurrent_sessions',
@@ -308,6 +321,14 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
+  disablePage() {
+    console.log('disable');
+    var els = this.shadowRoot.querySelectorAll(".admin");
+    for (var x = 0; x < els.length; x++) {
+      els[x].style.display = 'none';
+    }
+  }
+
   static get template() {
     // language=HTML
     return html`
@@ -321,14 +342,12 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <paper-material class="item" elevation="1">
+      <paper-material class="admin item" elevation="1">
         <h3>Credentials</h3>
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
           <span class="flex"></span>
-          <template is="dom-if" if="[[is_admin]]">
-            <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
-          </template>
+          <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
@@ -339,14 +358,12 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         </div>
       </paper-material>
 
-      <paper-material class="item" elevation="1">
+      <paper-material class="admin item" elevation="1">
         <h3>Resource policies</h3>
         <h4 class="horizontal flex center center-justified layout">
           <span>Policy groups</span>
           <span class="flex"></span>
-          <template is="dom-if" if="[[is_admin]]">
-            <mwc-button class="fg red" id="add-policy" outlined label="Create policy" icon="add"></mwc-button>
-          </template>
+          <mwc-button class="fg red" id="add-policy" outlined label="Create policy" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
