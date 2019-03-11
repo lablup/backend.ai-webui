@@ -29,8 +29,61 @@ $ npm run wsproxy
 ```
 If you need to serve with nginx, please install backend.ai-wsproxy.
 
-#### nginx configuration example
+### nginx configuration example
 
+#### Web server setting
+
+```
+server {
+    listen      443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name [SERVER URL];
+    charset     utf-8;
+
+    client_max_body_size 15M;   # maximum upload size.
+
+    root [APP PATH];
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+    location /proxy/ {
+        proxy_pass http://127.0.0.1:5050/;
+    }
+    location /p10001/ {
+        proxy_pass http://127.0.0.1:10001/;
+    }
+    keepalive_timeout 120;
+
+    ssl_certificate [CERTIFICATE FILE PATH];
+    ssl_certificate_key [CERTIFICATE KEY FILE PATH];
+}
+```
+
+#### Proxy setting
+
+```
+server {
+    listen      8443 ssl http2;
+    listen [::]:8443 ssl http2;
+    server_name [PROXY URL];
+    charset     utf-8;
+
+    client_max_body_size 15M;   # maximum upload size.
+
+    root /home/kookmin/backend.ai-console/deploy;
+    index index.html;
+
+    location / {
+        proxy_pass http://127.0.0.1:5050/;
+    }
+    keepalive_timeout 120;
+
+    ssl_certificate [CERTIFICATE FILE PATH];
+    ssl_certificate_key [CERTIFICATE KEY FILE PATH];
+}
+```
 
 ### Running websocket with node.js
 
