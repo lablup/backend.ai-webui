@@ -136,6 +136,7 @@ class Client {
     } else {
       this._config = config;
     }
+    this.kernelPrefix = '/kernel'
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
     this.keypair = new Keypair(this);
@@ -249,7 +250,7 @@ class Client {
         params['config'].mounts = resources['mounts'];
       }
     }
-    let rqst = this.newSignedRequest('POST', '/kernel/create', params);
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
     return this._wrapWithPromise(rqst);
   }
 
@@ -259,7 +260,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    */
   getInformation(sessionId) {
-    let rqst = this.newSignedRequest('GET', `/kernel/${sessionId}`, null);
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}`, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -269,7 +270,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    */
   getLogs(sessionId) {
-    let rqst = this.newSignedRequest('GET', `/kernel/${sessionId}/logs`, null);
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/logs`, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -279,7 +280,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    */
   destroy(sessionId) {
-    let rqst = this.newSignedRequest('DELETE', `/kernel/${sessionId}`, null);
+    let rqst = this.newSignedRequest('DELETE', `${this.kernelPrefix}/${sessionId}`, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -289,7 +290,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    */
   restart(sessionId) {
-    let rqst = this.newSignedRequest('PATCH', `/kernel/${sessionId}`, null);
+    let rqst = this.newSignedRequest('PATCH', `${this.kernelPrefix}/${sessionId}`, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -312,7 +313,7 @@ class Client {
       "runId": runId,
       "options": opts,
     };
-    let rqst = this.newSignedRequest('POST', `/kernel/${sessionId}`, params);
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
     return this._wrapWithPromise(rqst);
   }
 
@@ -336,7 +337,7 @@ class Client {
   upload(sessionId, path, fs) {
     const formData = new FormData();
     formData.append('src', fs, {filepath: path});
-    let rqst = this.newSignedRequest('POST', `/kernel/${sessionId}/upload`, formData)
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData)
     return this._wrapWithPromise(rqst);
   }
 
@@ -537,7 +538,6 @@ class VFolder {
     formData.append('src', fs, {filepath: path});
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData)
     return this.client._wrapWithPromise(rqst);
-
   }
 
   uploadFormData(fss, name = null) {
@@ -680,12 +680,20 @@ class Keypair {
     'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
 
     let q;
-    if (userId == null) {
-      q = `query($is_active: Boolean) {` +
-        `  keypairs(is_active: $is_active) {` +
-        `    ${fields.join(" ")}` +
-        `  }` +
-        `}`;
+    if (this.client.is_admin) {
+      if (userId == null) {
+        q = `query($is_active: Boolean) {` +
+          `  keypairs(is_active: $is_active) {` +
+          `    ${fields.join(" ")}` +
+          `  }` +
+          `}`;
+      } else {
+        q = `query($user_id: String!, $is_active: Boolean) {` +
+          `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+          `    ${fields.join(" ")}` +
+          `  }` +
+          `}`;
+      }
     } else {
       q = `query($user_id: String!, $is_active: Boolean) {` +
         `  keypairs(user_id: $user_id, is_active: $is_active) {` +
@@ -694,7 +702,7 @@ class Keypair {
         `}`;
     }
     let v = {
-      'user_id': userId,
+      'user_id': userId || this.client.email,
       'is_active': isActive,
     };
     return this.client.gql(q, v);
@@ -769,20 +777,16 @@ class ResourcePolicy {
     'allowed_vfolder_hosts',
     'idle_timeout']) {
     let q, v;
-    if (this.client.is_admin === true) {
-      if (name === null) {
-        q = `query {` +
-          `  keypair_resource_policies { ${fields.join(" ")} }` +
-          '}';
-        v = {'n': name};
-      } else {
-        q = `query($n:String!) {` +
-          `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
-          '}';
-        v = {'n': name};
-      }
+    if (name === null) {
+      q = `query {` +
+        `  keypair_resource_policies { ${fields.join(" ")} }` +
+        '}';
+      v = {'n': name};
     } else {
-      throw new Error("Admin privilege is required.")
+      q = `query($n:String!) {` +
+        `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
+        '}';
+      v = {'n': name};
     }
     return this.client.gql(q, v);
   }

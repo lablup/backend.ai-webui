@@ -322,7 +322,6 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
   }
 
   disablePage() {
-    console.log('disable');
     var els = this.shadowRoot.querySelectorAll(".admin");
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';

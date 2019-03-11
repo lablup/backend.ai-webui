@@ -37,81 +37,112 @@
     }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
   }, {}],
   3: [function (require, module, exports) {
-    'use babel';
-    /*
+    (function (Buffer) {
+      'use babel';
+      /*
 Backend.AI Node.JS / Javascript ES6 API Proxy Library for Ingen (v19.03b9)
 ==========================================================================
 
 (C) Copyright 2016-2019 Lablup Inc.
 Licensed under MIT
 */
-    /* jshint esnext: true */
+      /* jshint esnext: true */
 
-    const clientNode = require('./backend.ai-client-node');
+      const clientNode = require('./backend.ai-client-node');
 
 
-    class IngenClientConfig extends clientNode.ClientConfig {
-      constructor(accessKey, secretKey, endpoint) {
-        accessKey = secretKey = endpoint = '';
-        super(accessKey, secretKey, endpoint);
-      }
-    }
-
-    class IngenClient extends clientNode.Client {
-      constructor(config, agentSignature) {
-        super(config, agentSignature);
-        this.vfolder.urlPrefix = '/ingen/folders';
+      class IngenClientConfig extends clientNode.ClientConfig {
+        constructor(accessKey, secretKey, endpoint) {
+          accessKey = secretKey = endpoint = '';
+          super(accessKey, secretKey, endpoint);
+        }
       }
 
-      /* GraphQL requests */
-      gql(q, v) {
-        const query = {'query': q, 'variables': v};
-        const rqst = this.newSignedRequest('POST', '/ingen/graphql', query);
-        return this._wrapWithPromise(rqst);
+      class IngenClient extends clientNode.Client {
+        constructor(config, agentSignature) {
+          super(config, agentSignature);
+          this.kernelPrefix = '/ingen/kernel';
+          this.vfolder.urlPrefix = '/ingen/folders';
+        }
+
+        /* GraphQL requests */
+        gql(q, v) {
+          const query = {'query': q, 'variables': v};
+          const rqst = this.newSignedRequest('POST', '/ingen/graphql', query);
+          return this._wrapWithPromise(rqst);
+        }
+
+        /**
+         * Generate a RequestInfo object that can be passed to fetch() API.
+         * We don't need signing process since it will be dealt in ingen server,
+         * but we keep the method name to follow the parent's interface.
+         *
+         * @param {string} method - the HTTP method
+         * @param {string} queryString - the URI path and GET parameters
+         * @param {string} body - an object that will be encoded as JSON in the request body
+         *
+         * @return {Object} requestInfo - ingen request information
+         */
+        newSignedRequest(method, queryString, body) {
+          let requestBody;
+          let contentType = 'application/json';
+          if (body === null || body === undefined) {
+            requestBody = '';
+          } else if (typeof body.getBoundary === 'function' || body instanceof FormData) {
+            // detect form data input from form-data module
+            requestBody = body;
+            contentType = 'multipart/form-data';
+          } else {
+            requestBody = JSON.stringify(body);
+          }
+
+          const hdrs = new Headers();
+          if (body != undefined) {
+            if (typeof body.getBoundary === 'function') {
+              hdrs.set('Content-Type', body.getHeaders()['content-type']);
+            }
+            if (body instanceof FormData) {
+            } else {
+              hdrs.set('Content-Type', content_type);
+              hdrs.set('Content-Length', Buffer.byteLength(authBody));
+            }
+          } else {
+            hdrs.set('Content-Type', contentType);
+          }
+          const uri = queryString; // endpoint will be determined in inge
+
+          const requestInfo = {
+            method: method,
+            headers: hdrs,
+            cache: 'default',
+            body: requestBody,
+            uri: uri
+          };
+          return requestInfo;
+        }
+
+        hello() {
+          const rqst = this.newSignedRequest('GET', '/ingen');
+          return this._wrapWithPromise(rqst);
+        }
       }
 
-      /**
-       * Generate a RequestInfo object that can be passed to fetch() API.
-       * We don't need signing process since it will be dealt in ingen server,
-       * but we keep the method name to follow the parent's interface.
-       *
-       * @param {string} method - the HTTP method
-       * @param {string} queryString - the URI path and GET parameters
-       * @param {string} body - an object that will be encoded as JSON in the request body
-       *
-       * @return {Object} requestInfo - ingen request information
-       */
-      newSignedRequest(method, queryString, body) {
-        const requestBody = !body ? '' : JSON.stringify(body);
-        const requestInfo = {
-          method: method,
-          body: requestBody,
-          uri: queryString // endpoint will be determined in inge
-        };
-        return requestInfo;
-      }
 
-      hello() {
-        const rqst = this.newSignedRequest('GET', '/ingen');
-        return this._wrapWithPromise(rqst);
-      }
-    }
+      const backend = {
+        Client: IngenClient,
+        ClientConfig: IngenClientConfig,
+      };
 
-
-    const backend = {
-      Client: IngenClient,
-      ClientConfig: IngenClientConfig,
-    };
-
-    module.exports.backend = backend;
+      module.exports.backend = backend;
 // for classical uses
-    module.exports.Client = IngenClient;
-    module.exports.ClientConfig = IngenClientConfig;
+      module.exports.Client = IngenClient;
+      module.exports.ClientConfig = IngenClientConfig;
 // legacy aliases
-    module.exports.BackendAIClient = IngenClient;
-    module.exports.BackendAIClientConfig = IngenClientConfig;
+      module.exports.BackendAIClient = IngenClient;
+      module.exports.BackendAIClientConfig = IngenClientConfig;
 
-  }, {"./backend.ai-client-node": 4}],
+    }).call(this, require("buffer").Buffer)
+  }, {"./backend.ai-client-node": 4, "buffer": 52}],
   4: [function (require, module, exports) {
     (function (process, Buffer) {
       'use babel';
@@ -214,6 +245,7 @@ Licensed under MIT
           } else {
             this._config = config;
           }
+          this.kernelPrefix = '/kernel'
           this.vfolder = new VFolder(this);
           this.agent = new Agent(this);
           this.keypair = new Keypair(this);
@@ -327,7 +359,7 @@ Licensed under MIT
               params['config'].mounts = resources['mounts'];
             }
           }
-          let rqst = this.newSignedRequest('POST', '/kernel/create', params);
+          let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
           return this._wrapWithPromise(rqst);
         }
 
@@ -337,7 +369,7 @@ Licensed under MIT
          * @param {string} sessionId - the sessionId given when created
          */
         getInformation(sessionId) {
-          let rqst = this.newSignedRequest('GET', `/kernel/${sessionId}`, null);
+          let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}`, null);
           return this._wrapWithPromise(rqst);
         }
 
@@ -347,7 +379,7 @@ Licensed under MIT
          * @param {string} sessionId - the sessionId given when created
          */
         getLogs(sessionId) {
-          let rqst = this.newSignedRequest('GET', `/kernel/${sessionId}/logs`, null);
+          let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/logs`, null);
           return this._wrapWithPromise(rqst);
         }
 
@@ -357,7 +389,7 @@ Licensed under MIT
          * @param {string} sessionId - the sessionId given when created
          */
         destroy(sessionId) {
-          let rqst = this.newSignedRequest('DELETE', `/kernel/${sessionId}`, null);
+          let rqst = this.newSignedRequest('DELETE', `${this.kernelPrefix}/${sessionId}`, null);
           return this._wrapWithPromise(rqst);
         }
 
@@ -367,7 +399,7 @@ Licensed under MIT
          * @param {string} sessionId - the sessionId given when created
          */
         restart(sessionId) {
-          let rqst = this.newSignedRequest('PATCH', `/kernel/${sessionId}`, null);
+          let rqst = this.newSignedRequest('PATCH', `${this.kernelPrefix}/${sessionId}`, null);
           return this._wrapWithPromise(rqst);
         }
 
@@ -390,7 +422,7 @@ Licensed under MIT
             "runId": runId,
             "options": opts,
           };
-          let rqst = this.newSignedRequest('POST', `/kernel/${sessionId}`, params);
+          let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
           return this._wrapWithPromise(rqst);
         }
 
@@ -414,7 +446,7 @@ Licensed under MIT
         upload(sessionId, path, fs) {
           const formData = new FormData();
           formData.append('src', fs, {filepath: path});
-          let rqst = this.newSignedRequest('POST', `/kernel/${sessionId}/upload`, formData)
+          let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData)
           return this._wrapWithPromise(rqst);
         }
 
@@ -615,7 +647,6 @@ Licensed under MIT
           formData.append('src', fs, {filepath: path});
           let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData)
           return this.client._wrapWithPromise(rqst);
-
         }
 
         uploadFormData(fss, name = null) {
@@ -758,12 +789,20 @@ Licensed under MIT
           'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
 
           let q;
-          if (userId == null) {
-            q = `query($is_active: Boolean) {` +
-              `  keypairs(is_active: $is_active) {` +
-              `    ${fields.join(" ")}` +
-              `  }` +
-              `}`;
+          if (this.client.is_admin) {
+            if (userId == null) {
+              q = `query($is_active: Boolean) {` +
+                `  keypairs(is_active: $is_active) {` +
+                `    ${fields.join(" ")}` +
+                `  }` +
+                `}`;
+            } else {
+              q = `query($user_id: String!, $is_active: Boolean) {` +
+                `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+                `    ${fields.join(" ")}` +
+                `  }` +
+                `}`;
+            }
           } else {
             q = `query($user_id: String!, $is_active: Boolean) {` +
               `  keypairs(user_id: $user_id, is_active: $is_active) {` +
@@ -772,7 +811,7 @@ Licensed under MIT
               `}`;
           }
           let v = {
-            'user_id': userId,
+            'user_id': userId || this.client.email,
             'is_active': isActive,
           };
           return this.client.gql(q, v);
@@ -847,20 +886,16 @@ Licensed under MIT
           'allowed_vfolder_hosts',
           'idle_timeout']) {
           let q, v;
-          if (this.client.is_admin === true) {
-            if (name === null) {
-              q = `query {` +
-                `  keypair_resource_policies { ${fields.join(" ")} }` +
-                '}';
-              v = {'n': name};
-            } else {
-              q = `query($n:String!) {` +
-                `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
-                '}';
-              v = {'n': name};
-            }
+          if (name === null) {
+            q = `query {` +
+              `  keypair_resource_policies { ${fields.join(" ")} }` +
+              '}';
+            v = {'n': name};
           } else {
-            throw new Error("Admin privilege is required.")
+            q = `query($n:String!) {` +
+              `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
+              '}';
+            v = {'n': name};
           }
           return this.client.gql(q, v);
         }
@@ -23876,13 +23911,13 @@ Script.prototype.runInContext = function (context) {
         throw new TypeError("needs a 'context' argument.");
     }
 
-    var iframe = document.createElement('iframe');
+  var iframe = document.createElement('iframe');
     if (!iframe.style) iframe.style = {};
     iframe.style.display = 'none';
 
-    document.body.appendChild(iframe);
+  document.body.appendChild(iframe);
 
-    var win = iframe.contentWindow;
+  var win = iframe.contentWindow;
     var wEval = win.eval, wExecScript = win.execScript;
 
     if (!wEval && wExecScript) {
@@ -23891,7 +23926,7 @@ Script.prototype.runInContext = function (context) {
         wEval = win.eval;
     }
 
-    forEach(Object_keys(context), function (key) {
+  forEach(Object_keys(context), function (key) {
         win[key] = context[key];
     });
     forEach(globals, function (key) {
@@ -23900,11 +23935,11 @@ Script.prototype.runInContext = function (context) {
         }
     });
 
-    var winKeys = Object_keys(win);
+  var winKeys = Object_keys(win);
 
     var res = wEval.call(win, this.code);
 
-    forEach(Object_keys(win), function (key) {
+  forEach(Object_keys(win), function (key) {
         // Avoid copying circular objects like `top` and `window` by only
         // updating existing context properties or new properties in the `win`
         // that was only introduced after the eval.
@@ -23919,9 +23954,9 @@ Script.prototype.runInContext = function (context) {
         }
     });
 
-    document.body.removeChild(iframe);
+  document.body.removeChild(iframe);
 
-    return res;
+  return res;
 };
 
 Script.prototype.runInThisContext = function () {

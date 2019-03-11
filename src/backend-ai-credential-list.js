@@ -110,7 +110,6 @@ class BackendAICredentialList extends PolymerElement {
       default:
         is_active = false;
     }
-
     return window.backendaiclient.resourcePolicy.get().then((response) => {
       this.shadowRoot.querySelector('#loading-indicator').hide();
       let rp = response.keypair_resource_policies;
