@@ -397,7 +397,7 @@ class BackendAIJobList extends PolymerElement {
               this.$.indicator.end();
               console.log("Jupyter proxy loaded: ");
               console.log(kernelId);
-              }, 1000);
+            }, 1000);
           }
         });
     }
@@ -418,9 +418,9 @@ class BackendAIJobList extends PolymerElement {
               this.$.indicator.end();
               console.log("Jupyter proxy loaded: ");
               console.log(kernelId);
-              }, 1000);
+            }, 1000);
           }
-      });
+        });
     }
   }
 
@@ -440,9 +440,9 @@ class BackendAIJobList extends PolymerElement {
               this.$.indicator.end();
               console.log("Jupyter proxy loaded: ");
               console.log(kernelId);
-              }, 1000);
+            }, 1000);
           }
-      });
+        });
     }
   }
 
