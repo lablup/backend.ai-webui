@@ -63,8 +63,7 @@ class IngenClient extends clientNode.Client {
       }
       if (body instanceof FormData) {
       } else {
-        hdrs.set('Content-Type', content_type);
-        hdrs.set('Content-Length', Buffer.byteLength(authBody));
+        hdrs.set('Content-Type', contentType);
       }
     } else {
       hdrs.set('Content-Type', contentType);
