@@ -267,6 +267,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
     };
+    return input;
   }
 
   _addResourcePolicy() {
@@ -284,7 +285,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       return;
     }
     let input = this._readResourcePolicyInput();
-
+    console.log(input);
     window.backendaiclient.resourcePolicy.add(name, input).then(response => {
       this.$['new-policy-dialog'].close();
       this.$.notification.text = "Resource policy successfully created.";
