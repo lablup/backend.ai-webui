@@ -445,9 +445,17 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let cpu_metric = item;
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
-            cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu));
+            if (parseInt(cpu_metric.max) !== 0) {
+              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu));
+            } else {
+              cpu_metric.max = parseInt(this.userResourceLimit.cpu);
+            }
           } else {
-            cpu_metric.max = parseInt(cpu_metric.max);
+            if (parseInt(cpu_metric.max) !== 0) {
+              cpu_metric.max = parseInt(cpu_metric.max);
+            } else {
+              cpu_metric.max = 4;
+            }
           }
           if (cpu_metric.min > cpu_metric.max) {
             // TODO: dynamic maximum per user policy
@@ -459,13 +467,20 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
-            gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']));
+            if (parseInt(gpu_metric.max) !== 0) {
+              gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']));
+            } else {
+              gpu_metric.max = parseInt(this.userResourceLimit['cuda.device']);
+            }
           } else {
-            gpu_metric.max = parseInt(gpu_metric.max);
+            if (parseInt(gpu_metric.max) !== 0) {
+              gpu_metric.max = parseInt(gpu_metric.max);
+            } else {
+              gpu_metric.max = 0;
+            }
           }
           if (gpu_metric.min > gpu_metric.max) {
             // TODO: dynamic maximum per user policy
-
           }
           this.gpu_metric = gpu_metric;
         }
@@ -473,9 +488,17 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let vgpu_metric = item;
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
-            vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']));
+            if (parseInt(vgpu_metric.max) !== 0) {
+              vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']));
+            } else {
+              vgpu_metric.max = parseInt(this.userResourceLimit['cuda.shares']);
+            }
           } else {
-            vgpu_metric.max = parseInt(vgpu_metric.max);
+            if (parseInt(vgpu_metric.max) !== 0) {
+              vgpu_metric.max = parseInt(vgpu_metric.max);
+            } else {
+              vgpu_metric.max = 0;
+            }
           }
           if (vgpu_metric.min > vgpu_metric.max) {
             // TODO: dynamic maximum per user policy
@@ -491,19 +514,26 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           tpu_metric.max = parseInt(tpu_metric.max);
           if (tpu_metric.min > tpu_metric.max) {
             // TODO: dynamic maximum per user policy
-
           }
           this.tpu_metric = tpu_metric;
         }
         if (item.key === 'mem') {
           let mem_metric = item;
           mem_metric.min = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
+          let image_mem_max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           if ('mem' in this.userResourceLimit) {
-            let image_mem_max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
             let user_mem_max = window.window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
-            mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max));
+            if (parseInt(image_mem_max) !== 0) {
+              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max));
+            } else {
+              mem_metric.max = parseFloat(user_mem_max);
+            }
           } else {
-            mem_metric.max = parseFloat(window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g'));
+            if (parseInt(mem_metric.max) !== 0) {
+              mem_metric.max = parseFloat(window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g'));
+            } else {
+              mem_metric.max = 8.0; // TODO: set to largest memory size
+            }
           }
           if (mem_metric.min > mem_metric.max) {
             // TODO: dynamic maximum per user policy
