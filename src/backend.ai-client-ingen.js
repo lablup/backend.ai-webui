@@ -79,6 +79,10 @@ class IngenClient extends clientNode.Client {
     };
     return requestInfo;
   }
+  getResourceSlots() {
+    let rqst = this.newPublicRequest('GET', '/ingen/etcd/resource-slots', null, '');
+    return this._wrapWithPromise(rqst);
+  }
 
   hello() {
     const rqst = this.newSignedRequest('GET', '/ingen');
