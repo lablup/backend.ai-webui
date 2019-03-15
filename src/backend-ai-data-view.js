@@ -70,6 +70,10 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         type: Array,
         value: [],
       },
+      vhost: {
+        type: String,
+        value: 'cephfs'
+      }
     };
   }
 
@@ -657,7 +661,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
               <paper-input id="add-folder-host" label="Host" pattern="[a-zA-Z0-9_-]*" disabled
-                           error-message="Allows letters, numbers and -_." auto-validate value="cephfs"></paper-input>
+                           error-message="Allows letters, numbers and -_." auto-validate value="[[vhost]]"></paper-input>
               <br/>
               <paper-button class="blue add-button" type="submit" id="add-button">
                 <iron-icon icon="rowing"></iron-icon>
