@@ -189,15 +189,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshResourcePolicy();
-        this._refreshResourceValues();
       }, true);
     } else { // already connected
       this._refreshResourcePolicy();
-      this._refreshResourceValues();
     }
   }
 
-  _refreshResourcePolicy() {
+  async _refreshResourcePolicy() {
     window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy']).then((response) => {
       let policyName = response.keypair.resource_policy;
       // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
@@ -232,6 +230,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
       }
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
+      this._refreshResourceValues();
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -282,10 +281,12 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       if ('cuda.device' in results) {
         this.gpu_mode = 'gpu';
         this.gpu_step = 1;
+        console.log('gpu');
       }
       if ('cuda.shares' in results) {
         this.gpu_mode = 'vgpu';
         this.gpu_step = 0.05;
+        console.log('vgpu');
       }
     });
   }
@@ -357,6 +358,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       'java': 'Java',
       'julia': 'Julia',
       'lua': 'Lua',
+      'ngc-rapid': 'RAPID (NGC)',
       'ngc-digits': 'DIGITS (NGC)',
       'ngc-pytorch': 'PyTorch (NGC)',
       'ngc-tensorflow': 'TensorFlow (NGC)',
@@ -486,6 +488,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
         if (item.key === 'cuda.shares') {
           let vgpu_metric = item;
+          console.log("LETS VGPU", item);
+          console.log(this.userResourceLimit['cuda.shares']);
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseInt(vgpu_metric.max) !== 0) {
