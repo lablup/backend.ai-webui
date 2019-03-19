@@ -221,8 +221,12 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  getInformation(sessionId) {
-    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}`, null);
+  getInformation(sessionId, ownerKey = null) {
+    let queryString = `${this.kernelPrefix}/${sessionId}`;
+    if (ownerKey != null) {
+      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+    }
+    let rqst = this.newSignedRequest('GET', queryString, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -231,8 +235,12 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  getLogs(sessionId) {
-    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/logs`, null);
+  getLogs(sessionId, ownerKey = null) {
+    let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
+    if (ownerKey != null) {
+      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+    }
+    let rqst = this.newSignedRequest('GET', queryString, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -241,8 +249,12 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  destroy(sessionId) {
-    let rqst = this.newSignedRequest('DELETE', `${this.kernelPrefix}/${sessionId}`, null);
+  destroy(sessionId, ownerKey = null) {
+    let queryString = `${this.kernelPrefix}/${sessionId}`;
+    if (ownerKey != null) {
+      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+    }
+    let rqst = this.newSignedRequest('DELETE', queryString, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -251,8 +263,12 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  restart(sessionId) {
-    let rqst = this.newSignedRequest('PATCH', `${this.kernelPrefix}/${sessionId}`, null);
+  restart(sessionId, ownerKey = null) {
+    let queryString = `${this.kernelPrefix}/${sessionId}`;
+    if (ownerKey != null) {
+      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+    }
+    let rqst = this.newSignedRequest('PATCH', queryString, null);
     return this._wrapWithPromise(rqst);
   }
 
