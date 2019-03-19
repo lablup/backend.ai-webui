@@ -245,6 +245,8 @@ class BackendAIJobList extends PolymerElement {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
+    const accessKey = controls.accessKey;
+
     if (this.terminationQueue.includes(kernelId)) {
       this.$.notification.text = 'Already terminating the session.';
       this.$.notification.show();
@@ -254,7 +256,7 @@ class BackendAIJobList extends PolymerElement {
     this.$.notification.show();
     this.terminationQueue.push(kernelId);
     this._terminateApp(kernelId).then(() => {
-      window.backendaiclient.destroyKernel(kernelId).then((req) => {
+      window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
         setTimeout(() => {
           this.terminationQueue = [];
           this.refreshList();
@@ -328,7 +330,8 @@ class BackendAIJobList extends PolymerElement {
   _showLogs(e) {
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
-    window.backendaiclient.getLogs(kernelId).then((req) => {
+    const accessKey = controls.accessKey;
+    window.backendaiclient.getLogs(kernelId, accessKey).then((req) => {
       setTimeout(() => {
         this.$['work-title'].innerHTML = `${kernelId}`;
         this.$['work-area'].innerHTML = `<pre>${req.result.logs}</pre>` || 'No logs.';
@@ -660,7 +663,7 @@ class BackendAIJobList extends PolymerElement {
           <template class="header">Control</template>
           <template>
             <div id="controls" class="layout horizontal flex center"
-                 kernel-id="[[item.sess_id]]">
+                 kernel-id="[[item.sess_id]]" access-key="[[item.access_key]]">
               <template is="dom-if" if="[[_isRunning()]]">
                 <paper-icon-button class="fg blue controls-running" icon="assignment"
                                    on-tap="_showLogs"></paper-icon-button>
