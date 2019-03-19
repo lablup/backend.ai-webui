@@ -398,7 +398,7 @@ class BackendAIJobList extends PolymerElement {
             setTimeout(() => {
               window.open(response.url + "&redirect=/tree", '_blank');
               this.$.indicator.end();
-              console.log("Jupyter proxy loaded: ");
+              console.log("Jupyter notebook proxy loaded: ");
               console.log(kernelId);
             }, 1000);
           }
@@ -419,7 +419,7 @@ class BackendAIJobList extends PolymerElement {
             setTimeout(() => {
               window.open(response.url + "&redirect=/lab", '_blank');
               this.$.indicator.end();
-              console.log("Jupyter proxy loaded: ");
+              console.log("JupyterLab proxy loaded: ");
               console.log(kernelId);
             }, 1000);
           }
@@ -441,7 +441,28 @@ class BackendAIJobList extends PolymerElement {
             setTimeout(() => {
               window.open(response.url + "&redirect=/terminals/1", '_blank');
               this.$.indicator.end();
-              console.log("Jupyter proxy loaded: ");
+              console.log("Jupyter notebook proxy loaded: ");
+              console.log(kernelId);
+            }, 1000);
+          }
+        });
+    }
+  }
+
+  _runTensorBoard(e) {
+    const termButton = e.target;
+    const controls = e.target.closest('#controls');
+    const kernelId = controls.kernelId;
+    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+      this.$.indicator.start();
+      this._open_wsproxy(kernelId, 'tensorboard')
+        .then((response) => {
+          if (response.url) {
+            this.$.indicator.set(100, 'Prepared.');
+            setTimeout(() => {
+              window.open(response.url + "&redirect=/", '_blank');
+              this.$.indicator.end();
+              console.log("TensorBoard proxy loaded: ");
               console.log(kernelId);
             }, 1000);
           }
