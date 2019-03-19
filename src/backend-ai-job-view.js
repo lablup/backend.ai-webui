@@ -195,7 +195,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     }
   }
 
-  async _refreshResourcePolicy() {
+  _refreshResourcePolicy() {
     window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy']).then((response) => {
       let policyName = response.keypair.resource_policy;
       // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.

@@ -309,7 +309,7 @@ class BackendAIJobList extends PolymerElement {
     return this.sendRequest(rqst)
       .then((response) => {
         let accessKey = window.backendaiclient._config.accessKey;
-        if (response.code !== 404) {
+        if (response !== undefined && response.code !== 404) {
           let rqst = {
             method: 'GET',
             uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId + '/delete'
