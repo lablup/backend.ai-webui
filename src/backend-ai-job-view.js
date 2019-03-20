@@ -434,13 +434,53 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     return this.supports[lang];
   }
 
+  _aggregateResourceUse(compute_sessions) {
+    let used_slot = {};
+    compute_sessions.forEach((item) => {
+      if ('cpu_slot' in item) {
+        if ('cpu_slot' in used_slot) {
+          used_slot['cpu_slot'] = used_slot['cpu_slot'] + item['cpu_slot'];
+        } else {
+          used_slot['cpu_slot'] = item['cpu_slot'];
+        }
+      }
+      if ('mem_slot' in item) {
+        if ('mem_slot' in used_slot) {
+          used_slot['mem_slot'] = used_slot['mem_slot'] + item['mem_slot'];
+        } else {
+          used_slot['mem_slot'] = item['mem_slot'];
+        }
+      }
+      if ('gpu_slot' in item) {
+        if ('gpu_slot' in used_slot) {
+          used_slot['gpu_slot'] = used_slot['gpu_slot'] + item['gpu_slot'];
+        } else {
+          used_slot['gpu_slot'] = item['gpu_slot'];
+        }
+      }
+      if ('vgpu_slot' in item) {
+        if ('vgpu_slot' in used_slot) {
+          used_slot['vgpu_slot'] = used_slot['vgpu_slot'] + item['vgpu_slot'];
+        } else {
+          used_slot['vgpu_slot'] = item['vgpu_slot'];
+        }
+      }
+      // Resource minus
+    });
+    console.log(total_slot);
+    console.log(this.userResourceLimit);
+    return total_slot;
+  }
   updateMetric() {
     if (this.$['environment'].value in this.aliases) {
       let currentLang = this.aliases[this.$['environment'].value];
       let currentVersion = this.$['version'].value;
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
-      let userResource = {};
+      let currentUserResource = {};
+      let compute_sessions = this.shadowRoot.querySelector('#running-jobs').compute_sessions;
+      this._aggregateResourceUse(compute_sessions);
+      console.log(compute_sessions);
       if (!currentResource) return;
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
