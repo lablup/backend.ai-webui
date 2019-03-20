@@ -137,9 +137,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.$['version'].addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this._initAliases();
     var gpu_resource = this.$['gpu-resource'];
-    //this.$['gpu-value'].textContent = gpu_resource.value;
     gpu_resource.addEventListener('value-change', () => {
-      //this.$['gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
         this.$['use-gpu-checkbox'].checked = true;
       } else {
