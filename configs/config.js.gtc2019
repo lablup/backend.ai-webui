@@ -1,0 +1,5 @@
+export const proxyURL = "http://192.168.1.101:5050/";
+export const apiEndpoint = "http://192.168.1.101:8081";
+export const apiEndpointText = "Backend.AI Enterprise/On-premise (GTC2019)";
+export const proxyBaseURL = "http://192.168.1.101";
+export const proxyListenIP = "0.0.0.0";
