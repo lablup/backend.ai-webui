@@ -148,7 +148,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     });
     this.$['use-gpu-checkbox'].addEventListener('change', () => {
       if (this.$['use-gpu-checkbox'].checked === true) {
-        this.$['gpu-resource'].disabled = false;
+        if (this.gpu_metric.min == this.gpu_metric.max) {
+          this.shadowRoot.querySelector('#gpu-resource').disabled = true
+        } else {
+          this.$['gpu-resource'].disabled = false;
+        }
       } else {
         this.$['gpu-resource'].disabled = true;
       }
@@ -265,6 +269,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _launchSessionDialog() {
+    this.updateMetric();
     var gpu_resource = this.$['gpu-resource'];
     //this.$['gpu-value'].textContent = gpu_resource.value;
     if (gpu_resource.value > 0) {
@@ -529,7 +534,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           }
           this.cpu_metric = cpu_metric;
         }
-        console.log(this.cpu_metric);
 
         if (item.key === 'cuda.device') {
           let gpu_metric = item;
@@ -611,6 +615,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           if (mem_metric.min > mem_metric.max) {
             // TODO: dynamic maximum per user policy
           }
+          console.log(mem_metric);
           this.mem_metric = mem_metric;
         }
       });
@@ -627,7 +632,25 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         this.$['gpu-resource'].disabled = false;
         this.$['gpu-resource'].value = this.gpu_metric.max;
       }
-      //this.$['gpu-value'].textContent = this.$['gpu-resource'].value;
+      // Post-UI markup to disable unchangeable values
+      if (this.cpu_metric.min == this.cpu_metric.max) {
+        this.shadowRoot.querySelector('#cpu-resource').max = this.cpu_metric.max + 1;
+        this.shadowRoot.querySelector('#cpu-resource').disabled = true
+      } else {
+        this.shadowRoot.querySelector('#cpu-resource').disabled = false;
+      }
+      if (this.mem_metric.min == this.mem_metric.max) {
+        this.shadowRoot.querySelector('#ram-resource').max = this.mem_metric.max + 1;
+        this.shadowRoot.querySelector('#ram-resource').disabled = true
+      } else {
+        this.shadowRoot.querySelector('#ram-resource').disabled = false;
+      }
+      if (this.gpu_metric.min == this.gpu_metric.max) {
+        this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
+        this.shadowRoot.querySelector('#gpu-resource').disabled = true
+      } else {
+        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+      }
     }
   }
 
