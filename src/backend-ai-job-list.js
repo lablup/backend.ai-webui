@@ -725,6 +725,23 @@ class BackendAIJobList extends PolymerElement {
 
         </paper-material>
       </paper-dialog>
+      <paper-dialog id="app-dialog"
+                    entry-animation="slide-from-right-animation" exit-animation="slide-right-animation"
+                    style="padding:0;">
+        <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
+          <h3 class="horizontal center layout" style="font-weight:bold">
+            <span id="work-title"></span>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              Close
+            </paper-icon-button>
+          </h3>
+          <paper-dialog-scrollable id="work-area" style="overflow:scroll;"></paper-dialog-scrollable>
+          <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
+                  style="border-style: none;width: 100%;"></iframe>
+
+        </paper-material>
+      </paper-dialog>
     `;
   }
 }
