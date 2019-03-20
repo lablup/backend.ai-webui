@@ -79,3 +79,6 @@ app
 
 # webpack
 dist
+
+# deploy makefile
+deploy

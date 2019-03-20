@@ -30,8 +30,9 @@ dep: compile
 web:
 	cp ./configs/config.js.$(site) config.js
 	make dep
-	cd deploy; rm -rf ./*
-	cp -Rp build/bundle/* deploy
+	mkdir -p ./deploy/$(site)
+	cd deploy/$(site); rm -rf ./*; mkdir console
+	cp -Rp build/bundle/* deploy/$(site)/console
 	cp config.js.original config.js
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
