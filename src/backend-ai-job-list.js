@@ -149,7 +149,8 @@ class BackendAIJobList extends PolymerElement {
             sessions[objectKey].gpu_slot = parseInt(occupied_slots['cuda.device']);
           }
           if ('cuda.shares' in occupied_slots) {
-            sessions[objectKey].vgpu_slot = parseFloat(occupied_slots['cuda.shares']);
+            //sessions[objectKey].vgpu_slot = parseFloat(occupied_slots['cuda.shares']);
+            sessions[objectKey].vgpu_slot = parseFloat(parseFloat(occupied_slots['cuda.shares'])*(1.0/0.9)).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
         });

@@ -191,11 +191,11 @@ class Client {
       if (resources['mem']) {
         config['mem'] = resources['mem'];
       }
-      if (resources['gpu']) {
-        config['cuda.device'] = resources['gpu'];
+      if (resources['gpu']) { // Temporary fix for resource handling
+        config['cuda.device'] = parseFloat(parseFloat(resources['gpu'])*0.9).toFixed(2);
       }
-      if (resources['vgpu']) {
-        config['cuda.shares'] = resources['vgpu'];
+      if (resources['vgpu']) { // Temporary fix for resource handling
+        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu'])*0.9).toFixed(2);
       }
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
