@@ -232,7 +232,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       }
     }).then((response) => {
       let resource_policy = response.keypair_resource_policy;
-      if (resource_policy.default_for_unspecified === 'UNLIMITED') {
+      console.log(resource_policy.default_for_unspecified);
+      if (resource_policy.default_for_unspecified === 'UNLIMITED' ||
+        resource_policy.default_for_unspecified === 'DefaultForUnspecified.UNLIMITED') {
         this.defaultResourcePolicy = 'UNLIMITED';
       } else {
         this.defaultResourcePolicy = 'LIMITED';
@@ -498,6 +500,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           available_slot[slot] = total_slot[slot];
         }
       } else {// TODO: unlimited vs limited.
+        console.log(this.defaultResourcePolicy);
         if (this.defaultResourcePolicy === 'UNLIMITED') {
           available_slot[slot] = 100000;
         } else {
@@ -505,6 +508,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
       }
     });
+    console.log(total_slot);
+    console.log(available_slot);
     return available_slot;
   }
 
