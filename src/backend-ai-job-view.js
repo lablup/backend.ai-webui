@@ -556,8 +556,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
         if (item.key === 'cuda.shares') {
           let vgpu_metric = item;
-          console.log("LETS VGPU", item);
-          console.log(this.userResourceLimit['cuda.shares']);
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseInt(vgpu_metric.max) !== 0) {
@@ -613,7 +611,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           if (mem_metric.min > mem_metric.max) {
             // TODO: dynamic maximum per user policy
           }
-          console.log(mem_metric);
           this.mem_metric = mem_metric;
         }
       });
