@@ -125,6 +125,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       images: {
         type: Object,
         value: {}
+      },
+      defaultResourcePolicy: {
+        type: String,
+        value: 'UNLIMITED'
       }
     }
   }
@@ -229,7 +233,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     }).then((response) => {
       let resource_policy = response.keypair_resource_policy;
       if (resource_policy.default_for_unspecified === 'UNLIMITED') {
-
+        this.defaultResourcePolicy = 'UNLIMITED';
+      } else {
+        this.defaultResourcePolicy = 'LIMITED';
       }
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this._refreshResourceValues();
@@ -451,7 +457,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     if ('cuda.shares' in this.userResourceLimit) {
       total_slot['vgpu_slot'] = this.userResourceLimit['cuda.shares'];
     }
-
     let used_slot = {};
     compute_sessions.forEach((item) => {
       if ('cpu_slot' in item) {
@@ -492,12 +497,14 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         } else {
           available_slot[slot] = total_slot[slot];
         }
-      } else {
-        available_slot[slot] = 0;
+      } else {// TODO: unlimited vs limited.
+        if (this.defaultResourcePolicy === 'UNLIMITED') {
+          available_slot[slot] = 100000;
+        } else {
+          available_slot[slot] = 0;
+        }
       }
     });
-    console.log(available_slot);
-
     return available_slot;
   }
 
