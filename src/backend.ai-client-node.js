@@ -98,7 +98,7 @@ class Client {
     } else {
       this._config = config;
     }
-    this.kernelPrefix = '/kernel'
+    this.kernelPrefix = '/kernel';
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
     this.keypair = new Keypair(this);
@@ -193,10 +193,10 @@ class Client {
         config['mem'] = resources['mem'];
       }
       if (resources['gpu']) { // Temporary fix for resource handling
-        config['cuda.device'] = parseFloat(parseFloat(resources['gpu'])*0.9).toFixed(2);
+        config['cuda.device'] = parseFloat(parseFloat(resources['gpu']) * 0.9).toFixed(2);
       }
       if (resources['vgpu']) { // Temporary fix for resource handling
-        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu'])*0.9).toFixed(2);
+        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu']) * 0.9).toFixed(2);
       }
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
@@ -316,7 +316,7 @@ class Client {
   upload(sessionId, path, fs) {
     const formData = new FormData();
     formData.append('src', fs, {filepath: path});
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData)
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData);
     return this._wrapWithPromise(rqst);
   }
 
@@ -331,7 +331,7 @@ class Client {
     let query = {
       'query': q,
       'variables': v
-    }
+    };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
     return this._wrapWithPromise(rqst);
   }
@@ -515,12 +515,12 @@ class VFolder {
     }
     let formData = new FormData();
     formData.append('src', fs, {filepath: path});
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData)
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData);
     return this.client._wrapWithPromise(rqst);
   }
 
   uploadFormData(fss, name = null) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss)
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -567,7 +567,7 @@ class VFolder {
     let params = {
       'path': path
     };
-    let q = querystring.stringify(params)
+    let q = querystring.stringify(params);
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -890,56 +890,60 @@ class Resources {
   }
 
   totalResourceInformation(status = 'ALIVE') {
-    let fields = ['id',
-      'addr',
-      'status',
-      'first_contact',
-      'cpu_cur_pct',
-      'mem_cur_bytes',
-      'occupied_slots',
-      'available_slots'];
-    return this.client.agent.list(status, fields).then((response) => {
-      this._init_resource_values();
-      this.agents = response.agents;
-      Object.keys(this.agents).map((objectKey, index) => {
-        let value = this.agents[objectKey];
-        let occupied_slots = JSON.parse(value.occupied_slots);
-        let available_slots = JSON.parse(value.available_slots);
-        this.resources.cpu.total = this.resources.cpu.total + parseInt(Number(available_slots.cpu));
-        this.resources.cpu.used = this.resources.cpu.used + parseInt(Number(occupied_slots.cpu));
-        this.resources.cpu.percent = this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
+    if (this.client.is_admin) {
+      let fields = ['id',
+        'addr',
+        'status',
+        'first_contact',
+        'cpu_cur_pct',
+        'mem_cur_bytes',
+        'occupied_slots',
+        'available_slots'];
+      return this.client.agent.list(status, fields).then((response) => {
+        this._init_resource_values();
+        this.agents = response.agents;
+        Object.keys(this.agents).map((objectKey, index) => {
+          let value = this.agents[objectKey];
+          let occupied_slots = JSON.parse(value.occupied_slots);
+          let available_slots = JSON.parse(value.available_slots);
+          this.resources.cpu.total = this.resources.cpu.total + parseInt(Number(available_slots.cpu));
+          this.resources.cpu.used = this.resources.cpu.used + parseInt(Number(occupied_slots.cpu));
+          this.resources.cpu.percent = this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
 
-        this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'm'));
-        this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
-        this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'm'));
+          this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'm'));
+          this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
+          this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'm'));
 
-        this.resources.gpu.total = parseInt(this.resources.gpu.total) + parseInt(Number(available_slots['cuda.device']));
-        if ('cuda.device' in occupied_slots) {
-          this.resources.gpu.used = parseInt(this.resources.gpu.used) + parseInt(Number(occupied_slots['cuda.device']));
-        }
-        this.resources.vgpu.total = parseFloat(this.resources.vgpu.total) + parseFloat(available_slots['cuda.shares']);
-        if ('cuda.shares' in occupied_slots) {
-          this.resources.vgpu.used = parseFloat(this.resources.vgpu.used) + parseFloat(occupied_slots['cuda.shares']);
-        }
-        if (isNaN(this.resources.cpu.used)) {
-          this.resources.cpu.used = 0;
-        }
-        if (isNaN(this.resources.mem.used)) {
-          this.resources.mem.used = 0;
-        }
-        if (isNaN(this.resources.gpu.used)) {
-          this.resources.gpu.used = 0;
-        }
-        if (isNaN(this.resources.vgpu.used)) {
-          this.resources.vgpu.used = 0;
-        }
+          this.resources.gpu.total = parseInt(this.resources.gpu.total) + parseInt(Number(available_slots['cuda.device']));
+          if ('cuda.device' in occupied_slots) {
+            this.resources.gpu.used = parseInt(this.resources.gpu.used) + parseInt(Number(occupied_slots['cuda.device']));
+          }
+          this.resources.vgpu.total = parseFloat(this.resources.vgpu.total) + parseFloat(available_slots['cuda.shares']);
+          if ('cuda.shares' in occupied_slots) {
+            this.resources.vgpu.used = parseFloat(this.resources.vgpu.used) + parseFloat(occupied_slots['cuda.shares']);
+          }
+          if (isNaN(this.resources.cpu.used)) {
+            this.resources.cpu.used = 0;
+          }
+          if (isNaN(this.resources.mem.used)) {
+            this.resources.mem.used = 0;
+          }
+          if (isNaN(this.resources.gpu.used)) {
+            this.resources.gpu.used = 0;
+          }
+          if (isNaN(this.resources.vgpu.used)) {
+            this.resources.vgpu.used = 0;
+          }
+        });
+        this.resources.vgpu.used = this.resources.vgpu.used.toFixed(2);
+        this.resources.vgpu.total = this.resources.vgpu.total.toFixed(2);
+        return this.resources;
+      }).catch(err => {
+        throw err;
       });
-      this.resources.vgpu.used = this.resources.vgpu.used.toFixed(2);
-      this.resources.vgpu.total = this.resources.vgpu.total.toFixed(2);
-      return this.resources;
-    }).catch(err => {
-      throw err;
-    });
+    } else {
+      return Promise.resolve(false);
+    }
   }
 }
 

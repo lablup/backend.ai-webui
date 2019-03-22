@@ -225,10 +225,10 @@ class Client {
         config['mem'] = resources['mem'];
       }
       if (resources['gpu']) { // Temporary fix for resource handling
-        config['cuda.device'] = parseFloat(parseFloat(resources['gpu'])*0.9).toFixed(2);
+        config['cuda.device'] = parseFloat(parseFloat(resources['gpu']) * 0.9).toFixed(2);
       }
       if (resources['vgpu']) { // Temporary fix for resource handling
-        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu'])*0.9).toFixed(2);
+        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu']) * 0.9).toFixed(2);
       }
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
@@ -922,6 +922,7 @@ class ComputeSession {
     }
 
     totalResourceInformation(status = 'ALIVE') {
+      if (this.client.is_admin) {
       let fields = ['id',
         'addr',
         'status',
@@ -972,6 +973,9 @@ class ComputeSession {
       }).catch(err => {
         throw err;
       });
+      } else {
+        return Promise.resolve(false);
+      }
     }
   }
 

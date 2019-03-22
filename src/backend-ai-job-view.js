@@ -522,10 +522,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           available_slot[slot] = total_slot[slot];
         }
       } else {// TODO: unlimited vs limited.
-        console.log(this.defaultResourcePolicy);
         if (this.defaultResourcePolicy === 'UNLIMITED') {
-          console.log(this.resource_info);
-
           switch (slot) {
             case 'cpu_slot':
               total_slot[slot] = this.resource_info.cpu.total;
@@ -551,16 +548,16 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
       }
     });
-    console.log(window.backendaiclient.resources);
-    let aa = window.backendaiclient.resources.totalResourceInformation();
-    console.log(aa);
+    ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
+      if (slot in used_slot) {
+      } else {
+        used_slot[slot] = 0;
+      }
+    });
 
     this.total_slot = total_slot;
     this.used_slot = used_slot;
 
-    console.log(total_slot);
-    console.log(used_slot);
-    console.log(available_slot);
     return available_slot;
   }
 
