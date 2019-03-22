@@ -513,6 +513,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       }
       // Resource minus
     });
+    if ('vgpu_slot' in used_slot) {
+      used_slot['vgpu_slot'] = parseFloat(used_slot['vgpu_slot']).toFixed(2);
+    }
     let available_slot = {};
     ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
       if (slot in total_slot) {
