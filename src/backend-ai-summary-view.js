@@ -404,10 +404,6 @@ class BackendAISummary extends PolymerElement {
               </template>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="My Resources" elevation="1">
-            <div slot="message">
-            </div>
-          </lablup-activity-panel>
         </div>
         <h3 class="paper-material-title">Actions</h3>
         <div class="horizontal wrap layout">

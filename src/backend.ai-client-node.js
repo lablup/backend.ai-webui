@@ -106,6 +106,7 @@ class Client {
     this.utils = new utils(this);
     this.computeSession = new ComputeSession(this);
     this.resourcePolicy = new ResourcePolicy(this);
+    this.resources = new Resources(this);
   }
 
   async _wrapWithPromise(rqst) {
@@ -863,6 +864,85 @@ class ComputeSession {
   }
 }
 
+class Resources {
+  constructor(client) {
+    this.client = client;
+    this.resources = {};
+    this._init_resource_values();
+  }
+
+  _init_resource_values() {
+    this.resources.cpu = {};
+    this.resources.cpu.total = 0;
+    this.resources.cpu.used = 0;
+    this.resources.cpu.percent = 0;
+    this.resources.mem = {};
+    this.resources.mem.total = 0;
+    this.resources.mem.allocated = 0;
+    this.resources.mem.used = 0;
+    this.resources.gpu = {};
+    this.resources.gpu.total = 0;
+    this.resources.gpu.used = 0;
+    this.resources.vgpu = {};
+    this.resources.vgpu.total = 0;
+    this.resources.vgpu.used = 0;
+    this.agents = [];
+  }
+
+  totalResourceInformation(status = 'ALIVE') {
+    let fields = ['id',
+      'addr',
+      'status',
+      'first_contact',
+      'cpu_cur_pct',
+      'mem_cur_bytes',
+      'occupied_slots',
+      'available_slots'];
+    return this.client.agent.list(status, fields).then((response) => {
+      this._init_resource_values();
+      this.agents = response.agents;
+      Object.keys(this.agents).map((objectKey, index) => {
+        let value = this.agents[objectKey];
+        let occupied_slots = JSON.parse(value.occupied_slots);
+        let available_slots = JSON.parse(value.available_slots);
+        this.resources.cpu.total = this.resources.cpu.total + parseInt(Number(available_slots.cpu));
+        this.resources.cpu.used = this.resources.cpu.used + parseInt(Number(occupied_slots.cpu));
+        this.resources.cpu.percent = this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
+
+        this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'm'));
+        this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
+        this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'm'));
+
+        this.resources.gpu.total = parseInt(this.resources.gpu.total) + parseInt(Number(available_slots['cuda.device']));
+        if ('cuda.device' in occupied_slots) {
+          this.resources.gpu.used = parseInt(this.resources.gpu.used) + parseInt(Number(occupied_slots['cuda.device']));
+        }
+        this.resources.vgpu.total = parseFloat(this.resources.vgpu.total) + parseFloat(available_slots['cuda.shares']);
+        if ('cuda.shares' in occupied_slots) {
+          this.resources.vgpu.used = parseFloat(this.resources.vgpu.used) + parseFloat(occupied_slots['cuda.shares']);
+        }
+        if (isNaN(this.resources.cpu.used)) {
+          this.resources.cpu.used = 0;
+        }
+        if (isNaN(this.resources.mem.used)) {
+          this.resources.mem.used = 0;
+        }
+        if (isNaN(this.resources.gpu.used)) {
+          this.resources.gpu.used = 0;
+        }
+        if (isNaN(this.resources.vgpu.used)) {
+          this.resources.vgpu.used = 0;
+        }
+      });
+      this.resources.vgpu.used = this.resources.vgpu.used.toFixed(2);
+      this.resources.vgpu.total = this.resources.vgpu.total.toFixed(2);
+      return this.resources;
+    }).catch(err => {
+      throw err;
+    });
+  }
+}
+
 class utils {
   constructor(client) {
     this.client = client;
@@ -973,7 +1053,7 @@ Object.defineProperty(Client, 'ERR_REQUEST', {
 const backend = {
   Client: Client,
   ClientConfig: ClientConfig,
-}
+};
 
 // for use like "ai.backend.Client"
 module.exports.backend = backend;

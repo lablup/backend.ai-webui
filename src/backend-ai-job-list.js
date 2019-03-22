@@ -20,6 +20,7 @@ import './components/lablup-loading-indicator';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
@@ -150,7 +151,7 @@ class BackendAIJobList extends PolymerElement {
           }
           if ('cuda.shares' in occupied_slots) {
             //sessions[objectKey].vgpu_slot = parseFloat(occupied_slots['cuda.shares']);
-            sessions[objectKey].vgpu_slot = parseFloat(parseFloat(occupied_slots['cuda.shares'])*(1.0/0.9)).toFixed(2);
+            sessions[objectKey].vgpu_slot = parseFloat(parseFloat(occupied_slots['cuda.shares']) * (1.0 / 0.9)).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
         });

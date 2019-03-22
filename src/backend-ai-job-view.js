@@ -129,6 +129,22 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       defaultResourcePolicy: {
         type: String,
         value: 'UNLIMITED'
+      },
+      total_slot: {
+        type: Object,
+        value: {}
+      },
+      used_slot: {
+        type: Object,
+        value: {}
+      },
+      available_slot: {
+        type: Object,
+        value: {}
+      },
+      resource_info: {
+        type: Object,
+        value: {}
       }
     }
   }
@@ -202,7 +218,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _refreshResourcePolicy() {
-    window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy']).then((response) => {
+    window.backendaiclient.resources.totalResourceInformation().then((response) => { // Read information
+      this.resource_info = response;
+    }).then((response) => {
+      return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy'])
+    }).then((response) => {
       let policyName = response.keypair.resource_policy;
       // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
       // TODO: Fix it to use API-based resource max.
@@ -459,38 +479,40 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     if ('cuda.shares' in this.userResourceLimit) {
       total_slot['vgpu_slot'] = this.userResourceLimit['cuda.shares'];
     }
+
     let used_slot = {};
     compute_sessions.forEach((item) => {
       if ('cpu_slot' in item) {
         if ('cpu_slot' in used_slot) {
-          used_slot['cpu_slot'] = used_slot['cpu_slot'] + item['cpu_slot'];
+          used_slot['cpu_slot'] = parseInt(used_slot['cpu_slot']) + parseInt(item['cpu_slot']);
         } else {
-          used_slot['cpu_slot'] = item['cpu_slot'];
+          used_slot['cpu_slot'] = parseInt(item['cpu_slot']);
         }
       }
       if ('mem_slot' in item) {
         if ('mem_slot' in used_slot) {
-          used_slot['mem_slot'] = used_slot['mem_slot'] + item['mem_slot'];
+          used_slot['mem_slot'] = parseInt(used_slot['mem_slot']) + parseInt(item['mem_slot']);
         } else {
-          used_slot['mem_slot'] = item['mem_slot'];
+          used_slot['mem_slot'] = parseInt(item['mem_slot']);
         }
       }
       if ('gpu_slot' in item) {
         if ('gpu_slot' in used_slot) {
-          used_slot['gpu_slot'] = used_slot['gpu_slot'] + item['gpu_slot'];
+          used_slot['gpu_slot'] = parseInt(used_slot['gpu_slot']) + parseInt(item['gpu_slot']);
         } else {
-          used_slot['gpu_slot'] = item['gpu_slot'];
+          used_slot['gpu_slot'] = parseInt(item['gpu_slot']);
         }
       }
       if ('vgpu_slot' in item) {
         if ('vgpu_slot' in used_slot) {
-          used_slot['vgpu_slot'] = used_slot['vgpu_slot'] + item['vgpu_slot'];
+          used_slot['vgpu_slot'] = parseFloat(used_slot['vgpu_slot']) + parseFloat(item['vgpu_slot']);
         } else {
-          used_slot['vgpu_slot'] = item['vgpu_slot'];
+          used_slot['vgpu_slot'] = parseFloat(item['vgpu_slot']);
         }
       }
       // Resource minus
     });
+
     let available_slot = {};
     ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
       if (slot in total_slot) {
@@ -502,13 +524,42 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       } else {// TODO: unlimited vs limited.
         console.log(this.defaultResourcePolicy);
         if (this.defaultResourcePolicy === 'UNLIMITED') {
+          console.log(this.resource_info);
+
+          switch (slot) {
+            case 'cpu_slot':
+              total_slot[slot] = this.resource_info.cpu.total;
+              break;
+            case 'mem_slot':
+              total_slot[slot] = this.resource_info.mem.total;
+              break;
+            case 'gpu_slot':
+              total_slot[slot] = this.resource_info.gpu.total;
+              break;
+            case 'vgpu_slot':
+              total_slot[slot] = this.resource_info.vgpu.total;
+              break;
+          }
+          console.log(this.resource_info);
           available_slot[slot] = 100000;
+//            total_slot[slot] = 200;
+          //available_slot[slot] = 100000;
+          //total_slot[slot] = 200;
         } else {
           available_slot[slot] = 0;
+          total_slot[slot] = 0;
         }
       }
     });
+    console.log(window.backendaiclient.resources);
+    let aa = window.backendaiclient.resources.totalResourceInformation();
+    console.log(aa);
+
+    this.total_slot = total_slot;
+    this.used_slot = used_slot;
+
     console.log(total_slot);
+    console.log(used_slot);
     console.log(available_slot);
     return available_slot;
   }
@@ -743,6 +794,17 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           --paper-slider-active-color: var(--paper-cyan-400);
         }
 
+        paper-progress {
+          width: 100px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677EB;
+          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
+
         span.caption {
           width: 30px;
           padding-left: 10px;
@@ -750,6 +812,12 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
         div.caption {
           width: 100px;
+        }
+
+        .gauge-label {
+          width: 120px;
+          font-weight: 300;
+          font-size: 12px;
         }
 
         .indicator {
@@ -764,6 +832,33 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       <paper-material class="item" elevation="1">
         <h4 class="horizontal center layout">
           <span>Running</span>
+          <div class="layout horizontal center resources">
+            <div class="layout vertical start-justified wrap" style="padding-left:15px;">
+              <span class="gauge-label">CPUs: [[used_slot.cpu_slot]]/[[total_slot.cpu_slot]]</span>
+              <paper-progress id="cpu-usage-bar" value="[[used_slot.cpu_slot]]"
+                              secondary-progress="[[total_slot.cpu_slot]]"></paper-progress>
+            </div>
+            <div class="layout vertical start-justified wrap" style="padding-left:15px;">
+              <span class="gauge-label">RAM: [[used_slot.mem_slot]]GB/[[total_slot.mem_slot]]GB</span>
+              <paper-progress id="mem-usage-bar" value="[[used_slot.mem_slot]]"
+                              secondary-progress="[[total_slot.mem_slot]]"></paper-progress>
+            </div>
+            <template is="dom-if" if="[[total_slot.gpu_slot]]">
+              <div class="layout vertical start-justified wrap" style="padding-left:15px;">
+                <span class="gauge-label">GPUs: [[used_slot.gpu_slot]]/[[total_slot.gpu_slot]]</span>
+                <paper-progress id="gpu-usage-bar" value="[[used_slot.gpu_slot]]"
+                                secondary-progress="[[total_slot.gpu_slot]]"></paper-progress>
+              </div>
+            </template>
+            <template is="dom-if" if="[[total_slot.vgpu_slot]]">
+              <div class="layout vertical start-justified wrap" style="padding-left:15px;">
+                <span class="gauge-label">vGPUs: [[used_slot.vgpu_slot]]/[[total_slot.vgpu_slot]]</span>
+                <paper-progress id="gpu-usage-bar" value="[[used_slot.vgpu_slot]]"
+                                secondary-progress="[[total_slot.vgpu_slot]]"></paper-progress>
+              </div>
+            </template>
+          </div>
+
           <mwc-button class="fg red" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
         </h4>
         <div>
