@@ -157,6 +157,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.$['version'].addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this._initAliases();
     var gpu_resource = this.$['gpu-resource'];
+    document.addEventListener('backend-ai-resource-refreshed', () => {
+      this.updateResourceIndicator();
+    });
     gpu_resource.addEventListener('value-change', () => {
       if (gpu_resource.value > 0) {
         this.$['use-gpu-checkbox'].checked = true;
@@ -252,7 +255,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       }
     }).then((response) => {
       let resource_policy = response.keypair_resource_policy;
-      console.log(resource_policy.default_for_unspecified);
       if (resource_policy.default_for_unspecified === 'UNLIMITED' ||
         resource_policy.default_for_unspecified === 'DefaultForUnspecified.UNLIMITED') {
         this.defaultResourcePolicy = 'UNLIMITED';
@@ -479,7 +481,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     if ('cuda.shares' in this.userResourceLimit) {
       total_slot['vgpu_slot'] = this.userResourceLimit['cuda.shares'];
     }
-
     let used_slot = {};
     compute_sessions.forEach((item) => {
       if ('cpu_slot' in item) {
@@ -512,7 +513,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       }
       // Resource minus
     });
-
     let available_slot = {};
     ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
       if (slot in total_slot) {
@@ -531,20 +531,39 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               total_slot[slot] = this.resource_info.mem.total;
               break;
             case 'gpu_slot':
-              total_slot[slot] = this.resource_info.gpu.total;
+              if (this.gpu_mode === 'gpu') {
+                total_slot[slot] = this.resource_info.gpu.total;
+              }
               break;
             case 'vgpu_slot':
-              total_slot[slot] = this.resource_info.vgpu.total;
+              if (this.gpu_mode === 'vgpu') {
+                total_slot[slot] = this.resource_info.vgpu.total;
+              }
               break;
           }
-          console.log(this.resource_info);
           available_slot[slot] = 100000;
 //            total_slot[slot] = 200;
           //available_slot[slot] = 100000;
           //total_slot[slot] = 200;
         } else {
-          available_slot[slot] = 0;
-          total_slot[slot] = 0;
+
+          switch (slot) {
+            case 'gpu_slot':
+              if (this.gpu_mode === 'gpu') {
+                available_slot[slot] = 0;
+                total_slot[slot] = 0;
+              }
+              break;
+            case 'vgpu_slot':
+              if (this.gpu_mode === 'vgpu') {
+                available_slot[slot] = 0;
+                total_slot[slot] = 0;
+              }
+              break;
+            default:
+              available_slot[slot] = 0;
+              total_slot[slot] = 0;
+          }
         }
       }
     });
@@ -557,8 +576,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
     this.total_slot = total_slot;
     this.used_slot = used_slot;
-
+    this.available_slot = available_slot;
     return available_slot;
+  }
+
+  updateResourceIndicator() {
+    let compute_sessions = this.shadowRoot.querySelector('#running-jobs').compute_sessions;
+    this._aggregateResourceUse(compute_sessions);
   }
 
   updateMetric() {
@@ -593,7 +617,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           this.cpu_metric = cpu_metric;
         }
 
-        if (item.key === 'cuda.device') {
+        if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
           let gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
@@ -614,18 +638,19 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           }
           this.gpu_metric = gpu_metric;
         }
-        if (item.key === 'cuda.shares') {
+        if (item.key === 'cuda.shares' && this.gpu_mode == 'vgpu') {
           let vgpu_metric = item;
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
-            if (parseInt(vgpu_metric.max) !== 0) {
+            if (parseFloat(vgpu_metric.max) !== 0) {
               vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
             } else {
-              vgpu_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
+
+              vgpu_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
             }
           } else {
-            if (parseInt(vgpu_metric.max) !== 0) {
-              vgpu_metric.max = Math.min(parseInt(vgpu_metric.max), available_slot['vgpu_slot']);
+            if (parseFloat(vgpu_metric.max) !== 0) {
+              vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), available_slot['vgpu_slot']);
             } else {
               vgpu_metric.max = 0;
             }

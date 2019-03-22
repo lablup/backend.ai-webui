@@ -109,10 +109,10 @@ class BackendAIJobList extends PolymerElement {
   }
 
   refreshList() {
-    return this._refreshJobData();
+    return this._refreshJobData(true);
   }
 
-  _refreshJobData() {
+  _refreshJobData(refresh = false) {
     this.shadowRoot.querySelector('#loading-indicator').show();
     if (this.active !== true) {
       return;
@@ -161,9 +161,13 @@ class BackendAIJobList extends PolymerElement {
       let refreshTime;
       if (this.active === true) {
         if (this.condition === 'running') {
+          if (refresh === true) {
+            var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+            document.dispatchEvent(event);
+          }
           refreshTime = 5000;
           this.refreshTimer = setTimeout(() => {
-            this._refreshJobData(status)
+            this._refreshJobData()
           }, refreshTime);
         } else {
           refreshTime = 15000;
