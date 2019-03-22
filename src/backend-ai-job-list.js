@@ -700,6 +700,8 @@ class BackendAIJobList extends PolymerElement {
                                    on-tap="_runJupyter" icon="vaadin:notebook"></paper-icon-button>
                 <paper-icon-button class="fg controls-running orange"
                                    on-tap="_runJupyterLab" icon="vaadin:flask"></paper-icon-button>
+                <paper-icon-button class="fg controls-running orange"
+                                   on-tap="_runTensorBoard" icon="vaadin:clipboard_pulse"></paper-icon-button>
                 <paper-icon-button class="fg controls-running"
                                    on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
               </template>
