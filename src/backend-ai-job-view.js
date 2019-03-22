@@ -88,7 +88,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       },
       gpu_mode: {
         type: String,
-        value: 'gpu'
+        value: 'no'
       },
       gpu_step: {
         type: Number,
@@ -143,6 +143,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         value: {}
       },
       resource_info: {
+        type: Object,
+        value: {}
+      },
+      used_slot_percent: {
         type: Object,
         value: {}
       }
@@ -229,18 +233,18 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let policyName = response.keypair.resource_policy;
       // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
       // TODO: Fix it to use API-based resource max.
-      if (policyName === 'student') {
+      if (policyName === 'research') {
         return new Promise(function (resolve, reject) {
           var resource = {
-            "cpu": 4,
-            "mem": '8g',
-            "cuda.shares": 0.25
+            "cpu": 272,
+            "mem": '300g',
+            "cuda.shares": 13.0
           };
           var result = {
             keypair_resource_policy: {
-              'default_for_unspecified': 'LIMITED',
+              'default_for_unspecified': 'UNLIMITED',
               'total_resource_slots': JSON.stringify(resource),
-              'max_concurrent_sessions': 3,
+              'max_concurrent_sessions': 40,
               'max_containers_per_session': 1
             }
           };
@@ -526,6 +530,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
       } else {// TODO: unlimited vs limited.
         if (this.defaultResourcePolicy === 'UNLIMITED') {
+          console.log(this.resource_info);
           switch (slot) {
             case 'cpu_slot':
               total_slot[slot] = this.resource_info.cpu.total;
@@ -580,6 +585,15 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.total_slot = total_slot;
     this.used_slot = used_slot;
     this.available_slot = available_slot;
+
+    let used_slot_percent = {};
+    ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
+      if (slot in used_slot) {
+        used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
+      } else {
+      }
+    });
+    this.used_slot_percent = used_slot_percent;
     return available_slot;
   }
 
@@ -860,26 +874,22 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           <div class="layout horizontal center resources">
             <div class="layout vertical start-justified wrap" style="padding-left:15px;">
               <span class="gauge-label">CPUs: [[used_slot.cpu_slot]]/[[total_slot.cpu_slot]]</span>
-              <paper-progress id="cpu-usage-bar" value="[[used_slot.cpu_slot]]"
-                              secondary-progress="[[total_slot.cpu_slot]]"></paper-progress>
+              <paper-progress id="cpu-usage-bar" value="[[used_slot_percent.cpu_slot]]"></paper-progress>
             </div>
             <div class="layout vertical start-justified wrap" style="padding-left:15px;">
               <span class="gauge-label">RAM: [[used_slot.mem_slot]]GB/[[total_slot.mem_slot]]GB</span>
-              <paper-progress id="mem-usage-bar" value="[[used_slot.mem_slot]]"
-                              secondary-progress="[[total_slot.mem_slot]]"></paper-progress>
+              <paper-progress id="mem-usage-bar" value="[[used_slot_percent.mem_slot]]"></paper-progress>
             </div>
             <template is="dom-if" if="[[total_slot.gpu_slot]]">
               <div class="layout vertical start-justified wrap" style="padding-left:15px;">
                 <span class="gauge-label">GPUs: [[used_slot.gpu_slot]]/[[total_slot.gpu_slot]]</span>
-                <paper-progress id="gpu-usage-bar" value="[[used_slot.gpu_slot]]"
-                                secondary-progress="[[total_slot.gpu_slot]]"></paper-progress>
+                <paper-progress id="gpu-usage-bar" value="[[used_slot_percent.gpu_slot]]"></paper-progress>
               </div>
             </template>
             <template is="dom-if" if="[[total_slot.vgpu_slot]]">
               <div class="layout vertical start-justified wrap" style="padding-left:15px;">
                 <span class="gauge-label">vGPUs: [[used_slot.vgpu_slot]]/[[total_slot.vgpu_slot]]</span>
-                <paper-progress id="gpu-usage-bar" value="[[used_slot.vgpu_slot]]"
-                                secondary-progress="[[total_slot.vgpu_slot]]"></paper-progress>
+                <paper-progress id="gpu-usage-bar" value="[[used_slot_percent.vgpu_slot]]"></paper-progress>
               </div>
             </template>
           </div>
