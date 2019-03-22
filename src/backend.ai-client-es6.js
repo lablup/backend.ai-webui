@@ -130,7 +130,7 @@ class Client {
     } else {
       this._config = config;
     }
-    this.kernelPrefix = '/kernel'
+    this.kernelPrefix = '/kernel';
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
     this.keypair = new Keypair(this);
@@ -348,7 +348,7 @@ class Client {
   upload(sessionId, path, fs) {
     const formData = new FormData();
     formData.append('src', fs, {filepath: path});
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData)
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData);
     return this._wrapWithPromise(rqst);
   }
 
@@ -363,7 +363,7 @@ class Client {
     let query = {
       'query': q,
       'variables': v
-    }
+    };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
     return this._wrapWithPromise(rqst);
   }
@@ -547,12 +547,12 @@ class VFolder {
     }
     let formData = new FormData();
     formData.append('src', fs, {filepath: path});
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData)
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData);
     return this.client._wrapWithPromise(rqst);
   }
 
   uploadFormData(fss, name = null) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss)
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -599,7 +599,7 @@ class VFolder {
     let params = {
       'path': path
     };
-    let q = querystring.stringify(params)
+    let q = querystring.stringify(params);
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -896,33 +896,33 @@ class ComputeSession {
   }
 }
 
-  class Resources {
-    constructor(client) {
-      this.client = client;
-      this.resources = {};
-      this._init_resource_values();
-    }
+class Resources {
+  constructor(client) {
+    this.client = client;
+    this.resources = {};
+    this._init_resource_values();
+  }
 
-    _init_resource_values() {
-      this.resources.cpu = {};
-      this.resources.cpu.total = 0;
-      this.resources.cpu.used = 0;
-      this.resources.cpu.percent = 0;
-      this.resources.mem = {};
-      this.resources.mem.total = 0;
-      this.resources.mem.allocated = 0;
-      this.resources.mem.used = 0;
-      this.resources.gpu = {};
-      this.resources.gpu.total = 0;
-      this.resources.gpu.used = 0;
-      this.resources.vgpu = {};
-      this.resources.vgpu.total = 0;
-      this.resources.vgpu.used = 0;
-      this.agents = [];
-    }
+  _init_resource_values() {
+    this.resources.cpu = {};
+    this.resources.cpu.total = 0;
+    this.resources.cpu.used = 0;
+    this.resources.cpu.percent = 0;
+    this.resources.mem = {};
+    this.resources.mem.total = 0;
+    this.resources.mem.allocated = 0;
+    this.resources.mem.used = 0;
+    this.resources.gpu = {};
+    this.resources.gpu.total = 0;
+    this.resources.gpu.used = 0;
+    this.resources.vgpu = {};
+    this.resources.vgpu.total = 0;
+    this.resources.vgpu.used = 0;
+    this.agents = [];
+  }
 
-    totalResourceInformation(status = 'ALIVE') {
-      if (this.client.is_admin) {
+  totalResourceInformation(status = 'ALIVE') {
+    if (this.client.is_admin) {
       let fields = ['id',
         'addr',
         'status',
@@ -973,11 +973,11 @@ class ComputeSession {
       }).catch(err => {
         throw err;
       });
-      } else {
-        return Promise.resolve(false);
-      }
+    } else {
+      return Promise.resolve(false);
     }
   }
+}
 
 class utils {
   constructor(client) {

@@ -237,7 +237,7 @@ class Client {
     } else {
       this._config = config;
     }
-    this.kernelPrefix = '/kernel'
+    this.kernelPrefix = '/kernel';
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
     this.keypair = new Keypair(this);
@@ -455,7 +455,7 @@ class Client {
   upload(sessionId, path, fs) {
     const formData = new FormData();
     formData.append('src', fs, {filepath: path});
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData)
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData);
     return this._wrapWithPromise(rqst);
   }
 
@@ -470,7 +470,7 @@ class Client {
     let query = {
       'query': q,
       'variables': v
-    }
+    };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
     return this._wrapWithPromise(rqst);
   }
@@ -654,12 +654,12 @@ class VFolder {
     }
     let formData = new FormData();
     formData.append('src', fs, {filepath: path});
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData)
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData);
     return this.client._wrapWithPromise(rqst);
   }
 
   uploadFormData(fss, name = null) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss)
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -706,7 +706,7 @@ class VFolder {
     let params = {
       'path': path
     };
-    let q = querystring.stringify(params)
+    let q = querystring.stringify(params);
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1003,33 +1003,33 @@ class ComputeSession {
   }
 }
 
-  class Resources {
-    constructor(client) {
-      this.client = client;
-      this.resources = {};
-      this._init_resource_values();
-    }
+class Resources {
+  constructor(client) {
+    this.client = client;
+    this.resources = {};
+    this._init_resource_values();
+  }
 
-    _init_resource_values() {
-      this.resources.cpu = {};
-      this.resources.cpu.total = 0;
-      this.resources.cpu.used = 0;
-      this.resources.cpu.percent = 0;
-      this.resources.mem = {};
-      this.resources.mem.total = 0;
-      this.resources.mem.allocated = 0;
-      this.resources.mem.used = 0;
-      this.resources.gpu = {};
-      this.resources.gpu.total = 0;
-      this.resources.gpu.used = 0;
-      this.resources.vgpu = {};
-      this.resources.vgpu.total = 0;
-      this.resources.vgpu.used = 0;
-      this.agents = [];
-    }
+  _init_resource_values() {
+    this.resources.cpu = {};
+    this.resources.cpu.total = 0;
+    this.resources.cpu.used = 0;
+    this.resources.cpu.percent = 0;
+    this.resources.mem = {};
+    this.resources.mem.total = 0;
+    this.resources.mem.allocated = 0;
+    this.resources.mem.used = 0;
+    this.resources.gpu = {};
+    this.resources.gpu.total = 0;
+    this.resources.gpu.used = 0;
+    this.resources.vgpu = {};
+    this.resources.vgpu.total = 0;
+    this.resources.vgpu.used = 0;
+    this.agents = [];
+  }
 
-    totalResourceInformation(status = 'ALIVE') {
-      if (this.client.is_admin) {
+  totalResourceInformation(status = 'ALIVE') {
+    if (this.client.is_admin) {
       let fields = ['id',
         'addr',
         'status',
@@ -1080,11 +1080,11 @@ class ComputeSession {
       }).catch(err => {
         throw err;
       });
-      } else {
-        return Promise.resolve(false);
-      }
+    } else {
+      return Promise.resolve(false);
     }
   }
+}
 
 class utils {
   constructor(client) {
@@ -9748,7 +9748,7 @@ function utf8Slice (buf, start, end) {
 // Based on http://stackoverflow.com/a/22747272/680742, the browser with
 // the lowest limit is Chrome, with 0x10000 args.
 // We go 1 magnitude less, for safety
-  var MAX_ARGUMENTS_LENGTH = 0x1000
+var MAX_ARGUMENTS_LENGTH = 0x1000
 
 function decodeCodePointsArray (codePoints) {
   var len = codePoints.length
@@ -10363,7 +10363,7 @@ Buffer.prototype.fill = function fill (val, start, end, encoding) {
 // HELPER FUNCTIONS
 // ================
 
-  var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g
+var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g
 
 function base64clean (str) {
   // Node takes equal signs as end of the Base64 encoding
@@ -10516,10 +10516,10 @@ function numberIsNaN (obj) {
 
 }).call(this,require("buffer").Buffer)
 },{"base64-js":19,"buffer":52,"ieee754":103}],53:[function(require,module,exports){
-    var Buffer = require('safe-buffer').Buffer
-    var Transform = require('stream').Transform
-    var StringDecoder = require('string_decoder').StringDecoder
-    var inherits = require('inherits')
+var Buffer = require('safe-buffer').Buffer
+var Transform = require('stream').Transform
+var StringDecoder = require('string_decoder').StringDecoder
+var inherits = require('inherits')
 
 function CipherBase (hashMode) {
   Transform.call(this)
@@ -10536,8 +10536,7 @@ function CipherBase (hashMode) {
   this._decoder = null
   this._encoding = null
 }
-
-    inherits(CipherBase, Transform)
+inherits(CipherBase, Transform)
 
 CipherBase.prototype.update = function (data, inputEnc, outputEnc) {
   if (typeof data === 'string') {
@@ -10554,8 +10553,7 @@ CipherBase.prototype.update = function (data, inputEnc, outputEnc) {
   return outData
 }
 
-    CipherBase.prototype.setAutoPadding = function () {
-    }
+CipherBase.prototype.setAutoPadding = function () {}
 CipherBase.prototype.getAuthTag = function () {
   throw new Error('trying to get auth tag in unsupported state')
 }
@@ -10731,8 +10729,8 @@ function objectToString(o) {
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
 },{"../../is-buffer/index.js":105}],55:[function(require,module,exports){
 (function (Buffer){
-  var elliptic = require('elliptic')
-  var BN = require('bn.js')
+var elliptic = require('elliptic')
+var BN = require('bn.js')
 
 module.exports = function createECDH (curve) {
   return new ECDH(curve)
@@ -10769,11 +10767,11 @@ var aliases = {
   }
 }
 
-  aliases.p224 = aliases.secp224r1
-  aliases.p256 = aliases.secp256r1 = aliases.prime256v1
-  aliases.p192 = aliases.secp192r1 = aliases.prime192v1
-  aliases.p384 = aliases.secp384r1
-  aliases.p521 = aliases.secp521r1
+aliases.p224 = aliases.secp224r1
+aliases.p256 = aliases.secp256r1 = aliases.prime256v1
+aliases.p192 = aliases.secp192r1 = aliases.prime192v1
+aliases.p384 = aliases.secp384r1
+aliases.p521 = aliases.secp521r1
 
 function ECDH (curve) {
   this.curveType = aliases[curve]
@@ -10858,12 +10856,12 @@ function formatReturnValue (bn, enc, len) {
 
 }).call(this,require("buffer").Buffer)
 },{"bn.js":20,"buffer":52,"elliptic":71}],56:[function(require,module,exports){
-    'use strict'
-    var inherits = require('inherits')
-    var MD5 = require('md5.js')
-    var RIPEMD160 = require('ripemd160')
-    var sha = require('sha.js')
-    var Base = require('cipher-base')
+'use strict'
+var inherits = require('inherits')
+var MD5 = require('md5.js')
+var RIPEMD160 = require('ripemd160')
+var sha = require('sha.js')
+var Base = require('cipher-base')
 
 function Hash (hash) {
   Base.call(this, 'digest')
@@ -10871,7 +10869,7 @@ function Hash (hash) {
   this._hash = hash
 }
 
-    inherits(Hash, Base)
+inherits(Hash, Base)
 
 Hash.prototype._update = function (data) {
   this._hash.update(data)
@@ -10890,24 +10888,24 @@ module.exports = function createHash (alg) {
 }
 
 },{"cipher-base":53,"inherits":104,"md5.js":106,"ripemd160":148,"sha.js":151}],57:[function(require,module,exports){
-    var MD5 = require('md5.js')
+var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
 },{"md5.js":106}],58:[function(require,module,exports){
-    'use strict'
-    var inherits = require('inherits')
-    var Legacy = require('./legacy')
-    var Base = require('cipher-base')
-    var Buffer = require('safe-buffer').Buffer
-    var md5 = require('create-hash/md5')
-    var RIPEMD160 = require('ripemd160')
+'use strict'
+var inherits = require('inherits')
+var Legacy = require('./legacy')
+var Base = require('cipher-base')
+var Buffer = require('safe-buffer').Buffer
+var md5 = require('create-hash/md5')
+var RIPEMD160 = require('ripemd160')
 
-    var sha = require('sha.js')
+var sha = require('sha.js')
 
-    var ZEROS = Buffer.alloc(128)
+var ZEROS = Buffer.alloc(128)
 
 function Hmac (alg, key) {
   Base.call(this, 'digest')
@@ -10937,7 +10935,7 @@ function Hmac (alg, key) {
   this._hash.update(ipad)
 }
 
-    inherits(Hmac, Base)
+inherits(Hmac, Base)
 
 Hmac.prototype._update = function (data) {
   this._hash.update(data)
@@ -10961,14 +10959,14 @@ module.exports = function createHmac (alg, key) {
 }
 
 },{"./legacy":59,"cipher-base":53,"create-hash/md5":57,"inherits":104,"ripemd160":148,"safe-buffer":149,"sha.js":151}],59:[function(require,module,exports){
-    'use strict'
-    var inherits = require('inherits')
-    var Buffer = require('safe-buffer').Buffer
+'use strict'
+var inherits = require('inherits')
+var Buffer = require('safe-buffer').Buffer
 
-    var Base = require('cipher-base')
+var Base = require('cipher-base')
 
-    var ZEROS = Buffer.alloc(128)
-    var blocksize = 64
+var ZEROS = Buffer.alloc(128)
+var blocksize = 64
 
 function Hmac (alg, key) {
   Base.call(this, 'digest')
@@ -10996,7 +10994,7 @@ function Hmac (alg, key) {
   this._hash = [ipad]
 }
 
-    inherits(Hmac, Base)
+inherits(Hmac, Base)
 
 Hmac.prototype._update = function (data) {
   this._hash.push(data)
@@ -11009,59 +11007,59 @@ Hmac.prototype._final = function () {
 module.exports = Hmac
 
 },{"cipher-base":53,"inherits":104,"safe-buffer":149}],60:[function(require,module,exports){
-    'use strict'
+'use strict'
 
-    exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
-    exports.createHash = exports.Hash = require('create-hash')
-    exports.createHmac = exports.Hmac = require('create-hmac')
+exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
+exports.createHash = exports.Hash = require('create-hash')
+exports.createHmac = exports.Hmac = require('create-hmac')
 
-    var algos = require('browserify-sign/algos')
-    var algoKeys = Object.keys(algos)
-    var hashes = ['sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'md5', 'rmd160'].concat(algoKeys)
+var algos = require('browserify-sign/algos')
+var algoKeys = Object.keys(algos)
+var hashes = ['sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'md5', 'rmd160'].concat(algoKeys)
 exports.getHashes = function () {
   return hashes
 }
 
-    var p = require('pbkdf2')
-    exports.pbkdf2 = p.pbkdf2
-    exports.pbkdf2Sync = p.pbkdf2Sync
+var p = require('pbkdf2')
+exports.pbkdf2 = p.pbkdf2
+exports.pbkdf2Sync = p.pbkdf2Sync
 
-    var aes = require('browserify-cipher')
+var aes = require('browserify-cipher')
 
-    exports.Cipher = aes.Cipher
-    exports.createCipher = aes.createCipher
-    exports.Cipheriv = aes.Cipheriv
-    exports.createCipheriv = aes.createCipheriv
-    exports.Decipher = aes.Decipher
-    exports.createDecipher = aes.createDecipher
-    exports.Decipheriv = aes.Decipheriv
-    exports.createDecipheriv = aes.createDecipheriv
-    exports.getCiphers = aes.getCiphers
-    exports.listCiphers = aes.listCiphers
+exports.Cipher = aes.Cipher
+exports.createCipher = aes.createCipher
+exports.Cipheriv = aes.Cipheriv
+exports.createCipheriv = aes.createCipheriv
+exports.Decipher = aes.Decipher
+exports.createDecipher = aes.createDecipher
+exports.Decipheriv = aes.Decipheriv
+exports.createDecipheriv = aes.createDecipheriv
+exports.getCiphers = aes.getCiphers
+exports.listCiphers = aes.listCiphers
 
-    var dh = require('diffie-hellman')
+var dh = require('diffie-hellman')
 
-    exports.DiffieHellmanGroup = dh.DiffieHellmanGroup
-    exports.createDiffieHellmanGroup = dh.createDiffieHellmanGroup
-    exports.getDiffieHellman = dh.getDiffieHellman
-    exports.createDiffieHellman = dh.createDiffieHellman
-    exports.DiffieHellman = dh.DiffieHellman
+exports.DiffieHellmanGroup = dh.DiffieHellmanGroup
+exports.createDiffieHellmanGroup = dh.createDiffieHellmanGroup
+exports.getDiffieHellman = dh.getDiffieHellman
+exports.createDiffieHellman = dh.createDiffieHellman
+exports.DiffieHellman = dh.DiffieHellman
 
-    var sign = require('browserify-sign')
+var sign = require('browserify-sign')
 
-    exports.createSign = sign.createSign
-    exports.Sign = sign.Sign
-    exports.createVerify = sign.createVerify
-    exports.Verify = sign.Verify
+exports.createSign = sign.createSign
+exports.Sign = sign.Sign
+exports.createVerify = sign.createVerify
+exports.Verify = sign.Verify
 
-    exports.createECDH = require('create-ecdh')
+exports.createECDH = require('create-ecdh')
 
-    var publicEncrypt = require('public-encrypt')
+var publicEncrypt = require('public-encrypt')
 
-    exports.publicEncrypt = publicEncrypt.publicEncrypt
-    exports.privateEncrypt = publicEncrypt.privateEncrypt
-    exports.publicDecrypt = publicEncrypt.publicDecrypt
-    exports.privateDecrypt = publicEncrypt.privateDecrypt
+exports.publicEncrypt = publicEncrypt.publicEncrypt
+exports.privateEncrypt = publicEncrypt.privateEncrypt
+exports.publicDecrypt = publicEncrypt.publicDecrypt
+exports.privateDecrypt = publicEncrypt.privateDecrypt
 
 // the least I can do is make error messages for the rest of the node.js/crypto api.
 // ;[
@@ -11076,10 +11074,10 @@ exports.getHashes = function () {
 //   }
 // })
 
-    var rf = require('randomfill')
+var rf = require('randomfill')
 
-    exports.randomFill = rf.randomFill
-    exports.randomFillSync = rf.randomFillSync
+exports.randomFill = rf.randomFill
+exports.randomFillSync = rf.randomFillSync
 
 exports.createCredentials = function () {
   throw new Error([
@@ -11788,10 +11786,10 @@ exports.padSplit = function padSplit(num, size, group) {
 
 },{}],67:[function(require,module,exports){
 (function (Buffer){
-  var generatePrime = require('./lib/generatePrime')
-  var primes = require('./lib/primes.json')
+var generatePrime = require('./lib/generatePrime')
+var primes = require('./lib/primes.json')
 
-  var DH = require('./lib/dh')
+var DH = require('./lib/dh')
 
 function getDiffieHellman (mod) {
   var prime = new Buffer(primes[mod].prime, 'hex')
@@ -11828,7 +11826,7 @@ function createDiffieHellman (prime, enc, generator, genc) {
   return new DH(prime, generator, true)
 }
 
-  exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffieHellman = getDiffieHellman
+exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffieHellman = getDiffieHellman
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this,require("buffer").Buffer)
@@ -16079,9 +16077,9 @@ module.exports={
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-    var objectCreate = Object.create || objectCreatePolyfill
-    var objectKeys = Object.keys || objectKeysPolyfill
-    var bind = Function.prototype.bind || functionBindPolyfill
+var objectCreate = Object.create || objectCreatePolyfill
+var objectKeys = Object.keys || objectKeysPolyfill
+var bind = Function.prototype.bind || functionBindPolyfill
 
 function EventEmitter() {
   if (!this._events || !Object.prototype.hasOwnProperty.call(this, '_events')) {
@@ -16583,8 +16581,8 @@ function functionBindPolyfill(context) {
 }
 
 },{}],88:[function(require,module,exports){
-    var Buffer = require('safe-buffer').Buffer
-    var MD5 = require('md5.js')
+var Buffer = require('safe-buffer').Buffer
+var MD5 = require('md5.js')
 
 /* eslint-disable camelcase */
 function EVP_BytesToKey (password, salt, keyBits, ivLen) {
@@ -16630,10 +16628,10 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 module.exports = EVP_BytesToKey
 
 },{"md5.js":106,"safe-buffer":149}],89:[function(require,module,exports){
-    'use strict'
-    var Buffer = require('safe-buffer').Buffer
-    var Transform = require('stream').Transform
-    var inherits = require('inherits')
+'use strict'
+var Buffer = require('safe-buffer').Buffer
+var Transform = require('stream').Transform
+var inherits = require('inherits')
 
 function throwIfNotStringOrBuffer (val, prefix) {
   if (!Buffer.isBuffer(val) && typeof val !== 'string') {
@@ -16652,7 +16650,7 @@ function HashBase (blockSize) {
   this._finalized = false
 }
 
-    inherits(HashBase, Transform)
+inherits(HashBase, Transform)
 
 HashBase.prototype._transform = function (chunk, encoding, callback) {
   var error = null
@@ -18177,8 +18175,7 @@ if (typeof Object.create === 'function') {
   // old school shim for old browsers
   module.exports = function inherits(ctor, superCtor) {
     ctor.super_ = superCtor
-    var TempCtor = function () {
-    }
+    var TempCtor = function () {}
     TempCtor.prototype = superCtor.prototype
     ctor.prototype = new TempCtor()
     ctor.prototype.constructor = ctor
@@ -18209,12 +18206,12 @@ function isSlowBuffer (obj) {
 }
 
 },{}],106:[function(require,module,exports){
-    'use strict'
-    var inherits = require('inherits')
-    var HashBase = require('hash-base')
-    var Buffer = require('safe-buffer').Buffer
+'use strict'
+var inherits = require('inherits')
+var HashBase = require('hash-base')
+var Buffer = require('safe-buffer').Buffer
 
-    var ARRAY16 = new Array(16)
+var ARRAY16 = new Array(16)
 
 function MD5 () {
   HashBase.call(this, 64)
@@ -18226,7 +18223,7 @@ function MD5 () {
   this._d = 0x10325476
 }
 
-    inherits(MD5, HashBase)
+inherits(MD5, HashBase)
 
 MD5.prototype._update = function () {
   var M = ARRAY16
@@ -18563,11 +18560,11 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 },{}],111:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
-    'use strict'
+'use strict'
 
-    var asn1 = require('asn1.js')
+var asn1 = require('asn1.js')
 
-    exports.certificate = require('./certificate')
+exports.certificate = require('./certificate')
 
 var RSAPrivateKey = asn1.define('RSAPrivateKey', function () {
   this.seq().obj(
@@ -18582,7 +18579,7 @@ var RSAPrivateKey = asn1.define('RSAPrivateKey', function () {
     this.key('coefficient').int()
   )
 })
-    exports.RSAPrivateKey = RSAPrivateKey
+exports.RSAPrivateKey = RSAPrivateKey
 
 var RSAPublicKey = asn1.define('RSAPublicKey', function () {
   this.seq().obj(
@@ -18590,7 +18587,7 @@ var RSAPublicKey = asn1.define('RSAPublicKey', function () {
     this.key('publicExponent').int()
   )
 })
-    exports.RSAPublicKey = RSAPublicKey
+exports.RSAPublicKey = RSAPublicKey
 
 var PublicKey = asn1.define('SubjectPublicKeyInfo', function () {
   this.seq().obj(
@@ -18598,7 +18595,7 @@ var PublicKey = asn1.define('SubjectPublicKeyInfo', function () {
     this.key('subjectPublicKey').bitstr()
   )
 })
-    exports.PublicKey = PublicKey
+exports.PublicKey = PublicKey
 
 var AlgorithmIdentifier = asn1.define('AlgorithmIdentifier', function () {
   this.seq().obj(
@@ -18620,7 +18617,7 @@ var PrivateKeyInfo = asn1.define('PrivateKeyInfo', function () {
     this.key('subjectPrivateKey').octstr()
   )
 })
-    exports.PrivateKey = PrivateKeyInfo
+exports.PrivateKey = PrivateKeyInfo
 var EncryptedPrivateKeyInfo = asn1.define('EncryptedPrivateKeyInfo', function () {
   this.seq().obj(
     this.key('algorithm').seq().obj(
@@ -18643,7 +18640,7 @@ var EncryptedPrivateKeyInfo = asn1.define('EncryptedPrivateKeyInfo', function ()
   )
 })
 
-    exports.EncryptedPrivateKey = EncryptedPrivateKeyInfo
+exports.EncryptedPrivateKey = EncryptedPrivateKeyInfo
 
 var DSAPrivateKey = asn1.define('DSAPrivateKey', function () {
   this.seq().obj(
@@ -18655,7 +18652,7 @@ var DSAPrivateKey = asn1.define('DSAPrivateKey', function () {
     this.key('priv_key').int()
   )
 })
-    exports.DSAPrivateKey = DSAPrivateKey
+exports.DSAPrivateKey = DSAPrivateKey
 
 exports.DSAparam = asn1.define('DSAparam', function () {
   this.int()
@@ -18669,7 +18666,7 @@ var ECPrivateKey = asn1.define('ECPrivateKey', function () {
     this.key('publicKey').optional().explicit(1).bitstr()
   )
 })
-    exports.ECPrivateKey = ECPrivateKey
+exports.ECPrivateKey = ECPrivateKey
 
 var ECParameters = asn1.define('ECParameters', function () {
   this.choice({
@@ -18688,9 +18685,9 @@ exports.signature = asn1.define('signature', function () {
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
-    'use strict'
+'use strict'
 
-    var asn = require('asn1.js')
+var asn = require('asn1.js')
 
 var Time = asn.define('Time', function () {
   this.choice({
@@ -18777,12 +18774,12 @@ module.exports = X509Certificate
 
 },{"asn1.js":5}],113:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
-    var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r\+\/\=]+)[\n\r]+/m
-    var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
-    var fullRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----([0-9A-z\n\r\+\/\=]+)-----END \1-----$/m
-    var evp = require('evp_bytestokey')
-    var ciphers = require('browserify-aes')
-    var Buffer = require('safe-buffer').Buffer
+var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r\+\/\=]+)[\n\r]+/m
+var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
+var fullRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----([0-9A-z\n\r\+\/\=]+)-----END \1-----$/m
+var evp = require('evp_bytestokey')
+var ciphers = require('browserify-aes')
+var Buffer = require('safe-buffer').Buffer
 module.exports = function (okey, password) {
   var key = okey.toString()
   var match = key.match(findProc)
@@ -18809,13 +18806,13 @@ module.exports = function (okey, password) {
 }
 
 },{"browserify-aes":25,"evp_bytestokey":88,"safe-buffer":149}],114:[function(require,module,exports){
-    var asn1 = require('./asn1')
-    var aesid = require('./aesid.json')
-    var fixProc = require('./fixProc')
-    var ciphers = require('browserify-aes')
-    var compat = require('pbkdf2')
-    var Buffer = require('safe-buffer').Buffer
-    module.exports = parseKeys
+var asn1 = require('./asn1')
+var aesid = require('./aesid.json')
+var fixProc = require('./fixProc')
+var ciphers = require('browserify-aes')
+var compat = require('pbkdf2')
+var Buffer = require('safe-buffer').Buffer
+module.exports = parseKeys
 
 function parseKeys (buffer) {
   var password
@@ -18901,8 +18898,7 @@ function parseKeys (buffer) {
     default: throw new Error('unknown key type ' + type)
   }
 }
-
-    parseKeys.signature = asn1.signature
+parseKeys.signature = asn1.signature
 function decrypt (data, password) {
   var salt = data.algorithm.decrypt.kde.kdeparams.salt
   var iters = parseInt(data.algorithm.decrypt.kde.kdeparams.iters.toString(), 10)
@@ -18919,18 +18915,18 @@ function decrypt (data, password) {
 }
 
 },{"./aesid.json":110,"./asn1":111,"./fixProc":113,"browserify-aes":25,"pbkdf2":115,"safe-buffer":149}],115:[function(require,module,exports){
-    exports.pbkdf2 = require('./lib/async')
+exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
 },{"./lib/async":116,"./lib/sync":119}],116:[function(require,module,exports){
 (function (process,global){
-  var checkParameters = require('./precondition')
-  var defaultEncoding = require('./default-encoding')
-  var sync = require('./sync')
-  var Buffer = require('safe-buffer').Buffer
+var checkParameters = require('./precondition')
+var defaultEncoding = require('./default-encoding')
+var sync = require('./sync')
+var Buffer = require('safe-buffer').Buffer
 
-  var ZERO_BUF
-  var subtle = global.crypto && global.crypto.subtle
+var ZERO_BUF
+var subtle = global.crypto && global.crypto.subtle
 var toBrowser = {
   'sha': 'SHA-1',
   'sha-1': 'SHA-1',
@@ -18942,7 +18938,7 @@ var toBrowser = {
   'sha-512': 'SHA-512',
   'sha512': 'SHA-512'
 }
-  var checks = []
+var checks = []
 function checkNative (algo) {
   if (global.process && !global.process.browser) {
     return Promise.resolve(false)
@@ -19028,7 +19024,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./default-encoding":117,"./precondition":118,"./sync":119,"_process":121,"safe-buffer":149}],117:[function(require,module,exports){
 (function (process){
-  var defaultEncoding
+var defaultEncoding
 /* istanbul ignore next */
 if (process.browser) {
   defaultEncoding = 'utf-8'
@@ -19042,7 +19038,7 @@ module.exports = defaultEncoding
 }).call(this,require('_process'))
 },{"_process":121}],118:[function(require,module,exports){
 (function (Buffer){
-  var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
+var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 function checkBuffer (buf, name) {
   if (typeof buf !== 'string' && !Buffer.isBuffer(buf)) {
@@ -19073,14 +19069,14 @@ module.exports = function (password, salt, iterations, keylen) {
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
 },{"../../is-buffer/index.js":105}],119:[function(require,module,exports){
-    var md5 = require('create-hash/md5')
-    var RIPEMD160 = require('ripemd160')
-    var sha = require('sha.js')
+var md5 = require('create-hash/md5')
+var RIPEMD160 = require('ripemd160')
+var sha = require('sha.js')
 
-    var checkParameters = require('./precondition')
-    var defaultEncoding = require('./default-encoding')
-    var Buffer = require('safe-buffer').Buffer
-    var ZEROS = Buffer.alloc(128)
+var checkParameters = require('./precondition')
+var defaultEncoding = require('./default-encoding')
+var Buffer = require('safe-buffer').Buffer
+var ZEROS = Buffer.alloc(128)
 var sizes = {
   md5: 16,
   sha1: 20,
@@ -19263,7 +19259,7 @@ function defaultClearTimeout () {
     } catch (e) {
         cachedClearTimeout = defaultClearTimeout;
     }
-}())
+} ())
 function runTimeout(fun) {
     if (cachedSetTimeout === setTimeout) {
         //normal enviroments in sane situations
@@ -19400,9 +19396,7 @@ process.emit = noop;
 process.prependListener = noop;
 process.prependOnceListener = noop;
 
-    process.listeners = function (name) {
-      return []
-    }
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -19415,8 +19409,8 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],122:[function(require,module,exports){
-    exports.publicEncrypt = require('./publicEncrypt')
-    exports.privateDecrypt = require('./privateDecrypt')
+exports.publicEncrypt = require('./publicEncrypt')
+exports.privateDecrypt = require('./privateDecrypt')
 
 exports.privateEncrypt = function privateEncrypt (key, buf) {
   return exports.publicEncrypt(key, buf, true)
@@ -19427,8 +19421,8 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
 }
 
 },{"./privateDecrypt":124,"./publicEncrypt":125}],123:[function(require,module,exports){
-    var createHash = require('create-hash')
-    var Buffer = require('safe-buffer').Buffer
+var createHash = require('create-hash')
+var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (seed, len) {
   var t = Buffer.alloc(0)
@@ -19448,14 +19442,14 @@ function i2ops (c) {
 }
 
 },{"create-hash":56,"safe-buffer":149}],124:[function(require,module,exports){
-    var parseKeys = require('parse-asn1')
-    var mgf = require('./mgf')
-    var xor = require('./xor')
-    var BN = require('bn.js')
-    var crt = require('browserify-rsa')
-    var createHash = require('create-hash')
-    var withPublic = require('./withPublic')
-    var Buffer = require('safe-buffer').Buffer
+var parseKeys = require('parse-asn1')
+var mgf = require('./mgf')
+var xor = require('./xor')
+var BN = require('bn.js')
+var crt = require('browserify-rsa')
+var createHash = require('create-hash')
+var withPublic = require('./withPublic')
+var Buffer = require('safe-buffer').Buffer
 
 module.exports = function privateDecrypt (privateKey, enc, reverse) {
   var padding
@@ -19555,15 +19549,15 @@ function compare (a, b) {
 }
 
 },{"./mgf":123,"./withPublic":126,"./xor":127,"bn.js":20,"browserify-rsa":43,"create-hash":56,"parse-asn1":114,"safe-buffer":149}],125:[function(require,module,exports){
-    var parseKeys = require('parse-asn1')
-    var randomBytes = require('randombytes')
-    var createHash = require('create-hash')
-    var mgf = require('./mgf')
-    var xor = require('./xor')
-    var BN = require('bn.js')
-    var withPublic = require('./withPublic')
-    var crt = require('browserify-rsa')
-    var Buffer = require('safe-buffer').Buffer
+var parseKeys = require('parse-asn1')
+var randomBytes = require('randombytes')
+var createHash = require('create-hash')
+var mgf = require('./mgf')
+var xor = require('./xor')
+var BN = require('bn.js')
+var withPublic = require('./withPublic')
+var crt = require('browserify-rsa')
+var Buffer = require('safe-buffer').Buffer
 
 module.exports = function publicEncrypt (publicKey, msg, reverse) {
   var padding
@@ -19645,8 +19639,8 @@ function nonZero (len) {
 }
 
 },{"./mgf":123,"./withPublic":126,"./xor":127,"bn.js":20,"browserify-rsa":43,"create-hash":56,"parse-asn1":114,"randombytes":131,"safe-buffer":149}],126:[function(require,module,exports){
-    var BN = require('bn.js')
-    var Buffer = require('safe-buffer').Buffer
+var BN = require('bn.js')
+var Buffer = require('safe-buffer').Buffer
 
 function withPublic (paddedMsg, key) {
   return Buffer.from(paddedMsg
@@ -19849,22 +19843,22 @@ exports.encode = exports.stringify = require('./encode');
 
 },{"./decode":128,"./encode":129}],131:[function(require,module,exports){
 (function (process,global){
-  'use strict'
+'use strict'
 
 // limit of Crypto.getRandomValues()
 // https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues
-  var MAX_BYTES = 65536
+var MAX_BYTES = 65536
 
 // Node supports requesting up to this number of bytes
 // https://github.com/nodejs/node/blob/master/lib/internal/crypto/random.js#L48
-  var MAX_UINT32 = 4294967295
+var MAX_UINT32 = 4294967295
 
 function oldBrowser () {
   throw new Error('Secure random number generation is not supported by this browser.\nUse Chrome, Firefox or Internet Explorer 11')
 }
 
-  var Buffer = require('safe-buffer').Buffer
-  var crypto = global.crypto || global.msCrypto
+var Buffer = require('safe-buffer').Buffer
+var crypto = global.crypto || global.msCrypto
 
 if (crypto && crypto.getRandomValues) {
   module.exports = randomBytes
@@ -19903,18 +19897,17 @@ function randomBytes (size, cb) {
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":121,"safe-buffer":149}],132:[function(require,module,exports){
 (function (process,global){
-  'use strict'
+'use strict'
 
 function oldBrowser () {
   throw new Error('secure random number generation not supported by this browser\nuse chrome, FireFox or Internet Explorer 11')
 }
-
-  var safeBuffer = require('safe-buffer')
-  var randombytes = require('randombytes')
-  var Buffer = safeBuffer.Buffer
-  var kBufferMaxLength = safeBuffer.kMaxLength
-  var crypto = global.crypto || global.msCrypto
-  var kMaxUint32 = Math.pow(2, 32) - 1
+var safeBuffer = require('safe-buffer')
+var randombytes = require('randombytes')
+var Buffer = safeBuffer.Buffer
+var kBufferMaxLength = safeBuffer.kMaxLength
+var crypto = global.crypto || global.msCrypto
+var kMaxUint32 = Math.pow(2, 32) - 1
 function assertOffset (offset, length) {
   if (typeof offset !== 'number' || offset !== offset) { // eslint-disable-line no-self-compare
     throw new TypeError('offset must be a number')
@@ -22310,12 +22303,12 @@ module.exports = require('./readable').Transform
 module.exports = require('./lib/_stream_writable.js');
 
 },{"./lib/_stream_writable.js":138}],148:[function(require,module,exports){
-    'use strict'
-    var Buffer = require('buffer').Buffer
-    var inherits = require('inherits')
-    var HashBase = require('hash-base')
+'use strict'
+var Buffer = require('buffer').Buffer
+var inherits = require('inherits')
+var HashBase = require('hash-base')
 
-    var ARRAY16 = new Array(16)
+var ARRAY16 = new Array(16)
 
 var zl = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -22349,8 +22342,8 @@ var sr = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ]
 
-    var hl = [0x00000000, 0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xa953fd4e]
-    var hr = [0x50a28be6, 0x5c4dd124, 0x6d703ef3, 0x7a6d76e9, 0x00000000]
+var hl = [0x00000000, 0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xa953fd4e]
+var hr = [0x50a28be6, 0x5c4dd124, 0x6d703ef3, 0x7a6d76e9, 0x00000000]
 
 function RIPEMD160 () {
   HashBase.call(this, 64)
@@ -22363,7 +22356,7 @@ function RIPEMD160 () {
   this._e = 0xc3d2e1f0
 }
 
-    inherits(RIPEMD160, HashBase)
+inherits(RIPEMD160, HashBase)
 
 RIPEMD160.prototype._update = function () {
   var words = ARRAY16
@@ -22476,8 +22469,8 @@ module.exports = RIPEMD160
 
 },{"buffer":52,"hash-base":89,"inherits":104}],149:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
-    var buffer = require('buffer')
-    var Buffer = buffer.Buffer
+var buffer = require('buffer')
+var Buffer = buffer.Buffer
 
 // alternative to using Object.keys for old browsers
 function copyProps (src, dst) {
@@ -22498,7 +22491,7 @@ function SafeBuffer (arg, encodingOrOffset, length) {
 }
 
 // Copy static methods from Buffer
-    copyProps(Buffer, SafeBuffer)
+copyProps(Buffer, SafeBuffer)
 
 SafeBuffer.from = function (arg, encodingOrOffset, length) {
   if (typeof arg === 'number') {
@@ -22539,7 +22532,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 }
 
 },{"buffer":52}],150:[function(require,module,exports){
-    var Buffer = require('safe-buffer').Buffer
+var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
 function Hash (blockSize, finalSize) {
@@ -22631,11 +22624,11 @@ var exports = module.exports = function SHA (algorithm) {
   return new Algorithm()
 }
 
-    exports.sha = require('./sha')
-    exports.sha1 = require('./sha1')
-    exports.sha224 = require('./sha224')
-    exports.sha256 = require('./sha256')
-    exports.sha384 = require('./sha384')
+exports.sha = require('./sha')
+exports.sha1 = require('./sha1')
+exports.sha224 = require('./sha224')
+exports.sha256 = require('./sha256')
+exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
 },{"./sha":152,"./sha1":153,"./sha224":154,"./sha256":155,"./sha384":156,"./sha512":157}],152:[function(require,module,exports){
@@ -22647,15 +22640,15 @@ exports.sha512 = require('./sha512')
  * operation was added.
  */
 
-    var inherits = require('inherits')
-    var Hash = require('./hash')
-    var Buffer = require('safe-buffer').Buffer
+var inherits = require('inherits')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
 var K = [
   0x5a827999, 0x6ed9eba1, 0x8f1bbcdc | 0, 0xca62c1d6 | 0
 ]
 
-    var W = new Array(80)
+var W = new Array(80)
 
 function Sha () {
   this.init()
@@ -22664,7 +22657,7 @@ function Sha () {
   Hash.call(this, 64, 56)
 }
 
-    inherits(Sha, Hash)
+inherits(Sha, Hash)
 
 Sha.prototype.init = function () {
   this._a = 0x67452301
@@ -22744,15 +22737,15 @@ module.exports = Sha
  * See http://pajhome.org.uk/crypt/md5 for details.
  */
 
-    var inherits = require('inherits')
-    var Hash = require('./hash')
-    var Buffer = require('safe-buffer').Buffer
+var inherits = require('inherits')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
 var K = [
   0x5a827999, 0x6ed9eba1, 0x8f1bbcdc | 0, 0xca62c1d6 | 0
 ]
 
-    var W = new Array(80)
+var W = new Array(80)
 
 function Sha1 () {
   this.init()
@@ -22761,7 +22754,7 @@ function Sha1 () {
   Hash.call(this, 64, 56)
 }
 
-    inherits(Sha1, Hash)
+inherits(Sha1, Hash)
 
 Sha1.prototype.init = function () {
   this._a = 0x67452301
@@ -22845,11 +22838,11 @@ module.exports = Sha1
  */
 
 var inherits = require('inherits')
-    var Sha256 = require('./sha256')
-    var Hash = require('./hash')
-    var Buffer = require('safe-buffer').Buffer
+var Sha256 = require('./sha256')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
-    var W = new Array(64)
+var W = new Array(64)
 
 function Sha224 () {
   this.init()
@@ -22859,7 +22852,7 @@ function Sha224 () {
   Hash.call(this, 64, 56)
 }
 
-    inherits(Sha224, Sha256)
+inherits(Sha224, Sha256)
 
 Sha224.prototype.init = function () {
   this._a = 0xc1059ed8
@@ -22900,8 +22893,8 @@ module.exports = Sha224
  */
 
 var inherits = require('inherits')
-    var Hash = require('./hash')
-    var Buffer = require('safe-buffer').Buffer
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
 var K = [
   0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5,
@@ -22922,7 +22915,7 @@ var K = [
   0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
 ]
 
-    var W = new Array(64)
+var W = new Array(64)
 
 function Sha256 () {
   this.init()
@@ -22932,7 +22925,7 @@ function Sha256 () {
   Hash.call(this, 64, 56)
 }
 
-    inherits(Sha256, Hash)
+inherits(Sha256, Hash)
 
 Sha256.prototype.init = function () {
   this._a = 0x6a09e667
@@ -23028,12 +23021,12 @@ Sha256.prototype._hash = function () {
 module.exports = Sha256
 
 },{"./hash":150,"inherits":104,"safe-buffer":149}],156:[function(require,module,exports){
-    var inherits = require('inherits')
-    var SHA512 = require('./sha512')
-    var Hash = require('./hash')
-    var Buffer = require('safe-buffer').Buffer
+var inherits = require('inherits')
+var SHA512 = require('./sha512')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
-    var W = new Array(160)
+var W = new Array(160)
 
 function Sha384 () {
   this.init()
@@ -23042,7 +23035,7 @@ function Sha384 () {
   Hash.call(this, 128, 112)
 }
 
-    inherits(Sha384, SHA512)
+inherits(Sha384, SHA512)
 
 Sha384.prototype.init = function () {
   this._ah = 0xcbbb9d5d
@@ -23087,9 +23080,9 @@ Sha384.prototype._hash = function () {
 module.exports = Sha384
 
 },{"./hash":150,"./sha512":157,"inherits":104,"safe-buffer":149}],157:[function(require,module,exports){
-    var inherits = require('inherits')
-    var Hash = require('./hash')
-    var Buffer = require('safe-buffer').Buffer
+var inherits = require('inherits')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
 var K = [
   0x428a2f98, 0xd728ae22, 0x71374491, 0x23ef65cd,
@@ -23134,7 +23127,7 @@ var K = [
   0x5fcb6fab, 0x3ad6faec, 0x6c44198c, 0x4a475817
 ]
 
-    var W = new Array(160)
+var W = new Array(160)
 
 function Sha512 () {
   this.init()
@@ -23143,7 +23136,7 @@ function Sha512 () {
   Hash.call(this, 128, 112)
 }
 
-    inherits(Sha512, Hash)
+inherits(Sha512, Hash)
 
 Sha512.prototype.init = function () {
   this._ah = 0x6a09e667
@@ -23237,114 +23230,114 @@ Sha512.prototype._update = function (M) {
     xh = W[i - 2 * 2]
     xl = W[i - 2 * 2 + 1]
     var gamma1 = Gamma1(xh, xl)
-    var gamma1l = Gamma1l(xl, xh);
+    var gamma1l = Gamma1l(xl, xh)
 
     // W[i] = gamma0 + W[i - 7] + gamma1 + W[i - 16]
-    var Wi7h = W[i - 7 * 2];
-    var Wi7l = W[i - 7 * 2 + 1];
+    var Wi7h = W[i - 7 * 2]
+    var Wi7l = W[i - 7 * 2 + 1]
 
-    var Wi16h = W[i - 16 * 2];
-    var Wi16l = W[i - 16 * 2 + 1];
+    var Wi16h = W[i - 16 * 2]
+    var Wi16l = W[i - 16 * 2 + 1]
 
-    var Wil = (gamma0l + Wi7l) | 0;
-    var Wih = (gamma0 + Wi7h + getCarry(Wil, gamma0l)) | 0;
-    Wil = (Wil + gamma1l) | 0;
-    Wih = (Wih + gamma1 + getCarry(Wil, gamma1l)) | 0;
-    Wil = (Wil + Wi16l) | 0;
-    Wih = (Wih + Wi16h + getCarry(Wil, Wi16l)) | 0;
+    var Wil = (gamma0l + Wi7l) | 0
+    var Wih = (gamma0 + Wi7h + getCarry(Wil, gamma0l)) | 0
+    Wil = (Wil + gamma1l) | 0
+    Wih = (Wih + gamma1 + getCarry(Wil, gamma1l)) | 0
+    Wil = (Wil + Wi16l) | 0
+    Wih = (Wih + Wi16h + getCarry(Wil, Wi16l)) | 0
 
-    W[i] = Wih;
+    W[i] = Wih
     W[i + 1] = Wil
   }
 
   for (var j = 0; j < 160; j += 2) {
-    Wih = W[j];
-    Wil = W[j + 1];
+    Wih = W[j]
+    Wil = W[j + 1]
 
-    var majh = maj(ah, bh, ch);
-    var majl = maj(al, bl, cl);
+    var majh = maj(ah, bh, ch)
+    var majl = maj(al, bl, cl)
 
-    var sigma0h = sigma0(ah, al);
-    var sigma0l = sigma0(al, ah);
-    var sigma1h = sigma1(eh, el);
-    var sigma1l = sigma1(el, eh);
+    var sigma0h = sigma0(ah, al)
+    var sigma0l = sigma0(al, ah)
+    var sigma1h = sigma1(eh, el)
+    var sigma1l = sigma1(el, eh)
 
     // t1 = h + sigma1 + ch + K[j] + W[j]
-    var Kih = K[j];
-    var Kil = K[j + 1];
+    var Kih = K[j]
+    var Kil = K[j + 1]
 
-    var chh = Ch(eh, fh, gh);
-    var chl = Ch(el, fl, gl);
+    var chh = Ch(eh, fh, gh)
+    var chl = Ch(el, fl, gl)
 
-    var t1l = (hl + sigma1l) | 0;
-    var t1h = (hh + sigma1h + getCarry(t1l, hl)) | 0;
-    t1l = (t1l + chl) | 0;
-    t1h = (t1h + chh + getCarry(t1l, chl)) | 0;
-    t1l = (t1l + Kil) | 0;
-    t1h = (t1h + Kih + getCarry(t1l, Kil)) | 0;
-    t1l = (t1l + Wil) | 0;
-    t1h = (t1h + Wih + getCarry(t1l, Wil)) | 0;
+    var t1l = (hl + sigma1l) | 0
+    var t1h = (hh + sigma1h + getCarry(t1l, hl)) | 0
+    t1l = (t1l + chl) | 0
+    t1h = (t1h + chh + getCarry(t1l, chl)) | 0
+    t1l = (t1l + Kil) | 0
+    t1h = (t1h + Kih + getCarry(t1l, Kil)) | 0
+    t1l = (t1l + Wil) | 0
+    t1h = (t1h + Wih + getCarry(t1l, Wil)) | 0
 
     // t2 = sigma0 + maj
-    var t2l = (sigma0l + majl) | 0;
-    var t2h = (sigma0h + majh + getCarry(t2l, sigma0l)) | 0;
+    var t2l = (sigma0l + majl) | 0
+    var t2h = (sigma0h + majh + getCarry(t2l, sigma0l)) | 0
 
-    hh = gh;
-    hl = gl;
-    gh = fh;
-    gl = fl;
-    fh = eh;
-    fl = el;
-    el = (dl + t1l) | 0;
-    eh = (dh + t1h + getCarry(el, dl)) | 0;
-    dh = ch;
-    dl = cl;
-    ch = bh;
-    cl = bl;
-    bh = ah;
-    bl = al;
-    al = (t1l + t2l) | 0;
+    hh = gh
+    hl = gl
+    gh = fh
+    gl = fl
+    fh = eh
+    fl = el
+    el = (dl + t1l) | 0
+    eh = (dh + t1h + getCarry(el, dl)) | 0
+    dh = ch
+    dl = cl
+    ch = bh
+    cl = bl
+    bh = ah
+    bl = al
+    al = (t1l + t2l) | 0
     ah = (t1h + t2h + getCarry(al, t1l)) | 0
   }
 
-  this._al = (this._al + al) | 0;
-  this._bl = (this._bl + bl) | 0;
-  this._cl = (this._cl + cl) | 0;
-  this._dl = (this._dl + dl) | 0;
-  this._el = (this._el + el) | 0;
-  this._fl = (this._fl + fl) | 0;
-  this._gl = (this._gl + gl) | 0;
-  this._hl = (this._hl + hl) | 0;
+  this._al = (this._al + al) | 0
+  this._bl = (this._bl + bl) | 0
+  this._cl = (this._cl + cl) | 0
+  this._dl = (this._dl + dl) | 0
+  this._el = (this._el + el) | 0
+  this._fl = (this._fl + fl) | 0
+  this._gl = (this._gl + gl) | 0
+  this._hl = (this._hl + hl) | 0
 
-  this._ah = (this._ah + ah + getCarry(this._al, al)) | 0;
-  this._bh = (this._bh + bh + getCarry(this._bl, bl)) | 0;
-  this._ch = (this._ch + ch + getCarry(this._cl, cl)) | 0;
-  this._dh = (this._dh + dh + getCarry(this._dl, dl)) | 0;
-  this._eh = (this._eh + eh + getCarry(this._el, el)) | 0;
-  this._fh = (this._fh + fh + getCarry(this._fl, fl)) | 0;
-  this._gh = (this._gh + gh + getCarry(this._gl, gl)) | 0;
+  this._ah = (this._ah + ah + getCarry(this._al, al)) | 0
+  this._bh = (this._bh + bh + getCarry(this._bl, bl)) | 0
+  this._ch = (this._ch + ch + getCarry(this._cl, cl)) | 0
+  this._dh = (this._dh + dh + getCarry(this._dl, dl)) | 0
+  this._eh = (this._eh + eh + getCarry(this._el, el)) | 0
+  this._fh = (this._fh + fh + getCarry(this._fl, fl)) | 0
+  this._gh = (this._gh + gh + getCarry(this._gl, gl)) | 0
   this._hh = (this._hh + hh + getCarry(this._hl, hl)) | 0
-};
+}
 
 Sha512.prototype._hash = function () {
-  var H = Buffer.allocUnsafe(64);
+  var H = Buffer.allocUnsafe(64)
 
   function writeInt64BE (h, l, offset) {
-    H.writeInt32BE(h, offset);
+    H.writeInt32BE(h, offset)
     H.writeInt32BE(l, offset + 4)
   }
 
-  writeInt64BE(this._ah, this._al, 0);
-  writeInt64BE(this._bh, this._bl, 8);
-  writeInt64BE(this._ch, this._cl, 16);
-  writeInt64BE(this._dh, this._dl, 24);
-  writeInt64BE(this._eh, this._el, 32);
-  writeInt64BE(this._fh, this._fl, 40);
-  writeInt64BE(this._gh, this._gl, 48);
-  writeInt64BE(this._hh, this._hl, 56);
+  writeInt64BE(this._ah, this._al, 0)
+  writeInt64BE(this._bh, this._bl, 8)
+  writeInt64BE(this._ch, this._cl, 16)
+  writeInt64BE(this._dh, this._dl, 24)
+  writeInt64BE(this._eh, this._el, 32)
+  writeInt64BE(this._fh, this._fl, 40)
+  writeInt64BE(this._gh, this._gl, 48)
+  writeInt64BE(this._hh, this._hl, 56)
 
   return H
-};
+}
 
 module.exports = Sha512
 
@@ -23636,16 +23629,16 @@ var indexOf = function (xs, item) {
     return -1;
 };
 var Object_keys = function (obj) {
-  if (Object.keys) return Object.keys(obj);
+    if (Object.keys) return Object.keys(obj)
     else {
         var res = [];
-    for (var key in obj) res.push(key);
+        for (var key in obj) res.push(key)
         return res;
     }
 };
 
 var forEach = function (xs, fn) {
-  if (xs.forEach) return xs.forEach(fn);
+    if (xs.forEach) return xs.forEach(fn)
     else for (var i = 0; i < xs.length; i++) {
         fn(xs[i], i, xs);
     }
