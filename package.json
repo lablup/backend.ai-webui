@@ -45,10 +45,10 @@
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/paper-toggle-button": "^3.0.1",
-    "@polymer/polymer": "^3.1.0",
+    "@polymer/polymer": "^3.2.0",
     "@vaadin/vaadin-dialog": "^2.2.1",
-    "@vaadin/vaadin-grid": "^5.3.2",
-    "@vaadin/vaadin-icons": "^4.2.1",
+    "@vaadin/vaadin-grid": "^5.3.3",
+    "@vaadin/vaadin-icons": "^4.3.1",
     "@vaadin/vaadin-item": "^2.1.0",
     "@vaadin/vaadin-progress-bar": "^1.1.0",
     "@vaadin/vaadin-upload": "^4.2.1",
@@ -56,20 +56,18 @@
     "electron-tabs": "^0.9.5",
     "forever": "^0.15.3",
     "i18n-element": "^3.0.0-rc.1",
-    "polymer-cli": "^1.9.6"
+    "polymer-cli": "^1.9.7"
   },
   "devDependencies": {
-    "electron": "^4.0.5",
-    "electron-packager": "^12.2.0",
-    "eslint": "^5.14.1",
-    "eslint-config-google": "^0.12.0",
-    "webpack": "^4.29.3",
-    "webpack-cli": "^3.2.3",
-    "websocket": "^1.0.28",
     "buffer": "^5.2.1",
+    "cors": "^2.8.5",
+    "electron": "^4.1.1",
+    "electron-packager": "^12.2.0",
+    "eslint": "^5.15.3",
+    "eslint-config-google": "^0.12.0",
     "express": "^4.16.4",
     "graphql": "^14.1.1",
-    "lit-element": "^2.0.1",
+    "lit-element": "^2.1.0",
     "log": "^3.2.0",
     "node-fetch": "^2.3.0",
     "node-port-check": "^2.0.1",
@@ -78,6 +76,8 @@
     "redux-thunk": "^2.3.0",
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.1",
-    "cors": "^2.8.5"
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "websocket": "^1.0.28"
   }
 }

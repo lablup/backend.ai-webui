@@ -383,7 +383,7 @@ class BackendAIJobList extends PolymerElement {
       rqst = {
         method: 'GET',
         app: app,
-        uri: window.backendaiclient._config.proxyURL + 'proxy/' + token + "/" + kernelId + "/add"
+        uri: window.backendaiclient._config.proxyURL + 'proxy/' + token + "/" + kernelId + "/add?app=" + app
       };
       return await this.sendRequest(rqst);
     } catch (err) {
@@ -701,7 +701,7 @@ class BackendAIJobList extends PolymerElement {
                 <paper-icon-button class="fg controls-running orange"
                                    on-tap="_runJupyterLab" icon="vaadin:flask"></paper-icon-button>
                 <paper-icon-button class="fg controls-running orange"
-                                   on-tap="_runTensorBoard" icon="vaadin:clipboard_pulse"></paper-icon-button>
+                                   on-tap="_runTensorBoard" icon="vaadin:clipboard-pulse"></paper-icon-button>
                 <paper-icon-button class="fg controls-running"
                                    on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
               </template>
