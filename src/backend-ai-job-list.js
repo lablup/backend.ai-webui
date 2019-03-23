@@ -337,6 +337,7 @@ class BackendAIJobList extends PolymerElement {
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
     const accessKey = controls.accessKey;
+
     window.backendaiclient.getLogs(kernelId, accessKey).then((req) => {
       setTimeout(() => {
         this.$['work-title'].innerHTML = `${kernelId}`;
@@ -352,6 +353,17 @@ class BackendAIJobList extends PolymerElement {
         this.$.notification.show();
       }
     });
+  }
+
+  _showAppLauncher(e) {
+    const controls = e.target.closest('#controls');
+    const kernelId = controls.kernelId;
+    const accessKey = controls.accessKey;
+    let dialog = this.$['app-dialog'];
+    dialog.kernelId = kernelId;
+    dialog.accessKey = accessKey;
+    dialog.positionTarget = e.target;
+    this.$['app-dialog'].open();
   }
 
   async _open_wsproxy(kernelId, app = 'jupyter') {
@@ -393,7 +405,7 @@ class BackendAIJobList extends PolymerElement {
 
   _runJupyter(e) {
     const termButton = e.target;
-    const controls = e.target.closest('#controls');
+    const controls = e.target.closest('#app-dialog');
     const kernelId = controls.kernelId;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
@@ -414,7 +426,7 @@ class BackendAIJobList extends PolymerElement {
 
   _runJupyterLab(e) {
     const termButton = e.target;
-    const controls = e.target.closest('#controls');
+    const controls = e.target.closest('#app-dialog');
     const kernelId = controls.kernelId;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
@@ -457,7 +469,7 @@ class BackendAIJobList extends PolymerElement {
 
   _runTensorBoard(e) {
     const termButton = e.target;
-    const controls = e.target.closest('#controls');
+    const controls = e.target.closest('#app-dialog');
     const kernelId = controls.kernelId;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
@@ -506,12 +518,23 @@ class BackendAIJobList extends PolymerElement {
           padding: 0;
         }
 
-        paper-icon-button {
+        paper-icon-button.controls-running {
           --paper-icon-button: {
             width: 25px;
             height: 25px;
             min-width: 25px;
             min-height: 25px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
+
+        paper-icon-button.apps {
+          --paper-icon-button: {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            min-height: 50px;
             padding: 3px;
             margin-right: 5px;
           };
@@ -541,12 +564,24 @@ class BackendAIJobList extends PolymerElement {
 
         #work-area {
           width: 100%;
-          height: 100vh;
+          height: calc(100vh - 120px);
+          background-color: #222;
+          color: #efefef;
         }
 
         div.indicator,
         span.indicator {
           font-size: 9px;
+          margin-right: 5px;
+        }
+
+        div.label,
+        span.label {
+          font-size: 12px;
+        }
+
+        .app-icon {
+          margin-left: 5px;
           margin-right: 5px;
         }
 
@@ -696,12 +731,8 @@ class BackendAIJobList extends PolymerElement {
                                    on-tap="_showLogs"></paper-icon-button>
               </template>
               <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
-                <paper-icon-button class="fg controls-running orange"
-                                   on-tap="_runJupyter" icon="vaadin:notebook"></paper-icon-button>
-                <paper-icon-button class="fg controls-running orange"
-                                   on-tap="_runJupyterLab" icon="vaadin:flask"></paper-icon-button>
-                <paper-icon-button class="fg controls-running orange"
-                                   on-tap="_runTensorBoard" icon="vaadin:clipboard-pulse"></paper-icon-button>
+                <paper-icon-button class="fg controls-running green"
+                                   on-tap="_showAppLauncher" icon="vaadin:cubes"></paper-icon-button>
                 <paper-icon-button class="fg controls-running"
                                    on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
               </template>
@@ -734,20 +765,36 @@ class BackendAIJobList extends PolymerElement {
         </paper-material>
       </paper-dialog>
       <paper-dialog id="app-dialog"
-                    entry-animation="slide-from-right-animation" exit-animation="slide-right-animation"
-                    style="padding:0;">
-        <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span id="work-title"></span>
+                    style="padding:0;" no-overlap
+                    horizontal-align="right"
+                    vertical-align="top" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <paper-material elevation="1" class="intro" style="margin: 0; height: 100%;">
+          <h4 class="horizontal center layout" style="font-weight:bold">
+            <span>App</span>
             <div class="flex"></div>
             <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
               Close
             </paper-icon-button>
-          </h3>
-          <paper-dialog-scrollable id="work-area" style="overflow:scroll;"></paper-dialog-scrollable>
-          <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                  style="border-style: none;width: 100%;"></iframe>
-
+          </h4>
+          <div style="padding:15px;" class="horizontal layout wrap center center-justified">
+            <div class="vertical layout center center-justified app-icon">
+              <paper-icon-button class="fg apps orange"
+                                 on-tap="_runJupyter" icon="vaadin:notebook"></paper-icon-button>
+              <span class="label">Notebook</span>
+            </div>
+            <div class="vertical layout center center-justified app-icon">
+              <paper-icon-button class="fg apps red"
+                                 on-tap="_runJupyterLab" icon="vaadin:flask"></paper-icon-button>
+              <span class="label">JupyterLab</span>
+            </div>
+            <div class="vertical layout center center-justified app-icon">
+              <paper-icon-button class="fg apps green"
+                                 on-tap="_runTensorBoard" icon="vaadin:clipboard-pulse"></paper-icon-button>
+              <span class="label">TensorBoard</span>
+            </div>
+          </div>
+          <template is="dom-repeat" items="{{ app_support_list }}">
+          </template>
         </paper-material>
       </paper-dialog>
     `;

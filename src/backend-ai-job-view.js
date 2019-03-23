@@ -871,7 +871,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       <paper-material class="item" elevation="1">
         <h4 class="horizontal center layout">
           <span>Running</span>
-          <div class="layout horizontal center resources">
+          <div class="layout horizontal center resources wrap">
             <div class="layout vertical start-justified wrap" style="padding-left:15px;">
               <span class="gauge-label">CPUs: [[used_slot.cpu_slot]]/[[total_slot.cpu_slot]]</span>
               <paper-progress id="cpu-usage-bar" value="[[used_slot_percent.cpu_slot]]"></paper-progress>
