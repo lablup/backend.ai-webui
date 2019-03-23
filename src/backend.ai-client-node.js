@@ -301,12 +301,12 @@ class Client {
     return this.createIfNotExists(kernelType, sessionId, resources);
   }
 
-  destroyKernel(kernelId) {
-    return this.destroy(kernelId);
+  destroyKernel(kernelId, ownerKey = null) {
+    return this.destroy(kernelId, ownerKey);
   }
 
-  refreshKernel(kernelId) {
-    return this.restart(kernelId);
+  refreshKernel(kernelId, ownerKey = null) {
+    return this.restart(kernelId, ownerKey);
   }
 
   runCode(code, kernelId, runId, mode) {
