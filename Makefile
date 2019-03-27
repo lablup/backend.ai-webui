@@ -28,13 +28,13 @@ dep: compile
 	cp -Rp build/bundle build/electron-app/app
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy.js
 web:
-	cp ./configs/config.js.$(site) config.js
-	make dep
+	if [ ! -d "./build/bundle/" ];then \
+		make dep; \
+	fi
 	mkdir -p ./deploy/$(site)
 	cd deploy/$(site); rm -rf ./*; mkdir console
 	cp -Rp build/bundle/* deploy/$(site)/console
 	cp ./configs/config.js.$(site) deploy/$(site)/console/config.js
-	cp config.js.original config.js
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
 win: dep
