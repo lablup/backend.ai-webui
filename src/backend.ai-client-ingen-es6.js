@@ -332,10 +332,10 @@ class Client {
         config['mem'] = resources['mem'];
       }
       if (resources['gpu']) { // Temporary fix for resource handling
-        config['cuda.device'] = parseFloat(parseFloat(resources['gpu']) * 0.9).toFixed(2);
+        config['cuda.device'] = parseFloat(parseFloat(resources['gpu'])).toFixed(2);
       }
       if (resources['vgpu']) { // Temporary fix for resource handling
-        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu']) * 0.9).toFixed(2);
+        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu'])).toFixed(2);
       }
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
@@ -629,6 +629,11 @@ class VFolder {
 
   list() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  list_hosts() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/hosts`, null);
     return this.client._wrapWithPromise(rqst);
   }
 

@@ -225,10 +225,10 @@ class Client {
         config['mem'] = resources['mem'];
       }
       if (resources['gpu']) { // Temporary fix for resource handling
-        config['cuda.device'] = parseFloat(parseFloat(resources['gpu']) * 0.9).toFixed(2);
+        config['cuda.device'] = parseFloat(parseFloat(resources['gpu'])).toFixed(2);
       }
       if (resources['vgpu']) { // Temporary fix for resource handling
-        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu']) * 0.9).toFixed(2);
+        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu'])).toFixed(2);
       }
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
@@ -522,6 +522,11 @@ class VFolder {
 
   list() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  list_hosts() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/hosts`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -23123,114 +23128,114 @@ Sha512.prototype._update = function (M) {
     xh = W[i - 2 * 2]
     xl = W[i - 2 * 2 + 1]
     var gamma1 = Gamma1(xh, xl)
-    var gamma1l = Gamma1l(xl, xh)
+    var gamma1l = Gamma1l(xl, xh);
 
     // W[i] = gamma0 + W[i - 7] + gamma1 + W[i - 16]
-    var Wi7h = W[i - 7 * 2]
-    var Wi7l = W[i - 7 * 2 + 1]
+    var Wi7h = W[i - 7 * 2];
+    var Wi7l = W[i - 7 * 2 + 1];
 
-    var Wi16h = W[i - 16 * 2]
-    var Wi16l = W[i - 16 * 2 + 1]
+    var Wi16h = W[i - 16 * 2];
+    var Wi16l = W[i - 16 * 2 + 1];
 
-    var Wil = (gamma0l + Wi7l) | 0
-    var Wih = (gamma0 + Wi7h + getCarry(Wil, gamma0l)) | 0
-    Wil = (Wil + gamma1l) | 0
-    Wih = (Wih + gamma1 + getCarry(Wil, gamma1l)) | 0
-    Wil = (Wil + Wi16l) | 0
-    Wih = (Wih + Wi16h + getCarry(Wil, Wi16l)) | 0
+    var Wil = (gamma0l + Wi7l) | 0;
+    var Wih = (gamma0 + Wi7h + getCarry(Wil, gamma0l)) | 0;
+    Wil = (Wil + gamma1l) | 0;
+    Wih = (Wih + gamma1 + getCarry(Wil, gamma1l)) | 0;
+    Wil = (Wil + Wi16l) | 0;
+    Wih = (Wih + Wi16h + getCarry(Wil, Wi16l)) | 0;
 
-    W[i] = Wih
+    W[i] = Wih;
     W[i + 1] = Wil
   }
 
   for (var j = 0; j < 160; j += 2) {
-    Wih = W[j]
-    Wil = W[j + 1]
+    Wih = W[j];
+    Wil = W[j + 1];
 
-    var majh = maj(ah, bh, ch)
-    var majl = maj(al, bl, cl)
+    var majh = maj(ah, bh, ch);
+    var majl = maj(al, bl, cl);
 
-    var sigma0h = sigma0(ah, al)
-    var sigma0l = sigma0(al, ah)
-    var sigma1h = sigma1(eh, el)
-    var sigma1l = sigma1(el, eh)
+    var sigma0h = sigma0(ah, al);
+    var sigma0l = sigma0(al, ah);
+    var sigma1h = sigma1(eh, el);
+    var sigma1l = sigma1(el, eh);
 
     // t1 = h + sigma1 + ch + K[j] + W[j]
-    var Kih = K[j]
-    var Kil = K[j + 1]
+    var Kih = K[j];
+    var Kil = K[j + 1];
 
-    var chh = Ch(eh, fh, gh)
-    var chl = Ch(el, fl, gl)
+    var chh = Ch(eh, fh, gh);
+    var chl = Ch(el, fl, gl);
 
-    var t1l = (hl + sigma1l) | 0
-    var t1h = (hh + sigma1h + getCarry(t1l, hl)) | 0
-    t1l = (t1l + chl) | 0
-    t1h = (t1h + chh + getCarry(t1l, chl)) | 0
-    t1l = (t1l + Kil) | 0
-    t1h = (t1h + Kih + getCarry(t1l, Kil)) | 0
-    t1l = (t1l + Wil) | 0
-    t1h = (t1h + Wih + getCarry(t1l, Wil)) | 0
+    var t1l = (hl + sigma1l) | 0;
+    var t1h = (hh + sigma1h + getCarry(t1l, hl)) | 0;
+    t1l = (t1l + chl) | 0;
+    t1h = (t1h + chh + getCarry(t1l, chl)) | 0;
+    t1l = (t1l + Kil) | 0;
+    t1h = (t1h + Kih + getCarry(t1l, Kil)) | 0;
+    t1l = (t1l + Wil) | 0;
+    t1h = (t1h + Wih + getCarry(t1l, Wil)) | 0;
 
     // t2 = sigma0 + maj
-    var t2l = (sigma0l + majl) | 0
-    var t2h = (sigma0h + majh + getCarry(t2l, sigma0l)) | 0
+    var t2l = (sigma0l + majl) | 0;
+    var t2h = (sigma0h + majh + getCarry(t2l, sigma0l)) | 0;
 
-    hh = gh
-    hl = gl
-    gh = fh
-    gl = fl
-    fh = eh
-    fl = el
-    el = (dl + t1l) | 0
-    eh = (dh + t1h + getCarry(el, dl)) | 0
-    dh = ch
-    dl = cl
-    ch = bh
-    cl = bl
-    bh = ah
-    bl = al
-    al = (t1l + t2l) | 0
+    hh = gh;
+    hl = gl;
+    gh = fh;
+    gl = fl;
+    fh = eh;
+    fl = el;
+    el = (dl + t1l) | 0;
+    eh = (dh + t1h + getCarry(el, dl)) | 0;
+    dh = ch;
+    dl = cl;
+    ch = bh;
+    cl = bl;
+    bh = ah;
+    bl = al;
+    al = (t1l + t2l) | 0;
     ah = (t1h + t2h + getCarry(al, t1l)) | 0
   }
 
-  this._al = (this._al + al) | 0
-  this._bl = (this._bl + bl) | 0
-  this._cl = (this._cl + cl) | 0
-  this._dl = (this._dl + dl) | 0
-  this._el = (this._el + el) | 0
-  this._fl = (this._fl + fl) | 0
-  this._gl = (this._gl + gl) | 0
-  this._hl = (this._hl + hl) | 0
+  this._al = (this._al + al) | 0;
+  this._bl = (this._bl + bl) | 0;
+  this._cl = (this._cl + cl) | 0;
+  this._dl = (this._dl + dl) | 0;
+  this._el = (this._el + el) | 0;
+  this._fl = (this._fl + fl) | 0;
+  this._gl = (this._gl + gl) | 0;
+  this._hl = (this._hl + hl) | 0;
 
-  this._ah = (this._ah + ah + getCarry(this._al, al)) | 0
-  this._bh = (this._bh + bh + getCarry(this._bl, bl)) | 0
-  this._ch = (this._ch + ch + getCarry(this._cl, cl)) | 0
-  this._dh = (this._dh + dh + getCarry(this._dl, dl)) | 0
-  this._eh = (this._eh + eh + getCarry(this._el, el)) | 0
-  this._fh = (this._fh + fh + getCarry(this._fl, fl)) | 0
-  this._gh = (this._gh + gh + getCarry(this._gl, gl)) | 0
+  this._ah = (this._ah + ah + getCarry(this._al, al)) | 0;
+  this._bh = (this._bh + bh + getCarry(this._bl, bl)) | 0;
+  this._ch = (this._ch + ch + getCarry(this._cl, cl)) | 0;
+  this._dh = (this._dh + dh + getCarry(this._dl, dl)) | 0;
+  this._eh = (this._eh + eh + getCarry(this._el, el)) | 0;
+  this._fh = (this._fh + fh + getCarry(this._fl, fl)) | 0;
+  this._gh = (this._gh + gh + getCarry(this._gl, gl)) | 0;
   this._hh = (this._hh + hh + getCarry(this._hl, hl)) | 0
-}
+};
 
 Sha512.prototype._hash = function () {
-  var H = Buffer.allocUnsafe(64)
+  var H = Buffer.allocUnsafe(64);
 
   function writeInt64BE (h, l, offset) {
-    H.writeInt32BE(h, offset)
+    H.writeInt32BE(h, offset);
     H.writeInt32BE(l, offset + 4)
   }
 
-  writeInt64BE(this._ah, this._al, 0)
-  writeInt64BE(this._bh, this._bl, 8)
-  writeInt64BE(this._ch, this._cl, 16)
-  writeInt64BE(this._dh, this._dl, 24)
-  writeInt64BE(this._eh, this._el, 32)
-  writeInt64BE(this._fh, this._fl, 40)
-  writeInt64BE(this._gh, this._gl, 48)
-  writeInt64BE(this._hh, this._hl, 56)
+  writeInt64BE(this._ah, this._al, 0);
+  writeInt64BE(this._bh, this._bl, 8);
+  writeInt64BE(this._ch, this._cl, 16);
+  writeInt64BE(this._dh, this._dl, 24);
+  writeInt64BE(this._eh, this._el, 32);
+  writeInt64BE(this._fh, this._fl, 40);
+  writeInt64BE(this._gh, this._gl, 48);
+  writeInt64BE(this._hh, this._hl, 56);
 
   return H
-}
+};
 
 module.exports = Sha512
 
@@ -23522,16 +23527,16 @@ var indexOf = function (xs, item) {
     return -1;
 };
 var Object_keys = function (obj) {
-    if (Object.keys) return Object.keys(obj)
+  if (Object.keys) return Object.keys(obj);
     else {
         var res = [];
-        for (var key in obj) res.push(key)
+    for (var key in obj) res.push(key);
         return res;
     }
 };
 
 var forEach = function (xs, fn) {
-    if (xs.forEach) return xs.forEach(fn)
+  if (xs.forEach) return xs.forEach(fn);
     else for (var i = 0; i < xs.length; i++) {
         fn(xs[i], i, xs);
     }
