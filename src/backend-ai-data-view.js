@@ -133,6 +133,10 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       this.shadowRoot.querySelector('#loading-indicator').hide();
       this.folders = value;
     });
+    let vhosts = window.backendaiclient.vfolder.list_hosts();
+    vhosts.then((response) => {
+      console.log(response);
+    });
   }
 
   _menuChanged(active) {
