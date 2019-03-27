@@ -18,6 +18,8 @@ import '@polymer/paper-material/paper-material';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-toast/paper-toast';
 import './components/lablup-loading-indicator';
+import '@polymer/paper-listbox/paper-listbox';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
@@ -73,6 +75,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       vhost: {
         type: String,
         value: 'local'
+        //value: 'cephfs'
+      },
+      vhosts: {
+        type: Array,
+        value: ['local', 'cephfs']
         //value: 'cephfs'
       }
     };
@@ -130,7 +137,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
 
   _menuChanged(active) {
     if (!active) {
-      return;
+
     } else {
       if (window.backendaiclient == undefined || window.backendaiclient == null) {
         document.addEventListener('backend-ai-connected', () => {
@@ -661,8 +668,16 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             <fieldset>
               <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-              <paper-input id="add-folder-host" label="Host" pattern="[a-zA-Z0-9_-]*" disabled
+              <paper-input id="add-folder-host2" label="Host" pattern="[a-zA-Z0-9_-]*" disabled
                            error-message="Allows letters, numbers and -_." auto-validate value="[[vhost]]"></paper-input>
+              <paper-dropdown-menu id="add-folder-host" label="Host">
+                <paper-listbox slot="dropdown-content" selected="0">
+                  <template is="dom-repeat" items="[[ vhosts ]]">
+                    <paper-item id="[[ item ]]" label="[[ item ]]">[[ item ]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
               <br/>
               <paper-button class="blue add-button" type="submit" id="add-button">
                 <iron-icon icon="rowing"></iron-icon>

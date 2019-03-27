@@ -493,6 +493,11 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  list_hosts() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/hosts`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
   info(name = null) {
     if (name == null) {
       name = this.name;
