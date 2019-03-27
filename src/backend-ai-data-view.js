@@ -72,7 +72,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       },
       vhost: {
         type: String,
-        value: 'cephfs'
+        value: 'local'
+        //value: 'cephfs'
       }
     };
   }
