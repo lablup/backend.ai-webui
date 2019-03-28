@@ -96,8 +96,6 @@ $ node ./local_proxy.js
 
 ### Running stand-alone web service
 
-Will be prepared soon.
-
 ## Build (Web)
 
 Default setup will build `es6-bundled` version.
@@ -149,5 +147,5 @@ $ make pack # To create an zip-packed files (works on macOS)
 
 ```
 $ make dep
-$ make web
+$ make web site=(config. name)
 ```
