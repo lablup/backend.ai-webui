@@ -893,7 +893,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               </div>
             </template>
           </div>
-
+          <span class="flex"></span>
           <mwc-button class="fg red" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
         </h4>
         <div>
