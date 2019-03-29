@@ -287,17 +287,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     var cpu_resource = this.$['cpu-resource'];
     var ram_resource = this.$['ram-resource'];
     var gpu_resource = this.$['gpu-resource'];
-    /*
-    this.$['cpu-value'].textContent = cpu_resource.value;
-    cpu_resource.addEventListener('value-change', () => {
-      this.$['cpu-value'].textContent = cpu_resource.value;
-    });
-    this.$['ram-value'].textContent = ram_resource.value;
-    ram_resource.addEventListener('value-change', () => {
-      this.$['ram-value'].textContent = ram_resource.value;
-    });
-    this.$['gpu-value'].textContent = gpu_resource.value;
-    */
   }
 
   _launchSessionDialog() {
