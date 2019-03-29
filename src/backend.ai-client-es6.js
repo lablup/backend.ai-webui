@@ -23532,16 +23532,16 @@ var indexOf = function (xs, item) {
     return -1;
 };
 var Object_keys = function (obj) {
-  if (Object.keys) return Object.keys(obj)
+    if (Object.keys) return Object.keys(obj)
     else {
         var res = [];
-    for (var key in obj) res.push(key)
+        for (var key in obj) res.push(key)
         return res;
     }
 };
 
 var forEach = function (xs, fn) {
-  if (xs.forEach) return xs.forEach(fn)
+    if (xs.forEach) return xs.forEach(fn)
     else for (var i = 0; i < xs.length; i++) {
         fn(xs[i], i, xs);
     }
