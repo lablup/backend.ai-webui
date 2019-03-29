@@ -33,7 +33,7 @@ import '@material/mwc-button';
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
-import './lablup-shields';
+import './plastics/lablup-shields/lablup-shields';
 import {OverlayPatchMixin} from './overlay-patch-mixin.js'
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
