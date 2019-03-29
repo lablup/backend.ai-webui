@@ -369,6 +369,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
+      <paper-toast id="backend-ai-indicator"></paper-toast>
       <backend-ai-login id="login-panel"></backend-ai-login>
     `;
   }
