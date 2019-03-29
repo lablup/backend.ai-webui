@@ -329,7 +329,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 </footer>
                 <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
                   <address>
-                    <small class="sidebar-footer">By Lablup Inc.</small>
+                    <small class="sidebar-footer">Lablup Inc.</small>
                     <small class="sidebar-footer" style="font-size:9px;">1.2.6.20190329</small>
                   </address>
                 </div>
