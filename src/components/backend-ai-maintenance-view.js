@@ -49,7 +49,7 @@ class BackendAiMaintenanceView extends LitElement {
           width: 300px;
         }
 
-        paper-material > div {
+        plastic-material > div {
           padding: 15px;
         }
 
@@ -59,7 +59,7 @@ class BackendAiMaintenanceView extends LitElement {
   render() {
     // language=HTML
     return html`
-      <paper-material elevation="1">
+      <plastic-material elevation="1">
         <h3 class="horizontal center layout">
           <span>General</span>
           <span class="flex"></span>
@@ -102,7 +102,7 @@ class BackendAiMaintenanceView extends LitElement {
             </div>
           </div>
         </div>
-      </paper-material>
+      </plastic-material>
     `;
   }
 

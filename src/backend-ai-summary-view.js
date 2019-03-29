@@ -9,7 +9,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import '@polymer/paper-material/paper-material';
+import './plastics/plastic-material/plastic-material';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
@@ -296,8 +296,8 @@ class BackendAISummary extends PolymerElement {
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <paper-material class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="paper-material-title">Statistics</h3>
+      <plastic-material class="item" elevation="1" style="padding-bottom:20px;">
+        <h3 class="plastic-material-title">Statistics</h3>
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="Health" elevation="1">
             <div slot="message">
@@ -374,7 +374,7 @@ class BackendAISummary extends PolymerElement {
             </div>
           </lablup-activity-panel>
         </div>
-        <h3 class="paper-material-title">Actions</h3>
+        <h3 class="plastic-material-title">Actions</h3>
         <div class="horizontal wrap layout">
           <template is="dom-if" if="{{is_admin}}">
             <lablup-activity-panel title="Keypair" elevation="1">
@@ -396,7 +396,7 @@ class BackendAISummary extends PolymerElement {
             </lablup-activity-panel>
           </template>
         </div>
-      </paper-material>
+      </plastic-material>
     `;
   }
 }

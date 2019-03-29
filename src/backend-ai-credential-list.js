@@ -23,6 +23,7 @@ import '@vaadin/vaadin-item/vaadin-item';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 import './lablup-piechart.js';
+import './plastics/plastic-material/plastic-material';
 import './plastics/lablup-shields/lablup-shields.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
@@ -332,7 +333,7 @@ class BackendAICredentialList extends PolymerElement {
           };
         }
 
-        paper-material h4 {
+        plastic-material h4 {
           font-size: 14px;
           padding: 5px 15px 5px 12px;
           margin: 0 0 10px 0;
@@ -504,7 +505,7 @@ class BackendAICredentialList extends PolymerElement {
         </vaadin-grid-column>
       </vaadin-grid>
       <paper-dialog id="keypair-info-dialog">
-        <paper-material elevation="0" class="intro" style="margin: 0;">
+        <plastic-material elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span style="margin-right:15px;">Keypair Detail</span>
             <template is="dom-if" if="[[keypairInfo.is_admin]]">
@@ -566,7 +567,7 @@ class BackendAICredentialList extends PolymerElement {
               </div>
             </div>
           </div>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
     `;
   }

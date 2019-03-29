@@ -1,8 +1,6 @@
 /**
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
-
-
  */
 
 import {css, html, LitElement} from "lit-element";
@@ -10,7 +8,6 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
-//import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '../plastics/plastic-material/plastic-material';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -44,7 +41,6 @@ class BackendAiEnvironmentView extends LitElement {
           font-size: 9px;
           margin-right: 5px;
         }
-
       `];
   }
 
@@ -185,8 +181,6 @@ class BackendAiEnvironmentView extends LitElement {
             </template>
           </vaadin-grid-column>
         </vaadin-grid>
-
-
       </plastic-material>
     `;
   }
