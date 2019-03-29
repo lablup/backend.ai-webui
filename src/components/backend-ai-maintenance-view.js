@@ -11,7 +11,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
-import '../plastics/paper-material/paper-material';
+import '../plastics/plastic-material/plastic-material';
 import '@material/mwc-button';
 
 class BackendAiMaintenanceView extends LitElement {

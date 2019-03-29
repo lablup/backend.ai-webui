@@ -1,5 +1,9 @@
 /**
  @license
+ Copyright (c) 2019 Lablup Inc.
+ Ported to lit-element for easier migration from Polymer to LitElement.
+
+ Original paper-material:
  Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
  This code may only be used under the BSD style license found at
  http://polymer.github.io/LICENSE.txt The complete set of authors may be found at
@@ -7,12 +11,9 @@
  found at http://polymer.github.io/CONTRIBUTORS.txt Code distributed by Google as
  part of the polymer project is also subject to an additional IP rights grant
  found at http://polymer.github.io/PATENTS.txt
-
- Copyright (c) 2019 Lablup Inc.
- Ported to lit-element for easier migration from Polymer to LitElement.
  */
-import {html, LitElement} from "lit-element";
-import {PaperMaterialSharedStyles} from './paper-material-shared-styles';
+import {css, html, LitElement} from "lit-element";
+import {PlasticMaterialSharedStyles} from './plastic-material-shared-styles';
 import {setPassiveTouchGestures} from "@polymer/polymer/lib/utils/settings";
 
 /**
@@ -32,10 +33,10 @@ import {setPassiveTouchGestures} from "@polymer/polymer/lib/utils/settings";
  @demo demo/index.html
  */
 
-class PaperMaterial extends LitElement {
+class PlasticMaterial extends LitElement {
 
   static get is() {
-    return 'paper-material';
+    return 'plastic-material';
   }
 
   static get properties() {
@@ -50,7 +51,8 @@ class PaperMaterial extends LitElement {
        * @default 1
        */
       elevation: {
-        type: Number
+        type: Number,
+        reflect: true
       },
       /**
        * Set this to true to animate the shadow when setting a new
@@ -61,7 +63,8 @@ class PaperMaterial extends LitElement {
        * @default false
        */
       animated: {
-        type: Boolean
+        type: Boolean,
+        reflect: true
       }
     }
   }
@@ -81,14 +84,13 @@ class PaperMaterial extends LitElement {
   }
 
   static get styles() {
-    return [Shadow,
-      PaperMaterialSharedStyles,
+    return [PlasticMaterialSharedStyles,
       css`
       :host([animated]) {
-        @apply --shadow-transition;
+        transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
       }
       :host {
-        @apply --paper-material;
+        @apply --plastic-material;
       }    
     `];
   }
@@ -97,3 +99,5 @@ class PaperMaterial extends LitElement {
     return html`<slot></slot>`
   }
 }
+
+customElements.define(PlasticMaterial.is, PlasticMaterial);

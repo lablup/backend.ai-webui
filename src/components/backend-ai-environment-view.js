@@ -11,7 +11,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 //import '@vaadin/vaadin-grid/vaadin-grid.js';
-import '../plastics/paper-material/paper-material';
+import '../plastics/plastic-material/plastic-material';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -52,7 +52,7 @@ class BackendAiEnvironmentView extends LitElement {
     // language=HTML
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <paper-material elevation="1">
+      <plastic-material elevation="1">
         <h3 class="horizontal center layout">
           <span>Images</span>
           <span class="flex"></span>
@@ -187,7 +187,7 @@ class BackendAiEnvironmentView extends LitElement {
         </vaadin-grid>
 
 
-      </paper-material>
+      </plastic-material>
     `;
   }
 

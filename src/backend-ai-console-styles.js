@@ -533,7 +533,8 @@ export const BackendAiStyles =
       --iron-icon-width: 12px;
     }
 
-    paper-material {
+    paper-material,
+    plastic-material {
       display: block;
       background: white;
       box-sizing: border-box;
@@ -553,13 +554,15 @@ export const BackendAiStyles =
     }
 
     #content > paper-material,
+    #content > plasticr-material,
     #content > iron-pages,
     #content > iron-lazy-pages {
       max-width: var(--general-content-container-width, 980px);
     }
 
     @media screen and (max-width: 399px) {
-      paper-material {
+      paper-material,
+      plastic-material {
         margin-left: 0;
         margin-right: 0;
       }
@@ -567,6 +570,7 @@ export const BackendAiStyles =
 
     @media screen and (max-width: 449px) {
       #content > paper-material,
+      #content > plastic-material,
       #content > iron-pages,
       #content > iron-lazy-pages {
         width: 100%;
@@ -575,6 +579,7 @@ export const BackendAiStyles =
 
     @media screen and (min-width: 450px) {
       #content > paper-material,
+      #content > plastic-material,
       #content > div,
       #content > iron-lazy-pages {
         width: 95%;
@@ -589,25 +594,30 @@ export const BackendAiStyles =
       }
     }
 
-    paper-material p {
+    paper-material p,
+    plastic-material p {
       padding: 10px;
     }
 
-    paper-material > .entry > p {
+    paper-material > .entry > p,
+    plastic-material > .entry > p {
       padding: 5px;
     }
 
+    plastic-material .commands,
     paper-material .commands {
       margin: 0;
       border-top: 1px solid #ddd;
       text-align: left;
     }
 
-    paper-material.item div.items {
+    paper-material.item div.items,
+    plastic-material.item div.items {
       padding-bottom: 10px;
     }
 
-    paper-material .commands.float {
+    paper-material .commands.float,
+    plastic-material .commands.float {
       border-top: none;
       position: fixed;
       right: 0;
@@ -625,7 +635,8 @@ export const BackendAiStyles =
       margin: 5px;
     }
 
-    .panels paper-material {
+    .panels paper-material,
+    .panels plastic-material {
       width: var(--general-panel-width);
     }
 
@@ -633,7 +644,8 @@ export const BackendAiStyles =
       margin: 0 0 10px 0;
     }
 
-    .wide-panels paper-material {
+    .wide-panels paper-material,
+    .wide-panels plastic-material {
       width: 100%;
       margin: 0 0 16px 0;
     }
@@ -858,7 +870,8 @@ export const BackendAiStyles =
       padding-left: 10px;
     }
 
-    paper-material > h3 {
+    paper-material > h3,
+    plastic-material > h3 {
       font-size: 20px;
       font-weight: 200;
       padding: 10px 20px;
@@ -867,7 +880,8 @@ export const BackendAiStyles =
       border-bottom: 1px solid #DDD;
     }
 
-    paper-material > h3 > .date {
+    paper-material > h3 > .date,
+    plastic-material > h3 > .date {
       font-size: 12px;
       text-align: right;
       color: #888;
@@ -875,41 +889,58 @@ export const BackendAiStyles =
     }
 
     paper-material > h3.blue,
-    paper-material > h4.blue {
+    paper-material > h4.blue,
+    plastic-material > h3.blue,
+    plastic-material > h4.blue {
       border-left: 3px solid var(--paper-light-blue-400);
     }
 
     paper-material > h3.red,
-    paper-material > h4.red {
+    paper-material > h4.red,
+    plastic-material > h3.red,
+    plastic-material > h4.red {
       border-left: 3px solid var(--paper-red-400);
     }
 
     paper-material > h3.green,
-    paper-material > h4.green {
+    paper-material > h4.green,
+    plastic-material > h3.green,
+    plastic-material > h4.green {
       border-left: 3px solid var(--paper-green-400);
     }
 
     paper-material > h3.orange,
-    paper-material > h4.orange {
+    paper-material > h4.orange,
+    plastic-material > h3.orange,
+    plastic-material > h4.orange {
+
       border-left: 3px solid var(--paper-orange-400);
     }
 
     paper-material > h3.cyan,
-    paper-material > h4.cyan {
+    paper-material > h4.cyan,
+    plastic-material > h3.cyan,
+    plastic-material > h4.cyan {
+
       border-left: 3px solid var(--paper-cyan-400);
     }
 
     paper-material > h3.lime,
-    paper-material > h4.lime {
+    paper-material > h4.lime,
+    plastic-material > h3.lime,
+    plastic-material > h4.lime {
       border-left: 3px solid var(--paper-lime-400);
     }
 
     paper-material > h3.pink,
-    paper-material > h4.pink {
+    paper-material > h4.pink,
+    plastic-material > h3.pink,
+    plastic-material > h4.pink {
       border-left: 3px solid var(--paper-pink-400);
     }
 
-    paper-material > h4 {
+    paper-material > h4,
+    plastic-material > h4 {
       font-size: 14px;
       padding: 5px 15px 5px 20px;
       margin: 0 0 10px 0;
@@ -920,19 +951,24 @@ export const BackendAiStyles =
       justify-content: space-between;
     }
 
-    paper-material .flex {
+    paper-material .flex,
+    plastic-material .flex {
+
       display: flex;
     }
 
-    paper-material > div {
+    paper-material > div,
+    plastic-material > div {
       margin: 10px;
     }
 
-    paper-material.entries > div {
+    paper-material.entries > div,
+    plastic-material.entries > div {
       margin: 20px;
     }
 
-    paper-material paper-card {
+    paper-material paper-card,
+    plastic-material paper-card {
       margin-top: 15px;
       margin-bottom: 15px;
     }
