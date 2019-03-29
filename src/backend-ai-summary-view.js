@@ -41,8 +41,8 @@ class BackendAISummary extends PolymerElement {
         value: {}
       },
       agents: {
-        type: Object,
-        value: {}
+        type: Number,
+        value: 0
       },
       is_admin: {
         type: Boolean,
@@ -160,47 +160,10 @@ class BackendAISummary extends PolymerElement {
       'occupied_slots',
       'available_slots'];
     this.shadowRoot.querySelector('#loading-indicator').show();
-    window.backendaiclient.agent.list(status, fields).then((response) => {
+
+    window.backendaiclient.resources.totalResourceInformation().then((response) => {
       this.shadowRoot.querySelector('#loading-indicator').hide();
-
-      this.agents = response.agents;
-      this._init_resource_values();
-      Object.keys(this.agents).map((objectKey, index) => {
-        let value = this.agents[objectKey];
-        let occupied_slots = JSON.parse(value.occupied_slots);
-        let available_slots = JSON.parse(value.available_slots);
-        this.resources.cpu.total = this.resources.cpu.total + parseInt(Number(available_slots.cpu));
-        this.resources.cpu.used = this.resources.cpu.used + parseInt(Number(occupied_slots.cpu));
-        this.resources.cpu.percent = this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
-
-        this.resources.mem.total = this.resources.mem.total + parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'm'));
-        this.resources.mem.allocated = this.resources.mem.allocated + parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
-        this.resources.mem.used = this.resources.mem.used + parseInt(window.backendaiclient.utils.changeBinaryUnit(value.mem_cur_bytes, 'm'));
-
-        this.resources.gpu.total = this.resources.gpu.total + parseInt(Number(available_slots['cuda.device']));
-        if ('cuda.device' in occupied_slots) {
-          this.resources.gpu.used = this.resources.gpu.used + parseInt(Number(occupied_slots['cuda.device']));
-        }
-        this.resources.vgpu.total = this.resources.vgpu.total + parseFloat(available_slots['cuda.shares']);
-        if ('cuda.shares' in occupied_slots) {
-          this.resources.vgpu.used = this.resources.vgpu.used + parseFloat(occupied_slots['cuda.shares']);
-        }
-        if (isNaN(this.resources.cpu.used)) {
-          this.resources.cpu.used = 0;
-        }
-        if (isNaN(this.resources.mem.used)) {
-          this.resources.mem.used = 0;
-        }
-        if (isNaN(this.resources.gpu.used)) {
-          this.resources.gpu.used = 0;
-        }
-        if (isNaN(this.resources.vgpu.used)) {
-          this.resources.vgpu.used = 0;
-        }
-
-      });
-      this.resources.vgpu.used = this.resources.vgpu.used.toFixed(2);
-      this.resources.vgpu.total = this.resources.vgpu.total.toFixed(2);
+      this.resources = response;
       this._sync_resource_values();
       if (this.active == true) {
         setTimeout(() => {
@@ -230,6 +193,9 @@ class BackendAISummary extends PolymerElement {
     this.resources.vgpu = {};
     this.resources.vgpu.total = 0;
     this.resources.vgpu.used = 0;
+    this.resources.agents = {};
+    this.resources.agents.total = 0;
+    this.resources.agents.using = 0;
   }
 
   _sync_resource_values() {
@@ -250,6 +216,9 @@ class BackendAISummary extends PolymerElement {
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
     this.mem_current_usage_percent = (this.mem_current_usage_ratio / this.mem_total_usage_ratio * 100.0).toFixed(2);
+    console.log(this.resources);
+    this.agents = this.resources.agents.total;
+
     if (isNaN(this.mem_current_usage_percent)) {
       this.mem_current_usage_percent = 0;
     }
@@ -335,7 +304,7 @@ class BackendAISummary extends PolymerElement {
               <div class="horizontal justified layout wrap">
                 <template is="dom-if" if="{{is_admin}}">
                   <div class="vertical layout center">
-                    <div class="big indicator">[[_countObject(agents)]]</div>
+                    <div class="big indicator">[[agents]]</div>
                     <span>Connected nodes</span>
                   </div>
                 </template>

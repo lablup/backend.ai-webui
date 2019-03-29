@@ -18,7 +18,7 @@ import '@polymer/app-layout/app-layout';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import '@polymer/paper-material/paper-material';
+import '../plastics/plastic-material/plastic-material';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '@polymer/iron-icon/iron-icon';
@@ -121,6 +121,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
     this._refreshUserInfoPanel();
     //this._loadPageElement();
+  }
+
+  showUpdateNotifier() {
+    let indicator = this.shadowRoot.getElementById('backend-ai-indicator');
+    indicator.innerHTML = 'New console available. Please <a>reload</a> to update.';
+    indicator.show();
   }
 
   _refreshUserInfoPanel() {
@@ -323,8 +329,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 </footer>
                 <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
                   <address>
-                    <small class="sidebar-footer">By Lablup Inc.</small>
-                    <small class="sidebar-footer" style="font-size:9px;">1.2.3.20190323</small>
+                    <small class="sidebar-footer">Lablup Inc.</small>
+                    <small class="sidebar-footer" style="font-size:9px;">1.2.6.20190329</small>
                   </address>
                 </div>
               </app-header-layout>
@@ -369,6 +375,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
+      <paper-toast id="backend-ai-indicator"></paper-toast>
       <backend-ai-login id="login-panel"></backend-ai-login>
     `;
   }

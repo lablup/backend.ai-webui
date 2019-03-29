@@ -8,7 +8,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import '@polymer/paper-material/paper-material';
+import './plastics/plastic-material/plastic-material';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-toast/paper-toast';
@@ -214,7 +214,7 @@ class BackendAiLogin extends PolymerElement {
 
       <paper-dialog id="login-panel"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
-        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Console login</h3>
           <form id="login-form" onSubmit="this._login()">
             <fieldset>
@@ -232,7 +232,7 @@ class BackendAiLogin extends PolymerElement {
                           dialog-confirm></mwc-button>
             </fieldset>
           </form>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
     `;

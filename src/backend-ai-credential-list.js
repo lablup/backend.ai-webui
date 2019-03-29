@@ -23,7 +23,7 @@ import '@vaadin/vaadin-item/vaadin-item';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 import './lablup-piechart.js';
-import './lablup-shields.js';
+import './plastics/lablup-shields/lablup-shields.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 

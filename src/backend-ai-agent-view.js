@@ -8,7 +8,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import '@polymer/paper-material/paper-material';
+import './plastics/plastic-material/plastic-material';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
@@ -61,8 +61,8 @@ class BackendAIAgentView extends PolymerElement {
     return html`
       <style is="custom-style" include="backend-ai-styles">
       </style>
-      <paper-material class="item" elevation="1">
-        <h3 class="paper-material-title">Registered nodes</h3>
+      <plastic-material class="item" elevation="1">
+        <h3 class="plastic-material-title">Registered nodes</h3>
         <h4>Connected</h4>
         <div>
           <backend-ai-agent-list id="running-agents" condition="running"></backend-ai-agent-list>
@@ -71,7 +71,7 @@ class BackendAIAgentView extends PolymerElement {
         <div>
           <backend-ai-agent-list id="finished-agents" condition="finished"></backend-ai-agent-list>
         </div>
-      </paper-material>
+      </plastic-material>
     `;
   }
 }

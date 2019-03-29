@@ -9,7 +9,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import '@polymer/paper-material/paper-material';
+import './plastics/plastic-material/plastic-material';
 import '@polymer/iron-collapse/iron-collapse';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -287,17 +287,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     var cpu_resource = this.$['cpu-resource'];
     var ram_resource = this.$['ram-resource'];
     var gpu_resource = this.$['gpu-resource'];
-    /*
-    this.$['cpu-value'].textContent = cpu_resource.value;
-    cpu_resource.addEventListener('value-change', () => {
-      this.$['cpu-value'].textContent = cpu_resource.value;
-    });
-    this.$['ram-value'].textContent = ram_resource.value;
-    ram_resource.addEventListener('value-change', () => {
-      this.$['ram-value'].textContent = ram_resource.value;
-    });
-    this.$['gpu-value'].textContent = gpu_resource.value;
-    */
   }
 
   _launchSessionDialog() {
@@ -804,7 +793,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           width: 100%;
         }
 
-        paper-material h4 {
+        plastic-material h4 {
           padding: 5px 20px;
           border-bottom: 1px solid #ddd;
           font-weight: 100;
@@ -868,7 +857,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <paper-material class="item" elevation="1">
+      <plastic-material class="item" elevation="1">
         <h4 class="horizontal center layout">
           <span>Running</span>
           <div class="layout horizontal center resources wrap">
@@ -893,7 +882,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               </div>
             </template>
           </div>
-
+          <span class="flex"></span>
           <mwc-button class="fg red" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
         </h4>
         <div>
@@ -903,11 +892,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         <div>
           <backend-ai-job-list id="finished-jobs" condition="finished"></backend-ai-job-list>
         </div>
-      </paper-material>
+      </plastic-material>
       <paper-dialog id="new-session-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation"
                     style="padding:0;">
-        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Start a new session</span>
             <div class="flex"></div>
@@ -981,7 +970,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               </paper-button>
             </fieldset>
           </form>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
     `;
   }
