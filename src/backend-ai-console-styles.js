@@ -554,7 +554,7 @@ export const BackendAiStyles =
     }
 
     #content > paper-material,
-    #content > plasticr-material,
+    #content > plastic-material,
     #content > iron-pages,
     #content > iron-lazy-pages {
       max-width: var(--general-content-container-width, 980px);

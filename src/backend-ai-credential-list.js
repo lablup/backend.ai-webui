@@ -24,7 +24,7 @@ import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 import './lablup-piechart.js';
 import './plastics/plastic-material/plastic-material';
-import './plastics/lablup-shields/lablup-shields.js';
+import './plastics/lablup-shields/lablup-shields';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 

@@ -345,7 +345,6 @@ class BackendAiEnvironmentView extends LitElement {
   _indexFrom1(index) {
     return index + 1;
   }
-
 }
 
 customElements.define(BackendAiEnvironmentView.is, BackendAiEnvironmentView);
