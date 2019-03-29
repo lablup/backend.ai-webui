@@ -16,7 +16,7 @@ import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-progress/paper-progress';
 import './components/lablup-loading-indicator';
-
+import './plastics/plastic-material/plastic-material';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
@@ -750,7 +750,7 @@ class BackendAIJobList extends PolymerElement {
       <paper-dialog id="work-dialog"
                     entry-animation="slide-from-right-animation" exit-animation="slide-right-animation"
                     style="padding:0;">
-        <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
+        <plastic-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span id="work-title"></span>
             <div class="flex"></div>
@@ -762,13 +762,13 @@ class BackendAIJobList extends PolymerElement {
           <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                   style="border-style: none;width: 100%;"></iframe>
 
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
       <paper-dialog id="app-dialog"
                     style="padding:0;" no-overlap
                     horizontal-align="right"
                     vertical-align="top" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="intro" style="margin: 0; height: 100%;">
+        <plastic-material elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h4 class="horizontal center layout" style="font-weight:bold">
             <span>App</span>
             <div class="flex"></div>
@@ -795,7 +795,7 @@ class BackendAIJobList extends PolymerElement {
           </div>
           <template is="dom-repeat" items="{{ app_support_list }}">
           </template>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
     `;
   }

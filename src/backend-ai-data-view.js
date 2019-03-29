@@ -14,7 +14,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import '@polymer/paper-material/paper-material';
+import './plastics/plastic-material/plastic-material';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-toast/paper-toast';
 import './components/lablup-loading-indicator';
@@ -572,7 +572,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <paper-material class="item" elevation="1" style="padding-bottom:20px;">
+      <plastic-material class="item" elevation="1" style="padding-bottom:20px;">
         <h4 class="horizontal center layout">
           <span>Virtual Folders</span>
           <mwc-button class="fg red" id="add-folder" outlined label="Add new folder" icon="add"></mwc-button>
@@ -649,18 +649,18 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             </template>
           </vaadin-grid-column>
         </vaadin-grid>
-      </paper-material>
-      <paper-material>
+      </plastic-material>
+      <plastic-material>
         <h4 class="horizontal center layout">
           <span>Public Data</span>
         </h4>
         <div class="horizontal center flex layout" style="padding:15px;">
           <div>No data present.</div>
         </div>
-      </paper-material>
+      </plastic-material>
       <paper-dialog id="add-folder-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
             <div class="flex"></div>
@@ -689,11 +689,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               </paper-button>
             </fieldset>
           </form>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
       <paper-dialog id="delete-folder-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Delete a virtual folder</span>
             <div class="flex"></div>
@@ -714,11 +714,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               </paper-button>
             </fieldset>
           </form>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
       <paper-dialog id="info-folder-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="intro centered" style="margin: 0;">
+        <plastic-material elevation="1" class="intro centered" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span>[[folderInfo.name]]</span>
             <div class="flex"></div>
@@ -750,11 +750,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <div secondary>[[folderInfo.permission]]</div>
             </vaadin-item>
           </div>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
       <paper-dialog id="folder-explorer-dialog"
                     entry-animation="slide-from-right-animation" exit-animation="slide-right-animation">
-        <paper-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
+        <plastic-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>[[explorer.id]]</span>
             <div class="flex"></div>
@@ -871,12 +871,12 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               </template>
             </vaadin-grid-column>
           </vaadin-grid>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
 
       <paper-dialog id="mkdir-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <paper-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new folder</span>
             <div class="flex"></div>
@@ -895,7 +895,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               </paper-button>
             </fieldset>
           </form>
-        </paper-material>
+        </plastic-material>
       </paper-dialog>
     `;
   }

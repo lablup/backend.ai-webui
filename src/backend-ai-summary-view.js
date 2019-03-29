@@ -178,6 +178,23 @@ class BackendAISummary extends PolymerElement {
     });
   }
 
+  _init_resource_values() {
+    this.resources.cpu = {};
+    this.resources.cpu.total = 0;
+    this.resources.cpu.used = 0;
+    this.resources.cpu.percent = 0;
+    this.resources.mem = {};
+    this.resources.mem.total = 0;
+    this.resources.mem.allocated = 0;
+    this.resources.mem.used = 0;
+    this.resources.gpu = {};
+    this.resources.gpu.total = 0;
+    this.resources.gpu.used = 0;
+    this.resources.vgpu = {};
+    this.resources.vgpu.total = 0;
+    this.resources.vgpu.used = 0;
+  }
+
   _sync_resource_values() {
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = this.resources.mem.total;
