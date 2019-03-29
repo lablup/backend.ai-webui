@@ -14,14 +14,6 @@
   <script src="manifest/app.js" async></script>
   <title>Backend.AI Console</title>
   <script>
-    // Load and register pre-caching Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('service-worker.js', {
-          scope: '/',
-        });
-      });
-    }
     if ((typeof process !== "undefined") && process.versions && (process.versions.electron !== undefined)) {
       window.isElectron = true;
     } else {
@@ -161,5 +153,40 @@
 <script src="./node_modules/web-animations-js/web-animations-next-lite.min.js"></script>
 <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 <script src="./src/components/backend-ai-console.js" type="module"></script>
+<script>
+  window.isUpdateAvailable = new Promise(function (resolve, reject) {
+    if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('service-worker.js').then(registration => {
+          console.log('ServiceWorker registered with scope: ', registration.scope);
+          registration.onupdatefound = () => {
+            const installingWorker = registration.installing;
+            installingWorker.onstatechange = () => {
+              switch (installingWorker.state) {
+                case 'installed':
+                  if (navigator.serviceWorker.controller) {
+                    // new update available
+                    resolve(true);
+                  } else {
+                    // no update available
+                    resolve(false);
+                  }
+                  break;
+              }
+            };
+          };
+        }).catch(function (err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  });
+  window['isUpdateAvailable']
+    .then(isAvailable => {
+      if (isAvailable) {
+        console.log('New Update available. Reload to update.');
+      }
+    });
+</script>
 </body>
 </html>
