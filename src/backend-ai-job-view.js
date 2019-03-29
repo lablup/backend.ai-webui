@@ -236,9 +236,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       if (policyName === 'research') {
         return new Promise(function (resolve, reject) {
           var resource = {
-            "cpu": 272,
+            "cpu": 176,
             "mem": '300g',
-            "cuda.shares": 13.0
+            "cuda.shares": 8.0
           };
           var result = {
             keypair_resource_policy: {
