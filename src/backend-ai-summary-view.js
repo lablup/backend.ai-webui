@@ -41,8 +41,8 @@ class BackendAISummary extends PolymerElement {
         value: {}
       },
       agents: {
-        type: Object,
-        value: {}
+        type: Number,
+        value: 0
       },
       is_admin: {
         type: Boolean,
@@ -193,6 +193,9 @@ class BackendAISummary extends PolymerElement {
     this.resources.vgpu = {};
     this.resources.vgpu.total = 0;
     this.resources.vgpu.used = 0;
+    this.resources.agents = {};
+    this.resources.agents.total = 0;
+    this.resources.agents.using = 0;
   }
 
   _sync_resource_values() {
@@ -213,6 +216,9 @@ class BackendAISummary extends PolymerElement {
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
     this.mem_current_usage_percent = (this.mem_current_usage_ratio / this.mem_total_usage_ratio * 100.0).toFixed(2);
+    console.log(this.resources);
+    this.agents = this.resources.agents.total;
+
     if (isNaN(this.mem_current_usage_percent)) {
       this.mem_current_usage_percent = 0;
     }
@@ -298,7 +304,7 @@ class BackendAISummary extends PolymerElement {
               <div class="horizontal justified layout wrap">
                 <template is="dom-if" if="{{is_admin}}">
                   <div class="vertical layout center">
-                    <div class="big indicator">[[_countObject(agents)]]</div>
+                    <div class="big indicator">[[agents]]</div>
                     <span>Connected nodes</span>
                   </div>
                 </template>
