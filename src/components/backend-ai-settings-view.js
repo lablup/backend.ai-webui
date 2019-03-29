@@ -11,7 +11,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
-import '@polymer/paper-material';
+import './paper-material';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
