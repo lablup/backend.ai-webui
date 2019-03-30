@@ -852,6 +852,22 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           font-family: monospace;
         }
 
+        .resource-button {
+          height: 140px;
+          width: 120px;
+          padding: 0;
+        }
+        .resource-button h4 {
+          padding: 5px 0;
+          margin: 0;
+          font-weight: 400;
+        }
+
+        .resource-button ul {
+          padding: 0;
+          list-style-type: none;
+        }
+
         backend-ai-dropdown-menu {
           width: 100%;
         }
@@ -939,6 +955,31 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             </fieldset>
             <h4>Resource allocation</h4>
             <fieldset>
+              <div class="horizontal center layout">
+                <mwc-button class="fg red resource-button vertical center start layout" style="height:140px;width:120px;"
+                            elevation="1">
+                  <div>
+                    <h4>Study</h4>
+                    <ul>
+                      <li>2 CPU</li>
+                      <li>4GB RAM</li>
+                      <li>0.15 vGPU</li>
+                    </ul>
+                  </div>
+                </mwc-button>
+                <mwc-button class="fg red resource-button vertical center start layout" style="height:140px;width:120px;"
+                            elevation="1">
+                  <div>
+                    <h4>Research</h4>
+                    <ul>
+                      <li>12 CPU</li>
+                      <li>64GB RAM</li>
+                      <li>2 vGPU</li>
+                    </ul>
+                  </div>
+                </mwc-button>
+
+              </div>
               <div class="horizontal center layout">
                 <span style="width:30px;">CPU</span>
                 <paper-slider id="cpu-resource" class="cpu"
