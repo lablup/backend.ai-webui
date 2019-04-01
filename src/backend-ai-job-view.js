@@ -230,7 +230,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _refreshResourcePolicy() {
-    this._refreshResourceTemplate();
     window.backendaiclient.resources.totalResourceInformation().then((response) => { // Read information
       this.resource_info = response;
     }).then((response) => {
@@ -239,6 +238,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let policyName = response.keypair.resource_policy;
       // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
       // TODO: Fix it to use API-based resource max.
+      this._refreshResourceTemplate(policyName);
       if (policyName === 'research') {
         return new Promise(function (resolve, reject) {
           var resource = {
@@ -597,12 +597,24 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this._aggregateResourceUse(compute_sessions);
   }
 
-  _refreshResourceTemplate() {
-    this.resource_templates = [
-      {title: 'Study', cpu: 2, mem: 4, gpu: 0.15},
-      {title: 'Research', cpu: 12, mem: 64, gpu: 2}
-    ];
-    console.log(this.resource_templates);
+  _refreshResourceTemplate(policyName) {
+    switch (policyName) {
+      case 'student':
+        this.resource_templates = [
+          {title: 'Student', cpu: 2, mem: 4, gpu: 0.15}];
+        break;
+      case 'research':
+        this.resource_templates = [
+          {title: 'Student', cpu: 2, mem: 4, gpu: 0.15},
+          {title: 'Research', cpu: 12, mem: 64, gpu: 2}
+        ];
+        break;
+      default:
+        this.resource_templates = [
+          {title: 'Student', cpu: 2, mem: 4, gpu: 0.15},
+          {title: 'Research', cpu: 12, mem: 64, gpu: 2}
+        ];
+    }
   }
 
   updateMetric() {
@@ -732,6 +744,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         this.$['gpu-resource'].disabled = false;
         this.$['gpu-resource'].value = this.gpu_metric.max;
       }
+      // Refresh with resource template
+      if (this.resource_templates !== [] && this.resource_templates.length > 0) {
+        let resource = this.resource_templates[0];
+        this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
+        //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
+      }
+
       // Post-UI markup to disable unchangeable values
       if (this.cpu_metric.min == this.cpu_metric.max) {
         this.shadowRoot.querySelector('#cpu-resource').max = this.cpu_metric.max + 1;
@@ -809,6 +828,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     const cpu = button.cpu;
     const mem = button.mem;
     const gpu = button.gpu;
+    this._updateResourceIndicator(cpu, mem, gpu);
+    //button.raised = true;
+  }
+
+  _updateResourceIndicator(cpu, mem, gpu) {
     this.shadowRoot.querySelector('#cpu-resource').value = cpu;
     this.shadowRoot.querySelector('#ram-resource').value = mem;
     this.shadowRoot.querySelector('#gpu-resource').value = gpu;
@@ -902,7 +926,14 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           width: 100%;
         }
 
-        mwc-button.pink {
+        mwc-button.resource-button {
+          --mdc-theme-on-primary: white;
+          --mdc-theme-primary: #bbb;
+          --mdc-theme-on-secondary: white;
+          --mdc-theme-secondary: white;
+        }
+
+        mwc-button.iron-selected {
           --mdc-theme-on-primary: white;
           --mdc-theme-primary: #e9437a;
           --mdc-theme-on-secondary: white;
@@ -992,11 +1023,12 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             </fieldset>
             <h4>Resource allocation</h4>
             <fieldset style="padding-top:0;">
-              <div class="horizontal center layout">
+              <paper-listbox selected="0" class="horizontal center center-justified layout">
                 <template is="dom-repeat" items="[[ resource_templates ]]">
-                  <mwc-button class="fg red resource-button vertical center start layout"
+                  <mwc-button class="fg red resource-button vertical center start layout" role="option"
                               style="height:140px;width:120px;"
                               on-tap="_chooseResourceTemplate"
+                              id="[[ item.title ]]-button"
                               cpu="[[ item.cpu ]]"
                               mem="[[ item.mem ]]"
                               gpu="[[ item.gpu ]]"
@@ -1011,7 +1043,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                     </div>
                   </mwc-button>
                 </template>
-              </div>
+              </paper-listbox>
               <div class="horizontal end-justified layout">
                 <paper-button class="tiny" id="advanced-resource-settings-button">Advanced settings</paper-button>
               </div>

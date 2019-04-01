@@ -635,24 +635,27 @@ class BackendAIJobList extends PolymerElement {
             <div class="indicator">([[item.kernel_image]])</div>
           </template>
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="created_at">Starts</vaadin-grid-sorter>
-          </template>
+        <vaadin-grid-column resizable width="160px">
+          <template class="header">Control</template>
           <template>
-            <div class="layout vertical">
-              <span>[[_humanReadableTime(item.created_at)]]</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable>
-          <template class="header">
-            Reservation
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[_elapsed(item.created_at, item.terminated_at)]]</span>
+            <div id="controls" class="layout horizontal flex center"
+                 kernel-id="[[item.sess_id]]" access-key="[[item.access_key]]">
+              <template is="dom-if" if="[[_isRunning()]]">
+                <paper-icon-button class="fg blue controls-running" icon="assignment"
+                                   on-tap="_showLogs"></paper-icon-button>
+              </template>
+              <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
+                <paper-icon-button class="fg controls-running green"
+                                   on-tap="_showAppLauncher" icon="vaadin:cubes"></paper-icon-button>
+                <paper-icon-button class="fg controls-running"
+                                   on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
+              </template>
+              <template is="dom-if" if="[[_isRunning()]]">
+                <paper-icon-button disabled class="fg controls-running"
+                                   icon="av:pause"></paper-icon-button>
+                <paper-icon-button class="fg red controls-running"
+                                   on-tap="_terminateKernel" icon="delete"></paper-icon-button>
+              </template>
             </div>
           </template>
         </vaadin-grid-column>
@@ -720,28 +723,23 @@ class BackendAIJobList extends PolymerElement {
             </div>
           </template>
         </vaadin-grid-column>
-
         <vaadin-grid-column resizable>
-          <template class="header">Control</template>
+          <template class="header">
+            <vaadin-grid-sorter path="created_at">Starts</vaadin-grid-sorter>
+          </template>
           <template>
-            <div id="controls" class="layout horizontal flex center"
-                 kernel-id="[[item.sess_id]]" access-key="[[item.access_key]]">
-              <template is="dom-if" if="[[_isRunning()]]">
-                <paper-icon-button class="fg blue controls-running" icon="assignment"
-                                   on-tap="_showLogs"></paper-icon-button>
-              </template>
-              <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
-                <paper-icon-button class="fg controls-running green"
-                                   on-tap="_showAppLauncher" icon="vaadin:cubes"></paper-icon-button>
-                <paper-icon-button class="fg controls-running"
-                                   on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
-              </template>
-              <template is="dom-if" if="[[_isRunning()]]">
-                <paper-icon-button disabled class="fg controls-running"
-                                   icon="av:pause"></paper-icon-button>
-                <paper-icon-button class="fg red controls-running"
-                                   on-tap="_terminateKernel" icon="delete"></paper-icon-button>
-              </template>
+            <div class="layout vertical">
+              <span>[[_humanReadableTime(item.created_at)]]</span>
+            </div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column width="100px" flex-grow="0" resizable>
+          <template class="header">
+            Reservation
+          </template>
+          <template>
+            <div class="layout vertical">
+              <span>[[_elapsed(item.created_at, item.terminated_at)]]</span>
             </div>
           </template>
         </vaadin-grid-column>
