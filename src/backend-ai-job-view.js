@@ -524,7 +524,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
       } else {// TODO: unlimited vs limited.
         if (this.defaultResourcePolicy === 'UNLIMITED') {
-          console.log(this.resource_info);
           switch (slot) {
             case 'cpu_slot':
               total_slot[slot] = this.resource_info.cpu.total;
