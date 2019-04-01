@@ -635,7 +635,7 @@ class BackendAIJobList extends PolymerElement {
             <div class="indicator">([[item.kernel_image]])</div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable width="160px">
+        <vaadin-grid-column resizable width="130px">
           <template class="header">Control</template>
           <template>
             <div id="controls" class="layout horizontal flex center"
@@ -644,15 +644,17 @@ class BackendAIJobList extends PolymerElement {
                 <paper-icon-button class="fg blue controls-running" icon="assignment"
                                    on-tap="_showLogs"></paper-icon-button>
               </template>
+              <template is="dom-if" if="[[!_isRunning()]]">
+                <paper-icon-button disabled class="fg controls-running" icon="assignment"
+                ></paper-icon-button>
+              </template>
               <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
                 <paper-icon-button class="fg controls-running green"
-                                   on-tap="_showAppLauncher" icon="vaadin:cubes"></paper-icon-button>
+                                   on-tap="_showAppLauncher" icon="vaadin:package"></paper-icon-button>
                 <paper-icon-button class="fg controls-running"
                                    on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
               </template>
               <template is="dom-if" if="[[_isRunning()]]">
-                <paper-icon-button disabled class="fg controls-running"
-                                   icon="av:pause"></paper-icon-button>
                 <paper-icon-button class="fg red controls-running"
                                    on-tap="_terminateKernel" icon="delete"></paper-icon-button>
               </template>
