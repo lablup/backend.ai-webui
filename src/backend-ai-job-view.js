@@ -35,7 +35,6 @@ import './backend-ai-job-list.js';
 import {OverlayPatchMixin} from './overlay-patch-mixin.js';
 import './components/backend-ai-dropdown-menu';
 import '@material/mwc-button';
-
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {

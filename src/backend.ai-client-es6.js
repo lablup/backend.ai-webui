@@ -751,7 +751,7 @@ class Keypair {
   }
 
   mutate(accessKey, input) {
-    let q = `mutation($access_key: String!, $input: KeyPairInput!) {` +
+    let q = `mutation($access_key: String!, $input: ModifyKeyPairInput!) {` +
       `  modify_keypair(access_key: $access_key, props: $input) {` +
       `    ok msg` +
       `  }` +
