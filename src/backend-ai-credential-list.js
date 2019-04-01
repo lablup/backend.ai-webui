@@ -138,7 +138,8 @@ class BackendAICredentialList extends PolymerElement {
             keypair['total_resource_slots'].cpu = '-';
           }
           if ('mem' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].mem = parseFloat(keypair['total_resource_slots'].mem);
+            keypair['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(keypair['total_resource_slots'].mem, 'g'));
+            //keypair['total_resource_slots'].mem = parseFloat(keypair['total_resource_slots'].mem);
           } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
             keypair['total_resource_slots'].mem = '-';
           }

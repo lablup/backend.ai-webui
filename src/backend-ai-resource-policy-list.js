@@ -160,7 +160,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
           policy['total_resource_slots'].cpu = '-';
         }
         if ('mem' in policy['total_resource_slots']) {
-          policy['total_resource_slots'].mem = parseFloat(policy['total_resource_slots'].mem);
+          policy['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
         } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
           policy['total_resource_slots'].mem = '-';
         }
