@@ -635,7 +635,7 @@ class BackendAIJobList extends PolymerElement {
             <div class="indicator">([[item.kernel_image]])</div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable width="130px">
+        <vaadin-grid-column width="90px">
           <template class="header">Control</template>
           <template>
             <div id="controls" class="layout horizontal flex center"

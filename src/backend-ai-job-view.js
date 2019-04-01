@@ -928,7 +928,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
         mwc-button.resource-button {
           --mdc-theme-on-primary: white;
-          --mdc-theme-primary: #bbb;
+          --mdc-theme-primary: #89A;
           --mdc-theme-on-secondary: white;
           --mdc-theme-secondary: white;
         }
