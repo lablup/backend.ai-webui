@@ -149,6 +149,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       used_slot_percent: {
         type: Object,
         value: {}
+      },
+      resource_templates: {
+        type: Array,
+        value: []
       }
     }
   }
@@ -226,6 +230,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _refreshResourcePolicy() {
+    this._refreshResourceTemplate();
     window.backendaiclient.resources.totalResourceInformation().then((response) => { // Read information
       this.resource_info = response;
     }).then((response) => {
@@ -592,6 +597,14 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this._aggregateResourceUse(compute_sessions);
   }
 
+  _refreshResourceTemplate() {
+    this.resource_templates = [
+      {title: 'Study', cpu: 2, mem: 4, gpu: 0.15},
+      {title: 'Research', cpu: 12, mem: 64, gpu: 2}
+    ];
+    console.log(this.resource_templates);
+  }
+
   updateMetric() {
     if (this.$['environment'].value in this.aliases) {
       let currentLang = this.aliases[this.$['environment'].value];
@@ -790,6 +803,17 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.shadowRoot.querySelector('#advanced-resource-settings').toggle();
   }
 
+  _chooseResourceTemplate(e) {
+    const termButton = e.target;
+    const button = e.target.closest('mwc-button');
+    const cpu = button.cpu;
+    const mem = button.mem;
+    const gpu = button.gpu;
+    this.shadowRoot.querySelector('#cpu-resource').value = cpu;
+    this.shadowRoot.querySelector('#ram-resource').value = mem;
+    this.shadowRoot.querySelector('#gpu-resource').value = gpu;
+  }
+
   static get template() {
     // language=HTML
     return html`
@@ -967,35 +991,29 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               </div>
             </fieldset>
             <h4>Resource allocation</h4>
-            <fieldset>
+            <fieldset style="padding-top:0;">
               <div class="horizontal center layout">
-                <mwc-button class="fg red resource-button vertical center start layout"
-                            style="height:140px;width:120px;"
-                            outlined>
-                  <div>
-                    <h4>Study</h4>
-                    <ul>
-                      <li>2 CPU</li>
-                      <li>4GB RAM</li>
-                      <li>0.15 vGPU</li>
-                    </ul>
-                  </div>
-                </mwc-button>
-                <mwc-button class="fg red resource-button vertical center start layout"
-                            style="height:140px;width:120px;"
-                            outlined>
-                  <div>
-                    <h4>Research</h4>
-                    <ul>
-                      <li>12 CPU</li>
-                      <li>64GB RAM</li>
-                      <li>2 vGPU</li>
-                    </ul>
-                  </div>
-                </mwc-button>
+                <template is="dom-repeat" items="[[ resource_templates ]]">
+                  <mwc-button class="fg red resource-button vertical center start layout"
+                              style="height:140px;width:120px;"
+                              on-tap="_chooseResourceTemplate"
+                              cpu="[[ item.cpu ]]"
+                              mem="[[ item.mem ]]"
+                              gpu="[[ item.gpu ]]"
+                              outlined>
+                    <div>
+                      <h4>[[ item.title ]]</h4>
+                      <ul>
+                        <li>[[ item.cpu ]] CPU</li>
+                        <li>[[ item.mem ]]GB RAM</li>
+                        <li>[[ item.gpu ]] vGPU</li>
+                      </ul>
+                    </div>
+                  </mwc-button>
+                </template>
               </div>
               <div class="horizontal end-justified layout">
-                <paper-button id="advanced-resource-settings-button">Advanced settings</paper-button>
+                <paper-button class="tiny" id="advanced-resource-settings-button">Advanced settings</paper-button>
               </div>
               <iron-collapse id="advanced-resource-settings">
                 <div class="horizontal center layout">
@@ -1005,7 +1023,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                                 min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]"
                                 value="[[ cpu_metric.max ]]"></paper-slider>
                   <span class="caption">Core</span>
-
                 </div>
                 <div class="horizontal center layout">
                   <span style="width:30px;">RAM</span>
