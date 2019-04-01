@@ -159,6 +159,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.$['launch-button'].addEventListener('tap', this._newSession.bind(this));
     this.$['environment'].addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.$['version'].addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
+    this.shadowRoot.querySelector('#advanced-resource-settings-button').addEventListener('tap', this._toggleAdvancedSettings.bind(this));
     this._initAliases();
     var gpu_resource = this.$['gpu-resource'];
     document.addEventListener('backend-ai-resource-refreshed', () => {
@@ -785,6 +786,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     console.log(e);
   }
 
+  _toggleAdvancedSettings() {
+    this.shadowRoot.querySelector('#advanced-resource-settings').toggle();
+  }
+
   static get template() {
     // language=HTML
     return html`
@@ -857,6 +862,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           width: 120px;
           padding: 0;
         }
+
         .resource-button h4 {
           padding: 5px 0;
           margin: 0;
@@ -870,6 +876,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
         backend-ai-dropdown-menu {
           width: 100%;
+        }
+
+        mwc-button.pink {
+          --mdc-theme-on-primary: white;
+          --mdc-theme-primary: #e9437a;
+          --mdc-theme-on-secondary: white;
+          --mdc-theme-secondary: #e9437a;
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
@@ -956,8 +969,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             <h4>Resource allocation</h4>
             <fieldset>
               <div class="horizontal center layout">
-                <mwc-button class="fg red resource-button vertical center start layout" style="height:140px;width:120px;"
-                            elevation="1">
+                <mwc-button class="fg red resource-button vertical center start layout"
+                            style="height:140px;width:120px;"
+                            outlined>
                   <div>
                     <h4>Study</h4>
                     <ul>
@@ -967,8 +981,9 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                     </ul>
                   </div>
                 </mwc-button>
-                <mwc-button class="fg red resource-button vertical center start layout" style="height:140px;width:120px;"
-                            elevation="1">
+                <mwc-button class="fg red resource-button vertical center start layout"
+                            style="height:140px;width:120px;"
+                            outlined>
                   <div>
                     <h4>Research</h4>
                     <ul>
@@ -978,32 +993,36 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                     </ul>
                   </div>
                 </mwc-button>
+              </div>
+              <div class="horizontal end-justified layout">
+                <paper-button id="advanced-resource-settings-button">Advanced settings</paper-button>
+              </div>
+              <iron-collapse id="advanced-resource-settings">
+                <div class="horizontal center layout">
+                  <span style="width:30px;">CPU</span>
+                  <paper-slider id="cpu-resource" class="cpu"
+                                pin snaps expand editable
+                                min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]"
+                                value="[[ cpu_metric.max ]]"></paper-slider>
+                  <span class="caption">Core</span>
 
-              </div>
-              <div class="horizontal center layout">
-                <span style="width:30px;">CPU</span>
-                <paper-slider id="cpu-resource" class="cpu"
-                              pin snaps expand editable
-                              min="[[ cpu_metric.min ]]" max="[[ cpu_metric.max ]]"
-                              value="[[ cpu_metric.max ]]"></paper-slider>
-                <span class="caption">Core</span>
-
-              </div>
-              <div class="horizontal center layout">
-                <span style="width:30px;">RAM</span>
-                <paper-slider id="ram-resource" class="mem"
-                              pin snaps step=0.1 editable
-                              min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]"
-                              value="[[ mem_metric.max ]]"></paper-slider>
-                <span class="caption">GB</span>
-              </div>
-              <div class="horizontal center layout">
-                <span style="width:30px;">GPU</span>
-                <paper-slider id="gpu-resource" class="gpu"
-                              pin snaps editable step="[[ gpu_step ]]"
-                              min="0.0" max="[[gpu_metric.max]]" value="1.0"></paper-slider>
-                <span class="caption">GPU</span>
-              </div>
+                </div>
+                <div class="horizontal center layout">
+                  <span style="width:30px;">RAM</span>
+                  <paper-slider id="ram-resource" class="mem"
+                                pin snaps step=0.1 editable
+                                min="[[ mem_metric.min ]]" max="[[ mem_metric.max ]]"
+                                value="[[ mem_metric.max ]]"></paper-slider>
+                  <span class="caption">GB</span>
+                </div>
+                <div class="horizontal center layout">
+                  <span style="width:30px;">GPU</span>
+                  <paper-slider id="gpu-resource" class="gpu"
+                                pin snaps editable step="[[ gpu_step ]]"
+                                min="0.0" max="[[gpu_metric.max]]" value="1.0"></paper-slider>
+                  <span class="caption">GPU</span>
+                </div>
+              </iron-collapse>
               <br/>
               <paper-button class="blue launch-button" type="submit" id="launch-button">
                 <iron-icon icon="rowing"></iron-icon>
