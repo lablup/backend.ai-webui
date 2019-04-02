@@ -101,7 +101,13 @@ $ node ./local_proxy.js
 Default setup will build `es6-bundled` version.
 
 ```
-$ polymer build
+$ make web site=[SITE CONFIG FILE POSTFIX]
+```
+
+Example:
+
+```
+$ make web site=beta
 ```
 
 ## Build (Electron App)

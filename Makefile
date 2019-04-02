@@ -20,7 +20,10 @@ compile:
 	node ./node_modules/polymer-cli/bin/polymer.js build
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
-dep: compile
+dep:
+	if [ ! -d "./build/bundle/" ];then \
+		make compile; \
+	fi
 	mkdir -p build/electron-app
 	#rsync -av --progress ./src/wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
 	cp ./package.json ./build/electron-app/package.json
@@ -29,7 +32,7 @@ dep: compile
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy.js
 web:
 	if [ ! -d "./build/bundle/" ];then \
-		make dep; \
+		make compile; \
 	fi
 	mkdir -p ./deploy/$(site)
 	cd deploy/$(site); rm -rf ./*; mkdir console
