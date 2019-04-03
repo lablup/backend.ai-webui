@@ -131,6 +131,7 @@ class Client {
       this._config = config;
     }
     this.kernelPrefix = '/kernel';
+    this.resourcePreset = new ResourcePreset(this);
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
     this.keypair = new Keypair(this);
@@ -499,6 +500,24 @@ class Client {
     for (var i = 0; i < 8; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text + "-jsSDK";
+  }
+}
+
+class ResourcePreset {
+  constructor(client, name = null) {
+    this.client = client;
+    this.name = name;
+    this.urlPrefix = '/resource'
+  }
+
+  list() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  check() {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, null);
+    return this.client._wrapWithPromise(rqst);
   }
 }
 
