@@ -465,129 +465,74 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     return this.supports[lang];
   }
 
-  _aggregateResourceUse(compute_sessions) {
+  async _aggregateResourceUse(compute_sessions) {
     let total_slot = {};
-    if ('cpu' in this.userResourceLimit) {
-      total_slot['cpu_slot'] = this.userResourceLimit['cpu'];
-    }
-    if ('mem' in this.userResourceLimit) {
-      total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g'));
-    }
-    if ('cuda.device' in this.userResourceLimit) {
-      total_slot['gpu_slot'] = this.userResourceLimit['cuda.device'];
-    }
-    if ('cuda.shares' in this.userResourceLimit) {
-      total_slot['vgpu_slot'] = this.userResourceLimit['cuda.shares'];
-    }
-    let used_slot = {};
-    compute_sessions.forEach((item) => {
-      if ('cpu_slot' in item) {
-        if ('cpu_slot' in used_slot) {
-          used_slot['cpu_slot'] = parseInt(used_slot['cpu_slot']) + parseInt(item['cpu_slot']);
+    return window.backendaiclient.resourcePreset.check().then((response) => {
+      let resource_limit = response.keypair_limits;
+      if ('cpu' in resource_limit) {
+        if (resource_limit['cpu'] == 'Infinity') {
+          total_slot['cpu_slot'] = this.resource_info.cpu.total;
         } else {
-          used_slot['cpu_slot'] = parseInt(item['cpu_slot']);
+          total_slot['cpu_slot'] = resource_limit['cpu'];
         }
       }
-      if ('mem_slot' in item) {
-        if ('mem_slot' in used_slot) {
-          used_slot['mem_slot'] = parseInt(used_slot['mem_slot']) + parseInt(item['mem_slot']);
+      if ('mem' in resource_limit) {
+        if (resource_limit['mem'] == 'Infinity') {
+          total_slot['mem_slot'] = this.resource_info.mem.total;
         } else {
-          used_slot['mem_slot'] = parseInt(item['mem_slot']);
+          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'], 'g'));
         }
       }
-      if ('gpu_slot' in item) {
-        if ('gpu_slot' in used_slot) {
-          used_slot['gpu_slot'] = parseInt(used_slot['gpu_slot']) + parseInt(item['gpu_slot']);
+      if ('cuda.device' in resource_limit) {
+        if (resource_limit['cuda.device'] == 'Infinity') {
+          total_slot['gpu_slot'] = this.resource_info.gpu.total;
         } else {
-          used_slot['gpu_slot'] = parseInt(item['gpu_slot']);
+          total_slot['gpu_slot'] = resource_limit['cuda.device'];
         }
       }
-      if ('vgpu_slot' in item) {
-        if ('vgpu_slot' in used_slot) {
-          used_slot['vgpu_slot'] = parseFloat(used_slot['vgpu_slot']) + parseFloat(item['vgpu_slot']);
+      if ('cuda.shares' in resource_limit) {
+        if (resource_limit['cuda.shares'] == 'Infinity') {
+          total_slot['vgpu_slot'] = this.resource_info.vgpu.total;
         } else {
-          used_slot['vgpu_slot'] = parseFloat(item['vgpu_slot']);
+          total_slot['vgpu_slot'] = resource_limit['cuda.shares'];
         }
       }
-      // Resource minus
-    });
-    if ('vgpu_slot' in used_slot) {
-      used_slot['vgpu_slot'] = parseFloat(used_slot['vgpu_slot']).toFixed(2);
-    }
-    let available_slot = {};
-    ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
-      if (slot in total_slot) {
+
+      let remaining_slot = {};
+      let used_slot = {};
+      let resource_remaining = response.keypair_remaining;
+      if ('cpu' in resource_remaining) {
+        remaining_slot['cpu_slot'] = resource_remaining['cpu'];
+        used_slot['cpu_slot'] = total_slot['cpu_slot'] - remaining_slot['cpu_slot'];
+      }
+      if ('mem' in resource_remaining) {
+        remaining_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_remaining['mem'], 'g'));
+        used_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'] - resource_remaining['mem'], 'g'));
+      }
+      if ('cuda.device' in resource_remaining) {
+        remaining_slot['gpu_slot'] = resource_remaining['cuda.device'];
+        used_slot['gpu_slot'] = total_slot['gpu_slot'] - remaining_slot['gpu_slot'];
+      }
+      if ('cuda.shares' in resource_remaining) {
+        remaining_slot['vgpu_slot'] = resource_remaining['cuda.shares'];
+        used_slot['vgpu_slot'] = total_slot['vgpu_slot'] - remaining_slot['vgpu_slot'];
+      }
+      if ('vgpu_slot' in used_slot) {
+        used_slot['vgpu_slot'] = parseFloat(used_slot['vgpu_slot']).toFixed(2);
+      }
+      this.total_slot = total_slot;
+      this.used_slot = used_slot;
+      this.available_slot = remaining_slot;
+      let used_slot_percent = {};
+      ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
-          available_slot[slot] = total_slot[slot] - used_slot[slot];
+          used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
         } else {
-          available_slot[slot] = total_slot[slot];
         }
-      } else {// TODO: unlimited vs limited.
-        if (this.defaultResourcePolicy === 'UNLIMITED') {
-          switch (slot) {
-            case 'cpu_slot':
-              total_slot[slot] = this.resource_info.cpu.total;
-              break;
-            case 'mem_slot':
-              total_slot[slot] = this.resource_info.mem.total;
-              break;
-            case 'gpu_slot':
-              if (this.gpu_mode === 'gpu') {
-                total_slot[slot] = this.resource_info.gpu.total;
-              }
-              break;
-            case 'vgpu_slot':
-              if (this.gpu_mode === 'vgpu') {
-                total_slot[slot] = this.resource_info.vgpu.total;
-              }
-              break;
-          }
-          available_slot[slot] = 100000;
-//            total_slot[slot] = 200;
-          //available_slot[slot] = 100000;
-          //total_slot[slot] = 200;
-        } else {
-
-          switch (slot) {
-            case 'gpu_slot':
-              if (this.gpu_mode === 'gpu') {
-                available_slot[slot] = 0;
-                total_slot[slot] = 0;
-              }
-              break;
-            case 'vgpu_slot':
-              if (this.gpu_mode === 'vgpu') {
-                available_slot[slot] = 0;
-                total_slot[slot] = 0;
-              }
-              break;
-            default:
-              available_slot[slot] = 0;
-              total_slot[slot] = 0;
-          }
-        }
-      }
+      });
+      this.used_slot_percent = used_slot_percent;
+      return this.available_slot;
     });
-    ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
-      if (slot in used_slot) {
-      } else {
-        used_slot[slot] = 0;
-      }
-    });
-
-    this.total_slot = total_slot;
-    this.used_slot = used_slot;
-    this.available_slot = available_slot;
-
-    let used_slot_percent = {};
-    ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
-      if (slot in used_slot) {
-        used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
-      } else {
-      }
-    });
-    this.used_slot_percent = used_slot_percent;
-    return available_slot;
   }
 
   updateResourceIndicator() {
@@ -596,6 +541,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _refreshResourceTemplate(policyName) {
+    window.backendaiclient.resourcePreset.check().then((response) => {
+      console.log(response);
+      if (response.presets) {
+        console.log(response.presets);
+      }
+
+    });
     switch (policyName) {
       case 'student':
         this.resource_templates = [
@@ -615,14 +567,14 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     }
   }
 
-  updateMetric() {
+  async updateMetric() {
     if (this.$['environment'].value in this.aliases) {
       let currentLang = this.aliases[this.$['environment'].value];
       let currentVersion = this.$['version'].value;
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       let compute_sessions = this.shadowRoot.querySelector('#running-jobs').compute_sessions;
-      let available_slot = this._aggregateResourceUse(compute_sessions);
+      let available_slot = await this._aggregateResourceUse(compute_sessions);
       if (!currentResource) return;
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
