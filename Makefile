@@ -25,7 +25,6 @@ dep:
 		make compile; \
 	fi
 	mkdir -p build/electron-app
-	#rsync -av --progress ./src/wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/bundle build/electron-app/app
