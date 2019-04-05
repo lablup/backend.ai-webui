@@ -570,23 +570,26 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       if (response.presets) {
         console.log(response.presets);
       }
-
+      let presets = response.presets;
+      presets.forEach((item) => {
+        console.log(item);
+      });
     });
     switch (policyName) {
       case 'student':
         this.resource_templates = [
-          {title: 'Student', cpu: 2, mem: 4, gpu: 0.15}];
+          {name: 'Student', cpu: 2, mem: 4, gpu: 0.2}];
         break;
       case 'research':
         this.resource_templates = [
-          {title: 'Student', cpu: 2, mem: 4, gpu: 0.15},
-          {title: 'Research', cpu: 12, mem: 64, gpu: 2}
+          {name: 'Student', cpu: 2, mem: 4, gpu: 0.2},
+          {name: 'Research', cpu: 12, mem: 64, gpu: 2}
         ];
         break;
       default:
         this.resource_templates = [
-          {title: 'Student', cpu: 2, mem: 4, gpu: 0.15},
-          {title: 'Research', cpu: 12, mem: 64, gpu: 2}
+          {name: 'Student', cpu: 2, mem: 4, gpu: 0.2},
+          {name: 'Research', cpu: 12, mem: 64, gpu: 2}
         ];
     }
   }
@@ -1009,7 +1012,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                               gpu="[[ item.gpu ]]"
                               outlined>
                     <div>
-                      <h4>[[ item.title ]]</h4>
+                      <h4>[[ item.name ]]</h4>
                       <ul>
                         <li>[[ item.cpu ]] CPU</li>
                         <li>[[ item.mem ]]GB RAM</li>
