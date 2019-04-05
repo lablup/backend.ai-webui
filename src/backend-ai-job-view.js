@@ -238,31 +238,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let policyName = response.keypair.resource_policy;
       // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
       // TODO: Fix it to use API-based resource max.
-      this._refreshResourceTemplate(policyName);
-      if (policyName === 'research') {
-        return new Promise(function (resolve, reject) {
-          var resource = {
-            "cpu": 176,
-            "mem": '300g',
-            "cuda.shares": 8.0
-          };
-          var result = {
-            keypair_resource_policy: {
-              'default_for_unspecified': 'UNLIMITED',
-              'total_resource_slots': JSON.stringify(resource),
-              'max_concurrent_sessions': 40,
-              'max_containers_per_session': 1
-            }
-          };
-          resolve(result);
-        });
-      } else {
-        return window.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
-          'total_resource_slots',
-          'max_concurrent_sessions',
-          'max_containers_per_session',
-        ]);
-      }
+      return window.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
+        'total_resource_slots',
+        'max_concurrent_sessions',
+        'max_containers_per_session',
+      ]);
     }).then((response) => {
       let resource_policy = response.keypair_resource_policy;
       if (resource_policy.default_for_unspecified === 'UNLIMITED' ||
@@ -272,6 +252,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         this.defaultResourcePolicy = 'LIMITED';
       }
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
+      this._refreshResourceTemplate();
       this._refreshResourceValues();
     }).catch((err) => {
       console.log(err);
@@ -564,20 +545,24 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this._aggregateResourceUse(compute_sessions);
   }
 
-  _refreshResourceTemplate(policyName) {
+  _refreshResourceTemplate() {
     window.backendaiclient.resourcePreset.check().then((response) => {
       if (response.presets) {
         let presets = response.presets;
+        let available_presets = [];
         presets.forEach((item) => {
-          item.cpu = item.resource_slots.cpu;
-          item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
-          if ('cuda.shares' in item.resource_slots) {
-            item.gpu = item.resource_slots['cuda.shares'];
-          } else if ('cuda.device' in item) {
-            item.gpu = item.resource_slots['cuda.device'];
+          if (item.allocatable === true) {
+            if ('cuda.shares' in item.resource_slots) {
+              item.gpu = item.resource_slots['cuda.shares'];
+            } else if ('cuda.device' in item) {
+              item.gpu = item.resource_slots['cuda.device'];
+            }
+            item.cpu = item.resource_slots.cpu;
+            item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+            available_presets.push(item);
           }
         });
-        this.resource_templates = presets;
+        this.resource_templates = available_presets;
       }
     });
   }
@@ -608,7 +593,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               cpu_metric.max = 4;
             }
           }
-          console.log(cpu_metric);
           if (cpu_metric.min > cpu_metric.max) {
             // TODO: dynamic maximum per user policy
           }
@@ -782,6 +766,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   changed(e) {
     console.log(e);
+  }
+
+  isEmpty(item) {
+    if (item.length === 0) {
+      return true;
+    }
+    return false;
   }
 
   _toggleAdvancedSettings() {
@@ -1006,6 +997,18 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                         <li>[[ item.mem ]]GB RAM</li>
                         <li>[[ item.gpu ]] vGPU</li>
                       </ul>
+                    </div>
+                  </mwc-button>
+                </template>
+                <template is="dom-if" if="[[isEmpty(resource_templates)]]">
+                  <mwc-button class="fg red resource-button vertical center start layout" role="option"
+                              style="height:140px;width:250px;"
+                              disabled
+                              outlined>
+                    <div>
+                      <h4>No suitable preset</h4>
+                      <div>Not enough resource</div>
+                      <div>Use advanced settings to start custom session</div>
                     </div>
                   </mwc-button>
                 </template>

@@ -939,9 +939,15 @@ class Resources {
     this.resources.gpu = {};
     this.resources.gpu.total = 0;
     this.resources.gpu.used = 0;
+    this.resources['cuda.device'] = {};
+    this.resources['cuda.device'].total = 0;
+    this.resources['cuda.device'].used = 0;
     this.resources.vgpu = {};
     this.resources.vgpu.total = 0;
     this.resources.vgpu.used = 0;
+    this.resources['cuda.shares'] = {};
+    this.resources['cuda.shares'].total = 0;
+    this.resources['cuda.shares'].used = 0;
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
@@ -998,6 +1004,10 @@ class Resources {
         this.resources.vgpu.total = this.resources.vgpu.total.toFixed(2);
         this.resources.agents.total = Object.keys(this.agents).length; // TODO : remove terminated agents
         this.resources.agents.using = Object.keys(this.agents).length;
+        this.resources['cuda.shares'].used = this.resources.vgpu.used;
+        this.resources['cuda.device'].used = this.resources.gpu.used;
+        this.resources['cuda.shares'].total = this.resources.vgpu.total;
+        this.resources['cuda.device'].total = this.resources.gpu.total;
         return this.resources;
       }).catch(err => {
         throw err;
