@@ -981,10 +981,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             </fieldset>
             <h4>Resource allocation</h4>
             <fieldset style="padding-top:0;">
-              <paper-listbox selected="0" class="horizontal center center-justified layout">
+              <paper-listbox selected="0" class="horizontal center layout"
+                             style="width:350px; overflow:scroll;">
                 <template is="dom-repeat" items="[[ resource_templates ]]">
                   <mwc-button class="fg red resource-button vertical center start layout" role="option"
-                              style="height:140px;width:120px;"
+                              style="height:140px;min-width:120px;"
                               on-tap="_chooseResourceTemplate"
                               id="[[ item.title ]]-button"
                               cpu="[[ item.cpu ]]"
@@ -996,7 +997,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                       <ul>
                         <li>[[ item.cpu ]] CPU</li>
                         <li>[[ item.mem ]]GB RAM</li>
-                        <li>[[ item.gpu ]] vGPU</li>
+                        <template is="dom-if" if="[[ !item.gpu ]]">
+                          <li>NO GPU</li>
+                        </template>
+                        <template is="dom-if" if="[[ item.gpu ]]">
+                          <li>[[ item.gpu ]] vGPU</li>
+                        </template>
+
                       </ul>
                     </div>
                   </mwc-button>
