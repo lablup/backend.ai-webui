@@ -566,32 +566,20 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   _refreshResourceTemplate(policyName) {
     window.backendaiclient.resourcePreset.check().then((response) => {
-      console.log(response);
       if (response.presets) {
-        console.log(response.presets);
+        let presets = response.presets;
+        presets.forEach((item) => {
+          item.cpu = item.resource_slots.cpu;
+          item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+          if ('cuda.shares' in item.resource_slots) {
+            item.gpu = item.resource_slots['cuda.shares'];
+          } else if ('cuda.device' in item) {
+            item.gpu = item.resource_slots['cuda.device'];
+          }
+        });
+        this.resource_templates = presets;
       }
-      let presets = response.presets;
-      presets.forEach((item) => {
-        console.log(item);
-      });
     });
-    switch (policyName) {
-      case 'student':
-        this.resource_templates = [
-          {name: 'Student', cpu: 2, mem: 4, gpu: 0.2}];
-        break;
-      case 'research':
-        this.resource_templates = [
-          {name: 'Student', cpu: 2, mem: 4, gpu: 0.2},
-          {name: 'Research', cpu: 12, mem: 64, gpu: 2}
-        ];
-        break;
-      default:
-        this.resource_templates = [
-          {name: 'Student', cpu: 2, mem: 4, gpu: 0.2},
-          {name: 'Research', cpu: 12, mem: 64, gpu: 2}
-        ];
-    }
   }
 
   async updateMetric() {
@@ -684,13 +672,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
         }
         if (item.key === 'mem') {
           let mem_metric = item;
-          mem_metric.min = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
+          mem_metric.min = window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
           if (mem_metric.min < 0.1) {
             mem_metric.min = 0.1;
           }
-          let image_mem_max = window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
+          let image_mem_max = window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           if ('mem' in this.userResourceLimit) {
-            let user_mem_max = window.window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
+            let user_mem_max = window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
             if (parseInt(image_mem_max) !== 0) {
               mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem_slot']);
             } else {
@@ -698,7 +686,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             }
           } else {
             if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity') {
-              mem_metric.max = Math.min(parseFloat(window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem_slot']);
+              mem_metric.max = Math.min(parseFloat(window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem_slot']);
             } else {
               mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
             }
