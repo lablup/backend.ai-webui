@@ -541,14 +541,19 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       }
       this.total_slot = total_slot;
       this.used_slot = used_slot;
-      this.available_slot = remaining_slot;
       let used_slot_percent = {};
       ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
           used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
         } else {
         }
+        if (slot in remaining_slot) {
+          if (remaining_slot[slot] === 'Infinity') {
+            remaining_slot[slot] = total_slot[slot];
+          }
+        }
       });
+      this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
       return this.available_slot;
     });
@@ -600,7 +605,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let cpu_metric = item;
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
-            if (parseInt(cpu_metric.max) !== 0) {
+            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity') {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
             } else {
               cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
@@ -612,6 +617,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               cpu_metric.max = 4;
             }
           }
+          console.log(cpu_metric);
           if (cpu_metric.min > cpu_metric.max) {
             // TODO: dynamic maximum per user policy
           }
@@ -622,7 +628,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
-            if (parseInt(gpu_metric.max) !== 0) {
+            if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity') {
               gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['vgpu_slot']);
             } else {
               gpu_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['gpu_slot']);
@@ -643,7 +649,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let vgpu_metric = item;
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
-            if (parseFloat(vgpu_metric.max) !== 0) {
+            if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity') {
               vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
             } else {
 
@@ -688,7 +694,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               mem_metric.max = parseFloat(user_mem_max);
             }
           } else {
-            if (parseInt(mem_metric.max) !== 0) {
+            if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity') {
               mem_metric.max = Math.min(parseFloat(window.window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem_slot']);
             } else {
               mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
