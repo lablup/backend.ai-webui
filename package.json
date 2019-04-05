@@ -55,7 +55,7 @@
     "@webcomponents/webcomponentsjs": "^2.2.7",
     "electron-tabs": "^0.9.5",
     "forever": "^0.15.4",
-    "i18n-element": "^3.0.0-rc.1",
+    "i18n-element": "^3.0.0",
     "polymer-cli": "^1.9.7"
   },
   "devDependencies": {
