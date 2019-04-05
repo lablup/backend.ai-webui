@@ -96,6 +96,11 @@ $ node ./local_proxy.js
 
 ### Running stand-alone web service
 
+## Build
+
+```
+$ make compile
+```
 ## Build (Web)
 
 Default setup will build `es6-bundled` version.
