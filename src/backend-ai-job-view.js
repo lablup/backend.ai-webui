@@ -1,5 +1,6 @@
 /**
- * Backend.AI-job-view
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
 import {html, PolymerElement} from '@polymer/polymer';
@@ -501,22 +502,40 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let remaining_slot = {};
       let used_slot = {};
       let resource_remaining = response.keypair_remaining;
+      let resource_using = response.keypair_using;
       if ('cpu' in resource_remaining) {
         remaining_slot['cpu_slot'] = resource_remaining['cpu'];
-        used_slot['cpu_slot'] = total_slot['cpu_slot'] - remaining_slot['cpu_slot'];
+        if ('cpu' in resource_using) {
+          used_slot['cpu_slot'] = resource_using['cpu'];
+        } else {
+          used_slot['cpu_slot'] = 0;
+        }
       }
       if ('mem' in resource_remaining) {
         remaining_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_remaining['mem'], 'g'));
-        used_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'] - resource_remaining['mem'], 'g'));
+        if ('mem' in resource_using) {
+          used_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_using['mem'], 'g'));
+        } else {
+          used_slot['mem_slot'] = 0.0;
+        }
       }
       if ('cuda.device' in resource_remaining) {
         remaining_slot['gpu_slot'] = resource_remaining['cuda.device'];
-        used_slot['gpu_slot'] = total_slot['gpu_slot'] - remaining_slot['gpu_slot'];
+        if ('cuda.device' in resource_using) {
+          used_slot['gpu_slot'] = resource_using['cuda.device'];
+        } else {
+          used_slot['gpu_slot'] = 0;
+        }
       }
       if ('cuda.shares' in resource_remaining) {
         remaining_slot['vgpu_slot'] = resource_remaining['cuda.shares'];
-        used_slot['vgpu_slot'] = total_slot['vgpu_slot'] - remaining_slot['vgpu_slot'];
+        if ('cuda.shares' in resource_using) {
+          used_slot['vgpu_slot'] = resource_using['cuda.shares'];
+        } else {
+          used_slot['vgpu_slot'] = 0;
+        }
       }
+
       if ('vgpu_slot' in used_slot) {
         used_slot['vgpu_slot'] = parseFloat(used_slot['vgpu_slot']).toFixed(2);
       }
