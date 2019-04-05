@@ -519,6 +519,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
       if ('vgpu_slot' in used_slot) {
         used_slot['vgpu_slot'] = parseFloat(used_slot['vgpu_slot']).toFixed(2);
+        total_slot['vgpu_slot'] = parseFloat(total_slot['vgpu_slot']).toFixed(2);
       }
       this.total_slot = total_slot;
       this.used_slot = used_slot;
@@ -1007,7 +1008,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                               outlined>
                     <div>
                       <h4>No suitable preset</h4>
-                      <div>Not enough resource</div>
+                      <div>Not enough resource.</div>
                       <div>Use advanced settings to start custom session</div>
                     </div>
                   </mwc-button>
