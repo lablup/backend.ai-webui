@@ -134,6 +134,7 @@ class BackendAISummary extends PolymerElement {
   _refreshResourceInformation() {
     return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
       let rp = response.keypair_resource_policies;
+      console.log(rp);
       this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
 
     });
