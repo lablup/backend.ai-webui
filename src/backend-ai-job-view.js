@@ -168,6 +168,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     var gpu_resource = this.$['gpu-resource'];
     document.addEventListener('backend-ai-resource-refreshed', () => {
       this.updateResourceIndicator();
+      this._refreshResourceTemplate();
     });
     gpu_resource.addEventListener('value-change', () => {
       if (gpu_resource.value > 0) {
