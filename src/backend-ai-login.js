@@ -46,6 +46,9 @@ class BackendAiLogin extends PolymerElement {
       },
       api_endpoint: {
         type: String
+      },
+      default_session_environment: {
+        type: String
       }
     };
   }
@@ -83,6 +86,11 @@ class BackendAiLogin extends PolymerElement {
         }
         this.$['id_api_endpoint'].disabled = true;
         this.$['id_api_endpoint_humanized'].disabled = true;
+      }
+      if (typeof config.defaultSessionEnvironment === "undefined" || config.defaultSessionEnvironment === '') {
+        this.default_session_environment = '';
+      } else {
+        this.default_session_environment = config.defaultSessionEnvironment;
       }
     }).catch((err) => {   // No file
       this.proxy_url = 'http://127.0.0.1:5050/';
@@ -152,6 +160,7 @@ class BackendAiLogin extends PolymerElement {
       window.backendaiclient.is_admin = is_admin;
       window.backendaiclient.resource_policy = resource_policy;
       window.backendaiclient._config._proxyURL = this.proxy_url;
+      window.backendaiclient._config.default_session_environment = this.default_session_environment;
       var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();

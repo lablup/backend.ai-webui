@@ -3,6 +3,7 @@ const apiEndpoint = "https://node01.kmu-bigdata.onpremise.backend.ai";
 const apiEndpointText = "KMU Bigdata / Backend.AI Enterprise";
 const proxyBaseURL = "";
 const proxyListenIP = "0.0.0.0";
+const defaultSessionEnvironment = 'index.docker.io/lablup/ngc-tensorflow';
 
 define(["exports"], function (_exports) {
   "use strict";
@@ -18,7 +19,8 @@ define(["exports"], function (_exports) {
     apiEndpoint: apiEndpoint,
     apiEndpointText: apiEndpointText,
     proxyBaseURL: proxyBaseURL,
-    proxyListenIP: proxyListenIP
+    proxyListenIP: proxyListenIP,
+    defaultSessionEnvironment: defaultSessionEnvironment
   };
   _exports.$config = config
 });

@@ -153,6 +153,10 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       resource_templates: {
         type: Array,
         value: []
+      },
+      default_language: {
+        type: String,
+        value: ''
       }
     }
   }
@@ -278,6 +282,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _launchSessionDialog() {
+    this._selectDefaultLanguage();
     this.updateMetric();
     var gpu_resource = this.$['gpu-resource'];
     //this.$['gpu-value'].textContent = gpu_resource.value;
@@ -399,26 +404,29 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     return humanizedName;
   }
 
-  _updateEnvironment() {
+  async _updateEnvironment() {
     // this.languages = Object.keys(this.supports);
     // this.languages.sort();
-    const langs = Object.keys(this.supports);
-    if (langs === undefined) return;
-    langs.sort();
-    this.languages = [];
-    langs.forEach((item, index) => {
-      if (!(Object.keys(this.aliases).includes(item))) {
-        const humanizedName = this._guessHumanizedNames(item);
-        if (humanizedName !== null) {
-          this.aliases[item] = humanizedName;
+    return new Promise((resolve) => {
+      const langs = Object.keys(this.supports);
+      if (langs === undefined) return;
+      langs.sort();
+      this.languages = [];
+      langs.forEach((item, index) => {
+        if (!(Object.keys(this.aliases).includes(item))) {
+          const humanizedName = this._guessHumanizedNames(item);
+          if (humanizedName !== null) {
+            this.aliases[item] = humanizedName;
+          }
         }
-      }
-      const alias = this.aliases[item];
-      if (alias !== undefined) {
-        this.languages.push({name: item, alias: alias});
-      }
+        const alias = this.aliases[item];
+        if (alias !== undefined) {
+          this.languages.push({name: item, alias: alias});
+        }
+      });
+      this._initAliases();
+      return resolve(true);
     });
-    this._initAliases();
   }
 
   _updateVersions(lang) {
@@ -797,6 +805,21 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.shadowRoot.querySelector('#gpu-resource').value = gpu;
   }
 
+  _selectDefaultLanguage() {
+    console.log(window.backendaiclient._config);
+    if ('default_session_environment' in window.backendaiclient._config) {
+      this.default_language = window.backendaiclient._config.default_session_environment;
+    } else if (this.languages.length != 0) {
+      this.default_language = this.languages[0].name;
+    } else {
+      return '';
+    }
+  }
+
+  _selectDefaultVersion(version) {
+    return false;
+  }
+
   static get template() {
     // language=HTML
     return html`
@@ -951,7 +974,8 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             <fieldset>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="environment" label="Environments">
-                  <paper-listbox slot="dropdown-content" selected="0">
+                  <paper-listbox slot="dropdown-content" attr-for-selected="id"
+                                 selected="[[default_language]]">
                     <template is="dom-repeat" items="[[ languages ]]">
                       <paper-item id="[[ item.name ]]" label="[[ item.alias ]]">[[ item.alias ]]</paper-item>
                     </template>
