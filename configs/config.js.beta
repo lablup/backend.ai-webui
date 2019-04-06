@@ -3,6 +3,7 @@ const apiEndpoint = "https://api-beta.backend.ai";
 const apiEndpointText = "Backend.AI Enterprise (Beta Branch)";
 const proxyBaseURL = "";
 const proxyListenIP = "0.0.0.0";
+const defaultSessionEnvironment = 'index.docker.io/lablup/ngc-tensorflow';
 
 define(["exports"], function (_exports) {
   "use strict";

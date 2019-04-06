@@ -169,6 +169,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     this.$['version'].addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this.shadowRoot.querySelector('#advanced-resource-settings-button').addEventListener('tap', this._toggleAdvancedSettings.bind(this));
     this._initAliases();
+    this.updateResourceIndicator();
     var gpu_resource = this.$['gpu-resource'];
     document.addEventListener('backend-ai-resource-refreshed', () => {
       this.updateResourceIndicator();
@@ -235,11 +236,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _refreshResourcePolicy() {
-    window.backendaiclient.resources.totalResourceInformation().then((response) => { // Read information
-      this.resource_info = response;
-    }).then((response) => {
-      return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy'])
-    }).then((response) => {
+    window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy']).then((response) => {
       let policyName = response.keypair.resource_policy;
       // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
       // TODO: Fix it to use API-based resource max.
@@ -455,37 +452,40 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   async _aggregateResourceUse() {
     let total_slot = {};
+    console.log(this.resource_info);
     return window.backendaiclient.resourcePreset.check().then((response) => {
+      this.resource_info = response.scaling_group_remaining;
+      console.log("total preset", response);
       let resource_limit = response.keypair_limits;
+      console.log("res", this.resource_info);
       if ('cpu' in resource_limit) {
         if (resource_limit['cpu'] == 'Infinity') {
-          total_slot['cpu_slot'] = this.resource_info.cpu.total;
+          total_slot['cpu_slot'] = this.resource_info.cpu;
         } else {
           total_slot['cpu_slot'] = resource_limit['cpu'];
         }
       }
       if ('mem' in resource_limit) {
         if (resource_limit['mem'] == 'Infinity') {
-          total_slot['mem_slot'] = this.resource_info.mem.total;
+          total_slot['mem_slot'] = this.resource_info.mem;
         } else {
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'], 'g'));
         }
       }
       if ('cuda.device' in resource_limit) {
         if (resource_limit['cuda.device'] == 'Infinity') {
-          total_slot['gpu_slot'] = this.resource_info.gpu.total;
+          total_slot['gpu_slot'] = this.resource_info['cuda.device'];
         } else {
           total_slot['gpu_slot'] = resource_limit['cuda.device'];
         }
       }
       if ('cuda.shares' in resource_limit) {
         if (resource_limit['cuda.shares'] == 'Infinity') {
-          total_slot['vgpu_slot'] = this.resource_info.vgpu.total;
+          total_slot['vgpu_slot'] = this.resource_info['cuda.shares'];
         } else {
           total_slot['vgpu_slot'] = resource_limit['cuda.shares'];
         }
       }
-
       let remaining_slot = {};
       let used_slot = {};
       let resource_remaining = response.keypair_remaining;
