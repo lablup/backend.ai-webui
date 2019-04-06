@@ -806,7 +806,6 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _selectDefaultLanguage() {
-    console.log(window.backendaiclient._config);
     if ('default_session_environment' in window.backendaiclient._config) {
       this.default_language = window.backendaiclient._config.default_session_environment;
     } else if (this.languages.length != 0) {
