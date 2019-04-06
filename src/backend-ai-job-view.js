@@ -986,7 +986,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
-              <div>
+              <div style="display:none;">
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
               <div class="layout vertical">
