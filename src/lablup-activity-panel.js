@@ -23,9 +23,11 @@ class LablupActivityPanel extends PolymerElement {
         }
 
         paper-material > h4 {
-          border-left: 3px solid var(--paper-yellow-400);
+          border-left: 3px solid var(--paper-green-900);
+          background-color: var(--paper-green-500);
+          color: #eee;
           font-size: 14px;
-          font-weight: 100;
+          font-weight: 400;
           height: 32px;
           padding: 5px 15px 5px 20px;
           margin: 0 0 10px 0;
