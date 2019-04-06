@@ -1,19 +1,22 @@
-import {PolymerElement, html} from '@polymer/polymer';
-import '@polymer/polymer/lib/elements/dom-if.js';
-import '@polymer/paper-material/paper-material';
+import {css, html, LitElement} from "lit-element";
+import './plastics/plastic-material/plastic-material';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/color';
-import '@polymer/iron-flex-layout/iron-flex-layout';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import {IronFlex, IronFlexAlignment} from './layout/iron-flex-layout-classes';
 
-class LablupActivityPanel extends PolymerElement {
-  static get template() {
-    // language=HTML
-    return html`
-      <style is="custom-style" include="iron-flex iron-flex-alignment">
-        paper-material {
+class LablupActivityPanel extends LitElement {
+  static get is() {
+    return 'lablup-activity-panel';
+  }
+  
+  static get styles() {
+    return [
+      IronFlex,
+      IronFlexAlignment,
+      // language=CSS
+      css`
+        plastic-material {
           display: block;
           background: white;
           box-sizing: border-box;
@@ -22,7 +25,7 @@ class LablupActivityPanel extends PolymerElement {
           border-radius: 5px;
         }
 
-        paper-material > h4 {
+        plastic-material > h4 {
           border-left: 3px solid var(--paper-green-900);
           background-color: var(--paper-green-500);
           color: #eee;
@@ -39,19 +42,19 @@ class LablupActivityPanel extends PolymerElement {
           overflow: hidden;
         }
 
-        paper-material > div {
+        plastic-material > div {
           margin: 20px;
           padding-bottom: 20px;
           font-size: 12px;
           padding-left: 3px;
         }
 
-        paper-material > h4 > paper-icon-button {
+        plastic-material > h4 > paper-icon-button {
           display: flex;
         }
 
-        paper-material > h4 > paper-icon-button,
-        paper-material > h4 > paper-icon-button #icon {
+        plastic-material > h4 > paper-icon-button,
+        plastic-material > h4 > paper-icon-button #icon {
           width: 15px;
           height: 15px;
           padding: 0;
@@ -60,21 +63,21 @@ class LablupActivityPanel extends PolymerElement {
         ul {
           padding-inline-start: 0;
         }
+      `];
+  }
 
-      </style>
-      <paper-material id="activity" elevation="{{ elevation }}">
-        <h4 class="layout flex justified center">{{ title }}
+  render() {
+    // language=HTML
+    return html`
+      <plastic-material id="activity" elevation="${this.elevation}">
+        <h4 class="layout flex justified center">${this.title}
           <paper-icon-button id="button" icon="close"></paper-icon-button>
         </h4>
         <div>
           <slot name="message"></slot>
         </div>
-      </paper-material>
+      </plastic-material>
     `;
-  }
-
-  static get is() {
-    return 'lablup-activity-panel';
   }
 
   static get properties() {
@@ -116,31 +119,37 @@ class LablupActivityPanel extends PolymerElement {
 
   constructor() {
     super();
+    this.title = '';
+    this.elevation = 1;
+    this.message = '';
+    this.panelId = '';
+    this.width = 280;
+    this.horizontalsize = '';
+    this.marginWidth = 16;
   }
 
-  ready() {
-    super.ready();
+  firstUpdated() {
     if (this.pinned || this.panelId == undefined) {
       this.shadowRoot.querySelector('h4').removeChild(this.$.button);
     } else {
       this.shadowRoot.querySelector('#button').addEventListener('tap', this._removePanel.bind(this));
     }
-    this.shadowRoot.querySelector('paper-material').style.width = this.width + "px";
+    this.shadowRoot.querySelector('plastic-material').style.width = this.width + "px";
     if (this.minwidth) {
-      this.shadowRoot.querySelector('paper-material').style.minWidth = this.minwidth + "px";
+      this.shadowRoot.querySelector('plastic-material').style.minWidth = this.minwidth + "px";
     }
     if (this.maxwidth) {
-      this.shadowRoot.querySelector('paper-material').style.minWidth = this.maxwidth + "px";
+      this.shadowRoot.querySelector('plastic-material').style.minWidth = this.maxwidth + "px";
     }
     if (this.horizontalsize) {
       if (this.horizontalsize == '2x') {
-        this.shadowRoot.querySelector('paper-material').style.width = (this.width * 2 + 32) + "px";
+        this.shadowRoot.querySelector('plastic-material').style.width = (this.width * 2 + 32) + "px";
       }
       if (this.horizontalsize == '3x') {
-        this.shadowRoot.querySelector('paper-material').style.width = (this.width * 3 + 32) + "px";
+        this.shadowRoot.querySelector('plastic-material').style.width = (this.width * 3 + 32) + "px";
       }
     }
-    this.shadowRoot.querySelector('paper-material').style.margin = this.marginWidth + "px";
+    this.shadowRoot.querySelector('plastic-material').style.margin = this.marginWidth + "px";
   }
 
   connectedCallback() {
@@ -148,18 +157,6 @@ class LablupActivityPanel extends PolymerElement {
   }
 
   _removePanel() {
-    /*  TODO: Generalized this part. New type mixin with Polymer 3.
-    this._requestBot.url = "/activity/panel_state/";
-    this._requestBot.body = JSON.stringify({"panel_id": this.panelId, "state": "closed"});
-    var self = this;
-
-    var req = this._requestBot.generateRequest();
-    req.completes.then(function(resp) {
-        self.remove();
-    }).catch(function(err) {
-        console.log(err);
-        setNotification(req.response.error_msg);
-    });*/
   }
 }
 
