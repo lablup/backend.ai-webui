@@ -404,29 +404,26 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     return humanizedName;
   }
 
-  async _updateEnvironment() {
+  _updateEnvironment() {
     // this.languages = Object.keys(this.supports);
     // this.languages.sort();
-    return new Promise((resolve) => {
-      const langs = Object.keys(this.supports);
-      if (langs === undefined) return;
-      langs.sort();
-      this.languages = [];
-      langs.forEach((item, index) => {
-        if (!(Object.keys(this.aliases).includes(item))) {
-          const humanizedName = this._guessHumanizedNames(item);
-          if (humanizedName !== null) {
-            this.aliases[item] = humanizedName;
-          }
+    const langs = Object.keys(this.supports);
+    if (langs === undefined) return;
+    langs.sort();
+    this.languages = [];
+    langs.forEach((item, index) => {
+      if (!(Object.keys(this.aliases).includes(item))) {
+        const humanizedName = this._guessHumanizedNames(item);
+        if (humanizedName !== null) {
+          this.aliases[item] = humanizedName;
         }
-        const alias = this.aliases[item];
-        if (alias !== undefined) {
-          this.languages.push({name: item, alias: alias});
-        }
-      });
-      this._initAliases();
-      return resolve(true);
+      }
+      const alias = this.aliases[item];
+      if (alias !== undefined) {
+        this.languages.push({name: item, alias: alias});
+      }
     });
+    this._initAliases();
   }
 
   _updateVersions(lang) {
@@ -456,7 +453,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
     return this.supports[lang];
   }
 
-  async _aggregateResourceUse(compute_sessions) {
+  async _aggregateResourceUse() {
     let total_slot = {};
     return window.backendaiclient.resourcePreset.check().then((response) => {
       let resource_limit = response.keypair_limits;
@@ -551,8 +548,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   updateResourceIndicator() {
-    let compute_sessions = this.shadowRoot.querySelector('#running-jobs').compute_sessions;
-    this._aggregateResourceUse(compute_sessions);
+    this._aggregateResourceUse();
   }
 
   _refreshResourceTemplate() {
@@ -583,24 +579,23 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
       let currentVersion = this.$['version'].value;
       let kernelName = currentLang + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
-      let compute_sessions = this.shadowRoot.querySelector('#running-jobs').compute_sessions;
-      let available_slot = await this._aggregateResourceUse(compute_sessions);
+      let available_slot = await this._aggregateResourceUse();
       if (!currentResource) return;
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
           let cpu_metric = item;
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
-            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity') {
+            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
             } else {
               cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
             }
           } else {
-            if (parseInt(cpu_metric.max) !== 0) {
+            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu_slot']);
             } else {
-              cpu_metric.max = 4;
+              cpu_metric.max = this.available_slot['cpu_slot'];
             }
           }
           if (cpu_metric.min > cpu_metric.max) {
@@ -613,7 +608,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let gpu_metric = item;
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
-            if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity') {
+            if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity' && gpu_metric.max !== NaN) {
               gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['vgpu_slot']);
             } else {
               gpu_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['gpu_slot']);
@@ -622,7 +617,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
             if (parseInt(gpu_metric.max) !== 0) {
               gpu_metric.max = Math.min(parseInt(gpu_metric.max), available_slot['gpu_slot']);
             } else {
-              gpu_metric.max = 0;
+              gpu_metric.max = this.available_slot['gpu_slot'];
             }
           }
           if (gpu_metric.min > gpu_metric.max) {
@@ -634,7 +629,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           let vgpu_metric = item;
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
-            if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity') {
+            if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity' && vgpu_metric.max !== NaN) {
               vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
             } else {
 
@@ -679,7 +674,7 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
               mem_metric.max = parseFloat(user_mem_max);
             }
           } else {
-            if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity') {
+            if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && mem_metric.max !== NaN) {
               mem_metric.max = Math.min(parseFloat(window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem_slot']);
             } else {
               mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
@@ -806,13 +801,16 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   _selectDefaultLanguage() {
-    if ('default_session_environment' in window.backendaiclient._config) {
+    if (window.backendaiclient._config.default_session_environment !== undefined &&
+      'default_session_environment' in window.backendaiclient._config &&
+      window.backendaiclient._config.default_session_environment != '') {
       this.default_language = window.backendaiclient._config.default_session_environment;
     } else if (this.languages.length != 0) {
       this.default_language = this.languages[0].name;
     } else {
-      return '';
+      this.default_language = 'index.docker.io/lablup/ngc-tensorflow';
     }
+    return true;
   }
 
   _selectDefaultVersion(version) {
