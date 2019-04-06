@@ -134,7 +134,6 @@ class BackendAISummary extends PolymerElement {
   _refreshResourceInformation() {
     return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
       let rp = response.keypair_resource_policies;
-      console.log(rp);
       this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
 
     });
@@ -217,7 +216,6 @@ class BackendAISummary extends PolymerElement {
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
     this.mem_current_usage_percent = (this.mem_current_usage_ratio / this.mem_total_usage_ratio * 100.0).toFixed(2);
-    console.log(this.resources);
     this.agents = this.resources.agents.total;
 
     if (isNaN(this.mem_current_usage_percent)) {
