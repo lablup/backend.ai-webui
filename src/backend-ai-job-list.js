@@ -197,6 +197,7 @@ class BackendAIJobList extends PolymerElement {
           const kernelImage = sessions[objectKey].lang.split('/')[2];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
+          sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           if ('cuda.device' in occupied_slots) {
             sessions[objectKey].gpu_slot = parseInt(occupied_slots['cuda.device']);
           }
