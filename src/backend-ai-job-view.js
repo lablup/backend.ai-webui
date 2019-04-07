@@ -552,7 +552,13 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   updateResourceIndicator() {
-    this._aggregateResourceUse();
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._aggregateResourceUse();
+      }, true);
+    } else {
+      this._aggregateResourceUse();
+    }
   }
 
   _refreshResourceTemplate() {
