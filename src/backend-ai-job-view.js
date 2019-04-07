@@ -452,12 +452,16 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
 
   async _aggregateResourceUse() {
     let total_slot = {};
-    console.log(this.resource_info);
     return window.backendaiclient.resourcePreset.check().then((response) => {
-      this.resource_info = response.scaling_group_remaining;
-      console.log("total preset", response);
+      let group_resource = response.scaling_group_remaining;
+      ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
+        if (slot in response.keypair_using && slot in group_resource) {
+          group_resource[slot] = parseFloat(group_resource[slot]) + parseFloat(response.keypair_using[slot]);
+        }
+      });
+      //this.resource_info = response.scaling_group_remaining;
+      this.resource_info = group_resource;
       let resource_limit = response.keypair_limits;
-      console.log("res", this.resource_info);
       if ('cpu' in resource_limit) {
         if (resource_limit['cpu'] == 'Infinity') {
           total_slot['cpu_slot'] = this.resource_info.cpu;
@@ -574,156 +578,162 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 
   async updateMetric() {
-    if (this.$['environment'].value in this.aliases) {
-      let currentLang = this.aliases[this.$['environment'].value];
-      let currentVersion = this.$['version'].value;
-      let kernelName = currentLang + ':' + currentVersion;
-      let currentResource = this.resourceLimits[kernelName];
-      let available_slot = await this._aggregateResourceUse();
-      if (!currentResource) return;
-      currentResource.forEach((item) => {
-        if (item.key === 'cpu') {
-          let cpu_metric = item;
-          cpu_metric.min = parseInt(cpu_metric.min);
-          if ('cpu' in this.userResourceLimit) {
-            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.updateMetric();
+      }, true);
+    } else {
+      if (this.$['environment'].value in this.aliases) {
+        let currentLang = this.aliases[this.$['environment'].value];
+        let currentVersion = this.$['version'].value;
+        let kernelName = currentLang + ':' + currentVersion;
+        let currentResource = this.resourceLimits[kernelName];
+        let available_slot = await this._aggregateResourceUse();
+        if (!currentResource) return;
+        currentResource.forEach((item) => {
+          if (item.key === 'cpu') {
+            let cpu_metric = item;
+            cpu_metric.min = parseInt(cpu_metric.min);
+            if ('cpu' in this.userResourceLimit) {
+              if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
+                cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
+              } else {
+                cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
+              }
             } else {
-              cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
+              if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
+                cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu_slot']);
+              } else {
+                cpu_metric.max = this.available_slot['cpu_slot'];
+              }
             }
-          } else {
-            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu_slot']);
+            if (cpu_metric.min > cpu_metric.max) {
+              // TODO: dynamic maximum per user policy
+            }
+            this.cpu_metric = cpu_metric;
+          }
+
+          if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
+            let gpu_metric = item;
+            gpu_metric.min = parseInt(gpu_metric.min);
+            if ('cuda.device' in this.userResourceLimit) {
+              if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity' && gpu_metric.max !== NaN) {
+                gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['vgpu_slot']);
+              } else {
+                gpu_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['gpu_slot']);
+              }
             } else {
-              cpu_metric.max = this.available_slot['cpu_slot'];
+              if (parseInt(gpu_metric.max) !== 0) {
+                gpu_metric.max = Math.min(parseInt(gpu_metric.max), available_slot['gpu_slot']);
+              } else {
+                gpu_metric.max = this.available_slot['gpu_slot'];
+              }
+            }
+            if (gpu_metric.min > gpu_metric.max) {
+              // TODO: dynamic maximum per user policy
+            }
+            this.gpu_metric = gpu_metric;
+          }
+          if (item.key === 'cuda.shares' && this.gpu_mode == 'vgpu') {
+            let vgpu_metric = item;
+            vgpu_metric.min = parseInt(vgpu_metric.min);
+            if ('cuda.shares' in this.userResourceLimit) {
+              if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity' && vgpu_metric.max !== NaN) {
+                vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
+              } else {
+
+                vgpu_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
+              }
+            } else {
+              if (parseFloat(vgpu_metric.max) !== 0) {
+                vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), available_slot['vgpu_slot']);
+              } else {
+                vgpu_metric.max = 0;
+              }
+            }
+            if (vgpu_metric.min > vgpu_metric.max) {
+              // TODO: dynamic maximum per user policy
+            }
+            this.vgpu_metric = vgpu_metric;
+            if (vgpu_metric.max > 0) {
+              this.gpu_metric = vgpu_metric;
             }
           }
-          if (cpu_metric.min > cpu_metric.max) {
-            // TODO: dynamic maximum per user policy
+          if (item.key === 'tpu') {
+            let tpu_metric = item;
+            tpu_metric.min = parseInt(tpu_metric.min);
+            tpu_metric.max = parseInt(tpu_metric.max);
+            if (tpu_metric.min > tpu_metric.max) {
+              // TODO: dynamic maximum per user policy
+            }
+            this.tpu_metric = tpu_metric;
           }
-          this.cpu_metric = cpu_metric;
+          if (item.key === 'mem') {
+            let mem_metric = item;
+            mem_metric.min = window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
+            if (mem_metric.min < 0.1) {
+              mem_metric.min = 0.1;
+            }
+            let image_mem_max = window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
+            if ('mem' in this.userResourceLimit) {
+              let user_mem_max = window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
+              if (parseInt(image_mem_max) !== 0) {
+                mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem_slot']);
+              } else {
+                mem_metric.max = parseFloat(user_mem_max);
+              }
+            } else {
+              if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && mem_metric.max !== NaN) {
+                mem_metric.max = Math.min(parseFloat(window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem_slot']);
+              } else {
+                mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
+              }
+            }
+            if (mem_metric.min > mem_metric.max) {
+              // TODO: dynamic maximum per user policy
+            }
+            this.mem_metric = mem_metric;
+          }
+        });
+        if (this.gpu_metric === {}) {
+          this.gpu_metric = {
+            min: 0,
+            max: 0
+          };
+          this.$['use-gpu-checkbox'].checked = false;
+          this.$['gpu-resource'].disabled = true;
+          this.$['gpu-resource'].value = 0;
+        } else {
+          this.$['use-gpu-checkbox'].checked = true;
+          this.$['gpu-resource'].disabled = false;
+          this.$['gpu-resource'].value = this.gpu_metric.max;
+        }
+        // Refresh with resource template
+        if (this.resource_templates !== [] && this.resource_templates.length > 0) {
+          let resource = this.resource_templates[0];
+          this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
+          //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
         }
 
-        if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
-          let gpu_metric = item;
-          gpu_metric.min = parseInt(gpu_metric.min);
-          if ('cuda.device' in this.userResourceLimit) {
-            if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity' && gpu_metric.max !== NaN) {
-              gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['vgpu_slot']);
-            } else {
-              gpu_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['gpu_slot']);
-            }
-          } else {
-            if (parseInt(gpu_metric.max) !== 0) {
-              gpu_metric.max = Math.min(parseInt(gpu_metric.max), available_slot['gpu_slot']);
-            } else {
-              gpu_metric.max = this.available_slot['gpu_slot'];
-            }
-          }
-          if (gpu_metric.min > gpu_metric.max) {
-            // TODO: dynamic maximum per user policy
-          }
-          this.gpu_metric = gpu_metric;
+        // Post-UI markup to disable unchangeable values
+        if (this.cpu_metric.min == this.cpu_metric.max) {
+          this.shadowRoot.querySelector('#cpu-resource').max = this.cpu_metric.max + 1;
+          this.shadowRoot.querySelector('#cpu-resource').disabled = true
+        } else {
+          this.shadowRoot.querySelector('#cpu-resource').disabled = false;
         }
-        if (item.key === 'cuda.shares' && this.gpu_mode == 'vgpu') {
-          let vgpu_metric = item;
-          vgpu_metric.min = parseInt(vgpu_metric.min);
-          if ('cuda.shares' in this.userResourceLimit) {
-            if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity' && vgpu_metric.max !== NaN) {
-              vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
-            } else {
-
-              vgpu_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
-            }
-          } else {
-            if (parseFloat(vgpu_metric.max) !== 0) {
-              vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), available_slot['vgpu_slot']);
-            } else {
-              vgpu_metric.max = 0;
-            }
-          }
-          if (vgpu_metric.min > vgpu_metric.max) {
-            // TODO: dynamic maximum per user policy
-          }
-          this.vgpu_metric = vgpu_metric;
-          if (vgpu_metric.max > 0) {
-            this.gpu_metric = vgpu_metric;
-          }
+        if (this.mem_metric.min == this.mem_metric.max) {
+          this.shadowRoot.querySelector('#ram-resource').max = this.mem_metric.max + 1;
+          this.shadowRoot.querySelector('#ram-resource').disabled = true
+        } else {
+          this.shadowRoot.querySelector('#ram-resource').disabled = false;
         }
-        if (item.key === 'tpu') {
-          let tpu_metric = item;
-          tpu_metric.min = parseInt(tpu_metric.min);
-          tpu_metric.max = parseInt(tpu_metric.max);
-          if (tpu_metric.min > tpu_metric.max) {
-            // TODO: dynamic maximum per user policy
-          }
-          this.tpu_metric = tpu_metric;
+        if (this.gpu_metric.min == this.gpu_metric.max) {
+          this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
+          this.shadowRoot.querySelector('#gpu-resource').disabled = true
+        } else {
+          this.shadowRoot.querySelector('#gpu-resource').disabled = false;
         }
-        if (item.key === 'mem') {
-          let mem_metric = item;
-          mem_metric.min = window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
-          if (mem_metric.min < 0.1) {
-            mem_metric.min = 0.1;
-          }
-          let image_mem_max = window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
-          if ('mem' in this.userResourceLimit) {
-            let user_mem_max = window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
-            if (parseInt(image_mem_max) !== 0) {
-              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem_slot']);
-            } else {
-              mem_metric.max = parseFloat(user_mem_max);
-            }
-          } else {
-            if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && mem_metric.max !== NaN) {
-              mem_metric.max = Math.min(parseFloat(window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem_slot']);
-            } else {
-              mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
-            }
-          }
-          if (mem_metric.min > mem_metric.max) {
-            // TODO: dynamic maximum per user policy
-          }
-          this.mem_metric = mem_metric;
-        }
-      });
-      if (this.gpu_metric === {}) {
-        this.gpu_metric = {
-          min: 0,
-          max: 0
-        };
-        this.$['use-gpu-checkbox'].checked = false;
-        this.$['gpu-resource'].disabled = true;
-        this.$['gpu-resource'].value = 0;
-      } else {
-        this.$['use-gpu-checkbox'].checked = true;
-        this.$['gpu-resource'].disabled = false;
-        this.$['gpu-resource'].value = this.gpu_metric.max;
-      }
-      // Refresh with resource template
-      if (this.resource_templates !== [] && this.resource_templates.length > 0) {
-        let resource = this.resource_templates[0];
-        this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
-        //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
-      }
-
-      // Post-UI markup to disable unchangeable values
-      if (this.cpu_metric.min == this.cpu_metric.max) {
-        this.shadowRoot.querySelector('#cpu-resource').max = this.cpu_metric.max + 1;
-        this.shadowRoot.querySelector('#cpu-resource').disabled = true
-      } else {
-        this.shadowRoot.querySelector('#cpu-resource').disabled = false;
-      }
-      if (this.mem_metric.min == this.mem_metric.max) {
-        this.shadowRoot.querySelector('#ram-resource').max = this.mem_metric.max + 1;
-        this.shadowRoot.querySelector('#ram-resource').disabled = true
-      } else {
-        this.shadowRoot.querySelector('#ram-resource').disabled = false;
-      }
-      if (this.gpu_metric.min == this.gpu_metric.max) {
-        this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true
-      } else {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
       }
     }
   }
