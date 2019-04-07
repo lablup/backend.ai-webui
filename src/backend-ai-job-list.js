@@ -5,6 +5,7 @@
 
 import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
+import '@polymer/polymer/lib/elements/dom-repeat.js';
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -61,12 +62,21 @@ class BackendAIJobList extends PolymerElement {
       filterAccessKey: {
         type: String,
         value: ''
+      },
+      appSupportList: {
+        type: Array,
+        value: []
+      },
+      appTemplate: {
+        type: Object,
+        value: {}
       }
     };
   }
 
   ready() {
     super.ready();
+    this._initializeAppTemplate();
     this.refreshTimer = null;
     if (this.condition !== 'running' || !window.backendaiclient ||
       !window.backendaiclient.is_admin) {
@@ -106,6 +116,47 @@ class BackendAIJobList extends PolymerElement {
     } else { // already connected
       this._refreshJobData();
     }
+  }
+
+  _initializeAppTemplate() {
+    let jupyterBase = [
+      {
+        'name': 'jupyter',
+        'title': 'Notebook',
+        'redirect': "&redirect=/tree",
+        'icon': 'vaadin:notebook'
+      },
+      {
+        'name': 'jupyterlab',
+        'title': 'JupyterLab',
+        'redirect': "&redirect=/lab",
+        'icon': 'vaadin:flask'
+      }];
+    let TFBase = jupyterBase.concat(
+      {
+        'name': 'tensorboard',
+        'title': 'TensorBoard',
+        'redirect': "&redirect=/",
+        'icon': 'vaadin:clipboard-pulse'
+      });
+    this.appTemplate = {
+      'tensorflow': TFBase,
+      'python': jupyterBase,
+      'python-tensorflow': TFBase,
+      'python-pytorch': TFBase,
+      'ngc-digits':
+        TFBase.concat(
+          {
+            'name': 'digits',
+            'title': 'DIGITS',
+            'redirect': "&redirect=/",
+            'icon': 'vaadin:picture'
+          }),
+      'ngc-tensorflow': TFBase,
+      'ngc-pytorch': TFBase,
+      'julia': jupyterBase,
+      'r': jupyterBase
+    };
   }
 
   refreshList() {
@@ -218,6 +269,8 @@ class BackendAIJobList extends PolymerElement {
       'julia',
       'r',
     ];
+    //let support_kernels = this.appTemplate.keys;
+    //console.log(support_kernels);
     lang = lang.split('/')[2].split(':')[0];
     //lang = lang.split('/')[3].split(':')[0];
     return this.condition === 'running' && support_kernels.includes(lang);
@@ -359,10 +412,17 @@ class BackendAIJobList extends PolymerElement {
     const controls = e.target.closest('#controls');
     const kernelId = controls.kernelId;
     const accessKey = controls.accessKey;
+    let imageName = controls.kernelImage.split(":")[0];
+    if (imageName in this.appTemplate) {
+      this.appSupportList = this.appTemplate[imageName];
+    } else {
+      this.appSupportList = [];
+    }
     let dialog = this.$['app-dialog'];
     dialog.kernelId = kernelId;
     dialog.accessKey = accessKey;
     dialog.positionTarget = e.target;
+
     this.$['app-dialog'].open();
   }
 
@@ -403,41 +463,29 @@ class BackendAIJobList extends PolymerElement {
     }
   }
 
-  _runJupyter(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#app-dialog');
-    const kernelId = controls.kernelId;
-    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-      this.$.indicator.start();
-      this._open_wsproxy(kernelId, 'jupyter')
-        .then((response) => {
-          if (response.url) {
-            this.$.indicator.set(100, 'Prepared.');
-            setTimeout(() => {
-              window.open(response.url + "&redirect=/tree", '_blank');
-              this.$.indicator.end();
-              console.log("Jupyter notebook proxy loaded: ");
-              console.log(kernelId);
-            }, 1000);
-          }
-        });
-    }
-  }
+  _runApp(e) {
+    let controls = e.target.closest('#app-dialog');
+    let kernelId = controls.kernelId;
+    let urlPostfix = e.target.urlPostfix;
+    let appName = e.target.appName;
 
-  _runJupyterLab(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#app-dialog');
-    const kernelId = controls.kernelId;
+    if (appName === undefined || appName === null) {
+      return;
+    }
+    if (urlPostfix === undefined || urlPostfix === null) {
+      urlPostfix = '';
+    }
+
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.$.indicator.start();
-      this._open_wsproxy(kernelId, 'jupyterlab')
+      this._open_wsproxy(kernelId, appName)
         .then((response) => {
           if (response.url) {
             this.$.indicator.set(100, 'Prepared.');
             setTimeout(() => {
-              window.open(response.url + "&redirect=/lab", '_blank');
+              window.open(response.url + urlPostfix, '_blank');
               this.$.indicator.end();
-              console.log("JupyterLab proxy loaded: ");
+              console.log(appName + " proxy loaded: ");
               console.log(kernelId);
             }, 1000);
           }
@@ -459,28 +507,7 @@ class BackendAIJobList extends PolymerElement {
             setTimeout(() => {
               window.open(response.url + "&redirect=/terminals/1", '_blank');
               this.$.indicator.end();
-              console.log("Jupyter notebook proxy loaded: ");
-              console.log(kernelId);
-            }, 1000);
-          }
-        });
-    }
-  }
-
-  _runTensorBoard(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#app-dialog');
-    const kernelId = controls.kernelId;
-    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-      this.$.indicator.start();
-      this._open_wsproxy(kernelId, 'tensorboard')
-        .then((response) => {
-          if (response.url) {
-            this.$.indicator.set(100, 'Prepared.');
-            setTimeout(() => {
-              window.open(response.url + "&redirect=/", '_blank');
-              this.$.indicator.end();
-              console.log("TensorBoard proxy loaded: ");
+              console.log("Jupyter terminal proxy loaded: ");
               console.log(kernelId);
             }, 1000);
           }
@@ -639,7 +666,9 @@ class BackendAIJobList extends PolymerElement {
           <template class="header">Control</template>
           <template>
             <div id="controls" class="layout horizontal flex center"
-                 kernel-id="[[item.sess_id]]" access-key="[[item.access_key]]">
+                 kernel-id="[[item.sess_id]]"
+                 access-key="[[item.access_key]]"
+                 kernel-image="[[item.kernel_image]]">
               <template is="dom-if" if="[[_isRunning()]]">
                 <paper-icon-button class="fg blue controls-running" icon="assignment"
                                    on-tap="_showLogs"></paper-icon-button>
@@ -777,24 +806,15 @@ class BackendAIJobList extends PolymerElement {
             </paper-icon-button>
           </h4>
           <div style="padding:15px;" class="horizontal layout wrap center center-justified">
-            <div class="vertical layout center center-justified app-icon">
-              <paper-icon-button class="fg apps orange"
-                                 on-tap="_runJupyter" icon="vaadin:notebook"></paper-icon-button>
-              <span class="label">Notebook</span>
-            </div>
-            <div class="vertical layout center center-justified app-icon">
-              <paper-icon-button class="fg apps red"
-                                 on-tap="_runJupyterLab" icon="vaadin:flask"></paper-icon-button>
-              <span class="label">JupyterLab</span>
-            </div>
-            <div class="vertical layout center center-justified app-icon">
-              <paper-icon-button class="fg apps green"
-                                 on-tap="_runTensorBoard" icon="vaadin:clipboard-pulse"></paper-icon-button>
-              <span class="label">TensorBoard</span>
-            </div>
+            <template is="dom-repeat" items="{{ appSupportList }}">
+              <div class="vertical layout center center-justified app-icon">
+                <paper-icon-button class="fg apps green" app="[[item.name]]" app-name="[[item.name]]"
+                                   url-postfix="[[item.redirect]]"
+                                   on-tap="_runApp" icon="[[item.icon]]"></paper-icon-button>
+                <span class="label">[[item.title]]</span>
+              </div>
+            </template>
           </div>
-          <template is="dom-repeat" items="{{ app_support_list }}">
-          </template>
         </plastic-material>
       </paper-dialog>
     `;
