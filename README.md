@@ -1,19 +1,24 @@
 # backend.ai-console
 
-Backend.AI GUI console. Supports both app / web mode.
+Backend.AI GUI console.
 
- * Administration mode
- * User mode
+ * Provides administration / user mode
+ * Serve both app and web.
+ * Mobile-ready (preparing now)
 
 ## Features
  * Key management
     * Allocate resource limitation for keys
  * Session management
     * Set default resources for runs
+    * Choose and run environment-supported apps
  * Experiments
  * Virtual Folder management
+    * Create / delete folders
     * Upload  / download files
+    * Share folders (coming soon)
  * Kernel managements
+    * List supported kernels
  * Manager settings
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
 	* backend.ai-wsproxy package
@@ -23,11 +28,19 @@ Backend.AI GUI console. Supports both app / web mode.
 ### Running polymer-based web UI
 
 ```
-$ npm install
+$ npm i
+$ make test_web 
+$ make proxy
+```
+OR
+
+```
+$ npm i
 $ npm run polymer
 $ npm run wsproxy
 ```
-If you need to serve with nginx, please install backend.ai-wsproxy.
+
+If you need to serve with nginx, please install backend.ai-wsproxy for websocket proxy.
 
 ### nginx configuration example
 
