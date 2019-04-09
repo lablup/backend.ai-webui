@@ -19,6 +19,8 @@ Backend.AI GUI console.
     * Share folders (coming soon)
  * Kernel managements
     * List supported kernels
+	* Add kernels
+	* Add/update resource templates (soon)
  * Manager settings
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
 	* backend.ai-wsproxy package
