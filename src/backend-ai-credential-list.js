@@ -69,8 +69,6 @@ class BackendAICredentialList extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    afterNextRender(this, function () {
-    });
   }
 
   shouldUpdate() {

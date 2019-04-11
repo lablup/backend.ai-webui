@@ -77,7 +77,7 @@ class LablupShields extends LitElement {
     }
   }
 
-  get _colorScheme() {
+  _colorScheme() {
     return {
       "brightgreen": {"colorB": "#4c1", "colorT": "#222222"},
       "lightgreen": {"colorB": "#F3F5D0", "colorT": "#222222"},
@@ -105,7 +105,7 @@ class LablupShields extends LitElement {
     this.ui = 'flat';
   }
 
-  firstUpdated() {
+  firstUpdated(props) {
     this._colorChanged();
     this._appColorChanged();
     this._formatItem();
