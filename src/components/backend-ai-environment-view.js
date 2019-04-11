@@ -129,7 +129,7 @@ class BackendAiEnvironmentView extends LitElement {
           </vaadin-grid-column>
 
           <vaadin-grid-column width="150px" flex-grow="0" resizable>
-            <template class="header">Resource Limit</template>
+            <template class="header">Requirements</template>
             <template>
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
@@ -175,8 +175,6 @@ class BackendAiEnvironmentView extends LitElement {
                    kernel-id="[[item.digest]]">
                 <paper-icon-button class="fg blue controls-running" disabled
                                    on-tap="_modifyImage" icon="icons:settings"></paper-icon-button>
-                <paper-icon-button class="fg red controls-running" disabled
-                                   on-tap="_deleteImage" icon="delete"></paper-icon-button>
               </div>
             </template>
           </vaadin-grid-column>
