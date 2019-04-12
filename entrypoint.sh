@@ -1,7 +1,8 @@
 #!/bin/sh
 
 cd /wsproxy
-node ./wsproxy/local_proxy.js &
+node ./wsproxy.js &
+cd /console
 polymer serve --npm
 
 

@@ -8,14 +8,10 @@ RUN apt-get update && \
 
 ADD entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh && \
-    mkdir /serving && \
+    mkdir /console && \
     mkdir /wsproxy
-
-COPY ./build/es6-unbundled /serving/
-COPY ./wsproxy /wsproxy/
-
-RUN cd /wsproxy && \
-    npm install --only=prod
+COPY ./build/bundle /console/
+COPY ./src/wsproxy/dist/wsproxy.js /wsproxy/wsproxy.js
 
 EXPOSE 8081 5050
 
