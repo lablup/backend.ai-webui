@@ -204,7 +204,7 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
     };
   }
 
-  _modifyResourcePolicy() {
+  _modifyResourceTemplate() {
     let is_active = true;
     let is_admin = false;
     let name = this.$['id_new_policy_name'].value;
@@ -419,13 +419,13 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
         <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Modify</h3>
-          <form id="login-form" onSubmit="this._modifyResourcePolicy()">
+          <form id="login-form" onSubmit="this._modifyResourceTemplate()">
             <fieldset>
-              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
+              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Template Name"
                            auto-validate required
                            pattern="[a-zA-Z0-9]*"
                            error-message="Policy name only accepts letters and numbers"></paper-input>
-              <h4>Resource Policy</h4>
+              <h4>Resource Template</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
                   <paper-listbox slot="dropdown-content" selected="0">
@@ -453,49 +453,6 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
                 <paper-dropdown-menu id="vgpu-resource" label="vGPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ vgpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-
-              </div>
-              <div class="horizontal center layout">
-                <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ container_per_session_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="idle-timeout" label="Idle timeout (sec.)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ idle_timeout_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-
-              <div class="horizontal center layout">
-                <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ concurrency_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-              <div class="horizontal center layout">
-                <paper-dropdown-menu id="vfolder-capacity-limit" label="Virtual Folder Capacity">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-count-limit" label="Max. Virtual Folders">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vfolder_count_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
                     </template>
                   </paper-listbox>
