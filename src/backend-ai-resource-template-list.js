@@ -349,6 +349,7 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                    items="[[resourcePolicy]]">
