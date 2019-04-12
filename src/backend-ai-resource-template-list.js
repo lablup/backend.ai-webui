@@ -82,11 +82,11 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
     // If disconnected
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
-        this._refreshPolicyData();
+        this._refreshTemplateData();
         this.is_admin = window.backendaiclient.is_admin;
       }, true);
     } else { // already connected
-      this._refreshPolicyData();
+      this._refreshTemplateData();
       this.is_admin = window.backendaiclient.is_admin;
     }
   }
@@ -106,15 +106,14 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
     this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda.device'];
     this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda.shares'];
     this.$['ram-resource'].value = resourcePolicy.total_resource_slots['mem'];
-
-    this.$['concurrency-limit'].value = resourcePolicy.max_concurrent_sessions;
-    this.$['container-per-session-limit'].value = resourcePolicy.max_containers_per_session;
-    this.$['vfolder-count-limit'].value = resourcePolicy.max_vfolder_count;
-    this.$['vfolder-capacity-limit'].value = resourcePolicy.max_vfolder_size;
-    this.$['idle-timeout'].value = resourcePolicy.idle_timeout;
   }
 
-  _refreshPolicyData() {
+  _refreshTemplateData() {
+    return window.backendaiclient.resourcePreset.check().then((response) => {
+      console.log(response);
+    });
+
+
     return window.backendaiclient.resourcePolicy.get().then((response) => {
       let rp = response.keypair_resource_policies;
       let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -165,7 +164,7 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
   refresh() {
     //let user_id = window.backendaiclient_email;
     let user_id = null;
-    this._refreshPolicyData();
+    this._refreshTemplateData();
   }
 
   _isActive() {
@@ -184,23 +183,9 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
       "cuda.device": parseInt(gpu_resource),
       "cuda.shares": parseFloat(vgpu_resource)
     };
-    let vfolder_hosts = ["local"];
-    //let vfolder_hosts = ["cephfs"];
-    let concurrency_limit = this.$['concurrency-limit'].value;
-    let containers_per_session_limit = this.$['container-per-session-limit'].value;
-    let vfolder_count_limit = this.$['vfolder-count-limit'].value;
-    let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
-    let rate_limit = this.$['rate-limit'].value;
-    let idle_timeout = this.$['idle-timeout'].value;
     let input = {
       'default_for_unspecified': 'UNLIMITED',
-      'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': concurrency_limit,
-      'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': idle_timeout,
-      'max_vfolder_count': vfolder_count_limit,
-      'max_vfolder_size': vfolder_capacity_limit,
-      'allowed_vfolder_hosts': vfolder_hosts
+      'total_resource_slots': JSON.stringify(total_resource_slots)
     };
   }
 
@@ -211,14 +196,14 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
     let input = this._readResourcePolicyInput();
 
     window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
-      this.$['new-policy-dialog'].close();
+      this.$['new-template-dialog'].close();
       this.$.notification.text = "Resource policy successfully updated.";
       this.$.notification.show();
       this.$['resource-policy-list'].refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$['new-policy-dialog'].close();
+        this.$['new-template-dialog'].close();
         this.$.notification.text = err.message;
         this.$.notification.show();
       }
