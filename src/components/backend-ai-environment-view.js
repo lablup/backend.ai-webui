@@ -16,6 +16,8 @@ import './lablup-loading-indicator';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
 
+import '../backend-ai-resource-template-list';
+
 class BackendAiEnvironmentView extends LitElement {
   static get is() {
     return 'backend-ai-environment-view';
@@ -179,6 +181,14 @@ class BackendAiEnvironmentView extends LitElement {
             </template>
           </vaadin-grid-column>
         </vaadin-grid>
+      </plastic-material>
+      <plastic-material>
+        <h3 class="horizontal center layout">
+          <span>Resource Templates</span>
+          <span class="flex"></span>
+          <mwc-button class="fg red" id="add-image" disabled outlined label="Add" icon="add"></mwc-button>
+        </h3>
+        <backend-ai-resource-template-list></backend-ai-resource-template-list>
       </plastic-material>
     `;
   }
