@@ -1,5 +1,5 @@
 /**
- * Backend.AI-job-view
+ * Backend.AI-credential-view
  */
 
 import {html, PolymerElement} from '@polymer/polymer';
@@ -350,11 +350,11 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
           <mwc-button class="fg red" id="add-keypair" outlined label="Add credential" icon="add"></mwc-button>
         </h4>
         <div>
-          <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-job-list>
+          <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-credential-list>
         </div>
         <h4>Inactive</h4>
         <div>
-          <backend-ai-credential-list id="inactive-credential-list" condition="inactive"></backend-ai-job-list>
+          <backend-ai-credential-list id="inactive-credential-list" condition="inactive"></backend-ai-credential-list>
         </div>
       </plastic-material>
 

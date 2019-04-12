@@ -1,5 +1,5 @@
 /**
- * Backend.AI-job-view 
+ * Backend.AI-template
  */
 
 import { PolymerElement, html } from '@polymer/polymer';
@@ -15,7 +15,7 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import './backend-ai-styles.js';
 
-class BackendAIJobView extends PolymerElement {
+class BackendAISessionView extends PolymerElement {
   static get properties() {
     return {
     };
@@ -61,4 +61,4 @@ class BackendAIJobView extends PolymerElement {
   }
 }
 
-customElements.define('backend-ai-job-view', BackendAIJobView);
+customElements.define('backend-ai-session-view', BackendAISessionView);

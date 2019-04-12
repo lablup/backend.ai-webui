@@ -1,5 +1,5 @@
 /**
- * Backend.AI-job-view
+ * Backend.AI-agent-view
  */
 
 import {PolymerElement, html} from '@polymer/polymer';

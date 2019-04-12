@@ -355,7 +355,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <section role="main" id="content" class="container layout vertical center">
               <div id="app-page">
                 <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
-                <backend-ai-job-view class="page" name="job" ?active="${this._page === 'job'}"></backend-ai-job-view>
+                <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"></backend-ai-session-view>
                 <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
                 <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
                 <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"></backend-ai-data-view>

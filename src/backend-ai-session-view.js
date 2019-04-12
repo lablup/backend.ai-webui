@@ -32,15 +32,15 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-styles.js';
-import './backend-ai-job-list.js';
+import './backend-ai-session-list.js';
 import {OverlayPatchMixin} from './overlay-patch-mixin.js';
 import './components/backend-ai-dropdown-menu';
 import '@material/mwc-button';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
-class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
+class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
   static get is() {
-    return 'backend-ai-job-view';
+    return 'backend-ai-session-view';
   }
 
   constructor() {
@@ -965,11 +965,11 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
           <mwc-button class="fg red" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
         </h4>
         <div>
-          <backend-ai-job-list id="running-jobs" condition="running"></backend-ai-job-list>
+          <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
         </div>
         <h4>Finished</h4>
         <div>
-          <backend-ai-job-list id="finished-jobs" condition="finished"></backend-ai-job-list>
+          <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
         </div>
       </plastic-material>
       <paper-dialog id="new-session-dialog" with-backdrop
@@ -1100,4 +1100,4 @@ class BackendAIJobView extends OverlayPatchMixin(PolymerElement) {
   }
 }
 
-customElements.define(BackendAIJobView.is, BackendAIJobView);
+customElements.define(BackendAiSessionView.is, BackendAiSessionView);

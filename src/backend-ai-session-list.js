@@ -32,9 +32,9 @@ import './backend-ai-indicator.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 
-class BackendAIJobList extends PolymerElement {
+class BackendAiSessionList extends PolymerElement {
   static get is() {
-    return 'backend-ai-job-list';
+    return 'backend-ai-session-list';
   }
 
   static get properties() {
@@ -822,4 +822,4 @@ class BackendAIJobList extends PolymerElement {
   }
 }
 
-customElements.define(BackendAIJobList.is, BackendAIJobList);
+customElements.define(BackendAiSessionList.is, BackendAiSessionList);
