@@ -27,7 +27,7 @@ Backend.AI GUI console.
     * Add repository
 	* Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
-	* backend.ai-wsproxy package
+	* Needs backend.ai-wsproxy package
 
 ## Develop and Test
 
