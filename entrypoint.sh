@@ -3,6 +3,5 @@
 cd /wsproxy
 node ./wsproxy.js &
 cd /console
-polymer serve --npm
-
+python -m http.server
 
