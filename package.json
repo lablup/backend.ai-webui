@@ -35,7 +35,7 @@
     "@polymer/paper-dialog-scrollable": "^3.0.1",
     "@polymer/paper-dropdown-menu": "^3.0.1",
     "@polymer/paper-icon-button": "^3.0.2",
-    "@polymer/paper-input": "^3.0.1",
+    "@polymer/paper-input": "^3.0.2",
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
     "@polymer/paper-material": "^3.0.1",
@@ -46,16 +46,16 @@
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/paper-toggle-button": "^3.0.1",
     "@polymer/polymer": "^3.2.0",
-    "lit-element": "^2.1.0",
     "@vaadin/vaadin-dialog": "^2.2.1",
     "@vaadin/vaadin-grid": "^5.3.3",
     "@vaadin/vaadin-icons": "^4.3.1",
     "@vaadin/vaadin-item": "^2.1.0",
     "@vaadin/vaadin-progress-bar": "^1.1.0",
     "@vaadin/vaadin-upload": "^4.2.1",
-    "@webcomponents/webcomponentsjs": "^2.2.7",
+    "@webcomponents/webcomponentsjs": "^2.2.8",
     "electron-tabs": "^0.9.5",
-    "i18n-element": "^3.0.0"
+    "i18n-element": "^3.0.0",
+    "lit-element": "^2.1.0"
   },
   "devDependencies": {
     "buffer": "^5.2.1",
@@ -75,7 +75,7 @@
     "redux-thunk": "^2.3.0",
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.1",
-    "webpack": "^4.29.6",
+    "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0",
     "websocket": "^1.0.28"
   }
