@@ -67,12 +67,6 @@ server {
     location / {
         try_files $uri /index.html;
     }
-    location /proxy/ {
-        proxy_pass http://127.0.0.1:5050/;
-    }
-    location /p10001/ {
-        proxy_pass http://127.0.0.1:10001/;
-    }
     keepalive_timeout 120;
 
     ssl_certificate [CERTIFICATE FILE PATH];
