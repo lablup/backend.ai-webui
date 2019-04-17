@@ -109,7 +109,11 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.resources = new Resources(this);
   }
-
+  /**
+   * Promise wrapper for asynchronous request to Backend.AI manager.
+   *
+   * @param {Request} rqst - Request object to send
+   */
   async _wrapWithPromise(rqst) {
     let errorType = Client.ERR_REQUEST;
     let errorMsg;
@@ -164,7 +168,9 @@ class Client {
     let rqst = this.newPublicRequest('GET', '', null, '');
     return this._wrapWithPromise(rqst);
   }
-
+  /**
+   * Return the resource slots.
+   */
   getResourceSlots() {
     let rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
     return this._wrapWithPromise(rqst);
@@ -472,17 +478,25 @@ class Client {
 }
 
 class ResourcePreset {
-  constructor(client, name = null) {
+  /**
+   * Resource Preset API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
     this.client = client;
-    this.name = name;
     this.urlPrefix = '/resource'
   }
-
+  /**
+   * Return the GraphQL Promise object containing resource preset list.
+   */
   list() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, null);
     return this.client._wrapWithPromise(rqst);
   }
-
+  /**
+   * Return the GraphQL Promise object containing resource preset checking result.
+   */
   check() {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, null);
     return this.client._wrapWithPromise(rqst);
@@ -490,8 +504,12 @@ class ResourcePreset {
 }
 
 class VFolder {
-  // https://github.com/lablup/backend.ai-client-py/blob/master/src/ai/backend/client/vfolder.py
-
+  /**
+   * The Virtual Folder API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   * @param {string} name - Virtual folder name.
+   */
   constructor(client, name = null) {
     this.client = client;
     this.name = name;
