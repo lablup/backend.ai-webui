@@ -13,6 +13,7 @@ Backend.AI GUI console.
     * Set default resources for runs
     * Choose and run environment-supported apps
  * Experiments
+    * Manages container stream
  * Virtual Folder management
     * Create / delete folders
     * Upload  / download files
