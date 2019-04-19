@@ -109,6 +109,7 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.resources = new Resources(this);
   }
+
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
@@ -168,6 +169,7 @@ class Client {
     let rqst = this.newPublicRequest('GET', '', null, '');
     return this._wrapWithPromise(rqst);
   }
+
   /**
    * Return the resource slots.
    */
@@ -487,6 +489,7 @@ class ResourcePreset {
     this.client = client;
     this.urlPrefix = '/resource'
   }
+
   /**
    * Return the GraphQL Promise object containing resource preset list.
    */
@@ -494,6 +497,7 @@ class ResourcePreset {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, null);
     return this.client._wrapWithPromise(rqst);
   }
+
   /**
    * Return the GraphQL Promise object containing resource preset checking result.
    */
@@ -516,6 +520,12 @@ class VFolder {
     this.urlPrefix = '/folders'
   }
 
+  /**
+   * Create a Virtual folder on specific host.
+   *
+   * @param {string} name - Virtual folder name.
+   * @param {string} host - Host name to create virtual folder in it.
+   */
   create(name, host = null) {
     let body = {
       'name': name,
@@ -525,16 +535,25 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * List Virtual folders that requested accessKey has permission to.
+   */
   list() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * List Virtual folder hosts that requested accessKey has permission to.
+   */
   list_hosts() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/hosts`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Information about specific virtual folder.
+   */
   info(name = null) {
     if (name == null) {
       name = this.name;
@@ -543,6 +562,11 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Delete a Virtual folder.
+   *
+   * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+   */
   delete(name = null) {
     if (name == null) {
       name = this.name;
@@ -551,6 +575,13 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Upload files to specific Virtual folder.
+   *
+   * @param {string} path - Path to upload.
+   * @param {string} fs - File content to upload.
+   * @param {string} name - Virtual folder name.
+   */
   upload(path, fs, name = null) {
     if (name == null) {
       name = this.name;
@@ -561,11 +592,23 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Upload file from formData to specific Virtual folder.
+   *
+   * @param {string} fss - formData with file specification. formData should contain {src, content, {filePath:filePath}}.
+   * @param {string} name - Virtual folder name.
+   */
   uploadFormData(fss, name = null) {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss);
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Create directory in specific Virtual folder.
+   *
+   * @param {string} path - Directory path to create.
+   * @param {string} name - Virtual folder name.
+   */
   mkdir(path, name = null) {
     if (name == null) {
       name = this.name;
@@ -577,6 +620,13 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Delete multiple files in a Virtual folder.
+   *
+   * @param {string} files - Files to delete.
+   * @param {boolean} recursive - delete files recursively.
+   * @param {string} name - Virtual folder name that files are in.
+   */
   delete_files(files, recursive = null, name = null) {
 
     if (name == null) {
@@ -593,6 +643,12 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Download file in a Virtual folder.
+   *
+   * @param {string} file - File to download. Should contain full path.
+   * @param {string} name - Virtual folder name that files are in.
+   */
   download(file, name = false) {
     let params = {
       'file': file
@@ -602,6 +658,12 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * List files in specific virtual folder / path.
+   *
+   * @param {string} path - Directory path to list.
+   * @param {string} name - Virtual folder name to look up with.
+   */
   list_files(path, name = null) {
     if (name == null) {
       name = this.name;
@@ -614,6 +676,13 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Invite someone to specific virtual folder with permission.
+   *
+   * @param {string} perm - Directory path to list.
+   * @param {array} emails - User E-mail to invite.
+   * @param {string} name - Virtual folder name to invite.
+   */
   invite(perm, emails, name = null) {
     if (name == null) {
       name = this.name;
