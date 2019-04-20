@@ -9,7 +9,7 @@ class LablupActivityPanel extends LitElement {
   static get is() {
     return 'lablup-activity-panel';
   }
-  
+
   static get styles() {
     return [
       IronFlex,
@@ -130,7 +130,8 @@ class LablupActivityPanel extends LitElement {
 
   firstUpdated() {
     if (this.pinned || this.panelId == undefined) {
-      this.shadowRoot.querySelector('h4').removeChild(this.$.button);
+      const button = this.shadowRoot.getElementById('button');
+      this.shadowRoot.querySelector('h4').removeChild(button);
     } else {
       this.shadowRoot.querySelector('#button').addEventListener('tap', this._removePanel.bind(this));
     }

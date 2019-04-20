@@ -116,7 +116,6 @@ class LablupPiechart extends PolymerElement {
     if (this.url !== undefined && this.url !== "") {
       this.shadowRoot.querySelector("#chart").addEventListener('tap', this._moveTo.bind(this));
     }
-    console.log(this.currentNumber);
     this.updateStyles();
   }
 
