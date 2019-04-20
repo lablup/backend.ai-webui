@@ -471,7 +471,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
       }
       if ('mem' in resource_limit) {
         if (resource_limit['mem'] == 'Infinity') {
-          total_slot['mem_slot'] = this.resource_info.mem;
+          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resource_info.mem, 'g'));
         } else {
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'], 'g'));
         }
