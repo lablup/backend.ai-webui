@@ -572,6 +572,8 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
               item.gpu = item.resource_slots['cuda.shares'];
             } else if ('cuda.device' in item) {
               item.gpu = item.resource_slots['cuda.device'];
+            } else {
+              item.gpu = 0;
             }
             item.cpu = item.resource_slots.cpu;
             item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
@@ -579,6 +581,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
           }
         });
         this.resource_templates = available_presets;
+        console.log(this.resource_templates);
       }
     });
   }

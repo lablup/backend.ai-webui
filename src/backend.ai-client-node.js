@@ -7,9 +7,9 @@ Backend.AI Node.JS / Javascript ES6 API Library (v19.03b9)
 Licensed under MIT
 */
 /*jshint esnext: true */
+var fetch = require('node-fetch'); /* Exclude for ES6 */
+var Headers = fetch.Headers; /* Exclude for ES6 */
 
-var fetch = require('node-fetch');
-var Headers = fetch.Headers;
 var crypto = require('crypto');
 var FormData = require('form-data');
 
