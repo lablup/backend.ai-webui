@@ -303,6 +303,7 @@ function createWindow () {
     height: 970,
     title: "Backend.AI Console",
     frame: true,
+    titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false
