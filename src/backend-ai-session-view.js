@@ -581,7 +581,6 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
           }
         });
         this.resource_templates = available_presets;
-        console.log(this.resource_templates);
       }
     });
   }
