@@ -14,7 +14,7 @@
   <script src="manifest/app.js" async></script>
   <title>Backend.AI Console</title>
   <script>
-    if ((typeof process !== "undefined") && process.versions && (process.versions.electron !== undefined)) {
+    if ((typeof process !== "undefined") && process.versions && (process.versions.hasOwnProperty('electron'))) {
       window.isElectron = true;
     } else {
       window.isElectron = false;
