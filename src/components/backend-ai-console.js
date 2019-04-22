@@ -229,7 +229,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      <app-drawer-layout id="app-body" responsive-width="900px" drawer-width="200px">
+      <app-drawer-layout id="app-body" responsive-width="900px" drawer-width="190px">
         <app-drawer swipe-open slot="drawer" class="drawer-menu">
           <app-header-layout has-scrolling-region class="vertical layout">
             <app-header id="portrait-bar" slot="header" effects="waterfall" fixed>
@@ -239,9 +239,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand.svg"
                               sizing="contain"></iron-image>
                 </div>
-                <div class="vertical start-justified layout">
-                  <span class="site-name"><span class="bold">Backend</span>.AI</span>
-                  <span class="site-name" style="font-size:13px;">console</span>
+                <div class="vertical start-justified layout" style="margin-left:10px;margin-right:10px;">
+                  <div class="site-name"><span class="bold">Backend</span>.AI</div>
+                  <div class="site-name" style="font-size:13px;text-align:right;">console</div>
                 </div>
                 <span class="flex"></span>
               </div>
