@@ -53,6 +53,7 @@
     "@vaadin/vaadin-progress-bar": "^1.1.0",
     "@vaadin/vaadin-upload": "^4.2.1",
     "@webcomponents/webcomponentsjs": "^2.2.8",
+    "electron-builder": "^20.39.0",
     "electron-tabs": "^0.9.5",
     "i18n-element": "^3.0.0",
     "lit-element": "^2.1.0"
