@@ -41,9 +41,20 @@ import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../
 import '../backend-ai-offline-indicator.js';
 import '../backend-ai-login.js';
 
-//import '../backend-ai-summary-view.js';
 
+/**
+ Backend.AI GUI Console
 
+ `backend-ai-console` is a shell of Backend.AI GUI console (web / app).
+
+ Example:
+
+ <backend-ai-console>
+ ... content ...
+ </backend-ai-console>
+
+ @group Backend.AI Console
+ */
 class BackendAiConsole extends connect(store)(LitElement) {
   static get is() {
     return 'backend-ai-console';
