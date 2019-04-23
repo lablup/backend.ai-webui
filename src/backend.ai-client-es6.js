@@ -699,11 +699,20 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Show invitations to current API key.
+   */
   invitations() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/invitations/list`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Accept specific invitation.
+   *
+   * @param {string} inv_id - Invitation ID.
+   * @param {string} inv_ak - Access key to accept the invitation.
+   */
   accept_invitation(inv_id, inv_ak) {
     let body = {
       'inv_id': inv_id,
@@ -713,6 +722,11 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Delete specific invitation.
+   *
+   * @param {string} inv_id - Invitation ID to delete.
+   */
   delete_invitation(inv_id) {
     let body = {
       'inv_id': inv_id
@@ -723,6 +737,11 @@ class VFolder {
 }
 
 class Agent {
+  /**
+   * Agent API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
   constructor(client) {
     this.client = client;
   }
@@ -1037,9 +1056,9 @@ class Resources {
           if (occupied_slots.mem === undefined) {
             occupied_slots.mem = 0;
           }
-          this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'm'));
-          this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
-          this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'm'));
+          this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'b'));
+          this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'b'));
+          this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'b'));
 
           this.resources.gpu.total = parseInt(this.resources.gpu.total) + parseInt(Number(available_slots['cuda.device']));
           if ('cuda.device' in occupied_slots) {

@@ -1052,9 +1052,9 @@ class Resources {
           if (occupied_slots.mem === undefined) {
             occupied_slots.mem = 0;
           }
-          this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'm'));
-          this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'm'));
-          this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'm'));
+          this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'b'));
+          this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'b'));
+          this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'b'));
 
           this.resources.gpu.total = parseInt(this.resources.gpu.total) + parseInt(Number(available_slots['cuda.device']));
           if ('cuda.device' in occupied_slots) {

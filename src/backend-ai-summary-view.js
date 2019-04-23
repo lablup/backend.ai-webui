@@ -200,17 +200,19 @@ class BackendAISummary extends PolymerElement {
 
   _sync_resource_values() {
     this.cpu_total = this.resources.cpu.total;
-    this.mem_total = this.resources.mem.total;
+    this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
+    console.log(this.resources.mem.total);
+    console.log(this.mem_total);
     this.gpu_total = this.resources.gpu.total;
     this.vgpu_total = this.resources.vgpu.total;
 
     this.cpu_used = this.resources.cpu.used;
-    this.mem_used = this.resources.mem.used;
+    this.mem_used = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
     this.gpu_used = this.resources.gpu.used;
     this.vgpu_used = this.resources.vgpu.used;
 
-    this.cpu_percent = this.resources.cpu.percent;
-    this.mem_allocated = this.resources.mem.allocated;
+    this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
+    this.mem_allocated = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
     this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
     this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
@@ -334,10 +336,10 @@ class BackendAISummary extends PolymerElement {
                   <div class="layout vertical start" style="padding-left:15px;">
                     <paper-progress id="mem-usage-bar" value="[[mem_current_usage_ratio]]"
                                     secondary-progress="[[mem_total_usage_ratio]]"></paper-progress>
-                    <div><span class="progress-value"> [[_addComma(mem_allocated)]]</span>/[[_addComma(mem_total)]] MB
+                    <div><span class="progress-value"> [[_addComma(mem_allocated)]]</span>/[[_addComma(mem_total)]] GB
                       reserved.
                     </div>
-                    <div>Using <span class="progress-value"> [[_addComma(mem_used)]]</span>/[[_addComma(mem_total)]] MB
+                    <div>Using <span class="progress-value"> [[_addComma(mem_used)]]</span> GB
                       ([[mem_current_usage_percent]] %)
                     </div>
                   </div>
