@@ -476,6 +476,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'], 'g'));
         }
       }
+      total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
       if ('cuda.device' in resource_limit) {
         if (resource_limit['cuda.device'] == 'Infinity') {
           total_slot['gpu_slot'] = this.resource_info['cuda.device'];
@@ -510,6 +511,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
           used_slot['mem_slot'] = 0.0;
         }
       }
+      used_slot['mem_slot'] = used_slot['mem_slot'].toFixed(2);
       if ('cuda.device' in resource_remaining) {
         remaining_slot['gpu_slot'] = resource_remaining['cuda.device'];
         if ('cuda.device' in resource_using) {
