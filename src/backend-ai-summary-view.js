@@ -201,8 +201,6 @@ class BackendAISummary extends PolymerElement {
   _sync_resource_values() {
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
-    console.log(this.resources.mem.total);
-    console.log(this.mem_total);
     this.gpu_total = this.resources.gpu.total;
     this.vgpu_total = this.resources.vgpu.total;
 
