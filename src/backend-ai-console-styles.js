@@ -10,10 +10,11 @@ export const BackendAiStyles =
       --general-menu-background-color-r: 255;
       --general-menu-background-color-g: 255;
       --general-menu-background-color-b: 255;
-      --general-menu-background-color: rgba(var(--general-menu-background-color-r),
+      --general-menu-background-color-2: rgba(var(--general-menu-background-color-r),
       var(--general-menu-background-color-g),
       var(--general-menu-background-color-b),
       0.95);
+      --general-menu-background-color: var(--paper-grey-200);
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
       --general-menu-background-border: rgba(23, 23, 23, 1);
       --general-menu-background-opacity: 1;
@@ -38,7 +39,11 @@ export const BackendAiStyles =
       --general-sidebar-h3-border-color: 1px solid #DDD;
       --general-sidebar-topbar-background-color: #383E48;
       --general-sidebar-topbar-background-color: var(--paper-grey-200);
+      /*
+      --general-sidebar-topbar-background-color: rgba(103, 172, 91, 1.00);
+      */
       --general-sidebar-topbar-color: #222222;
+      */
       --general-sidebar-topbar-shadow: {
       };
       --general-sidebar-selected-color: var(--paper-green-400);
@@ -334,18 +339,12 @@ export const BackendAiStyles =
     }
 
     #main-toolbar app-toolbar.bar {
-      background-color: rgba(var(--general-menu-background-color-r),
-      var(--general-menu-background-color-g),
-      var(--general-menu-background-color-b),
-      0.7);
+      background-color: var(--general-menu-background-color);
     }
 
     #app-navbar-footer,
     #sidebar-navbar-footer {
-      background-color: rgba(var(--general-navbar-footer-background-color-r),
-      var(--general-navbar-footer-background-color-g),
-      var(--general-navbar-footer-background-color-b),
-      0.7);
+      background-color: var(--general-navbar-footer-background-color);
     }
 
     #app-navbar-footer:before,
