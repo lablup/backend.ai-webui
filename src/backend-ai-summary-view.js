@@ -212,6 +212,7 @@ class BackendAISummary extends PolymerElement {
     this.vgpu_used = this.resources.vgpu.used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
+    this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / parseFloat(this.cpu_total * 100)) * 100.0).toFixed(2);
     this.mem_allocated = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
     this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
     this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
@@ -317,22 +318,29 @@ class BackendAISummary extends PolymerElement {
             </div>
           </lablup-activity-panel>
 
-          <lablup-activity-panel title="Resource Allocation" elevation="1">
+          <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
               <template is="dom-if" if="{{is_admin}}">
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                  <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                  <div class="layout vertical start center-justified">
+                    <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                    <span>CPU</span>
+                  </div>
                   <div class="layout vertical start" style="padding-left:15px;">
                     <paper-progress id="cpu-usage-bar" value="[[cpu_current_usage_ratio]]"
                                     secondary-progress="[[cpu_total_usage_ratio]]"></paper-progress>
-                    <div>CPUs: <span class="progress-value"> [[_addComma(cpu_used)]]</span>/[[_addComma(cpu_total)]]
+                    <div><span class="progress-value"> [[_addComma(cpu_used)]]</span>/[[_addComma(cpu_total)]]
                       Cores reserved.
                     </div>
-                    <div>Using <span class="progress-value"> [[cpu_percent]]</span>%.</div>
+                    <div>Using <span class="progress-value"> [[cpu_total_percent]]</span>% (util. [[cpu_percent]] %)
+                    </div>
                   </div>
                 </div>
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                  <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                  <div class="layout vertical start center-justified">
+                    <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                    <span>RAM</span>
+                  </div>
                   <div class="layout vertical start" style="padding-left:15px;">
                     <paper-progress id="mem-usage-bar" value="[[mem_current_usage_ratio]]"
                                     secondary-progress="[[mem_total_usage_ratio]]"></paper-progress>
@@ -346,7 +354,10 @@ class BackendAISummary extends PolymerElement {
                 </div>
                 <template is="dom-if" if="[[gpu_total]]">
                   <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <div class="layout vertical start center-justified">
+                      <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                      <span>GPU</span>
+                    </div>
                     <div class="layout vertical start" style="padding-left:15px;">
                       <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
                       <div><span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs</div>
@@ -355,7 +366,10 @@ class BackendAISummary extends PolymerElement {
                 </template>
                 <template is="dom-if" if="[[vgpu_total]]">
                   <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <div class="layout vertical start center-justified">
+                      <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                      <span>GPU</span>
+                    </div>
                     <div class="layout vertical start" style="padding-left:15px;">
                       <vaadin-progress-bar id="vgpu-bar" value="[[vgpu_used]]"
                                            max="[[vgpu_total]]"></vaadin-progress-bar>
