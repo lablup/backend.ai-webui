@@ -695,11 +695,20 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Show invitations to current API key.
+   */
   invitations() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/invitations/list`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Accept specific invitation.
+   *
+   * @param {string} inv_id - Invitation ID.
+   * @param {string} inv_ak - Access key to accept the invitation.
+   */
   accept_invitation(inv_id, inv_ak) {
     let body = {
       'inv_id': inv_id,
@@ -709,6 +718,11 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Delete specific invitation.
+   *
+   * @param {string} inv_id - Invitation ID to delete.
+   */
   delete_invitation(inv_id) {
     let body = {
       'inv_id': inv_id
@@ -719,6 +733,11 @@ class VFolder {
 }
 
 class Agent {
+  /**
+   * Agent API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
   constructor(client) {
     this.client = client;
   }
