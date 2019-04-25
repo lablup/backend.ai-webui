@@ -881,6 +881,12 @@ class Agent {
     this.client = client;
   }
 
+  /**
+   * List computation agents.
+   *
+   * @param {string} status - Status to query. Should be one of 'ALIVE', 'PREPARING', 'TERMINATING' and 'TERMINATED'.
+   * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
+   */
   list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
     if (['ALIVE', 'TERMINATED'].includes(status) === false) {
       return resolve(false);
@@ -896,12 +902,24 @@ class Agent {
 }
 
 class Keypair {
+  /**
+   * Keypair API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
   constructor(client, name = null) {
     this.client = client;
     this.name = name;
   }
 
-  info(accessKey, fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+  /**
+   * Information of specific Keypair.
+   *
+   * @param {string} accessKey - Access key to query information. If client is not authorized as admin, this will be ignored and current API key infomation will be returned.
+   * @param {array} fields - Fields to query. Queryable fields are: 'access_key', 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+   'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'.
+   */
+  info(accessKey, fields = ['access_key', 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
     'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
     let q, v;
     if (this.client.is_admin) {
@@ -924,7 +942,14 @@ class Keypair {
     return this.client.gql(q, v);
   }
 
-  list(userId = null, fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+  /**
+   * List Keypairs of given user ID.
+   *
+   * @param {string} userId - User ID to query API keys. If user ID is not given and client is authorized as admin, this will return every keypairs of the manager.
+   * @param {array} fields - Fields to query. Queryable fields are: "access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+   'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'.
+   */
+  list(userId = null, fields = ['access_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
     'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
 
     let q;
@@ -956,6 +981,15 @@ class Keypair {
     return this.client.gql(q, v);
   }
 
+  /**
+   * Add Keypair with given information.
+   *
+   * @param {string} userId - User ID for new Keypair.
+   * @param {boolean} isActive - is_active state. Default is True.
+   * @param {boolean} isAdmin - is_admin state. Default is False.
+   * @param {string} resourcePolicy - resource policy name to assign. Default is `default`.
+   * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
+   */
   add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
       rateLimit = 1000) {
     let fields = [
@@ -982,6 +1016,18 @@ class Keypair {
     return this.client.gql(q, v);
   }
 
+  /**
+   * mutate Keypair for given accessKey.
+   *
+   * @param {string} accessKey - access key to mutate.
+   * @param {json} input - new information for mutation. JSON format should follow:
+   * {
+   *   'is_active': is_active,
+   *   'is_admin': is_admin,
+   *   'resource_policy': resource_policy,
+   *   'rate_limit': rate_limit
+   * }
+   */
   mutate(accessKey, input) {
     let q = `mutation($access_key: String!, $input: ModifyKeyPairInput!) {` +
       `  modify_keypair(access_key: $access_key, props: $input) {` +
@@ -995,6 +1041,11 @@ class Keypair {
     return this.client.gql(q, v);
   }
 
+  /**
+   * Delete Keypair with given accessKey
+   *
+   * @param {string} accessKey - access key to delete.
+   */
   delete(accessKey) {
     let q = `mutation($access_key: String!) {` +
       `  delete_keypair(access_key: $access_key) {` +
