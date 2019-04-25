@@ -1,8 +1,6 @@
 /**
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
-
-
  */
 
 import {css, html, LitElement} from "lit-element";
@@ -145,11 +143,6 @@ class BackendAiMaintenanceView extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
   }
-
-  _indexFrom1(index) {
-    return index + 1;
-  }
-
 }
 
 customElements.define(BackendAiMaintenanceView.is, BackendAiMaintenanceView);

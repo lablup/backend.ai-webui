@@ -113,7 +113,6 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
       console.log(response);
     });
 
-
     return window.backendaiclient.resourcePolicy.get().then((response) => {
       let rp = response.keypair_resource_policies;
       let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -210,12 +209,6 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
-  _revokeKey2(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
-    const accessKey = controls.accessKey;
-  }
-
   _deleteKey(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
@@ -233,22 +226,6 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
 
   _findKeyItem(element) {
     return element.access_key = this;
-  }
-
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  _byteToGB(value) {
-    return Math.floor(value / 1000000000);
-  }
-
-  _MBToGB(value) {
-    return value / 1024;
-  }
-
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(2);
   }
 
   _elapsed(start, end) {
