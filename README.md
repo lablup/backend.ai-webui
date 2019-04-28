@@ -137,6 +137,10 @@ Prerequistics : electron, electron-packager
 
 ```
 $ make all (build win64/macos/linux app)
+	OR
+$ make win
+$ make mac
+$ make linux
 ```
 
 ### Manual run (using local Electron)
