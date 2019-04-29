@@ -295,7 +295,7 @@ function createWindow () {
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,
-      devTools: false 
+      devTools: true
     }
   });
   // and load the index.html of the app.
