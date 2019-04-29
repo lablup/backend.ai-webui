@@ -20,7 +20,7 @@ console.log('app:', app);
 app.once('ready', function() {
   //let port = 5050;
   //wsproxy("127.0.0.1", port, "http://localhost");
-
+  wsproxy();
   var template;
   if (process.platform == 'darwin') {
     template = [
