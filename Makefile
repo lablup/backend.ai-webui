@@ -29,6 +29,8 @@ dep:
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/bundle build/electron-app/app
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy.js
+	mkdir ./build/electron-app/app/config
+	cp ./src/wsproxy-config.js ./build/electron-app/app/config/default.json
 web:
 	if [ ! -d "./build/bundle/" ];then \
 		make compile; \
