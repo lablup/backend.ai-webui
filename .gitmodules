@@ -1,0 +1,3 @@
+[submodule "src/wsproxy"]
+	path = src/wsproxy
+	url = git@github.com:lablup/backend.ai-wsproxy.git
