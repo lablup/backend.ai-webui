@@ -1,0 +1,12 @@
+# TODO: finish this script.
+version: '3.1'
+
+services:
+  console:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-dev
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/usr/share/nginx/html
