@@ -26,7 +26,7 @@
     "@polymer/iron-dropdown": "^3.0.1",
     "@polymer/iron-icon": "^3.0.1",
     "@polymer/iron-icons": "^3.0.1",
-    "@polymer/iron-image": "^3.0.1",
+    "@polymer/iron-image": "^3.0.2",
     "@polymer/iron-pages": "^3.0.1",
     "@polymer/neon-animation": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
@@ -52,7 +52,7 @@
     "@vaadin/vaadin-item": "^2.1.0",
     "@vaadin/vaadin-progress-bar": "^1.1.0",
     "@vaadin/vaadin-upload": "^4.2.1",
-    "@webcomponents/webcomponentsjs": "^2.2.8",
+    "@webcomponents/webcomponentsjs": "^2.2.10",
     "electron-builder": "^20.39.0",
     "electron-tabs": "^0.9.5",
     "i18n-element": "^3.0.0",
@@ -68,7 +68,7 @@
     "express": "^4.16.4",
     "graphql": "^14.2.1",
     "log": "^3.2.0",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.4.1",
     "node-port-check": "^2.0.1",
     "polymer-cli": "^1.9.8",
     "pwa-helpers": "^0.9.1",
@@ -77,7 +77,7 @@
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.1",
     "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.0",
+    "webpack-cli": "^3.3.1",
     "websocket": "^1.0.28"
   }
 }

@@ -1,7 +1,5 @@
 #!/bin/sh
 
-cd /wsproxy
-node ./wsproxy.js &
-cd /console
-python -m http.server
-
+#cd /wsproxy
+#node ./wsproxy.js
+while true; do echo "Running..."; sleep 100; done

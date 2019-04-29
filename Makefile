@@ -5,7 +5,7 @@ mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 test:
-	node ./node_modules/polymer-cli/bin/polymer.js build
+	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
 	mkdir -p build/electron-app/wsproxy
 	cp -Rp build/unbundle build/electron-app/app
 	rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
@@ -13,11 +13,11 @@ test:
 	cd build/electron-app; npm install --only=prod
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 test_web:
-	node ./node_modules/polymer-cli/bin/polymer.js serve --npm
+	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js serve --npm
 proxy:
 	node ./src/wsproxy/local_proxy.js
 compile:
-	node ./node_modules/polymer-cli/bin/polymer.js build
+	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
 dep:
@@ -29,9 +29,9 @@ dep:
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/bundle build/electron-app/app
 	mkdir -p ./build/electron-app/app/wsproxy
-	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
-	mkdir ./build/electron-app/app/wsproxy/config
-	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
+	#cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
+	#mkdir ./build/electron-app/app/wsproxy/config
+	#cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
 web:
 	if [ ! -d "./build/bundle/" ];then \
 		make compile; \
