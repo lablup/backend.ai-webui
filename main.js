@@ -1,18 +1,25 @@
 // Modules to control application life and create native browser window
 const {app, Menu, shell, BrowserWindow} = require('electron');
-process.env.electronPath = app.getAppPath();
-const web = require('./src/wsproxy/web.js');
 const url = require('url');
 const path = require('path');
+console.log('app:', app);
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 var mainIndex = 'build/electron-app/app/index.html';
 
+// Modules to control application life and create native browser window
+console.log('config directory:', process.env.NODE_CONFIG_DIR);
+process.env.NODE_CONFIG_DIR = './src/wsproxy/config';
+const wsproxy = require('./src/wsproxy/dist/wsproxy.js');
+console.log('config directory:', process.env.NODE_CONFIG_DIR);
+console.log('app:', app);
+
+// Modules to control application life and create native browser window
 app.once('ready', function() {
-  let port = 5050;
-  web("127.0.0.1", port, "http://localhost");
+  //let port = 5050;
+  //wsproxy("127.0.0.1", port, "http://localhost");
 
   var template;
   if (process.platform == 'darwin') {
