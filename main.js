@@ -1,9 +1,7 @@
 // Modules to control application life and create native browser window
-console.log("called");
 const {app, Menu, shell, BrowserWindow} = require('electron');
 const url = require('url');
 const path = require('path');
-console.log('app:', app);
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -11,12 +9,9 @@ let mainWindow;
 var mainIndex = 'build/electron-app/app/index.html';
 
 // Modules to control application life and create native browser window
-console.log('app2:', app);
-
-// Modules to control application life and create native browser window
 app.once('ready', function() {
-  //let port = 5050;
-  //wsproxy("127.0.0.1", port, "http://localhost");
+  let port = 5050;
+  wsproxy("127.0.0.1", port, "http://localhost");
   //wsproxy();
   var template;
   if (process.platform == 'darwin') {
@@ -392,19 +387,15 @@ app.on('web-contents-created', (event, contents) => {
 })
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-console.log('config directory:', process.env.NODE_CONFIG_DIR);
-process.env.NODE_CONFIG_DIR = './src/wsproxy/config';
-var spawn = require('child_process').spawn;
-let options = {}
-options.cwd = '.'
-options.setsid = false
-proxy_env = {}
-proxy_env.NODE_CONFIG_DIR = './config';
-options.env = proxy_env
-options.slient = false;
-options.stdio = options.silent ? ['pipe', 'pipe', 'pipe', 'ipc'] :
-        [0, 1, 2, 'ipc'];
-var ls = spawn(process.execPath, ['./src/wsproxy/dist/wsproxy.js'], [], options)
-
-//const wsproxy = require('./src/wsproxy/dist/wsproxy.js');
-console.log('config directory:', process.env.NODE_CONFIG_DIR);
+//process.env.NODE_CONFIG_DIR = './src/wsproxy/config';
+//const {fork, spawn} = require('child_process')
+//let options = {}
+//options.cwd = '.'
+//options.setsid = false
+//proxy_env = {}
+//proxy_env.NODE_CONFIG_DIR = './config';
+//options.env = proxy_env
+//options.slient = false;
+//options.stdio = options.silent ? ['pipe', 'pipe', 'pipe', 'ipc'] :
+//        [0, 1, 2, 'ipc'];
+//var ls = spawn(process.execPath, ['./src/wsproxy/dist/wsproxy.js'], [], options)

@@ -11,8 +11,8 @@ let mainWindow;
 var mainIndex = 'app/index.html';
 
 app.once('ready', function() {
-  //let port = 5050;
-  //web("127.0.0.1", port, "http://localhost");
+  let port = 5050;
+  web("127.0.0.1", port, "http://localhost");
 
   var template;
   if (process.platform == 'darwin') {
