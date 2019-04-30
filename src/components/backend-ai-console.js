@@ -251,7 +251,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
         <app-drawer swipe-open slot="drawer" class="drawer-menu">
           <app-header-layout has-scrolling-region class="vertical layout">
             <app-header id="portrait-bar" slot="header" effects="waterfall" fixed class="draggable">
-              <div class="horizontal center layout flex bar"
+              <div class="horizontal center layout flex bar draggable"
                    onclick="location.reload();" style="cursor:pointer;">
                 <div class="portrait-canvas">
                   <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand.svg"
@@ -357,7 +357,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <app-header slot="header" id="main-toolbar" condenses reveals class="draggable"
                           effects="waterfall blend-background" 
                           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
-                <app-toolbar primary style="height:48px;" class="bar">
+                <app-toolbar primary style="height:48px;" class="draggable bar">
                   <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                   <span title id="main-panel-toolbar-title">${this.menuTitle}</span>
               <span class="flex"></span>
