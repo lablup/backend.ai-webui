@@ -238,8 +238,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
           display: block;
         }
         .draggable {
-          -webkit-user-select: none;
-          -webkit-app-region: drag;
+          -webkit-user-select: none!important;
+          -webkit-app-region: drag!important;
         }
       `];
   }
