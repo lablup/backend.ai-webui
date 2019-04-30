@@ -237,6 +237,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
         .page[active] {
           display: block;
         }
+        .draggable {
+          -webkit-user-select: none;
+          -webkit-app-region: drag;
+        }
       `];
   }
 
@@ -246,7 +250,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       <app-drawer-layout id="app-body" responsive-width="900px" drawer-width="190px">
         <app-drawer swipe-open slot="drawer" class="drawer-menu">
           <app-header-layout has-scrolling-region class="vertical layout">
-            <app-header id="portrait-bar" slot="header" effects="waterfall" fixed>
+            <app-header id="portrait-bar" slot="header" effects="waterfall" fixed class="draggable">
               <div class="horizontal center layout flex bar"
                    onclick="location.reload();" style="cursor:pointer;">
                 <div class="portrait-canvas">
@@ -350,8 +354,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
               </app-header-layout>
             </app-drawer>
             <app-header-layout main id="main-panel">
-              <app-header slot="header" id="main-toolbar" condenses reveals
-                          effects="waterfall blend-background"
+              <app-header slot="header" id="main-toolbar" condenses reveals class="draggable"
+                          effects="waterfall blend-background" 
                           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
                 <app-toolbar primary style="height:48px;" class="bar">
                   <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>

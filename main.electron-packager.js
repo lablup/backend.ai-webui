@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
 const {app, Menu, shell, BrowserWindow} = require('electron');
 process.env.electronPath = app.getAppPath();
-const web = require('./app/wsproxy/wsproxy.js');
+const wsproxy = require('./app/wsproxy/wsproxy.js');
 const url = require('url');
 const path = require('path');
 
@@ -12,7 +12,7 @@ var mainIndex = 'app/index.html';
 
 app.once('ready', function() {
   let port = 5050;
-  web("127.0.0.1", port, "http://localhost");
+  wsproxy("127.0.0.1", port, "http://localhost");
 
   var template;
   if (process.platform == 'darwin') {
