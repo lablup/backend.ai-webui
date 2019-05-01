@@ -75,30 +75,6 @@ server {
 }
 ```
 
-#### Proxy setting
-
-```
-server {
-    listen      8443 ssl http2;
-    listen [::]:8443 ssl http2;
-    server_name [PROXY URL];
-    charset     utf-8;
-
-    client_max_body_size 15M;   # maximum upload size.
-
-    root /home/kookmin/backend.ai-console/deploy;
-    index index.html;
-
-    location / {
-        proxy_pass http://127.0.0.1:5050/;
-    }
-    keepalive_timeout 120;
-
-    ssl_certificate [CERTIFICATE FILE PATH];
-    ssl_certificate_key [CERTIFICATE KEY FILE PATH];
-}
-```
-
 ### Running websocket with node.js
 
 This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
