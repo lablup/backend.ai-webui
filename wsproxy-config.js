@@ -1,5 +1,5 @@
 {
-  "secret": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "secret": "AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAZ",
 
   "manager":{
     "protocol": "http",
