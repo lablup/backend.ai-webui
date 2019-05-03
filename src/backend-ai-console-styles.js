@@ -32,7 +32,7 @@ export const BackendAiStyles =
       --general-panel-width: 280px;
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
-      --general-background-color: rgba(244, 245, 247, 0.95);
+      --general-background-color: rgba(244, 245, 247, 1);
       --general-sidebar-color: #DDD;
       --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
       --general-sidebar-h3-color: #424242;
@@ -46,7 +46,7 @@ export const BackendAiStyles =
       --general-sidebar-topbar-shadow: {
       };
       --general-sidebar-selected-color: var(--paper-green-400);
-      --general-sidebar-selected-background-color: transparent;
+      --general-sidebar-selected-background-color: rgba(244, 245, 247, 1); /* removed transparent */
       --general-sidebar-selected-background-gradient-color: transparent;
       --general-sidebar-selected-border-left: 5px solid #2AB6F6;
       --general-sidebar-footer-color: #777777;
@@ -775,8 +775,9 @@ export const BackendAiStyles =
       background: var(--general-sidebar-selected-background-color, #23252B);
       border-left: var(--general-sidebar-selected-border-left);
       padding-left: 11px;
-      border-right: var(--general-sidebar-selected-border-left);
+      border-right: 0;
       padding-right: 11px;
+      font-weight: 900;
 
     }
 

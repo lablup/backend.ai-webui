@@ -65,6 +65,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       menuTitle: {
         type: String
       },
+      descriptionTitle: {
+        type: String
+      },
       user_id: {
         type: String
       },
@@ -237,9 +240,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
         .page[active] {
           display: block;
         }
+
         .draggable {
-          -webkit-user-select: none!important;
-          -webkit-app-region: drag!important;
+          -webkit-user-select: none !important;
+          -webkit-app-region: drag !important;
         }
       `];
   }
@@ -259,6 +263,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 </div>
                 <div class="vertical start-justified layout" style="margin-left:10px;margin-right:10px;">
                   <div class="site-name"><span class="bold">Backend</span>.AI</div>
+                  ${this.descriptionTitle ?
+      html`<div class="site-name" style="font-size:13px;text-align:right;">this.descriptionTitle</div>` :
+      html``
+      }
                 </div>
                 <span class="flex"></span>
               </div>
@@ -359,7 +367,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <app-toolbar primary style="height:48px;" class="draggable bar">
                   <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                   <span title id="main-panel-toolbar-title">${this.menuTitle}</span>
-              <span class="flex"></span>
+                  <span class="flex"></span>
               <div style="vertical end-justified flex layout">
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 8px;text-align:right">${this.api_endpoint}</div>
