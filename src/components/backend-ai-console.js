@@ -254,12 +254,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <div class="horizontal center layout flex bar draggable"
                    onclick="location.reload();" style="cursor:pointer;">
                 <div class="portrait-canvas">
-                  <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand.svg"
+                  <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
                               sizing="contain"></iron-image>
                 </div>
                 <div class="vertical start-justified layout" style="margin-left:10px;margin-right:10px;">
                   <div class="site-name"><span class="bold">Backend</span>.AI</div>
-                  <div class="site-name" style="font-size:13px;text-align:right;">console</div>
                 </div>
                 <span class="flex"></span>
               </div>
@@ -354,7 +353,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               </app-header-layout>
             </app-drawer>
             <app-header-layout main id="main-panel">
-              <app-header slot="header" id="main-toolbar" condenses reveals class="draggable"
+              <app-header slot="header" id="main-toolbar" fixed shadow class="draggable"
                           effects="waterfall blend-background" 
                           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
                 <app-toolbar primary style="height:48px;" class="draggable bar">

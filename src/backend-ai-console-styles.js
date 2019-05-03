@@ -10,16 +10,17 @@ export const BackendAiStyles =
       --general-menu-background-color-r: 255;
       --general-menu-background-color-g: 255;
       --general-menu-background-color-b: 255;
-      --general-menu-background-color-2: rgba(var(--general-menu-background-color-r),
+      --general-menu-background-color-3: rgba(var(--general-menu-background-color-r),
       var(--general-menu-background-color-g),
       var(--general-menu-background-color-b),
       0.95);
-      --general-menu-background-color: var(--paper-grey-200);
+      --general-menu-background-color-2: var(--paper-grey-200);
+      --general-menu-background-color: var(--paper-green-600);
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
       --general-menu-background-border: rgba(23, 23, 23, 1);
       --general-menu-background-opacity: 1;
-      --general-menu-color: #242424;
-
+      --general-menu-color-2: #242424;
+      --general-menu-color: #efefef;
       --general-navbar-footer-background-color-r: 255;
       --general-navbar-footer-background-color-g: 255;
       --general-navbar-footer-background-color-b: 255;
@@ -32,18 +33,16 @@ export const BackendAiStyles =
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
       --general-background-color: rgba(244, 245, 247, 0.95);
-      --general-sidebar-topbar-color: #434854;
       --general-sidebar-color: #DDD;
-      --general-sidebar-background-color: rgba(24, 24, 24, 0.95);
+      --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
       --general-sidebar-h3-color: #424242;
       --general-sidebar-h3-border-color: 1px solid #DDD;
-      --general-sidebar-topbar-background-color: #383E48;
-      --general-sidebar-topbar-background-color: var(--paper-grey-200);
-      /*
-      --general-sidebar-topbar-background-color: rgba(103, 172, 91, 1.00);
-      */
-      --general-sidebar-topbar-color: #222222;
-      */
+      --general-sidebar-topbar-background-color-3: #383E48;
+      --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1.00);
+      --general-sidebar-topbar-background-color-4: var(--paper-grey-200);
+      --general-sidebar-topbar-color-4: #222222;
+      --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
+      --general-sidebar-topbar-color: #efefef;
       --general-sidebar-topbar-shadow: {
       };
       --general-sidebar-selected-color: var(--paper-green-400);
@@ -574,6 +573,16 @@ export const BackendAiStyles =
       #content > iron-lazy-pages {
         width: 100%;
       }
+
+      #app-navbar-footer {
+        display: flex;
+      }
+
+      #sidebar-navbar-footer {
+        border-top: 1px solid #eee;
+        background-color: var(--general-navbar-footer-background-color);
+        color: var(--general-sidebar-navbar-footer-color);
+      }
     }
 
     @media screen and (min-width: 450px) {
@@ -582,6 +591,16 @@ export const BackendAiStyles =
       #content > div,
       #content > iron-lazy-pages {
         width: 95%;
+      }
+
+      #app-navbar-footer {
+        display: none;
+      }
+
+      #sidebar-navbar-footer {
+        border-top: 1px solid var(--general-sidebar-background-color);
+        background-color: var(--general-sidebar-background-color);
+        color: var(--general-sidebar-color);
       }
     }
 
