@@ -39,7 +39,7 @@ web:
 	mkdir -p ./deploy/$(site)
 	cd deploy/$(site); rm -rf ./*; mkdir console
 	cp -Rp build/bundle/* deploy/$(site)/console
-	cp ./configs/config.js.$(site) deploy/$(site)/console/config.js
+	cp ./configs/$(site).ini deploy/$(site)/console/config.ini
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
 win: dep

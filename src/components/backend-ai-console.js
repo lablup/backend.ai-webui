@@ -108,6 +108,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
+    this._parseConfig('../../config.ini').then(() => {
+      this.loadConfig(this.config);
+    }).catch(err => {
+      console.log("Configuration loading failed. Fallback to default.");
+    });
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       this.shadowRoot.querySelector('#login-panel').login();
     }
@@ -127,6 +132,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
     super.attributeChangedCallback(name, oldval, newval);
   }
 
+  loadConfig(config) {
+    var loginPanel = this.shadowRoot.querySelector('#login-panel');
+    loginPanel.refreshPanel(config);
+  }
+
   refreshPage() {
     this.shadowRoot.getElementById('sign-button').icon = 'icons:exit-to-app';
     this.is_connected = true;
@@ -144,6 +154,45 @@ class BackendAiConsole extends connect(store)(LitElement) {
     let indicator = this.shadowRoot.getElementById('backend-ai-indicator');
     indicator.innerHTML = 'New console available. Please <a>reload</a> to update.';
     indicator.show();
+  }
+
+  _parseConfig(fileName) {
+    return fetch(fileName)
+      .then(res => {
+        if (res.status == 200) {
+          return res.text();
+        }
+      })
+      .then(res => {
+        var data = res;
+        var regex = {
+          section: /^\s*\[\s*([^\]]*)\s*\]\s*$/,
+          param: /^\s*([^=]+?)\s*=\s*(.*?)\s*$/,
+          comment: /^\s*;.*$/
+        };
+        var value = {};
+        var lines = data.split(/[\r\n]+/);
+        var section = null;
+        lines.forEach(function (line) {
+          if (regex.comment.test(line)) {
+
+          } else if (regex.param.test(line)) {
+            var match = line.match(regex.param);
+            if (section) {
+              value[section][match[1]] = match[2];
+            } else {
+              value[match[1]] = match[2];
+            }
+          } else if (regex.section.test(line)) {
+            var match = line.match(regex.section);
+            value[match[1]] = {};
+            section = match[1];
+          } else if (line.length == 0 && section) {
+            section = null;
+          }
+        });
+        this.config = value;
+      })
   }
 
   _refreshUserInfoPanel() {
