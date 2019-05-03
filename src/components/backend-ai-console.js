@@ -65,7 +65,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       menuTitle: {
         type: String
       },
-      descriptionTitle: {
+      siteDescription: {
         type: String
       },
       user_id: {
@@ -133,6 +133,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   loadConfig(config) {
+    if ('siteDescription' in config) {
+      this.siteDescription = config.siteDescription;
+    }
     var loginPanel = this.shadowRoot.querySelector('#login-panel');
     loginPanel.refreshPanel(config);
   }
@@ -312,8 +315,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 </div>
                 <div class="vertical start-justified layout" style="margin-left:10px;margin-right:10px;">
                   <div class="site-name"><span class="bold">Backend</span>.AI</div>
-                  ${this.descriptionTitle ?
-      html`<div class="site-name" style="font-size:13px;text-align:right;">this.descriptionTitle</div>` :
+                  ${this.siteDescription ?
+      html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
       html``
       }
                 </div>
