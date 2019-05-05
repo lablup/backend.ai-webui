@@ -894,6 +894,10 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
           width: 100px;
         }
 
+        .gauge-name {
+          font-size: 10px;
+        }
+
         .gauge-label {
           width: 120px;
           font-weight: 300;
@@ -943,28 +947,40 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
       <plastic-material class="item" elevation="1">
         <h4 class="horizontal center layout">
           <span>Running</span>
-          <div class="layout horizontal center resources wrap">
-            <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+          <div class="layout horizontal center resources wrap" style="margin-left:20px;">
+            <div class="layout vertical center-justified wrap">
+              <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+              <div class="gauge-name">CPU</div>
+            </div>
             <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">CPUs: [[used_slot.cpu_slot]]/[[total_slot.cpu_slot]]</span>
+              <span class="gauge-label">[[used_slot.cpu_slot]]/[[total_slot.cpu_slot]]</span>
               <paper-progress id="cpu-usage-bar" value="[[used_slot_percent.cpu_slot]]"></paper-progress>
             </div>
-            <iron-icon class="fg green" icon="hardware:memory" style="padding-right:15px;"></iron-icon>
-            <div class="layout vertical start-justified wrap" style="padding-left:15px;">
-              <span class="gauge-label">RAM: [[used_slot.mem_slot]]GB/[[total_slot.mem_slot]]GB</span>
+            <div class="layout vertical center-justified wrap">
+              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+              <span class="gauge-name">RAM</span>
+            </div>
+            <div class="layout vertical start-justified wrap">
+              <span class="gauge-label">[[used_slot.mem_slot]]GB/[[total_slot.mem_slot]]GB</span>
               <paper-progress id="mem-usage-bar" value="[[used_slot_percent.mem_slot]]"></paper-progress>
             </div>
             <template is="dom-if" if="[[total_slot.gpu_slot]]">
-              <iron-icon class="fg green" icon="icons:view-module" style="padding-right:15px;"></iron-icon>
-              <div class="layout vertical start-justified wrap" style="padding-left:15px;">
-                <span class="gauge-label">GPUs: [[used_slot.gpu_slot]]/[[total_slot.gpu_slot]]</span>
+              <div class="layout vertical center-justified wrap">
+                <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                <span class="gauge-name">GPU</span>
+              </div>
+              <div class="layout vertical start-justified wrap">
+                <span class="gauge-label">[[used_slot.gpu_slot]]/[[total_slot.gpu_slot]]</span>
                 <paper-progress id="gpu-usage-bar" value="[[used_slot_percent.gpu_slot]]"></paper-progress>
               </div>
             </template>
             <template is="dom-if" if="[[total_slot.vgpu_slot]]">
-              <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-              <div class="layout vertical start-justified wrap" style="padding-left:15px;">
-                <span class="gauge-label">vGPUs: [[used_slot.vgpu_slot]]/[[total_slot.vgpu_slot]]</span>
+              <div class="layout vertical center-justified wrap">
+                <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                <span class="gauge-name">GPU</span>
+              </div>
+              <div class="layout vertical start-justified wrap">
+                <span class="gauge-label">[[used_slot.vgpu_slot]]/[[total_slot.vgpu_slot]]</span>
                 <paper-progress id="gpu-usage-bar" value="[[used_slot_percent.vgpu_slot]]"></paper-progress>
               </div>
             </template>
