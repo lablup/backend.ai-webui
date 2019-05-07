@@ -9,7 +9,7 @@ const path = require('path');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 var mainIndex = 'app/index.html';
-
+// TODO: randomize port to prevent conflict
 app.once('ready', function() {
   let port = 5050;
   wsproxy("127.0.0.1", port, "http://localhost");
