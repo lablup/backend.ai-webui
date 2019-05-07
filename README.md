@@ -18,6 +18,7 @@ Backend.AI GUI console.
     * Create / delete folders
     * Upload  / download files
     * Share folders (coming soon)
+ * Statistics
  * Kernel managements
     * List supported kernels
 	* Add kernels
