@@ -31,6 +31,7 @@ import '@polymer/paper-toast/paper-toast';
 
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
 import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
+import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
 import '@polymer/iron-pages/iron-pages';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
@@ -414,46 +415,48 @@ class BackendAiConsole extends connect(store)(LitElement) {
             </app-drawer>
             <app-header-layout main id="main-panel">
               <app-header slot="header" id="main-toolbar" fixed shadow class="draggable"
-                          effects="waterfall blend-background" 
+                          effects="waterfall resize-title" 
+                          condenses style="height: 96px;"
                           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
-                <app-toolbar primary style="height:48px;" class="draggable bar">
+                <app-toolbar sticky style="height:48px;" class="draggable bar">
                   <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                  <span title id="main-panel-toolbar-title">${this.menuTitle}</span>
+                  <span title condensed-title>${this.menuTitle}</span>
                   <span class="flex"></span>
-              <div style="vertical end-justified flex layout">
-                <div style="font-size: 10px;text-align:right">${this.user_id}</div>
-                <div style="font-size: 8px;text-align:right">${this.api_endpoint}</div>
+                  <div style="vertical end-justified flex layout">
+                    <div style="font-size: 10px;text-align:right">${this.user_id}</div>
+                    <div style="font-size: 8px;text-align:right">${this.api_endpoint}</div>
+                  </div>
+                  <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
+                </app-toolbar>
+                <h2 title main-title>${this.menuTitle}</h2>
+              </app-header>
+              <div class="content">
+                <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
+                <section role="main" id="content" class="container layout vertical center">
+                  <div id="app-page">
+                    <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
+                    <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"></backend-ai-session-view>
+                    <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
+                    <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
+                    <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"></backend-ai-data-view>
+                    <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"></backend-ai-environment-view>
+                    <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"></backend-ai-settings-view>
+                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"></backend-ai-maintenance-view>
+                  </div>
+                </section>
+                <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
+                  <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                  <paper-icon-button id="back-button" icon="icons:arrow-back"></paper-icon-button>
+                  <div id="lablup-notification-navbar" style="color: #999999; font-size:10px;"></div>
+                </app-toolbar>
               </div>
-              <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
-            </app-toolbar>
-          </app-header>
-          <div class="content">
-            <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
-            <section role="main" id="content" class="container layout vertical center">
-              <div id="app-page">
-                <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
-                <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"></backend-ai-session-view>
-                <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
-                <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
-                <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"></backend-ai-data-view>
-                <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"></backend-ai-environment-view>
-                <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"></backend-ai-settings-view>
-                <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"></backend-ai-maintenance-view>
-              </div>
-            </section>
-            <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
-              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <paper-icon-button id="back-button" icon="icons:arrow-back"></paper-icon-button>
-              <div id="lablup-notification-navbar" style="color: #999999; font-size:10px;"></div>
-            </app-toolbar>
-          </div>
-        </app-header-layout>
-      </app-drawer-layout>
-      <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
-        You are now ${this._offline ? 'offline' : 'online'}.
-      </backend-ai-offline-indicator>
-      <paper-toast id="backend-ai-indicator"></paper-toast>
-      <backend-ai-login id="login-panel"></backend-ai-login>
+            </app-header-layout>
+          </app-drawer-layout>
+          <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
+            You are now ${this._offline ? 'offline' : 'online'}.
+          </backend-ai-offline-indicator>
+          <paper-toast id="backend-ai-indicator"></paper-toast>
+          <backend-ai-login id="login-panel"></backend-ai-login>
     `;
   }
 

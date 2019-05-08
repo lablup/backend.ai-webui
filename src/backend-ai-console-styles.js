@@ -276,13 +276,19 @@ export const BackendAiStyles =
       background-color: var(--general-sidebar-item-odd-background-color, transparent);
     }
 
-    #portrait-bar,
-    #main-toolbar {
+    #portrait-bar {
       height: 48px;
     }
 
     #portrait-bar .bar {
       background-color: var(--general-sidebar-topbar-background-color);
+    }
+
+    #main-toolbar {
+      background-color: var(--general-menu-background-color);
+      color: var(--general-menu-color);
+      z-index: 1;
+      overflow: visible;
     }
 
     #main-toolbar .bar {
@@ -292,6 +298,10 @@ export const BackendAiStyles =
       overflow: visible;
     }
 
+    #main-toolbar h2 {
+      margin: 0 0 0 15px;
+      font-weight: 300;
+    }
     .drawer-menu footer {
       bottom: 0;
       color: var(--general-sidebar-footer-color, #AAAAAA);
