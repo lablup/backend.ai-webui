@@ -291,13 +291,6 @@ export const BackendAiStyles =
       overflow: visible;
     }
 
-    #main-toolbar .bar {
-      background-color: var(--general-menu-background-color);
-      color: var(--general-menu-color);
-      z-index: 1;
-      overflow: visible;
-    }
-
     #main-toolbar h2 {
       margin: 0 0 0 15px;
       font-weight: 300;
@@ -345,10 +338,6 @@ export const BackendAiStyles =
       z-index: 1;
       --app-toolbar-font-size: 14px;
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    #main-toolbar app-toolbar.bar {
-      background-color: var(--general-menu-background-color);
     }
 
     #app-navbar-footer,

@@ -223,34 +223,42 @@ class BackendAiConsole extends connect(store)(LitElement) {
         case 'summary':
           this.menuTitle = 'Summary';
           this.shadowRoot.getElementById('sidebar-menu').selected = 0;
+          this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'job':
           this.menuTitle = 'Sessions';
           this.shadowRoot.getElementById('sidebar-menu').selected = 1;
+          this.updateTitleColor('var(--paper-red-800)', '#efefef');
           break;
         case 'data':
           this.menuTitle = 'Data';
           this.shadowRoot.getElementById('sidebar-menu').selected = 3;
+          this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
           this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'Credentials & Policies';
           this.shadowRoot.getElementById('sidebar-menu').selected = 7;
+          this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments';
           this.shadowRoot.getElementById('sidebar-menu').selected = 8;
+          this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
           this.shadowRoot.getElementById('sidebar-menu').selected = 9;
+          this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'maintenance':
           this.menuTitle = 'Maintenance';
           this.shadowRoot.getElementById('sidebar-menu').selected = 10;
+          this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
@@ -267,6 +275,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
       if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
     }
     location.reload();
+  }
+
+  updateTitleColor(backgroundColorVal, colorVal) {
+    this.shadowRoot.querySelector('#main-toolbar').style.backgroundColor = backgroundColorVal;
+    this.shadowRoot.querySelector('#main-toolbar').style.color = colorVal;
   }
 
   static get styles() {
@@ -327,7 +340,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
               <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon id="activities-icon" class="fg orange" icon="icons:view-quilt"></iron-icon>
+                  <iron-icon id="activities-icon" class="fg green" icon="icons:view-quilt"></iron-icon>
                   Summary
                 </paper-item>
               </a>
@@ -343,7 +356,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 </paper-item>
                 <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                   <paper-item link>
-                    <iron-icon class="fg lime" icon="vaadin:folder-open-o"></iron-icon>
+                    <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
                     Data
                   </paper-item>
                 </a>
