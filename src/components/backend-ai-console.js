@@ -420,7 +420,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
                 <app-toolbar sticky style="height:48px;" class="draggable bar">
                   <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                  <span title condensed-title>${this.menuTitle}</span>
+                  <span condensed-title>${this.menuTitle}</span>
                   <span class="flex"></span>
                   <div style="vertical end-justified flex layout">
                     <div style="font-size: 10px;text-align:right">${this.user_id}</div>
@@ -428,7 +428,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   </div>
                   <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
                 </app-toolbar>
-                <h2 title main-title>${this.menuTitle}</h2>
+                <h2 main-title>${this.menuTitle}</h2>
               </app-header>
               <div class="content">
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>

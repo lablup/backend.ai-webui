@@ -948,7 +948,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal center layout">
           <span>Running</span>
           <div class="layout horizontal center resources wrap" style="margin-left:20px;">
-            <div class="layout vertical center-justified wrap">
+            <div class="layout vertical start center-justified wrap">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
               <div class="gauge-name">CPU</div>
             </div>
