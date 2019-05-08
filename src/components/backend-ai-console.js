@@ -441,7 +441,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   </div>
                   <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
                 </app-toolbar>
-                <h2 main-title>${this.menuTitle}</h2>
+                <div class="horizontal layout">
+                  <h2 main-title>${this.menuTitle}</h2>
+                </div>
               </app-header>
               <div class="content">
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
