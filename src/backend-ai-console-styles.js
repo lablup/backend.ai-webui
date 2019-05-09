@@ -768,7 +768,6 @@ export const BackendAiStyles =
       color: var(--general-sidebar-color, #eeeeee);;
     }
 
-    paper-listbox.sidebar paper-item.iron-selected,
     paper-listbox.sidebar a.iron-selected paper-item {
       color: var(--general-sidebar-selected-color, #eeeeee);
       background: var(--general-sidebar-selected-background-color, #23252B);

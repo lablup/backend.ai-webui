@@ -884,6 +884,9 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
         }
+        .custom {
+          color: var(--paper-red-800);
+        }
 
         span.caption {
           width: 30px;
@@ -948,7 +951,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
         <h4 class="horizontal center layout">
           <span>Running</span>
           <div class="layout horizontal center resources wrap" style="margin-left:20px;">
-            <div class="layout vertical start center-justified wrap">
+            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
               <div class="gauge-name">CPU</div>
             </div>
@@ -956,7 +959,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
               <span class="gauge-label">[[used_slot.cpu_slot]]/[[total_slot.cpu_slot]]</span>
               <paper-progress id="cpu-usage-bar" value="[[used_slot_percent.cpu_slot]]"></paper-progress>
             </div>
-            <div class="layout vertical center-justified wrap">
+            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
               <span class="gauge-name">RAM</span>
             </div>
@@ -965,7 +968,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
               <paper-progress id="mem-usage-bar" value="[[used_slot_percent.mem_slot]]"></paper-progress>
             </div>
             <template is="dom-if" if="[[total_slot.gpu_slot]]">
-              <div class="layout vertical center-justified wrap">
+              <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
                 <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
                 <span class="gauge-name">GPU</span>
               </div>
@@ -975,7 +978,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
               </div>
             </template>
             <template is="dom-if" if="[[total_slot.vgpu_slot]]">
-              <div class="layout vertical center-justified wrap">
+              <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
                 <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
                 <span class="gauge-name">GPU</span>
               </div>
@@ -986,7 +989,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
             </template>
           </div>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
+          <mwc-button class="fg custom" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
         </h4>
         <div>
           <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>

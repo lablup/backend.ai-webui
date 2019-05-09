@@ -36,7 +36,7 @@ Backend.AI GUI console.
 ### Running polymer-based web UI
 
 ```
-$ npm i
+$ npm i --dev
 $ make test_web 
 $ make proxy
 ```
