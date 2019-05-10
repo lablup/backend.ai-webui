@@ -14,7 +14,6 @@
     "polymer": "node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
   },
   "dependencies": {
-    "@material/drawer": "^2.0.0",
     "@material/elevation": "^0.44.1",
     "@material/mwc-button": "^0.3.6",
     "@material/mwc-checkbox": "^0.3.6",
@@ -45,6 +44,7 @@
     "@polymer/paper-slider": "^3.0.1",
     "@polymer/paper-spinner": "^3.0.2",
     "@polymer/paper-styles": "^3.0.1",
+    "@polymer/paper-tabs": "^3.1.0",
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/paper-toggle-button": "^3.0.1",
     "@polymer/polymer": "^3.2.0",

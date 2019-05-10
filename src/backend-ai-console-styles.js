@@ -789,7 +789,7 @@ export const BackendAiStyles =
     }
 
     paper-tabs {
-      background-color: var(--paper-grey-800);
+      background-color: var(--paper-red-400);
       color: #fff;
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
     }
