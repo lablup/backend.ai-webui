@@ -106,6 +106,12 @@ Example:
 $ make web site=beta
 ```
 
+## Dockerize
+
+```
+$ docker build -t backendai-web .
+```
+
 ## Build (Electron App)
 
 ### Using makefile
