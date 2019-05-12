@@ -1,14 +1,14 @@
 # backend.ai-console
 
-Backend.AI GUI console.
+Make AI Accessible: Backend.AI GUI console for end-user / SysAdmin.
 
- * Provides administration / user mode
- * Serve both app and web.
- * Mobile-ready (preparing now)
+Backend.AI console focuses to 
 
-## Features
- * Key management
-    * Allocate resource limitation for keys
+ * Provide both administration and user mode
+ * Serve as app and web service
+ * Versatile devices ready such as mobile, tablet and desktop.
+
+## User Features
  * Session management
     * Set default resources for runs
     * Choose and run environment-supported apps
@@ -19,40 +19,60 @@ Backend.AI GUI console.
     * Upload  / download files
     * Share folders (coming soon)
  * Statistics
+    * User resource statistics
+    * Session statistics
+
+## Management Features
+ * Keypair management
+    * Allocate resource limitation for keys
  * Kernel managements
     * List supported kernels
-	* Add kernels
-	* Refresh kernel list
-	* Categorize repository
-	* Add/update resource templates (under development)
+	 * Add kernels
+	 * Refresh kernel list
+	 * Categorize repository
+	 * Add/update resource templates (under development)
  * Manager settings
     * Add repository
-	* Plugin support
+    * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
-	* Needs backend.ai-wsproxy package
+	 * Needs backend.ai-wsproxy package
 
-## Develop and Test
+## Development Guide
 
-### Running polymer-based web UI
+Backend.AI console is build with  
+ * `litelement` / `Polymer 3 `for webcomponent framework
+ * `npm` as package manager
+ * `polymer-cli` as bundler
+ * `electron` as app shell
+
+### Initializing
 
 ```
 $ npm i --dev
-$ make test_web 
-$ make proxy
-```
-OR
-
-```
-$ npm i
-$ npm run polymer
-$ npm run wsproxy
 ```
 
-If you need to serve with nginx, please install backend.ai-wsproxy for websocket proxy.
+### Developing / testing without bundling
 
-### nginx configuration example
+```
+$ npm run polymer # To run web server
+$ npm run wsproxy # To run websocket proxy
+```
 
-#### Web server setting
+## Serving Guide
+
+### Preparing bundled source
+
+```
+$ make compile
+```
+
+Then bundled resource will be prepared in `build/bundle`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
+
+### Serving with nginx
+
+If you need to serve with nginx, please install and setup `backend.ai-wsproxy` package for websocket proxy. Bundled websocket proxy is simplified version for single-user app.
+
+This is nginx server configuration example. [APP PATH] should be changed to your source path.
 
 ```
 server {
@@ -76,25 +96,27 @@ server {
 }
 ```
 
-### Running websocket with node.js
+### Building docker image
+
+```
+$ make compile
+$ docker build -t backendai-console .
+```
+
+### Running websocket proxy with node.js
 
 This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
 
 ```
-$ cd src/wsproxy
-$ node ./local_proxy.js
-```
-
-### Running stand-alone web service
-
-## Build
-
-```
 $ make compile
+$ npm run wsproxy
 ```
-## Build (Web)
 
-Default setup will build `es6-bundled` version.
+## Build web server with specific configuration
+
+You can prepare site-specific configuration as `ini` format. Also, you can build site-specific web bundle refering in `configs` directory.
+
+Note: Default setup will build `es6-bundled` version. If you want to use `es6-unbundled`, make sure that your webserver supports HTTP/2 and setup as HTTPS with proper certification.
 
 ```
 $ make web site=[SITE CONFIG FILE POSTFIX]
@@ -106,58 +128,45 @@ Example:
 $ make web site=beta
 ```
 
-## Dockerize
+## App Building Guide
+### Building Electron App
+
+Electron building is automated using `Makefile`.
 
 ```
-$ docker build -t backendai-web .
+$ make all # build win64/macos/linux app
 ```
 
-## Build (Electron App)
-
-### Using makefile
-
-Prerequistics : electron, electron-packager
+#### Windows x86-64 version
 
 ```
-$ make all (build win64/macos/linux app)
-	OR
 $ make win
+```
+
+#### macOS version
+
+```
 $ make mac
+```
+
+#### Linux x86-64 version
+
+```
 $ make linux
 ```
 
-### Manual run (using local Electron)
-
-Hard way:
-```
-$ polymer build
-$ cd build/unbundled
-$ npm install --only=prod
-$ cd ../..
-$ npm start
-```
-
-OR,
-
-Easy way:
+### Packaging as zip files
+Note: this command only works on macOS, because packaging uses `ditto`, that supports both PKZIP and compressed CPIO format.
 
 ```
-$ make test
-$ electron .
+$ make pack
 ```
 
+### Manual run to test Electron
 
-## Package
-
-```
-$ make clean
-$ make all
-$ make pack # To create an zip-packed files (works on macOS)
-```
-
-## Serve (Web)
+Note: There are two Electron configuration files, `main.js` and `main.electron-packager.js`. Local Electron run uses `main.js`, not `main.electron-packager.js` that is used for real Electron app.
 
 ```
-$ make dep
-$ make web site=(config. name)
+$ make dep # Compile with app dependencies
+$ electron . 
 ```
