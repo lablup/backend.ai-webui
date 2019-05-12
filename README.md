@@ -37,6 +37,23 @@ Backend.AI console focuses to
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
 	 * Needs backend.ai-wsproxy package
 
+## Setup Guide
+### Configuration
+
+Backend.AI Console uses `config.ini` located in app root directory. You can prepare many `config.ini.[POSTFIX]` in `configs` directory to switch various configurations.
+
+These are options in `config.ini`.
+
+```
+apiEndpoint = [Default API Endpoint. If blank, user input field will be shown.]
+apiEndpointText = [Placeholder text instead of API endpoint input field.]
+defaultSessionEnvironment = [Default session kernel. If blank, alphabetically first kernel will be default.]
+proxyURL = [Proxy URL]
+proxyBaseURL = [Base URL of websocket proxy,]
+proxyListenIP = [Websocekt proxy configuration IP.]
+siteDescription = [Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]
+```
+
 ## Development Guide
 
 Backend.AI console is build with  
