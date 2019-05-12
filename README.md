@@ -56,8 +56,8 @@ siteDescription = [Site description placeholder. It will be at the bottom of 'Ba
 
 ## Development Guide
 
-Backend.AI console is build with  
- * `litelement` / `Polymer 3 `for webcomponent framework
+Backend.AI console is built with  
+ * `litelement` / `Polymer 3 `as webcomponent framework
  * `npm` as package manager
  * `polymer-cli` as bundler
  * `electron` as app shell
