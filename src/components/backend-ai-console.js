@@ -3,15 +3,15 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import { css, html, LitElement } from "lit-element";
-import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings';
+import {css, html, LitElement} from "lit-element";
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 // PWA components
-import { connect } from 'pwa-helpers/connect-mixin.js';
-import { installOfflineWatcher } from 'pwa-helpers/network.js';
-import { installRouter } from 'pwa-helpers/router.js';
-import { store } from '../store.js';
+import {connect} from 'pwa-helpers/connect-mixin.js';
+import {installOfflineWatcher} from 'pwa-helpers/network.js';
+import {installRouter} from 'pwa-helpers/router.js';
+import {store} from '../store.js';
 
-import { navigate, updateOffline } from '../backend-ai-app.js';
+import {navigate, updateOffline} from '../backend-ai-app.js';
 
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/app-layout/app-layout';
@@ -23,6 +23,7 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '@polymer/paper-tabs/paper-tabs';
 import '@polymer/paper-tabs/paper-tab';
+import '@polymer/paper-spinner/paper-spinner-lite';
 
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -40,8 +41,8 @@ import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '../backend.ai-client-es6.js';
-import { BackendAiStyles } from '../backend-ai-console-styles.js';
-import { IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning } from '../layout/iron-flex-layout-classes';
+import {BackendAiStyles} from '../backend-ai-console-styles.js';
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 import '../backend-ai-offline-indicator.js';
 import '../backend-ai-login.js';
 
@@ -87,10 +88,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
       proxy_url: {
         type: String
       },
-      _page: { type: String },
-      _drawerOpened: { type: Boolean },
-      _offlineIndicatorOpened: { type: Boolean },
-      _offline: { type: Boolean }
+      _page: {type: String},
+      _drawerOpened: {type: Boolean},
+      _offlineIndicatorOpened: {type: Boolean},
+      _offline: {type: Boolean}
     }
   }
 
@@ -310,6 +311,30 @@ class BackendAiConsole extends connect(store)(LitElement) {
           display: block;
         }
 
+        paper-spinner-lite {
+          --paper-spinner-layer-1-color: #9c27b0;
+          --paper-spinner-layer-2-color: #00bcd4;
+          --paper-spinner-layer-3-color: #607d8b;
+          --paper-spinner-layer-4-color: #ffc107;
+          --paper-spinner-stroke-width: 6px;
+          width: 48px;
+          height: 48px;
+          position: fixed;
+          top: calc(50vh - 24px);
+        }
+
+        @media screen and (max-width: 899px) {
+          paper-spinner-lite {
+            left: calc(50% - 24px);
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          paper-spinner-lite {
+            left: calc(50% + 71px);
+          }
+        }
+
         .draggable {
           -webkit-user-select: none !important;
           -webkit-app-region: drag !important;
@@ -332,9 +357,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <div class="vertical start-justified layout" style="margin-left:10px;margin-right:10px;">
                   <div class="site-name"><span class="bold">Backend</span>.AI</div>
                   ${this.siteDescription ?
-                    html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
-                    html``
-                  }
+      html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
+      html``
+      }
                 </div>
                 <span class="flex"></span>
               </div>
@@ -367,7 +392,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 Statistics
               </paper-item>
               ${this.is_admin ?
-                html`
+      html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
       
               <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
@@ -376,9 +401,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Resources
                 </paper-item>
               </a>` :
-                html``}
+      html``}
               ${this.is_admin ?
-                html`
+      html`
       
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
@@ -386,9 +411,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Credentials
                 </paper-item>
               </a>` :
-                html``}
+      html``}
               ${this.is_admin ?
-                html`
+      html`
               <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
@@ -451,13 +476,13 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <section role="main" id="content" class="container layout vertical center">
               <div id="app-page">
                 <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
-                <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"></backend-ai-session-view>
-                <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"></backend-ai-credential-view>
-                <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"></backend-ai-agent-view>
-                <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"></backend-ai-data-view>
-                <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"></backend-ai-environment-view>
-                <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"></backend-ai-settings-view>
-                <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"></backend-ai-maintenance-view>
+                <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-session-view>
+                <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-credential-view>
+                <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-agent-view>
+                <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-data-view>
+                <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-environment-view>
+                <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-settings-view>
+                <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-maintenance-view>
               </div>
             </section>
             <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
