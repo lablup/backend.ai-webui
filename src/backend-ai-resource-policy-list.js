@@ -52,9 +52,57 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
         type: Object,
         value: {}
       },
+      cpu_metric: {
+        type: Array,
+        value: [1, 2, 3, 4, 8, 16, 24, "Unlimited"]
+      },
+      ram_metric: {
+        type: Array,
+        value: [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"]
+      },
+      gpu_metric: {
+        type: Array,
+        value: [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"]
+      },
+      vgpu_metric: {
+        type: Array,
+        value: [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"]
+      },
+      rate_metric: {
+        type: Array,
+        value: [1000, 2000, 3000, 4000, 5000, 10000, 50000]
+      },
+      concurrency_metric: {
+        type: Array,
+        value: [1, 2, 3, 4, 5, 10, 50, "Unlimited"]
+      },
+      container_per_session_metric: {
+        type: Array,
+        value: [1, 2, 3, 4, 8, "Unlimited"]
+      },
+      idle_timeout_metric: {
+        type: Array,
+        value: [60, 180, 540, 900, 1800, 3600]
+      },
+      vfolder_capacity_metric: {
+        type: Array,
+        value: [1, 2, 5, 10, 50, 100, 200, 1000]
+      },
+      vfolder_count_metric: {
+        type: Array,
+        value: [1, 2, 3, 4, 5, 10, 30, 50, 100]
+      },
       is_admin: {
         type: Boolean,
         value: false
+      },
+      allowed_vfolder_hosts: {
+        type: Array,
+        value: []
+      },
+      default_vfolder_host: {
+        type: String,
+        value: ''
       }
     };
   }
@@ -101,7 +149,8 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     const policyName = controls.policyName;
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
-    //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
+    this.$['id_new_policy_name'].value = policyName;
+    console.log(resourcePolicy.total_resource_slots);
     this.$['cpu-resource'].value = resourcePolicy.total_resource_slots.cpu;
     this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda.device'];
     this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda.shares'];
@@ -112,39 +161,8 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     this.$['vfolder-count-limit'].value = resourcePolicy.max_vfolder_count;
     this.$['vfolder-capacity-limit'].value = resourcePolicy.max_vfolder_size;
     this.$['idle-timeout'].value = resourcePolicy.idle_timeout;
-
-
-    /*
-    let cpu_resource = this.$['cpu-resource'].value;
-    let ram_resource = this.$['ram-resource'].value;
-    let gpu_resource = this.$['gpu-resource'].value;
-    let vgpu_resource = this.$['vgpu-resource'].value;
-
-    let total_resource_slots = {
-      "cpu": cpu_resource,
-      "mem": ram_resource + 'g',
-      "cuda.device": parseInt(gpu_resource),
-      "cuda.shares": parseFloat(vgpu_resource)
-    };
-    let vfolder_hosts = ["local"];
-    let concurrency_limit = this.$['concurrency-limit'].value;
-    let containers_per_session_limit = this.$['container-per-session-limit'].value;
-    let vfolder_count_limit = this.$['vfolder-count-limit'].value;
-    let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
-    let rate_limit = this.$['rate-limit'].value;
-    let idle_timeout = this.$['idle-timeout'].value;
-    let input = {
-      'default_for_unspecified': 'UNLIMITED',
-      'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': concurrency_limit,
-      'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': idle_timeout,
-      'max_vfolder_count': vfolder_count_limit,
-      'max_vfolder_size': vfolder_capacity_limit,
-      'allowed_vfolder_hosts': vfolder_hosts
-    };
-*/
   }
+
   _refreshPolicyData() {
     return window.backendaiclient.resourcePolicy.get().then((response) => {
       let rp = response.keypair_resource_policies;
@@ -157,30 +175,30 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
         policy['total_resource_slots'] = JSON.parse(policy['total_resource_slots']);
         if ('cpu' in policy['total_resource_slots']) {
         } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cpu = '-';
+          policy['total_resource_slots'].cpu = 'Unlimited';
         }
         if ('mem' in policy['total_resource_slots']) {
           policy['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
         } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].mem = '-';
+          policy['total_resource_slots'].mem = 'Unlimited';
         }
         if ('cuda.device' in policy['total_resource_slots']) {
           if (policy['total_resource_slots']['cuda.device'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
-            policy['total_resource_slots'].cuda_device = '-';
+            policy['total_resource_slots'].cuda_device = 'Unlimited';
           } else {
             policy['total_resource_slots'].cuda_device = policy['total_resource_slots']['cuda.device'];
           }
         } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cuda_device = '-';
+          policy['total_resource_slots'].cuda_device = 'Unlimited';
         }
         if ('cuda.shares' in policy['total_resource_slots']) {
           if (policy['total_resource_slots']['cuda.shares'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
-            policy['total_resource_slots'].cuda_shares = '-';
+            policy['total_resource_slots'].cuda_shares = 'Unlimited';
           } else {
             policy['total_resource_slots'].cuda_shares = policy['total_resource_slots']['cuda.shares'];
           }
         } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cuda_shares = '-';
+          policy['total_resource_slots'].cuda_shares = 'Unlimited';
         }
       });
       this.resourcePolicy = resourcePolicies;
@@ -208,15 +226,30 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     let ram_resource = this.$['ram-resource'].value;
     let gpu_resource = this.$['gpu-resource'].value;
     let vgpu_resource = this.$['vgpu-resource'].value;
+    let vfolder_hosts = this.$['allowed_vfolder-hosts'].value;
+    if (cpu_resource === "Unlimited") {
+      cpu_resource = "Infinity";
+    }
+    if (ram_resource === "Unlimited") {
+      ram_resource = "Infinity";
+    }
+    if (gpu_resource === "Unlimited") {
+      gpu_resource = "Infinity";
+    } else {
+      gpu_resource = parseInt(gpu_resource).toString();
+    }
+    if (vgpu_resource === "Unlimited") {
+      vgpu_resource = "Infinity";
+    } else {
+      vgpu_resource = parseFloat(vgpu_resource).toString();
+    }
 
     let total_resource_slots = {
       "cpu": cpu_resource,
       "mem": ram_resource + 'g',
-      "cuda.device": parseInt(gpu_resource).toString(),
-      "cuda.shares": parseFloat(vgpu_resource).toString()
+      "cuda.device": gpu_resource,
+      "cuda.shares": vgpu_resource
     };
-    let vfolder_hosts = ["local"];
-    //let vfolder_hosts = ["cephfs"];
     let concurrency_limit = this.$['concurrency-limit'].value;
     let containers_per_session_limit = this.$['container-per-session-limit'].value;
     let vfolder_count_limit = this.$['vfolder-count-limit'].value;
@@ -256,12 +289,6 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     });
   }
 
-  _revokeKey2(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
-    const accessKey = controls.accessKey;
-  }
-
   _deleteKey(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
@@ -276,56 +303,17 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
       }
     });
   }
-
-  _findKeyItem(element) {
-    return element.access_key = this;
-  }
-
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  _byteToGB(value) {
-    return Math.floor(value / 1000000000);
-  }
-
-  _MBToGB(value) {
-    return value / 1024;
-  }
-
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(2);
-  }
-
-  _elapsed(start, end) {
-    var startDate = new Date(start);
-    if (this.condition == 'active') {
-      var endDate = new Date();
-    } else {
-      var endDate = new Date();
-    }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
-    var days = Math.floor(seconds / 86400);
-    return days;
-  }
-
-  _humanReadableTime(d) {
-    var d = new Date(d);
-    return d.toUTCString();
-  }
-
   _indexFrom1(index) {
     return index + 1;
   }
 
   _markIfUnlimited(value) {
-    if (['-', 0].includes(value)) {
+    if (['Unlimited', 0].includes(value)) {
       return '∞';
     } else {
       return value;
     }
   }
-
   static get template() {
     // language=HTML
 
@@ -378,6 +366,39 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
         div.configuration iron-icon {
           padding-right: 5px;
         }
+
+        mwc-button.create-button {
+          width: calc(100% - 40px);
+        }
+
+        fieldset {
+          padding: 0;
+        }
+
+        fieldset div {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        fieldset mwc-button {
+          padding-left: 20px;
+          padding-right: 20px;
+          padding-bottom: 20px;
+        }
+
+        paper-dialog paper-input {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        paper-dialog h4 {
+          margin: 10px 0 5px 0;
+          font-weight: 400;
+          font-size: 13px;
+          padding-left: 20px;
+          border-bottom: 1px solid #ccc;
+        }
+
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
 
@@ -515,8 +536,6 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
-              </div>
-              <div class="horizontal center layout">
                 <paper-dropdown-menu id="gpu-resource" label="GPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ gpu_metric }}">
@@ -531,8 +550,8 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
-
               </div>
+              <h4>Sessions</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
                   <paper-listbox slot="dropdown-content" selected="0">
@@ -559,15 +578,23 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
+              <h4>Virtual Folders</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="vfolder-capacity-limit" label="Virtual Folder Capacity">
+                <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ allowed_vfolder_hosts }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="vfolder-capacity-limit" label="Capacity (GB)">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-count-limit" label="Max. Virtual Folders">
+                <paper-dropdown-menu id="vfolder-count-limit" label="Max.#">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ vfolder_count_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
@@ -575,6 +602,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
+
               <br/><br/>
               <mwc-button class="fg blue create-button" id="create-policy-button" outlined label="Create"
                           icon="add"></mwc-button>

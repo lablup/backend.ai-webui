@@ -44,11 +44,11 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       },
       cpu_metric: {
         type: Array,
-        value: [1, 2, 3, 4, 8, 16, 24]
+        value: [1, 2, 3, 4, 8, 16, 24, "Unlimited"]
       },
       ram_metric: {
         type: Array,
-        value: [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512]
+        value: [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"]
       },
       gpu_metric: {
         type: Array,
@@ -93,6 +93,14 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       is_admin: {
         type: Boolean,
         value: false
+      },
+      allowed_vfolder_hosts: {
+        type: Array,
+        value: []
+      },
+      default_vfolder_host: {
+        type: String,
+        value: ''
       }
     }
   }
@@ -183,12 +191,27 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     this.$['new-keypair-dialog'].open();
   }
 
+  _readVFolderHostInfo() {
+    window.backendaiclient.vfolder.list_hosts().then(response => {
+      console.log(response);
+      this.allowed_vfolder_hosts = response.allowed;
+      this.default_vfolder_host = response.default;
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+  }
+
   _launchResourcePolicyDialog() {
+    this._readVFolderHostInfo();
     this.$['new-policy-dialog'].open();
   }
 
   _launchModifyResourcePolicyDialog() {
-
+    this._readVFolderHostInfo();
     this.$['new-policy-dialog'].open();
   }
 
@@ -243,6 +266,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     let ram_resource = this.$['ram-resource'].value;
     let gpu_resource = this.$['gpu-resource'].value;
     let vgpu_resource = this.$['vgpu-resource'].value;
+    let vfolder_hosts = this.$['allowed_vfolder-hosts'].value;
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
     }
@@ -265,8 +289,6 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       "cuda.device": gpu_resource,
       "cuda.shares": vgpu_resource
     };
-    let vfolder_hosts = ["local"];
-    //let vfolder_hosts = ["cephfs"];
     let concurrency_limit = this.$['concurrency-limit'].value;
     let containers_per_session_limit = this.$['container-per-session-limit'].value;
     let vfolder_count_limit = this.$['vfolder-count-limit'].value;
@@ -349,11 +371,39 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     return html`
       <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
         mwc-button.create-button {
-          width: 100%;
+          width: calc(100% - 40px);
         }
 
         #new-keypair-dialog {
           min-width: 350px;
+        }
+
+        fieldset {
+          padding: 0;
+        }
+
+        fieldset div {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        fieldset mwc-button {
+          padding-left: 20px;
+          padding-right: 20px;
+          padding-bottom: 20px;
+        }
+
+        paper-dialog paper-input {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        paper-dialog h4 {
+          margin: 10px 0 5px 0;
+          font-weight: 400;
+          font-size: 13px;
+          padding-left: 20px;
+          border-bottom: 1px solid #ccc;
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
@@ -443,8 +493,6 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
-              </div>
-              <div class="horizontal center layout">
                 <paper-dropdown-menu id="gpu-resource" label="GPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ gpu_metric }}">
@@ -461,6 +509,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                 </paper-dropdown-menu>
 
               </div>
+              <h4>Sessions</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
                   <paper-listbox slot="dropdown-content" selected="0">
@@ -487,15 +536,23 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
+              <h4>Virtual Folders</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="vfolder-capacity-limit" label="Virtual Folder Capacity">
+                <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ allowed_vfolder_hosts }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="vfolder-capacity-limit" label="Capacity (GB)">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-count-limit" label="Max. Virtual Folders">
+                <paper-dropdown-menu id="vfolder-count-limit" label="Max.#">
                   <paper-listbox slot="dropdown-content" selected="0">
                     <template is="dom-repeat" items="{{ vfolder_count_metric }}">
                       <paper-item label="{{item}}">{{ item }}</paper-item>
