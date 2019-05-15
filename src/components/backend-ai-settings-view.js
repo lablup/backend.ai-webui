@@ -75,7 +75,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch></mwc-switch>
+              <mwc-switch disabled></mwc-switch>
             </div>
           </div>
 
@@ -86,7 +86,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch></mwc-switch>
+              <mwc-switch disabled></mwc-switch>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
@@ -96,7 +96,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch></mwc-switch>
+              <mwc-switch disabled></mwc-switchdisabled>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
@@ -106,7 +106,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch></mwc-switch>
+              <mwc-switch disabled></mwc-switch>
             </div>
           </div>
         </div>
@@ -123,7 +123,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch checked></mwc-switch>
+              <mwc-switch checked disabled></mwc-switch>
             </div>
           </div>
         </div>
@@ -140,20 +140,30 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch checked></mwc-switch>
+              <mwc-switch checked disabled></mwc-switch>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>TPU</div>
-              <div class="description">Use TPU accelerator. <br/>Requires nodes on Google Cloud with TPU enabled.
+              <div class="description">Use TPU accelerator. <br/>Requires resource nodes on Google Cloud with Cloud TPU
+                enabled.
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch checked></mwc-switch>
+              <mwc-switch disabled></mwc-switch>
             </div>
           </div>
-
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>Statistics</div>
+              <div class="description">Use precise statistics module. <br/>
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+              <mwc-switch disabled></mwc-switch>
+            </div>
+          </div>
         </div>
 
 

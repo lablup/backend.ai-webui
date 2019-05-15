@@ -52,11 +52,11 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       },
       gpu_metric: {
         type: Array,
-        value: [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16]
+        value: [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"]
       },
       vgpu_metric: {
         type: Array,
-        value: [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16]
+        value: [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"]
       },
       rate_metric: {
         type: Array,
@@ -64,11 +64,11 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       },
       concurrency_metric: {
         type: Array,
-        value: [1, 2, 3, 4, 5, 10, 50]
+        value: [1, 2, 3, 4, 5, 10, 50, "Unlimited"]
       },
       container_per_session_metric: {
         type: Array,
-        value: [1, 2, 3, 4, 8]
+        value: [1, 2, 3, 4, 8, "Unlimited"]
       },
       idle_timeout_metric: {
         type: Array,
@@ -243,12 +243,27 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
     let ram_resource = this.$['ram-resource'].value;
     let gpu_resource = this.$['gpu-resource'].value;
     let vgpu_resource = this.$['vgpu-resource'].value;
-
+    if (cpu_resource === "Unlimited") {
+      cpu_resource = "Infinity";
+    }
+    if (ram_resource === "Unlimited") {
+      ram_resource = "Infinity";
+    }
+    if (gpu_resource === "Unlimited") {
+      gpu_resource = "Infinity";
+    } else {
+      gpu_resource = parseInt(gpu_resource).toString();
+    }
+    if (vgpu_resource === "Unlimited") {
+      vgpu_resource = "Infinity";
+    } else {
+      vgpu_resource = parseFloat(vgpu_resource).toString();
+    }
     let total_resource_slots = {
       "cpu": cpu_resource,
       "mem": ram_resource + 'g',
-      "cuda.device": parseInt(gpu_resource),
-      "cuda.shares": parseFloat(vgpu_resource)
+      "cuda.device": gpu_resource,
+      "cuda.shares": vgpu_resource
     };
     let vfolder_hosts = ["local"];
     //let vfolder_hosts = ["cephfs"];

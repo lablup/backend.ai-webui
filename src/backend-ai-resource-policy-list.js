@@ -212,8 +212,8 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     let total_resource_slots = {
       "cpu": cpu_resource,
       "mem": ram_resource + 'g',
-      "cuda.device": parseInt(gpu_resource),
-      "cuda.shares": parseFloat(vgpu_resource)
+      "cuda.device": parseInt(gpu_resource).toString(),
+      "cuda.shares": parseFloat(vgpu_resource).toString()
     };
     let vfolder_hosts = ["local"];
     //let vfolder_hosts = ["cephfs"];
