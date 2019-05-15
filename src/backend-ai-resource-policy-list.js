@@ -150,10 +150,9 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
     this.$['id_new_policy_name'].value = policyName;
-    console.log(resourcePolicy.total_resource_slots);
     this.$['cpu-resource'].value = resourcePolicy.total_resource_slots.cpu;
-    this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda.device'];
-    this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda.shares'];
+    this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda_device'];
+    this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda_shares'];
     this.$['ram-resource'].value = resourcePolicy.total_resource_slots['mem'];
 
     this.$['concurrency-limit'].value = resourcePolicy.max_concurrent_sessions;
@@ -161,6 +160,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
     this.$['vfolder-count-limit'].value = resourcePolicy.max_vfolder_count;
     this.$['vfolder-capacity-limit'].value = resourcePolicy.max_vfolder_size;
     this.$['idle-timeout'].value = resourcePolicy.idle_timeout;
+    this.$['allowed_vfolder-hosts'].value = resourcePolicy.allowed_vfolder_hosts[0]; /* TODO: multiple vfolder hosts */
   }
 
   _refreshPolicyData() {
