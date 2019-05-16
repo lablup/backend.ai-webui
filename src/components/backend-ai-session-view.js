@@ -845,7 +845,7 @@ class BackendAiSessionView extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        paper-button.launch-button {
+        mwc-button.launch-button {
           width: 100%;
         }
 
@@ -1122,10 +1122,9 @@ ${this.resource_templates.map(item => html`
                   </div>
                 </iron-collapse>
                 <br/>
-                <paper-button class="blue launch-button" type="submit" id="launch-button">
-                  <iron-icon icon="rowing"></iron-icon>
+                <mwc-button class="blue launch-button" type="submit" id="launch-button" icon="rowing">
                   <span id="launch-button-msg">Launch</span>
-                </paper-button>
+                </mwc-button>
               </fieldset>
             </form>
           </plastic-material>
