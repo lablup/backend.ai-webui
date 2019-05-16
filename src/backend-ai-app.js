@@ -41,7 +41,8 @@ const loadPage = (page) => (dispatch) => {
       });
       break;
     case 'job':
-      import('./backend-ai-session-view.js');
+      //import('./backend-ai-session-view.js');
+      import('./components/backend-ai-session-view.js');
       break;
     case 'data':
       import('./backend-ai-data-view.js');
