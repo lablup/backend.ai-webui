@@ -192,6 +192,12 @@ class BackendAiSessionView extends LitElement {
     });
   }
 
+  _initTabBar() {
+    /* Test code */
+    let b = document.body.querySelector('#console-shell');
+    let c = b.shadowRoot.querySelector('#top-tab-menu');
+  }
+
   _initAliases() {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;

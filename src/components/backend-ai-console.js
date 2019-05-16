@@ -468,7 +468,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             </app-toolbar>
             <div class="horizontal layout">
               <h2 main-title>${this.menuTitle}</h2>
-              <div slot="topbar-menu"></div>
+              <div id="top-tab-menu"></div>
             </div>
           </app-header>
           <div class="content">

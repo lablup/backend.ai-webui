@@ -137,7 +137,6 @@ class BackendAiMaintenanceView extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-
   }
 
   disconnectedCallback() {
