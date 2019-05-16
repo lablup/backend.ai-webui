@@ -1063,11 +1063,11 @@ class BackendAiSessionView extends LitElement {
 ${this.resource_templates.map(item => html`
                     <mwc-button class="fg red resource-button vertical center start layout" role="option"
                                 style="height:140px;min-width:120px;"
-                                on-tap="_chooseResourceTemplate"
-                                id="${item.title}-button"
-                                cpu="${item.cpu}"
-                                mem="${item.mem}"
-                                gpu="${item.gpu}"
+                                @click="${this._chooseResourceTemplate}"
+                                id="${item.name}-button"
+                                .cpu="${item.cpu}"
+                                .mem="${item.mem}"
+                                .gpu="${item.gpu}"
                                 outlined>
                       <div>
                         <h4>${item.name}</h4>
