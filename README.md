@@ -58,21 +58,21 @@ siteDescription = [Site description placeholder. It will be at the bottom of 'Ba
 
 Backend.AI console is built with  
  * `litelement` / `Polymer 3 `as webcomponent framework
- * `npm` as package manager
+ * `yarn` as package manager
  * `polymer-cli` as bundler
  * `electron` as app shell
 
 ### Initializing
 
 ```
-$ npm i --dev
+$ yarn install
 ```
 
 ### Developing / testing without bundling
 
 ```
-$ npm run polymer # To run web server
-$ npm run wsproxy # To run websocket proxy
+$ yarn run polymer # To run web server
+$ yarn run wsproxy # To run websocket proxy
 ```
 
 ## Serving Guide
