@@ -138,8 +138,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   loadConfig(config) {
-    if ('siteDescription' in config) {
-      this.siteDescription = config.siteDescription;
+    if (typeof config.general !== "undefined" && 'siteDescription' in config.general) {
+      this.siteDescription = config.general.siteDescription;
     }
     var loginPanel = this.shadowRoot.querySelector('#login-panel');
     loginPanel.refreshPanel(config);

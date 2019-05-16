@@ -71,23 +71,23 @@ class BackendAiLogin extends PolymerElement {
   }
 
   refreshPanel(config) {
-    if (typeof config.proxyURL === "undefined" || config.proxyURL === '') {
+    if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
-      this.proxy_url = config.proxyURL;
+      this.proxy_url = config.wsproxy.proxyURL;
     }
-    if (typeof config.apiEndpoint === "undefined" || config.apiEndpoint === '') {
+    if (typeof config.general === "undefined" || typeof config.general.apiEndpoint === "undefined" || config.general.apiEndpoint === '') {
       this.shadowRoot.querySelector('#id_api_endpoint').style.display = 'block';
       this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'none';
     } else {
-      this.api_endpoint = config.apiEndpoint;
-      if (typeof config.apiEndpointText === "undefined" || config.apiEndpointText === '') {
+      this.api_endpoint = config.general.apiEndpoint;
+      if (typeof config.general === "undefined" || typeof config.general.apiEndpointText === "undefined" || config.general.apiEndpointText === '') {
         this.shadowRoot.querySelector('#id_api_endpoint').style.display = 'block';
         this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'none';
       } else {
         this.shadowRoot.querySelector('#id_api_endpoint').style.display = 'none';
         this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'block';
-        this.shadowRoot.querySelector('#id_api_endpoint_humanized').value = config.apiEndpointText;
+        this.shadowRoot.querySelector('#id_api_endpoint_humanized').value = config.general.apiEndpointText;
       }
       this.$['id_api_endpoint'].disabled = true;
       this.$['id_api_endpoint_humanized'].disabled = true;
