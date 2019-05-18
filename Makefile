@@ -1,5 +1,6 @@
 EP = electron-packager ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
+BUILD_TIME := $(shell date +%H%m%S)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
@@ -17,6 +18,7 @@ test_web:
 proxy:
 	node ./src/wsproxy/local_proxy.js
 compile:
+	cat index.html | sed -e "s/VERSION/${BUILD_DATE}\.${BUILD_TIME}/g" > index.html
 	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
