@@ -19,7 +19,7 @@ test_web:
 proxy:
 	node ./src/wsproxy/local_proxy.js
 compile:
-	cat index.html | sed -e "s/VERSION/${BUILD_DATE}\.${BUILD_TIME}/g" > index.html
+	#cat index.html | sed -e "s/VERSION/${BUILD_DATE}\.${BUILD_TIME}/g" | tee index.html
 	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
