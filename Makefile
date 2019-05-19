@@ -21,8 +21,8 @@ proxy:
 compile:
 	sed -i -E 's/name="console-version" content="\(.*\)"/name="console-version" content="${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
 	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.js
-	#node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
-	#cd ./src/wsproxy; npx webpack --config webpack.config.js
+	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
+	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
 dep:
 	if [ ! -d "./build/bundle/" ];then \
