@@ -115,12 +115,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     this._parseConfig('../../config.ini').then(() => {
       this.loadConfig(this.config);
+      if (window.backendaiclient == undefined || window.backendaiclient == null) {
+        this.shadowRoot.querySelector('#login-panel').login();
+      }
     }).catch(err => {
-      console.log("Configuration loading failed. Fallback to default.");
+      console.log("Configuration loading failed.");
     });
-    if (window.backendaiclient == undefined || window.backendaiclient == null) {
-      this.shadowRoot.querySelector('#login-panel').login();
-    }
   }
 
   connectedCallback() {
