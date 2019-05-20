@@ -83,6 +83,7 @@ class BackendAiSessionView extends LitElement {
     this.resource_templates = [];
     this.vfolders = [];
     this.default_language = '';
+    this.launch_ready = false;
   }
 
   static get properties() {
@@ -155,6 +156,9 @@ class BackendAiSessionView extends LitElement {
       },
       default_language: {
         type: String
+      },
+      launch_ready: {
+        type: Boolean
       }
     }
   }
@@ -281,16 +285,21 @@ class BackendAiSessionView extends LitElement {
   }
 
   _launchSessionDialog() {
-    this._selectDefaultLanguage();
-    this.updateMetric();
-    var gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-    //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
-    if (gpu_resource.value > 0) {
-      this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      this.shadowRoot.querySelector('#notification').text = 'Please wait while initlaizating...';
+      this.shadowRoot.querySelector('#notification').show();
     } else {
-      this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
+      this.selectDefaultLanguage();
+      this.updateMetric();
+      var gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+      //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
+      if (gpu_resource.value > 0) {
+        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
+      } else {
+        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
+      }
+      this.shadowRoot.querySelector('#new-session-dialog').open();
     }
-    this.shadowRoot.querySelector('#new-session-dialog').open();
   }
 
   _updateGPUMode() {
@@ -822,6 +831,15 @@ class BackendAiSessionView extends LitElement {
     this.shadowRoot.querySelector('#gpu-resource').value = gpu;
   }
 
+  selectDefaultLanguage() {
+    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._selectDefaultLanguage();
+      }, true);
+    } else {
+      this._selectDefaultLanguage();
+    }
+  }
   _selectDefaultLanguage() {
     if (window.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in window.backendaiclient._config &&
@@ -1004,7 +1022,7 @@ class BackendAiSessionView extends LitElement {
       html``}
             </div>
             <span class="flex"></span>
-            <mwc-button class="fg custom" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
+            <mwc-button disabled class="fg custom" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
           </h4>
           <div>
             <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
