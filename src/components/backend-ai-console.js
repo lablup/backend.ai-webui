@@ -160,7 +160,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
 
   showUpdateNotifier() {
     let indicator = this.shadowRoot.getElementById('backend-ai-indicator');
-    indicator.innerHTML = 'New console available. Please <a>reload</a> to update.';
+    indicator.innerHTML = 'New console available. Please <a onclick="window.location.reload()">reload</a> to update.';
     indicator.show();
   }
 
