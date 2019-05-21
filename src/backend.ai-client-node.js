@@ -65,6 +65,10 @@ class ClientConfig {
     return this._apiVersionMajor;
   }
 
+  get hashType() {
+    return this._hashType;
+  }
+
   get connectionMode() {
     return this._connectionMode;
   }
