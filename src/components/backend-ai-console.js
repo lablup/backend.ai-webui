@@ -88,6 +88,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       proxy_url: {
         type: String
       },
+      connection_mode: {
+        type: String
+      },
       _page: {type: String},
       _drawerOpened: {type: Boolean},
       _offlineIndicatorOpened: {type: Boolean},
@@ -104,6 +107,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.is_connected = false;
     this.is_admin = false;
     this._page = '';
+    this.connection_mode = 'API';
   }
 
   firstUpdated() {
@@ -140,6 +144,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
   loadConfig(config) {
     if (typeof config.general !== "undefined" && 'siteDescription' in config.general) {
       this.siteDescription = config.general.siteDescription;
+    }
+    if (typeof config.general !== "undefined" && 'connectionMode' in config.general) {
+      this.connection_mode = config.general.connectionMode;
+      console.log(this.connection_mode);
     }
     var loginPanel = this.shadowRoot.querySelector('#login-panel');
     loginPanel.refreshPanel(config);
