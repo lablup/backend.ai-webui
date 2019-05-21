@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI Node.JS / Javascript ES6 API Library (v19.03b9)
+Backend.AI Node.JS / Javascript ES6 API Library (v19.05.1)
 ==========================================================
 
 (C) Copyright 2016-2019 Lablup Inc.
@@ -34,6 +34,7 @@ class ClientConfig {
     this._accessKey = accessKey;
     this._secretKey = secretKey;
     this._proxyURL = null;
+    this._connectionMode = 'API';
   }
 
   get accessKey() {
@@ -64,8 +65,12 @@ class ClientConfig {
     return this._apiVersionMajor;
   }
 
-  get hashType() {
-    return this._hashType;
+  get connectionMode() {
+    return this._connectionMode;
+  }
+
+  get accessKey() {
+    return this._accessKey;
   }
 
   /**
@@ -358,7 +363,6 @@ class Client {
     let requestBody;
     let authBody;
     let d = new Date();
-    let signKey = this.getSignKey(this._config.secretKey, d);
     if (body === null || body === undefined) {
       requestBody = '';
       authBody = requestBody;
@@ -378,14 +382,22 @@ class Client {
     } else {
       aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
     }
-
-    let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
-    let hdrs = new Headers({
-      "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-      "X-BackendAI-Version": this._config.apiVersion,
-      "X-BackendAI-Date": d.toISOString(),
-      "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
-    });
+    if (this._config.connectionMode() === 'SESSION') { // Force request to use Public when session mode is enabled
+      let hdrs = new Headers({
+        "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+        "X-BackendAI-Version": this._config.apiVersion,
+        "X-BackendAI-Date": d.toISOString()
+      });
+    } else {
+      let signKey = this.getSignKey(this._config.secretKey, d);
+      let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
+      let hdrs = new Headers({
+        "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+        "X-BackendAI-Version": this._config.apiVersion,
+        "X-BackendAI-Date": d.toISOString(),
+        "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
+      });
+    }
     if (body != undefined) {
       if (typeof body.getBoundary === 'function') {
         hdrs.set('Content-Type', body.getHeaders()['content-type']);
