@@ -386,8 +386,9 @@ class Client {
     } else {
       aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
     }
-    if (this._config.connectionMode() === 'SESSION') { // Force request to use Public when session mode is enabled
-      let hdrs = new Headers({
+    let hdrs;
+    if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
+      hdrs = new Headers({
         "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
         "X-BackendAI-Version": this._config.apiVersion,
         "X-BackendAI-Date": d.toISOString()
@@ -395,7 +396,7 @@ class Client {
     } else {
       let signKey = this.getSignKey(this._config.secretKey, d);
       let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
-      let hdrs = new Headers({
+      hdrs = new Headers({
         "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
         "X-BackendAI-Version": this._config.apiVersion,
         "X-BackendAI-Date": d.toISOString(),

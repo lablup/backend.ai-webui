@@ -123,7 +123,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
         this.shadowRoot.querySelector('#login-panel').login();
       }
     }).catch(err => {
-      console.log("Configuration loading failed.");
+      console.log("Initialization failed.");
     });
   }
 
