@@ -52,9 +52,6 @@ class BackendAiLogin extends LitElement {
       api_endpoint: {
         type: String
       },
-      console_server: {
-        type: String
-      },
       default_session_environment: {
         type: String
       },
@@ -72,7 +69,6 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = '';
     this.proxy_url = 'http://127.0.0.1:5050/';
     this.connection_mode = 'API';
-    this.console_server = '';
     this.default_session_environment = '';
     this.config = null;
   }
@@ -108,11 +104,6 @@ class BackendAiLogin extends LitElement {
     } else {
       this.default_session_environment = config.general.defaultSessionEnvironment;
     }
-    if (typeof config.general === "undefined" || typeof config.general.consoleServer === "undefined" || config.general.consoleServer === '') {
-      this.console_server = '';
-    } else {
-      this.console_server = config.general.consoleServer;
-    }
     if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
       this.connection_mode = 'API';
     } else {
@@ -137,8 +128,9 @@ class BackendAiLogin extends LitElement {
   login() {
     this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
     this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
-    this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
-
+    if (this.api_endpoint === '') {
+      this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
+    }
     if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       this._connect();
     } else {
@@ -158,21 +150,57 @@ class BackendAiLogin extends LitElement {
     this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
-    this._connectUsingAPI();
+    if (this.connection_mode === 'SESSION') {
+      this._connectUsingSession();
+    } else {
+      this._connectUsingAPI();
+    }
   }
 
-  _connectUsingSession() {
+  async _connectUsingSession() {
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
       this.secret_key,
       this.api_endpoint,
-      'SESSION',
-      this.console_server
+      'SESSION'
     );
     this.client = new ai.backend.Client(
       this.clientConfig,
       `Backend.AI Console.`,
     );
+    let isLogon = await this.client.check_login();
+    if (isLogon === false) {
+      this.client.login().then(response => {
+        window.backendaiclient = this.client;
+        let email = this.api_key;
+        let is_admin = response.is_admin;
+        let resource_policy = response['keypair'].resource_policy;
+        if (this.email != email) {
+          this.email = email;
+        }
+        window.backendaiclient.email = this.email;
+        window.backendaiclient.is_admin = is_admin;
+        window.backendaiclient.resource_policy = resource_policy;
+        window.backendaiclient._config._proxyURL = this.proxy_url;
+        window.backendaiclient._config.default_session_environment = this.default_session_environment;
+        var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
+        document.dispatchEvent(event);
+        this.close();
+      }).catch((err) => {   // Connection failed
+        if (this.shadowRoot.querySelector('#login-panel').opened != true) {
+          if (err.message != undefined) {
+            this.shadowRoot.querySelector('#notification').text = err.message;
+          } else {
+            this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+          }
+          this.shadowRoot.querySelector('#notification').show();
+          this.open();
+        } else {
+          this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
+          this.shadowRoot.querySelector('#notification').show();
+        }
+      });
+    }
   }
 
   _connectUsingAPI() {
@@ -185,6 +213,7 @@ class BackendAiLogin extends LitElement {
       this.clientConfig,
       `Backend.AI Console.`,
     );
+
     // Test connection
     let fields = ["user_id", "is_admin", "resource_policy"];
     let q = `query { keypair { ${fields.join(" ")} } }`;

@@ -21,7 +21,7 @@ const querystring = require('querystring');
 
 
 class ClientConfig {
-  constructor(accessKey, secretKey, endpoint) {
+  constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // fixed configs with this implementation
     this._apiVersionMajor = 'v4';
     this._apiVersion = 'v4.20190115';
@@ -38,7 +38,7 @@ class ClientConfig {
     this._accessKey = accessKey;
     this._secretKey = secretKey;
     this._proxyURL = null;
-    this._connectionMode = 'API';
+    this._connectionMode = connectionMode;
   }
 
   get accessKey() {
@@ -123,6 +123,23 @@ class Client {
     this.resources = new Resources(this);
   }
 
+  async check_login() {
+    let rqst = this.newSignedRequest('POST', `/server/login-check`, null);
+    let result = await this._wrapWithPromise(rqst);
+    console.log(result.authenticated);
+  }
+  /**
+   * Login into console-server with given ID/Password. This requires additional console-server package.
+   *
+   */
+  login() {
+    let body = {
+      'username': this._config.accessKey,
+      'password': this._config.secretKey
+    };
+    let rqst = this.newSignedRequest('POST', `/server/login`, body);
+    return this._wrapWithPromise(rqst);
+  }
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
