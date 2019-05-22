@@ -31,8 +31,8 @@ import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import '../backend-ai-session-list.js';
 import './backend-ai-dropdown-menu';
 import '@material/mwc-button';
-import '@authentic/mwc-tab';
-import '@authentic/mwc-tab-bar';
+//import '@authentic/mwc-tab';
+//import '@authentic/mwc-tab-bar';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
