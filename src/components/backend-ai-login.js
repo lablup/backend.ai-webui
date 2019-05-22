@@ -1,5 +1,6 @@
 /**
- * Login implementation of Backend.AI-console
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
 import {css, html, LitElement} from "lit-element";
@@ -62,10 +63,6 @@ class BackendAiLogin extends LitElement {
         type: Object
       }
     };
-  }
-
-  _getStoredKeys(key) {
-    return '';
   }
 
   constructor() {
