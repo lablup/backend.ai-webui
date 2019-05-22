@@ -10,7 +10,6 @@ import '../plastics/plastic-material/plastic-material';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-dialog/paper-dialog';
 
-=;
 import '@polymer/paper-input/paper-input';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';

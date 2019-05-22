@@ -1022,7 +1022,7 @@ class BackendAiSessionView extends LitElement {
       html``}
             </div>
             <span class="flex"></span>
-            <mwc-button disabled class="fg custom" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
+            <mwc-button class="fg custom" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
           </h4>
           <div>
             <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
