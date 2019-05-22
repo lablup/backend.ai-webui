@@ -91,6 +91,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       connection_mode: {
         type: String
       },
+      connection_server: {
+        type: String
+      },
       _page: {type: String},
       _drawerOpened: {type: Boolean},
       _offlineIndicatorOpened: {type: Boolean},
@@ -148,6 +151,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
     if (typeof config.general !== "undefined" && 'connectionMode' in config.general) {
       this.connection_mode = config.general.connectionMode;
       console.log(this.connection_mode);
+    }
+    if (typeof config.general !== "undefined" && 'connectionServer' in config.general) {
+      this.connection_server = config.general.connectionServer;
+      console.log(this.connection_server);
     }
     var loginPanel = this.shadowRoot.querySelector('#login-panel');
     loginPanel.refreshPanel(config);

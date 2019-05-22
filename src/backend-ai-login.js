@@ -2,8 +2,7 @@
  * Login implementation of Backend.AI-console
  */
 
-import {html, PolymerElement} from '@polymer/polymer';
-import '@polymer/polymer/lib/elements/dom-if.js';
+import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-styles/typography';
@@ -25,9 +24,9 @@ import '@material/mwc-button';
 
 import './backend.ai-client-es6.js';
 
-import './backend-ai-styles.js';
+import {BackendAiStyles} from "./backend-ai-console-styles";
 
-class BackendAiLogin extends PolymerElement {
+class BackendAiLogin extends LitElement {
   static get is() {
     return 'backend-ai-login';
   }
@@ -41,10 +40,12 @@ class BackendAiLogin extends PolymerElement {
         type: String
       },
       proxy_url: {
-        type: String,
-        value: 'http://127.0.0.1:5050/'
+        type: String
       },
       api_endpoint: {
+        type: String
+      },
+      console_server: {
         type: String
       },
       default_session_environment: {
@@ -63,11 +64,17 @@ class BackendAiLogin extends PolymerElement {
   constructor() {
     super();
     setPassiveTouchGestures(true);
+    this.api_key = '';
+    this.secret_key = '';
+    this.api_endpoint = '';
+    this.proxy_url = 'http://127.0.0.1:5050/';
+    this.console_server = '';
+    this.default_session_environment = '';
+    this.config = null;
   }
 
-  ready() {
-    super.ready();
-    this.$['login-button'].addEventListener('tap', this._login.bind(this));
+  firstUpdated() {
+    this.shadowRoot.querySelector('#login-button').addEventListener('tap', this._login.bind(this));
   }
 
   refreshPanel(config) {
@@ -89,22 +96,27 @@ class BackendAiLogin extends PolymerElement {
         this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'block';
         this.shadowRoot.querySelector('#id_api_endpoint_humanized').value = config.general.apiEndpointText;
       }
-      this.$['id_api_endpoint'].disabled = true;
-      this.$['id_api_endpoint_humanized'].disabled = true;
+      this.shadowRoot.querySelector('#id_api_endpoint').disabled = true;
+      this.shadowRoot.querySelector('#id_api_endpoint_humanized').disabled = true;
     }
-    if (typeof config.defaultSessionEnvironment === "undefined" || config.defaultSessionEnvironment === '') {
+    if (typeof config.general === "undefined" || typeof config.general.defaultSessionEnvironment === "undefined" || config.general.defaultSessionEnvironment === '') {
       this.default_session_environment = '';
     } else {
-      this.default_session_environment = config.defaultSessionEnvironment;
+      this.default_session_environment = config.general.defaultSessionEnvironment;
+    }
+    if (typeof config.general === "undefined" || typeof config.general.consoleServer === "undefined" || config.general.consoleServer === '') {
+      this.console_server = '';
+    } else {
+      this.console_server = config.general.consoleServer;
     }
   }
 
   open() {
-    this.$['login-panel'].open();
+    this.shadowRoot.querySelector('#login-panel').open();
   }
 
   close() {
-    this.$['login-panel'].close();
+    this.shadowRoot.querySelector('#login-panel').close();
   }
 
   login() {
@@ -127,9 +139,9 @@ class BackendAiLogin extends PolymerElement {
   }
 
   _login() {
-    this.api_key = this.$['id_api_key'].value;
-    this.secret_key = this.$['id_secret_key'].value;
-    this.api_endpoint = this.$['id_api_endpoint'].value;
+    this.api_key = this.shadowRoot.querySelector('#id_api_key').value;
+    this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
+    this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this._connect();
   }
@@ -166,25 +178,26 @@ class BackendAiLogin extends PolymerElement {
       document.dispatchEvent(event);
       this.close();
     }).catch((err) => {   // Connection failed
-      if (this.$['login-panel'].opened != true) {
+      if (this.shadowRoot.querySelector('#login-panel').opened != true) {
         if (err.message != undefined) {
-          this.$.notification.text = err.message;
+          this.shadowRoot.querySelector('#notification').text = err.message;
         } else {
-          this.$.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
         }
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').show();
         this.open();
       } else {
-        this.$.notification.text = 'Login failed. Check login information.';
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
 
-  static get template() {
-    // language=HTML
-    return html`
-      <style is="custom-style" include="backend-ai-styles">
+  static get styles() {
+    return [
+      BackendAiStyles,
+      // language=CSS
+      css`
         paper-icon-button {
           --paper-icon-button-ink-color: white;
         }
@@ -214,13 +227,18 @@ class BackendAiLogin extends PolymerElement {
         mwc-button {
           width: 100%;
         }
-      </style>
+      `];
+  }
+
+  render() {
+    // language=HTML
+    return html`
       <app-localstorage-document key="backendaiconsole.email" data="{{email}}"></app-localstorage-document>
       <app-localstorage-document id="storage" key="backendaiconsole.api_key"
-                                 data="{{api_key}}"></app-localstorage-document>
-      <app-localstorage-document key="backendaiconsole.secret_key" data="{{secret_key}}"></app-localstorage-document>
+                                 data="${this.api_key}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
       <app-localstorage-document key="backendaiconsole.api_endpoint"
-                                 data="{{api_endpoint}}"></app-localstorage-document>
+                                 data="${this.api_endpoint}"></app-localstorage-document>
 
       <paper-dialog id="login-panel"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
@@ -229,11 +247,11 @@ class BackendAiLogin extends PolymerElement {
           <form id="login-form" onSubmit="this._login()">
             <fieldset>
               <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
-                           label="API Key" value="{{api_key}}"></paper-input>
+                           label="API Key" value="${this.api_key}"></paper-input>
               <paper-input type="password" name="secret_key" id="id_secret_key"
-                           label="Secret Key" value="{{secret_key}}"></paper-input>
+                           label="Secret Key" value="${this.secret_key}"></paper-input>
               <paper-input type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="API Endpoint" value="{{api_endpoint}}"></paper-input>
+                           label="API Endpoint" value="${this.api_endpoint}"></paper-input>
               <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
                            label="API Endpoint" value=""></paper-input>
