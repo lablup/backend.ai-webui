@@ -126,7 +126,7 @@ class Client {
   async check_login() {
     let rqst = this.newSignedRequest('POST', `/server/login-check`, null);
     let result = await this._wrapWithPromise(rqst);
-    console.log(result.authenticated);
+    return result.authenticated;
   }
   /**
    * Login into console-server with given ID/Password. This requires additional console-server package.
