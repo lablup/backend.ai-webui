@@ -17,7 +17,7 @@ const querystring = require('querystring');
 
 
 class ClientConfig {
-  constructor(accessKey, secretKey, endpoint) {
+  constructor(accessKey, secretKey, endpoint, connectionMode = 'API', consoleServer = '') {
     // fixed configs with this implementation
     this._apiVersionMajor = 'v4';
     this._apiVersion = 'v4.20190115';
@@ -34,7 +34,8 @@ class ClientConfig {
     this._accessKey = accessKey;
     this._secretKey = secretKey;
     this._proxyURL = null;
-    this._connectionMode = 'API';
+    this._connectionMode = connectionMode;
+    this._consoleServer = consoleServer;
   }
 
   get accessKey() {
@@ -71,6 +72,10 @@ class ClientConfig {
 
   get connectionMode() {
     return this._connectionMode;
+  }
+
+  get consoleServer() {
+    return this._consoleServer;
   }
 
   get accessKey() {
@@ -118,7 +123,6 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.resources = new Resources(this);
   }
-
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *

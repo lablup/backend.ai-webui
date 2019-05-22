@@ -118,6 +118,8 @@ class BackendAiLogin extends LitElement {
     } else {
       if (config.general.connectionMode.toUpperCase() === 'SESSION') {
         this.connection_mode = 'SESSION';
+        this.shadowRoot.querySelector('#id_api_key').label = 'ID';
+        this.shadowRoot.querySelector('#id_secret_key').label = 'Password';
       } else {
         this.connection_mode = 'API';
       }
@@ -156,10 +158,24 @@ class BackendAiLogin extends LitElement {
     this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
-    this._connect();
+    this._connectUsingAPI();
   }
 
-  _connect() {
+  _connectUsingSession() {
+    this.clientConfig = new ai.backend.ClientConfig(
+      this.api_key,
+      this.secret_key,
+      this.api_endpoint,
+      'SESSION',
+      this.console_server
+    );
+    this.client = new ai.backend.Client(
+      this.clientConfig,
+      `Backend.AI Console.`,
+    );
+  }
+
+  _connectUsingAPI() {
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
       this.secret_key,
