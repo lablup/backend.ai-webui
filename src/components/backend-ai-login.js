@@ -7,14 +7,12 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '../plastics/plastic-material/plastic-material';
 import '@polymer/paper-toast/paper-toast';
-
 import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-button/paper-button';
-import '@polymer/paper-input/paper-input';
 
+=;
+import '@polymer/paper-input/paper-input';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
-
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import '@material/mwc-button';
 
@@ -22,6 +20,19 @@ import '../backend.ai-client-es6.js';
 
 import {BackendAiStyles} from "../backend-ai-console-styles";
 
+/**
+ Backend.AI Login for GUI Console
+
+ `backend-ai-login` is a login UI / Model to provide both API and session-based login.
+
+ Example:
+
+ <backend-ai-login>
+ ... content ...
+ </backend-ai-login>
+
+ @group Backend.AI Console
+ */
 class BackendAiLogin extends LitElement {
   static get is() {
     return 'backend-ai-login';
@@ -64,6 +75,7 @@ class BackendAiLogin extends LitElement {
     this.secret_key = '';
     this.api_endpoint = '';
     this.proxy_url = 'http://127.0.0.1:5050/';
+    this.connection_mode = 'API';
     this.console_server = '';
     this.default_session_environment = '';
     this.config = null;
@@ -104,6 +116,15 @@ class BackendAiLogin extends LitElement {
       this.console_server = '';
     } else {
       this.console_server = config.general.consoleServer;
+    }
+    if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
+      this.connection_mode = 'API';
+    } else {
+      if (config.general.connectionMode.toUpperCase() === 'SESSION') {
+        this.connection_mode = 'SESSION';
+      } else {
+        this.connection_mode = 'API';
+      }
     }
   }
 
