@@ -123,6 +123,14 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.resources = new Resources(this);
   }
+
+  /**
+   * Login into console-server with given ID/Password. This requires additional console-server package.
+   *
+   */
+  login() {
+
+  }
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
