@@ -132,7 +132,11 @@ class BackendAiLogin extends LitElement {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
     if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      this._connect();
+      if (this.connection_mode === 'SESSION') {
+        this._connectUsingSession();
+      } else {
+        this._connectUsingAPI();
+      }
     } else {
       this.open();
     }
@@ -168,6 +172,7 @@ class BackendAiLogin extends LitElement {
       this.clientConfig,
       `Backend.AI Console.`,
     );
+
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
       this.client.login().then(response => {
@@ -199,6 +204,7 @@ class BackendAiLogin extends LitElement {
           this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
           this.shadowRoot.querySelector('#notification').show();
         }
+        this.open();
       });
     }
   }
@@ -248,6 +254,7 @@ class BackendAiLogin extends LitElement {
         this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
         this.shadowRoot.querySelector('#notification').show();
       }
+      this.open();
     });
   }
 

@@ -260,7 +260,12 @@ class Client {
 
   async check_login() {
     let rqst = this.newSignedRequest('POST', `/server/login-check`, null);
-    let result = await this._wrapWithPromise(rqst);
+    let result;
+    try {
+      result = await this._wrapWithPromise(rqst);
+    } catch (err) {
+      return false;
+    }
     return result.authenticated;
   }
   /**
