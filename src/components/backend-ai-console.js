@@ -354,6 +354,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
           -webkit-user-select: none !important;
           -webkit-app-region: drag !important;
         }
+
+        mwc-tab {
+          color: #ffffff;
+        }
+
       `];
   }
 
@@ -481,8 +486,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
               </div>
               <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
             </app-toolbar>
-            <div class="horizontal layout">
-              <h2 main-title>${this.menuTitle}</h2>
+            <div class="horizontal flex wrap layout">
+              <h2 main-title style="width:150px;">${this.menuTitle}</h2>
               <div id="top-tab-menu"></div>
             </div>
           </app-header>

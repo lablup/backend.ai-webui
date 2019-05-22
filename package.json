@@ -14,6 +14,8 @@
     "polymer": "node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
   },
   "dependencies": {
+    "@authentic/mwc-tab": "^0.5.2",
+    "@authentic/mwc-tab-bar": "^0.5.2",
     "@material/elevation": "^0.44.1",
     "@material/mwc-button": "^0.3.6",
     "@material/mwc-checkbox": "^0.3.6",

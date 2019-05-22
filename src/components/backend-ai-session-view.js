@@ -12,6 +12,8 @@ import '../plastics/plastic-material/plastic-material';
 import '@polymer/iron-collapse/iron-collapse';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
+import '@polymer/paper-tabs/paper-tabs';
+import '@polymer/paper-tabs/paper-tab';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
@@ -29,6 +31,9 @@ import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import '../backend-ai-session-list.js';
 import './backend-ai-dropdown-menu';
 import '@material/mwc-button';
+import '@authentic/mwc-tab';
+import '@authentic/mwc-tab-bar';
+
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
@@ -194,12 +199,15 @@ class BackendAiSessionView extends LitElement {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
+    //this._initTabBar();
   }
 
   _initTabBar() {
     /* Test code */
     let b = document.body.querySelector('#console-shell');
     let c = b.shadowRoot.querySelector('#top-tab-menu');
+    let d = this.shadowRoot.querySelector('#topbar-tabs');
+    c.appendChild(d);
   }
 
   _initAliases() {
@@ -978,6 +986,10 @@ class BackendAiSessionView extends LitElement {
     // language=HTML
     return html`
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <paper-tabs id="topbar-tabs" style="display:none;">
+        <paper-tab>Running</paper-tab>
+        <paper-tab>Finished</paper-tab>
+      </paper-tabs>
       <plastic-material class="item" elevation="1">
         <h4 class="horizontal center layout">
           <span>Running</span>
