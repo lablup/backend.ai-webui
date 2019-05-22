@@ -5,11 +5,7 @@
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
 import '../plastics/plastic-material/plastic-material';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-toast/paper-toast';
 
 import '@polymer/paper-dialog/paper-dialog';
