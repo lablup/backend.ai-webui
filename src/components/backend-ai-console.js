@@ -44,7 +44,7 @@ import '../backend.ai-client-es6.js';
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 import '../backend-ai-offline-indicator.js';
-import '../backend-ai-login.js';
+import './backend-ai-login.js';
 
 
 /**

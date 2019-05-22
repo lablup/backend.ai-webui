@@ -7,7 +7,7 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import './plastics/plastic-material/plastic-material';
+import '../plastics/plastic-material/plastic-material';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-toast/paper-toast';
@@ -22,9 +22,9 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import '@material/mwc-button';
 
-import './backend.ai-client-es6.js';
+import '../backend.ai-client-es6.js';
 
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "../backend-ai-console-styles";
 
 class BackendAiLogin extends LitElement {
   static get is() {
