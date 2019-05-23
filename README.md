@@ -145,6 +145,8 @@ Example:
 $ make web site=beta
 ```
 
+You can manually modify config.ini for your need.
+
 ## App Building Guide
 ### Building Electron App
 
