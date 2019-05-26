@@ -1,6 +1,6 @@
 {
   "description": "Backend.AI Console",
-  "manifest_version": 3,
+  "manifest_version": 4,
   "name": "Backend.AI Console",
   "short_name": "BackendAIConsole",
   "version": "19.03.2",
