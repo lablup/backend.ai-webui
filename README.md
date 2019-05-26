@@ -45,13 +45,16 @@ Backend.AI Console uses `config.ini` located in app root directory. You can prep
 These are options in `config.ini`.
 
 ```
+[general]
 apiEndpoint = [Default API Endpoint. If blank, user input field will be shown.]
 apiEndpointText = [Placeholder text instead of API endpoint input field.]
 defaultSessionEnvironment = [Default session kernel. If blank, alphabetically first kernel will be default.]
+siteDescription = [Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]
+connectionMode = [Connection mode. Default is API. Currenly supports API and SESSION]
+[wsproxy]
 proxyURL = [Proxy URL]
 proxyBaseURL = [Base URL of websocket proxy,]
 proxyListenIP = [Websocekt proxy configuration IP.]
-siteDescription = [Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]
 ```
 
 ## Development Guide
