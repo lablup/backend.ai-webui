@@ -13,7 +13,7 @@ import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
-import '@material/mwc-button';
+import 'weightless/button';
 import '@material/mwc-checkbox';
 
 import '../backend-ai-resource-template-list';
@@ -54,7 +54,7 @@ class BackendAiEnvironmentView extends LitElement {
         <h3 class="horizontal center layout">
           <span>Images</span>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="add-image" disabled outlined label="Add" icon="add"></mwc-button>
+          <wl-button id="add-image" flat inverted outlined disabled label="Add" icon="add">Add</wl-button>
         </h3>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid">
@@ -186,7 +186,7 @@ class BackendAiEnvironmentView extends LitElement {
         <h3 class="horizontal center layout">
           <span>Resource Templates</span>
           <span class="flex"></span>
-          <mwc-button class="fg red" id="add-image" disabled outlined label="Add" icon="add"></mwc-button>
+          <wl-button class="fg red" id="add-image" disabled outlined label="Add" icon="add"></wl-button>
         </h3>
         <backend-ai-resource-template-list></backend-ai-resource-template-list>
       </plastic-material>

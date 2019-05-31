@@ -10,7 +10,8 @@ import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
 import '../plastics/plastic-material/plastic-material';
-import '@material/mwc-button';
+import 'weightless/button';
+import 'weightless/icon';
 
 class BackendAiMaintenanceView extends LitElement {
   static get is() {
@@ -51,6 +52,11 @@ class BackendAiMaintenanceView extends LitElement {
           padding: 15px;
         }
 
+        wl-button {
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-red-100);
+        }
+
       `];
   }
 
@@ -73,7 +79,10 @@ class BackendAiMaintenanceView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-button class="fg red" outlined label="Recalculate usage" icon="refresh"></mwc-button>
+              <wl-button class="fg red" outlined label="Recalculate usage" icon="refresh">
+                <wl-icon>refresh</wl-icon>
+                Recalculate usage
+              </wl-button>
             </div>
           </div>
         </div>
@@ -86,7 +95,10 @@ class BackendAiMaintenanceView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-button class="fg red" outlined label="Rescan images" icon="refresh"></mwc-button>
+              <wl-button class="fg red" outlined label="Rescan images" icon="refresh">
+                <wl-icon>refresh</wl-icon>
+                Rescan images
+              </wl-button>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
@@ -96,7 +108,10 @@ class BackendAiMaintenanceView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-button class="fg red" outlined label="Clean up images" icon="delete"></mwc-button>
+              <wl-button class="fg red" outlined label="Clean up images" icon="delete">
+                <wl-icon>delete</wl-icon>
+                Clean up images
+              </wl-button>
             </div>
           </div>
         </div>

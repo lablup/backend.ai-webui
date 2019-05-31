@@ -30,7 +30,8 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import '../backend-ai-session-list.js';
 import './backend-ai-dropdown-menu';
-import '@material/mwc-button';
+import 'weightless/button';
+import 'weightless/icon';
 //import '@authentic/mwc-tab';
 //import '@authentic/mwc-tab-bar';
 
@@ -825,7 +826,7 @@ class BackendAiSessionView extends LitElement {
 
   _chooseResourceTemplate(e) {
     const termButton = e.target;
-    const button = e.target.closest('mwc-button');
+    const button = e.target.closest('wl-button');
     const cpu = button.cpu;
     const mem = button.mem;
     const gpu = button.gpu;
@@ -874,8 +875,8 @@ class BackendAiSessionView extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        mwc-button.launch-button {
-          width: 100%;
+        wl-button.launch-button {
+          width: 300px;
         }
 
         plastic-material h4 {
@@ -948,7 +949,9 @@ class BackendAiSessionView extends LitElement {
         .resource-button {
           height: 140px;
           width: 120px;
+          margin: 5px;
           padding: 0;
+          font-size: 14px;
         }
 
         .resource-button h4 {
@@ -966,14 +969,14 @@ class BackendAiSessionView extends LitElement {
           width: 100%;
         }
 
-        mwc-button.resource-button {
+        wl-button.resource-button {
           --mdc-theme-on-primary: white;
           --mdc-theme-primary: #89A;
           --mdc-theme-on-secondary: white;
           --mdc-theme-secondary: white;
         }
 
-        mwc-button.iron-selected {
+        wl-button.iron-selected {
           --mdc-theme-on-primary: white;
           --mdc-theme-primary: #e9437a;
           --mdc-theme-on-secondary: white;
@@ -1034,7 +1037,10 @@ class BackendAiSessionView extends LitElement {
       html``}
             </div>
             <span class="flex"></span>
-            <mwc-button class="fg custom" id="launch-session" outlined label="Launch" icon="add"></mwc-button>
+            <wl-button id="launch-session" inverted outlined>
+              <wl-icon>add</wl-icon>
+              Start
+            </wl-button>
           </h4>
           <div>
             <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
@@ -1094,14 +1100,14 @@ class BackendAiSessionView extends LitElement {
                       <paper-listbox selected="0" class="horizontal center layout"
                                      style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
-                    <mwc-button class="fg red resource-button vertical center start layout" role="option"
+                    <wl-button class="resource-button vertical center start layout" role="option"
                                 style="height:140px;min-width:120px;"
+                                flat inverted outlined 
                                 @click="${this._chooseResourceTemplate}"
                                 id="${item.name}-button"
                                 .cpu="${item.cpu}"
                                 .mem="${item.mem}"
-                                .gpu="${item.gpu}"
-                                outlined>
+                                .gpu="${item.gpu}">
                       <div>
                         <h4>${item.name}</h4>
                         <ul>
@@ -1110,20 +1116,19 @@ ${this.resource_templates.map(item => html`
                           ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} vGPU</li>`}
                           </ul>
                       </div>
-                    </mwc-button>
+                    </wl-button>
                   `)}
                   ${this.isEmpty(this.resource_templates) ?
       html`
-                    <mwc-button class="fg red resource-button vertical center start layout" role="option"
+                    <wl-button class="resource-button vertical center start layout" role="option"
                                 style="height:140px;width:250px;"
-                                disabled
-                                outlined>
+                                flat inverted outlined disabled>
                       <div>
                         <h4>No suitable preset</h4>
                         <div>Not enough resource.</div>
                         <div>Use advanced settings to start custom session</div>
                       </div>
-                    </mwc-button>
+                    </wl-button>
 ` : html``}
                 </paper-listbox>
                 <div class="horizontal end-justified layout">
@@ -1155,9 +1160,11 @@ ${this.resource_templates.map(item => html`
                   </div>
                 </iron-collapse>
                 <br/>
-                <mwc-button class="blue launch-button" type="submit" id="launch-button" icon="rowing">
+                <wl-button class="launch-button" type="submit" id="launch-button"
+                                                 outlined>
+                                                <wl-icon>rowing</wl-icon>
                   <span id="launch-button-msg">Launch</span>
-                </mwc-button>
+                </wl-button>
               </fieldset>
             </form>
           </plastic-material>

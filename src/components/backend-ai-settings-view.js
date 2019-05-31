@@ -15,7 +15,6 @@ import '../plastics/plastic-material/plastic-material';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
-import '@material/mwc-button';
 import '@material/mwc-switch';
 
 class BackendAiSettingsView extends LitElement {
