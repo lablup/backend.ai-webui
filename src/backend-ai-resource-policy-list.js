@@ -17,7 +17,8 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
-import '@material/mwc-button';
+import 'weightless/button';
+import 'weightless/icon';
 
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
@@ -367,7 +368,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
           padding-right: 5px;
         }
 
-        mwc-button.create-button {
+        wl-button.create-button {
           width: calc(100% - 40px);
         }
 
@@ -380,7 +381,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
           padding-right: 20px;
         }
 
-        fieldset mwc-button {
+        fieldset wl-button {
           padding-left: 20px;
           padding-right: 20px;
           padding-bottom: 20px;
@@ -604,8 +605,11 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
               </div>
 
               <br/><br/>
-              <mwc-button class="fg blue create-button" id="create-policy-button" outlined label="Create"
-                          icon="add"></mwc-button>
+              <wl-button class="fg blue create-button" id="create-policy-button" outlined>
+                <wl-icon>add</wl-icon>
+                Create
+              </wl-button>
+              
             </fieldset>
           </form>
         </plastic-material>
