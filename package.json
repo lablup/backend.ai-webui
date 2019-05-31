@@ -59,7 +59,8 @@
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "chartjs-web-components": "^2.7.1",
     "i18n-element": "^3.0.0",
-    "lit-element": "^2.1.0"
+    "lit-element": "^2.1.0",
+    "weightless": "^0.0.34"
   },
   "devDependencies": {
     "buffer": "^5.2.1",
