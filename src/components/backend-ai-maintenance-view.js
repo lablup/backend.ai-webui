@@ -55,6 +55,7 @@ class BackendAiMaintenanceView extends LitElement {
         wl-button {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-100);
         }
 
       `];

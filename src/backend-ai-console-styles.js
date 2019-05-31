@@ -115,7 +115,6 @@ export const BackendAiStyles =
     footer a {
       color: #ccc !important;
     }
-
     #content {
       padding: 0 auto;
       margin: 0 auto 45px auto;
@@ -1213,5 +1212,11 @@ export const BackendAiStyles =
     paper-toast paper-icon-button {
       display: inline-block;
       color: #ffffff;
+    }
+
+    /* Button */
+    wl-button {
+      --button-padding: 8px;
+      --button-font-size: 14px;
     }
   `;

@@ -875,10 +875,6 @@ class BackendAiSessionView extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        wl-button.launch-button {
-          width: 300px;
-        }
-
         plastic-material h4 {
           padding: 5px 20px;
           border-bottom: 1px solid #ddd;
@@ -969,18 +965,26 @@ class BackendAiSessionView extends LitElement {
           width: 100%;
         }
 
-        wl-button.resource-button {
-          --mdc-theme-on-primary: white;
-          --mdc-theme-primary: #89A;
-          --mdc-theme-on-secondary: white;
-          --mdc-theme-secondary: white;
+        #launch-session {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
         }
 
-        wl-button.iron-selected {
-          --mdc-theme-on-primary: white;
-          --mdc-theme-primary: #e9437a;
-          --mdc-theme-on-secondary: white;
-          --mdc-theme-secondary: #e9437a;
+        wl-button.launch-button {
+          width: 335px;
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
+        wl-button.resource-button {
+          --button-bg: white;
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: #89A;
+          --button-color-active: red;
+          --button-color-hover: red;
         }
       `];
   }
@@ -1037,7 +1041,7 @@ class BackendAiSessionView extends LitElement {
       html``}
             </div>
             <span class="flex"></span>
-            <wl-button id="launch-session" inverted outlined>
+            <wl-button class="fg red" id="launch-session" outlined>
               <wl-icon>add</wl-icon>
               Start
             </wl-button>
@@ -1101,8 +1105,8 @@ class BackendAiSessionView extends LitElement {
                                      style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
                     <wl-button class="resource-button vertical center start layout" role="option"
-                                style="height:140px;min-width:120px;"
-                                flat inverted outlined 
+                                style="height:140px;min-width:120px;" type="button"
+                                flat outlined 
                                 @click="${this._chooseResourceTemplate}"
                                 id="${item.name}-button"
                                 .cpu="${item.cpu}"
@@ -1121,7 +1125,7 @@ ${this.resource_templates.map(item => html`
                   ${this.isEmpty(this.resource_templates) ?
       html`
                     <wl-button class="resource-button vertical center start layout" role="option"
-                                style="height:140px;width:250px;"
+                                style="height:140px;width:250px;" type="button"
                                 flat inverted outlined disabled>
                       <div>
                         <h4>No suitable preset</h4>
@@ -1160,7 +1164,7 @@ ${this.resource_templates.map(item => html`
                   </div>
                 </iron-collapse>
                 <br/>
-                <wl-button class="launch-button" type="submit" id="launch-button"
+                <wl-button class="launch-button fg red" type="button" id="launch-button"
                                                  outlined>
                                                 <wl-icon>rowing</wl-icon>
                   <span id="launch-button-msg">Launch</span>

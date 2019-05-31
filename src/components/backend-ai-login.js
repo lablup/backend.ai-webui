@@ -14,7 +14,8 @@ import '@polymer/paper-input/paper-input';
 import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
-import '@material/mwc-button';
+import 'weightless/button';
+import 'weightless/icon';
 
 import '../backend.ai-client-es6.js';
 
@@ -289,8 +290,11 @@ class BackendAiLogin extends LitElement {
           border-bottom: 1.5px solid #0d47a1;
         }
 
-        mwc-button {
-          width: 100%;
+        wl-button {
+          width: 300px;
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
         }
       `];
   }
@@ -321,8 +325,10 @@ class BackendAiLogin extends LitElement {
                            style="display:none;"
                            label="API Endpoint" value=""></paper-input>
               <br/><br/>
-              <mwc-button class="fg red" id="login-button" outlined label="Login" icon="check" type="submit"
-                          dialog-confirm></mwc-button>
+              <wl-button class="fg red" id="login-button" outlined type="button"
+                          dialog-confirm>
+                          <wl-icon>check</wl-icon>
+                          Login</wl-button>
             </fieldset>
           </form>
         </plastic-material>

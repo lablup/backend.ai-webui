@@ -29,7 +29,8 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
 import '@vaadin/vaadin-item/vaadin-item.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js';
 
-import '@material/mwc-button';
+import 'weightless/button';
+import 'weightless/icon';
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
@@ -569,13 +570,22 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           padding: 10px 30px;
         }
 
+        wl-button {
+          --button-bg: var(--paper-orange-50);
+          --button-bg-hover: var(--paper-orange-100);
+          --button-bg-active: var(--paper-orange-600);
+        }
+
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <plastic-material class="item" elevation="1" style="padding-bottom:20px;">
         <h4 class="horizontal center layout">
           <span>Virtual Folders</span>
-          <mwc-button class="fg red" id="add-folder" outlined label="Add new folder" icon="add"></mwc-button>
+          <wl-button class="fg red" id="add-folder" outlined>
+            <wl-icon>add</wl-icon>
+            New folder
+          </wl-button>
         </h4>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Folder list" items="[[folders]]">

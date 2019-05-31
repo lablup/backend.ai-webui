@@ -1590,6 +1590,13 @@ const template =
             margin: 0;
             background: transparent;
           }
+
+          /* Button */
+          wl-button {
+            --button-padding: 8px;
+            --button-font-size: 14px;
+          }
+
         </style>
       </template>
     </dom-module>`;
