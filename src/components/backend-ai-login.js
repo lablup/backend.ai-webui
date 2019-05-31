@@ -291,7 +291,7 @@ class BackendAiLogin extends LitElement {
         }
 
         wl-button {
-          width: 300px;
+          width: 335px;
           --button-bg: transparent;
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
