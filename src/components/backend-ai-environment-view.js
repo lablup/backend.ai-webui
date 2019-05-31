@@ -14,6 +14,8 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
 import 'weightless/button';
+import 'weightless/icon';
+
 import '@material/mwc-checkbox';
 
 import '../backend-ai-resource-template-list';
@@ -54,7 +56,9 @@ class BackendAiEnvironmentView extends LitElement {
         <h3 class="horizontal center layout">
           <span>Images</span>
           <span class="flex"></span>
-          <wl-button id="add-image" flat inverted outlined disabled label="Add" icon="add">Add</wl-button>
+          <wl-button id="add-image" flat inverted outlined disabled>
+            <wl-icon>add</wl-icon>
+            Add</wl-button>
         </h3>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid">
