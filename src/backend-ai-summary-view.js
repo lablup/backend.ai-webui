@@ -44,7 +44,7 @@ class BackendAISummary extends PolymerElement {
         type: Number,
         value: 0
       },
-      is_admin: {
+      is_superadmin: {
         type: Boolean,
         value: false
       },
@@ -93,7 +93,7 @@ class BackendAISummary extends PolymerElement {
 
   _refreshHealthPanel() {
     this._refreshSessionInformation();
-    if (this.is_admin) {
+    if (this.is_superadmin) {
       this._refreshAgentInformation();
     }
   }
@@ -232,13 +232,13 @@ class BackendAISummary extends PolymerElement {
     if (window.backendaiclient == undefined || window.backendaiclient == null) {
       document.addEventListener('backend-ai-connected', () => {
         this._init_resource_values();
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
         this._refreshHealthPanel();
       }, true);
     } else {
       this._init_resource_values();
-      this.is_admin = window.backendaiclient.is_admin;
+      this.is_superadmin = window.backendaiclient.is_superadmin;
       this.authenticated = true;
       this._refreshHealthPanel();
     }
@@ -302,7 +302,7 @@ class BackendAISummary extends PolymerElement {
           <lablup-activity-panel title="Health" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <template is="dom-if" if="{{is_admin}}">
+                <template is="dom-if" if="{{is_superadmin}}">
                   <div class="vertical layout center">
                     <div class="big indicator">[[agents]]</div>
                     <span>Connected nodes</span>
@@ -318,7 +318,7 @@ class BackendAISummary extends PolymerElement {
 
           <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
-              <template is="dom-if" if="{{is_admin}}">
+              <template is="dom-if" if="{{is_superadmin}}">
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
                     <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
@@ -379,7 +379,7 @@ class BackendAISummary extends PolymerElement {
                   <div>vGPU disabled on this cluster.</div>
                 </template>
               </template>
-              <template is="dom-if" if="{{!is_admin}}">
+              <template is="dom-if" if="{{!is_superadmin}}">
                 <ul>
                   <li>Login with administrator privileges required.</li>
                 </ul>
@@ -389,7 +389,7 @@ class BackendAISummary extends PolymerElement {
         </div>
         <h3 class="plastic-material-title">Actions</h3>
         <div class="horizontal wrap layout">
-          <template is="dom-if" if="{{is_admin}}">
+          <template is="dom-if" if="{{is_superadmin}}">
             <lablup-activity-panel title="Keypair" elevation="1">
               <div slot="message">
                 <ul>
