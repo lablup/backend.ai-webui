@@ -141,6 +141,16 @@ class Client {
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     return this._wrapWithPromise(rqst);
   }
+
+  /**
+   * Logout from console-server. This requires additional console-server package.
+   *
+   */
+  logout() {
+    let body = {};
+    let rqst = this.newSignedRequest('POST', `/server/logout`, body);
+    return this._wrapWithPromise(rqst);
+  }
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
