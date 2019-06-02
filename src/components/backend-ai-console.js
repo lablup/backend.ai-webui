@@ -315,7 +315,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
   changeGroup(e) {
     window.backendaiclient.current_group = e.target.value;
     this.current_group = window.backendaiclient.current_group;
-    console.log(window.backendaiclient.current_group);
+    var event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
+    document.dispatchEvent(event);
   }
   static get styles() {
     return [
