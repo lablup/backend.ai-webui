@@ -495,14 +495,14 @@ class BackendAiSessionView extends LitElement {
       this.resource_info = group_resource;
       let resource_limit = response.keypair_limits;
       if ('cpu' in resource_limit) {
-        if (resource_limit['cpu'] == 'Infinity') {
+        if (resource_limit['cpu'] === 'Infinity') {
           total_slot['cpu_slot'] = this.resource_info.cpu;
         } else {
           total_slot['cpu_slot'] = resource_limit['cpu'];
         }
       }
       if ('mem' in resource_limit) {
-        if (resource_limit['mem'] == 'Infinity') {
+        if (resource_limit['mem'] === 'Infinity') {
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resource_info.mem, 'g'));
         } else {
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'], 'g'));
@@ -510,14 +510,14 @@ class BackendAiSessionView extends LitElement {
       }
       total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
       if ('cuda.device' in resource_limit) {
-        if (resource_limit['cuda.device'] == 'Infinity') {
+        if (resource_limit['cuda.device'] === 'Infinity') {
           total_slot['gpu_slot'] = this.resource_info['cuda.device'];
         } else {
           total_slot['gpu_slot'] = resource_limit['cuda.device'];
         }
       }
       if ('cuda.shares' in resource_limit) {
-        if (resource_limit['cuda.shares'] == 'Infinity') {
+        if (resource_limit['cuda.shares'] === 'Infinity') {
           total_slot['vgpu_slot'] = this.resource_info['cuda.shares'];
         } else {
           total_slot['vgpu_slot'] = resource_limit['cuda.shares'];
@@ -527,20 +527,28 @@ class BackendAiSessionView extends LitElement {
       let used_slot = {};
       let resource_remaining = response.keypair_remaining;
       let resource_using = response.keypair_using;
-      if ('cpu' in resource_remaining) {
-        remaining_slot['cpu_slot'] = resource_remaining['cpu'];
+      if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
         if ('cpu' in resource_using) {
           used_slot['cpu_slot'] = resource_using['cpu'];
         } else {
           used_slot['cpu_slot'] = 0;
         }
+        if (resource_remaining['cpu'] === 'Infinity') {  // Monkeypatch: manager reports Infinity to mem.
+          remaining_slot['cpu_slot'] = total_slot['cpu_slot'] - used_slot['cpu_slot'];
+        } else {
+          remaining_slot['cpu_slot'] = resource_remaining['cpu'];
+        }
       }
       if ('mem' in resource_remaining) {
-        remaining_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_remaining['mem'], 'g'));
         if ('mem' in resource_using) {
           used_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_using['mem'], 'g'));
         } else {
           used_slot['mem_slot'] = 0.0;
+        }
+        if (resource_remaining['mem'] === 'Infinity') {  // Monkeypatch: manager reports Infinity to mem.
+          remaining_slot['mem_slot'] = total_slot['mem_slot'] - used_slot['mem_slot'];
+        } else {
+          remaining_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_remaining['mem'], 'g'));
         }
       }
       used_slot['mem_slot'] = used_slot['mem_slot'].toFixed(2);
@@ -575,6 +583,7 @@ class BackendAiSessionView extends LitElement {
         }
         if (slot in remaining_slot) {
           if (remaining_slot[slot] === 'Infinity') {
+            console.log(slot);
             remaining_slot[slot] = total_slot[slot];
           }
         }
@@ -725,7 +734,7 @@ class BackendAiSessionView extends LitElement {
                 mem_metric.max = parseFloat(user_mem_max);
               }
             } else {
-              if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && mem_metric.max !== NaN) {
+              if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && isNaN(mem_metric.max) !== true) {
                 mem_metric.max = Math.min(parseFloat(window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem_slot']);
               } else {
                 mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
@@ -735,6 +744,7 @@ class BackendAiSessionView extends LitElement {
               // TODO: dynamic maximum per user policy
             }
             this.mem_metric = mem_metric;
+            console.log(mem_metric);
           }
         });
         if (this.gpu_metric === {}) {
