@@ -180,20 +180,44 @@ class BackendAiLogin extends LitElement {
 
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
-      this.client.login().then(response => { // TODO : upgrade to new parameters
+      this.client.login().then(response => { 
         window.backendaiclient = this.client;
-        let email = this.api_key;
-        let is_admin = response.is_admin;
+        window.backendaiclient._config.accessKey = response.access_key;
         let resource_policy = response['keypair'].resource_policy;
+        window.backendaiclient.resource_policy = resource_policy;
+        let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups"];
+        let q = `query { user { ${fields.join(" ")} } }`;
+        let v = {'uuid': response['keypair'].user};
+        return this.client.gql(q, v);
+      }).then(response => {
+        let email = response['user'].email;
         if (this.email != email) {
           this.email = email;
         }
+        let groups = response['user'].groups;
+        window.backendaiclient.groups = groups.map((item) => {
+          item = item.replace(/\'/g, '"');
+          const parsedItem = JSON.parse(item);
+          return parsedItem.name;
+        });
+        let role = response['user'].role;
+        let domain_name = response['user'].domain_name;
+        this.domain_name = domain_name;
         window.backendaiclient.email = this.email;
-        window.backendaiclient.is_admin = is_admin;
-        window.backendaiclient.resource_policy = resource_policy;
+        window.backendaiclient.current_group = window.backendaiclient.groups[0];
+        window.backendaiclient.is_admin = false;
+        window.backendaiclient.is_superadmin = false;
+
+        if (["superadmin", "admin"].includes(role)) {
+          window.backendaiclient.is_admin = true;
+        }
+        if (["superadmin"].includes((role))) {
+          window.backendaiclient.is_superadmin = true;
+        }
         window.backendaiclient._config._proxyURL = this.proxy_url;
+        window.backendaiclient._config.domainName = this.domain_name;
         window.backendaiclient._config.default_session_environment = this.default_session_environment;
-        var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
+        let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
         document.dispatchEvent(event);
         this.close();
       }).catch((err) => {   // Connection failed
@@ -245,10 +269,10 @@ class BackendAiLogin extends LitElement {
       }
       let groups = response['user'].groups;
       window.backendaiclient.groups = groups.map((item) => {
-        item = item.replace(/\'/g, '"');
-        const parsedItem = JSON.parse(item);
-        return parsedItem.name;
-      });
+        item = item.replace(/\'/g, '"');
+        const parsedItem = JSON.parse(item);
+        return parsedItem.name;
+      });
       let role = response['user'].role;
       let domain_name = response['user'].domain_name;
       this.domain_name = domain_name;
