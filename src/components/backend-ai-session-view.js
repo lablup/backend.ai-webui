@@ -36,8 +36,6 @@ import 'weightless/dialog';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
-//import '@authentic/mwc-tab';
-//import '@authentic/mwc-tab-bar';
 
 class BackendAiSessionView extends LitElement {
   static get is() {
