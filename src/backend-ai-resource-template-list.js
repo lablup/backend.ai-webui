@@ -17,7 +17,8 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
-import '@material/mwc-button';
+import 'weightless/button';
+import 'weightless/icon';
 
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
@@ -422,8 +423,9 @@ class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <mwc-button class="fg blue create-button" id="create-policy-button" outlined label="Create"
-                          icon="add"></mwc-button>
+              <wl-button class="fg blue create-button" id="create-policy-button" outlined>
+                <wl-icon>add</wl-icon>
+                Add</wl-button>
             </fieldset>
           </form>
         </plastic-material>

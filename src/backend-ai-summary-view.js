@@ -206,7 +206,6 @@ class BackendAISummary extends PolymerElement {
     } else {
       this.gpu_total = this.resources.gpu.total;
     }
-    console.log(this.gpu_total);
     if (isNaN(this.resources.vgpu.total)) {
       this.vgpu_total = null;
     } else {
