@@ -579,8 +579,12 @@ class Client {
     } else {
       hdrs.set('Content-Type', content_type);
     }
-    let uri = this._config.endpoint + queryString;
-
+    let uri;
+    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
+      uri = this._config.endpoint + '/func' + queryString;
+    } else {
+      uri = this._config.endpoint + queryString;
+    }
 
     let requestInfo = {
       method: method,
@@ -614,9 +618,14 @@ class Client {
       method: method,
       headers: hdrs,
       mode: 'cors',
-      cache: 'default',
-      uri: this._config.endpoint + queryString,
+      cache: 'default'
     };
+    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
+      requestInfo.uri = this._config.endpoint + '/func' + queryString;
+    } else {
+      requestInfo.uri = this._config.endpoint + queryString;
+    }
+
     return requestInfo;
   }
 
