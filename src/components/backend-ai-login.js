@@ -222,7 +222,7 @@ class BackendAiLogin extends LitElement {
     );
 
     // Test connection
-    let fields = ["user_id", "is_admin", "resource_policy"];
+    let fields = ["user_id", "is_admin", "resource_policy", "user"];
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
 
