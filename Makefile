@@ -31,10 +31,12 @@ dep:
 	if [ ! -d "./build/bundle/" ];then \
 		make compile; \
 	fi
+	rm -rf build/electron-app
 	mkdir -p build/electron-app
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/bundle build/electron-app/app
+	cp ./config.ini ./build/electron-app/app/config.ini
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	mkdir -p ./build/electron-app/app/wsproxy/config

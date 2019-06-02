@@ -129,7 +129,13 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
-    this._parseConfig('../../config.ini').then(() => {
+    let configPath;
+    if (window.isElectron) {
+      configPath = './config.ini';
+    } else {
+      configPath = '../../config.ini';
+    }
+    this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
       if (window.backendaiclient == undefined || window.backendaiclient == null) {
         this.shadowRoot.querySelector('#login-panel').login();
