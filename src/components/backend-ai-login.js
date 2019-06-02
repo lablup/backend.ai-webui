@@ -305,7 +305,9 @@ class BackendAiLogin extends LitElement {
         fieldset input:focus {
           border-bottom: 1.5px solid #0d47a1;
         }
-
+        #login-panel {
+          --dialog-width: 400px;
+        }
         wl-button {
           width: 335px;
           --button-bg: transparent;

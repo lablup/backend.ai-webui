@@ -32,6 +32,8 @@ import '../backend-ai-session-list.js';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/icon';
+import 'weightless/dialog';
+
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 //import '@authentic/mwc-tab';
