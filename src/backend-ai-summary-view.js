@@ -201,9 +201,17 @@ class BackendAISummary extends PolymerElement {
   _sync_resource_values() {
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
-    this.gpu_total = this.resources.gpu.total;
-    this.vgpu_total = this.resources.vgpu.total;
-
+    if (isNaN(this.resources.gpu.total)) {
+      this.gpu_total = null;
+    } else {
+      this.gpu_total = this.resources.gpu.total;
+    }
+    console.log(this.gpu_total);
+    if (isNaN(this.resources.vgpu.total)) {
+      this.vgpu_total = null;
+    } else {
+      this.vgpu_total = this.resources.vgpu.total;
+    }
     this.cpu_used = this.resources.cpu.used;
     this.mem_used = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
     this.gpu_used = this.resources.gpu.used;
@@ -376,7 +384,7 @@ class BackendAISummary extends PolymerElement {
                   </div>
                 </template>
                 <template is="dom-if" if="[[!vgpu_total]]">
-                  <div>vGPU disabled on this cluster.</div>
+                  <div>GPU disabled on this cluster.</div>
                 </template>
               </template>
               <template is="dom-if" if="{{!is_superadmin}}">
