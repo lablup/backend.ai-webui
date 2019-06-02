@@ -315,7 +315,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   changeGroup(e) {
     window.backendaiclient.current_group = e.target.value;
     this.current_group = window.backendaiclient.current_group;
-    var event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
+    let event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
   static get styles() {
@@ -410,7 +410,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <span class="flex"></span>
               </div>
             </app-header>
-            <wl-select label="Group" @input="${this.changeGroup}">
+            <wl-select id="group-select" name="group-select" label="Group" 
+              @input="${this.changeGroup}" .value="${this.current_group}">
+               <option value disabled>Select group</option>
                 ${this.groups.map(group => html`
                 <option value="${group}" ?selected="${this.current_group === group}">${group}</option>
                 `)}
