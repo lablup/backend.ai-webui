@@ -17,7 +17,6 @@
     "@authentic/mwc-tab": "^0.5.2",
     "@authentic/mwc-tab-bar": "^0.5.2",
     "@material/elevation": "^0.44.1",
-    "@material/mwc-button": "^0.3.6",
     "@material/mwc-checkbox": "^0.3.6",
     "@material/mwc-switch": "^0.3.6",
     "@material/top-app-bar": "^2.1.0",
