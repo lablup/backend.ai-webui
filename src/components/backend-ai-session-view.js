@@ -33,6 +33,7 @@ import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
+import 'weightless/expansion';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
@@ -173,7 +174,7 @@ class BackendAiSessionView extends LitElement {
     this.shadowRoot.querySelector('#launch-button').addEventListener('tap', this._newSession.bind(this));
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-    this.shadowRoot.querySelector('#advanced-resource-settings-button').addEventListener('tap', this._toggleAdvancedSettings.bind(this));
+    //this.shadowRoot.querySelector('#advanced-resource-settings-button').addEventListener('tap', this._toggleAdvancedSettings.bind(this));
     this._initAliases();
     this.updateResourceIndicator();
     var gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -395,6 +396,7 @@ class BackendAiSessionView extends LitElement {
   _hideSessionDialog() {
     this.shadowRoot.querySelector('#new-session-dialog').hide();
   }
+
   _guessHumanizedNames(kernelName) {
     const candidate = {
       'cpp': 'C++',
@@ -1008,6 +1010,13 @@ class BackendAiSessionView extends LitElement {
           --button-color-active: red;
           --button-color-hover: red;
         }
+
+        wl-expansion {
+          --expansion-elevation: 0;
+          --expansion-elevation-open: 0;
+          --expansion-elevation-hover: 0;
+          --expansion-margin-open: 0;
+        }
       `];
   }
 
@@ -1119,13 +1128,14 @@ class BackendAiSessionView extends LitElement {
                       ${this.vfolders.map(item => html`
                         <paper-item value="${item.name}">${item.name}</paper-item>
                       `)}    
-                       </backend-ai-dropdown-menu>
-                      </div>
-                    </fieldset>
-                    <h4>Resource allocation</h4>
-                    <fieldset style="padding-top:0;">
-                      <paper-listbox selected="0" class="horizontal center layout"
-                                     style="width:350px; overflow:scroll;">
+                      </backend-ai-dropdown-menu>
+                  </div>
+                </fieldset>
+                <wl-expansion name="resource-group" open>
+                  <span slot="title">Resource allocation</span>
+                  <span slot="description"></span>
+                  <paper-listbox selected="0" class="horizontal center layout"
+                                 style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
                     <wl-button class="resource-button vertical center start layout" role="option"
                                 style="height:140px;min-width:120px;" type="button"
@@ -1148,20 +1158,19 @@ ${this.resource_templates.map(item => html`
                   ${this.isEmpty(this.resource_templates) ?
       html`
                     <wl-button class="resource-button vertical center start layout" role="option"
-                                style="height:140px;width:250px;" type="button"
+                                style="height:140px;width:350px;" type="button"
                                 flat inverted outlined disabled>
                       <div>
                         <h4>No suitable preset</h4>
-                        <div>Not enough resource.</div>
-                        <div>Use advanced settings to start custom session</div>
+                        <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
                       </div>
                     </wl-button>
 ` : html``}
-                </paper-listbox>
-                <div class="horizontal end-justified layout">
-                  <paper-button class="tiny" id="advanced-resource-settings-button">Advanced settings</paper-button>
-                </div>
-                <iron-collapse id="advanced-resource-settings">
+                  </paper-listbox>
+                </wl-expansion>
+                <wl-expansion name="resource-group">
+                  <span slot="title">Advanced</span>
+                  <span slot="description">Free resource allocation</span>
                   <div class="horizontal center layout">
                     <span style="width:30px;">CPU</span>
                     <paper-slider id="cpu-resource" class="cpu"
@@ -1185,14 +1194,15 @@ ${this.resource_templates.map(item => html`
                                   min="0.0" max="${this.gpu_metric.max}" value="1.0"></paper-slider>
                     <span class="caption">GPU</span>
                   </div>
-                </iron-collapse>
-                <br/>
-                <wl-button class="launch-button fg red" type="button" id="launch-button"
-                                                 outlined>
-                                                <wl-icon>rowing</wl-icon>
-                  <span id="launch-button-msg">Launch</span>
-                </wl-button>
-              </fieldset>
+                </wl-expansion>
+                
+                <fieldset style="padding-top:0;">
+                  <wl-button class="launch-button fg red" type="button" id="launch-button"
+                                               outlined>
+                                              <wl-icon>rowing</wl-icon>
+                    <span id="launch-button-msg">Launch</span>
+                  </wl-button>
+                </fieldset>
             </form>
           </plastic-material>
         </wl-dialog>
