@@ -19,31 +19,64 @@
       window.isElectron = false;
     }
     window.process = {env: {NODE_ENV: 'production'}};
+    window.packageVersion = "19.03.05";
     window.buildVersion = "190531.180558";
   </script>
   <style>
     body {
       margin: 0;
+      font-family: "Montserrat", Roboto, sans-serif;
+    }
+
+    .splash {
+      position: absolute;
+      top: calc(50% - 150px);
+      left: calc(50% - 170px);
+      width: 340px;
+      height: 300px;
+      border: 1px solid #aaa;
+    }
+
+    .splash-header {
+      width: 340px;
+      height: 120px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: left top;
+      background-color: RGB(246, 253, 247);
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 60px;
+    }
+
+    .splash-information {
+    }
+
+    ul {
+      list-style-type: none;
+    }
+
+    .splash-information .detail {
+      font-weight: 400;
+      font-size: 13px;
     }
 
     .loading-message {
       position: absolute;
-      top: calc(50% + 10px);
-      left: calc(50% - 95px);
+      top: calc(50% + 100px);
+      left: calc(50% - 155px);
       width: 200px;
       text-align: center;
-      font-family: monospace;
-      font-size: 20px;
+      font-size: 18px;
     }
 
     .sk-folding-cube {
       margin: 20px auto;
-      width: 40px;
-      height: 40px;
-
+      width: 20px;
+      height: 20px;
       position: absolute;
-      top: calc(50% - 40px);
-      left: calc(50% - 20px);
+      top: calc(50% + 100px);
+      left: calc(50% - 140px);
       margin: auto;
       -webkit-transform: rotateZ(45deg);
       transform: rotateZ(45deg);
@@ -144,13 +177,27 @@
 
 <body>
 <backend-ai-console id="console-shell">
-  <div class="sk-folding-cube">
-    <div class="sk-cube1 sk-cube"></div>
-    <div class="sk-cube2 sk-cube"></div>
-    <div class="sk-cube4 sk-cube"></div>
-    <div class="sk-cube3 sk-cube"></div>
+  <div class="splash">
+    <div class="splash-header">
+      <img src="/manifest/backend.ai-brand.svg" style="height:60px;padding-top:20px;padding-left:20px;">
+      Backend.AI
+    </div>
+    <div class="splash-information">
+      <ul>
+        <li>Backend.AI <span id="version-detail" class="detail"></span></li>
+        <li><span id="build-detail" class="detail"></span></li>
+        <li><span id="license-detail"></span></li>
+      </ul>
+    </div>
+
+    <div class="sk-folding-cube">
+      <div class="sk-cube1 sk-cube"></div>
+      <div class="sk-cube2 sk-cube"></div>
+      <div class="sk-cube4 sk-cube"></div>
+      <div class="sk-cube3 sk-cube"></div>
+    </div>
+    <div class="loading-message">Loading...</div>
   </div>
-  <div class="loading-message">Loading...</div>
 </backend-ai-console>
 <noscript>
   <p>Could not render Backend.AI console. Check that JavaScript is enabled. (190518.3)</p>
@@ -159,6 +206,10 @@
 <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 <script src="./src/components/backend-ai-console.js" type="module"></script>
 <script>
+  document.getElementById('version-detail').innerText = window.packageVersion;
+  document.getElementById('build-detail').innerText = 'Build ' + window.buildVersion;
+  document.getElementById('license-detail').innerText = 'Open-source Edition';
+
   window.isUpdateAvailable = new Promise(function (resolve, reject) {
     if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
       window.addEventListener('load', function () {
