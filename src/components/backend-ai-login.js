@@ -180,7 +180,7 @@ class BackendAiLogin extends LitElement {
 
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
-      this.client.login().then(response => {
+      this.client.login().then(response => { // TODO : upgrade to new parameters
         window.backendaiclient = this.client;
         let email = this.api_key;
         let is_admin = response.is_admin;
@@ -244,11 +244,16 @@ class BackendAiLogin extends LitElement {
         this.email = email;
       }
       let groups = response['user'].groups;
+      window.backendaiclient.groups = groups.map((item) => {
+        item = item.replace(/\'/g, '"');
+        const parsedItem = JSON.parse(item);
+        return parsedItem.name;
+      });
       let role = response['user'].role;
       let domain_name = response['user'].domain_name;
       this.domain_name = domain_name;
       window.backendaiclient.email = this.email;
-      window.backendaiclient.groups = groups;
+      window.backendaiclient.current_group = window.backendaiclient.groups[0];
       window.backendaiclient.is_admin = false;
       window.backendaiclient.is_superadmin = false;
 

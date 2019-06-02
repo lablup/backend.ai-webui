@@ -32,11 +32,10 @@ import '../backend-ai-session-list.js';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/icon';
-//import '@authentic/mwc-tab';
-//import '@authentic/mwc-tab-bar';
-
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
+//import '@authentic/mwc-tab';
+//import '@authentic/mwc-tab-bar';
 
 class BackendAiSessionView extends LitElement {
   static get is() {
@@ -341,13 +340,21 @@ class BackendAiSessionView extends LitElement {
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
 
     let config = {};
+    config['group_name'] = window.backendaiclient.current_group;
+
     config['cpu'] = this.shadowRoot.querySelector('#cpu-resource').value;
     if (this.gpu_mode == 'vgpu') {
       config['vgpu'] = this.shadowRoot.querySelector('#gpu-resource').value;
     } else {
       config['gpu'] = this.shadowRoot.querySelector('#gpu-resource').value;
     }
-    config['mem'] = String(this.shadowRoot.querySelector('#ram-resource').value) + 'g';
+
+    if (String(this.shadowRoot.querySelector('#ram-resource').value) === "Infinity") {
+      config['mem'] = String(this.shadowRoot.querySelector('#ram-resource').value);
+    } else {
+      config['mem'] = String(this.shadowRoot.querySelector('#ram-resource').value) + 'g';
+    }
+
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
       if (this.gpu_mode == 'vgpu') {
         config['vgpu'] = 0.0;
@@ -849,6 +856,7 @@ class BackendAiSessionView extends LitElement {
       this._selectDefaultLanguage();
     }
   }
+
   _selectDefaultLanguage() {
     if (window.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in window.backendaiclient._config &&
@@ -977,6 +985,7 @@ class BackendAiSessionView extends LitElement {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
+
         wl-button.resource-button {
           --button-bg: white;
           --button-bg-active: var(--paper-red-600);

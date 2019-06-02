@@ -386,6 +386,9 @@ class Client {
       if (resources['clustersize']) {
         config['clusterSize'] = resources['clustersize'];
       }
+      if (resources['group_name']) {
+        params['group_name'] = resources['group_name'];
+      }
       //params['config'] = {};
       params['config'] = {resources: config};
       if (resources['mounts']) {
