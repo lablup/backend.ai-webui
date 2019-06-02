@@ -32,7 +32,6 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-toast/paper-toast';
-
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
 import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
 import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
@@ -40,6 +39,9 @@ import '@polymer/iron-pages/iron-pages';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
+
+import 'weightless/select';
+
 import '../backend.ai-client-es6.js';
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
@@ -94,6 +96,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
       connection_server: {
         type: String
       },
+      groups: {
+        type: Array
+      },
+      current_group: {
+        type: String
+      },
       _page: {type: String},
       _drawerOpened: {type: Boolean},
       _offlineIndicatorOpened: {type: Boolean},
@@ -110,6 +118,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.is_connected = false;
     this.is_admin = false;
     this._page = '';
+    this.groups = [];
     this.connection_mode = 'API';
   }
 
@@ -221,6 +230,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
   _refreshUserInfoPanel() {
     this.user_id = window.backendaiclient.email;
     this.domain = window.backendaiclient._config.domainName;
+    this.current_group = window.backendaiclient.current_group;
+    this.groups = window.backendaiclient.groups;
+    this.groups.push('test1');
   }
 
   _loadPageElement() {
@@ -300,7 +312,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.shadowRoot.querySelector('#main-toolbar').style.backgroundColor = backgroundColorVal;
     this.shadowRoot.querySelector('#main-toolbar').style.color = colorVal;
   }
-
+  changeGroup(e) {
+    window.backendaiclient.current_group = e.target.value;
+    this.current_group = window.backendaiclient.current_group;
+    console.log(window.backendaiclient.current_group);
+  }
   static get styles() {
     return [
       BackendAiStyles,
@@ -358,7 +374,16 @@ class BackendAiConsole extends connect(store)(LitElement) {
         mwc-tab {
           color: #ffffff;
         }
-
+        wl-select {
+          --input-bg: transparent;
+          --input-color: rgb(221,221,221);
+          --input-color-disabled:rgb(221,221,221);
+          --input-label-color: rgb(221,221,221);
+          --input-label-font-size: 10px;
+          --input-padding-left-right: 20px;
+          --input-border-style: 0;
+          --input-font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+        }
       `];
   }
 
@@ -384,6 +409,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <span class="flex"></span>
               </div>
             </app-header>
+            <wl-select label="Group" @input="${this.changeGroup}">
+                ${this.groups.map(group => html`
+                <option value="${group}" ?selected="${this.current_group === group}">${group}</option>
+                `)}
+            </wl-select>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
               <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
                 <paper-item link>
