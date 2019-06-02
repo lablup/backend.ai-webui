@@ -180,47 +180,14 @@ class BackendAiLogin extends LitElement {
 
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
-      this.client.login().then(response => { 
+      this.client.login().then(response => {
         window.backendaiclient = this.client;
         window.backendaiclient._config.accessKey = response.access_key;
         let resource_policy = response['keypair'].resource_policy;
         window.backendaiclient.resource_policy = resource_policy;
-        let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups"];
-        let q = `query { user { ${fields.join(" ")} } }`;
-        let v = {'uuid': response['keypair'].user};
-        return this.client.gql(q, v);
-      }).then(response => {
-        let email = response['user'].email;
-        if (this.email != email) {
-          this.email = email;
-        }
-        let groups = response['user'].groups;
-        window.backendaiclient.groups = groups.map((item) => {
-          item = item.replace(/\'/g, '"');
-          const parsedItem = JSON.parse(item);
-          return parsedItem.name;
-        });
-        let role = response['user'].role;
-        let domain_name = response['user'].domain_name;
-        this.domain_name = domain_name;
-        window.backendaiclient.email = this.email;
-        window.backendaiclient.current_group = window.backendaiclient.groups[0];
-        window.backendaiclient.is_admin = false;
-        window.backendaiclient.is_superadmin = false;
-
-        if (["superadmin", "admin"].includes(role)) {
-          window.backendaiclient.is_admin = true;
-        }
-        if (["superadmin"].includes((role))) {
-          window.backendaiclient.is_superadmin = true;
-        }
-        window.backendaiclient._config._proxyURL = this.proxy_url;
-        window.backendaiclient._config.domainName = this.domain_name;
-        window.backendaiclient._config.default_session_environment = this.default_session_environment;
-        let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
-        document.dispatchEvent(event);
-        this.close();
-      }).catch((err) => {   // Connection failed
+        this.user = response['keypair'].user;
+        return this._connectGQL();
+    }).catch((err) => {   // Connection failed
         if (this.shadowRoot.querySelector('#login-panel').opened != true) {
           if (err.message != undefined) {
             this.shadowRoot.querySelector('#notification').text = err.message;
@@ -258,13 +225,32 @@ class BackendAiLogin extends LitElement {
       window.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
       window.backendaiclient.resource_policy = resource_policy;
-      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups"];
-      let q = `query { user { ${fields.join(" ")} } }`;
-      let v = {'uuid': response['keypair'].user};
-      return this.client.gql(q, v);
-    }).then(response => {
+      this.user = response['keypair'].user;
+      return this._connectGQL();
+    }).catch((err) => {   // Connection failed
+      if (this.shadowRoot.querySelector('#login-panel').opened != true) {
+        if (err.message != undefined) {
+          this.shadowRoot.querySelector('#notification').text = err.message;
+        } else {
+          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+        }
+        this.shadowRoot.querySelector('#notification').show();
+        this.open();
+      } else {
+        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
+        this.shadowRoot.querySelector('#notification').show();
+      }
+      this.open();
+    });
+  }
+
+  _connectGQL() {
+    let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups"];
+    let q = `query { user { ${fields.join(" ")} } }`;
+    let v = {'uuid': this.user};
+    return window.backendaiclient.gql(q, v).then(response => {
       let email = response['user'].email;
-      if (this.email != email) {
+      if (this.email !== email) {
         this.email = email;
       }
       let groups = response['user'].groups;
