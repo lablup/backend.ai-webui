@@ -16,6 +16,7 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
+import 'weightless/dialog';
 
 import '../backend.ai-client-es6.js';
 
@@ -123,11 +124,11 @@ class BackendAiLogin extends LitElement {
   }
 
   open() {
-    this.shadowRoot.querySelector('#login-panel').open();
+    this.shadowRoot.querySelector('#login-panel').show();
   }
 
   close() {
-    this.shadowRoot.querySelector('#login-panel').close();
+    this.shadowRoot.querySelector('#login-panel').hide();
   }
 
   login() {
@@ -197,6 +198,8 @@ class BackendAiLogin extends LitElement {
         }
         this.open();
       });
+    } else {
+      return this._connectGQL();
     }
   }
 
@@ -288,11 +291,7 @@ class BackendAiLogin extends LitElement {
         app-drawer-layout:not([narrow]) [drawer-toggle] {
           display: none;
         }
-
-        #login-panel {
-          width: 400px;
-        }
-
+        
         fieldset input {
           width: 100%;
           border: 0;
@@ -325,11 +324,9 @@ class BackendAiLogin extends LitElement {
       <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
       <app-localstorage-document key="backendaiconsole.api_endpoint"
                                  data="${this.api_endpoint}"></app-localstorage-document>
-
-      <paper-dialog id="login-panel"
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation" modal>
+      <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent>
         <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Console login</h3>
+          <h3>Login</h3>
           <form id="login-form" onSubmit="this._login()">
             <fieldset>
               <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
@@ -349,7 +346,7 @@ class BackendAiLogin extends LitElement {
             </fieldset>
           </form>
         </plastic-material>
-      </paper-dialog>
+      </wl-dialog>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
     `;
   }
