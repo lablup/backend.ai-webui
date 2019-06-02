@@ -181,15 +181,10 @@ class BackendAiLogin extends LitElement {
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
       this.client.login().then(response => {
-        window.backendaiclient = this.client;
-        window.backendaiclient._config.accessKey = response.access_key;
-        let resource_policy = response['keypair'].resource_policy;
-        window.backendaiclient.resource_policy = resource_policy;
-        this.user = response['keypair'].user;
         return this._connectGQL();
     }).catch((err) => {   // Connection failed
-        if (this.shadowRoot.querySelector('#login-panel').opened != true) {
-          if (err.message != undefined) {
+        if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+          if (err.message !== undefined) {
             this.shadowRoot.querySelector('#notification').text = err.message;
           } else {
             this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
@@ -215,7 +210,10 @@ class BackendAiLogin extends LitElement {
       this.clientConfig,
       `Backend.AI Console.`,
     );
+    return this._connectGQL();
+  }
 
+  _connectGQL() {
     // Test connection
     let fields = ["user_id", "resource_policy", "user"];
     let q = `query { keypair { ${fields.join(" ")} } }`;
@@ -226,29 +224,11 @@ class BackendAiLogin extends LitElement {
       let resource_policy = response['keypair'].resource_policy;
       window.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
-      return this._connectGQL();
-    }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened != true) {
-        if (err.message != undefined) {
-          this.shadowRoot.querySelector('#notification').text = err.message;
-        } else {
-          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
-        }
-        this.shadowRoot.querySelector('#notification').show();
-        this.open();
-      } else {
-        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
-        this.shadowRoot.querySelector('#notification').show();
-      }
-      this.open();
-    });
-  }
-
-  _connectGQL() {
-    let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups"];
-    let q = `query { user { ${fields.join(" ")} } }`;
-    let v = {'uuid': this.user};
-    return window.backendaiclient.gql(q, v).then(response => {
+      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups"];
+      let q = `query { user { ${fields.join(" ")} } }`;
+      let v = {'uuid': this.user};
+      return window.backendaiclient.gql(q, v);
+    }).then(response => {
       let email = response['user'].email;
       if (this.email !== email) {
         this.email = email;
@@ -280,8 +260,8 @@ class BackendAiLogin extends LitElement {
       document.dispatchEvent(event);
       this.close();
     }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened != true) {
-        if (err.message != undefined) {
+      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+        if (err.message !== undefined) {
           this.shadowRoot.querySelector('#notification').text = err.message;
         } else {
           this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
