@@ -76,7 +76,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       user_id: {
         type: String
       },
-      api_endpoint: {
+      domain: {
         type: String
       },
       is_connected: {
@@ -106,7 +106,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     setPassiveTouchGestures(true);
     this.menuTitle = 'LOGIN REQUIRED';
     this.user_id = 'DISCONNECTED';
-    this.api_endpoint = 'CLICK TO CONNECT';
+    this.domain = 'CLICK TO CONNECT';
     this.is_connected = false;
     this.is_admin = false;
     this._page = '';
@@ -220,7 +220,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
 
   _refreshUserInfoPanel() {
     this.user_id = window.backendaiclient.email;
-    this.api_endpoint = window.backendaiclient._config.endpoint;
+    this.domain = window.backendaiclient._config.domainName;
   }
 
   _loadPageElement() {
@@ -482,7 +482,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <span class="flex"></span>
               <div style="vertical end-justified flex layout">
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
-                <div style="font-size: 8px;text-align:right">${this.api_endpoint}</div>
+                <div style="font-size: 8px;text-align:right">${this.domain}</div>
               </div>
               <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
             </app-toolbar>

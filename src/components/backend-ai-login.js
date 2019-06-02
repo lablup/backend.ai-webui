@@ -53,6 +53,9 @@ class BackendAiLogin extends LitElement {
       api_endpoint: {
         type: String
       },
+      domain_name: {
+        type: String
+      },
       default_session_environment: {
         type: String
       },
@@ -68,6 +71,7 @@ class BackendAiLogin extends LitElement {
     this.api_key = '';
     this.secret_key = '';
     this.api_endpoint = '';
+    this.domain_name = '';
     this.proxy_url = 'http://127.0.0.1:5050/';
     this.connection_mode = 'API';
     this.default_session_environment = '';
@@ -222,22 +226,40 @@ class BackendAiLogin extends LitElement {
     );
 
     // Test connection
-    let fields = ["user_id", "is_admin", "resource_policy", "user"];
+    let fields = ["user_id", "resource_policy", "user"];
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
 
     this.client.gql(q, v).then(response => {
       window.backendaiclient = this.client;
-      let email = response['keypair'].user_id;
-      let is_admin = response['keypair'].is_admin;
       let resource_policy = response['keypair'].resource_policy;
+      window.backendaiclient.resource_policy = resource_policy;
+      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups"];
+      let q = `query { user { ${fields.join(" ")} } }`;
+      let v = {'uuid': response['keypair'].user};
+      return this.client.gql(q, v);
+    }).then(response => {
+      let email = response['user'].email;
       if (this.email != email) {
         this.email = email;
       }
+      let groups = response['user'].groups;
+      let role = response['user'].role;
+      let domain_name = response['user'].domain_name;
+      this.domain_name = domain_name;
       window.backendaiclient.email = this.email;
-      window.backendaiclient.is_admin = is_admin;
-      window.backendaiclient.resource_policy = resource_policy;
+      window.backendaiclient.groups = groups;
+      window.backendaiclient.is_admin = false;
+      window.backendaiclient.is_superadmin = false;
+
+      if (["superadmin", "admin"].includes(role)) {
+        window.backendaiclient.is_admin = true;
+      }
+      if (["superadmin"].includes((role))) {
+        window.backendaiclient.is_superadmin = true;
+      }
       window.backendaiclient._config._proxyURL = this.proxy_url;
+      window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
       var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
