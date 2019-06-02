@@ -308,7 +308,7 @@ class BackendAiSessionView extends LitElement {
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
       }
-      this.shadowRoot.querySelector('#new-session-dialog').open();
+      this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
 
@@ -377,7 +377,7 @@ class BackendAiSessionView extends LitElement {
     this.shadowRoot.querySelector('#notification').show();
     window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
       this.shadowRoot.querySelector('#running-jobs').refreshList();
-      this.shadowRoot.querySelector('#new-session-dialog').close();
+      this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
     }).catch((err) => {
@@ -1065,8 +1065,8 @@ class BackendAiSessionView extends LitElement {
             <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
           </div>
         </plastic-material>
-        <paper-dialog id="new-session-dialog"
-                      entry-animation="scale-up-animation" exit-animation="fade-out-animation"
+        <wl-dialog id="new-session-dialog"
+                      fixed backdrop blockscrolling persistent
                       style="padding:0;">
           <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
             <h3 class="horizontal center layout">
@@ -1183,7 +1183,7 @@ ${this.resource_templates.map(item => html`
               </fieldset>
             </form>
           </plastic-material>
-        </paper-dialog>
+        </wl-dialog>
 `;
   }
 }

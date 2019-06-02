@@ -8,11 +8,8 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '../plastics/plastic-material/plastic-material';
 import '@polymer/paper-toast/paper-toast';
-import '@polymer/paper-dialog/paper-dialog';
 
 import '@polymer/paper-input/paper-input';
-import '@polymer/neon-animation/animations/scale-up-animation.js';
-import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
