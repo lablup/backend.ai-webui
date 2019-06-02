@@ -394,6 +394,9 @@ class BackendAiSessionView extends LitElement {
     });
   }
 
+  _hideSessionDialog() {
+    this.shadowRoot.querySelector('#new-session-dialog').hide();
+  }
   _guessHumanizedNames(kernelName) {
     const candidate = {
       'cpp': 'C++',
@@ -1072,7 +1075,8 @@ class BackendAiSessionView extends LitElement {
             <h3 class="horizontal center layout">
               <span>Start a new session</span>
               <div class="flex"></div>
-              <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+              <paper-icon-button icon="close" class="blue close-button" 
+                @click="${() => this._hideSessionDialog()}">
                 Close
               </paper-icon-button>
             </h3>
