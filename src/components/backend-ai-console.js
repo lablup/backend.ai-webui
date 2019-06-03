@@ -403,7 +403,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
         <app-drawer swipe-open slot="drawer" class="drawer-menu">
           <app-header-layout has-scrolling-region class="vertical layout">
             <app-header id="portrait-bar" slot="header" effects="waterfall" fixed class="draggable">
-              <div class="horizontal center layout flex bar draggable" onclick="location.reload();" style="cursor:pointer;">
+              <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
                 <div class="portrait-canvas">
                   <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
                     sizing="contain"></iron-image>
