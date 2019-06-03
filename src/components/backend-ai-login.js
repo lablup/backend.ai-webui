@@ -325,7 +325,10 @@ class BackendAiLogin extends LitElement {
                                  data="${this.api_endpoint}"></app-localstorage-document>
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent>
         <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Login</h3>
+          <h3 class="horizontal center-justified flex layout">
+            <div>Login</div> 
+            <div class="flex"></div>
+          </h3>
           <form id="login-form" onSubmit="this._login()">
             <fieldset>
               <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus

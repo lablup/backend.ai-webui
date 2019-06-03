@@ -238,7 +238,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.domain = window.backendaiclient._config.domainName;
     this.current_group = window.backendaiclient.current_group;
     this.groups = window.backendaiclient.groups;
-    this.groups.push('test1');
   }
 
   _loadPageElement() {
