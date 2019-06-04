@@ -3,7 +3,7 @@ module.exports = {
   mode: 'production',
   target: "node",
   entry: {
-    app: ["./web.js"]
+    app: ["./manager.js"]
   },
   output: {
     libraryTarget: 'commonjs2',
