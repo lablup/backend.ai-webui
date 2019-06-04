@@ -3,7 +3,8 @@
 const {app, Menu, shell, BrowserWindow} = require('electron');
 const url = require('url');
 const path = require('path');
-const wsproxy = require('./src/wsproxy/dist/wsproxy.js');
+const ProxyManager = require('./src/wsproxy/dist/wsproxy.js');
+const { ipcMain } = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -12,9 +13,17 @@ var mainIndex = 'build/electron-app/app/index.html';
 
 // Modules to control application life and create native browser window
 app.once('ready', function() {
-  let port = 5050;
-  wsproxy("127.0.0.1", port, "http://localhost");
-  //wsproxy();
+  //Add handler for proxy
+  ipcMain.once('ready', (event) => {
+    let manager = new ProxyManager();
+    manager.once("ready", () => {
+      let url = 'http://localhost:' + manager.port;
+      console.log("Proxy is ready:" + url);
+      event.reply('proxy-ready', url);
+    });
+    manager.start();
+  })
+
   var template;
   if (process.platform == 'darwin') {
     template = [
@@ -308,7 +317,8 @@ function createWindow () {
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      preload: path.join(__dirname, 'preload.js')
     }  
   })
   // and load the index.html of the app.

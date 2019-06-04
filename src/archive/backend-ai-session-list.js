@@ -366,7 +366,7 @@ class BackendAiSessionList extends PolymerElement {
     let accessKey = window.backendaiclient._config.accessKey;
     let rqst = {
       method: 'GET',
-      uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId
+      uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + kernelId
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -374,7 +374,7 @@ class BackendAiSessionList extends PolymerElement {
         if (response !== undefined && response.code !== 404) {
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId + '/delete'
+            uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + kernelId + '/delete'
           };
           return this.sendRequest(rqst);
         }
@@ -432,9 +432,6 @@ class BackendAiSessionList extends PolymerElement {
       return false;
     }
 
-    if (window.backendaiclient._config.proxyURL === undefined) {
-      window.backendaiclient._config.proxyURL = 'http://127.0.0.1:5050/';
-    }
     let param = {
       access_key: window.backendaiclient._config.accessKey,
       secret_key: window.backendaiclient._config.secretKey,
@@ -447,16 +444,16 @@ class BackendAiSessionList extends PolymerElement {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      uri: window.backendaiclient._config.proxyURL + 'conf'
+      uri: this._getProxyURL() + 'conf'
     };
     try {
+      this.$.indicator.set(50, 'Requesting proxy session...');
       let response = await this.sendRequest(rqst);
       let token = response.token;
-      this.$.indicator.set(50, 'Adding kernel to socket queue...');
       rqst = {
         method: 'GET',
         app: app,
-        uri: window.backendaiclient._config.proxyURL + 'proxy/' + token + "/" + kernelId + "/add?app=" + app
+        uri: this._getProxyURL() + 'proxy/' + token + "/" + kernelId + "/add?app=" + app
       };
       return await this.sendRequest(rqst);
     } catch (err) {
@@ -523,6 +520,17 @@ class BackendAiSessionList extends PolymerElement {
       this._refreshJobData();
     }
   }
+
+  _getProxyURL() {
+    let url = 'http://127.0.0.1:5050/'
+    if (window.__local_proxy !== undefined) {
+      url = window.__local_proxy;
+    } else if (window.backendaiclient._config.proxyURL !== undefined) {
+      url = window.backendaiclient._config.proxyURL;
+    }
+    return url;
+  }
+
 
   static get template() {
     // language=HTML
