@@ -41,6 +41,7 @@ dep:
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
+test_electron:
 web:
 	if [ ! -d "./build/bundle/" ];then \
 		make compile; \
