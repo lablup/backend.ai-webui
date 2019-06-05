@@ -15,7 +15,9 @@ test:
 	cd build/electron-app; npm install --only=prod
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 test_web:
-	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js serve --npm
+	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js serve --npm --port 9080
+test_electron:
+	electron .
 proxy:
 	node ./src/wsproxy/local_proxy.js
 versiontag:
@@ -41,7 +43,6 @@ dep:
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
-test_electron:
 web:
 	if [ ! -d "./build/bundle/" ];then \
 		make compile; \

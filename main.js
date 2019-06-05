@@ -313,12 +313,18 @@ function createWindow () {
   // and load the index.html of the app.
   //mainWindow.loadFile('build/electron-app/app/index.html')
 
-  mainWindow.loadURL(url.format({ // Load HTML into new Window
-    pathname: path.join(__dirname, mainIndex),
-    protocol: 'file',
+  // Load HTML into new Window (file-based serving)
+  //mainWindow.loadURL(url.format({
+  //  pathname: path.join(__dirname, mainIndex),
+  //  protocol: 'file',
+  //  slashes: true
+  //}));
+  // Load HTML into new Window (dynamic serving for develop)
+  mainWindow.loadURL(url.format({
+    pathname: '127.0.0.1:9080',
+    protocol: 'http',
     slashes: true
   }));
-
 
   mainWindow.webContents.openDevTools();
   // Emitted when the window is closed.
