@@ -341,8 +341,9 @@ class BackendAiSessionView extends LitElement {
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
 
     let config = {};
-    config['group_name'] = window.backendaiclient.current_group;
-
+    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
+      config['group_name'] = window.backendaiclient.current_group;
+    }
     config['cpu'] = this.shadowRoot.querySelector('#cpu-resource').value;
     if (this.gpu_mode == 'vgpu') {
       config['vgpu'] = this.shadowRoot.querySelector('#gpu-resource').value;

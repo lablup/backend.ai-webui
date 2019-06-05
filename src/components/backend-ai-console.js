@@ -237,6 +237,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.domain = window.backendaiclient._config.domainName;
     this.current_group = window.backendaiclient.current_group;
     this.groups = window.backendaiclient.groups;
+    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05') === false) {
+      this.shadowRoot.getElementById('group-select').disabled = true;
+      this.shadowRoot.getElementById('group-select').label = 'No Project';
+    }
   }
 
   _loadPageElement() {
@@ -417,7 +421,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <span class="flex"></span>
               </div>
             </app-header>
-            <wl-select id="group-select" name="group-select" label="Group" 
+            <wl-select id="group-select" name="group-select" label="Project" 
               @input="${this.changeGroup}" .value="${this.current_group}">
                <option value disabled>Select group</option>
                 ${this.groups.map(group => html`
