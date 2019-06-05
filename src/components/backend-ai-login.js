@@ -157,6 +157,7 @@ class BackendAiLogin extends LitElement {
     this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
+
     if (this.connection_mode === 'SESSION') {
       this._connectUsingSession();
     } else {
@@ -215,11 +216,16 @@ class BackendAiLogin extends LitElement {
 
   _connectGQL() {
     // Test connection
-    let fields = ["user_id", "resource_policy", "user"];
-    let q = `query { keypair { ${fields.join(" ")} } }`;
-    let v = {};
+    this.client.isManagerVersionCompatible('19.05');
 
-    this.client.gql(q, v).then(response => {
+
+    this.client.getManagerVersion().then(response => {
+      console.log(response.manager);
+      let fields = ["user_id", "resource_policy", "user"];
+      let q = `query { keypair { ${fields.join(" ")} } }`;
+      let v = {};
+      return this.client.gql(q, v);
+    }).then(response => {
       window.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
       window.backendaiclient.resource_policy = resource_policy;

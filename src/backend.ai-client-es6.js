@@ -111,6 +111,7 @@ class Client {
     } else {
       this._config = config;
     }
+    this._managerVersion = '';
     this.kernelPrefix = '/kernel';
     this.resourcePreset = new ResourcePreset(this);
     this.vfolder = new VFolder(this);
@@ -213,6 +214,25 @@ class Client {
   getServerVersion() {
     let rqst = this.newPublicRequest('GET', '', null, '');
     return this._wrapWithPromise(rqst);
+  }
+
+  get managerVersion() {
+    return this._managerVersion;
+  }
+
+  async getManagerVersion() {
+    if (this._managerVersion === '') {
+      let v = await this.getServerVersion();
+      this._managerVersion = v.manager;
+    }
+    return this._managerVersion;
+  }
+
+  async isManagerVersionCompatible(version) {
+    let managerVersion = await this.getManagerVersion();
+    managerVersion = managerVersion.split('.').map( s => s.padStart(10) ).join('.');
+    version = version.split('.').map( s => s.padStart(10) ).join('.');
+    return version <= managerVersion;
   }
 
   /**
