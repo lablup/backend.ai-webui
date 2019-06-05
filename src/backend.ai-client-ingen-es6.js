@@ -159,7 +159,7 @@ class ClientConfig {
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // fixed configs with this implementation
     this._apiVersionMajor = 'v4';
-    this._apiVersion = 'v4.20190115';
+    this._apiVersion = 'v4.20190315';
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
@@ -278,6 +278,16 @@ class Client {
       'password': this._config.secretKey
     };
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Logout from console-server. This requires additional console-server package.
+   *
+   */
+  logout() {
+    let body = {};
+    let rqst = this.newSignedRequest('POST', `/server/logout`, body);
     return this._wrapWithPromise(rqst);
   }
   /**
@@ -555,7 +565,9 @@ class Client {
       hdrs = new Headers({
         "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
         "X-BackendAI-Version": this._config.apiVersion,
-        "X-BackendAI-Date": d.toISOString()
+        "X-BackendAI-Date": d.toISOString(),
+        "credentials": 'include',
+        "mode": 'cors'
       });
     } else {
       let signKey = this.getSignKey(this._config.secretKey, d);
@@ -611,7 +623,9 @@ class Client {
       "Content-Type": "application/json",
       "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
       "X-BackendAI-Version": this._config.apiVersion,
-      "X-BackendAI-Date": d.toISOString()
+      "X-BackendAI-Date": d.toISOString(),
+      "credentials": 'include',
+      "mode": 'cors'
     });
     //queryString = '/' + urlPrefix + queryString;
     let requestInfo = {
