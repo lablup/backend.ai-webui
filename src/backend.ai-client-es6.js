@@ -441,7 +441,9 @@ class Client {
         "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
         "X-BackendAI-Version": this._config.apiVersion,
         "X-BackendAI-Date": d.toISOString(),
-        "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
+        "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
+        "credentials": 'include',
+        "mode": 'cors'
       });
     }
     if (body != undefined) {
