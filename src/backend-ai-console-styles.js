@@ -13,7 +13,7 @@ export const BackendAiStyles =
       --general-menu-background-color-3: rgba(var(--general-menu-background-color-r),
       var(--general-menu-background-color-g),
       var(--general-menu-background-color-b),
-      0.95);
+      1.0);
       --general-menu-background-color-2: var(--paper-grey-200);
       --general-menu-background-color: var(--paper-green-600);
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
@@ -357,8 +357,8 @@ export const BackendAiStyles =
 
     @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
       #main-toolbar app-toolbar.bar {
-        -webkit-backdrop-filter: saturate(180%) blur(20px);
-        backdrop-filter: saturate(180%) blur(20px);
+        /*-webkit-backdrop-filter: saturate(180%) blur(20px);
+        backdrop-filter: saturate(180%) blur(20px);*/
       }
 
       #app-navbar-footer,
