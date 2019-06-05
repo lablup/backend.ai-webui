@@ -136,7 +136,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
-      if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
         this.shadowRoot.querySelector('#login-panel').login();
       }
     }).catch(err => {

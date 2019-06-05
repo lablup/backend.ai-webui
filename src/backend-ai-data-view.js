@@ -144,7 +144,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     if (!active) {
 
     } else {
-      if (window.backendaiclient == undefined || window.backendaiclient == null) {
+      if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
         document.addEventListener('backend-ai-connected', () => {
           this.is_admin = window.backendaiclient.is_admin;
           this.authenticated = true;

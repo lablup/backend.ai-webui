@@ -181,7 +181,7 @@ class BackendAiLogin extends LitElement {
     if (isLogon === false) {
       this.client.login().then(response => {
         return this._connectGQL();
-    }).catch((err) => {   // Connection failed
+      }).catch((err) => {   // Connection failed
         if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
           if (err.message !== undefined) {
             this.shadowRoot.querySelector('#notification').text = err.message;
@@ -211,21 +211,40 @@ class BackendAiLogin extends LitElement {
       this.clientConfig,
       `Backend.AI Console.`,
     );
-    return this._connectGQL();
+    this.client.ready = false;
+    this._connectGQL();
   }
 
   _connectGQL() {
     // Test connection
-    this.client.isManagerVersionCompatible('19.05');
-
-
     this.client.getManagerVersion().then(response => {
-      console.log(response.manager);
-      let fields = ["user_id", "resource_policy", "user"];
-      let q = `query { keypair { ${fields.join(" ")} } }`;
-      let v = {};
-      return this.client.gql(q, v);
-    }).then(response => {
+      if (this.client.isManagerVersionCompatibleWith('19.05')) {
+        this._connectViaGQL();
+      } else { // Legacy code to support 19.03
+        this._connectViaGQLLegacy();
+      }
+    }).catch((err) => {   // Connection failed
+      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+        if (err.message !== undefined) {
+          this.shadowRoot.querySelector('#notification').text = err.message;
+        } else {
+          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+        }
+        this.shadowRoot.querySelector('#notification').show();
+        this.open();
+      } else {
+        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
+        this.shadowRoot.querySelector('#notification').show();
+      }
+      this.open();
+    });
+  }
+
+  _connectViaGQL() {
+    let fields = ["user_id", "resource_policy", "user"];
+    let q = `query { keypair { ${fields.join(" ")} } }`;
+    let v = {};
+    return this.client.gql(q, v).then(response => {
       window.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
       window.backendaiclient.resource_policy = resource_policy;
@@ -262,23 +281,38 @@ class BackendAiLogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
-      var event = new CustomEvent("backend-ai-connected", {"detail": this.client});
+      window.backendaiclient.ready = true;
+      let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-    }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
-        if (err.message !== undefined) {
-          this.shadowRoot.querySelector('#notification').text = err.message;
-        } else {
-          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
-        }
-        this.shadowRoot.querySelector('#notification').show();
-        this.open();
-      } else {
-        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
-        this.shadowRoot.querySelector('#notification').show();
+    });
+  }
+
+  _connectViaGQLLegacy() {
+    let fields = ["user_id", "is_admin", "resource_policy"];
+    let q = `query { keypair { ${fields.join(" ")} } }`;
+    let v = {};
+    return this.client.gql(q, v).then(response => {
+      window.backendaiclient = this.client;
+      let email = response['keypair'].user_id;
+      let is_admin = response['keypair'].is_admin;
+      let resource_policy = response['keypair'].resource_policy;
+      if (this.email != email) {
+        this.email = email;
       }
-      this.open();
+      window.backendaiclient.groups = ['default'];
+      window.backendaiclient.email = this.email;
+      window.backendaiclient.current_group = 'default';
+      window.backendaiclient.is_admin = is_admin;
+      window.backendaiclient.is_superadmin = is_admin;
+      window.backendaiclient.resource_policy = resource_policy;
+      window.backendaiclient._config._proxyURL = this.proxy_url;
+      window.backendaiclient._config.domainName = 'default';
+      window.backendaiclient._config.default_session_environment = this.default_session_environment;
+      window.backendaiclient.ready = true;
+      let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
+      document.dispatchEvent(event);
+      this.close();
     });
   }
 
@@ -294,7 +328,7 @@ class BackendAiLogin extends LitElement {
         app-drawer-layout:not([narrow]) [drawer-toggle] {
           display: none;
         }
-        
+
         fieldset input {
           width: 100%;
           border: 0;
@@ -308,9 +342,11 @@ class BackendAiLogin extends LitElement {
         fieldset input:focus {
           border-bottom: 1.5px solid #0d47a1;
         }
+
         #login-panel {
           --dialog-width: 400px;
         }
+
         wl-button {
           width: 335px;
           --button-bg: transparent;

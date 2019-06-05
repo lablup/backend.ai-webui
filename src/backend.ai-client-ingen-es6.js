@@ -246,7 +246,7 @@ class Client {
     } else {
       this._config = config;
     }
-    this._managerVersion = '';
+    this._managerVersion = null;
     this.kernelPrefix = '/kernel';
     this.resourcePreset = new ResourcePreset(this);
     this.vfolder = new VFolder(this);
@@ -257,39 +257,6 @@ class Client {
     this.computeSession = new ComputeSession(this);
     this.resourcePolicy = new ResourcePolicy(this);
     this.resources = new Resources(this);
-  }
-
-  async check_login() {
-    let rqst = this.newSignedRequest('POST', `/server/login-check`, null);
-    let result;
-    try {
-      result = await this._wrapWithPromise(rqst);
-    } catch (err) {
-      return false;
-    }
-    return result.authenticated;
-  }
-  /**
-   * Login into console-server with given ID/Password. This requires additional console-server package.
-   *
-   */
-  login() {
-    let body = {
-      'username': this._config.accessKey,
-      'password': this._config.secretKey
-    };
-    let rqst = this.newSignedRequest('POST', `/server/login`, body);
-    return this._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Logout from console-server. This requires additional console-server package.
-   *
-   */
-  logout() {
-    let body = {};
-    let rqst = this.newSignedRequest('POST', `/server/logout`, body);
-    return this._wrapWithPromise(rqst);
   }
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
@@ -350,26 +317,67 @@ class Client {
     let rqst = this.newPublicRequest('GET', '', null, '');
     return this._wrapWithPromise(rqst);
   }
-
+  /**
+   * Return the server-side manager version.
+   */
   get managerVersion() {
     return this._managerVersion;
   }
-
+  /**
+   * Get the server-side manager version.
+   */
   async getManagerVersion() {
-    if (this._managerVersion === '') {
+    if (this._managerVersion === null) {
       let v = await this.getServerVersion();
       this._managerVersion = v.manager;
     }
     return this._managerVersion;
   }
-
-  async isManagerVersionCompatible(version) {
-    let managerVersion = await this.getManagerVersion();
+  /**
+   * Return if manager is compatible with given version.
+   */
+  isManagerVersionCompatibleWith(version) {
+    let managerVersion = this.managerVersion;
     managerVersion = managerVersion.split('.').map( s => s.padStart(10) ).join('.');
     version = version.split('.').map( s => s.padStart(10) ).join('.');
     return version <= managerVersion;
   }
+  /**
+   * Check if console-server is authenticated. This requires additional console-server package.
+   *
+   */
+  async check_login() {
+    let rqst = this.newSignedRequest('POST', `/server/login-check`, null);
+    let result;
+    try {
+      result = await this._wrapWithPromise(rqst);
+    } catch (err) {
+      return false;
+    }
+    return result.authenticated;
+  }
+  /**
+   * Login into console-server with given ID/Password. This requires additional console-server package.
+   *
+   */
+  login() {
+    let body = {
+      'username': this._config.accessKey,
+      'password': this._config.secretKey
+    };
+    let rqst = this.newSignedRequest('POST', `/server/login`, body);
+    return this._wrapWithPromise(rqst);
+  }
 
+  /**
+   * Logout from console-server. This requires additional console-server package.
+   *
+   */
+  logout() {
+    let body = {};
+    let rqst = this.newSignedRequest('POST', `/server/logout`, body);
+    return this._wrapWithPromise(rqst);
+  }
   /**
    * Return the resource slots.
    */

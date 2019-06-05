@@ -226,7 +226,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
     this.$['running-jobs'].active = true;
     this.$['finished-jobs'].active = true;
     // If disconnected
-    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshResourcePolicy();
       }, true);
@@ -554,7 +554,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
   }
 
   updateResourceIndicator() {
-    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse();
       }, true);
@@ -588,7 +588,7 @@ class BackendAiSessionView extends OverlayPatchMixin(PolymerElement) {
   }
 
   async updateMetric() {
-    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateMetric();
       }, true);

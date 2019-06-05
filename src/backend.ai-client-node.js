@@ -197,8 +197,8 @@ class Client {
   /**
    * Return if manager is compatible with given version.
    */
-  async c(version) {
-    let managerVersion = this.managerVersion();
+  isManagerVersionCompatibleWith(version) {
+    let managerVersion = this.managerVersion;
     managerVersion = managerVersion.split('.').map( s => s.padStart(10) ).join('.');
     version = version.split('.').map( s => s.padStart(10) ).join('.');
     return version <= managerVersion;

@@ -120,7 +120,7 @@ class BackendAiSessionList extends LitElement {
       return;
     }
     // If disconnected
-    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshJobData();
       }, true);
@@ -439,7 +439,7 @@ class BackendAiSessionList extends LitElement {
   }
 
   async _open_wsproxy(kernelId, app = 'jupyter') {
-    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
       return false;
     }
 

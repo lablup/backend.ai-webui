@@ -236,14 +236,16 @@ class BackendAISummary extends PolymerElement {
       return;
     }
 
-    if (window.backendaiclient == undefined || window.backendaiclient == null) {
+    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        console.log('queueing');
         this._init_resource_values();
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
         this._refreshHealthPanel();
       }, true);
     } else {
+        console.log('running');
       this._init_resource_values();
       this.is_superadmin = window.backendaiclient.is_superadmin;
       this.authenticated = true;
