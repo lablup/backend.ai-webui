@@ -79,6 +79,17 @@ $ yarn run polymer # To run web server
 $ yarn run wsproxy # To run websocket proxy
 ```
 
+### Electron testing
+
+Terminal 1:
+```
+$ make test_web # To run test server
+```
+Terminal 2:
+```
+$ make test_electron # Run Electron as dev mode.
+```
+
 ## Serving Guide
 
 ### Preparing bundled source
