@@ -118,7 +118,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }).catch(err => {
       console.log("Configuration loading failed. Fallback to default.");
     });
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       this.shadowRoot.querySelector('#login-panel').login();
     }
   }

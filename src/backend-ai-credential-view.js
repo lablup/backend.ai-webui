@@ -136,7 +136,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
       this.$['inactive-credential-list'].refresh();
     }, true);
 
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         if (window.backendaiclient.is_admin !== true) {
           this.disablePage();

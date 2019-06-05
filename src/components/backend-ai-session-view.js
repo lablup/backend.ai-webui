@@ -244,7 +244,7 @@ class BackendAiSessionView extends LitElement {
     this.shadowRoot.querySelector('#running-jobs').active = true;
     this.shadowRoot.querySelector('#finished-jobs').active = true;
     // If disconnected
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshResourcePolicy();
       }, true);
@@ -294,7 +294,7 @@ class BackendAiSessionView extends LitElement {
   }
 
   _launchSessionDialog() {
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       this.shadowRoot.querySelector('#notification').text = 'Please wait while initlaizating...';
       this.shadowRoot.querySelector('#notification').show();
     } else {
@@ -595,7 +595,7 @@ class BackendAiSessionView extends LitElement {
   }
 
   updateResourceIndicator() {
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse();
       }, true);
@@ -629,7 +629,7 @@ class BackendAiSessionView extends LitElement {
   }
 
   async updateMetric() {
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateMetric();
       }, true);
@@ -863,7 +863,7 @@ class BackendAiSessionView extends LitElement {
   }
 
   selectDefaultLanguage() {
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._selectDefaultLanguage();
       }, true);

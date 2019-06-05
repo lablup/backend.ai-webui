@@ -66,7 +66,7 @@ class BackendAIAgentList extends PolymerElement {
       return;
     }
     // If disconnected
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         let status = 'ALIVE';
         this._loadAgentList(status);

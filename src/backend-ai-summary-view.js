@@ -236,7 +236,7 @@ class BackendAISummary extends PolymerElement {
       return;
     }
 
-    if (window.backendaiclient == undefined || window.backendaiclient == null || window.backendaiclient.ready === false) {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         console.log('queueing');
         this._init_resource_values();
