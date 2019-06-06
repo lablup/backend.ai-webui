@@ -1,3 +1,4 @@
+// Local tester file
 // Modules to control application life and create native browser window
 const {app, Menu, shell, BrowserWindow} = require('electron');
 const url = require('url');
