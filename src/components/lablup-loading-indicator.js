@@ -1,12 +1,9 @@
 /**
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
-
-
  */
 
 import {css, html, LitElement} from 'lit-element';
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-spinner/paper-spinner-lite';
 
 class LablupLoadingIndicator extends LitElement {
@@ -64,7 +61,6 @@ class LablupLoadingIndicator extends LitElement {
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
     this.active = true;
   }
 
