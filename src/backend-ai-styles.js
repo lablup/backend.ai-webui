@@ -62,20 +62,6 @@ const template =
             height: 280px;
           }
 
-          .item paper-card {
-            width: 280px;
-            margin: 15px 18px;
-            --paper-card-header-image-text: {
-              width: 100%;
-              color: #eee;
-              padding-left: 10px;
-              padding-right: 0;
-              text-shadow: 0 0 4px #444, 0 0 8px #000;
-              font-weight: 400;
-              overflow-x: hidden;
-            };
-          }
-
           iron-icon.tiny {
             --iron-icon-height: 12px;
             --iron-icon-width: 12px;

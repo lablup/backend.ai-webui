@@ -144,15 +144,6 @@ export const BackendAiStyles =
       font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
     }
 
-    .welcome-username {
-      text-align: center;
-      margin-left: auto;
-      margin-right: auto;
-      font-size: 13px;
-      padding-top: 13px;
-      line-height: 16px;
-    }
-
     .portrait-canvas {
       margin-left: 16px;
       padding-right: 5px;
@@ -389,20 +380,6 @@ export const BackendAiStyles =
       height: 280px;
     }
 
-    .item paper-card {
-      width: 280px;
-      margin: 15px 18px;
-      --paper-card-header-image-text: {
-        width: 100%;
-        color: #eee;
-        padding-left: 10px;
-        padding-right: 0;
-        text-shadow: 0 0 4px #444, 0 0 8px #000;
-        font-weight: 400;
-        overflow-x: hidden;
-      };
-    }
-
     .paper-header {
       height: 60px;
       font-size: 16px;
@@ -425,105 +402,15 @@ export const BackendAiStyles =
       line-height: 50px;
     }
 
-    .paper-content {
-      padding: 0;
-      min-height: 220px;
-      max-height: 500px;
-    }
-
     .cover {
       margin: 60px;
-    }
-
-    .blue .paper-header {
-      background-color: var(--paper-light-blue-400);
-    }
-
-    .red .paper-header {
-      background-color: var(--paper-red-400);
-    }
-
-    .orange .paper-header {
-      background-color: var(--paper-amber-400);
-    }
-
-    .green .paper-header {
-      background-color: var(--paper-green-400);
-    }
-
-    .cyan .paper-header {
-      background-color: var(--paper-cyan-400);
-    }
-
-    .lime .paper-header {
-      background-color: var(--paper-lime-400);
-    }
-
-    .pink .paper-header {
-      background-color: var(--paper-pink-a200);
-    }
-
-    .blue .paper-content {
-      background: linear-gradient(white, #b3e5fc);
-    }
-
-    .red .paper-content {
-      background: linear-gradient(white, #ffcdd2);
-    }
-
-    .orange .paper-content {
-      background: linear-gradient(white, #ffecb3);
-    }
-
-    .green .paper-content {
-      background: linear-gradient(white, #c8e6c9);
-    }
-
-    .cyan .paper-content {
-      background: linear-gradient(white, #b2ebf2);
-    }
-
-    .lime .paper-content {
-      background: linear-gradient(white, #f0f4c3);
-    }
-
-    .pink .paper-content {
-      background: linear-gradient(white, #f8bbd0);
     }
 
     paper-checkbox {
       display: block;
       margin-bottom: 40px;
     }
-
-    paper-checkbox.blue {
-      --paper-checkbox-checked-color: var(--paper-light-blue-400);
-      --paper-checkbox-checked-ink-color: var(--paper-light-blue-400);
-      --paper-checkbox-unchecked-color: var(--paper-light-blue-900);
-      --paper-checkbox-unchecked-ink-color: var(--paper-light-blue-900);
-    }
-
-    paper-checkbox.red {
-      --paper-checkbox-checked-color: var(--paper-red-400);
-      --paper-checkbox-checked-ink-color: var(--paper-red-400);
-      --paper-checkbox-unchecked-color: var(--paper-red-900);
-      --paper-checkbox-unchecked-ink-color: var(--paper-red-900);
-    }
-
-    paper-checkbox.green {
-      --paper-checkbox-checked-color: var(--paper-green-400);
-      --paper-checkbox-checked-ink-color: var(--paper-green-400);
-      --paper-checkbox-unchecked-color: var(--paper-green-900);
-      --paper-checkbox-unchecked-ink-color: var(--paper-green-900);
-    }
-
-    paper-checkbox.orange {
-      --paper-checkbox-checked-color: var(--paper-orange-400);
-      --paper-checkbox-checked-ink-color: var(--paper-orange-400);
-      --paper-checkbox-unchecked-color: var(--paper-orange-900);
-      --paper-checkbox-unchecked-ink-color: var(--paper-orange-900);
-    }
-
+    
     iron-icon.tiny {
       --iron-icon-height: 12px;
       --iron-icon-width: 12px;
@@ -877,11 +764,6 @@ export const BackendAiStyles =
 
     wl-card.entries > div {
       margin: 20px;
-    }
-
-    wl-card paper-card {
-      margin-top: 15px;
-      margin-bottom: 15px;
     }
 
     paper-toolbar {
