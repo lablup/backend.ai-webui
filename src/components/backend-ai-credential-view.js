@@ -463,7 +463,8 @@ class BackendAICredentialView extends LitElement {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <wl-button class="fg blue create-button" id="create-keypair-button" outlined type="button">
+              <wl-button class="fg blue create-button" id="create-keypair-button" outlined type="button"
+              @click="${this._addKeyPair}">
                          <wl-icon>add</wl-icon>
                          Add
                          </wl-button>
@@ -477,7 +478,7 @@ class BackendAICredentialView extends LitElement {
           <form id="login-form" onSubmit="this._addResourcePolicy()">
             <fieldset>
               <wl-textfield name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           required
+                           type="text"
                            pattern="[a-zA-Z0-9]*"
                            error-message="Policy name only accepts letters and numbers"></wl-textfield>
               <h4>Resource Policy</h4>
@@ -564,7 +565,8 @@ class BackendAICredentialView extends LitElement {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined>
+              <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined
+               @click="${this._addResourcePolicy}">
                          <wl-icon>add</wl-icon>
                          Create
               </wl-button>
