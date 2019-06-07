@@ -13,7 +13,6 @@ import {store} from '../store.js';
 
 import {navigate, updateOffline} from '../backend-ai-app.js';
 
-import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/app-layout/app-layout';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
@@ -28,15 +27,10 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-image/iron-image';
-import '@polymer/iron-flex-layout/iron-flex-layout';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
 import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
 import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
-import '@polymer/iron-pages/iron-pages';
-import '@polymer/app-route/app-location.js';
-import '@polymer/app-route/app-route.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 
 import 'weightless/select';
