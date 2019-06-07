@@ -641,11 +641,6 @@ export const BackendAiStyles =
       margin: 5px;
     }
 
-    paper-material .commands paper-fab {
-      display: inline-block;
-      margin: 5px;
-    }
-
     .panels paper-material,
     .panels wl-card {
       width: var(--general-panel-width);
@@ -695,10 +690,6 @@ export const BackendAiStyles =
       -webkit-justify-content: center;
       justify-content: center;
       margin-left: auto;
-    }
-
-    .commands-float a > span,
-    .commands-float a > paper-fab {
     }
 
     .commands-float a > span {
@@ -833,49 +824,6 @@ export const BackendAiStyles =
       color: #ffffff !important;
     }
 
-    paper-fab {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      border-radius: 35% !important;
-    }
-
-    paper-fab.blue {
-      --paper-fab-background: var(--paper-light-blue-500);
-    }
-
-    paper-fab.red {
-      --paper-fab-background: var(--paper-red-500);
-    }
-
-    paper-fab.yellow {
-      --paper-fab-background: var(--paper-yellow-500);
-    }
-
-    paper-fab.green {
-      --paper-fab-background: var(--paper-green-500);
-    }
-
-    paper-fab.orange {
-      --paper-fab-background: var(--paper-orange-500);
-    }
-
-    paper-fab.lime {
-      --paper-fab-background: var(--paper-lime-500);
-    }
-
-    paper-fab.grey {
-      --paper-fab-background: var(--paper-grey-300);
-    }
-
-    paper-fab.command-button {
-      --paper-fab-background: var(--paper-light-blue-500);
-    }
-
-    paper-fab.back-button {
-      --paper-fab-background: var(--paper-green-500);
-    }
-
     paper-tab .badge {
       font-size: 12px;
       padding-left: 10px;
@@ -988,37 +936,6 @@ export const BackendAiStyles =
       --paper-toolbar-sm-height: 45px;
     }
 
-    .user-profile paper-card {
-      text-align: center;
-      --paper-card-header-image-text: {
-        font-size: 18px;
-        color: #ffffff;
-        text-align: center;
-        width: 100%;
-        padding-left: 0;
-        padding-right: 0;
-        text-shadow: 0 0 4px #bbbbbb, 0 0 8px #000;
-        font-weight: 100;
-        background: linear-gradient(to bottom, rgba(25, 25, 25, 0.5), rgba(25, 25, 25, 0.3), rgba(25, 25, 25, 0.1));
-      };
-    }
-
-    .author-card paper-card {
-      text-align: center;
-      margin: 0;
-      --paper-card-header-image-text: {
-        font-size: 12px;
-        color: #ffffff;
-        text-align: center;
-        width: 100%;
-        padding-left: 0;
-        padding-right: 0;
-        text-shadow: 0 0 4px #bbbbbb, 0 0 8px #000;
-        font-weight: 100;
-        background: linear-gradient(to bottom, rgba(25, 25, 25, 0.5), rgba(25, 25, 25, 0.3), rgba(25, 25, 25, 0.1));
-      };
-    }
-
     .activity-counter {
       text-align: center;
     }
@@ -1035,24 +952,6 @@ export const BackendAiStyles =
     lablup-activity-panel div[slot="message"] paper-button {
       margin-top: 10px;
       margin-bottom: 0;
-    }
-
-    lablup-search-objects {
-      right: 0 !important;
-    }
-
-    lablup-course-item {
-      margin: 15px;
-    }
-
-    #circle lablup-circle {
-      margin-left: 10px;
-      margin-right: 10px;
-    }
-
-    .activity-counter section {
-      margin-left: 10px;
-      margin-right: 10px;
     }
 
     .drawer-menu paper-badge {
@@ -1189,6 +1088,7 @@ export const BackendAiStyles =
       margin-right: auto;
     }
 
+    wl-card > h4, 
     paper-material > h4 {
       font-weight: 200;
     }

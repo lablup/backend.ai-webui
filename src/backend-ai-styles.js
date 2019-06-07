@@ -627,12 +627,6 @@ const template =
             margin: 5px;
           }
 
-          paper-material .commands paper-fab,
-          wl-card .commands paper-fab {
-            display: inline-block;
-            margin: 5px;
-          }
-
           .panels paper-material,
           .panels wl-card {
             width: var(--general-panel-width);
@@ -675,10 +669,6 @@ const template =
             @apply --layout-inline;
             @apply --layout-center-center;
             margin-left: auto;
-          }
-
-          .commands-float a > span,
-          .commands-float a > paper-fab {
           }
 
           .commands-float a > span {
@@ -797,49 +787,6 @@ const template =
           paper-tabs.file-tabs paper-tab.iron-selected,
           paper-tabs.file-tabs a.iron-selected {
             color: #ffffff !important;
-          }
-
-          paper-fab {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            border-radius: 35% !important;
-          }
-
-          paper-fab.blue {
-            --paper-fab-background: var(--paper-light-blue-500);
-          }
-
-          paper-fab.red {
-            --paper-fab-background: var(--paper-red-500);
-          }
-
-          paper-fab.yellow {
-            --paper-fab-background: var(--paper-yellow-500);
-          }
-
-          paper-fab.green {
-            --paper-fab-background: var(--paper-green-500);
-          }
-
-          paper-fab.orange {
-            --paper-fab-background: var(--paper-orange-500);
-          }
-
-          paper-fab.lime {
-            --paper-fab-background: var(--paper-lime-500);
-          }
-
-          paper-fab.grey {
-            --paper-fab-background: var(--paper-grey-300);
-          }
-
-          paper-fab.command-button {
-            --paper-fab-background: var(--paper-light-blue-500);
-          }
-
-          paper-fab.back-button {
-            --paper-fab-background: var(--paper-green-500);
           }
 
           paper-tab .badge {
