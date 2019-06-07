@@ -317,12 +317,10 @@ class BackendAiSessionView extends LitElement {
       if ('cuda.device' in results) {
         this.gpu_mode = 'gpu';
         this.gpu_step = 1;
-        console.log('gpu');
       }
       if ('cuda.shares' in results) {
         this.gpu_mode = 'vgpu';
         this.gpu_step = 0.05;
-        console.log('vgpu');
       }
     });
   }
@@ -813,6 +811,7 @@ class BackendAiSessionView extends LitElement {
         return;
       }
       this.images = images;
+      console.log(images);
       this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];

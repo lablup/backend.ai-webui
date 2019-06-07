@@ -223,7 +223,7 @@
 <script>
   document.getElementById('version-detail').innerText = window.packageVersion;
   document.getElementById('build-detail').innerText = 'Build ' + window.buildVersion;
-  document.getElementById('license-detail').innerText = 'Open-source Edition';
+  document.getElementById('license-detail').innerText = 'Enterprise Edition';
 
   window.isUpdateAvailable = new Promise(function (resolve, reject) {
     if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
