@@ -257,6 +257,7 @@ class Client {
     this.computeSession = new ComputeSession(this);
     this.resourcePolicy = new ResourcePolicy(this);
     this.resources = new Resources(this);
+    this.getManagerVersion();
   }
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
