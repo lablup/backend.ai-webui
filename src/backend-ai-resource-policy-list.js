@@ -23,8 +23,8 @@ import 'weightless/icon';
 import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 import './lablup-piechart.js';
-import './plastics/plastic-material/plastic-material';
 import './plastics/lablup-shields/lablup-shields';
+import 'weightless/card';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {OverlayPatchMixin} from "./overlay-patch-mixin";
@@ -513,7 +513,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
       </vaadin-grid>
       <paper-dialog id="modify-policy-dialog"
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Modify</h3>
           <form id="login-form" onSubmit="this._modifyResourcePolicy()">
             <fieldset>
@@ -612,7 +612,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
               
             </fieldset>
           </form>
-        </plastic-material>
+        </wl-card>
       </paper-dialog>
     `;
   }

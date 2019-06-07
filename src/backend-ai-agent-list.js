@@ -16,6 +16,7 @@ import '@polymer/paper-toast';
 import './plastics/lablup-shields/lablup-shields.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-progress/paper-progress';
+
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 

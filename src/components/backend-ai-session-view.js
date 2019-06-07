@@ -8,7 +8,6 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import '../plastics/plastic-material/plastic-material';
 import '@polymer/iron-collapse/iron-collapse';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -34,6 +33,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/expansion';
+import 'weightless/card';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
@@ -898,7 +898,8 @@ class BackendAiSessionView extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        plastic-material h4 {
+        plastic-material h4,
+        wl-card h4 {
           padding: 5px 20px;
           border-bottom: 1px solid #ddd;
           font-weight: 100;
@@ -1028,7 +1029,7 @@ class BackendAiSessionView extends LitElement {
         <paper-tab>Running</paper-tab>
         <paper-tab>Finished</paper-tab>
       </paper-tabs>
-      <plastic-material class="item" elevation="1">
+      <wl-card class="item" elevation="1">
         <h4 class="horizontal center layout">
           <span>Running</span>
           <div class="layout horizontal center resources wrap" style="margin-left:20px;">
@@ -1084,11 +1085,11 @@ class BackendAiSessionView extends LitElement {
           <div>
             <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
           </div>
-        </plastic-material>
+        </wl-card>
         <wl-dialog id="new-session-dialog"
                       fixed backdrop blockscrolling persistent
                       style="padding:0;">
-          <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
             <h3 class="horizontal center layout">
               <span>Start a new session</span>
               <div class="flex"></div>
@@ -1204,7 +1205,7 @@ ${this.resource_templates.map(item => html`
                   </wl-button>
                 </fieldset>
             </form>
-          </plastic-material>
+          </wl-card>
         </wl-dialog>
 `;
   }

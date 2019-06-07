@@ -8,13 +8,13 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
-import '../plastics/plastic-material/plastic-material';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
 import 'weightless/button';
 import 'weightless/icon';
+import 'weightless/card';
 
 import '@material/mwc-checkbox';
 
@@ -52,7 +52,7 @@ class BackendAiEnvironmentView extends LitElement {
     // language=HTML
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <plastic-material elevation="1">
+      <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>Images</span>
           <span class="flex"></span>
@@ -185,15 +185,15 @@ class BackendAiEnvironmentView extends LitElement {
             </template>
           </vaadin-grid-column>
         </vaadin-grid>
-      </plastic-material>
-      <plastic-material>
+      </wl-card>
+      <wl-card>
         <h3 class="horizontal center layout">
           <span>Resource Templates</span>
           <span class="flex"></span>
           <wl-button class="fg red" id="add-image" disabled outlined label="Add" icon="add"></wl-button>
         </h3>
         <backend-ai-resource-template-list></backend-ai-resource-template-list>
-      </plastic-material>
+      </wl-card>
     `;
   }
 

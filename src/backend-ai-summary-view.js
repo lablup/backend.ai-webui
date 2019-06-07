@@ -9,7 +9,6 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import './plastics/plastic-material/plastic-material';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
@@ -20,6 +19,8 @@ import './components/lablup-loading-indicator';
 
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-progress/paper-progress';
+
+import 'weightless/card';
 
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
@@ -305,7 +306,7 @@ class BackendAISummary extends PolymerElement {
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <plastic-material class="item" elevation="1" style="padding-bottom:20px;">
+      <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">Statistics</h3>
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="Health" elevation="1">
@@ -418,7 +419,7 @@ class BackendAISummary extends PolymerElement {
             </lablup-activity-panel>
           </template>
         </div>
-      </plastic-material>
+      </wl-card>
     `;
   }
 }

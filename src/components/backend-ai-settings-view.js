@@ -11,11 +11,12 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import {BackendAiStyles} from '../backend-ai-console-styles.js';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
-import '../plastics/plastic-material/plastic-material';
+import '../plastics/wl-card/wl-card';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
 import '@material/mwc-switch';
+import 'weightless/card';
 
 class BackendAiSettingsView extends LitElement {
   static get is() {
@@ -52,7 +53,7 @@ class BackendAiSettingsView extends LitElement {
           width: 300px;
         }
 
-        plastic-material > div {
+        wl-card > div {
           padding: 15px;
         }
       `];
@@ -61,7 +62,7 @@ class BackendAiSettingsView extends LitElement {
   render() {
     // language=HTML
     return html`
-      <plastic-material elevation="1">
+      <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>General</span>
           <span class="flex"></span>
@@ -166,7 +167,7 @@ class BackendAiSettingsView extends LitElement {
         </div>
 
 
-      </plastic-material>
+      </wl-card>
     `;
   }
 

@@ -9,7 +9,6 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import './plastics/plastic-material/plastic-material';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-image/iron-image';
@@ -27,6 +26,7 @@ import '@polymer/neon-animation/animations/fade-out-animation.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import 'weightless/button';
 import 'weightless/icon';
+import 'weightless/card';
 
 import './backend-ai-styles.js';
 import './backend-ai-credential-list.js';
@@ -414,7 +414,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         }
       </style>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <plastic-material class="admin item" elevation="1">
+      <wl-card class="admin item" elevation="1">
         <h3>Credentials</h3>
         <h4 class="horizontal flex center center-justified layout">
           <span>Active</span>
@@ -431,9 +431,9 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <div>
           <backend-ai-credential-list id="inactive-credential-list" condition="inactive"></backend-ai-credential-list>
         </div>
-      </plastic-material>
+      </wl-card>
 
-      <plastic-material class="admin item" elevation="1">
+      <wl-card class="admin item" elevation="1">
         <h3>Resource policies</h3>
         <h4 class="horizontal flex center center-justified layout">
           <span>Policy groups</span>
@@ -446,12 +446,12 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
         <div>
           <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
         </div>
-      </plastic-material>
+      </wl-card>
 
 
       <paper-dialog id="new-keypair-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Add credential</h3>
           <form id="login-form" onSubmit="this._addKeyPair()">
             <fieldset>
@@ -478,11 +478,11 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                          icon="add"></wl-button>
             </fieldset>
           </form>
-        </plastic-material>
+        </wl-card>
       </paper-dialog>
       <paper-dialog id="new-policy-dialog" with-backdrop
                     entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Create</h3>
           <form id="login-form" onSubmit="this._addResourcePolicy()">
             <fieldset>
@@ -578,7 +578,7 @@ class BackendAICredentialView extends OverlayPatchMixin(PolymerElement) {
                          icon="add"></wl-button>
             </fieldset>
           </form>
-        </plastic-material>
+        </wl-card>
       </paper-dialog>
     `;
   }

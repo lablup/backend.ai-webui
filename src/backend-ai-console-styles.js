@@ -530,7 +530,7 @@ export const BackendAiStyles =
     }
 
     paper-material,
-    plastic-material {
+    wl-card {
       display: block;
       background: white;
       box-sizing: border-box;
@@ -550,13 +550,13 @@ export const BackendAiStyles =
     }
 
     #content > paper-material,
-    #content > plastic-material {
+    #content > wl-card {
       max-width: var(--general-content-container-width, 980px);
     }
 
     @media screen and (max-width: 399px) {
       paper-material,
-      plastic-material {
+      wl-card {
         margin-left: 0;
         margin-right: 0;
       }
@@ -564,7 +564,7 @@ export const BackendAiStyles =
 
     @media screen and (max-width: 449px) {
       #content > paper-material,
-      #content > plastic-material {
+      #content > wl-card {
         width: 100%;
       }
 
@@ -581,7 +581,7 @@ export const BackendAiStyles =
 
     @media screen and (min-width: 450px) {
       #content > paper-material,
-      #content > plastic-material,
+      #content > wl-card,
       #content > div {
         width: 95%;
       }
@@ -606,16 +606,16 @@ export const BackendAiStyles =
     }
 
     paper-material p,
-    plastic-material p {
+    wl-card p {
       padding: 10px;
     }
 
     paper-material > .entry > p,
-    plastic-material > .entry > p {
+    wl-card > .entry > p {
       padding: 5px;
     }
 
-    plastic-material .commands,
+    wl-card .commands,
     paper-material .commands {
       margin: 0;
       border-top: 1px solid #ddd;
@@ -623,12 +623,12 @@ export const BackendAiStyles =
     }
 
     paper-material.item div.items,
-    plastic-material.item div.items {
+    wl-card.item div.items {
       padding-bottom: 10px;
     }
 
     paper-material .commands.float,
-    plastic-material .commands.float {
+    wl-card .commands.float {
       border-top: none;
       position: fixed;
       right: 0;
@@ -647,7 +647,7 @@ export const BackendAiStyles =
     }
 
     .panels paper-material,
-    .panels plastic-material {
+    .panels wl-card {
       width: var(--general-panel-width);
     }
 
@@ -656,7 +656,7 @@ export const BackendAiStyles =
     }
 
     .wide-panels paper-material,
-    .wide-panels plastic-material {
+    .wide-panels wl-card {
       width: 100%;
       margin: 0 0 16px 0;
     }
@@ -882,7 +882,7 @@ export const BackendAiStyles =
     }
 
     paper-material > h3,
-    plastic-material > h3 {
+    wl-card > h3 {
       font-size: 20px;
       font-weight: 200;
       padding: 10px 20px;
@@ -892,7 +892,7 @@ export const BackendAiStyles =
     }
 
     paper-material > h3 > .date,
-    plastic-material > h3 > .date {
+    wl-card > h3 > .date {
       font-size: 12px;
       text-align: right;
       color: #888;
@@ -901,57 +901,57 @@ export const BackendAiStyles =
 
     paper-material > h3.blue,
     paper-material > h4.blue,
-    plastic-material > h3.blue,
-    plastic-material > h4.blue {
+    wl-card > h3.blue,
+    wl-card > h4.blue {
       border-left: 3px solid var(--paper-light-blue-400);
     }
 
     paper-material > h3.red,
     paper-material > h4.red,
-    plastic-material > h3.red,
-    plastic-material > h4.red {
+    wl-card > h3.red,
+    wl-card > h4.red {
       border-left: 3px solid var(--paper-red-400);
     }
 
     paper-material > h3.green,
     paper-material > h4.green,
-    plastic-material > h3.green,
-    plastic-material > h4.green {
+    wl-card > h3.green,
+    wl-card > h4.green {
       border-left: 3px solid var(--paper-green-400);
     }
 
     paper-material > h3.orange,
     paper-material > h4.orange,
-    plastic-material > h3.orange,
-    plastic-material > h4.orange {
+    wl-card > h3.orange,
+    wl-card > h4.orange {
 
       border-left: 3px solid var(--paper-orange-400);
     }
 
     paper-material > h3.cyan,
     paper-material > h4.cyan,
-    plastic-material > h3.cyan,
-    plastic-material > h4.cyan {
+    wl-card > h3.cyan,
+    wl-card > h4.cyan {
 
       border-left: 3px solid var(--paper-cyan-400);
     }
 
     paper-material > h3.lime,
     paper-material > h4.lime,
-    plastic-material > h3.lime,
-    plastic-material > h4.lime {
+    wl-card > h3.lime,
+    wl-card > h4.lime {
       border-left: 3px solid var(--paper-lime-400);
     }
 
     paper-material > h3.pink,
     paper-material > h4.pink,
-    plastic-material > h3.pink,
-    plastic-material > h4.pink {
+    wl-card > h3.pink,
+    wl-card > h4.pink {
       border-left: 3px solid var(--paper-pink-400);
     }
 
     paper-material > h4,
-    plastic-material > h4 {
+    wl-card > h4 {
       font-size: 14px;
       padding: 5px 15px 5px 20px;
       margin: 0 0 10px 0;
@@ -963,23 +963,23 @@ export const BackendAiStyles =
     }
 
     paper-material .flex,
-    plastic-material .flex {
+    wl-card .flex {
 
       display: flex;
     }
 
     paper-material > div,
-    plastic-material > div {
+    wl-card > div {
       margin: 10px;
     }
 
     paper-material.entries > div,
-    plastic-material.entries > div {
+    wl-card.entries > div {
       margin: 20px;
     }
 
     paper-material paper-card,
-    plastic-material paper-card {
+    wl-card paper-card {
       margin-top: 15px;
       margin-bottom: 15px;
     }
