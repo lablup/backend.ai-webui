@@ -285,6 +285,20 @@ class BackendAiLogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
+    }).catch((err) => {   // Connection failed
+      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+        if (err.message !== undefined) {
+          this.shadowRoot.querySelector('#notification').text = err.message;
+        } else {
+          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+        }
+        this.shadowRoot.querySelector('#notification').show();
+        this.open();
+      } else {
+        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
+        this.shadowRoot.querySelector('#notification').show();
+      }
+      this.open();
     });
   }
 
@@ -313,6 +327,20 @@ class BackendAiLogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
+    }).catch((err) => {   // Connection failed
+      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+        if (err.message !== undefined) {
+          this.shadowRoot.querySelector('#notification').text = err.message;
+        } else {
+          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+        }
+        this.shadowRoot.querySelector('#notification').show();
+        this.open();
+      } else {
+        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
+        this.shadowRoot.querySelector('#notification').show();
+      }
+      this.open();
     });
   }
 
