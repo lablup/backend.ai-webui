@@ -1,8 +1,6 @@
 /**
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
-
-
  */
 
 import {css, html, LitElement} from 'lit-element';
@@ -14,8 +12,8 @@ import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
-import '@material/mwc-switch';
 import 'weightless/card';
+import 'weightless/switch';
 
 class BackendAiSettingsView extends LitElement {
   static get is() {
@@ -74,7 +72,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch disabled></mwc-switch>
+              <wl-switch disabled></wl-switch>
             </div>
           </div>
 
@@ -85,7 +83,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch disabled></mwc-switch>
+              <wl-switch disabled></wl-switch>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
@@ -95,7 +93,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch disabled></mwc-switchdisabled>
+              <wl-switch disabled></wl-switchdisabled>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
@@ -105,7 +103,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch disabled></mwc-switch>
+              <wl-switch disabled></wl-switch>
             </div>
           </div>
         </div>
@@ -122,7 +120,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch checked disabled></mwc-switch>
+              <wl-switch checked disabled></wl-switch>
             </div>
           </div>
         </div>
@@ -139,7 +137,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch checked disabled></mwc-switch>
+              <wl-switch checked disabled></wl-switch>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
@@ -150,7 +148,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch disabled></mwc-switch>
+              <wl-switch disabled></wl-switch>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
@@ -160,7 +158,7 @@ class BackendAiSettingsView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <mwc-switch disabled></mwc-switch>
+              <wl-switch disabled></wl-switch>
             </div>
           </div>
         </div>
