@@ -3,28 +3,15 @@
  */
 
 import {css, html, LitElement} from "lit-element";
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-image/iron-image';
-import '@polymer/iron-flex-layout/iron-flex-layout';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes';
-
 import '@polymer/paper-input/paper-input';
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-button/paper-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
-import '@polymer/neon-animation/animations/scale-up-animation.js';
-import '@polymer/neon-animation/animations/fade-out-animation.js';
-import '@vaadin/vaadin-icons/vaadin-icons.js';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
+import 'weightless/dialog';
+import 'weightless/textfield';
 
 import '../backend-ai-credential-list.js';
 import '../backend-ai-resource-policy-list.js';
@@ -97,7 +84,6 @@ class BackendAICredentialView extends LitElement {
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
     this.active = false;
     this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
     this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
@@ -172,15 +158,14 @@ class BackendAICredentialView extends LitElement {
       this.shadowRoot.querySelector('#resource-policy-list').active = false;
       return;
     }
-      this.shadowRoot.querySelector('#active-credential-list').active = true;
-      this.shadowRoot.querySelector('#inactive-credential-list').active = true;
-      this.shadowRoot.querySelector('#resource-policy-list').active = true;
-    this.is_admin = window.backendaiclient.is_admin;
+    this.shadowRoot.querySelector('#active-credential-list').active = true;
+    this.shadowRoot.querySelector('#inactive-credential-list').active = true;
+    this.shadowRoot.querySelector('#resource-policy-list').active = true;
   }
 
   async _launchKeyPairDialog() {
     await this._getResourcePolicies();
-    this.shadowRoot.querySelector('#new-keypair-dialog').open();
+    this.shadowRoot.querySelector('#new-keypair-dialog').show();
   }
 
   _readVFolderHostInfo() {
@@ -199,12 +184,12 @@ class BackendAICredentialView extends LitElement {
 
   _launchResourcePolicyDialog() {
     this._readVFolderHostInfo();
-    this.shadowRoot.querySelector('#new-policy-dialog').open();
+    this.shadowRoot.querySelector('#new-policy-dialog').show();
   }
 
   _launchModifyResourcePolicyDialog() {
     this._readVFolderHostInfo();
-    this.shadowRoot.querySelector('#new-policy-dialog').open();
+    this.shadowRoot.querySelector('#new-policy-dialog').show();
   }
 
   async _getResourcePolicies() {
@@ -368,7 +353,7 @@ class BackendAICredentialView extends LitElement {
       // language=CSS
       css`
         wl-button.create-button {
-          width: calc(100% - 40px);
+          width:335px;
         }
 
         #new-keypair-dialog {
@@ -385,20 +370,24 @@ class BackendAICredentialView extends LitElement {
         }
 
         fieldset wl-button {
-          padding-left: 20px;
-          padding-right: 20px;
-          padding-bottom: 20px;
+          margin-left: 20px;
+          margin-right: 20px;
+          margin-bottom: 20px;
         }
 
-        paper-dialog paper-input {
+        wl-dialog paper-input,
+        wl-dialog wl-textfield {
           padding-left: 20px;
           padding-right: 20px;
+          --input-font-family: Roboto, Noto, sans-serif;
         }
-
-        paper-dialog h4 {
-          margin: 10px 0 5px 0;
-          font-weight: 400;
-          font-size: 13px;
+        wl-textfield {
+          --input-state-color-invalid: red;
+        }
+        wl-dialog h4 {
+          margin: 15px 0 5px 0;
+          font-weight: 100;
+          font-size: 16px;
           padding-left: 20px;
           border-bottom: 1px solid #ccc;
         }
@@ -410,6 +399,7 @@ class BackendAICredentialView extends LitElement {
         }
       `];
   }
+
   render() {
     // language=HTML
     return html`
@@ -449,14 +439,13 @@ class BackendAICredentialView extends LitElement {
       </wl-card>
 
 
-      <paper-dialog id="new-keypair-dialog" with-backdrop
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <wl-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Add credential</h3>
           <form id="login-form" onSubmit="this._addKeyPair()">
             <fieldset>
-              <paper-input type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
-                           auto-validate></paper-input>
+              <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
+                           auto-validate></wl-textfield>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="resource-policy" label="Resource Policy">
                   <paper-listbox slot="dropdown-content" selected="0">
@@ -474,22 +463,23 @@ class BackendAICredentialView extends LitElement {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <wl-button class="fg blue create-button" id="create-keypair-button" outlined label="Add"
-                         icon="add"></wl-button>
+              <wl-button class="fg blue create-button" id="create-keypair-button" outlined type="button">
+                         <wl-icon>add</wl-icon>
+                         Add
+                         </wl-button>
             </fieldset>
           </form>
         </wl-card>
-      </paper-dialog>
-      <paper-dialog id="new-policy-dialog" with-backdrop
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      </wl-dialog>
+      <wl-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Create</h3>
           <form id="login-form" onSubmit="this._addResourcePolicy()">
             <fieldset>
-              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           auto-validate required
+              <wl-textfield name="new_policy_name" id="id_new_policy_name" label="Policy Name"
+                           required
                            pattern="[a-zA-Z0-9]*"
-                           error-message="Policy name only accepts letters and numbers"></paper-input>
+                           error-message="Policy name only accepts letters and numbers"></wl-textfield>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
@@ -574,12 +564,14 @@ class BackendAICredentialView extends LitElement {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <wl-button class="fg blue create-button" id="create-policy-button" outlined label="Create"
-                         icon="add"></wl-button>
+              <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined>
+                         <wl-icon>add</wl-icon>
+                         Create
+              </wl-button>
             </fieldset>
           </form>
         </wl-card>
-      </paper-dialog>
+      </wl-dialog>
     `;
   }
 }
