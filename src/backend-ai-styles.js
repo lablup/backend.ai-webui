@@ -228,7 +228,7 @@ const template =
             transition: all 400ms;
           }
 
-          .paper-material-title {
+          .wl-card-title {
             font-weight: 200;
           }
 
@@ -536,7 +536,6 @@ const template =
             --iron-icon-width: 12px;
           }
 
-          paper-material,
           wl-card {
             display: block;
             background: white;
@@ -545,27 +544,12 @@ const template =
             padding: 0;
             border-radius: 2px;
           }
-
-          .setting-detail paper-material,
-          .setting-detail wl-card {
-            margin: 16px 8px 16px 16px !important;
-          }
-
-          .setting-detail #price-container paper-input {
-            --paper-input-container-input: {
-              max-width: 100px;
-            }
-          }
-
-          #content > paper-material,
-          #content > wl-card,
-          #content > iron-pages,
-          #content > iron-lazy-pages {
+          
+          #content > wl-card {
             max-width: var(--general-content-container-width, 980px);
           }
 
           @media screen and (max-width: 399px) {
-            paper-material,
             wl-card {
               margin-left: 0;
               margin-right: 0;
@@ -573,19 +557,13 @@ const template =
           }
 
           @media screen and (max-width: 449px) {
-            #content > paper-material,
-            #content > wl-card,
-            #content > iron-pages,
-            #content > iron-lazy-pages {
+            #content > wl-card {
               width: 100%;
             }
           }
 
           @media screen and (min-width: 450px) {
-            #content > paper-material,
-            #content > wl-card,
-            #content > iron-pages,
-            #content > iron-lazy-pages {
+            #content > wl-card {
               width: 95%;
             }
           }
@@ -596,38 +574,20 @@ const template =
             }
           }
 
-          paper-material p,
           wl-card p {
             padding: 10px;
           }
 
-          paper-material > .entry > p,
           wl-card > .entry > p {
             padding: 5px;
           }
 
-          paper-material .commands,
           wl-card .commands {
             margin: 0;
             border-top: 1px solid #ddd;
             text-align: left;
           }
 
-          paper-material.item div.items {
-            padding-bottom: 10px;
-          }
-
-          paper-material .commands.float {
-            border-top: none;
-            @apply --layout-fixed-bottom;
-          }
-
-          paper-material .commands a {
-            display: inline-block;
-            margin: 5px;
-          }
-
-          .panels paper-material,
           .panels wl-card {
             width: var(--general-panel-width);
           }
@@ -636,7 +596,6 @@ const template =
             margin: 0 0 10px 0;
           }
 
-          .wide-panels paper-material,
           .wide-panels wl-card {
             width: 100%;
             margin: 0 0 16px 0;
@@ -794,7 +753,6 @@ const template =
             padding-left: 10px;
           }
 
-          paper-material > h3,
           wl-card > h3 {
             font-size: 20px;
             font-weight: 200;
@@ -804,7 +762,6 @@ const template =
             border-bottom: 1px solid #DDD;
           }
 
-          paper-material > h3 > .date,
           wl-card > h3 > .date {
             font-size: 12px;
             text-align: right;
@@ -812,56 +769,41 @@ const template =
             margin-left: 20px;
           }
 
-          paper-material > h3.blue,
-          paper-material > h4.blue,
           wl-card > h3.blue,
           wl-card > h4.blue {
             border-left: 3px solid var(--paper-light-blue-400);
           }
 
-          paper-material > h3.red,
-          paper-material > h4.red,
           wl-card > h3.red,
           wl-card > h4.red {
             border-left: 3px solid var(--paper-red-400);
           }
 
-          paper-material > h3.green,
-          paper-material > h4.green,
           wl-card > h3.green,
           wl-card > h4.green {
             border-left: 3px solid var(--paper-green-400);
           }
 
-          paper-material > h3.orange,
-          paper-material > h4.orange,
           wl-card > h3.orange,
           wl-card > h4.orange {
             border-left: 3px solid var(--paper-orange-400);
           }
 
-          paper-material > h3.cyan,
-          paper-material > h4.cyan,
           wl-card > h3.cyan,
           wl-card > h4.cyan {
             border-left: 3px solid var(--paper-cyan-400);
           }
 
-          paper-material > h3.lime,
-          paper-material > h4.lime,
           wl-card > h3.lime,
           wl-card > h4.lime {
             border-left: 3px solid var(--paper-lime-400);
           }
 
-          paper-material > h3.pink,
-          paper-material > h4.pink,
           wl-card > h3.pink,
           wl-card > h4.pink {
             border-left: 3px solid var(--paper-pink-400);
           }
 
-          paper-material > h4,
           wl-card > h4 {
             font-size: 14px;
             padding: 5px 15px 5px 20px;
@@ -871,22 +813,18 @@ const template =
             @apply --layout-justified;
           }
 
-          paper-material .flex,
           wl-card .flex {
             display: flex;
           }
 
-          paper-material > div,
           wl-card > div {
             margin: 10px;
           }
 
-          paper-material.entries > div,
           wl-card.entries > div {
             margin: 20px;
           }
 
-          paper-material paper-card,
           wl-card paper-card {
             margin-top: 15px;
             margin-bottom: 15px;
@@ -1092,400 +1030,14 @@ const template =
             margin-left: auto;
             margin-right: auto;
           }
-
-          /* Part-specific UI customizations */
-          #activity paper-material > h3,
-          #activity paper-material > h4 {
-            border-left: 3px solid var(--paper-yellow-400);
-          }
-
-          #circle paper-material > h3,
-          #circle paper-material > h4 {
-            border-left: 3px solid var(--paper-lime-400);
-          }
-
-          #course paper-material > h3,
-          #course paper-material > h4 {
-            border-left: 3px solid var(--paper-blue-400);
-          }
-
-          #bookmark paper-material > h3,
-          #bookmark paper-material > h4 {
-            border-left: 3px solid var(--paper-red-400);
-          }
-
-          #my_entry paper-material > h3,
-          #my_entry paper-material > h4 {
-            border-left: 3px solid var(--paper-red-400);
-          }
-
-          #user_preference paper-material > h3 {
-            border-left: 3px solid var(--paper-green-400);
-          }
-
-          paper-material > h4,
+          
           wl-card > h4 {
             font-weight: 200;
           }
-
-          #sandbox paper-material > h3,
-          #sandbox paper-material > h4 {
-            border-left: 3px solid var(--paper-blue-700);
-          }
-
-          #sandbox .sidebar-controls paper-input,
-          #sandbox .sidebar-controls paper-textarea,
-          #sandbox .sidebar-controls paper-dropdown-menu {
-            --paper-input-container-color: #424242;
-            --paper-input-container-focus-color: #F98F23;
-            --paper-input-container-input-color: #242424;
-          }
-
-          #sandbox .sidebar-controls paper-slider {
-            width: 170px;
-            --paper-slider-container-color: #424242;
-            --paper-slider-active-color: #F98F23;
-            --paper-slider-font-color: #242424;
-          }
-
-          #sandbox .sidebar-controls {
-            color: #242424;
-          }
-
-          #comment-list paper-material {
-            padding-bottom: 5px !important;
-          }
-
-          #comment-list paper-material p {
-            padding: 0;
-            margin: 0;
-          }
-
-          #activity paper-material > paper-material {
-            max-width: 480px;
-          }
-
-          #activity paper-material .download {
-            width: 280px;
-          }
-
-          #activity paper-material .download paper-button {
-            margin-top: 0;
-            margin-bottom: 0;
-          }
-
-          #activity lablup-shields {
-            margin-right: 5px;
-          }
-
-          #summary lablup-shields {
-            margin-right: 5px;
-          }
-
-          paper-material.setting .name {
-            width: 300px;
-          }
-
+          
           .setting paper-toggle-button,
           .setting paper-range-slider {
             margin-left: 16px;
-          }
-
-          #billing .billing paper-header-panel {
-            width: 250px;
-            min-height: 550px;
-            margin: 15px;
-            @apply --shadow-elevation-2dp;
-          }
-
-          #billing .billing paper-header-panel .paper-header {
-            text-align: center;
-          }
-
-          #billing .billing paper-header-panel.selected {
-            border: 5px solid rgba(220, 0, 0, 0.5);
-          }
-
-          #billing .paper-header {
-            height: 50px;
-            line-height: 50px;
-          }
-
-          #billing .paper-header.medium-tall {
-            height: 80px;
-            line-height: 40px;
-          }
-
-          #billing .billing paper-header-panel .content {
-            padding: 15px;
-            height: 330px;
-          }
-
-          #billing .billing paper-header-panel .content .includes {
-            height: 150px;
-          }
-
-          #billing .billing paper-header-panel paper-button.price {
-          }
-
-          #billing paper-card .coupon-header {
-            @apply --paper-font-headline;
-          }
-
-          #billing paper-card .coupon-credit {
-            vertical-align: middle;
-          }
-
-          #course .card-actions-item {
-            padding-right: 15px;
-          }
-
-          #course .card-actions-item span {
-            display: block;
-            height: 25px;
-            line-height: 25px;
-          }
-
-          #user_preference paper-item.name,
-          #billing paper-item.name {
-            width: 350px;
-          }
-
-          #user_preference paper-item.name div {
-            overflow-y: scroll;
-            text-overflow: inherit;
-            white-space: normal;
-          }
-
-          #user_preference .plan {
-          }
-
-          #user_preference .plan > div {
-            display: inline-block;
-            vertical-align: middle;
-          }
-
-          #user_preference .plan > .current-plan {
-            width: 90px;
-            height: 90px;
-            margin: 0;
-            padding: 0;
-            line-height: 90px;
-            text-align: center;
-          }
-
-          #user_preference .plan > .current-detail {
-            margin: 0;
-            padding: 15px;
-          }
-
-          #user_preference .current-detail > div > span.title {
-            display: inline-block;
-            margin-right: 5px;
-            margin-bottom: 5px;
-          }
-
-          #user_preference .current-detail > div > span.count {
-            font-size: 9px;
-          }
-
-          #user_preference .current-detail .entry > paper-progress {
-            width: 100%;
-            margin-bottom: 15px;
-            --paper-progress-active-color: #e91e63;
-          }
-
-          #user_preference .current-detail .circle > paper-progress {
-            width: 100%;
-            margin-bottom: 15px;
-            --paper-progress-active-color: var(--paper-lime-400);
-          }
-
-          #user_preference .current-detail .course > paper-progress {
-            width: 100%;
-            margin-bottom: 10px;
-            --paper-progress-active-color: var(--paper-blue-400);
-          }
-
-          #user_preference .payment-history paper-item {
-            font-size: inherit;
-            --paper-item-min-height: 30px;
-          }
-
-          #user_preference #username-form fieldset div {
-            margin: 0 0 5px 0;
-          }
-
-          #user_preference #username-form .warning {
-            color: var(--paper-red-400);
-          }
-
-          #user_type paper-header-panel {
-            width: 250px;
-            min-height: 400px;
-            margin: 15px;
-            @apply --shadow-elevation-8dp;
-          }
-
-          #user_type paper-header-panel .paper-header {
-            text-align: center;
-          }
-
-          #user_type paper-header-panel.selected {
-            @apply --shadow-elevation-2dp;
-          }
-
-          #user_type paper-header-panel .content {
-            padding: 15px;
-            height: 280px;
-          }
-
-          #user_type paper-header-panel .content .role {
-            height: 100px;
-          }
-
-          /* Comment form */
-          #commentForm paper-button {
-            font-size: inherit;
-            --paper-button: {
-              margin: 0;
-            }
-          }
-
-          #commentForm paper-textarea {
-            --paper-input-container: {
-              padding: 0;
-            }
-            --paper-input-container-input: {
-              font-size: inherit;
-            }
-          }
-
-          /* Entry */
-          paper-material.comment-card .name-tag {
-            display: inline-block;
-            width: 150px;
-            text-align: center;
-            min-height: 80px;
-            overflow: hidden;
-          }
-
-          .admonition paper-button {
-            height: 40px;
-          }
-
-          .access-list paper-item {
-            font-size: inherit;
-            height: 60px;
-            --paper-item-min-height: 60px;
-
-          }
-
-          .access-list paper-dropdown-menu {
-            --paper-dropdown-menu: {
-              width: 90px;
-            };
-            --paper-input-container-input: {
-              font-size: inherit;
-              text-align: center;
-            };
-          }
-
-          .access-list #people-to-be-invited paper-icon-button {
-            width: 20px;
-            height: 20px;
-            padding-top: 2px;
-            padding-left: 2px;
-            margin-left: -10px;
-            margin-right: 5px;
-          }
-
-          .access-list .invite-people-container #input-invite {
-            --paper-input-container: {
-              padding: 0;
-            };
-            --paper-input-container-label: {
-              font-size: inherit;
-            };
-            --paper-input-container-input: {
-              font-size: inherit;
-            };
-          }
-
-          .access-list .invite-people-container #btn-add-invitee {
-            padding: 0;
-            padding-top: 1px;
-            padding-left: 2px;
-            margin: 4px 0;
-            width: 24px;
-            height: 24px;
-          }
-
-          .access-list .invite-people-container #btn-send-invitation {
-            border: 1px #ccc solid;
-            padding: 5px 0;
-            margin: 0;
-            margin-left: 8px;
-            min-width: 50px;
-          }
-
-          .access-list #people-to-be-invited paper-icon-button::shadow #icon {
-            width: 16px;
-            height: 16px;
-          }
-
-          /* File-upload */
-          #entry .uploadArea,
-          #notice .uploadArea {
-            margin: 0 0 20px 0;
-            height: 80px;
-            border-radius: 5px;
-            padding-bottom: 0;
-            border: 2px dotted #ccc;
-          }
-
-          /* CodeRunner */
-          ingen-dino-cage .CodeMirror,
-          .sandbox .CodeMirror,
-          .content-textarea .CodeMirror {
-            z-index: 0 !important;
-          }
-
-          .cm-ingen-code {
-            font-family: "Roboto Mono", Consolas, Menlo, monospace;
-          }
-
-          .cm-comment {
-            font-family: "Roboto Mono", Consolas, Menlo, monospace;
-          }
-
-          .entry ingen-dino-cage pre,
-          ingen-dino-lab pre {
-            margin: 0;
-            background: transparent;
-          }
-
-          ingen-dino-cage paper-button {
-            margin-bottom: 24px;
-          }
-
-          #user_preference #cover-image lablup-coverimage-list {
-            --coverimage-list-theme: {
-              height: 220px !important;
-              width: 220px !important;
-            };
-            --file-theme: {
-              height: 220px !important;
-              width: 220px !important;
-            };
-            --iron-image-theme: {
-              height: 220px !important;
-              width: 220px !important;
-            };
-            --delete-button-theme: {
-              top: -35px;
-              right: 9px;
-            };
           }
 
           /* Loading spinner */
@@ -1514,30 +1066,7 @@ const template =
           ingen-dino-lab {
             z-index: 0;
           }
-
-          /* Sandbox code runner */
-          /* Dino cage */
-          .sandbox.embed ingen-dino-cage {
-            z-index: 0;
-            --ingen-dino-cage-result-console-color: #222;
-            --ingen-dino-cage-result-console-background-color: transparent;
-            --ingen-dino-cage-error-console-color: #d32f2f;
-            --ingen-dino-cage-error-console-background-color: rgba(255, 235, 239, 0.5);
-          }
-
-          .sandbox.embed ingen-dino-cage #result-console-control {
-            position: fixed;
-            margin-bottom: 0 !important;
-            bottom: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.7);
-          }
-
-          .sandbox ingen-dino-cage pre {
-            margin: 0;
-            background: transparent;
-          }
-
+          
           /* Button */
           wl-button {
             --button-padding: 8px;

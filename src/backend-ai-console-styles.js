@@ -224,7 +224,7 @@ export const BackendAiStyles =
       transition: all 400ms;
     }
 
-    .paper-material-title {
+    .wl-card-title {
       font-weight: 200;
     }
 
@@ -529,7 +529,6 @@ export const BackendAiStyles =
       --iron-icon-width: 12px;
     }
 
-    paper-material,
     wl-card {
       display: block;
       background: white;
@@ -538,24 +537,12 @@ export const BackendAiStyles =
       padding: 0;
       border-radius: 2px;
     }
-
-    .setting-detail paper-material {
-      margin: 16px 8px 16px 16px !important;
-    }
-
-    .setting-detail #price-container paper-input {
-      --paper-input-container-input: {
-        max-width: 100px;
-      }
-    }
-
-    #content > paper-material,
+    
     #content > wl-card {
       max-width: var(--general-content-container-width, 980px);
     }
 
     @media screen and (max-width: 399px) {
-      paper-material,
       wl-card {
         margin-left: 0;
         margin-right: 0;
@@ -563,7 +550,6 @@ export const BackendAiStyles =
     }
 
     @media screen and (max-width: 449px) {
-      #content > paper-material,
       #content > wl-card {
         width: 100%;
       }
@@ -580,7 +566,6 @@ export const BackendAiStyles =
     }
 
     @media screen and (min-width: 450px) {
-      #content > paper-material,
       #content > wl-card,
       #content > div {
         width: 95%;
@@ -605,29 +590,24 @@ export const BackendAiStyles =
       }
     }
 
-    paper-material p,
     wl-card p {
       padding: 10px;
     }
 
-    paper-material > .entry > p,
     wl-card > .entry > p {
       padding: 5px;
     }
 
-    wl-card .commands,
-    paper-material .commands {
+    wl-card .commands {
       margin: 0;
       border-top: 1px solid #ddd;
       text-align: left;
     }
 
-    paper-material.item div.items,
     wl-card.item div.items {
       padding-bottom: 10px;
     }
 
-    paper-material .commands.float,
     wl-card .commands.float {
       border-top: none;
       position: fixed;
@@ -636,12 +616,6 @@ export const BackendAiStyles =
       left: 0;
     }
 
-    paper-material .commands a {
-      display: inline-block;
-      margin: 5px;
-    }
-
-    .panels paper-material,
     .panels wl-card {
       width: var(--general-panel-width);
     }
@@ -650,7 +624,6 @@ export const BackendAiStyles =
       margin: 0 0 10px 0;
     }
 
-    .wide-panels paper-material,
     .wide-panels wl-card {
       width: 100%;
       margin: 0 0 16px 0;
@@ -829,7 +802,6 @@ export const BackendAiStyles =
       padding-left: 10px;
     }
 
-    paper-material > h3,
     wl-card > h3 {
       font-size: 20px;
       font-weight: 200;
@@ -839,7 +811,6 @@ export const BackendAiStyles =
       border-bottom: 1px solid #DDD;
     }
 
-    paper-material > h3 > .date,
     wl-card > h3 > .date {
       font-size: 12px;
       text-align: right;
@@ -847,58 +818,43 @@ export const BackendAiStyles =
       margin-left: 20px;
     }
 
-    paper-material > h3.blue,
-    paper-material > h4.blue,
     wl-card > h3.blue,
     wl-card > h4.blue {
       border-left: 3px solid var(--paper-light-blue-400);
     }
 
-    paper-material > h3.red,
-    paper-material > h4.red,
     wl-card > h3.red,
     wl-card > h4.red {
       border-left: 3px solid var(--paper-red-400);
     }
 
-    paper-material > h3.green,
-    paper-material > h4.green,
     wl-card > h3.green,
     wl-card > h4.green {
       border-left: 3px solid var(--paper-green-400);
     }
 
-    paper-material > h3.orange,
-    paper-material > h4.orange,
     wl-card > h3.orange,
     wl-card > h4.orange {
 
       border-left: 3px solid var(--paper-orange-400);
     }
 
-    paper-material > h3.cyan,
-    paper-material > h4.cyan,
     wl-card > h3.cyan,
     wl-card > h4.cyan {
 
       border-left: 3px solid var(--paper-cyan-400);
     }
 
-    paper-material > h3.lime,
-    paper-material > h4.lime,
     wl-card > h3.lime,
     wl-card > h4.lime {
       border-left: 3px solid var(--paper-lime-400);
     }
 
-    paper-material > h3.pink,
-    paper-material > h4.pink,
     wl-card > h3.pink,
     wl-card > h4.pink {
       border-left: 3px solid var(--paper-pink-400);
     }
 
-    paper-material > h4,
     wl-card > h4 {
       font-size: 14px;
       padding: 5px 15px 5px 20px;
@@ -910,23 +866,19 @@ export const BackendAiStyles =
       justify-content: space-between;
     }
 
-    paper-material .flex,
     wl-card .flex {
 
       display: flex;
     }
 
-    paper-material > div,
     wl-card > div {
       margin: 10px;
     }
 
-    paper-material.entries > div,
     wl-card.entries > div {
       margin: 20px;
     }
 
-    paper-material paper-card,
     wl-card paper-card {
       margin-top: 15px;
       margin-bottom: 15px;
@@ -1088,8 +1040,7 @@ export const BackendAiStyles =
       margin-right: auto;
     }
 
-    wl-card > h4, 
-    paper-material > h4 {
+    wl-card > h4 {
       font-weight: 200;
     }
 
