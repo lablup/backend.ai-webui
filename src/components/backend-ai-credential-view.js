@@ -3,6 +3,7 @@
  */
 
 import {css, html, LitElement} from "lit-element";
+import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
@@ -475,10 +476,11 @@ class BackendAICredentialView extends LitElement {
           <h3>Create</h3>
           <form id="login-form" onSubmit="this._addResourcePolicy()">
             <fieldset>
-              <wl-textfield name="new_policy_name" id="id_new_policy_name" label="Policy Name"
+              <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
                            type="text"
+                           auto-validate required
                            pattern="[a-zA-Z0-9]*"
-                           error-message="Policy name only accepts letters and numbers"></wl-textfield>
+                           error-message="Policy name only accepts letters and numbers"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
