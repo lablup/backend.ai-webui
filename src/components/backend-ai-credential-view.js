@@ -3,7 +3,6 @@
  */
 
 import {css, html, LitElement} from "lit-element";
-import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
@@ -375,7 +374,6 @@ class BackendAICredentialView extends LitElement {
           margin-bottom: 20px;
         }
 
-        wl-dialog paper-input,
         wl-dialog wl-textfield {
           padding-left: 20px;
           padding-right: 20px;
