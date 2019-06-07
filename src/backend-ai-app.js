@@ -51,7 +51,7 @@ const loadPage = (page) => (dispatch) => {
       import('./backend-ai-agent-view.js');
       break;
     case 'credential':
-      import('./backend-ai-credential-view.js');
+      import('./components/backend-ai-credential-view.js');
       break;
     case 'environment':
       import('./components/backend-ai-environment-view.js');
