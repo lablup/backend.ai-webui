@@ -1,7 +1,7 @@
 import {css, html, LitElement} from "lit-element";
-import './plastics/plastic-material/plastic-material';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/color';
+import 'weightless/card';
 
 import {IronFlex, IronFlexAlignment} from './layout/iron-flex-layout-classes';
 
@@ -16,7 +16,7 @@ class LablupActivityPanel extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-        plastic-material {
+        wl-card {
           display: block;
           background: white;
           box-sizing: border-box;
@@ -25,7 +25,7 @@ class LablupActivityPanel extends LitElement {
           border-radius: 5px;
         }
 
-        plastic-material > h4 {
+        wl-card > h4 {
           border-left: 3px solid var(--paper-green-900);
           background-color: var(--paper-green-500);
           color: #eee;
@@ -42,19 +42,19 @@ class LablupActivityPanel extends LitElement {
           overflow: hidden;
         }
 
-        plastic-material > div {
+        wl-card > div {
           margin: 20px;
           padding-bottom: 20px;
           font-size: 12px;
           padding-left: 3px;
         }
 
-        plastic-material > h4 > paper-icon-button {
+        wl-card > h4 > paper-icon-button {
           display: flex;
         }
 
-        plastic-material > h4 > paper-icon-button,
-        plastic-material > h4 > paper-icon-button #icon {
+        wl-card > h4 > paper-icon-button,
+        wl-card > h4 > paper-icon-button #icon {
           width: 15px;
           height: 15px;
           padding: 0;
@@ -69,14 +69,14 @@ class LablupActivityPanel extends LitElement {
   render() {
     // language=HTML
     return html`
-      <plastic-material id="activity" elevation="${this.elevation}">
+      <wl-card id="activity" elevation="${this.elevation}">
         <h4 class="layout flex justified center">${this.title}
           <paper-icon-button id="button" icon="close"></paper-icon-button>
         </h4>
         <div>
           <slot name="message"></slot>
         </div>
-      </plastic-material>
+      </wl-card>
     `;
   }
 
@@ -135,22 +135,22 @@ class LablupActivityPanel extends LitElement {
     } else {
       this.shadowRoot.querySelector('#button').addEventListener('tap', this._removePanel.bind(this));
     }
-    this.shadowRoot.querySelector('plastic-material').style.width = this.width + "px";
+    this.shadowRoot.querySelector('wl-card').style.width = this.width + "px";
     if (this.minwidth) {
-      this.shadowRoot.querySelector('plastic-material').style.minWidth = this.minwidth + "px";
+      this.shadowRoot.querySelector('wl-card').style.minWidth = this.minwidth + "px";
     }
     if (this.maxwidth) {
-      this.shadowRoot.querySelector('plastic-material').style.minWidth = this.maxwidth + "px";
+      this.shadowRoot.querySelector('wl-card').style.minWidth = this.maxwidth + "px";
     }
     if (this.horizontalsize) {
       if (this.horizontalsize == '2x') {
-        this.shadowRoot.querySelector('plastic-material').style.width = (this.width * 2 + 32) + "px";
+        this.shadowRoot.querySelector('wl-card').style.width = (this.width * 2 + 32) + "px";
       }
       if (this.horizontalsize == '3x') {
-        this.shadowRoot.querySelector('plastic-material').style.width = (this.width * 3 + 32) + "px";
+        this.shadowRoot.querySelector('wl-card').style.width = (this.width * 3 + 32) + "px";
       }
     }
-    this.shadowRoot.querySelector('plastic-material').style.margin = this.marginWidth + "px";
+    this.shadowRoot.querySelector('wl-card').style.margin = this.marginWidth + "px";
   }
 
   connectedCallback() {

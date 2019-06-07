@@ -6,7 +6,6 @@
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
-import '../plastics/plastic-material/plastic-material';
 import '@polymer/paper-toast/paper-toast';
 
 import '@polymer/paper-input/paper-input';
@@ -14,6 +13,7 @@ import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
+import 'weightless/card';
 
 import '../backend.ai-client-es6.js';
 
@@ -394,7 +394,7 @@ class BackendAiLogin extends LitElement {
       <app-localstorage-document key="backendaiconsole.api_endpoint"
                                  data="${this.api_endpoint}"></app-localstorage-document>
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent>
-        <plastic-material elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center-justified flex layout">
             <div>Login</div> 
             <div class="flex"></div>
@@ -417,7 +417,7 @@ class BackendAiLogin extends LitElement {
                           Login</wl-button>
             </fieldset>
           </form>
-        </plastic-material>
+        </wl-card>
       </wl-dialog>
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
     `;

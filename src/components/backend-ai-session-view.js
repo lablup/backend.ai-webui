@@ -898,7 +898,6 @@ class BackendAiSessionView extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        plastic-material h4,
         wl-card h4 {
           padding: 5px 20px;
           border-bottom: 1px solid #ddd;

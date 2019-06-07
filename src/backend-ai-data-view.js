@@ -14,7 +14,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import './plastics/plastic-material/plastic-material';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-toast/paper-toast';
 import './components/lablup-loading-indicator';

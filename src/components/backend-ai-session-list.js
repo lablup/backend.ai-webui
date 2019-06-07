@@ -17,7 +17,6 @@ import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-progress/paper-progress';
 import './components/lablup-loading-indicator';
-import './plastics/plastic-material/plastic-material';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
@@ -25,6 +24,8 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
+
+import 'weightless/card';
 
 import './backend-ai-styles.js';
 import './backend-ai-indicator.js';
@@ -791,7 +792,7 @@ class BackendAiSessionList extends LitElement {
       <paper-dialog id="work-dialog"
                     entry-animation="slide-from-right-animation" exit-animation="slide-right-animation"
                     style="padding:0;">
-        <plastic-material elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
+        <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span id="work-title"></span>
             <div class="flex"></div>
@@ -803,13 +804,13 @@ class BackendAiSessionList extends LitElement {
           <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                   style="border-style: none;width: 100%;"></iframe>
 
-        </plastic-material>
+        </wl-card>
       </paper-dialog>
       <paper-dialog id="app-dialog"
                     style="padding:0;" no-overlap
                     horizontal-align="right"
                     vertical-align="top" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <plastic-material elevation="1" class="intro" style="margin: 0; height: 100%;">
+        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h4 class="horizontal center layout" style="font-weight:bold">
             <span>App</span>
             <div class="flex"></div>
@@ -827,7 +828,7 @@ class BackendAiSessionList extends LitElement {
               </div>
             </template>
           </div>
-        </plastic-material>
+        </wl-card>
       </paper-dialog>
     `;
   }
