@@ -494,6 +494,7 @@ class BackendAiSessionView extends LitElement {
   async _aggregateResourceUse() {
     let total_slot = {};
     return window.backendaiclient.resourcePreset.check().then((response) => {
+      console.log(response);
       let group_resource = response.scaling_group_remaining;
       ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
         if (slot in response.keypair_using && slot in group_resource) {
@@ -598,6 +599,8 @@ class BackendAiSessionView extends LitElement {
         }
       });
       used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
+      console.log(this.concurrency_used);
+      console.log(this.concurrency_max);
       console.log(used_slot_percent['concurrency']);
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
@@ -696,7 +699,7 @@ class BackendAiSessionView extends LitElement {
             }
             this.gpu_metric = gpu_metric;
           }
-          if (item.key === 'cuda.shares' && this.gpu_mode == 'vgpu') {
+          if (item.key === 'cuda.shares' && this.gpu_mode === 'vgpu') {
             let vgpu_metric = item;
             vgpu_metric.min = parseInt(vgpu_metric.min);
             if ('cuda.shares' in this.userResourceLimit) {
@@ -887,9 +890,9 @@ class BackendAiSessionView extends LitElement {
   _selectDefaultLanguage() {
     if (window.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in window.backendaiclient._config &&
-      window.backendaiclient._config.default_session_environment != '') {
+      window.backendaiclient._config.default_session_environment !== '') {
       this.default_language = window.backendaiclient._config.default_session_environment;
-    } else if (this.languages.length != 0) {
+    } else if (this.languages.length !== 0) {
       this.default_language = this.languages[0].name;
     } else {
       this.default_language = 'index.docker.io/lablup/ngc-tensorflow';
@@ -948,6 +951,14 @@ class BackendAiSessionView extends LitElement {
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
+        }
+
+        .short-indicator paper-progress {
+          width: 50px;
+        }
+
+        .short-indicator .gauge-label {
+          width: 80px;
         }
 
         .custom {
@@ -1041,7 +1052,7 @@ class BackendAiSessionView extends LitElement {
         <paper-tab>Finished</paper-tab>
       </paper-tabs>
       <wl-card class="item" elevation="1">
-        <h4 class="horizontal center layout">
+        <h3 class="horizontal center layout">
           <span>Running</span>
           <div class="layout horizontal center resources wrap" style="margin-left:20px;">
             <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
@@ -1066,7 +1077,7 @@ class BackendAiSessionView extends LitElement {
                 <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
                 <span class="gauge-name">GPU</span>
               </div>
-              <div class="layout vertical start-justified wrap">
+              <div class="layout vertical start-justified wrap short-indicator">
                 <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
                 <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
               </div>` :
@@ -1077,18 +1088,18 @@ class BackendAiSessionView extends LitElement {
                   <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
                   <span class="gauge-name">GPU</span>
                 </div>
-                <div class="layout vertical start-justified wrap">
+                <div class="layout vertical start-justified wrap short-indicator">
                   <span class="gauge-label">${this.used_slot.vgpu_slot}/${this.total_slot.vgpu_slot}</span>
                   <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
                 </div>` :
       html``}
             <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+              <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
             </div>
-            <div class="layout vertical start-justified wrap">
+            <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-              <paper-progress id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+              <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
             </div>
 
             </div>
@@ -1097,7 +1108,7 @@ class BackendAiSessionView extends LitElement {
               <wl-icon>add</wl-icon>
               Start
             </wl-button>
-          </h4>
+          </h3>
           <div>
             <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
           </div>
