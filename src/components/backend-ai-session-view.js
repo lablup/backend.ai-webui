@@ -90,6 +90,8 @@ class BackendAiSessionView extends LitElement {
     this.vfolders = [];
     this.default_language = '';
     this.launch_ready = false;
+    this.concurrency_used = 0;
+    this.concurrency_max = 0;
   }
 
   static get properties() {
@@ -147,6 +149,12 @@ class BackendAiSessionView extends LitElement {
       },
       available_slot: {
         type: Object
+      },
+      concurrency_used: {
+        type: Number
+      },
+      concurrency_max: {
+        type: Number
       },
       vfolders: {
         type: Array
@@ -254,8 +262,9 @@ class BackendAiSessionView extends LitElement {
   }
 
   _refreshResourcePolicy() {
-    window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy']).then((response) => {
+    window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
+      this.concurrency_used = response.keypair.concurrency_used;
       // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
       // TODO: Fix it to use API-based resource max.
       return window.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
@@ -272,6 +281,7 @@ class BackendAiSessionView extends LitElement {
         this.defaultResourcePolicy = 'LIMITED';
       }
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
+      this.concurrency_max = resource_policy.max_concurrent_sessions;
       this._refreshResourceTemplate();
       this._refreshResourceValues();
     }).catch((err) => {
@@ -587,6 +597,8 @@ class BackendAiSessionView extends LitElement {
           }
         }
       });
+      used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
+      console.log(used_slot_percent['concurrency']);
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
       return this.available_slot;
@@ -1070,6 +1082,15 @@ class BackendAiSessionView extends LitElement {
                   <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
                 </div>` :
       html``}
+            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+              <span class="gauge-name">Session</span>
+            </div>
+            <div class="layout vertical start-justified wrap">
+              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
+              <paper-progress id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+            </div>
+
             </div>
             <span class="flex"></span>
             <wl-button class="fg red" id="launch-session" outlined>
