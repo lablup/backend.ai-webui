@@ -8,7 +8,6 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
-import '@polymer/iron-collapse/iron-collapse';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-tabs/paper-tabs';
