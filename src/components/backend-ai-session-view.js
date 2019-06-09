@@ -599,9 +599,6 @@ class BackendAiSessionView extends LitElement {
         }
       });
       used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
-      console.log(this.concurrency_used);
-      console.log(this.concurrency_max);
-      console.log(used_slot_percent['concurrency']);
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
       return this.available_slot;
