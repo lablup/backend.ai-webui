@@ -13,7 +13,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/textfield';
 
-import '../backend-ai-credential-list.js';
+import './backend-ai-credential-list.js';
 import '../backend-ai-resource-policy-list.js';
 
 import {BackendAiStyles} from "../backend-ai-console-styles";
@@ -70,6 +70,9 @@ class BackendAICredentialView extends LitElement {
       },
       default_vfolder_host: {
         type: String
+      },
+      _status: {
+        type: Boolean
       }
     }
   }
@@ -100,6 +103,7 @@ class BackendAICredentialView extends LitElement {
     this.is_admin = false;
     this.allowed_vfolder_hosts = [];
     this.default_vfolder_host = '';
+    this._status = false;
   }
 
   firstUpdated() {
@@ -135,12 +139,6 @@ class BackendAICredentialView extends LitElement {
     super.connectedCallback();
   }
 
-  static get observers() {
-    return [
-      '_menuChanged(active)'
-    ]
-  }
-
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this._menuChanged(true);
@@ -153,14 +151,12 @@ class BackendAICredentialView extends LitElement {
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('#active-credential-list').active = false;
-      this.shadowRoot.querySelector('#inactive-credential-list').active = false;
       this.shadowRoot.querySelector('#resource-policy-list').active = false;
+      this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector('#active-credential-list').active = true;
-    this.shadowRoot.querySelector('#inactive-credential-list').active = true;
     this.shadowRoot.querySelector('#resource-policy-list').active = true;
+    this._status = 'active';
   }
 
   async _launchKeyPairDialog() {
@@ -224,16 +220,16 @@ class BackendAICredentialView extends LitElement {
     // Read resources
     window.backendaiclient.keypair.add(user_id, is_active, is_admin,
       resource_policy, rate_limit).then(response => {
-      this.shadowRoot.querySelector('#new-keypair-dialog').close();
-      this.$.notification.text = "Keypair successfully created.";
-      this.$.notification.show();
+      this.shadowRoot.querySelector('#new-keypair-dialog').hide();
+      this.shadowRoot.querySelector('#notification').text = "Keypair successfully created.";
+      this.shadowRoot.querySelector('#notification').show();
       this.shadowRoot.querySelector('#active-credential-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#new-keypair-dialog').close();
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#new-keypair-dialog').hide();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
@@ -414,11 +410,11 @@ class BackendAICredentialView extends LitElement {
           </wl-button>
         </h4>
         <div>
-          <backend-ai-credential-list id="active-credential-list" condition="active"></backend-ai-credential-list>
+          <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._status === 'active'}"></backend-ai-credential-list>
         </div>
         <h4>Inactive</h4>
         <div>
-          <backend-ai-credential-list id="inactive-credential-list" condition="inactive"></backend-ai-credential-list>
+          <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._status === 'active'}"></backend-ai-credential-list>
         </div>
       </wl-card>
 
