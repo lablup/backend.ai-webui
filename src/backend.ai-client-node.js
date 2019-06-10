@@ -244,7 +244,11 @@ class Client {
    * Return the resource slots.
    */
   getResourceSlots() {
-    let rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
+    if (this.isManagerVersionCompatibleWith('19.06')) {
+      let rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
+    } else {
+      let rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
+    }
     return this._wrapWithPromise(rqst);
   }
 

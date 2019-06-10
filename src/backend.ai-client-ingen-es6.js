@@ -383,7 +383,11 @@ class Client {
    * Return the resource slots.
    */
   getResourceSlots() {
-    let rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
+    if (this.isManagerVersionCompatibleWith('19.06')) {
+      let rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
+    } else {
+      let rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
+    }
     return this._wrapWithPromise(rqst);
   }
 
@@ -1157,10 +1161,20 @@ class Keypair {
 
 
 class ResourcePolicy {
+  /**
+   * The Resource Policy  API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
   constructor(client) {
     this.client = client;
   }
-
+  /**
+   * get resource policy with given name and fields.
+   *
+   * @param {string} name - resource policy name.
+   * @param {array} fields - fields to query.
+   */
   get(name = null, fields = ['name',
     'created_at',
     'default_for_unspecified',
@@ -1185,7 +1199,22 @@ class ResourcePolicy {
     }
     return this.client.gql(q, v);
   }
-
+  /**
+   * add resource policy with given name and fields.
+   *
+   * @param {string} name - resource policy name.
+   * @param {json} input - resource policy specification and data. Required fields are: 
+   * {
+   *   'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
+   *   'total_resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
+   *   'max_concurrent_sessions': concurrency_limit,
+   *   'max_containers_per_session': containers_per_session_limit,
+   *   'idle_timeout': idle_timeout,
+   *   'max_vfolder_count': vfolder_count_limit,
+   *   'max_vfolder_size': vfolder_capacity_limit,
+   *   'allowed_vfolder_hosts': vfolder_hosts
+   * };
+   */
   add(name = null, input) {
     let fields = ['name',
       'created_at',
@@ -1212,7 +1241,22 @@ class ResourcePolicy {
       return resolve(false);
     }
   }
-
+  /**
+   * mutate specified resource policy with given name with new values.
+   *
+   * @param {string} name - resource policy name to mutate.
+   * @param {json} input - resource policy specification and data. Required fields are: 
+   * {
+   *   'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
+   *   'total_resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
+   *   'max_concurrent_sessions': concurrency_limit,
+   *   'max_containers_per_session': containers_per_session_limit,
+   *   'idle_timeout': idle_timeout,
+   *   'max_vfolder_count': vfolder_count_limit,
+   *   'max_vfolder_size': vfolder_capacity_limit,
+   *   'allowed_vfolder_hosts': vfolder_hosts
+   * };
+   */
   mutate(name = null, input) {
     let fields = ['name',
       'created_at',
@@ -1242,10 +1286,19 @@ class ResourcePolicy {
 }
 
 class Image {
+  /**
+   * The Container image API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
   constructor(client) {
     this.client = client;
   }
-
+  /**
+   * list container images registered on the manager.
+   *
+   * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
+   */
   list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
     let q, v;
     q = `query {` +
@@ -1257,6 +1310,11 @@ class Image {
 }
 
 class ComputeSession {
+  /**
+   * The Computate session API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
   constructor(client) {
     this.client = client;
   }
