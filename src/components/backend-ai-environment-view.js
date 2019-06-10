@@ -61,7 +61,7 @@ class BackendAiEnvironmentView extends LitElement {
             Add</wl-button>
         </h3>
 
-        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
           <vaadin-grid-column width="40px">
             <template class="header">
               <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
@@ -291,7 +291,6 @@ class BackendAiEnvironmentView extends LitElement {
       //let sorted_images = {};
       //image_keys.sort();
       this.images = images;
-      this.shadowRoot.querySelector('#testgrid').items = this.images;
       this.shadowRoot.querySelector('#loading-indicator').hide();
 
     });
