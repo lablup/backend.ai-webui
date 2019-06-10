@@ -102,6 +102,7 @@ class BackendAiLogin extends LitElement {
       this.shadowRoot.querySelector('#id_api_endpoint').disabled = true;
       this.shadowRoot.querySelector('#id_api_endpoint_humanized').disabled = true;
     }
+
     if (typeof config.general === "undefined" || typeof config.general.defaultSessionEnvironment === "undefined" || config.general.defaultSessionEnvironment === '') {
       this.default_session_environment = '';
     } else {
@@ -281,6 +282,7 @@ class BackendAiLogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
+
       window.backendaiclient.ready = true;
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);

@@ -351,6 +351,9 @@ class BackendAiSessionView extends LitElement {
     if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
       config['group_name'] = window.backendaiclient.current_group;
     }
+    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
+      config['domain'] = window.backendaiclient._config.domainName;
+    }
     config['cpu'] = this.shadowRoot.querySelector('#cpu-resource').value;
     if (this.gpu_mode == 'vgpu') {
       config['vgpu'] = this.shadowRoot.querySelector('#gpu-resource').value;
