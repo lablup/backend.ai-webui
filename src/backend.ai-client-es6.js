@@ -298,6 +298,9 @@ class Client {
       if (resources['group_name']) {
         params['group_name'] = resources['group_name'];
       }
+      if (resources['domain']) {
+        params['domain'] = resources['domain'];
+      }
       //params['config'] = {};
       params['config'] = {resources: config};
       if (resources['mounts']) {
