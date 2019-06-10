@@ -118,8 +118,6 @@ class BackendAICredentialList extends LitElement {
   }
 
   _refreshKeyData(user_id) {
-    this.shadowRoot.querySelector('#loading-indicator').show();
-
     let status = 'active';
     let is_active = true;
     switch (this.condition) {
@@ -176,7 +174,6 @@ class BackendAICredentialList extends LitElement {
         }
       });
       this.keypairs = keypairs;
-      this.shadowRoot.querySelector('#keypair-grid').items = this.keypairs;
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -371,10 +368,10 @@ class BackendAICredentialList extends LitElement {
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
-                   id="keypair-grid">
+                   id="keypair-grid" .items="${this.keypairs}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
-          <template>[[_indexFrom1(index)]]</template>
+          <template>[[index]]</template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
