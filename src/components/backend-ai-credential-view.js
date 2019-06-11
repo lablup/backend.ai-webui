@@ -12,6 +12,8 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/textfield';
+import 'weightless/tab';
+import 'weightless/tab-group';
 
 import './backend-ai-credential-list.js';
 import '../backend-ai-resource-policy-list.js';
@@ -349,6 +351,14 @@ class BackendAICredentialView extends LitElement {
     }
   }
 
+  _showTab(tab) {
+    var els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (var x = 0; x < els.length; x++) {
+      els[x].style.display = 'none';
+    }
+    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+  }
+
   static get styles() {
     return [
       BackendAiStyles,
@@ -359,7 +369,7 @@ class BackendAICredentialView extends LitElement {
       // language=CSS
       css`
         wl-button.create-button {
-          width:335px;
+          width: 335px;
         }
 
         #new-keypair-dialog {
@@ -386,9 +396,11 @@ class BackendAICredentialView extends LitElement {
           padding-right: 20px;
           --input-font-family: Roboto, Noto, sans-serif;
         }
+
         wl-textfield {
           --input-state-color-invalid: red;
         }
+
         wl-dialog h4 {
           margin: 15px 0 5px 0;
           font-weight: 100;
@@ -402,6 +414,12 @@ class BackendAICredentialView extends LitElement {
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
         }
+
+        wl-card wl-card {
+          margin: 0;
+          padding: 0;
+          --card-elevation: 0;
+        }
       `];
   }
 
@@ -410,37 +428,41 @@ class BackendAICredentialView extends LitElement {
     return html`
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <wl-card class="admin item" elevation="1">
-        <h3>Credentials</h3>
-        <h4 class="horizontal flex center center-justified layout">
-          <span>Active</span>
-          <span class="flex"></span>
-          <wl-button class="fg green" id="add-keypair" outlined>
-            <wl-icon>add</wl-icon>
-            Add credential
-          </wl-button>
-        </h4>
-        <div>
-          <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._status === 'active'}"></backend-ai-credential-list>
-        </div>
-        <h4>Inactive</h4>
-        <div>
-          <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._status === 'active'}"></backend-ai-credential-list>
-        </div>
-      </wl-card>
+        <wl-tab-group>
+          <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
+          <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
+        </wl-tab-group>
+        <wl-card id="credential-lists" class="tab-content">
+          <h4 class="horizontal flex center center-justified layout">
+            <span>Active</span>
+            <span class="flex"></span>
+            <wl-button class="fg green" id="add-keypair" outlined>
+              <wl-icon>add</wl-icon>
+              Add credential
+            </wl-button>
+          </h4>
+          <div>
+            <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._status === 'active'}"></backend-ai-credential-list>
+          </div>
+          <h4>Inactive</h4>
+          <div>
+            <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._status === 'active'}"></backend-ai-credential-list>
+          </div>
+        </wl-card>
+        <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
+          <h4 class="horizontal flex center center-justified layout">
+            <span>Policy groups</span>
+            <span class="flex"></span>
+            <wl-button class="fg green" id="add-policy" outlined>
+              <wl-icon>add</wl-icon>
+              Create policy
+            </wl-button>
+          </h4>
+          <div>
+            <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
+          </div>
+        </wl-card>
 
-      <wl-card class="admin item" elevation="1">
-        <h3>Resource policies</h3>
-        <h4 class="horizontal flex center center-justified layout">
-          <span>Policy groups</span>
-          <span class="flex"></span>
-          <wl-button class="fg green" id="add-policy" outlined>
-            <wl-icon>add</wl-icon>
-            Create policy
-          </wl-button>
-        </h4>
-        <div>
-          <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
-        </div>
       </wl-card>
 
 
