@@ -4,7 +4,7 @@
  */
 
 import {css, html, LitElement} from "lit-element";
-import '@polymer/polymer/lib/elements/dom-if.js';
+//import '@polymer/polymer/lib/elements/dom-if.js';
 
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-dialog/paper-dialog';
@@ -171,6 +171,9 @@ class BackendAICredentialList extends LitElement {
             keypair['total_resource_slots'].cuda_shares = '-';
             keypair['total_resource_slots'].cuda_device = '-';
           }
+          ['cpu', 'mem', 'cuda_shares', 'cuda_device'].forEach((slot) => {
+            keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
+          });
         }
       });
       this.keypairs = keypairs;
@@ -424,12 +427,12 @@ class BackendAICredentialList extends LitElement {
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[_markIfUnlimited(item.total_resource_slots.cpu)]]</span>
+                <span>[[item.total_resource_slots.cpu]]</span>
                 <span class="indicator">cores</span>
               </div>
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[_markIfUnlimited(item.total_resource_slots.mem)]]</span>
+                <span>[[item.total_resource_slots.mem]]</span>
                 <span class="indicator">GB</span>
               </div>
             </div>
@@ -452,12 +455,12 @@ class BackendAICredentialList extends LitElement {
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
-                <span>[[_markIfUnlimited(item.max_vfolder_size)]]</span>
+                <span>[[item.max_vfolder_size]]</span>
                 <span class="indicator">GB</span>
               </div>
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="icons:folder"></iron-icon>
-                <span>[[_markIfUnlimited(item.max_vfolder_count)]]</span>
+                <span>[[item.max_vfolder_count]]</span>
                 <span class="indicator">Folders</span>
               </div>
             </div>

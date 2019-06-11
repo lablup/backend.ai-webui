@@ -19,7 +19,17 @@ import '../backend-ai-resource-policy-list.js';
 import {BackendAiStyles} from "../backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
 
+/**
+ Backend.AI Credential view page
 
+ Example:
+
+ <backend-ai-credential-view active=true>
+ ... content ...
+ </backend-ai-credential-view>
+
+ @group Backend.AI Console
+ */
 class BackendAICredentialView extends LitElement {
   static get properties() {
     return {
