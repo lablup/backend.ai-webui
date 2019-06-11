@@ -420,6 +420,18 @@ class BackendAICredentialView extends LitElement {
           padding: 0;
           --card-elevation: 0;
         }
+
+        wl-tab {
+          --tab-color: #666;
+          --tab-color-hover: #222;
+          --tab-color-hover-filled: #222;
+          --tab-color-active: #222;
+          --tab-color-active-hover: #222;
+          --tab-color-active-filled: #ccc;
+          --tab-bg-active: var(--paper-lime-600);
+          --tab-bg-filled: var(--paper-lime-600);
+          --tab-bg-active-hover: var(--paper-lime-600);
+        }
       `];
   }
 
@@ -431,6 +443,7 @@ class BackendAICredentialView extends LitElement {
         <wl-tab-group>
           <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
           <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
+          <wl-tab value="user-lists" disabled>Users</wl-tab>  
         </wl-tab-group>
         <wl-card id="credential-lists" class="tab-content">
           <h4 class="horizontal flex center center-justified layout">
