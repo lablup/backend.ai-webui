@@ -149,6 +149,8 @@ class BackendAICredentialList extends LitElement {
               keypair['total_resource_slots'] = JSON.parse(this.resourcePolicy[keypair.resource_policy][k]);
             }
           }
+          keypair['created_at_formatted'] = this._humanReadableTime(keypair['created_at']);
+          keypair['elapsed'] = this._elapsed(keypair['created_at']);
           if ('cpu' in keypair['total_resource_slots']) {
           } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
             keypair['total_resource_slots'].cpu = '-';
@@ -415,8 +417,8 @@ class BackendAICredentialList extends LitElement {
           </template>
           <template>
             <div class="layout vertical">
-              <span>[[_elapsed(item.created_at)]] Days</span>
-              <span class="indicator">([[_humanReadableTime(item.created_at)]])</span>
+              <span>[[item.elapsed]] Days</span>
+              <span class="indicator">([[item.created_at_formatted]])</span>
             </div>
           </template>
         </vaadin-grid-column>
