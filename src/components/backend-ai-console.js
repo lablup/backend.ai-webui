@@ -263,7 +263,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.updateTitleColor('var(--paper-red-800)', '#efefef');
           break;
         case 'data':
-          this.menuTitle = 'Data';
+          this.menuTitle = 'Storage';
           this.shadowRoot.getElementById('sidebar-menu').selected = 3;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
@@ -441,7 +441,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
-                  Data
+                  Storage
                 </paper-item>
               </a>
               <paper-item disabled>

@@ -19,6 +19,7 @@ import '@polymer/paper-progress/paper-progress';
 import './lablup-loading-indicator';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-toast/paper-toast';
@@ -720,18 +721,15 @@ class BackendAiSessionList extends LitElement {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list" 
          .items="${this.compute_sessions}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this.indexRenderer}"></vaadin-grid-column>
-        <template is="dom-if" if="{{is_admin}}">
-          <vaadin-grid-column resizable width="100px" flex-grow="0">
-            <template class="header">
-              <vaadin-grid-sorter path="access_key">API Key</vaadin-grid-sorter>
-            </template>
+        ${this.is_admin ? html`
+          <vaadin-grid-sort-column resizable width="100px" header="API Key" flex-grow="0" path="access_key">
             <template>
               <div class="layout vertical">
                 <span class="indicator">{{item.access_key}}</span>
               </div>
             </template>
-          </vaadin-grid-column>
-        </template>
+          </vaadin-grid-sort-column>
+        ` : html``}
         <vaadin-grid-column resizable header="Job ID">
           <template>
             <div>[[item.sess_id]]</div>
@@ -785,8 +783,7 @@ class BackendAiSessionList extends LitElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="100px" flex-grow="0" resizable>
-          <template class="header">Usage</template>
+        <vaadin-grid-column width="100px" flex-grow="0" resizable header="Usage">
           <template>
             <div class="layout horizontal center flex">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
@@ -802,20 +799,14 @@ class BackendAiSessionList extends LitElement {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="created_at">Starts</vaadin-grid-sorter>
-          </template>
+        <vaadin-grid-sort-column resizable header="Starts" path="created_at">
           <template>
             <div class="layout vertical">
               <span>[[item.created_at_hr]]</span>
             </div>
           </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable>
-          <template class="header">
-            Reservation
-          </template>
+        </vaadin-grid-sort-column>
+        <vaadin-grid-column width="100px" flex-grow="0" resizable header="Reservation">
           <template>
             <div class="layout vertical">
               <span>[[item.elapsed]]</span>
