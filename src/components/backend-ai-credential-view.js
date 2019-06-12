@@ -425,12 +425,12 @@ class BackendAICredentialView extends LitElement {
           --tab-color: #666;
           --tab-color-hover: #222;
           --tab-color-hover-filled: #222;
-          --tab-color-active: #222;
-          --tab-color-active-hover: #222;
+          --tab-color-active: var(--paper-green-600);
+          --tab-color-active-hover: var(--paper-green-600);
           --tab-color-active-filled: #ccc;
-          --tab-bg-active: var(--paper-lime-600);
-          --tab-bg-filled: var(--paper-lime-600);
-          --tab-bg-active-hover: var(--paper-lime-600);
+          --tab-bg-active: var(--paper-lime-200);
+          --tab-bg-filled: var(--paper-lime-200);
+          --tab-bg-active-hover: var(--paper-lime-200);
         }
       `];
   }
