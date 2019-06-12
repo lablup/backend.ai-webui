@@ -425,6 +425,10 @@ class BackendAICredentialView extends LitElement {
           --card-elevation: 0;
         }
 
+        wl-tab-group {
+          --tab-group-indicator-bg: var(--paper-green-600);
+        }
+
         wl-tab {
           --tab-color: #666;
           --tab-color-hover: #222;
@@ -449,6 +453,12 @@ class BackendAICredentialView extends LitElement {
           font-weight: 200;
           border-bottom: 0;
         }
+
+        wl-card h3.tab {
+          padding-top: 0;
+          padding-bottom: 0;
+          padding-left: 0;
+        }
       `];
   }
 
@@ -457,7 +467,7 @@ class BackendAICredentialView extends LitElement {
     return html`
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <wl-card class="admin item" elevation="1">
-        <h3 class="horizontal wrap layout">
+        <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
             <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>

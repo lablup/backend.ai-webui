@@ -506,7 +506,6 @@ class BackendAiSessionView extends LitElement {
   async _aggregateResourceUse() {
     let total_slot = {};
     return window.backendaiclient.resourcePreset.check().then((response) => {
-      console.log(response);
       let group_resource = response.scaling_group_remaining;
       ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
         if (slot in response.keypair_using && slot in group_resource) {
@@ -605,7 +604,6 @@ class BackendAiSessionView extends LitElement {
         }
         if (slot in remaining_slot) {
           if (remaining_slot[slot] === 'Infinity') {
-            console.log(slot);
             remaining_slot[slot] = total_slot[slot];
           }
         }
@@ -767,7 +765,6 @@ class BackendAiSessionView extends LitElement {
               // TODO: dynamic maximum per user policy
             }
             this.mem_metric = mem_metric;
-            console.log(mem_metric);
           }
         });
         if (this.gpu_metric === {}) {
@@ -835,7 +832,6 @@ class BackendAiSessionView extends LitElement {
         return;
       }
       this.images = images;
-      console.log(images);
       this.supports = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
@@ -1049,10 +1045,27 @@ class BackendAiSessionView extends LitElement {
           --button-color-active: red;
           --button-color-hover: red;
         }
+
         wl-card h3.tab {
           padding-top:0;
           padding-bottom:0;
           padding-left:0;
+        }
+
+        wl-tab-group {
+          --tab-group-indicator-bg: var(--paper-red-500);
+        }
+
+        wl-tab {
+          --tab-color: #666;
+          --tab-color-hover: #222;
+          --tab-color-hover-filled: #222;
+          --tab-color-active: #222;
+          --tab-color-active-hover: #222;
+          --tab-color-active-filled: #ccc;
+          --tab-bg-active: var(--paper-red-50);
+          --tab-bg-filled: var(--paper-red-50);
+          --tab-bg-active-hover: var(--paper-red-100);
         }
         
         wl-expansion {

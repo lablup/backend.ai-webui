@@ -29,7 +29,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
 import '../backend-ai-indicator.js';
 
 class BackendAiSessionList extends LitElement {
@@ -126,7 +126,7 @@ class BackendAiSessionList extends LitElement {
         this._refreshJobData();
       }, true);
     } else { // already connected
-        this._refreshJobData();
+      this._refreshJobData();
     }
   }
 
@@ -420,8 +420,8 @@ class BackendAiSessionList extends LitElement {
 
   _showLogs(e) {
     const controls = e.target.closest('#controls');
-    const kernelId = controls.kernelId;
-    const accessKey = controls.accessKey;
+    const kernelId = controls['kernel-id'];
+    const accessKey = controls['access-key'];
 
     window.backendaiclient.getLogs(kernelId, accessKey).then((req) => {
       setTimeout(() => {
@@ -445,6 +445,8 @@ class BackendAiSessionList extends LitElement {
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
     const kernelImage = controls['kernel-image'];
+    console.log(kernelImage);
+
     let imageName = kernelImage.split(":")[0];
     if (imageName in this.appTemplate) {
       this.appSupportList = this.appTemplate[imageName];
@@ -452,8 +454,8 @@ class BackendAiSessionList extends LitElement {
       this.appSupportList = [];
     }
     let dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.kernelId = kernelId;
-    dialog.accessKey = accessKey;
+    dialog.setAttribute('kernel-id', kernelId);
+    dialog.setAttribute('access-key', accessKey);
     dialog.positionTarget = e.target;
 
     this.shadowRoot.querySelector('#app-dialog').show();
@@ -498,10 +500,9 @@ class BackendAiSessionList extends LitElement {
 
   _runApp(e) {
     let controls = e.target.closest('#app-dialog');
-    let kernelId = controls['kernel-id'];
+    let kernelId = controls.getAttribute('kernel-id');
     let urlPostfix = e.target['url-postfix'];
     let appName = e.target['app-name'];
-
     if (appName === undefined || appName === null) {
       return;
     }
@@ -551,6 +552,7 @@ class BackendAiSessionList extends LitElement {
   _hideAppDialog() {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
+
   _updateFilterAccessKey(e) {
     this.filterAccessKey = e.target.value;
     if (this.refreshTimer) {
@@ -558,6 +560,7 @@ class BackendAiSessionList extends LitElement {
       this._refreshJobData();
     }
   }
+
   static get styles() {
     return [
       BackendAiStyles,
@@ -607,11 +610,11 @@ class BackendAiSessionList extends LitElement {
         }
 
         #work-dialog {
-          height: calc(100vh - 80px);
+          height: calc(100vh - 130px);
           right: 0;
           top: 0;
           position: fixed;
-          margin: 70px 0 0 0;
+          margin: 100px 0 0 0;
         }
 
         @media screen and (max-width: 899px) {
@@ -662,15 +665,15 @@ class BackendAiSessionList extends LitElement {
         div.filters #access-key-filter {
           --paper-input-container-input: {
             font-size: small;
-          }
+          };
           --paper-input-container-label: {
             font-size: small;
-          }
+          };
         }
       `];
   }
+
   controlRenderer(root, column, rowData) {
-    console.log(this);
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
@@ -679,8 +682,9 @@ class BackendAiSessionList extends LitElement {
              .kernel-image="${rowData.item.kernel_image}">
              ${this._isRunning ? html`
             <paper-icon-button class="fg blue controls-running" icon="assignment"
+                               @click="${(e) => this._showLogs(e)}"
                                on-tap="_showLogs"></paper-icon-button>
-             `: html`
+             ` : html`
             <paper-icon-button disabled class="fg controls-running" icon="assignment"
             ></paper-icon-button>
              `}
@@ -691,15 +695,16 @@ class BackendAiSessionList extends LitElement {
             <paper-icon-button class="fg controls-running"
                                @click="${(e) => this._runJupyterTerminal(e)}"
                                icon="vaadin:terminal"></paper-icon-button>
-                               `: html``}
+                               ` : html``}
              ${this.condition === 'running' ? html`
             <paper-icon-button class="fg red controls-running"
                                @click="${(e) => this._terminateKernel(e)}"
                                icon="delete"></paper-icon-button>
-                               `: html``}
+                               ` : html``}
         </div>`, root
     );
   }
+
   render() {
     // language=HTML
     return html`
@@ -849,9 +854,10 @@ class BackendAiSessionList extends LitElement {
           <div style="padding:15px;" class="horizontal layout wrap center center-justified">
               ${this.appSupportList.map(item => html`
                 <div class="vertical layout center center-justified app-icon">
-                  <paper-icon-button class="fg apps green" app="${item.name}" app-name="${item.name}"
-                                     url-postfix="${item.redirect}"
-                                     on-tap="_runApp" icon="${item.icon}"></paper-icon-button>
+                  <paper-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                     .url-postfix="${item.redirect}"
+                                     @click="${(e) => this._runApp(e)}"
+                                     icon="${item.icon}"></paper-icon-button>
                   <span class="label">${item.title}</span>
                 </div>
                 `)}
