@@ -1038,6 +1038,7 @@ class BackendAiSessionView extends LitElement {
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
+          border-bottom: 1px solid #ccc;
         }
       `];
   }
