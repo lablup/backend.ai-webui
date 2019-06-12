@@ -6,7 +6,7 @@
 import {css, html, LitElement} from 'lit-element';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
-import {BackendAiStyles} from '../backend-ai-console-styles.js';
+import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
 import '@vaadin/vaadin-grid/vaadin-grid';

@@ -17,7 +17,7 @@ import 'weightless/card';
 
 import '../backend.ai-client-es6.js';
 
-import {BackendAiStyles} from "../backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-console-styles";
 
 /**
  Backend.AI Login for GUI Console

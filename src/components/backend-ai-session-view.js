@@ -34,7 +34,7 @@ import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/card';
 
-import {BackendAiStyles} from '../backend-ai-console-styles.js';
+import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
 class BackendAiSessionView extends LitElement {
