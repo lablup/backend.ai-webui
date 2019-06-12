@@ -26,7 +26,7 @@ import '@polymer/neon-animation/animations/scale-up-animation.js';
 import '@polymer/neon-animation/animations/fade-out-animation.js';
 
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
-import '../backend-ai-session-list.js';
+import './backend-ai-session-list.js';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/icon';
@@ -93,6 +93,7 @@ class BackendAiSessionView extends LitElement {
     this.launch_ready = false;
     this.concurrency_used = 0;
     this.concurrency_max = 0;
+    this._status = 'inactive';
   }
 
   static get properties() {
@@ -174,6 +175,9 @@ class BackendAiSessionView extends LitElement {
       },
       launch_ready: {
         type: Boolean
+      },
+      _status: {
+        type: Boolean
       }
     }
   }
@@ -248,10 +252,12 @@ class BackendAiSessionView extends LitElement {
     if (active === false) {
       this.shadowRoot.querySelector('#running-jobs').active = false;
       this.shadowRoot.querySelector('#finished-jobs').active = false;
+      this._status = 'inactive';
       return;
     }
     this.shadowRoot.querySelector('#running-jobs').active = true;
     this.shadowRoot.querySelector('#finished-jobs').active = true;
+    this._status = 'active';
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -1041,17 +1047,17 @@ class BackendAiSessionView extends LitElement {
           --button-color-active: red;
           --button-color-hover: red;
         }
-        wl-card h3 {
+        wl-card h3.tab {
           padding-top:0;
           padding-bottom:0;
           padding-left:0;
         }
+        
         wl-expansion {
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
-          border-bottom: 1px solid #ccc;
         }
       `];
   }
@@ -1065,7 +1071,7 @@ class BackendAiSessionView extends LitElement {
         <paper-tab>Finished</paper-tab>
       </paper-tabs>
       <wl-card class="item" elevation="1">
-        <h3 class="horizontal center layout">
+        <h3 class="tab horizontal center layout">
           <wl-tab-group>
             <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>  
             <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
@@ -1126,10 +1132,10 @@ class BackendAiSessionView extends LitElement {
             </wl-button>
           </h3>
           <div id="running-lists" class="tab-content">
-            <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
+            <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
           </div>
           <div id="finished-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
+            <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
           </div>
         </wl-card>
         <wl-dialog id="new-session-dialog"

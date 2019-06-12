@@ -16,7 +16,7 @@ import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-progress/paper-progress';
-import './components/lablup-loading-indicator';
+import './lablup-loading-indicator';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
@@ -26,13 +26,9 @@ import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
 
 import 'weightless/card';
-
-import './backend-ai-styles.js';
-import './backend-ai-indicator.js';
-
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
-import {setPassiveTouchGestures} from "@polymer/polymer/lib/utils/settings";
-
+import {BackendAiStyles} from './backend-ai-console-styles';
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
+import '../backend-ai-indicator.js';
 
 class BackendAiSessionList extends LitElement {
   static get is() {
@@ -42,43 +38,34 @@ class BackendAiSessionList extends LitElement {
   static get properties() {
     return {
       active: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       condition: {
-        type: String,
-        default: 'running'  // finished, running, archived
+        type: String
       },
       jobs: {
-        type: Object,
-        value: {}
+        type: Object
       },
       compute_sessions: {
-        type: Object,
-        value: {}
+        type: Object
       },
       terminationQueue: {
-        type: Array,
-        value: []
+        type: Array
       },
       filterAccessKey: {
-        type: String,
-        value: ''
+        type: String
       },
       appSupportList: {
-        type: Array,
-        value: []
+        type: Array
       },
       appTemplate: {
-        type: Object,
-        value: {}
+        type: Object
       }
     };
   }
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
     this.active = false;
     this.condition = 'running';
     this.jobs = {};
@@ -92,9 +79,9 @@ class BackendAiSessionList extends LitElement {
   firstUpdated() {
     this._initializeAppTemplate();
     this.refreshTimer = null;
-    if (this.condition !== 'running' || !window.backendaiclient ||
+    if (!window.backendaiclient ||
       !window.backendaiclient.is_admin) {
-      this.$['access-key-filter'].parentNode.removeChild(this.$['access-key-filter']);
+      this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
     }
   }
 
@@ -116,8 +103,18 @@ class BackendAiSessionList extends LitElement {
     return window.backendaiclient.is_admin;
   }
 
-  _menuChanged(active) {
-    if (!active) {
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this._menuChanged(true);
+    } else {
+      this._menuChanged(false);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  async _menuChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
       return;
     }
     // If disconnected
@@ -126,7 +123,7 @@ class BackendAiSessionList extends LitElement {
         this._refreshJobData();
       }, true);
     } else { // already connected
-      this._refreshJobData();
+        this._refreshJobData();
     }
   }
 
@@ -210,6 +207,10 @@ class BackendAiSessionList extends LitElement {
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
+
+          sessions[objectKey].cpu_used_sec = this._msecToSec(sessions[objectKey].cpu_used);
+          sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
+
           if ('cuda.device' in occupied_slots) {
             sessions[objectKey].gpu_slot = parseInt(occupied_slots['cuda.device']);
           }
@@ -224,41 +225,41 @@ class BackendAiSessionList extends LitElement {
       //this.jobs = response;
       let refreshTime;
       if (this.active === true) {
-        if (this.condition === 'running') {
-          if (refresh === true) {
-            var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
-            document.dispatchEvent(event);
-          }
-          refreshTime = 5000;
-          this.refreshTimer = setTimeout(() => {
-            this._refreshJobData()
-          }, refreshTime);
-        } else {
-          refreshTime = 15000;
+        if (refresh === true) {
+          var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+          document.dispatchEvent(event);
         }
+        if (this.condition === 'running') {
+          refreshTime = 5000;
+        } else {
+          refreshTime = 30000;
+        }
+        this.refreshTimer = setTimeout(() => {
+          this._refreshJobData()
+        }, refreshTime);
       }
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
 
   _startProgressDialog() {
-    this.$['app-progress'].value = 0;
-    this.$['app-progress-text'].textContent = 'Initializing...';
-    this.$['app-progress-dialog'].open();
+    this.shadowRoot.querySelector('#app-progress').value = 0;
+    this.shadowRoot.querySelector('#app-progress-text').textContent = 'Initializing...';
+    this.shadowRoot.querySelector('#app-progress-dialog').open();
   }
 
   _setProgressDialog(value, text = '') {
-    this.$['app-progress-text'].textContent = text;
-    this.$['app-progress'].value = value;
+    this.shadowRoot.querySelector('#app-progress-text').textContent = text;
+    this.shadowRoot.querySelector('#app-progress').value = value;
   }
 
   _endProgressDialog() {
-    this.$['app-progress-dialog'].close();
+    this.shadowRoot.querySelector('#app-progress-dialog').close();
   }
 
   _isRunning() {
@@ -320,12 +321,12 @@ class BackendAiSessionList extends LitElement {
     const accessKey = controls.accessKey;
 
     if (this.terminationQueue.includes(kernelId)) {
-      this.$.notification.text = 'Already terminating the session.';
-      this.$.notification.show();
+      this.shadowRoot.querySelector('#notification').text = 'Already terminating the session.';
+      this.shadowRoot.querySelector('#notification').show();
       return false;
     }
-    this.$.notification.text = 'Terminating session...';
-    this.$.notification.show();
+    this.shadowRoot.querySelector('#notification').text = 'Terminating session...';
+    this.shadowRoot.querySelector('#notification').show();
     this.terminationQueue.push(kernelId);
     this._terminateApp(kernelId).then(() => {
       window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
@@ -334,14 +335,14 @@ class BackendAiSessionList extends LitElement {
           this.refreshList();
         }, 1000);
       }).catch((err) => {
-        this.$.notification.text = 'Problem occurred during termination.';
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = 'Problem occurred during termination.';
+        this.shadowRoot.querySelector('#notification').show();
       });
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
@@ -393,8 +394,8 @@ class BackendAiSessionList extends LitElement {
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
-          this.$.notification.text = err.message;
-          this.$.notification.show();
+          this.shadowRoot.querySelector('#notification').text = err.message;
+          this.shadowRoot.querySelector('#notification').show();
         }
       });
   }
@@ -406,17 +407,17 @@ class BackendAiSessionList extends LitElement {
 
     window.backendaiclient.getLogs(kernelId, accessKey).then((req) => {
       setTimeout(() => {
-        this.$['work-title'].innerHTML = `${kernelId}`;
-        this.$['work-area'].innerHTML = `<pre>${req.result.logs}</pre>` || 'No logs.';
-        this.$['work-dialog'].open();
+        this.shadowRoot.querySelector('#work-title').innerHTML = `${kernelId}`;
+        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${req.result.logs}</pre>` || 'No logs.';
+        this.shadowRoot.querySelector('#work-dialog').open();
       }, 100);
     }).catch((err) => {
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       } else if (err && err.title) {
-        this.$.notification.text = err.title;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.title;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
@@ -431,12 +432,12 @@ class BackendAiSessionList extends LitElement {
     } else {
       this.appSupportList = [];
     }
-    let dialog = this.$['app-dialog'];
+    let dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.kernelId = kernelId;
     dialog.accessKey = accessKey;
     dialog.positionTarget = e.target;
 
-    this.$['app-dialog'].open();
+    this.shadowRoot.querySelector('#app-dialog').open();
   }
 
   async _open_wsproxy(kernelId, app = 'jupyter') {
@@ -535,14 +536,17 @@ class BackendAiSessionList extends LitElement {
       this._refreshJobData();
     }
   }
-
-  static get template() {
-    // language=HTML
-    return html`
-      <style include="backend-ai-styles iron-flex iron-flex-alignment">
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      // language=CSS
+      css`
         vaadin-grid {
           border: 0;
           font-size: 14px;
+          height: calc(100vh - 300px);
         }
 
         paper-item {
@@ -641,20 +645,26 @@ class BackendAiSessionList extends LitElement {
             font-size: small;
           }
         }
-      </style>
+      `];
+  }
+
+  render() {
+    // language=HTML
+    return html`
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
         <span class="flex"></span>
         <paper-input id="access-key-filter" type="search" size=30
-                     label="access key" no-label-float value="[[filterAccessKey]]"
+                     label="access key" no-label-float .value="${this.filterAccessKey}"
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[compute_sessions]]">
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" 
+         .items="${this.compute_sessions}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
-          <template>[[_indexFrom1(index)]]</template>
+          <template>[[index]]</template>
         </vaadin-grid-column>
         <template is="dom-if" if="{{is_admin}}">
           <vaadin-grid-column resizable width="100px" flex-grow="0">
@@ -756,7 +766,7 @@ class BackendAiSessionList extends LitElement {
             <div class="layout horizontal center flex">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
               <div class="vertical start layout">
-                <span>[[_msecToSec(item.cpu_used)]]</span>
+                <span>[[item.cpu_used_sec]]</span>
                 <span class="indicator">sec.</span>
               </div>
               <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
@@ -783,7 +793,7 @@ class BackendAiSessionList extends LitElement {
           </template>
           <template>
             <div class="layout vertical">
-              <span>[[_elapsed(item.created_at, item.terminated_at)]]</span>
+              <span>[[item.elapsed]]</span>
             </div>
           </template>
         </vaadin-grid-column>
@@ -819,18 +829,18 @@ class BackendAiSessionList extends LitElement {
             </paper-icon-button>
           </h4>
           <div style="padding:15px;" class="horizontal layout wrap center center-justified">
-            <template is="dom-repeat" items="{{ appSupportList }}">
-              <div class="vertical layout center center-justified app-icon">
-                <paper-icon-button class="fg apps green" app="[[item.name]]" app-name="[[item.name]]"
-                                   url-postfix="[[item.redirect]]"
-                                   on-tap="_runApp" icon="[[item.icon]]"></paper-icon-button>
-                <span class="label">[[item.title]]</span>
-              </div>
-            </template>
-          </div>
-        </wl-card>
-      </paper-dialog>
-    `;
+              ${this.appSupportList.map(item => html`
+                <div class="vertical layout center center-justified app-icon">
+                  <paper-icon-button class="fg apps green" app="${item.name}" app-name="${item.name}"
+                                     url-postfix="${item.redirect}"
+                                     on-tap="_runApp" icon="${item.icon}"></paper-icon-button>
+                  <span class="label">${item.title}</span>
+                </div>
+                `)}
+            </div>
+          </wl-card>
+        </paper-dialog>
+`;
   }
 }
 
