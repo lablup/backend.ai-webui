@@ -325,16 +325,16 @@ class BackendAiSessionList extends LitElement {
   }
 
   _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
     render(
       html`
-        <div>${rowData.index}</div>
+        <div>${idx}</div>
       `,
       root
     );
   }
 
   _terminateKernel(e) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
@@ -442,12 +442,11 @@ class BackendAiSessionList extends LitElement {
   }
 
   _showAppLauncher(e) {
-    const controls = e.target.closest('#controls');
+    const controller = e.target;
+    const controls = controller.closest('#controls');
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
     const kernelImage = controls['kernel-image'];
-    console.log(kernelImage);
-
     let imageName = kernelImage.split(":")[0];
     if (imageName in this.appTemplate) {
       this.appSupportList = this.appTemplate[imageName];
@@ -500,10 +499,11 @@ class BackendAiSessionList extends LitElement {
   }
 
   _runApp(e) {
-    let controls = e.target.closest('#app-dialog');
+    const controller = e.target;
+    let controls = controller.closest('#app-dialog');
     let kernelId = controls.getAttribute('kernel-id');
-    let urlPostfix = e.target['url-postfix'];
-    let appName = e.target['app-name'];
+    let urlPostfix = controller['url-postfix'];
+    let appName = controller['app-name'];
     if (appName === undefined || appName === null) {
       return;
     }
@@ -529,8 +529,8 @@ class BackendAiSessionList extends LitElement {
   }
 
   _runJupyterTerminal(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
+    const controller = e.target;
+    const controls = controller.closest('#controls');
     const kernelId = controls['kernel-id'];
     let accessKey = window.backendaiclient._config.accessKey;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
@@ -720,7 +720,7 @@ class BackendAiSessionList extends LitElement {
       </div>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list" 
          .items="${this.compute_sessions}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this.indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
           <vaadin-grid-sort-column resizable width="100px" header="API Key" flex-grow="0" path="access_key">
             <template>
