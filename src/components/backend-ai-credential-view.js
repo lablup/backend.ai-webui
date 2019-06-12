@@ -14,7 +14,7 @@ import 'weightless/dialog';
 import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
-
+import 'weightless/expansion';
 import './backend-ai-credential-list.js';
 import '../backend-ai-resource-policy-list.js';
 
@@ -390,7 +390,7 @@ class BackendAICredentialView extends LitElement {
           margin-right: 20px;
           margin-bottom: 20px;
         }
-
+        
         wl-dialog wl-textfield {
           padding-left: 20px;
           padding-right: 20px;
@@ -432,6 +432,13 @@ class BackendAICredentialView extends LitElement {
           --tab-bg-filled: var(--paper-lime-200);
           --tab-bg-active-hover: var(--paper-lime-200);
         }
+        
+        wl-expansion {
+          --expansion-elevation: 0;
+          --expansion-elevation-open: 0;
+          --expansion-elevation-hover: 0;
+          --expansion-margin-open: 0;
+        }
       `];
   }
 
@@ -440,27 +447,33 @@ class BackendAICredentialView extends LitElement {
     return html`
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <wl-card class="admin item" elevation="1">
+      <div class="horizontal wrap layout">
         <wl-tab-group>
           <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
           <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
           <wl-tab value="user-lists" disabled>Users</wl-tab>  
         </wl-tab-group>
+        <div class="flex"></div>
+        <wl-button class="fg green" id="add-keypair" outlined>
+          <wl-icon>add</wl-icon>
+          Add credential
+        </wl-button>
+        </div>
         <wl-card id="credential-lists" class="tab-content">
-          <h4 class="horizontal flex center center-justified layout">
-            <span>Active</span>
-            <span class="flex"></span>
-            <wl-button class="fg green" id="add-keypair" outlined>
-              <wl-icon>add</wl-icon>
-              Add credential
-            </wl-button>
-          </h4>
-          <div>
-            <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._status === 'active'}"></backend-ai-credential-list>
-          </div>
-          <h4>Inactive</h4>
-          <div>
-            <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._status === 'active'}"></backend-ai-credential-list>
-          </div>
+          <wl-expansion name="credential-group" open>
+            <span slot="title">Active</span>
+            <span slot="description">
+            </span>
+            <div>
+              <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._status === 'active'}"></backend-ai-credential-list>
+            </div>
+          </wl-expansion>
+          <wl-expansion name="credential-group" open>
+            <span slot="title">Inactive</span>
+            <div>
+              <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._status === 'active'}"></backend-ai-credential-list>
+            </div>
+          </wl-expansion>
         </wl-card>
         <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
           <h4 class="horizontal flex center center-justified layout">
