@@ -4,8 +4,8 @@
  */
 
 import {css, html, LitElement} from "lit-element";
-import '@polymer/polymer/lib/elements/dom-if.js';
-import '@polymer/polymer/lib/elements/dom-repeat.js';
+import {render} from 'lit-html';
+
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -74,6 +74,7 @@ class BackendAiSessionList extends LitElement {
     this.filterAccessKey = '';
     this.appSupportList = [];
     this.appTemplate = {};
+    this._boundControlRenderer = this.controlRenderer.bind(this);
   }
 
   firstUpdated() {
@@ -152,6 +153,7 @@ class BackendAiSessionList extends LitElement {
       'tensorflow': TFBase,
       'python': jupyterBase,
       'python-tensorflow': TFBase,
+      'python-ff': TFBase,
       'python-pytorch': TFBase,
       'ngc-digits':
         TFBase.concat(
@@ -207,10 +209,18 @@ class BackendAiSessionList extends LitElement {
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
-
+          // Readable text
           sessions[objectKey].cpu_used_sec = this._msecToSec(sessions[objectKey].cpu_used);
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
-
+          sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
+          sessions[objectKey].io_read_bytes_mb = this._byteToMB(sessions[objectKey].io_read_bytes);
+          sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
+          sessions[objectKey].appSupport = this._isAppRunning(sessions[objectKey].lang);
+          if (this.condition === 'running') {
+            sessions[objectKey].running = true;
+          } else {
+            sessions[objectKey].running = false;
+          }
           if ('cuda.device' in occupied_slots) {
             sessions[objectKey].gpu_slot = parseInt(occupied_slots['cuda.device']);
           }
@@ -262,7 +272,7 @@ class BackendAiSessionList extends LitElement {
     this.shadowRoot.querySelector('#app-progress-dialog').close();
   }
 
-  _isRunning() {
+  get _isRunning() {
     return this.condition === 'running';
   }
 
@@ -275,6 +285,7 @@ class BackendAiSessionList extends LitElement {
     if (this.condition != 'running') return false;
     let support_kernels = [
       'python',
+      'python-ff',
       'python-tensorflow',
       'python-pytorch',
       'ngc-digits',
@@ -310,15 +321,20 @@ class BackendAiSessionList extends LitElement {
     return window.backendaiclient.utils.elapsedTime(start, end);
   }
 
-  _indexFrom1(index) {
-    return index + 1;
+  _indexRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>${rowData.index}</div>
+      `,
+      root
+    );
   }
 
   _terminateKernel(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
-    const kernelId = controls.kernelId;
-    const accessKey = controls.accessKey;
+    const kernelId = controls['kernel-id'];
+    const accessKey = controls['access-key'];
 
     if (this.terminationQueue.includes(kernelId)) {
       this.shadowRoot.querySelector('#notification').text = 'Already terminating the session.';
@@ -424,9 +440,10 @@ class BackendAiSessionList extends LitElement {
 
   _showAppLauncher(e) {
     const controls = e.target.closest('#controls');
-    const kernelId = controls.kernelId;
-    const accessKey = controls.accessKey;
-    let imageName = controls.kernelImage.split(":")[0];
+    const kernelId = controls['kernel-id'];
+    const accessKey = controls['access-key'];
+    const kernelImage = controls['kernel-image'];
+    let imageName = kernelImage.split(":")[0];
     if (imageName in this.appTemplate) {
       this.appSupportList = this.appTemplate[imageName];
     } else {
@@ -647,7 +664,37 @@ class BackendAiSessionList extends LitElement {
         }
       `];
   }
-
+  controlRenderer(root, column, rowData) {
+    console.log(this);
+    render(
+      html`
+        <div id="controls" class="layout horizontal flex center"
+             .kernel-id="${rowData.item.sess_id}"
+             .access-key="${rowData.item.access_key}"
+             .kernel-image="${rowData.item.kernel_image}">
+             ${this._isRunning ? html`
+            <paper-icon-button class="fg blue controls-running" icon="assignment"
+                               on-tap="_showLogs"></paper-icon-button>
+             `: html`
+            <paper-icon-button disabled class="fg controls-running" icon="assignment"
+            ></paper-icon-button>
+             `}
+             ${rowData.item.appSupport ? html`
+            <paper-icon-button class="fg controls-running green"
+                               @click="${(e) => this._showAppLauncher(e)}"
+                               icon="vaadin:package"></paper-icon-button>
+            <paper-icon-button class="fg controls-running"
+                               @click="${(e) => this._runJupyterTerminal(e)}"
+                               icon="vaadin:terminal"></paper-icon-button>
+                               `: html``}
+             ${this.condition === 'running' ? html`
+            <paper-icon-button class="fg red controls-running"
+                               @click="${(e) => this._terminateKernel(e)}"
+                               icon="delete"></paper-icon-button>
+                               `: html``}
+        </div>`, root
+    );
+  }
   render() {
     // language=HTML
     return html`
@@ -660,12 +707,9 @@ class BackendAiSessionList extends LitElement {
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" 
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list" 
          .items="${this.compute_sessions}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[index]]</template>
-        </vaadin-grid-column>
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this.indexRenderer}"></vaadin-grid-column>
         <template is="dom-if" if="{{is_admin}}">
           <vaadin-grid-column resizable width="100px" flex-grow="0">
             <template class="header">
@@ -678,40 +722,13 @@ class BackendAiSessionList extends LitElement {
             </template>
           </vaadin-grid-column>
         </template>
-        <vaadin-grid-column resizable>
-          <template class="header">Job ID</template>
+        <vaadin-grid-column resizable header="Job ID">
           <template>
             <div>[[item.sess_id]]</div>
             <div class="indicator">([[item.kernel_image]])</div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="90px">
-          <template class="header">Control</template>
-          <template>
-            <div id="controls" class="layout horizontal flex center"
-                 kernel-id="[[item.sess_id]]"
-                 access-key="[[item.access_key]]"
-                 kernel-image="[[item.kernel_image]]">
-              <template is="dom-if" if="[[_isRunning()]]">
-                <paper-icon-button class="fg blue controls-running" icon="assignment"
-                                   on-tap="_showLogs"></paper-icon-button>
-              </template>
-              <template is="dom-if" if="[[!_isRunning()]]">
-                <paper-icon-button disabled class="fg controls-running" icon="assignment"
-                ></paper-icon-button>
-              </template>
-              <template is="dom-if" if="[[_isAppRunning(item.lang)]]">
-                <paper-icon-button class="fg controls-running green"
-                                   on-tap="_showAppLauncher" icon="vaadin:package"></paper-icon-button>
-                <paper-icon-button class="fg controls-running"
-                                   on-tap="_runJupyterTerminal" icon="vaadin:terminal"></paper-icon-button>
-              </template>
-              <template is="dom-if" if="[[_isRunning()]]">
-                <paper-icon-button class="fg red controls-running"
-                                   on-tap="_terminateKernel" icon="delete"></paper-icon-button>
-              </template>
-            </div>
-          </template>
+        <vaadin-grid-column width="90px" header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="150px" flex-grow="0" resizable>
           <template class="header">Configuration</template>
@@ -771,8 +788,8 @@ class BackendAiSessionList extends LitElement {
               </div>
               <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
               <div class="vertical start layout">
-                <span style="font-size:8px">[[_byteToMB(item.io_read_bytes)]]<span class="indicator">MB</span></span>
-                <span style="font-size:8px">[[_byteToMB(item.io_write_bytes)]]<span class="indicator">MB</span></span>
+                <span style="font-size:8px">[[item.io_read_bytes_mb]]<span class="indicator">MB</span></span>
+                <span style="font-size:8px">[[item.io_write_bytes_mb]]<span class="indicator">MB</span></span>
               </div>
             </div>
           </template>
@@ -783,7 +800,7 @@ class BackendAiSessionList extends LitElement {
           </template>
           <template>
             <div class="layout vertical">
-              <span>[[_humanReadableTime(item.created_at)]]</span>
+              <span>[[item.created_at_hr]]</span>
             </div>
           </template>
         </vaadin-grid-column>

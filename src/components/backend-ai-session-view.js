@@ -53,6 +53,7 @@ class BackendAiSessionView extends LitElement {
     this.userResourceLimit = {};
     this.aliases = {
       'TensorFlow': 'python-tensorflow',
+      'Lablup ResearchEnv.': 'python-ff',
       'Python': 'python',
       'PyTorch': 'python-pytorch',
       'Chainer': 'chainer',
@@ -433,6 +434,7 @@ class BackendAiSessionView extends LitElement {
       'octave': 'Octave',
       'php': 'PHP',
       'python': 'Python',
+      'python-ff': 'Lablup ResearchEnv.',
       'python-cntk': 'CNTK',
       'python-pytorch': 'PyTorch',
       'python-tensorflow': 'TensorFlow',
