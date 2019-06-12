@@ -26,6 +26,8 @@ import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
 
 import 'weightless/card';
+import 'weightless/dialog';
+
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 import '../backend-ai-indicator.js';
@@ -454,7 +456,7 @@ class BackendAiSessionList extends LitElement {
     dialog.accessKey = accessKey;
     dialog.positionTarget = e.target;
 
-    this.shadowRoot.querySelector('#app-dialog').open();
+    this.shadowRoot.querySelector('#app-dialog').show();
   }
 
   async _open_wsproxy(kernelId, app = 'jupyter') {
@@ -482,7 +484,7 @@ class BackendAiSessionList extends LitElement {
     try {
       let response = await this.sendRequest(rqst);
       let token = response.token;
-      this.$.indicator.set(50, 'Adding kernel to socket queue...');
+      this.shadowRoot.querySelector('#indicator').set(50, 'Adding kernel to socket queue...');
       rqst = {
         method: 'GET',
         app: app,
@@ -496,9 +498,9 @@ class BackendAiSessionList extends LitElement {
 
   _runApp(e) {
     let controls = e.target.closest('#app-dialog');
-    let kernelId = controls.kernelId;
-    let urlPostfix = e.target.urlPostfix;
-    let appName = e.target.appName;
+    let kernelId = controls['kernel-id'];
+    let urlPostfix = e.target['url-postfix'];
+    let appName = e.target['app-name'];
 
     if (appName === undefined || appName === null) {
       return;
@@ -508,14 +510,14 @@ class BackendAiSessionList extends LitElement {
     }
 
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-      this.$.indicator.start();
+      this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(kernelId, appName)
         .then((response) => {
           if (response.url) {
-            this.$.indicator.set(100, 'Prepared.');
+            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
               window.open(response.url + urlPostfix, '_blank');
-              this.$.indicator.end();
+              this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
               console.log(kernelId);
             }, 1000);
@@ -527,17 +529,17 @@ class BackendAiSessionList extends LitElement {
   _runJupyterTerminal(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
-    const kernelId = controls.kernelId;
+    const kernelId = controls['kernel-id'];
     let accessKey = window.backendaiclient._config.accessKey;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-      this.$.indicator.start();
+      this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(kernelId, 'jupyter')
         .then((response) => {
           if (response.url) {
-            this.$.indicator.set(100, 'Prepared.');
+            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
               window.open(response.url + "&redirect=/terminals/1", '_blank');
-              this.$.indicator.end();
+              this.shadowRoot.querySelector('#indicator').end();
               console.log("Jupyter terminal proxy loaded: ");
               console.log(kernelId);
             }, 1000);
@@ -546,6 +548,9 @@ class BackendAiSessionList extends LitElement {
     }
   }
 
+  _hideAppDialog() {
+    this.shadowRoot.querySelector('#app-dialog').hide();
+  }
   _updateFilterAccessKey(e) {
     this.filterAccessKey = e.target.value;
     if (this.refreshTimer) {
@@ -728,10 +733,8 @@ class BackendAiSessionList extends LitElement {
             <div class="indicator">([[item.kernel_image]])</div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="90px" header="Control" .renderer="${this._boundControlRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="150px" flex-grow="0" resizable>
-          <template class="header">Configuration</template>
+        <vaadin-grid-column width="190px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
@@ -833,15 +836,13 @@ class BackendAiSessionList extends LitElement {
 
         </wl-card>
       </paper-dialog>
-      <paper-dialog id="app-dialog"
-                    style="padding:0;" no-overlap
-                    horizontal-align="right"
-                    vertical-align="top" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <wl-dialog id="app-dialog" fixed backdrop blockscrolling
+                    style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h4 class="horizontal center layout" style="font-weight:bold">
             <span>App</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
+            <paper-icon-button icon="close" class="blue close-button" @click="${() => this._hideAppDialog()}">
               Close
             </paper-icon-button>
           </h4>
@@ -856,7 +857,7 @@ class BackendAiSessionList extends LitElement {
                 `)}
             </div>
           </wl-card>
-        </paper-dialog>
+        </wl-dialog>
 `;
   }
 }
