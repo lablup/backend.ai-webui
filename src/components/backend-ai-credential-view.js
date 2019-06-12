@@ -414,7 +414,11 @@ class BackendAICredentialView extends LitElement {
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
         }
-
+        wl-card h3 {
+          padding-top:0;
+          padding-bottom:0;
+        }
+        
         wl-card wl-card {
           margin: 0;
           padding: 0;
@@ -438,6 +442,12 @@ class BackendAICredentialView extends LitElement {
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
+          border-bottom: 1px solid #DDD;
+        }
+        
+        wl-expansion h4 {
+          font-weight: 200;
+          border-bottom: 0;
         }
       `];
   }
@@ -447,29 +457,29 @@ class BackendAICredentialView extends LitElement {
     return html`
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
       <wl-card class="admin item" elevation="1">
-      <div class="horizontal wrap layout">
-        <wl-tab-group>
-          <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
-          <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
-          <wl-tab value="user-lists" disabled>Users</wl-tab>  
-        </wl-tab-group>
-        <div class="flex"></div>
-        <wl-button class="fg green" id="add-keypair" outlined>
-          <wl-icon>add</wl-icon>
-          Add credential
-        </wl-button>
-        </div>
+        <h3 class="horizontal wrap layout">
+          <wl-tab-group>
+            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
+            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
+            <wl-tab value="user-lists" disabled>Users</wl-tab>  
+          </wl-tab-group>
+          <div class="flex"></div>
+          <wl-button class="fg green" id="add-keypair" outlined>
+            <wl-icon>add</wl-icon>
+            Add credential
+          </wl-button>
+        </h3>
         <wl-card id="credential-lists" class="tab-content">
           <wl-expansion name="credential-group" open>
-            <span slot="title">Active</span>
+            <h4 slot="title">Active</h4>
             <span slot="description">
             </span>
             <div>
               <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._status === 'active'}"></backend-ai-credential-list>
             </div>
           </wl-expansion>
-          <wl-expansion name="credential-group" open>
-            <span slot="title">Inactive</span>
+          <wl-expansion name="credential-group">
+            <h4 slot="title">Inactive</h4>
             <div>
               <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._status === 'active'}"></backend-ai-credential-list>
             </div>

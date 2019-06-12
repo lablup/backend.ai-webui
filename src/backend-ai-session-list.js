@@ -78,7 +78,7 @@ class BackendAiSessionList extends PolymerElement {
     super.ready();
     this._initializeAppTemplate();
     this.refreshTimer = null;
-    if (this.condition !== 'running' || !window.backendaiclient ||
+    if (!window.backendaiclient ||
       !window.backendaiclient.is_admin) {
       this.$['access-key-filter'].parentNode.removeChild(this.$['access-key-filter']);
     }
@@ -212,18 +212,18 @@ class BackendAiSessionList extends PolymerElement {
       //this.jobs = response;
       let refreshTime;
       if (this.active === true) {
-        if (this.condition === 'running') {
           if (refresh === true) {
             var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
             document.dispatchEvent(event);
           }
-          refreshTime = 5000;
+          if (this.condition === 'running') {
+            refreshTime = 5000;
+          } else {
+            refreshTime = 15000;
+          }
           this.refreshTimer = setTimeout(() => {
             this._refreshJobData()
           }, refreshTime);
-        } else {
-          refreshTime = 15000;
-        }
       }
     }).catch(err => {
       console.log(err);
@@ -531,6 +531,7 @@ class BackendAiSessionList extends PolymerElement {
         vaadin-grid {
           border: 0;
           font-size: 14px;
+          height: calc(100vh - 300px);
         }
 
         paper-item {

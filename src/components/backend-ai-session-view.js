@@ -33,6 +33,8 @@ import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/card';
+import 'weightless/tab';
+import 'weightless/tab-group';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
@@ -902,6 +904,13 @@ class BackendAiSessionView extends LitElement {
   _selectDefaultVersion(version) {
     return false;
   }
+  _showTab(tab) {
+    var els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (var x = 0; x < els.length; x++) {
+      els[x].style.display = 'none';
+    }
+    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+  }
 
   static get styles() {
     return [
@@ -1032,7 +1041,11 @@ class BackendAiSessionView extends LitElement {
           --button-color-active: red;
           --button-color-hover: red;
         }
-
+        wl-card h3 {
+          padding-top:0;
+          padding-bottom:0;
+          padding-left:0;
+        }
         wl-expansion {
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
@@ -1053,7 +1066,10 @@ class BackendAiSessionView extends LitElement {
       </paper-tabs>
       <wl-card class="item" elevation="1">
         <h3 class="horizontal center layout">
-          <span>Running</span>
+          <wl-tab-group>
+            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>  
+            <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
+          </wl-tab-group>
           <div class="layout horizontal center resources wrap" style="margin-left:20px;">
             <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
@@ -1109,11 +1125,10 @@ class BackendAiSessionView extends LitElement {
               Start
             </wl-button>
           </h3>
-          <div>
+          <div id="running-lists" class="tab-content">
             <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
           </div>
-          <h4>Finished</h4>
-          <div>
+          <div id="finished-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
           </div>
         </wl-card>
