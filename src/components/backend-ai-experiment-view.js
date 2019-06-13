@@ -15,6 +15,7 @@ import '@polymer/paper-tabs/paper-tab';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
+import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-listbox/paper-listbox';
@@ -35,6 +36,8 @@ import 'weightless/expansion';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
+import 'weightless/list-item';
+import 'weightless/divider';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
@@ -1025,27 +1028,27 @@ class BackendAiExperimentView extends LitElement {
           width: 100%;
         }
 
-        #launch-session {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
+        wl-button.button {
+          --button-bg: var(--paper-blue-50);
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
         }
 
         wl-button.launch-button {
           width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
+          --button-bg: var(--paper-blue-50);
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
         }
 
         wl-button.resource-button {
           --button-bg: white;
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
+          --button-bg-active: var(--paper-blue-600);
+          --button-bg-hover: var(--paper-blue-600);
+          --button-bg-active-flat: var(--paper-blue-50);
           --button-color: #89A;
-          --button-color-active: red;
-          --button-color-hover: red;
+          --button-color-active: blue;
+          --button-color-hover: blue;
         }
 
         wl-card h3.tab {
@@ -1067,84 +1070,226 @@ class BackendAiExperimentView extends LitElement {
     // language=HTML
     return html`
       <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
-      <paper-tabs id="topbar-tabs" style="display:none;">
-        <paper-tab>Running</paper-tab>
-        <paper-tab>Finished</paper-tab>
-      </paper-tabs>
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>  
+            <wl-tab value="exp-lists" checked @click="${(e) => this._showTab(e.target)}">List</wl-tab>  
+            <wl-tab value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>  
             <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
           </wl-tab-group>
-          <div class="layout horizontal center resources wrap" style="margin-left:20px;">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
-              <div class="gauge-name">CPU</div>
+          <span class="flex"></span>
+          <wl-button class="fg blue button" id="add-experiment" outlined>
+           <wl-icon>add</wl-icon>
+            Add experiment
+          </wl-button>
+        </h3>
+        <div id="exp-lists" class="tab-content" style="margin:0;padding:0;height:calc(100vh - 235px);">
+            <div class="horizontal wrap layout" style="margin:0;padding:0;">
+              <div style="weight: 300px;border-right:1px solid #ccc;height:calc(100vh - 235px);">
+                <wl-list-item active style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <span slot="after">5<br/><span style="font-size:9px">components</span></span>
+                  <wl-title level="4" style="margin: 0">Test experiment</wl-title>
+                  <span style="font-size: 11px;">Test experiment</span>
+                </wl-list-item>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="3" style="margin: 0">Fashion MNIST</wl-title>
+                   <span style="font-size: 11px;">Fashion MNIST serving test</span>
+                </wl-list-item>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="4" style="margin: 0">Test experiment2</wl-title>
+                   <span style="font-size: 11px;">Test experiment2</span>
+                </wl-list-item>
+                <h4>Templates</h4>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">5<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="2" style="margin: 0">Example Experiment (TensorFlow)</wl-title>
+                   <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
+                </wl-list-item>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="2" style="margin: 0">Example Experiment (PyTorch)</wl-title>
+                   <span style="font-size: 11px;">Basic experiment example using Pytorch</span>
+                </wl-list-item>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="2" style="margin: 0">Facet data cleaner</wl-title>
+                   <span style="font-size: 11px;">Data preprocessing using Facet</span>
+                </wl-list-item>
+              </div>             
+              <div class="layout vertical">
+                <wl-list-item active style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                    <div class="horizontal layout">
+                      <div class="layout vertical center center-justified flex" style="width:50px;">
+                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                      </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>-</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>               
+                    </div>   
+                  </div>
+                  <wl-title level="4" style="margin: 0">Backend.AI Data Uploader</wl-title>
+                  <div style="font-size:11px;max-width:450px;">Backend.AI data uploader helps users uploading the data to experiment store.</div>
+                </wl-list-item>
+                <wl-list-item style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                    <div class="horizontal layout">
+                      <div class="layout vertical center center-justified flex" style="width:50px;">
+                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                      </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>2</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>-</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>               
+                    </div>   
+                  </div>
+                  <wl-title level="4" style="margin: 0">Facet</wl-title>
+                  <div style="font-size:11px;max-width:450px;">Facets contains two robust visualizations to aid in understanding and analyzing machine learning datasets.</div>
+                </wl-list-item>
+                <wl-list-item style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                  <div class="horizontal layout">
+                    <div class="layout vertical center center-justified flex" style="width:50px;">
+                        <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                    </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>4</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>16</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>1.5</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>                 
+                    </div> 
+                  </div>
+                  <wl-title level="4" style="margin: 0">TensorFlow</wl-title>
+                  <div style="font-size:11px;max-width:450px;">TensorFlow is an end-to-end open source platform for machine learning.</div>
+                </wl-list-item>
+                <wl-list-item style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                  <div class="horizontal layout">
+                    <div class="layout vertical center center-justified flex" style="width:50px;">
+                        <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                    </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>4</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>16</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>1.5</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>                 
+                    </div> 
+                  </div>
+                  <wl-title level="4" style="margin: 0">TensorFlow Validate</wl-title>
+                  <div style="font-size:11px;max-width:450px;">TensorFlow is an end-to-end open source platform for machine learning.</div>
+                </wl-list-item>
+                <wl-list-item style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                    <div class="horizontal layout">
+                      <div class="layout vertical center center-justified flex" style="width:50px;">
+                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                      </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>-</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>                 
+                    </div> 
+                  </div>
+                  <wl-title level="4" style="margin: 0">TensorFlow Serving</wl-title>
+                  <div style="font-size: 11px;max-width:450px;">TensorFlow Serving is a flexible, high-performance serving system for machine learning models, designed for production environments.</div>
+                </wl-list-item>
+                <wl-button class="fg blue button" id="launch-session" outlined>
+                  <wl-icon>add</wl-icon>
+                  Add component
+                </wl-button>
             </div>
-            <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
-              <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
-            </div>
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
-              <span class="gauge-name">RAM</span>
-            </div>
-            <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
-              <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
-            </div>
-            ${this.total_slot.gpu_slot ?
-      html`
-              <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-                <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-                <span class="gauge-name">GPU</span>
-              </div>
-              <div class="layout vertical start-justified wrap short-indicator">
-                <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
-                <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
-              </div>` :
-      html``}
-            ${this.total_slot.vgpu_slot ?
-      html`
-                <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-                  <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-                  <span class="gauge-name">GPU</span>
-                </div>
-                <div class="layout vertical start-justified wrap short-indicator">
-                  <span class="gauge-label">${this.used_slot.vgpu_slot}/${this.total_slot.vgpu_slot}</span>
-                  <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
-                </div>` :
-      html``}
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
-              <span class="gauge-name">Session</span>
-            </div>
-            <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-              <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
-            </div>
-
-            </div>
-            <span class="flex"></span>
-            <wl-button class="fg red" id="launch-session" outlined>
-              <wl-icon>add</wl-icon>
-              Start
-            </wl-button>
-          </h3>
-          <div id="running-lists" class="tab-content">
-            <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
           </div>
-          <div id="finished-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
-          </div>
-        </wl-card>
+        </div>
+        <div id="running-lists" class="tab-content" style="display:none;">
+          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
+        </div>
+        <div id="finished-lists" class="tab-content" style="display:none;">
+          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
+        </div>
+      </wl-card>
         <wl-dialog id="new-session-dialog"
                       fixed backdrop blockscrolling persistent
                       style="padding:0;">
           <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
             <h3 class="horizontal center layout">
-              <span>Start a new session</span>
+              <span>Add a new component</span>
               <div class="flex"></div>
               <paper-icon-button icon="close" class="blue close-button" 
                 @click="${() => this._hideSessionDialog()}">
@@ -1251,10 +1396,10 @@ ${this.resource_templates.map(item => html`
                 </wl-expansion>
                 
                 <fieldset style="padding-top:0;">
-                  <wl-button class="launch-button fg red" type="button" id="launch-button"
+                  <wl-button class="launch-button fg blue" type="button" id="launch-button"
                                                outlined>
                                               <wl-icon>rowing</wl-icon>
-                    <span id="launch-button-msg">Launch</span>
+                    <span id="launch-button-msg">Register</span>
                   </wl-button>
                 </fieldset>
             </form>
