@@ -60,6 +60,10 @@ class BackendAISummary extends PolymerElement {
       active: {
         type: Boolean,
         value: false
+      },
+      manager_version: {
+        type: String,
+        value: ''
       }
     };
   }
@@ -200,6 +204,7 @@ class BackendAISummary extends PolymerElement {
   }
 
   _sync_resource_values() {
+    this.manager_version = window.backendaiclient.managerVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources.gpu.total)) {
@@ -329,6 +334,10 @@ class BackendAISummary extends PolymerElement {
           <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
               <template is="dom-if" if="{{is_superadmin}}">
+                <div class="layout horizontal center flex" style="margin-bottom:5px;">
+                  Manager version : [[manager_version]]
+                </div>
+
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
                     <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>

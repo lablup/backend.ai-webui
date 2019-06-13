@@ -262,6 +262,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.shadowRoot.getElementById('sidebar-menu').selected = 1;
           this.updateTitleColor('var(--paper-red-800)', '#efefef');
           break;
+        case 'experiment':
+          this.menuTitle = 'Experiments';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 2;
+          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+          break;
         case 'data':
           this.menuTitle = 'Storage';
           this.shadowRoot.getElementById('sidebar-menu').selected = 3;
@@ -434,10 +439,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Sessions
                 </paper-item>
               </a>
-              <paper-item disabled>
-                <iron-icon icon="icons:pageview"></iron-icon>
-                Experiments
-              </paper-item>
+              <a ?selected="${this._page === 'experiment'}" href="/experiment" tabindex="-1" role="menuitem">
+                <paper-item ?disabled="${!this.is_admin}">
+                  <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
+                  Experiments
+                </paper-item>
+              </a>
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
@@ -534,6 +541,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <div id="app-page">
                 <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
                 <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-session-view>
+                <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-experiment-view>
                 <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-credential-view>
                 <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-agent-view>
                 <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-data-view>
