@@ -31,7 +31,7 @@ import 'weightless/dialog';
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
-import '../backend-ai-indicator.js';
+import './backend-ai-indicator.js';
 
 class BackendAiSessionList extends LitElement {
   constructor() {
@@ -573,6 +573,10 @@ class BackendAiSessionList extends LitElement {
     this.shadowRoot.querySelector('#app-dialog').show();
   }
 
+  _hideAppLauncher() {
+    this.shadowRoot.querySelector('#app-dialog').hide();
+  }
+
   async _open_wsproxy(kernelId, app = 'jupyter') {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       return false;
@@ -624,6 +628,7 @@ class BackendAiSessionList extends LitElement {
     }
 
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+      this._hideAppLauncher();
       this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(kernelId, appName)
         .then((response) => {
