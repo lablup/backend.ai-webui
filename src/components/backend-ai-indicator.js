@@ -2,13 +2,12 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-
-//import {PolymerElement, html} from '@polymer/polymer';
 import {css, html, LitElement} from "lit-element";
-//import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-progress/paper-progress';
-//import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import 'weightless/dialog';
+import 'weightless/banner';
+
+import 'weightless/progress-bar';
+import 'weightless/title';
 
 class BackendAIIndicator extends LitElement {
   static get is() {
@@ -50,7 +49,7 @@ class BackendAIIndicator extends LitElement {
   }
 
   set(value, text = '') {
-    this.value = value;
+    this.value = value / 100.0;
     this.text = text;
   }
 
@@ -58,12 +57,28 @@ class BackendAIIndicator extends LitElement {
     this.dialog.hide();
   }
 
+  static get styles() {
+    return [
+      // language=CSS
+      css`
+        wl-dialog {
+          position: fixed;
+          right: 20px;
+          bottom: 20px;
+          --dialog-height: 80px;
+          --dialog-width: 250px;
+          --dialog-content-padding: 15px;
+        }
+      `];
+  }
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="app-progress-dialog" fixed backdrop blockscrolling>
-        <div id="app-progress-text">${this.text}</div>
-        <paper-progress id="app-progress" .value="${this.value}"></paper-progress>
+      <wl-dialog id="app-progress-dialog" blockscrolling>
+        <wl-title level="5" id="app-progress-text" slot="header">${this.text}</wl-title>
+        <div slot="content">
+        <wl-progress-bar mode="determinate" id="app-progress" .value="${this.value}"></wl-progress-bar>
+        </div>
       </wl-dialog>
     `;
   }
