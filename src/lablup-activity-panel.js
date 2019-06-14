@@ -63,6 +63,10 @@ class LablupActivityPanel extends LitElement {
         ul {
           padding-inline-start: 0;
         }
+
+        #button {
+          display: none;
+        }
       `];
   }
 
