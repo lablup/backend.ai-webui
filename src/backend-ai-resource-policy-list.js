@@ -405,7 +405,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
 
       </style>
       <lablup-notification id="notification"></lablup-notification>
-
+=[
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                    items="[[resourcePolicy]]">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>

@@ -19,6 +19,7 @@ import './lablup-notification.js';
 
 import './backend-ai-credential-list.js';
 import '../backend-ai-resource-policy-list.js';
+import './backend-ai-user-list.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
@@ -166,10 +167,12 @@ class BackendAICredentialView extends LitElement {
     await this.updateComplete;
     if (active === false) {
       this.shadowRoot.querySelector('#resource-policy-list').active = false;
+      this.shadowRoot.querySelector('#user-list').active = false;
       this._status = 'inactive';
       return;
     }
     this.shadowRoot.querySelector('#resource-policy-list').active = true;
+    this.shadowRoot.querySelector('#user-list').active = true;
     this._status = 'active';
   }
 
@@ -471,9 +474,9 @@ class BackendAICredentialView extends LitElement {
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
+            <wl-tab value="credential-lists" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
-            <wl-tab value="user-lists" disabled>Users</wl-tab>  
+            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">Users</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
           <wl-button class="fg green" id="add-keypair" outlined>
@@ -481,7 +484,7 @@ class BackendAICredentialView extends LitElement {
             Add credential
           </wl-button>
         </h3>
-        <wl-card id="credential-lists" class="tab-content">
+        <wl-card id="credential-lists" class="tab-content" style="display:none;">
           <wl-expansion name="credential-group" open>
             <h4 slot="title">Active</h4>
             <span slot="description">
@@ -510,7 +513,19 @@ class BackendAICredentialView extends LitElement {
             <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
           </div>
         </wl-card>
-
+        <wl-card id="user-lists" class="admin item tab-content">
+          <h4 class="horizontal flex center center-justified layout">
+            <span>Users</span>
+            <span class="flex"></span>
+            <wl-button class="fg green" id="add-policy" outlined>
+              <wl-icon>add</wl-icon>
+              Create user
+            </wl-button>
+          </h4>
+          <div>
+            <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
+          </div>
+        </wl-card>
       </wl-card>
 
 
