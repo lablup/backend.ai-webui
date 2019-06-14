@@ -100,7 +100,7 @@ class Client {
     this.code = null;
     this.kernelId = null;
     this.kernelType = null;
-    this.clientVersion = '0.4.0';  // TODO: read from package.json?
+    this.clientVersion = '19.06.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -117,6 +117,7 @@ class Client {
     this.utils = new utils(this);
     this.computeSession = new ComputeSession(this);
     this.resourcePolicy = new ResourcePolicy(this);
+    this.user = new User(this);
     this.resources = new Resources(this);
     this.getManagerVersion();
   }
