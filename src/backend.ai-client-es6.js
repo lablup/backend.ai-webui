@@ -1336,10 +1336,10 @@ class User {
    * };
    */
   list(is_active = true,
-       fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids']) {
+       fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups']) {
     let q, v;
     if (this.client.is_admin === true) {
-      q = `query($is_active:String) {` +
+      q = `query($is_active:Boolean) {` +
         `  users(is_active:$is_active) { ${fields.join(" ")} }` +
         '}';
       v = {'is_active': is_active};

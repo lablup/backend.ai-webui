@@ -16,6 +16,7 @@ import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
@@ -53,6 +54,9 @@ class BackendAIUserList extends LitElement {
         type: Object
       },
       userInfo: {
+        type: Object
+      },
+      users: {
         type: Object
       },
       isAdmin: {
@@ -126,52 +130,15 @@ class BackendAIUserList extends LitElement {
         is_active = false;
     }
     this.shadowRoot.querySelector('#loading-indicator').hide();
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups'];
+    let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups'];
     return window.backendaiclient.user.list(is_active, fields).then((response) => {
-      console.log(response);
-      let keypairs = response.keypairs;
-      Object.keys(keypairs).map((objectKey, index) => {
-        var keypair = keypairs[objectKey];
-        if (keypair.resource_policy in this.resourcePolicy) {
-          for (var k in this.resourcePolicy[keypair.resource_policy]) {
-            if (k === 'created_at') {
-              continue;
-            }
-            keypair[k] = this.resourcePolicy[keypair.resource_policy][k];
-            if (k === 'total_resource_slots') {
-              keypair['total_resource_slots'] = JSON.parse(this.resourcePolicy[keypair.resource_policy][k]);
-            }
-          }
-          keypair['created_at_formatted'] = this._humanReadableTime(keypair['created_at']);
-          keypair['elapsed'] = this._elapsed(keypair['created_at']);
-          if ('cpu' in keypair['total_resource_slots']) {
-          } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
-            keypair['total_resource_slots'].cpu = '-';
-          }
-          if ('mem' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(keypair['total_resource_slots'].mem, 'g'));
-            //keypair['total_resource_slots'].mem = parseFloat(keypair['total_resource_slots'].mem);
-          } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
-            keypair['total_resource_slots'].mem = '-';
-          }
-          if ('cuda.device' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].cuda_device = keypair['total_resource_slots']['cuda.device'];
-          }
-          if ('cuda.shares' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].cuda_shares = keypair['total_resource_slots']['cuda.shares'];
-          }
-          if (('cuda_device' in keypair['total_resource_slots']) === false &&
-            ('cuda_shares' in keypair['total_resource_slots']) === false &&
-            keypair['default_for_unspecified'] === 'UNLIMITED') {
-            keypair['total_resource_slots'].cuda_shares = '-';
-            keypair['total_resource_slots'].cuda_device = '-';
-          }
-          ['cpu', 'mem', 'cuda_shares', 'cuda_device'].forEach((slot) => {
-            keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
-          });
-        }
+      let users = response.users;
+      Object.keys(users).map((objectKey, index) => {
+        var user = users[objectKey];
+        // Blank for the next impl.
       });
-      this.keypairs = keypairs;
+      this.users = users;
+      console.log(this.users);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -399,45 +366,27 @@ class BackendAIUserList extends LitElement {
     return html`
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
-                   id="keypair-grid" .items="${this.keypairs}">
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="User list"
+                   id="user-grid" .items="${this.users}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
           <template>[[index]]</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="user_id">User ID</vaadin-grid-sorter>
-          </template>
+        <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.user_id]]</div>
+              <div class="indicator">[[item.email]]</div>
             </div>
           </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">Access Key</template>
-          <template>
-            <div class="indicator">[[item.access_key]]</div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="is_admin">Permission</vaadin-grid-sorter>
-          </template>
+        </vaadin-grid-sort-column>
+        <vaadin-grid-sort-column resizable header="Name" path="username">
           <template>
             <div class="layout horizontal center flex">
-              <template is="dom-if" if="[[item.is_admin]]">
-                <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
-              </template>
-              <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+              <div class="indicator">[[item.username]]</div>
             </div>
           </template>
-        </vaadin-grid-column>
-
+        </vaadin-grid-sort-column>
         <vaadin-grid-column resizable>
           <template class="header">
             <vaadin-grid-sorter path="created_at">Key age</vaadin-grid-sorter>
@@ -449,25 +398,6 @@ class BackendAIUserList extends LitElement {
             </div>
           </template>
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">Allocation</template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div class="vertical start layout">
-                <div style="font-size:11px;width:40px;">[[item.concurrency_used]] /
-                  [[item.concurrency_limit]]
-                </div>
-                <span class="indicator">Sess.</span>
-              </div>
-              <div class="vertical start layout">
-                <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15m.</span></span>
-                <span style="font-size:8px">[[item.num_queries]] <span class="indicator">queries</span></span>
-              </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
         <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
