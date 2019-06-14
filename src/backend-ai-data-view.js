@@ -580,13 +580,14 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h4 class="horizontal center layout">
+        <h3 class="horizontal center flex layout">
           <span>Virtual Folders</span>
+          <span class="flex"></span>
           <wl-button class="fg red" id="add-folder" outlined>
             <wl-icon>add</wl-icon>
             New folder
           </wl-button>
-        </h4>
+        </h3>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Folder list" items="[[folders]]">
           <vaadin-grid-column width="40px" flex-grow="0" resizable>
