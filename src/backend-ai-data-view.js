@@ -15,7 +15,6 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
 import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-toast/paper-toast';
 import './components/lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
@@ -32,6 +31,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 
+import './components/lablup-notification.js';
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
 import './plastics/lablup-shields/lablup-shields';
@@ -577,7 +577,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         }
 
       </style>
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h4 class="horizontal center layout">

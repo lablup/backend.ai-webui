@@ -22,6 +22,7 @@ import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
 
+import './components/lablup-notification.js';
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
@@ -309,7 +310,7 @@ class BackendAISummary extends PolymerElement {
           --paper-progress-transition-delay: 0s;
         }
       </style>
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">Statistics</h3>

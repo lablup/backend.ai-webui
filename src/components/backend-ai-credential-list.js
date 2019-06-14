@@ -5,11 +5,7 @@
 
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
-
-//import '@polymer/polymer/lib/elements/dom-if.js';
-
 import '@polymer/iron-ajax/iron-ajax';
-import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -28,8 +24,10 @@ import '../backend-ai-styles.js';
 import '../lablup-piechart.js';
 import '../plastics/lablup-shields/lablup-shields';
 
+import './lablup-notification.js';
 import 'weightless/card';
 import 'weightless/dialog';
+import 'weightless/snackbar';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -63,6 +61,9 @@ class BackendAICredentialList extends LitElement {
       },
       _status: {
         type: Boolean
+      },
+      notification: {
+        type: Object
       }
     };
   }
@@ -86,6 +87,7 @@ class BackendAICredentialList extends LitElement {
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   connectedCallback() {
@@ -328,11 +330,14 @@ class BackendAICredentialList extends LitElement {
   }
 
   _hideDialog(e) {
+    console.log(this);
+    console.log(this.notification);
+    this.notification.text = "hi all";
+    this.notification.show();
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
   }
-
   static get styles() {
     return [
       BackendAiStyles,
@@ -406,9 +411,8 @@ class BackendAICredentialList extends LitElement {
   render() {
     // language=HTML
     return html`
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairs}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>

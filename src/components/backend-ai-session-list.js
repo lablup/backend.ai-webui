@@ -22,18 +22,31 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@polymer/paper-toast/paper-toast';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
 
 import 'weightless/card';
 import 'weightless/dialog';
 
+import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
 import '../backend-ai-indicator.js';
 
 class BackendAiSessionList extends LitElement {
+  constructor() {
+    super();
+    this.active = false;
+    this.condition = 'running';
+    this.jobs = {};
+    this.compute_sessions = {};
+    this.terminationQueue = [];
+    this.filterAccessKey = '';
+    this.appSupportList = [];
+    this.appTemplate = {};
+    this._boundControlRenderer = this.controlRenderer.bind(this);
+  }
+
   static get is() {
     return 'backend-ai-session-list';
   }
@@ -67,17 +80,126 @@ class BackendAiSessionList extends LitElement {
     };
   }
 
-  constructor() {
-    super();
-    this.active = false;
-    this.condition = 'running';
-    this.jobs = {};
-    this.compute_sessions = {};
-    this.terminationQueue = [];
-    this.filterAccessKey = '';
-    this.appSupportList = [];
-    this.appTemplate = {};
-    this._boundControlRenderer = this.controlRenderer.bind(this);
+  static get observers() {
+    return [
+      '_menuChanged(active)'
+    ]
+  }
+
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      // language=CSS
+      css`
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 300px);
+        }
+
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
+
+        iron-icon {
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+          min-height: 16px;
+          padding: 0;
+        }
+
+        paper-icon-button.controls-running {
+          --paper-icon-button: {
+            width: 25px;
+            height: 25px;
+            min-width: 25px;
+            min-height: 25px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
+
+        paper-icon-button.apps {
+          --paper-icon-button: {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            min-height: 50px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
+
+        #work-dialog {
+          height: calc(100vh - 130px);
+          right: 0;
+          top: 0;
+          position: fixed;
+          margin: 100px 0 0 0;
+        }
+
+        @media screen and (max-width: 899px) {
+          #work-dialog {
+            left: 0;
+            width: 100%;
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          #work-dialog {
+            left: 200px;
+            width: calc(100% - 200px);
+          }
+        }
+
+        #work-area {
+          width: 100%;
+          height: calc(100vh - 120px);
+          background-color: #222;
+          color: #efefef;
+        }
+
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
+
+        div.label,
+        span.label {
+          font-size: 12px;
+        }
+
+        .app-icon {
+          margin-left: 5px;
+          margin-right: 5px;
+        }
+
+        div.configuration {
+          width: 70px !important;
+        }
+
+        div.configuration iron-icon {
+          padding-right: 5px;
+        }
+
+        div.filters #access-key-filter {
+          --paper-input-container-input: {
+            font-size: small;
+          };
+          --paper-input-container-label: {
+            font-size: small;
+          };
+        }
+      `];
+  }
+
+  get _isRunning() {
+    return this.condition === 'running';
   }
 
   firstUpdated() {
@@ -95,12 +217,6 @@ class BackendAiSessionList extends LitElement {
 
   shouldUpdate() {
     return this.active;
-  }
-
-  static get observers() {
-    return [
-      '_menuChanged(active)'
-    ]
   }
 
   is_admin() {
@@ -273,10 +389,6 @@ class BackendAiSessionList extends LitElement {
 
   _endProgressDialog() {
     this.shadowRoot.querySelector('#app-progress-dialog').close();
-  }
-
-  get _isRunning() {
-    return this.condition === 'running';
   }
 
   _humanReadableTime(d) {
@@ -564,118 +676,6 @@ class BackendAiSessionList extends LitElement {
     }
   }
 
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      // language=CSS
-      css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-          height: calc(100vh - 300px);
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
-        }
-
-        paper-icon-button.controls-running {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        paper-icon-button.apps {
-          --paper-icon-button: {
-            width: 50px;
-            height: 50px;
-            min-width: 50px;
-            min-height: 50px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        #work-dialog {
-          height: calc(100vh - 130px);
-          right: 0;
-          top: 0;
-          position: fixed;
-          margin: 100px 0 0 0;
-        }
-
-        @media screen and (max-width: 899px) {
-          #work-dialog {
-            left: 0;
-            width: 100%;
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          #work-dialog {
-            left: 200px;
-            width: calc(100% - 200px);
-          }
-        }
-
-        #work-area {
-          width: 100%;
-          height: calc(100vh - 120px);
-          background-color: #222;
-          color: #efefef;
-        }
-
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
-
-        div.label,
-        span.label {
-          font-size: 12px;
-        }
-
-        .app-icon {
-          margin-left: 5px;
-          margin-right: 5px;
-        }
-
-        div.configuration {
-          width: 70px !important;
-        }
-
-        div.configuration iron-icon {
-          padding-right: 5px;
-        }
-
-        div.filters #access-key-filter {
-          --paper-input-container-input: {
-            font-size: small;
-          };
-          --paper-input-container-label: {
-            font-size: small;
-          };
-        }
-      `];
-  }
-
   controlRenderer(root, column, rowData) {
     render(
       html`
@@ -711,7 +711,7 @@ class BackendAiSessionList extends LitElement {
   render() {
     // language=HTML
     return html`
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
         <span class="flex"></span>

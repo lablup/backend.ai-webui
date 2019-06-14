@@ -12,10 +12,11 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
-import '@polymer/paper-toast';
 import './plastics/lablup-shields/lablup-shields.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-progress/paper-progress';
+
+import './components/lablup-notification.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
@@ -205,7 +206,6 @@ class BackendAIAgentList extends PolymerElement {
       default:
         return 'blue';
     }
-    ;
   }
 
   static get template() {
@@ -263,7 +263,7 @@ class BackendAIAgentList extends PolymerElement {
           --paper-progress-transition-delay: 0s;
         }
       </style>
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[agents]]">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>

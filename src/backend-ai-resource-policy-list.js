@@ -22,12 +22,12 @@ import '@vaadin/vaadin-item/vaadin-item';
 import 'weightless/button';
 import 'weightless/icon';
 
-import '@polymer/paper-toast/paper-toast';
 import './backend-ai-styles.js';
 import './lablup-piechart.js';
 import './plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
 
+import './components/lablup-notification.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {OverlayPatchMixin} from "./overlay-patch-mixin";
 
@@ -404,7 +404,7 @@ class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
         }
 
       </style>
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                    items="[[resourcePolicy]]">

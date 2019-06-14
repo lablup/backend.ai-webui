@@ -6,14 +6,13 @@
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
-import '@polymer/paper-toast/paper-toast';
-
 import '@polymer/paper-input/paper-input';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
+import './lablup-notification.js';
 
 import '../backend.ai-client-es6.js';
 
@@ -421,7 +420,7 @@ class BackendAiLogin extends LitElement {
           </form>
         </wl-card>
       </wl-dialog>
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
     `;
   }
 }

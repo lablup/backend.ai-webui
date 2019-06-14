@@ -15,7 +15,6 @@ import '@polymer/paper-tabs/paper-tab';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
-import '@polymer/paper-toast/paper-toast';
 import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
@@ -36,6 +35,7 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
+import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
@@ -1080,7 +1080,7 @@ class BackendAiSessionView extends LitElement {
   render() {
     // language=HTML
     return html`
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
       <paper-tabs id="topbar-tabs" style="display:none;">
         <paper-tab>Running</paper-tab>
         <paper-tab>Finished</paper-tab>

@@ -15,6 +15,8 @@ import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
+import './lablup-notification.js';
+
 import './backend-ai-credential-list.js';
 import '../backend-ai-resource-policy-list.js';
 
@@ -465,7 +467,7 @@ class BackendAICredentialView extends LitElement {
   render() {
     // language=HTML
     return html`
-      <paper-toast id="notification" text="" horizontal-align="right"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
