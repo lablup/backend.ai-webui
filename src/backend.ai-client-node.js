@@ -1315,6 +1315,39 @@ class User {
     this.client = client;4
   }
   /**
+   * List registred users.
+   *
+   * @param {boolean} is_active - List whether active users or inactive users.
+   * @param {json} input - User specification to query. Fields are:
+   * {
+   *   'username': String,      // User name for given user id.
+   *   'password': String,      // Password for user id.
+   *   'need_password_change': Boolean, // Let user change password at the next login.
+   *   'full_name': String,     // Full name of given user id.
+   *   'description': String,   // Description for user.
+   *   'is_active': Boolean,    // Flag if user is active or not.
+   *   'domain_name': String,   // Domain for user.
+   *   'role': String,          // Role for user.
+   *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   * };
+   */
+  list(is_active = true,
+       fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids']) {
+    let q, v;
+    if (this.client.is_admin === true) {
+      q = `query($is_active:String) {` +
+        `  users(is_active:$is_active) { ${fields.join(" ")} }` +
+        '}';
+      v = {'is_active': is_active};
+    } else {
+      q = `query {` +
+        `  user { ${fields.join(" ")} }` +
+        '}';
+      v = {};
+    }
+    return this.client.gql(q, v);
+  }
+  /**
    * add new user with given information.
    *
    * @param {string} email - E-mail address as user id.
