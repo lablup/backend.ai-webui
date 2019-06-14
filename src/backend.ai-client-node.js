@@ -1304,6 +1304,105 @@ class Resources {
   }
 }
 
+class User {
+  /**
+   * The user API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;4
+  }
+  /**
+   * add new user with given information.
+   *
+   * @param {string} email - E-mail address as user id.
+   * @param {json} input - User specification to change. Required fields are:
+   * {
+   *   'username': String,      // User name for given user id.
+   *   'password': String,      // Password for user id.
+   *   'need_password_change': Boolean, // Let user change password at the next login.
+   *   'full_name': String,     // Full name of given user id.
+   *   'description': String,   // Description for user.
+   *   'is_active': Boolean,    // Flag if user is active or not.
+   *   'domain_name': String,   // Domain for user.
+   *   'role': String,          // Role for user.
+   *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   * };
+   */
+  add(email = null, input) {
+    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids']
+    if (this.client.is_admin === true) {
+      let q = `mutation($email: String!, $input: UserInput!) {` +
+        `  create_user(email: $email, props: $input) {` +
+        `    ok msg user { ${fields.join(" ")} }` +
+        `  }` +
+        `}`;
+      let v = {
+        'email': email,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+  /**
+   * modify user information with given user id with new values.
+   *
+   * @param {string} email - E-mail address as user id.
+   * @param {json} input - User specification to change. Required fields are:
+   * {
+   *   'username': String,      // User name for given user id.
+   *   'password': String,      // Password for user id.
+   *   'need_password_change': Boolean, // Let user change password at the next login.
+   *   'full_name': String,     // Full name of given user id.
+   *   'description': String,   // Description for user.
+   *   'is_active': Boolean,    // Flag if user is active or not.
+   *   'domain_name': String,   // Domain for user.
+   *   'role': String,          // Role for user.
+   *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   * };
+   */
+  modify(email = null, input) {
+    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids']
+    if (this.client.is_admin === true) {
+      let q = `mutation($email: String!, $input: UserInput!) {` +
+        `  modify_user(email: $email, props: $input) {` +
+        `    ok msg` +
+        `  }` +
+        `}`;
+      let v = {
+        'email': email,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+  /**
+   * delete user information with given user id
+   *
+   * @param {string} email - E-mail address as user id to delete.
+   */
+  delete(email) {
+    if (this.client.is_admin === true) {
+      let q = `mutation($email: String!) {` +
+        `  delete_user(email: $email) {` +
+        `    ok msg` +
+        `  }` +
+        `}`;
+      let v = {
+        'email': email
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+}
+
 class utils {
   constructor(client) {
     this.client = client;
