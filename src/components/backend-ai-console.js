@@ -27,7 +27,6 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-image/iron-image';
-import '@polymer/paper-toast/paper-toast';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
 import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
 import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
@@ -559,7 +558,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
-      <paper-toast id="backend-ai-indicator"></paper-toast>
+      <lablup-notification id="notification"></lablup-notification>
       <backend-ai-login id="login-panel"></backend-ai-login>
     `;
   }

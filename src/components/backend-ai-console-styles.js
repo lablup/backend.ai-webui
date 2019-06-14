@@ -937,16 +937,6 @@ export const BackendAiStyles =
       --paper-spinner-stroke-width: 6px;
     }
 
-    /* Toast */
-    paper-toast {
-      z-index: 25;
-    }
-
-    paper-toast paper-icon-button {
-      display: inline-block;
-      color: #ffffff;
-    }
-
     /* Button */
     wl-button {
       --button-padding: 8px;
