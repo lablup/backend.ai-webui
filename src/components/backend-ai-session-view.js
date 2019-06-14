@@ -13,7 +13,6 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-tabs/paper-tabs';
 import '@polymer/paper-tabs/paper-tab';
 
-import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
 import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-listbox/paper-listbox';

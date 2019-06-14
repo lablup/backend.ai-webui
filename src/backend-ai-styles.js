@@ -132,10 +132,6 @@ const template =
             margin: 0 0 16px 0;
           }
 
-          paper-dialog form {
-            margin-bottom: 0;
-          }
-
           paper-tabs {
             background-color: var(--paper-grey-800);
             color: #fff;
