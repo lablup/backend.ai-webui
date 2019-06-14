@@ -439,12 +439,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Sessions
                 </paper-item>
               </a>
-              <a ?selected="${this._page === 'experiment'}" href="/experiment" tabindex="-1" role="menuitem">
-                <paper-item ?disabled="${!this.is_admin}">
-                  <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
-                  Experiments
-                </paper-item>
-              </a>
+              <paper-item disabled>
+                <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
+                Experiments
+              </paper-item>
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>

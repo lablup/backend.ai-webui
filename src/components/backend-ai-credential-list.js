@@ -4,6 +4,8 @@
  */
 
 import {css, html, LitElement} from "lit-element";
+import {render} from 'lit-html';
+
 //import '@polymer/polymer/lib/elements/dom-if.js';
 
 import '@polymer/iron-ajax/iron-ajax';
@@ -25,7 +27,9 @@ import '@polymer/paper-toast/paper-toast';
 import '../backend-ai-styles.js';
 import '../lablup-piechart.js';
 import '../plastics/lablup-shields/lablup-shields';
+
 import 'weightless/card';
+import 'weightless/dialog';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -78,6 +82,7 @@ class BackendAICredentialList extends LitElement {
     };
 
     this.isAdmin = false;
+    this._boundControlRenderer = this.controlRenderer.bind(this);
   }
 
   firstUpdated() {
@@ -191,11 +196,11 @@ class BackendAICredentialList extends LitElement {
 
   async _showKeypairDetail(e) {
     const controls = e.target.closest('#controls');
-    const access_key = controls.accessKey;
+    const access_key = controls['access-key'];
     try {
       const data = await this._getKeyData(access_key);
       this.keypairInfo = data.keypair;
-      this.shadowRoot.querySelector('#keypair-info-dialog').open();
+      this.shadowRoot.querySelector('#keypair-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
         this.shadowRoot.querySelector('#notification').text = err.message;
@@ -223,7 +228,7 @@ class BackendAICredentialList extends LitElement {
   _deleteKey(e) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
-    const accessKey = controls.accessKey;
+    const accessKey = controls['access-key'];
     window.backendaiclient.keypair.delete(accessKey).then(response => {
       this.refresh();
     }).catch(err => {
@@ -246,7 +251,7 @@ class BackendAICredentialList extends LitElement {
   _mutateKey(e, is_active) {
     const termButton = e.target;
     const controls = e.target.closest('#controls');
-    const accessKey = controls.accessKey;
+    const accessKey = controls['access-key'];
     let original = this.keypairs.find(this._findKeyItem, accessKey);
     let input = {
       'is_active': is_active,
@@ -297,6 +302,35 @@ class BackendAICredentialList extends LitElement {
     } else {
       return value;
     }
+  }
+
+  controlRenderer(root, column, rowData) {
+    render(
+      html`
+            <div id="controls" class="layout horizontal flex center"
+                 .access-key="${rowData.item.access_key}">
+              <paper-icon-button class="fg green" icon="assignment"
+                                 @click="${(e) => this._showKeypairDetail(e)}"></paper-icon-button>
+              ${this.isAdmin && this._isActive() && rowData.item.is_admin ? html`
+                    <paper-icon-button class="fg blue controls-running" icon="delete"
+                                       @click="${(e) => this._revokeKey(e)}"></paper-icon-button>
+                    <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
+                                       @click="${(e) => this._deleteKey(e)}"></paper-icon-button>
+              ` : html``}
+              
+              ${this._isActive() ? html`
+                  <paper-icon-button class="fg blue controls-running" icon="icons:redo"
+                                     on-tap="_reuseKey"></paper-icon-button>
+              ` : html``}
+            </div>
+      `, root
+    );
+  }
+
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
   }
 
   static get styles() {
@@ -490,32 +524,10 @@ class BackendAICredentialList extends LitElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">Control</template>
-          <template>
-            <div id="controls" class="layout horizontal flex center"
-                 access-key="[[item.access_key]]">
-              <paper-icon-button class="fg green" icon="assignment"
-                                 on-tap="_showKeypairDetail"></paper-icon-button>
-              <template is="dom-if" if="[[isAdmin]]">
-                <template is="dom-if" if="[[_isActive()]]">
-                  <template is="dom-if" if="[[!item.is_admin]]">
-                    <paper-icon-button class="fg blue controls-running" icon="delete"
-                                       on-tap="_revokeKey"></paper-icon-button>
-                    <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                       on-tap="_deleteKey"></paper-icon-button>
-                  </template>
-                </template>
-                <template is="dom-if" if="[[!_isActive()]]">
-                  <paper-icon-button class="fg blue controls-running" icon="icons:redo"
-                                     on-tap="_reuseKey"></paper-icon-button>
-                </template>
-              </template>
-            </div>
-          </template>
+        <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <paper-dialog id="keypair-info-dialog">
+      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span style="margin-right:15px;">Keypair Detail</span>
@@ -524,9 +536,9 @@ class BackendAICredentialList extends LitElement {
               ` : html``}
             <lablup-shields app="" description="user" ui="flat"></lablup-shields>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
           <div class="horizontal layout">
             <div style="width:335px;">
@@ -579,7 +591,7 @@ class BackendAICredentialList extends LitElement {
             </div>
           </div>
         </wl-card>
-      </paper-dialog>
+      </wl-dialog>
     `;
   }
 }

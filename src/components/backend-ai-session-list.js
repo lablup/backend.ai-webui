@@ -550,8 +550,10 @@ class BackendAiSessionList extends LitElement {
     }
   }
 
-  _hideAppDialog() {
-    this.shadowRoot.querySelector('#app-dialog').hide();
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
   }
 
   _updateFilterAccessKey(e) {
@@ -838,9 +840,9 @@ class BackendAiSessionList extends LitElement {
           <h4 class="horizontal center layout" style="font-weight:bold">
             <span>App</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" @click="${() => this._hideAppDialog()}">
-              Close
-            </paper-icon-button>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h4>
           <div style="padding:15px;" class="horizontal layout wrap center center-justified">
               ${this.appSupportList.map(item => html`
