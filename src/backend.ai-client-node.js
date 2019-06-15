@@ -126,7 +126,7 @@ class Client {
    *
    * @param {Request} rqst - Request object to send
    */
-  async _wrapWithPromise(rqst) {
+  async _wrapWithPromise(rqst, rawFile = false) {
     let errorType = Client.ERR_REQUEST;
     let errorMsg;
     let resp, body;
@@ -137,10 +137,10 @@ class Client {
       resp = await fetch(rqst.uri, rqst);
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (contentType.startsWith('application/json') ||
-        contentType.startsWith('application/problem+json')) {
+      if (rawFile === false && (contentType.startsWith('application/json') ||
+        contentType.startsWith('application/problem+json'))) {
         body = await resp.json();
-      } else if (contentType.startsWith('text/')) {
+      } else if (rawFile === false && contentType.startsWith('text/')) {
         body = await resp.text();
       } else {
         if (resp.blob === undefined)
@@ -760,7 +760,7 @@ class VFolder {
     };
     let q = querystring.stringify(params);
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-    return this.client._wrapWithPromise(rqst);
+    return this.client._wrapWithPromise(rqst, true);
   }
 
   /**
