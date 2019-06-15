@@ -795,10 +795,13 @@ class BackendAiSessionView extends LitElement {
           this.shadowRoot.querySelector('#gpu-resource').disabled = false;
           this.shadowRoot.querySelector('#gpu-resource').value = this.gpu_metric.max;
         }
+
         // Refresh with resource template
         if (this.resource_templates !== [] && this.resource_templates.length > 0) {
           let resource = this.resource_templates[0];
           this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
+          let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('wl-button')[0];
+          default_template.setAttribute('active', true);
           //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
         }
 
@@ -1023,6 +1026,14 @@ class BackendAiSessionView extends LitElement {
           font-size: 14px;
         }
 
+        wl-button.resource-button.iron-selected {
+          --button-color: var(--paper-red-600);
+          --button-bg: var(--paper-red-600);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-bg-flat: var(--paper-orange-50);
+        }
         .resource-button h4 {
           padding: 5px 0;
           margin: 0;
@@ -1217,7 +1228,7 @@ class BackendAiSessionView extends LitElement {
                 <wl-expansion name="resource-group" open>
                   <span slot="title">Resource allocation</span>
                   <span slot="description"></span>
-                  <paper-listbox selected="0" class="horizontal center layout"
+                  <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                                  style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
                     <wl-button class="resource-button vertical center start layout" role="option"
