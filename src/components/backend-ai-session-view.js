@@ -33,6 +33,7 @@ import 'weightless/expansion';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
+import 'weightless/slider';
 
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -94,6 +95,9 @@ class BackendAiSessionView extends LitElement {
     this.concurrency_used = 0;
     this.concurrency_max = 0;
     this._status = 'inactive';
+    this.cpu_request = 1;
+    this.mem_request = 1;
+    this.gpu_request = 0;
   }
 
   static get properties() {
@@ -175,6 +179,15 @@ class BackendAiSessionView extends LitElement {
       },
       launch_ready: {
         type: Boolean
+      },
+      cpu_request: {
+        type: Number
+      },
+      mem_request: {
+        type: Number
+      },
+      gpu_request: {
+        type: Number
       },
       _status: {
         type: Boolean
@@ -312,7 +325,7 @@ class BackendAiSessionView extends LitElement {
 
   _launchSessionDialog() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      this.shadowRoot.querySelector('#notification').text = 'Please wait while initlaizating...';
+      this.shadowRoot.querySelector('#notification').text = 'Please wait while initializing...';
       this.shadowRoot.querySelector('#notification').show();
     } else {
       this.selectDefaultLanguage();
@@ -354,6 +367,9 @@ class BackendAiSessionView extends LitElement {
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
+    this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
+    this.mem_request = this.shadowRoot.querySelector('#ram-resource').value;
+    this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
 
     let config = {};
     if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
@@ -362,17 +378,17 @@ class BackendAiSessionView extends LitElement {
     if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
       config['domain'] = window.backendaiclient._config.domainName;
     }
-    config['cpu'] = this.shadowRoot.querySelector('#cpu-resource').value;
+    config['cpu'] = this.cpu_request;
     if (this.gpu_mode == 'vgpu') {
-      config['vgpu'] = this.shadowRoot.querySelector('#gpu-resource').value;
+      config['vgpu'] = this.gpu_request;
     } else {
-      config['gpu'] = this.shadowRoot.querySelector('#gpu-resource').value;
+      config['gpu'] = this.gpu_request;
     }
 
     if (String(this.shadowRoot.querySelector('#ram-resource').value) === "Infinity") {
       config['mem'] = String(this.shadowRoot.querySelector('#ram-resource').value);
     } else {
-      config['mem'] = String(this.shadowRoot.querySelector('#ram-resource').value) + 'g';
+      config['mem'] = String(this.mem_request) + 'g';
     }
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
@@ -876,9 +892,9 @@ class BackendAiSessionView extends LitElement {
   }
 
   _updateResourceIndicator(cpu, mem, gpu) {
-    this.shadowRoot.querySelector('#cpu-resource').value = cpu;
-    this.shadowRoot.querySelector('#ram-resource').value = mem;
-    this.shadowRoot.querySelector('#gpu-resource').value = gpu;
+    this.cpu_request = cpu;
+    this.mem_request = mem;
+    this.gpu_request = gpu;
   }
 
   selectDefaultLanguage() {
@@ -1206,7 +1222,7 @@ class BackendAiSessionView extends LitElement {
 ${this.resource_templates.map(item => html`
                     <wl-button class="resource-button vertical center start layout" role="option"
                                 style="height:140px;min-width:120px;" type="button"
-                                flat outlined 
+                                flat outlined
                                 @click="${this._chooseResourceTemplate}"
                                 id="${item.name}-button"
                                 .cpu="${item.cpu}"
@@ -1242,23 +1258,23 @@ ${this.resource_templates.map(item => html`
                     <span style="width:30px;">CPU</span>
                     <paper-slider id="cpu-resource" class="cpu"
                                   pin snaps expand editable
-                                  min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                                  value="${this.cpu_metric.max}"></paper-slider>
+                                  .min="${this.cpu_metric.min}" .max="${this.cpu_metric.max}"
+                                  value="${this.cpu_request}"></paper-slider>
                     <span class="caption">Core</span>
                   </div>
                   <div class="horizontal center layout">
                     <span style="width:30px;">RAM</span>
                     <paper-slider id="ram-resource" class="mem"
                                   pin snaps step=0.1 editable
-                                  min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                                  value="${this.mem_metric.max}"></paper-slider>
+                                  .min="${this.mem_metric.min}" .max="${this.mem_metric.max}"
+                                  value="${this.mem_request}"></paper-slider>
                     <span class="caption">GB</span>
                   </div>
                   <div class="horizontal center layout">
                     <span style="width:30px;">GPU</span>
                     <paper-slider id="gpu-resource" class="gpu"
-                                  pin snaps editable step="${this.gpu_step}"
-                                  min="0.0" max="${this.gpu_metric.max}" value="1.0"></paper-slider>
+                                  pin snaps editable .step="${this.gpu_step}"
+                                  .min="0.0" .max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
                     <span class="caption">GPU</span>
                   </div>
                 </wl-expansion>
