@@ -498,11 +498,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         }
 
         #folder-explorer-dialog {
-          height: calc(100vh - 80px);
+          height: calc(100vh - 120px);
           right: 0;
           top: 0;
           position: fixed;
-          margin: 70px 0 0 0;
+          margin: 120px 0 0 0;
         }
 
         @media screen and (max-width: 899px) {
