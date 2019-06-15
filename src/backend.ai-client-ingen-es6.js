@@ -276,8 +276,6 @@ class Client {
       resp = await fetch(rqst.uri, rqst);
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      console.log(contentType);
-      console.log(resp);
       if (rawFile === false && (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json'))) {
         body = await resp.json();
