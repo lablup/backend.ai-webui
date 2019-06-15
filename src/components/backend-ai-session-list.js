@@ -24,6 +24,7 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
 
+//import {AnsiUp} from 'ansi_up/ansi_up';
 import 'weightless/card';
 import 'weightless/dialog';
 
