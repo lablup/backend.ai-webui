@@ -268,11 +268,18 @@ class BackendAiSessionList extends LitElement {
         'redirect': "&redirect=/",
         'icon': 'vaadin:clipboard-pulse'
       });
+    let FFBase = TFBase.concat(
+      {
+        'name': 'jupyter',
+        'title': 'Jupyter Extension',
+        'redirect': "&redirect=/nbextensions",
+        'icon': 'vaadin:clipboard-pulse'
+      });
     this.appTemplate = {
       'tensorflow': TFBase,
       'python': jupyterBase,
       'python-tensorflow': TFBase,
-      'python-ff': TFBase,
+      'python-ff': FFBase,
       'python-pytorch': TFBase,
       'ngc-digits':
         TFBase.concat(
