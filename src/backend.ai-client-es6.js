@@ -1351,6 +1351,7 @@ class User {
     }
     return this.client.gql(q, v);
   }
+
   /**
    * Get user information.
    *
@@ -1384,7 +1385,6 @@ class User {
     }
     return this.client.gql(q, v);
   }
-
   /**
    * add new user with given information.
    *

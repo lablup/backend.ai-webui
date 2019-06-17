@@ -1486,6 +1486,7 @@ class User {
     }
     return this.client.gql(q, v);
   }
+
   /**
    * Get user information.
    *
@@ -1519,7 +1520,6 @@ class User {
     }
     return this.client.gql(q, v);
   }
-
   /**
    * add new user with given information.
    *
@@ -23220,34 +23220,34 @@ Sha.prototype._update = function (M) {
   for (; i < 80; ++i) W[i] = W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16]
 
   for (var j = 0; j < 80; ++j) {
-    var s = ~~(j / 20);
-    var t = (rotl5(a) + ft(s, b, c, d) + e + W[j] + K[s]) | 0;
+    var s = ~~(j / 20)
+    var t = (rotl5(a) + ft(s, b, c, d) + e + W[j] + K[s]) | 0
 
-    e = d;
-    d = c;
-    c = rotl30(b);
-    b = a;
+    e = d
+    d = c
+    c = rotl30(b)
+    b = a
     a = t
   }
 
-  this._a = (a + this._a) | 0;
-  this._b = (b + this._b) | 0;
-  this._c = (c + this._c) | 0;
-  this._d = (d + this._d) | 0;
+  this._a = (a + this._a) | 0
+  this._b = (b + this._b) | 0
+  this._c = (c + this._c) | 0
+  this._d = (d + this._d) | 0
   this._e = (e + this._e) | 0
-};
+}
 
 Sha.prototype._hash = function () {
-  var H = Buffer.allocUnsafe(20);
+  var H = Buffer.allocUnsafe(20)
 
-  H.writeInt32BE(this._a | 0, 0);
-  H.writeInt32BE(this._b | 0, 4);
-  H.writeInt32BE(this._c | 0, 8);
-  H.writeInt32BE(this._d | 0, 12);
-  H.writeInt32BE(this._e | 0, 16);
+  H.writeInt32BE(this._a | 0, 0)
+  H.writeInt32BE(this._b | 0, 4)
+  H.writeInt32BE(this._c | 0, 8)
+  H.writeInt32BE(this._d | 0, 12)
+  H.writeInt32BE(this._e | 0, 16)
 
   return H
-};
+}
 
 module.exports = Sha
 
@@ -23261,34 +23261,34 @@ module.exports = Sha
  * See http://pajhome.org.uk/crypt/md5 for details.
  */
 
-    var inherits = require('inherits');
-    var Hash = require('./hash');
-    var Buffer = require('safe-buffer').Buffer;
+var inherits = require('inherits')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
 var K = [
   0x5a827999, 0x6ed9eba1, 0x8f1bbcdc | 0, 0xca62c1d6 | 0
-];
+]
 
-    var W = new Array(80);
+var W = new Array(80)
 
 function Sha1 () {
-  this.init();
-  this._w = W;
+  this.init()
+  this._w = W
 
   Hash.call(this, 64, 56)
 }
 
-    inherits(Sha1, Hash);
+inherits(Sha1, Hash)
 
 Sha1.prototype.init = function () {
-  this._a = 0x67452301;
-  this._b = 0xefcdab89;
-  this._c = 0x98badcfe;
-  this._d = 0x10325476;
-  this._e = 0xc3d2e1f0;
+  this._a = 0x67452301
+  this._b = 0xefcdab89
+  this._c = 0x98badcfe
+  this._d = 0x10325476
+  this._e = 0xc3d2e1f0
 
   return this
-};
+}
 
 function rotl1 (num) {
   return (num << 1) | (num >>> 31)
@@ -23303,52 +23303,52 @@ function rotl30 (num) {
 }
 
 function ft (s, b, c, d) {
-  if (s === 0) return (b & c) | ((~b) & d);
-  if (s === 2) return (b & c) | (b & d) | (c & d);
+  if (s === 0) return (b & c) | ((~b) & d)
+  if (s === 2) return (b & c) | (b & d) | (c & d)
   return b ^ c ^ d
 }
 
 Sha1.prototype._update = function (M) {
-  var W = this._w;
+  var W = this._w
 
-  var a = this._a | 0;
-  var b = this._b | 0;
-  var c = this._c | 0;
-  var d = this._d | 0;
-  var e = this._e | 0;
+  var a = this._a | 0
+  var b = this._b | 0
+  var c = this._c | 0
+  var d = this._d | 0
+  var e = this._e | 0
 
-  for (var i = 0; i < 16; ++i) W[i] = M.readInt32BE(i * 4);
-  for (; i < 80; ++i) W[i] = rotl1(W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16]);
+  for (var i = 0; i < 16; ++i) W[i] = M.readInt32BE(i * 4)
+  for (; i < 80; ++i) W[i] = rotl1(W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16])
 
   for (var j = 0; j < 80; ++j) {
-    var s = ~~(j / 20);
-    var t = (rotl5(a) + ft(s, b, c, d) + e + W[j] + K[s]) | 0;
+    var s = ~~(j / 20)
+    var t = (rotl5(a) + ft(s, b, c, d) + e + W[j] + K[s]) | 0
 
-    e = d;
-    d = c;
-    c = rotl30(b);
-    b = a;
+    e = d
+    d = c
+    c = rotl30(b)
+    b = a
     a = t
   }
 
-  this._a = (a + this._a) | 0;
-  this._b = (b + this._b) | 0;
-  this._c = (c + this._c) | 0;
-  this._d = (d + this._d) | 0;
+  this._a = (a + this._a) | 0
+  this._b = (b + this._b) | 0
+  this._c = (c + this._c) | 0
+  this._d = (d + this._d) | 0
   this._e = (e + this._e) | 0
-};
+}
 
 Sha1.prototype._hash = function () {
-  var H = Buffer.allocUnsafe(20);
+  var H = Buffer.allocUnsafe(20)
 
-  H.writeInt32BE(this._a | 0, 0);
-  H.writeInt32BE(this._b | 0, 4);
-  H.writeInt32BE(this._c | 0, 8);
-  H.writeInt32BE(this._d | 0, 12);
-  H.writeInt32BE(this._e | 0, 16);
+  H.writeInt32BE(this._a | 0, 0)
+  H.writeInt32BE(this._b | 0, 4)
+  H.writeInt32BE(this._c | 0, 8)
+  H.writeInt32BE(this._d | 0, 12)
+  H.writeInt32BE(this._e | 0, 16)
 
   return H
-};
+}
 
 module.exports = Sha1
 
@@ -23361,49 +23361,49 @@ module.exports = Sha1
  *
  */
 
-var inherits = require('inherits');
-    var Sha256 = require('./sha256');
-    var Hash = require('./hash');
-    var Buffer = require('safe-buffer').Buffer;
+var inherits = require('inherits')
+var Sha256 = require('./sha256')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
-    var W = new Array(64);
+var W = new Array(64)
 
 function Sha224 () {
-  this.init();
+  this.init()
 
-  this._w = W; // new Array(64)
+  this._w = W // new Array(64)
 
   Hash.call(this, 64, 56)
 }
 
-    inherits(Sha224, Sha256);
+inherits(Sha224, Sha256)
 
 Sha224.prototype.init = function () {
-  this._a = 0xc1059ed8;
-  this._b = 0x367cd507;
-  this._c = 0x3070dd17;
-  this._d = 0xf70e5939;
-  this._e = 0xffc00b31;
-  this._f = 0x68581511;
-  this._g = 0x64f98fa7;
-  this._h = 0xbefa4fa4;
+  this._a = 0xc1059ed8
+  this._b = 0x367cd507
+  this._c = 0x3070dd17
+  this._d = 0xf70e5939
+  this._e = 0xffc00b31
+  this._f = 0x68581511
+  this._g = 0x64f98fa7
+  this._h = 0xbefa4fa4
 
   return this
-};
+}
 
 Sha224.prototype._hash = function () {
-  var H = Buffer.allocUnsafe(28);
+  var H = Buffer.allocUnsafe(28)
 
-  H.writeInt32BE(this._a, 0);
-  H.writeInt32BE(this._b, 4);
-  H.writeInt32BE(this._c, 8);
-  H.writeInt32BE(this._d, 12);
-  H.writeInt32BE(this._e, 16);
-  H.writeInt32BE(this._f, 20);
-  H.writeInt32BE(this._g, 24);
+  H.writeInt32BE(this._a, 0)
+  H.writeInt32BE(this._b, 4)
+  H.writeInt32BE(this._c, 8)
+  H.writeInt32BE(this._d, 12)
+  H.writeInt32BE(this._e, 16)
+  H.writeInt32BE(this._f, 20)
+  H.writeInt32BE(this._g, 24)
 
   return H
-};
+}
 
 module.exports = Sha224
 
@@ -23416,9 +23416,9 @@ module.exports = Sha224
  *
  */
 
-var inherits = require('inherits');
-    var Hash = require('./hash');
-    var Buffer = require('safe-buffer').Buffer;
+var inherits = require('inherits')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
 var K = [
   0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5,
@@ -23437,32 +23437,32 @@ var K = [
   0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
   0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208,
   0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
-];
+]
 
-    var W = new Array(64);
+var W = new Array(64)
 
 function Sha256 () {
-  this.init();
+  this.init()
 
-  this._w = W; // new Array(64)
+  this._w = W // new Array(64)
 
   Hash.call(this, 64, 56)
 }
 
-    inherits(Sha256, Hash);
+inherits(Sha256, Hash)
 
 Sha256.prototype.init = function () {
-  this._a = 0x6a09e667;
-  this._b = 0xbb67ae85;
-  this._c = 0x3c6ef372;
-  this._d = 0xa54ff53a;
-  this._e = 0x510e527f;
-  this._f = 0x9b05688c;
-  this._g = 0x1f83d9ab;
-  this._h = 0x5be0cd19;
+  this._a = 0x6a09e667
+  this._b = 0xbb67ae85
+  this._c = 0x3c6ef372
+  this._d = 0xa54ff53a
+  this._e = 0x510e527f
+  this._f = 0x9b05688c
+  this._g = 0x1f83d9ab
+  this._h = 0x5be0cd19
 
   return this
-};
+}
 
 function ch (x, y, z) {
   return z ^ (x & (y ^ z))
@@ -23489,124 +23489,124 @@ function gamma1 (x) {
 }
 
 Sha256.prototype._update = function (M) {
-  var W = this._w;
+  var W = this._w
 
-  var a = this._a | 0;
-  var b = this._b | 0;
-  var c = this._c | 0;
-  var d = this._d | 0;
-  var e = this._e | 0;
-  var f = this._f | 0;
-  var g = this._g | 0;
-  var h = this._h | 0;
+  var a = this._a | 0
+  var b = this._b | 0
+  var c = this._c | 0
+  var d = this._d | 0
+  var e = this._e | 0
+  var f = this._f | 0
+  var g = this._g | 0
+  var h = this._h | 0
 
-  for (var i = 0; i < 16; ++i) W[i] = M.readInt32BE(i * 4);
-  for (; i < 64; ++i) W[i] = (gamma1(W[i - 2]) + W[i - 7] + gamma0(W[i - 15]) + W[i - 16]) | 0;
+  for (var i = 0; i < 16; ++i) W[i] = M.readInt32BE(i * 4)
+  for (; i < 64; ++i) W[i] = (gamma1(W[i - 2]) + W[i - 7] + gamma0(W[i - 15]) + W[i - 16]) | 0
 
   for (var j = 0; j < 64; ++j) {
-    var T1 = (h + sigma1(e) + ch(e, f, g) + K[j] + W[j]) | 0;
-    var T2 = (sigma0(a) + maj(a, b, c)) | 0;
+    var T1 = (h + sigma1(e) + ch(e, f, g) + K[j] + W[j]) | 0
+    var T2 = (sigma0(a) + maj(a, b, c)) | 0
 
-    h = g;
-    g = f;
-    f = e;
-    e = (d + T1) | 0;
-    d = c;
-    c = b;
-    b = a;
+    h = g
+    g = f
+    f = e
+    e = (d + T1) | 0
+    d = c
+    c = b
+    b = a
     a = (T1 + T2) | 0
   }
 
-  this._a = (a + this._a) | 0;
-  this._b = (b + this._b) | 0;
-  this._c = (c + this._c) | 0;
-  this._d = (d + this._d) | 0;
-  this._e = (e + this._e) | 0;
-  this._f = (f + this._f) | 0;
-  this._g = (g + this._g) | 0;
+  this._a = (a + this._a) | 0
+  this._b = (b + this._b) | 0
+  this._c = (c + this._c) | 0
+  this._d = (d + this._d) | 0
+  this._e = (e + this._e) | 0
+  this._f = (f + this._f) | 0
+  this._g = (g + this._g) | 0
   this._h = (h + this._h) | 0
-};
+}
 
 Sha256.prototype._hash = function () {
-  var H = Buffer.allocUnsafe(32);
+  var H = Buffer.allocUnsafe(32)
 
-  H.writeInt32BE(this._a, 0);
-  H.writeInt32BE(this._b, 4);
-  H.writeInt32BE(this._c, 8);
-  H.writeInt32BE(this._d, 12);
-  H.writeInt32BE(this._e, 16);
-  H.writeInt32BE(this._f, 20);
-  H.writeInt32BE(this._g, 24);
-  H.writeInt32BE(this._h, 28);
+  H.writeInt32BE(this._a, 0)
+  H.writeInt32BE(this._b, 4)
+  H.writeInt32BE(this._c, 8)
+  H.writeInt32BE(this._d, 12)
+  H.writeInt32BE(this._e, 16)
+  H.writeInt32BE(this._f, 20)
+  H.writeInt32BE(this._g, 24)
+  H.writeInt32BE(this._h, 28)
 
   return H
-};
+}
 
 module.exports = Sha256
 
 },{"./hash":150,"inherits":104,"safe-buffer":149}],156:[function(require,module,exports){
-    var inherits = require('inherits');
-    var SHA512 = require('./sha512');
-    var Hash = require('./hash');
-    var Buffer = require('safe-buffer').Buffer;
+var inherits = require('inherits')
+var SHA512 = require('./sha512')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
-    var W = new Array(160);
+var W = new Array(160)
 
 function Sha384 () {
-  this.init();
-  this._w = W;
+  this.init()
+  this._w = W
 
   Hash.call(this, 128, 112)
 }
 
-    inherits(Sha384, SHA512);
+inherits(Sha384, SHA512)
 
 Sha384.prototype.init = function () {
-  this._ah = 0xcbbb9d5d;
-  this._bh = 0x629a292a;
-  this._ch = 0x9159015a;
-  this._dh = 0x152fecd8;
-  this._eh = 0x67332667;
-  this._fh = 0x8eb44a87;
-  this._gh = 0xdb0c2e0d;
-  this._hh = 0x47b5481d;
+  this._ah = 0xcbbb9d5d
+  this._bh = 0x629a292a
+  this._ch = 0x9159015a
+  this._dh = 0x152fecd8
+  this._eh = 0x67332667
+  this._fh = 0x8eb44a87
+  this._gh = 0xdb0c2e0d
+  this._hh = 0x47b5481d
 
-  this._al = 0xc1059ed8;
-  this._bl = 0x367cd507;
-  this._cl = 0x3070dd17;
-  this._dl = 0xf70e5939;
-  this._el = 0xffc00b31;
-  this._fl = 0x68581511;
-  this._gl = 0x64f98fa7;
-  this._hl = 0xbefa4fa4;
+  this._al = 0xc1059ed8
+  this._bl = 0x367cd507
+  this._cl = 0x3070dd17
+  this._dl = 0xf70e5939
+  this._el = 0xffc00b31
+  this._fl = 0x68581511
+  this._gl = 0x64f98fa7
+  this._hl = 0xbefa4fa4
 
   return this
-};
+}
 
 Sha384.prototype._hash = function () {
-  var H = Buffer.allocUnsafe(48);
+  var H = Buffer.allocUnsafe(48)
 
   function writeInt64BE (h, l, offset) {
-    H.writeInt32BE(h, offset);
+    H.writeInt32BE(h, offset)
     H.writeInt32BE(l, offset + 4)
   }
 
-  writeInt64BE(this._ah, this._al, 0);
-  writeInt64BE(this._bh, this._bl, 8);
-  writeInt64BE(this._ch, this._cl, 16);
-  writeInt64BE(this._dh, this._dl, 24);
-  writeInt64BE(this._eh, this._el, 32);
-  writeInt64BE(this._fh, this._fl, 40);
+  writeInt64BE(this._ah, this._al, 0)
+  writeInt64BE(this._bh, this._bl, 8)
+  writeInt64BE(this._ch, this._cl, 16)
+  writeInt64BE(this._dh, this._dl, 24)
+  writeInt64BE(this._eh, this._el, 32)
+  writeInt64BE(this._fh, this._fl, 40)
 
   return H
-};
+}
 
 module.exports = Sha384
 
 },{"./hash":150,"./sha512":157,"inherits":104,"safe-buffer":149}],157:[function(require,module,exports){
-    var inherits = require('inherits');
-    var Hash = require('./hash');
-    var Buffer = require('safe-buffer').Buffer;
+var inherits = require('inherits')
+var Hash = require('./hash')
+var Buffer = require('safe-buffer').Buffer
 
 var K = [
   0x428a2f98, 0xd728ae22, 0x71374491, 0x23ef65cd,
@@ -23649,40 +23649,40 @@ var K = [
   0x3c9ebe0a, 0x15c9bebc, 0x431d67c4, 0x9c100d4c,
   0x4cc5d4be, 0xcb3e42b6, 0x597f299c, 0xfc657e2a,
   0x5fcb6fab, 0x3ad6faec, 0x6c44198c, 0x4a475817
-];
+]
 
-    var W = new Array(160);
+var W = new Array(160)
 
 function Sha512 () {
-  this.init();
-  this._w = W;
+  this.init()
+  this._w = W
 
   Hash.call(this, 128, 112)
 }
 
-    inherits(Sha512, Hash);
+inherits(Sha512, Hash)
 
 Sha512.prototype.init = function () {
-  this._ah = 0x6a09e667;
-  this._bh = 0xbb67ae85;
-  this._ch = 0x3c6ef372;
-  this._dh = 0xa54ff53a;
-  this._eh = 0x510e527f;
-  this._fh = 0x9b05688c;
-  this._gh = 0x1f83d9ab;
-  this._hh = 0x5be0cd19;
+  this._ah = 0x6a09e667
+  this._bh = 0xbb67ae85
+  this._ch = 0x3c6ef372
+  this._dh = 0xa54ff53a
+  this._eh = 0x510e527f
+  this._fh = 0x9b05688c
+  this._gh = 0x1f83d9ab
+  this._hh = 0x5be0cd19
 
-  this._al = 0xf3bcc908;
-  this._bl = 0x84caa73b;
-  this._cl = 0xfe94f82b;
-  this._dl = 0x5f1d36f1;
-  this._el = 0xade682d1;
-  this._fl = 0x2b3e6c1f;
-  this._gl = 0xfb41bd6b;
-  this._hl = 0x137e2179;
+  this._al = 0xf3bcc908
+  this._bl = 0x84caa73b
+  this._cl = 0xfe94f82b
+  this._dl = 0x5f1d36f1
+  this._el = 0xade682d1
+  this._fl = 0x2b3e6c1f
+  this._gl = 0xfb41bd6b
+  this._hl = 0x137e2179
 
   return this
-};
+}
 
 function Ch (x, y, z) {
   return z ^ (x & (y ^ z))
@@ -23721,147 +23721,147 @@ function getCarry (a, b) {
 }
 
 Sha512.prototype._update = function (M) {
-  var W = this._w;
+  var W = this._w
 
-  var ah = this._ah | 0;
-  var bh = this._bh | 0;
-  var ch = this._ch | 0;
-  var dh = this._dh | 0;
-  var eh = this._eh | 0;
-  var fh = this._fh | 0;
-  var gh = this._gh | 0;
-  var hh = this._hh | 0;
+  var ah = this._ah | 0
+  var bh = this._bh | 0
+  var ch = this._ch | 0
+  var dh = this._dh | 0
+  var eh = this._eh | 0
+  var fh = this._fh | 0
+  var gh = this._gh | 0
+  var hh = this._hh | 0
 
-  var al = this._al | 0;
-  var bl = this._bl | 0;
-  var cl = this._cl | 0;
-  var dl = this._dl | 0;
-  var el = this._el | 0;
-  var fl = this._fl | 0;
-  var gl = this._gl | 0;
-  var hl = this._hl | 0;
+  var al = this._al | 0
+  var bl = this._bl | 0
+  var cl = this._cl | 0
+  var dl = this._dl | 0
+  var el = this._el | 0
+  var fl = this._fl | 0
+  var gl = this._gl | 0
+  var hl = this._hl | 0
 
   for (var i = 0; i < 32; i += 2) {
-    W[i] = M.readInt32BE(i * 4);
+    W[i] = M.readInt32BE(i * 4)
     W[i + 1] = M.readInt32BE(i * 4 + 4)
   }
   for (; i < 160; i += 2) {
-    var xh = W[i - 15 * 2];
-    var xl = W[i - 15 * 2 + 1];
-    var gamma0 = Gamma0(xh, xl);
-    var gamma0l = Gamma0l(xl, xh);
+    var xh = W[i - 15 * 2]
+    var xl = W[i - 15 * 2 + 1]
+    var gamma0 = Gamma0(xh, xl)
+    var gamma0l = Gamma0l(xl, xh)
 
-    xh = W[i - 2 * 2];
-    xl = W[i - 2 * 2 + 1];
-    var gamma1 = Gamma1(xh, xl);
-    var gamma1l = Gamma1l(xl, xh);
+    xh = W[i - 2 * 2]
+    xl = W[i - 2 * 2 + 1]
+    var gamma1 = Gamma1(xh, xl)
+    var gamma1l = Gamma1l(xl, xh)
 
     // W[i] = gamma0 + W[i - 7] + gamma1 + W[i - 16]
-    var Wi7h = W[i - 7 * 2];
-    var Wi7l = W[i - 7 * 2 + 1];
+    var Wi7h = W[i - 7 * 2]
+    var Wi7l = W[i - 7 * 2 + 1]
 
-    var Wi16h = W[i - 16 * 2];
-    var Wi16l = W[i - 16 * 2 + 1];
+    var Wi16h = W[i - 16 * 2]
+    var Wi16l = W[i - 16 * 2 + 1]
 
-    var Wil = (gamma0l + Wi7l) | 0;
-    var Wih = (gamma0 + Wi7h + getCarry(Wil, gamma0l)) | 0;
-    Wil = (Wil + gamma1l) | 0;
-    Wih = (Wih + gamma1 + getCarry(Wil, gamma1l)) | 0;
-    Wil = (Wil + Wi16l) | 0;
-    Wih = (Wih + Wi16h + getCarry(Wil, Wi16l)) | 0;
+    var Wil = (gamma0l + Wi7l) | 0
+    var Wih = (gamma0 + Wi7h + getCarry(Wil, gamma0l)) | 0
+    Wil = (Wil + gamma1l) | 0
+    Wih = (Wih + gamma1 + getCarry(Wil, gamma1l)) | 0
+    Wil = (Wil + Wi16l) | 0
+    Wih = (Wih + Wi16h + getCarry(Wil, Wi16l)) | 0
 
-    W[i] = Wih;
+    W[i] = Wih
     W[i + 1] = Wil
   }
 
   for (var j = 0; j < 160; j += 2) {
-    Wih = W[j];
-    Wil = W[j + 1];
+    Wih = W[j]
+    Wil = W[j + 1]
 
-    var majh = maj(ah, bh, ch);
-    var majl = maj(al, bl, cl);
+    var majh = maj(ah, bh, ch)
+    var majl = maj(al, bl, cl)
 
-    var sigma0h = sigma0(ah, al);
-    var sigma0l = sigma0(al, ah);
-    var sigma1h = sigma1(eh, el);
-    var sigma1l = sigma1(el, eh);
+    var sigma0h = sigma0(ah, al)
+    var sigma0l = sigma0(al, ah)
+    var sigma1h = sigma1(eh, el)
+    var sigma1l = sigma1(el, eh)
 
     // t1 = h + sigma1 + ch + K[j] + W[j]
-    var Kih = K[j];
-    var Kil = K[j + 1];
+    var Kih = K[j]
+    var Kil = K[j + 1]
 
-    var chh = Ch(eh, fh, gh);
-    var chl = Ch(el, fl, gl);
+    var chh = Ch(eh, fh, gh)
+    var chl = Ch(el, fl, gl)
 
-    var t1l = (hl + sigma1l) | 0;
-    var t1h = (hh + sigma1h + getCarry(t1l, hl)) | 0;
-    t1l = (t1l + chl) | 0;
-    t1h = (t1h + chh + getCarry(t1l, chl)) | 0;
-    t1l = (t1l + Kil) | 0;
-    t1h = (t1h + Kih + getCarry(t1l, Kil)) | 0;
-    t1l = (t1l + Wil) | 0;
-    t1h = (t1h + Wih + getCarry(t1l, Wil)) | 0;
+    var t1l = (hl + sigma1l) | 0
+    var t1h = (hh + sigma1h + getCarry(t1l, hl)) | 0
+    t1l = (t1l + chl) | 0
+    t1h = (t1h + chh + getCarry(t1l, chl)) | 0
+    t1l = (t1l + Kil) | 0
+    t1h = (t1h + Kih + getCarry(t1l, Kil)) | 0
+    t1l = (t1l + Wil) | 0
+    t1h = (t1h + Wih + getCarry(t1l, Wil)) | 0
 
     // t2 = sigma0 + maj
-    var t2l = (sigma0l + majl) | 0;
-    var t2h = (sigma0h + majh + getCarry(t2l, sigma0l)) | 0;
+    var t2l = (sigma0l + majl) | 0
+    var t2h = (sigma0h + majh + getCarry(t2l, sigma0l)) | 0
 
-    hh = gh;
-    hl = gl;
-    gh = fh;
-    gl = fl;
-    fh = eh;
-    fl = el;
-    el = (dl + t1l) | 0;
-    eh = (dh + t1h + getCarry(el, dl)) | 0;
-    dh = ch;
-    dl = cl;
-    ch = bh;
-    cl = bl;
-    bh = ah;
-    bl = al;
-    al = (t1l + t2l) | 0;
+    hh = gh
+    hl = gl
+    gh = fh
+    gl = fl
+    fh = eh
+    fl = el
+    el = (dl + t1l) | 0
+    eh = (dh + t1h + getCarry(el, dl)) | 0
+    dh = ch
+    dl = cl
+    ch = bh
+    cl = bl
+    bh = ah
+    bl = al
+    al = (t1l + t2l) | 0
     ah = (t1h + t2h + getCarry(al, t1l)) | 0
   }
 
-  this._al = (this._al + al) | 0;
-  this._bl = (this._bl + bl) | 0;
-  this._cl = (this._cl + cl) | 0;
-  this._dl = (this._dl + dl) | 0;
-  this._el = (this._el + el) | 0;
-  this._fl = (this._fl + fl) | 0;
-  this._gl = (this._gl + gl) | 0;
-  this._hl = (this._hl + hl) | 0;
+  this._al = (this._al + al) | 0
+  this._bl = (this._bl + bl) | 0
+  this._cl = (this._cl + cl) | 0
+  this._dl = (this._dl + dl) | 0
+  this._el = (this._el + el) | 0
+  this._fl = (this._fl + fl) | 0
+  this._gl = (this._gl + gl) | 0
+  this._hl = (this._hl + hl) | 0
 
-  this._ah = (this._ah + ah + getCarry(this._al, al)) | 0;
-  this._bh = (this._bh + bh + getCarry(this._bl, bl)) | 0;
-  this._ch = (this._ch + ch + getCarry(this._cl, cl)) | 0;
-  this._dh = (this._dh + dh + getCarry(this._dl, dl)) | 0;
-  this._eh = (this._eh + eh + getCarry(this._el, el)) | 0;
-  this._fh = (this._fh + fh + getCarry(this._fl, fl)) | 0;
-  this._gh = (this._gh + gh + getCarry(this._gl, gl)) | 0;
+  this._ah = (this._ah + ah + getCarry(this._al, al)) | 0
+  this._bh = (this._bh + bh + getCarry(this._bl, bl)) | 0
+  this._ch = (this._ch + ch + getCarry(this._cl, cl)) | 0
+  this._dh = (this._dh + dh + getCarry(this._dl, dl)) | 0
+  this._eh = (this._eh + eh + getCarry(this._el, el)) | 0
+  this._fh = (this._fh + fh + getCarry(this._fl, fl)) | 0
+  this._gh = (this._gh + gh + getCarry(this._gl, gl)) | 0
   this._hh = (this._hh + hh + getCarry(this._hl, hl)) | 0
-};
+}
 
 Sha512.prototype._hash = function () {
-  var H = Buffer.allocUnsafe(64);
+  var H = Buffer.allocUnsafe(64)
 
   function writeInt64BE (h, l, offset) {
-    H.writeInt32BE(h, offset);
+    H.writeInt32BE(h, offset)
     H.writeInt32BE(l, offset + 4)
   }
 
-  writeInt64BE(this._ah, this._al, 0);
-  writeInt64BE(this._bh, this._bl, 8);
-  writeInt64BE(this._ch, this._cl, 16);
-  writeInt64BE(this._dh, this._dl, 24);
-  writeInt64BE(this._eh, this._el, 32);
-  writeInt64BE(this._fh, this._fl, 40);
-  writeInt64BE(this._gh, this._gl, 48);
-  writeInt64BE(this._hh, this._hl, 56);
+  writeInt64BE(this._ah, this._al, 0)
+  writeInt64BE(this._bh, this._bl, 8)
+  writeInt64BE(this._ch, this._cl, 16)
+  writeInt64BE(this._dh, this._dl, 24)
+  writeInt64BE(this._eh, this._el, 32)
+  writeInt64BE(this._fh, this._fl, 40)
+  writeInt64BE(this._gh, this._gl, 48)
+  writeInt64BE(this._hh, this._hl, 56)
 
   return H
-};
+}
 
 module.exports = Sha512
 
@@ -24153,16 +24153,16 @@ var indexOf = function (xs, item) {
     return -1;
 };
 var Object_keys = function (obj) {
-  if (Object.keys) return Object.keys(obj);
+    if (Object.keys) return Object.keys(obj)
     else {
         var res = [];
-    for (var key in obj) res.push(key);
+        for (var key in obj) res.push(key)
         return res;
     }
 };
 
 var forEach = function (xs, fn) {
-  if (xs.forEach) return xs.forEach(fn);
+    if (xs.forEach) return xs.forEach(fn)
     else for (var i = 0; i < xs.length; i++) {
         fn(xs[i], i, xs);
     }
