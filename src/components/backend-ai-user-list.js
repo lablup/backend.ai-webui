@@ -149,12 +149,12 @@ class BackendAIUserList extends LitElement {
     });
   }
 
-  async _showKeypairDetail(e) {
+  async _showUserDetail(e) {
     const controls = e.target.closest('#controls');
-    const access_key = controls['access-key'];
+    const user_id = controls['user-id'];
     try {
-      const data = await this._getKeyData(access_key);
-      this.userInfo = data.keypair;
+      const data = await this._getUserData(user_id);
+      this.userInfo = data.user;
       this.shadowRoot.querySelector('#keypair-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
@@ -162,6 +162,11 @@ class BackendAIUserList extends LitElement {
         this.shadowRoot.querySelector('#notification').show();
       }
     }
+  }
+
+  async _getUserData(user_id) {
+    let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups'];
+    return window.backendaiclient.user.get(user_id, fields);
   }
 
   async _getKeyData(accessKey) {
@@ -263,9 +268,9 @@ class BackendAIUserList extends LitElement {
     render(
       html`
             <div id="controls" class="layout horizontal flex center"
-                 .access-key="${rowData.item.access_key}">
+                 .user-id="${rowData.item.email}">
               <paper-icon-button class="fg green" icon="assignment"
-                                 @click="${(e) => this._showKeypairDetail(e)}"></paper-icon-button>
+                                 @click="${(e) => this._showUserDetail(e)}"></paper-icon-button>
               ${this.isAdmin && this._isActive() && rowData.item.is_admin ? html`
                     <paper-icon-button class="fg blue controls-running" icon="delete"
                                        @click="${(e) => this._revokeKey(e)}"></paper-icon-button>
@@ -387,17 +392,6 @@ class BackendAIUserList extends LitElement {
             </div>
           </template>
         </vaadin-grid-sort-column>
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="created_at">Key age</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[item.elapsed]] Days</span>
-              <span class="indicator">([[item.created_at_formatted]])</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
         <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>

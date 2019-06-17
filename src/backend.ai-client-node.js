@@ -1347,6 +1347,40 @@ class User {
     }
     return this.client.gql(q, v);
   }
+
+  /**
+   * Get user information.
+   *
+   * @param {string} email - E-mail address as user id.
+   * @param {json} input - User specification to query. Fields are:
+   * {
+   *   'email': String,         // E-mail for given E-mail (same as user)
+   *   'username': String,      // User name for given user id.
+   *   'password': String,      // Password for user id.
+   *   'need_password_change': Boolean, // Let user change password at the next login.
+   *   'full_name': String,     // Full name of given user id.
+   *   'description': String,   // Description for user.
+   *   'is_active': Boolean,    // Flag if user is active or not.
+   *   'domain_name': String,   // Domain for user.
+   *   'role': String,          // Role for user.
+   *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   * };
+   */
+  get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups']) {
+    let q, v;
+    if (this.client.is_admin === true) {
+      q = `query($email:String) {` +
+        `  user (email:$email) { ${fields.join(" ")} }` +
+        '}';
+      v = {'email': email};
+    } else {
+      q = `query {` +
+        `  user { ${fields.join(" ")} }` +
+        '}';
+      v = {};
+    }
+    return this.client.gql(q, v);
+  }
   /**
    * add new user with given information.
    *
