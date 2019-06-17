@@ -28,6 +28,8 @@ import './lablup-notification.js';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
+import 'weightless/switch';
+import 'weightless/textfield';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -67,6 +69,9 @@ class BackendAIUserList extends LitElement {
       },
       notification: {
         type: Object
+      },
+      userInfoGroups: {
+        type: Object
       }
     };
   }
@@ -78,6 +83,7 @@ class BackendAIUserList extends LitElement {
     this.users = {};
     this.isAdmin = false;
     this.userInfo = {};
+    this.userInfoGroups = [];
     this._boundControlRenderer = this.controlRenderer.bind(this);
   }
 
@@ -152,10 +158,16 @@ class BackendAIUserList extends LitElement {
   async _showUserDetail(e) {
     const controls = e.target.closest('#controls');
     const user_id = controls['user-id'];
+    let groupNames;
     try {
       const data = await this._getUserData(user_id);
       this.userInfo = data.user;
-      this.shadowRoot.querySelector('#keypair-info-dialog').show();
+      groupNames = this.userInfo.groups.map((item) => {
+        const parsedItem = JSON.parse(item);
+        return parsedItem.name;
+      });
+      this.userInfoGroups = groupNames;
+      this.shadowRoot.querySelector('#user-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
         this.shadowRoot.querySelector('#notification').text = err.message;
@@ -167,12 +179,6 @@ class BackendAIUserList extends LitElement {
   async _getUserData(user_id) {
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups'];
     return window.backendaiclient.user.get(user_id, fields);
-  }
-
-  async _getKeyData(accessKey) {
-    let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-      'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-    return window.backendaiclient.keypair.info(accessKey, fields);
   }
 
   refresh() {
@@ -288,14 +294,11 @@ class BackendAIUserList extends LitElement {
   }
 
   _hideDialog(e) {
-    console.log(this);
-    console.log(this.notification);
-    this.notification.text = "hi all";
-    this.notification.show();
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
   }
+
   static get styles() {
     return [
       BackendAiStyles,
@@ -363,6 +366,15 @@ class BackendAIUserList extends LitElement {
         div.configuration iron-icon {
           padding-right: 5px;
         }
+
+        wl-dialog wl-textfield {
+          padding-left: 15px;
+          --input-font-family: Roboto, Noto, sans-serif;
+          --input-color-disabled: #222;
+          --input-label-color-disabled: #222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #ccc;
+        }
       `];
   }
 
@@ -395,10 +407,10 @@ class BackendAIUserList extends LitElement {
         <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling>
+      <wl-dialog id="user-info-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span style="margin-right:15px;">Keypair Detail</span>
+            <span style="margin-right:15px;">User Detail</span>
             <lablup-shields app="" description="user" ui="flat"></lablup-shields>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
@@ -409,48 +421,37 @@ class BackendAIUserList extends LitElement {
             <div style="width:335px;">
               <h4>Information</h4>
               <div role="listbox" style="margin: 0;">
+                <wl-textfield label="User ID" disabled value="${this.userInfo.email}"></wl-textfield>
+                <wl-textfield label="User name" disabled value="${this.userInfo.username}"></wl-textfield>
+                <wl-textfield label="Full name" disabled value="${this.userInfo.full_name}"></wl-textfield>
                 <vaadin-item>
-                  <div><strong>User ID</strong></div>
-                  <div secondary>${this.userInfo.user_id}</div>
+                  <div><strong>Description</strong></div>
+                  <div secondary>${this.userInfo.description}</div>
                 </vaadin-item>
-                <vaadin-item>
-                  <div><strong>Access Key</strong></div>
-                  <div secondary>${this.userInfo.access_key}</div>
-                </vaadin-item>
-                <vaadin-item>
-                  <div><strong>Secret Key</strong></div>
-                  <div secondary>${this.userInfo.secret_key}</div>
-                </vaadin-item>
-                <vaadin-item>
-                  <div><strong>Created</strong></div>
-                  <div secondary>${this.userInfo.created_at}</div>
-                </vaadin-item>
-                <vaadin-item>
-                  <div><strong>Last used</strong></div>
-                  <div secondary>${this.userInfo.last_used}</div>
-                </vaadin-item>
+                <wl-textfield label="Active user?" disabled value="${this.userInfo.is_active ? `Yes`:`No`}"></wl-textfield>
+                <wl-textfield label="Require password change?" disabled value="${this.userInfo.need_password_change ? `Yes`:`No`}"></wl-textfield>
               </div>
             </div>
             <div style="width:335px;">
-              <h4>Allocation</h4>
+              <h4>Association</h4>
               <div role="listbox" style="margin: 0;">
                 <vaadin-item>
-                  <div><strong>Resource Policy</strong></div>
-                  <div secondary>${this.userInfo.resource_policy}</div>
+                  <div><strong>Domain</strong></div>
+                  <div secondary>${this.userInfo.domain_name}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Number of queries</strong></div>
-                  <div secondary>${this.userInfo.num_queries}</div>
+                  <div><strong>Role</strong></div>
+                  <div secondary>${this.userInfo.role}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Concurrent Sessions</strong></div>
-                  <div secondary${this.userInfo.concurrency_used} active / ${this.userInfo.concurrency_used} concurrent
-                    sessions.
+                  <div><strong>Groups</strong></div>
+                  <div secondary>
+                  <ul>
+                  ${this.userInfoGroups.map(item => html`
+                    <li>${item}</li>
+                  `)}
+                  </ul>
                   </div>
-                </vaadin-item>
-                <vaadin-item>
-                  <div><strong>Rate Limit</strong></div>
-                  <div secondary>${this.userInfo.rate_limit} for 900 seconds.</div>
                 </vaadin-item>
               </div>
             </div>

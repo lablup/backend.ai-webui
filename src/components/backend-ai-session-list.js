@@ -186,6 +186,16 @@ class BackendAiSessionList extends LitElement {
         div.configuration iron-icon {
           padding-right: 5px;
         }
+        paper-icon-button.apps {
+          width: 48px;
+          height: 48px;
+        }
+        .app-icon .label {
+          display: block;
+          width: 60px;
+          text-align: center;
+          height: 25px;
+        }
 
         div.filters #access-key-filter {
           --paper-input-container-input: {
@@ -251,14 +261,15 @@ class BackendAiSessionList extends LitElement {
     let jupyterBase = [
       {
         'name': 'jupyter',
-        'title': 'Notebook',
+        'title': 'Jupyter Notebook',
         'redirect': "&redirect=/tree",
-        'icon': 'vaadin:notebook'
+        'src': '/resources/icons/jupyter.png'
       },
       {
         'name': 'jupyterlab',
         'title': 'JupyterLab',
         'redirect': "&redirect=/lab",
+        'src': '/resources/icons/jupyterlab.png',
         'icon': 'vaadin:flask'
       }];
     let TFBase = jupyterBase.concat(
@@ -266,13 +277,14 @@ class BackendAiSessionList extends LitElement {
         'name': 'tensorboard',
         'title': 'TensorBoard',
         'redirect': "&redirect=/",
-        'icon': 'vaadin:clipboard-pulse'
+        'src': '/resources/icons/tensorflow.png'
       });
     let FFBase = TFBase.concat(
       {
         'name': 'jupyter',
         'title': 'Jupyter Extension',
         'redirect': "&redirect=/nbextensions",
+        'src': '/resources/icons/jupyter.png',
         'icon': 'vaadin:clipboard-pulse'
       });
     this.appTemplate = {
@@ -287,7 +299,7 @@ class BackendAiSessionList extends LitElement {
             'name': 'digits',
             'title': 'DIGITS',
             'redirect': "&redirect=/",
-            'icon': 'vaadin:picture'
+            'src': '/resources/icons/nvidia.png'
           }),
       'ngc-tensorflow': TFBase,
       'ngc-pytorch': TFBase,
@@ -862,7 +874,7 @@ class BackendAiSessionList extends LitElement {
                   <paper-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
                                      .url-postfix="${item.redirect}"
                                      @click="${(e) => this._runApp(e)}"
-                                     icon="${item.icon}"></paper-icon-button>
+                                     src="${item.src}"></paper-icon-button>
                   <span class="label">${item.title}</span>
                 </div>
                 `)}

@@ -338,8 +338,8 @@ class Client {
   /**
    * Return if manager is compatible with given version.
    */
-  isManagerVersionCompatibleWith(version) {
-    let managerVersion = this.managerVersion;
+  async isManagerVersionCompatibleWith(version) {
+    let managerVersion = await this.getManagerVersion();
     managerVersion = managerVersion.split('.').map( s => s.padStart(10) ).join('.');
     version = version.split('.').map( s => s.padStart(10) ).join('.');
     return version <= managerVersion;
@@ -383,9 +383,9 @@ class Client {
   /**
    * Return the resource slots.
    */
-  getResourceSlots() {
+  async getResourceSlots() {
     let rqst;
-    if (this.isManagerVersionCompatibleWith('19.06')) {
+    if (await this.isManagerVersionCompatibleWith('19.06')) {
       rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
     } else {
       rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
