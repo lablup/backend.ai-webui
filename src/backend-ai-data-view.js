@@ -30,6 +30,7 @@ import '@vaadin/vaadin-upload/vaadin-upload.js';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
+import 'weightless/dialog';
 
 import './components/lablup-notification.js';
 import './backend-ai-styles.js';
@@ -80,9 +81,9 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
       },
       vhosts: {
         type: Array,
-        value: ['local', 'cephfs']
+        value: ['local']
         //value: 'cephfs'
-      }
+      },
     };
   }
 
@@ -162,7 +163,10 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     return Object.keys(obj).length;
   }
 
-  _addFolderDialog() {
+  async _addFolderDialog() {
+    let vhost_info = await window.backendaiclient.vfolder.list_hosts();
+    this.vhosts = vhost_info.allowed;
+    this.vhost = vhost_info.default;
     this.openDialog('add-folder-dialog');
   }
 
@@ -201,7 +205,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
 
   _addFolder() {
     let name = this.$['add-folder-name'].value;
-    let job = window.backendaiclient.vfolder.create(name);
+    let host = this.shadowRoot.querySelector('#add-folder-host').value;
+    let job = window.backendaiclient.vfolder.create(name, host);
     job.then((value) => {
       this.$.notification.text = 'Virtual folder is successfully created.';
       this.$.notification.show();
@@ -692,7 +697,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                   </template>
                 </paper-listbox>
               </paper-dropdown-menu>
-
               <br/>
               <paper-button class="blue add-button" type="submit" id="add-button">
                 <iron-icon icon="rowing"></iron-icon>
