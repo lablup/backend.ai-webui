@@ -686,48 +686,44 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <form id="login-form" onSubmit="this._addFolder()">
-            <fieldset>
-              <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
-                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-              <paper-dropdown-menu id="add-folder-host" label="Host">
-                <paper-listbox slot="dropdown-content" selected="0">
-                  <template is="dom-repeat" items="[[ vhosts ]]">
-                    <paper-item id="[[ item ]]" label="[[ item ]]">[[ item ]]</paper-item>
-                  </template>
-                </paper-listbox>
-              </paper-dropdown-menu>
-              <br/>
-              <wl-button class="blue" type="submit" id="add-button" outlined>
-                <wl-icon>rowing</wl-icon>
-                Create
-              </wl-button>
-            </fieldset>
-          </form>
+          <div>
+            <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
+                         error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+            <paper-dropdown-menu id="add-folder-host" label="Host">
+              <paper-listbox slot="dropdown-content" selected="0">
+                <template is="dom-repeat" items="[[ vhosts ]]">
+                  <paper-item id="[[ item ]]" label="[[ item ]]">[[ item ]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+            <br/>
+            <wl-button class="blue" type="submit" id="add-button" outlined>
+              <wl-icon>rowing</wl-icon>
+              Create
+            </wl-button>
+          </div>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="delete-folder-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+        <wl-card class="login-panel intro centered" style="margin: 0;padding:0;--card-elevation:0;">
           <h3 class="horizontal center layout">
             <span>Delete a virtual folder</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
+            <wl-button fab flat inverted on-tap="_hideDialog">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
           <div class="warning">WARNING: this cannot be undone!</div>
-          <form id="login-form" onSubmit="this._addFolder()">
-            <fieldset>
-              <paper-input class="red" id="delete-folder-name" label="Type folder name to delete"
-                           pattern="[a-zA-Z0-9_-]*"
-                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-              <br/>
-              <wl-button class="blue delete-button" type="submit" id="delete-button" outlined>
-                <wl-icon>close</wl-icon>
-                Delete
-              </wl-button>
-            </fieldset>
-          </form>
+          <div>
+            <paper-input class="red" id="delete-folder-name" label="Type folder name to delete"
+                         pattern="[a-zA-Z0-9_-]*"
+                         error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+            <br/>
+            <wl-button class="blue delete-button" type="submit" id="delete-button" outlined>
+              <wl-icon>close</wl-icon>
+              Delete
+            </wl-button>
+          </div>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="info-folder-dialog" fixed backdrop blockscrolling>
@@ -895,17 +891,15 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <form>
-            <fieldset>
-              <paper-input id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
-                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-              <br/>
-              <wl-button class="blue add-button" type="submit" id="mkdir-btn" on-click="_mkdir" outlined>
-                <wl-icon>rowing</wl-icon>
-                Create
-              </wl-button>
-            </fieldset>
-          </form>
+          <div>
+            <paper-input id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
+                         error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+            <br/>
+            <wl-button class="blue add-button" type="submit" id="mkdir-btn" on-click="_mkdir" outlined>
+              <wl-icon>rowing</wl-icon>
+              Create
+            </wl-button>
+          </div>
         </wl-card>
       </wl-dialog>
     `;
