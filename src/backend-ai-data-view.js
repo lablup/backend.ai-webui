@@ -34,6 +34,13 @@ import {OverlayPatchMixin} from './overlay-patch-mixin.js'
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 class BackendAIData extends OverlayPatchMixin(PolymerElement) {
+  constructor() {
+    super();
+    // Resolve warning about scroll performance
+    // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
+    setPassiveTouchGestures(true);
+  }
+
   static get properties() {
     return {
       folders: {
@@ -81,29 +88,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     };
   }
 
-  constructor() {
-    super();
-    // Resolve warning about scroll performance
-    // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
-    setPassiveTouchGestures(true);
-  }
-
-  ready() {
-    super.ready();
-    this._addEventListenerDropZone();
-    document.addEventListener('backend-ai-connected', () => {
-      this.is_admin = window.backendaiclient.is_admin;
-      this.authenticated = true;
-      this._refreshFolderList();
-    }, true);
-    this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
-    this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
-    this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
-
-    this._clearExplorer = this._clearExplorer.bind(this);
-    this._mkdir = this._mkdir.bind(this);
-  }
-
   static get observers() {
     return [
       '_routeChanged(route.*)',
@@ -112,355 +96,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     ]
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    afterNextRender(this, function () {
-    });
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
-  _refreshFolderList() {
-    this.shadowRoot.querySelector('#loading-indicator').show();
-    let l = window.backendaiclient.vfolder.list();
-    l.then((value) => {
-      this.shadowRoot.querySelector('#loading-indicator').hide();
-      this.folders = value;
-    });
-    let vhosts = window.backendaiclient.vfolder.list_hosts();
-    vhosts.then((response) => {
-      console.log(response);
-    });
-  }
-
-  _menuChanged(active) {
-    if (!active) {
-
-    } else {
-      if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-        document.addEventListener('backend-ai-connected', () => {
-          this.is_admin = window.backendaiclient.is_admin;
-          this.authenticated = true;
-          this._refreshFolderList();
-        }, true);
-      } else {
-        this.is_admin = window.backendaiclient.is_admin;
-        this.authenticated = true;
-        this._refreshFolderList();
-      }
-    }
-  }
-
-  _countObject(obj) {
-    return Object.keys(obj).length;
-  }
-
-  async _addFolderDialog() {
-    let vhost_info = await window.backendaiclient.vfolder.list_hosts();
-    this.vhosts = vhost_info.allowed;
-    this.vhost = vhost_info.default;
-    this.openDialog('add-folder-dialog');
-  }
-
-  _folderExplorerDialog() {
-    this.openDialog('folder-explorer-dialog');
-  }
-
-  _mkdirDialog() {
-    this.$['mkdir-name'].value = '';
-    this.openDialog('mkdir-dialog');
-  }
-
-  openDialog(id) {
-    //var body = document.querySelector('body');
-    //body.appendChild(this.$[id]);
-    this.$[id].show();
-  }
-
-  closeDialog(id) {
-    this.$[id].hide();
-  }
-
-  _indexFrom1(index) {
-    return index + 1;
-  }
-
-  _hasPermission(item, perm) {
-    if (item.permission.includes(perm)) {
-      return true;
-    }
-    if (item.permission.includes('w') && perm === 'r') {
-      return true;
-    }
-    return false;
-  }
-
-  _addFolder() {
-    let name = this.$['add-folder-name'].value;
-    let host = this.shadowRoot.querySelector('#add-folder-host').value;
-    let job = window.backendaiclient.vfolder.create(name, host);
-    job.then((value) => {
-      this.$.notification.text = 'Virtual folder is successfully created.';
-      this.$.notification.show();
-      this._refreshFolderList();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-    this.closeDialog('add-folder-dialog');
-  }
-
-  _getControlId(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
-    return controls.folderId;
-  }
-
-  _infoFolder(e) {
-    const folderId = this._getControlId(e);
-    let job = window.backendaiclient.vfolder.info(folderId);
-    job.then((value) => {
-      this.folderInfo = value;
-      this.openDialog('info-folder-dialog');
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-  }
-
-  _deleteFolderDialog(e) {
-    this.deleteFolderId = this._getControlId(e);
-    this.$['delete-folder-name'].value = '';
-    this.openDialog('delete-folder-dialog');
-  }
-
-  _deleteFolderWithCheck() {
-    let typedDeleteFolderName = this.$['delete-folder-name'].value;
-    if (typedDeleteFolderName != this.deleteFolderId) {
-      this.$.notification.text = 'Folder name mismatched. Check your typing.';
-      this.$.notification.show();
-      return;
-    }
-    this.closeDialog('delete-folder-dialog');
-    this._deleteFolder(this.deleteFolderId);
-  }
-
-  _deleteFolder(folderId) {
-    let job = window.backendaiclient.vfolder.delete(folderId);
-    job.then((value) => {
-      this.$.notification.text = 'Virtual folder is successfully deleted.';
-      this.$.notification.show();
-      this._refreshFolderList();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-  }
-
-  /*Folder Explorer*/
-  _clearExplorer(path = this.explorer.breadcrumb.join('/'),
-                 id = this.explorer.id,
-                 dialog = false) {
-    let job = window.backendaiclient.vfolder.list_files(path, id);
-    job.then(value => {
-      this.set('explorer.files', JSON.parse(value.files));
-
-      if (dialog) {
-        this.openDialog('folder-explorer-dialog');
-      }
-
-    });
-  }
-
-  _folderExplorer(e) {
-    const folderId = e.target.folderId;
-
-    let explorer = {
-      id: folderId,
-      breadcrumb: ['.'],
-    };
-
-    this.set('explorer', explorer);
-    this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
-  }
-
-  _enqueueFolder(e) {
-    const fn = e.target.name;
-    this.push('explorer.breadcrumb', fn);
-    this._clearExplorer();
-  }
-
-  _gotoFolder(e) {
-    const dest = e.target.dest;
-    let tempBreadcrumb = this.explorer.breadcrumb;
-    const index = tempBreadcrumb.indexOf(dest);
-
-    if (index === -1) {
-      return;
-    }
-
-    tempBreadcrumb = tempBreadcrumb.slice(0, index + 1);
-
-    this.set('explorer.breadcrumb', tempBreadcrumb);
-    this._clearExplorer(tempBreadcrumb.join('/'), this.explorer.id, false);
-  }
-
-  _mkdir(e) {
-    const newfolder = this.$['mkdir-name'].value;
-    const explorer = this.explorer;
-    let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id);
-    job.then(res => {
-      this.closeDialog('mkdir-dialog');
-      this._clearExplorer();
-    });
-  }
-
-  _isDir(file) {
-    return file.mode.startsWith("d");
-  }
-
-  /* File upload and download */
-  _addEventListenerDropZone() {
-    const dndZoneEl = this.$['folder-explorer-dialog'];
-    const dndZonePlaceholderEl = this.$.dropzone;
-
-    dndZonePlaceholderEl.addEventListener('dragleave', () => {
-      dndZonePlaceholderEl.style.display = "none";
-    });
-
-    dndZoneEl.addEventListener('dragover', e => {
-      e.stopPropagation();
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'copy';
-      dndZonePlaceholderEl.style.display = "flex";
-      return false;
-    });
-
-    dndZoneEl.addEventListener('drop', e => {
-      e.stopPropagation();
-      e.preventDefault();
-      dndZonePlaceholderEl.style.display = "none";
-
-      let temp = [];
-      for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        const file = e.dataTransfer.files[i];
-        if (file.size > 2 ** 20) {
-          console.log('File size limit (< 1 MiB)');
-        } else {
-          file.progress = 0;
-          file.error = false;
-          file.complete = false;
-          temp.push(file);
-          this.push("uploadFiles", file);
-        }
-      }
-
-      for (let i = 0; i < temp.length; i++) {
-        this.fileUpload(temp[i]);
-        this._clearExplorer();
-      }
-    });
-  }
-
-  _uploadFileBtnClick(e) {
-    const elem = this.$.fileInput;
-    if (elem && document.createEvent) {  // sanity check
-      const evt = document.createEvent("MouseEvents");
-      evt.initEvent("click", true, false);
-      elem.dispatchEvent(evt);
-    }
-  }
-
-  _uploadFileChange(e) {
-    const length = e.target.files.length;
-    for (let i = 0; i < length; i++) {
-      const file = e.target.files[i];
-
-      let text = "";
-      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      for (let i = 0; i < 5; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-      file.id = text;
-      file.progress = 0;
-      file.error = false;
-      file.complete = false;
-      this.push("uploadFiles", file);
-    }
-
-    for (let i = 0; i < length; i++) {
-      this.fileUpload(this.uploadFiles[i]);
-      this._clearExplorer();
-    }
-
-    this.$.fileInput.value = '';
-  }
-
-  fileUpload(fileObj) {
-    const fd = new FormData();
-    const explorer = this.explorer;
-    const path = explorer.breadcrumb.concat(fileObj.name).join("/");
-    fd.append("src", fileObj, path);
-    const index = this.uploadFiles.indexOf(fileObj);
-
-    let job = window.backendaiclient.vfolder.uploadFormData(fd, explorer.id);
-    job.then(resp => {
-      this._clearExplorer();
-      this.set('uploadFiles.' + index + '.complete', true);
-
-      setTimeout(() => {
-        this.splice('uploadFiles', this.uploadFiles.indexOf(fileObj), 1);
-      }, 1000);
-    });
-  }
-
-  _downloadFile(e) {
-    let fn = e.target.filename;
-    let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
-    job.then(res => {
-      const url = window.URL.createObjectURL(res);
-      let a = document.createElement('a');
-      a.addEventListener('click', function (e) {
-        e.stopPropagation();
-      });
-      a.href = url;
-      a.download = fn;
-      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-      a.click();
-      a.remove();  //afterwards we remove the element again
-      URL.revokeObjectURL(url);
-    });
-  }
-
-  _humanReadableTime(d) {
-    const date = new Date(d * 1000);
-    const offset = date.getTimezoneOffset() / 60;
-    const hours = date.getHours();
-    date.setHours(hours - offset);
-    return date.toUTCString();
-  }
-
-  _isDownloadable(file) {
-    return file.size < 209715200
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
-  }
-  
   static get template() {
     // language=HTML
     return html`
@@ -903,6 +538,371 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         </wl-card>
       </wl-dialog>
     `;
+  }
+
+  ready() {
+    super.ready();
+    this._addEventListenerDropZone();
+    document.addEventListener('backend-ai-connected', () => {
+      this.is_admin = window.backendaiclient.is_admin;
+      this.authenticated = true;
+      this._refreshFolderList();
+    }, true);
+    this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
+    this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
+    this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
+
+    this._clearExplorer = this._clearExplorer.bind(this);
+    this._mkdir = this._mkdir.bind(this);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    afterNextRender(this, function () {
+    });
+  }
+
+  shouldUpdate() {
+    return this.active;
+  }
+
+  _refreshFolderList() {
+    this.shadowRoot.querySelector('#loading-indicator').show();
+    let l = window.backendaiclient.vfolder.list();
+    l.then((value) => {
+      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.folders = value;
+    });
+    let vhosts = window.backendaiclient.vfolder.list_hosts();
+    vhosts.then((response) => {
+      console.log(response);
+    });
+  }
+
+  _menuChanged(active) {
+    if (!active) {
+
+    } else {
+      if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+        document.addEventListener('backend-ai-connected', () => {
+          this.is_admin = window.backendaiclient.is_admin;
+          this.authenticated = true;
+          this._refreshFolderList();
+        }, true);
+      } else {
+        this.is_admin = window.backendaiclient.is_admin;
+        this.authenticated = true;
+        this._refreshFolderList();
+      }
+    }
+  }
+
+  _countObject(obj) {
+    return Object.keys(obj).length;
+  }
+
+  async _addFolderDialog() {
+    let vhost_info = await window.backendaiclient.vfolder.list_hosts();
+    this.vhosts = vhost_info.allowed;
+    this.vhost = vhost_info.default;
+    this.openDialog('add-folder-dialog');
+  }
+
+  _folderExplorerDialog() {
+    this.openDialog('folder-explorer-dialog');
+  }
+
+  _mkdirDialog() {
+    this.$['mkdir-name'].value = '';
+    this.openDialog('mkdir-dialog');
+  }
+
+  openDialog(id) {
+    //var body = document.querySelector('body');
+    //body.appendChild(this.$[id]);
+    this.$[id].show();
+  }
+
+  closeDialog(id) {
+    this.$[id].hide();
+  }
+
+  _indexFrom1(index) {
+    return index + 1;
+  }
+
+  _hasPermission(item, perm) {
+    if (item.permission.includes(perm)) {
+      return true;
+    }
+    if (item.permission.includes('w') && perm === 'r') {
+      return true;
+    }
+    return false;
+  }
+
+  _addFolder() {
+    let name = this.$['add-folder-name'].value;
+    let host = this.shadowRoot.querySelector('#add-folder-host').value;
+    let job = window.backendaiclient.vfolder.create(name, host);
+    job.then((value) => {
+      this.$.notification.text = 'Virtual folder is successfully created.';
+      this.$.notification.show();
+      this._refreshFolderList();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+    this.closeDialog('add-folder-dialog');
+  }
+
+  _getControlId(e) {
+    const termButton = e.target;
+    const controls = e.target.closest('#controls');
+    return controls.folderId;
+  }
+
+  _infoFolder(e) {
+    const folderId = this._getControlId(e);
+    let job = window.backendaiclient.vfolder.info(folderId);
+    job.then((value) => {
+      this.folderInfo = value;
+      this.openDialog('info-folder-dialog');
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+  }
+
+  _deleteFolderDialog(e) {
+    this.deleteFolderId = this._getControlId(e);
+    this.$['delete-folder-name'].value = '';
+    this.openDialog('delete-folder-dialog');
+  }
+
+  _deleteFolderWithCheck() {
+    let typedDeleteFolderName = this.$['delete-folder-name'].value;
+    if (typedDeleteFolderName != this.deleteFolderId) {
+      this.$.notification.text = 'Folder name mismatched. Check your typing.';
+      this.$.notification.show();
+      return;
+    }
+    this.closeDialog('delete-folder-dialog');
+    this._deleteFolder(this.deleteFolderId);
+  }
+
+  _deleteFolder(folderId) {
+    let job = window.backendaiclient.vfolder.delete(folderId);
+    job.then((value) => {
+      this.$.notification.text = 'Virtual folder is successfully deleted.';
+      this.$.notification.show();
+      this._refreshFolderList();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+  }
+
+  /*Folder Explorer*/
+  _clearExplorer(path = this.explorer.breadcrumb.join('/'),
+                 id = this.explorer.id,
+                 dialog = false) {
+    let job = window.backendaiclient.vfolder.list_files(path, id);
+    job.then(value => {
+      this.set('explorer.files', JSON.parse(value.files));
+
+      if (dialog) {
+        this.openDialog('folder-explorer-dialog');
+      }
+
+    });
+  }
+
+  _folderExplorer(e) {
+    const folderId = e.target.folderId;
+
+    let explorer = {
+      id: folderId,
+      breadcrumb: ['.'],
+    };
+
+    this.set('explorer', explorer);
+    this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
+  }
+
+  _enqueueFolder(e) {
+    const fn = e.target.name;
+    this.push('explorer.breadcrumb', fn);
+    this._clearExplorer();
+  }
+
+  _gotoFolder(e) {
+    const dest = e.target.dest;
+    let tempBreadcrumb = this.explorer.breadcrumb;
+    const index = tempBreadcrumb.indexOf(dest);
+
+    if (index === -1) {
+      return;
+    }
+
+    tempBreadcrumb = tempBreadcrumb.slice(0, index + 1);
+
+    this.set('explorer.breadcrumb', tempBreadcrumb);
+    this._clearExplorer(tempBreadcrumb.join('/'), this.explorer.id, false);
+  }
+
+  _mkdir(e) {
+    const newfolder = this.$['mkdir-name'].value;
+    const explorer = this.explorer;
+    let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id);
+    job.then(res => {
+      this.closeDialog('mkdir-dialog');
+      this._clearExplorer();
+    });
+  }
+
+  _isDir(file) {
+    return file.mode.startsWith("d");
+  }
+
+  /* File upload and download */
+  _addEventListenerDropZone() {
+    const dndZoneEl = this.$['folder-explorer-dialog'];
+    const dndZonePlaceholderEl = this.$.dropzone;
+
+    dndZonePlaceholderEl.addEventListener('dragleave', () => {
+      dndZonePlaceholderEl.style.display = "none";
+    });
+
+    dndZoneEl.addEventListener('dragover', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      dndZonePlaceholderEl.style.display = "flex";
+      return false;
+    });
+
+    dndZoneEl.addEventListener('drop', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      dndZonePlaceholderEl.style.display = "none";
+
+      let temp = [];
+      for (let i = 0; i < e.dataTransfer.files.length; i++) {
+        const file = e.dataTransfer.files[i];
+        if (file.size > 2 ** 20) {
+          console.log('File size limit (< 1 MiB)');
+        } else {
+          file.progress = 0;
+          file.error = false;
+          file.complete = false;
+          temp.push(file);
+          this.push("uploadFiles", file);
+        }
+      }
+
+      for (let i = 0; i < temp.length; i++) {
+        this.fileUpload(temp[i]);
+        this._clearExplorer();
+      }
+    });
+  }
+
+  _uploadFileBtnClick(e) {
+    const elem = this.$.fileInput;
+    if (elem && document.createEvent) {  // sanity check
+      const evt = document.createEvent("MouseEvents");
+      evt.initEvent("click", true, false);
+      elem.dispatchEvent(evt);
+    }
+  }
+
+  _uploadFileChange(e) {
+    const length = e.target.files.length;
+    for (let i = 0; i < length; i++) {
+      const file = e.target.files[i];
+
+      let text = "";
+      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      for (let i = 0; i < 5; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      file.id = text;
+      file.progress = 0;
+      file.error = false;
+      file.complete = false;
+      this.push("uploadFiles", file);
+    }
+
+    for (let i = 0; i < length; i++) {
+      this.fileUpload(this.uploadFiles[i]);
+      this._clearExplorer();
+    }
+
+    this.$.fileInput.value = '';
+  }
+
+  fileUpload(fileObj) {
+    const fd = new FormData();
+    const explorer = this.explorer;
+    const path = explorer.breadcrumb.concat(fileObj.name).join("/");
+    fd.append("src", fileObj, path);
+    const index = this.uploadFiles.indexOf(fileObj);
+
+    let job = window.backendaiclient.vfolder.uploadFormData(fd, explorer.id);
+    job.then(resp => {
+      this._clearExplorer();
+      this.set('uploadFiles.' + index + '.complete', true);
+
+      setTimeout(() => {
+        this.splice('uploadFiles', this.uploadFiles.indexOf(fileObj), 1);
+      }, 1000);
+    });
+  }
+
+  _downloadFile(e) {
+    let fn = e.target.filename;
+    let path = this.explorer.breadcrumb.concat(fn).join("/");
+    let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
+    job.then(res => {
+      const url = window.URL.createObjectURL(res);
+      let a = document.createElement('a');
+      a.addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+      a.href = url;
+      a.download = fn;
+      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+      a.click();
+      a.remove();  //afterwards we remove the element again
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  _humanReadableTime(d) {
+    const date = new Date(d * 1000);
+    const offset = date.getTimezoneOffset() / 60;
+    const hours = date.getHours();
+    date.setHours(hours - offset);
+    return date.toUTCString();
+  }
+
+  _isDownloadable(file) {
+    return file.size < 209715200
+  }
+  
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
   }
 }
 
