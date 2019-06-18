@@ -690,8 +690,6 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             <fieldset>
               <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-              <paper-input id="add-folder-host2" label="Host" pattern="[a-zA-Z0-9_-]*" disabled
-                           error-message="Allows letters, numbers and -_." auto-validate value="[[vhost]]"></paper-input>
               <paper-dropdown-menu id="add-folder-host" label="Host">
                 <paper-listbox slot="dropdown-content" selected="0">
                   <template is="dom-repeat" items="[[ vhosts ]]">
