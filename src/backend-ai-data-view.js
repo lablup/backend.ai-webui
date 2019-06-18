@@ -6,9 +6,6 @@
 import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -19,9 +16,6 @@ import './components/lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/neon-animation/animations/slide-from-right-animation.js';
-import '@polymer/neon-animation/animations/slide-right-animation.js';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
 import '@vaadin/vaadin-item/vaadin-item.js';
@@ -182,11 +176,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
   openDialog(id) {
     //var body = document.querySelector('body');
     //body.appendChild(this.$[id]);
-    this.$[id].open();
+    this.$[id].show();
   }
 
   closeDialog(id) {
-    this.$[id].close();
+    this.$[id].hide();
   }
 
   _indexFrom1(index) {
@@ -461,6 +455,12 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
     return file.size < 209715200
   }
 
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
+  
   static get template() {
     // language=HTML
     return html`
@@ -483,8 +483,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           width: 100px;
         }
 
-        paper-button.add-button,
-        paper-button.delete-button {
+        wl-button.add-button,
+        wl-button.delete-button {
           width: 100%;
         }
 
@@ -503,6 +503,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         }
 
         #folder-explorer-dialog {
+          --dialog-height: calc(100vh - 120px);
           height: calc(100vh - 120px);
           right: 0;
           top: 0;
@@ -513,14 +514,16 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         @media screen and (max-width: 899px) {
           #folder-explorer-dialog {
             left: 0;
+            --dialog-width: 100%;
             width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #folder-explorer-dialog {
-            left: 200px;
-            width: calc(100% - 200px);
+            left: 150px;
+            --dialog-width: calc(100% - 100px);
+            width: calc(100% - 100px);
           }
         }
 
@@ -533,14 +536,13 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           display: none;
         }
 
-        paper-button.goto {
+        wl-button.goto {
           margin: 0;
           padding: 5px;
           min-width: 0;
         }
 
-        paper-button.goto:last-of-type {
-          color: #000;
+        wl-button.goto:last-of-type {
           font-weight: bold;
         }
 
@@ -579,6 +581,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           --button-bg: var(--paper-orange-50);
           --button-bg-hover: var(--paper-orange-100);
           --button-bg-active: var(--paper-orange-600);
+          color: var(--paper-orange-900);
         }
 
       </style>
@@ -674,15 +677,14 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           <div>No data present.</div>
         </div>
       </wl-card>
-      <paper-dialog id="add-folder-dialog" with-backdrop
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <wl-dialog id="add-folder-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
+            <wl-button fab flat inverted on-tap="_hideDialog">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
           <form id="login-form" onSubmit="this._addFolder()">
             <fieldset>
@@ -698,16 +700,15 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                 </paper-listbox>
               </paper-dropdown-menu>
               <br/>
-              <paper-button class="blue add-button" type="submit" id="add-button">
-                <iron-icon icon="rowing"></iron-icon>
+              <wl-button class="blue" type="submit" id="add-button" outlined>
+                <wl-icon>rowing</wl-icon>
                 Create
-              </paper-button>
+              </wl-button>
             </fieldset>
           </form>
         </wl-card>
-      </paper-dialog>
-      <paper-dialog id="delete-folder-dialog" with-backdrop
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      </wl-dialog>
+      <wl-dialog id="delete-folder-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Delete a virtual folder</span>
@@ -723,23 +724,22 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                            pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
               <br/>
-              <paper-button class="blue delete-button" type="submit" id="delete-button">
-                <iron-icon icon="close"></iron-icon>
+              <wl-button class="blue delete-button" type="submit" id="delete-button" outlined>
+                <wl-icon>close</wl-icon>
                 Delete
-              </paper-button>
+              </wl-button>
             </fieldset>
           </form>
         </wl-card>
-      </paper-dialog>
-      <paper-dialog id="info-folder-dialog" with-backdrop
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      </wl-dialog>
+      <wl-dialog id="info-folder-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="intro centered" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span>[[folderInfo.name]]</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
+            <wl-button fab flat inverted on-tap="_hideDialog">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
           <div role="listbox" style="margin: 0;">
             <vaadin-item>
@@ -766,22 +766,21 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             </vaadin-item>
           </div>
         </wl-card>
-      </paper-dialog>
-      <paper-dialog id="folder-explorer-dialog"
-                    entry-animation="slide-from-right-animation" exit-animation="slide-right-animation">
+      </wl-dialog>
+      <wl-dialog id="folder-explorer-dialog">
         <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>[[explorer.id]]</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
+            <wl-button fab flat inverted on-tap="_hideDialog">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
 
           <div class="breadcrumb">
             <template is="dom-repeat" items="[[explorer.breadcrumb]]">
               <span>&gt;</span>
-              <paper-button class="goto" path="item" on-click="_gotoFolder" dest="[[item]]">[[item]]</paper-button>
+              <wl-button outlined class="goto" path="item" on-click="_gotoFolder" dest="[[item]]">[[item]]</wl-button>
             </template>
           </div>
 
@@ -801,7 +800,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                     <vaadin-item class="progress-item">
                       <div>
                         <template is="dom-if" if="[[item.complete]]">
-                          <iron-icon icon="check"></iron-icon>
+                          <wl-icon>check</wl-icon>
                         </template>
                       </div>
                     </vaadin-item>
@@ -887,31 +886,30 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             </vaadin-grid-column>
           </vaadin-grid>
         </wl-card>
-      </paper-dialog>
+      </wl-dialog>
 
-      <paper-dialog id="mkdir-dialog"
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <wl-dialog id="mkdir-dialog" fixed blockscrolling backdrop>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new folder</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
+            <wl-button fab flat inverted on-tap="_hideDialog">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
           <form>
             <fieldset>
               <paper-input id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
               <br/>
-              <paper-button class="blue add-button" type="submit" id="mkdir-btn" on-click="_mkdir">
-                <iron-icon icon="rowing"></iron-icon>
+              <wl-button class="blue add-button" type="submit" id="mkdir-btn" on-click="_mkdir" outlined>
+                <wl-icon>rowing</wl-icon>
                 Create
-              </paper-button>
+              </wl-button>
             </fieldset>
           </form>
         </wl-card>
-      </paper-dialog>
+      </wl-dialog>
     `;
   }
 }
