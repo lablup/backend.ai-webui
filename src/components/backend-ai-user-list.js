@@ -136,7 +136,7 @@ class BackendAIUserList extends LitElement {
         is_active = false;
     }
     this.shadowRoot.querySelector('#loading-indicator').hide();
-    let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups'];
+    let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return window.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
       Object.keys(users).map((objectKey, index) => {
@@ -144,7 +144,6 @@ class BackendAIUserList extends LitElement {
         // Blank for the next impl.
       });
       this.users = users;
-      console.log(this.users);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);

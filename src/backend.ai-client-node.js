@@ -1332,7 +1332,7 @@ class User {
    * };
    */
   list(is_active = true,
-       fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups']) {
+       fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($is_active:Boolean) {` +
@@ -1363,10 +1363,10 @@ class User {
    *   'is_active': Boolean,    // Flag if user is active or not.
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
-   *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups']) {
+  get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +
