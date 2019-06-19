@@ -40,10 +40,6 @@ import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 
 class BackendAiSessionView extends LitElement {
-  static get is() {
-    return 'backend-ai-session-view';
-  }
-
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -98,6 +94,10 @@ class BackendAiSessionView extends LitElement {
     this.cpu_request = 1;
     this.mem_request = 1;
     this.gpu_request = 0;
+  }
+
+  static get is() {
+    return 'backend-ai-session-view';
   }
 
   static get properties() {
@@ -193,6 +193,175 @@ class BackendAiSessionView extends LitElement {
         type: Boolean
       }
     }
+  }
+
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
+        wl-card h4 {
+          padding: 5px 20px;
+          border-bottom: 1px solid #ddd;
+          font-weight: 100;
+        }
+
+        paper-slider {
+          width: 285px;
+          --paper-slider-input: {
+            width: 70px;
+          };
+          --paper-slider-height: 3px;
+        }
+
+        paper-slider.mem {
+          --paper-slider-knob-color: var(--paper-orange-400);
+          --paper-slider-active-color: var(--paper-orange-400);
+        }
+
+        paper-slider.cpu {
+          --paper-slider-knob-color: var(--paper-light-green-400);
+          --paper-slider-active-color: var(--paper-light-green-400);
+        }
+
+        paper-slider.gpu {
+          --paper-slider-knob-color: var(--paper-cyan-400);
+          --paper-slider-active-color: var(--paper-cyan-400);
+        }
+
+        paper-progress {
+          width: 100px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677EB;
+          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
+
+        .short-indicator paper-progress {
+          width: 50px;
+        }
+
+        .short-indicator .gauge-label {
+          width: 80px;
+        }
+
+        .custom {
+          color: var(--paper-red-800);
+        }
+
+        span.caption {
+          width: 30px;
+          padding-left: 10px;
+        }
+
+        div.caption {
+          width: 100px;
+        }
+
+        .gauge-name {
+          font-size: 10px;
+        }
+
+        .gauge-label {
+          width: 120px;
+          font-weight: 300;
+          font-size: 12px;
+        }
+
+        .indicator {
+          font-family: monospace;
+        }
+
+        .resource-button {
+          height: 140px;
+          width: 120px;
+          margin: 5px;
+          padding: 0;
+          font-size: 14px;
+        }
+
+        wl-button.resource-button.iron-selected {
+          --button-color: var(--paper-red-600);
+          --button-bg: var(--paper-red-600);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-bg-flat: var(--paper-orange-50);
+        }
+        .resource-button h4 {
+          padding: 5px 0;
+          margin: 0;
+          font-weight: 400;
+        }
+
+        .resource-button ul {
+          padding: 0;
+          list-style-type: none;
+        }
+
+        backend-ai-dropdown-menu {
+          width: 100%;
+        }
+
+        #launch-session {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
+
+        wl-button.launch-button {
+          width: 335px;
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
+
+        wl-button.resource-button {
+          --button-bg: white;
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: #89A;
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
+
+        wl-card h3.tab {
+          padding-top:0;
+          padding-bottom:0;
+          padding-left:0;
+        }
+
+        wl-tab-group {
+          --tab-group-indicator-bg: var(--paper-red-500);
+        }
+
+        wl-tab {
+          --tab-color: #666;
+          --tab-color-hover: #222;
+          --tab-color-hover-filled: #222;
+          --tab-color-active: #222;
+          --tab-color-active-hover: #222;
+          --tab-color-active-filled: #ccc;
+          --tab-bg-active: var(--paper-red-50);
+          --tab-bg-filled: var(--paper-red-50);
+          --tab-bg-active-hover: var(--paper-red-100);
+        }
+        
+        wl-expansion {
+          --expansion-elevation: 0;
+          --expansion-elevation-open: 0;
+          --expansion-elevation-hover: 0;
+          --expansion-margin-open: 0;
+        }
+      `];
   }
 
   firstUpdated() {
@@ -895,6 +1064,7 @@ class BackendAiSessionView extends LitElement {
   }
 
   _updateResourceIndicator(cpu, mem, gpu) {
+    this.shadowRoot.querySelector('#gpu-resource').value = gpu;
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu;
@@ -926,181 +1096,13 @@ class BackendAiSessionView extends LitElement {
   _selectDefaultVersion(version) {
     return false;
   }
+
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
-  }
-
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-        wl-card h4 {
-          padding: 5px 20px;
-          border-bottom: 1px solid #ddd;
-          font-weight: 100;
-        }
-
-        paper-slider {
-          width: 285px;
-          --paper-slider-input: {
-            width: 70px;
-          };
-          --paper-slider-height: 3px;
-        }
-
-        paper-slider.mem {
-          --paper-slider-knob-color: var(--paper-orange-400);
-          --paper-slider-active-color: var(--paper-orange-400);
-        }
-
-        paper-slider.cpu {
-          --paper-slider-knob-color: var(--paper-light-green-400);
-          --paper-slider-active-color: var(--paper-light-green-400);
-        }
-
-        paper-slider.gpu {
-          --paper-slider-knob-color: var(--paper-cyan-400);
-          --paper-slider-active-color: var(--paper-cyan-400);
-        }
-
-        paper-progress {
-          width: 100px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677EB;
-          --paper-progress-secondary-color: #98BE5A;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
-
-        .short-indicator paper-progress {
-          width: 50px;
-        }
-
-        .short-indicator .gauge-label {
-          width: 80px;
-        }
-
-        .custom {
-          color: var(--paper-red-800);
-        }
-
-        span.caption {
-          width: 30px;
-          padding-left: 10px;
-        }
-
-        div.caption {
-          width: 100px;
-        }
-
-        .gauge-name {
-          font-size: 10px;
-        }
-
-        .gauge-label {
-          width: 120px;
-          font-weight: 300;
-          font-size: 12px;
-        }
-
-        .indicator {
-          font-family: monospace;
-        }
-
-        .resource-button {
-          height: 140px;
-          width: 120px;
-          margin: 5px;
-          padding: 0;
-          font-size: 14px;
-        }
-
-        wl-button.resource-button.iron-selected {
-          --button-color: var(--paper-red-600);
-          --button-bg: var(--paper-red-600);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-bg-flat: var(--paper-orange-50);
-        }
-        .resource-button h4 {
-          padding: 5px 0;
-          margin: 0;
-          font-weight: 400;
-        }
-
-        .resource-button ul {
-          padding: 0;
-          list-style-type: none;
-        }
-
-        backend-ai-dropdown-menu {
-          width: 100%;
-        }
-
-        #launch-session {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
-
-        wl-button.launch-button {
-          width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
-
-        wl-button.resource-button {
-          --button-bg: white;
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: #89A;
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
-
-        wl-card h3.tab {
-          padding-top:0;
-          padding-bottom:0;
-          padding-left:0;
-        }
-
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-red-500);
-        }
-
-        wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: #222;
-          --tab-color-active-hover: #222;
-          --tab-color-active-filled: #ccc;
-          --tab-bg-active: var(--paper-red-50);
-          --tab-bg-filled: var(--paper-red-50);
-          --tab-bg-active-hover: var(--paper-red-100);
-        }
-        
-        wl-expansion {
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-margin-open: 0;
-        }
-      `];
   }
 
   render() {
