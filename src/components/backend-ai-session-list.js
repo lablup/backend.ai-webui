@@ -529,7 +529,7 @@ class BackendAiSessionList extends LitElement {
     let accessKey = window.backendaiclient._config.accessKey;
     let rqst = {
       method: 'GET',
-      uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId
+      uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + kernelId
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -537,7 +537,7 @@ class BackendAiSessionList extends LitElement {
         if (response !== undefined && response.code !== 404) {
           let rqst = {
             method: 'GET',
-            uri: window.backendaiclient._config.proxyURL + 'proxy/' + accessKey + "/" + kernelId + '/delete'
+            uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + kernelId + '/delete'
           };
           return this.sendRequest(rqst);
         }
@@ -548,6 +548,16 @@ class BackendAiSessionList extends LitElement {
           this.shadowRoot.querySelector('#notification').show();
         }
       });
+  }
+
+  _getProxyURL() {
+    let url = 'http://127.0.0.1:5050/'
+    if (window.__local_proxy !== undefined) {
+      url = window.__local_proxy;
+    } else if (window.backendaiclient._config.proxyURL !== undefined) {
+      url = window.backendaiclient._config.proxyURL;
+    }
+    return url;
   }
 
   _showLogs(e) {
@@ -601,9 +611,6 @@ class BackendAiSessionList extends LitElement {
       return false;
     }
 
-    if (window.backendaiclient._config.proxyURL === undefined) {
-      window.backendaiclient._config.proxyURL = 'http://127.0.0.1:5050/';
-    }
     let param = {
       access_key: window.backendaiclient._config.accessKey,
       secret_key: window.backendaiclient._config.secretKey,
@@ -616,7 +623,7 @@ class BackendAiSessionList extends LitElement {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      uri: window.backendaiclient._config.proxyURL + 'conf'
+      uri: this._getProxyURL() + 'conf'
     };
     try {
       let response = await this.sendRequest(rqst);
@@ -625,7 +632,7 @@ class BackendAiSessionList extends LitElement {
       rqst = {
         method: 'GET',
         app: app,
-        uri: window.backendaiclient._config.proxyURL + 'proxy/' + token + "/" + kernelId + "/add?app=" + app
+        uri: this._getProxyURL() + 'proxy/' + token + "/" + kernelId + "/add?app=" + app
       };
       return await this.sendRequest(rqst);
     } catch (err) {
