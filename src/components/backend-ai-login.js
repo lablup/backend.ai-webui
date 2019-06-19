@@ -218,10 +218,12 @@ class BackendAiLogin extends LitElement {
   _connectGQL() {
     // Test connection
     this.client.getManagerVersion().then(response => {
-      if (this.client.isManagerVersionCompatibleWith('19.05')) {
-        this._connectViaGQL();
-      } else { // Legacy code to support 19.03
+      return this.client.isManagerVersionCompatibleWith('19.06');
+    }).then(response => {
+      if (response === false) {// Legacy code to support 19.03
         this._connectViaGQLLegacy();
+      } else {
+        this._connectViaGQL();
       }
     }).catch((err) => {   // Connection failed
       if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
@@ -265,8 +267,7 @@ class BackendAiLogin extends LitElement {
         return item.name;
       });
       let role = response['user'].role;
-      let domain_name = response['user'].domain_name;
-      this.domain_name = domain_name;
+      this.domain_name = response['user'].domain_name;
       window.backendaiclient.email = this.email;
       window.backendaiclient.current_group = window.backendaiclient.groups[0];
       window.backendaiclient.is_admin = false;
