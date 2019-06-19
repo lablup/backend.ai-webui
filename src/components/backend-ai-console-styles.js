@@ -951,4 +951,7 @@ export const BackendAiStyles =
     wl-dialog > wl-card {
       --card-elevation: 0;
     }
+    wl-dialog.dialog-ask {
+      --dialog-min-width: 350px;
+    }
   `;
