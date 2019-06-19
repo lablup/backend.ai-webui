@@ -30,10 +30,9 @@ import './components/lablup-notification.js';
 import './backend-ai-styles.js';
 import './lablup-activity-panel.js';
 import './plastics/lablup-shields/lablup-shields';
-import {OverlayPatchMixin} from './overlay-patch-mixin.js'
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
-class BackendAIData extends OverlayPatchMixin(PolymerElement) {
+class BackendAIData extends PolymerElement {
   constructor() {
     super();
     // Resolve warning about scroll performance

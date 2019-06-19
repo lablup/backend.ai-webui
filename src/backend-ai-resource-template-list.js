@@ -27,9 +27,8 @@ import './plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
-import {OverlayPatchMixin} from "./overlay-patch-mixin";
 
-class BackendAIResourceTemplateList extends OverlayPatchMixin(PolymerElement) {
+class BackendAIResourceTemplateList extends PolymerElement {
 
   static get is() {
     return 'backend-ai-resource-template-list';

@@ -29,9 +29,8 @@ import 'weightless/card';
 
 import './components/lablup-notification.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
-import {OverlayPatchMixin} from "./overlay-patch-mixin";
 
-class BackendAIResourcePolicyList extends OverlayPatchMixin(PolymerElement) {
+class BackendAIResourcePolicyList extends PolymerElement {
 
   static get is() {
     return 'backend-ai-resource-policy-list';
