@@ -249,7 +249,7 @@ class BackendAiLogin extends LitElement {
       let resource_policy = response['keypair'].resource_policy;
       window.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
-      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups"];
+      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name}"];
       let q = `query { user { ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
       return window.backendaiclient.gql(q, v);
@@ -260,9 +260,9 @@ class BackendAiLogin extends LitElement {
       }
       let groups = response['user'].groups;
       window.backendaiclient.groups = groups.map((item) => {
-        item = item.replace(/\'/g, '"');
-        const parsedItem = JSON.parse(item);
-        return parsedItem.name;
+        //item = item.replace(/\'/g, '"');
+        //const parsedItem = JSON.parse(item);
+        return item.name;
       });
       let role = response['user'].role;
       let domain_name = response['user'].domain_name;
