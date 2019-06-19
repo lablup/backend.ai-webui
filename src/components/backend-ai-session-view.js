@@ -4,26 +4,16 @@
  */
 
 import {css, html, LitElement} from "lit-element";
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
-import '@polymer/paper-tabs/paper-tabs';
-import '@polymer/paper-tabs/paper-tab';
 
-import '@polymer/paper-button/paper-button';
-import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
-import '@polymer/neon-animation/animations/scale-up-animation.js';
-import '@polymer/neon-animation/animations/fade-out-animation.js';
 
-import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-session-list.js';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
@@ -42,7 +32,6 @@ import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../
 class BackendAiSessionView extends LitElement {
   constructor() {
     super();
-    setPassiveTouchGestures(true);
     this.active = false;
     this.supports = {};
     this.resourceLimits = {};
@@ -1109,10 +1098,6 @@ class BackendAiSessionView extends LitElement {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
-      <paper-tabs id="topbar-tabs" style="display:none;">
-        <paper-tab>Running</paper-tab>
-        <paper-tab>Finished</paper-tab>
-      </paper-tabs>
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
