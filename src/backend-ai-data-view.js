@@ -119,7 +119,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         }
 
         wl-button.button {
-          width: 95%;
+          width: 330px;
         }
 
         paper-icon-button.tiny {
@@ -317,8 +317,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           <div>No data present.</div>
         </div>
       </wl-card>
-      <wl-dialog id="add-folder-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+      <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
+        <wl-card elevation="1" class="login-panel intro centered">
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
             <div class="flex"></div>
@@ -326,7 +326,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <div>
+          <section>
             <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                          error-message="Allows letters, numbers and -_." auto-validate></paper-input>
             <paper-dropdown-menu id="add-folder-host" label="Host">
@@ -341,11 +341,11 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <wl-icon>rowing</wl-icon>
               Create
             </wl-button>
-          </div>
+          </section>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="delete-folder-dialog" fixed backdrop blockscrolling>
-        <wl-card class="login-panel intro centered" style="margin: 0;padding:0;--card-elevation:0;">
+      <wl-dialog id="delete-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
+        <wl-card class="login-panel intro centered">
           <h3 class="horizontal center layout">
             <span>Delete a virtual folder</span>
             <div class="flex"></div>
@@ -353,21 +353,23 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <div class="warning">WARNING: this cannot be undone!</div>
-          <div>
-            <paper-input class="red" id="delete-folder-name" label="Type folder name to delete"
-                         pattern="[a-zA-Z0-9_-]*"
-                         error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-            <br/>
-            <wl-button class="blue button" type="submit" id="delete-button" outlined>
-              <wl-icon>close</wl-icon>
-              Delete
-            </wl-button>
-          </div>
+          <section>
+            <div class="warning">WARNING: this cannot be undone!</div>
+            <div>
+              <paper-input class="red" id="delete-folder-name" label="Type folder name to delete"
+                           pattern="[a-zA-Z0-9_-]*"
+                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+              <br/>
+              <wl-button class="blue button" type="submit" id="delete-button" outlined>
+                <wl-icon>close</wl-icon>
+                Delete
+              </wl-button>
+            </div>
+            </section>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="info-folder-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="intro centered" style="margin: 0;">
+      <wl-dialog id="info-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
+        <wl-card class="intro centered" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span>[[folderInfo.name]]</span>
             <div class="flex"></div>
@@ -531,7 +533,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <div>
+          <section>
             <paper-input id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                          error-message="Allows letters, numbers and -_." auto-validate></paper-input>
             <br/>
@@ -539,7 +541,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               <wl-icon>rowing</wl-icon>
               Create
             </wl-button>
-          </div>
+          </section>
         </wl-card>
       </wl-dialog>
     `;

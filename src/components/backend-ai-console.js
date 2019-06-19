@@ -19,8 +19,6 @@ import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
-import '@polymer/paper-tabs/paper-tabs';
-import '@polymer/paper-tabs/paper-tab';
 import '@polymer/paper-spinner/paper-spinner-lite';
 
 import '@polymer/iron-icon/iron-icon';
@@ -509,7 +507,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.06.0.190618</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.06.0.190619</small>
               </address>
             </div>
           </app-header-layout>

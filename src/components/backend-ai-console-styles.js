@@ -633,62 +633,6 @@ export const BackendAiStyles =
       color: var(--general-menu-color);
     }
 
-    paper-tabs {
-      background-color: var(--paper-red-400);
-      color: #fff;
-      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    paper-tabs a {
-      color: #fff;
-    }
-
-    paper-toolbar paper-tabs {
-      box-shadow: none;
-    }
-
-    paper-tabs[noink][no-bar] paper-tab.iron-selected {
-      color: #ffff8d;
-    }
-
-    paper-tabs[alignBottom] {
-      box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
-    }
-
-    paper-tab {
-      width: 130px;
-    }
-
-    paper-tabs.sidebar-selector {
-      background-color: var(--general-sidebar-topbar-background-color, var(--general-menu-background-color));
-      color: var(--general-sidebar-topbar-color, #434854);
-      --paper-tabs-selection-bar-color: var(--paper-light-blue-a400);
-    }
-
-    paper-tabs.file-tabs {
-      background-color: var(--paper-grey-700);
-      --paper-tabs-selection-bar-color: var(--paper-light-green-400);
-    }
-
-    paper-tabs.file-tabs paper-tab {
-      width: 150px;
-      max-width: 200px;
-    }
-
-    paper-tabs.file-tabs paper-tab.add-file-button {
-      width: 40px;
-    }
-
-    paper-tabs.file-tabs paper-tab.iron-selected,
-    paper-tabs.file-tabs a.iron-selected {
-      color: #ffffff !important;
-    }
-
-    paper-tab .badge {
-      font-size: 12px;
-      padding-left: 10px;
-    }
-
     wl-card > h3 {
       font-size: 20px;
       font-weight: 200;

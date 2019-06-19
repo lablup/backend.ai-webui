@@ -9,8 +9,6 @@ import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
-import '@polymer/paper-tabs/paper-tabs';
-import '@polymer/paper-tabs/paper-tab';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
@@ -793,10 +791,6 @@ class BackendAiResourceMonitor extends LitElement {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
-      <paper-tabs id="topbar-tabs" style="display:none;">
-        <paper-tab>Running</paper-tab>
-        <paper-tab>Finished</paper-tab>
-      </paper-tabs>
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
