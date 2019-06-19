@@ -41,7 +41,7 @@ class Manager extends EventEmitter {
   }
 
   getPort() {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       if (this.ports.length == 0) {
         this.refreshPorts();
       }
@@ -55,14 +55,14 @@ class Manager extends EventEmitter {
           });
         }
       });
-    }.bind(this));
+    });
   }
 
   init() {
     this.app.use(express.json());
     this.app.use(cors());
 
-    this.app.put('/conf', function (req, res) {
+    this.app.put('/conf', (req, res) => {
       let config = new ai.backend.ClientConfig(
         req.body.access_key,
         req.body.secret_key,
@@ -70,9 +70,9 @@ class Manager extends EventEmitter {
       );
       this.aiclient = new ai.backend.Client(config);
       res.send({"token": "local"});
-    }.bind(this));
+    });
 
-    this.app.get('/', function (req, res) {
+    this.app.get('/', (req, res) => {
       let rtn = [];
       for (var key in this.proxies) {
         rtn.push(key);
@@ -80,7 +80,7 @@ class Manager extends EventEmitter {
       res.send(rtn);
     });
 
-    this.app.get('/proxy/local/:kernelId', function (req, res) {
+    this.app.get('/proxy/local/:kernelId', (req, res) => {
       let kernelId = req.params["kernelId"];
       if (!this.aiclient){
         res.send({"code": 401});
@@ -91,7 +91,7 @@ class Manager extends EventEmitter {
       } else {
         res.send({"code": 404});
       }
-    }.bind(this));
+    });
 
     this.app.get('/proxy/local/:kernelId/add', (req, res) =>{
       let kernelId = req.params["kernelId"];
@@ -116,7 +116,7 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:kernelId/delete', function (req, res) {
+    this.app.get('/proxy/local/:kernelId/delete', (req, res) => {
       let kernelId = req.params["kernelId"];
       if (!this.aiclient){
         res.send({"code": 401});
@@ -129,13 +129,13 @@ class Manager extends EventEmitter {
       } else {
         res.send({"code": 404});
       }
-    }.bind(this));
+    });
 
-    this.app.get('/redirect', function (req, res) {
+    this.app.get('/redirect', (req, res) => {
       let port = req.query.port;
       let path = req.query.redirect || "";
       res.redirect("http://" + this.listen_ip + ":" + port + path)
-    }.bind(this));
+    });
   }
 
   start() {
