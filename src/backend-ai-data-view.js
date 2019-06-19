@@ -118,9 +118,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           width: 100px;
         }
 
-        wl-button.add-button,
-        wl-button.delete-button {
-          width: 100%;
+        wl-button.button {
+          width: 95%;
         }
 
         paper-icon-button.tiny {
@@ -169,6 +168,12 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
 
         div.breadcrumb span:first-child {
           display: none;
+        }
+
+        vaadin-grid.explorer {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 320px);
         }
 
         wl-button.goto {
@@ -332,7 +337,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
               </paper-listbox>
             </paper-dropdown-menu>
             <br/>
-            <wl-button class="blue" type="submit" id="add-button" outlined>
+            <wl-button class="blue button" type="button" id="add-button" outlined>
               <wl-icon>rowing</wl-icon>
               Create
             </wl-button>
@@ -354,7 +359,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
                          pattern="[a-zA-Z0-9_-]*"
                          error-message="Allows letters, numbers and -_." auto-validate></paper-input>
             <br/>
-            <wl-button class="blue delete-button" type="submit" id="delete-button" outlined>
+            <wl-button class="blue button" type="submit" id="delete-button" outlined>
               <wl-icon>close</wl-icon>
               Delete
             </wl-button>
@@ -397,7 +402,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="folder-explorer-dialog">
-        <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
+        <wl-card>
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>[[explorer.id]]</span>
             <div class="flex"></div>
@@ -414,8 +419,8 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
           </div>
 
           <div>
-            <vaadin-button raised id="add-btn" on-tap="_uploadFileBtnClick">Upload Files...</vaadin-button>
-            <vaadin-button id="mkdir" on-click="_mkdirDialog">New Directory</vaadin-button>
+            <wl-button outlined raised id="add-btn" on-tap="_uploadFileBtnClick">Upload Files...</wl-button>
+            <wl-button outlined id="mkdir" on-click="_mkdirDialog">New Directory</wl-button>
           </div>
 
           <div id="upload">
@@ -452,7 +457,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             </template>
           </div>
 
-          <vaadin-grid theme="row-stripes compact" aria-label="Explorer" items="[[explorer.files]]">
+          <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" items="[[explorer.files]]">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>
               <template class="header">#</template>
               <template>[[_indexFrom1(index)]]</template>
@@ -517,7 +522,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
         </wl-card>
       </wl-dialog>
 
-      <wl-dialog id="mkdir-dialog" fixed blockscrolling backdrop>
+      <wl-dialog id="mkdir-dialog" class="dialog-ask" fixed blockscrolling backdrop>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create a new folder</span>
@@ -530,7 +535,7 @@ class BackendAIData extends OverlayPatchMixin(PolymerElement) {
             <paper-input id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                          error-message="Allows letters, numbers and -_." auto-validate></paper-input>
             <br/>
-            <wl-button class="blue add-button" type="submit" id="mkdir-btn" on-click="_mkdir" outlined>
+            <wl-button class="blue button" type="submit" id="mkdir-btn" on-click="_mkdir" outlined>
               <wl-icon>rowing</wl-icon>
               Create
             </wl-button>
