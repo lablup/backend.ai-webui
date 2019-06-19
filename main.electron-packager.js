@@ -307,7 +307,7 @@ function createWindow () {
       nativeWindowOpen: true,
       nodeIntegration: false,
       preload: path.join(__dirname, 'preload.js'),
-      devTools: true
+      devTools: false 
     }
   });
 
