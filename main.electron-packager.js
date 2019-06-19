@@ -3,7 +3,7 @@ const {app, Menu, shell, BrowserWindow} = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
-const ProxyManager = require('./src/wsproxy/dist/wsproxy.js');
+const ProxyManager = require('./app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
