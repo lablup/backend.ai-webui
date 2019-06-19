@@ -41,6 +41,7 @@ dep:
 	cp ./config.ini ./build/electron-app/app/config.ini
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
+	cp ./preload.js ./build/electron-app/app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
 web:
