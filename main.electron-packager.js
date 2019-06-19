@@ -17,7 +17,7 @@ app.once('ready', function() {
   ipcMain.once('ready', (event) => {
     let manager = new ProxyManager();
     manager.once("ready", () => {
-      let url = 'http://localhost:' + manager.port;
+      let url = 'http://localhost:' + manager.port + "/";
       console.log("Proxy is ready:" + url);
       event.reply('proxy-ready', url);
     });

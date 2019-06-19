@@ -6,6 +6,5 @@ let Manager = require('./manager.js');
 
 (async () => {
   let manager = new Manager();
-  manager.on("ready", (port) => console.log(port));
   manager.start();
 })();

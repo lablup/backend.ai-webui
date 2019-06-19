@@ -9,17 +9,26 @@ const Client = require("./lib/WstClient"),
   Proxy = require("./proxy");
 
 class Manager extends EventEmitter {
-  constructor(listen_ip, port, proxyBaseURL) {
+  constructor(listen_ip, proxyBaseURL) {
     super();
-    this.listen_ip = listen_ip;
-    this.port = port;
-    this.proxyBaseURL = proxyBaseURL;
+    if(listen_ip === undefined) {
+      this.listen_ip = "127.0.0.1"
+    } else {
+      this.listen_ip = listen_ip;
+    }
+
+    if(proxyBaseURL === undefined) {
+      this.proxyBaseURL = "127.0.0.1"
+    } else {
+      this.proxyBaseURL = proxyBaseURL;
+    }
+    this.port = undefined;
 
     this.app = express();
     this.aiclient = undefined;
     this.proxies = {};
     this.ports = [];
-    this.baseURL = "http://" + listen_ip + ":" + port;
+    this.baseURL = "http://" + this.listen_ip + ":" + this.port;
 
     this.init();
   }
@@ -27,16 +36,16 @@ class Manager extends EventEmitter {
   refreshPorts() {
     console.log("PortRefresh");
     for (let i = 0; i < 100; i++) {
-      ports.push(Math.floor(Math.random() * 20000) + 10000)
+      this.ports.push(Math.floor(Math.random() * 20000) + 10000)
     }
   }
 
   getPort() {
     return new Promise(function (resolve, reject) {
-      if (ports.length == 0) {
-        refreshPorts();
+      if (this.ports.length == 0) {
+        this.refreshPorts();
       }
-      var port = ports.shift();
+      var port = this.ports.shift();
       isFreePort(port).then((v) => {
         if (v[2] == true) {
           resolve(v[0]);
@@ -46,7 +55,7 @@ class Manager extends EventEmitter {
           });
         }
       });
-    });
+    }.bind(this));
   }
 
   init() {
@@ -61,11 +70,11 @@ class Manager extends EventEmitter {
       );
       this.aiclient = new ai.backend.Client(config);
       res.send({"token": "local"});
-    });
+    }.bind(this));
 
     this.app.get('/', function (req, res) {
       let rtn = [];
-      for (var key in proxies) {
+      for (var key in this.proxies) {
         rtn.push(key);
       }
       res.send(rtn);
@@ -77,14 +86,14 @@ class Manager extends EventEmitter {
         res.send({"code": 401});
         return;
       }
-      if (kernelId in proxies) {
+      if (kernelId in this.proxies) {
         res.send({"code": 200});
       } else {
         res.send({"code": 404});
       }
-    });
+    }.bind(this));
 
-    this.app.get('/proxy/local/:kernelId/add', function (req, res) {
+    this.app.get('/proxy/local/:kernelId/add', (req, res) =>{
       let kernelId = req.params["kernelId"];
       if (!this.aiclient){
         res.send({"code": 401});
@@ -92,18 +101,18 @@ class Manager extends EventEmitter {
       }
       let app = req.query.app || "jupyter";
       let p = kernelId + "|" + app;
-      if (!(p in proxies)) {
+      if (!(p in this.proxies)) {
         let proxy = new Proxy(this.aiclient._config);
         this.getPort().then((port) => {
-          let proxy_url = proxyBaseURL + ":" + port;
-          proxy.start_proxy(kernelId, app, listen_ip, port, proxy_url);
-          proxies[p] = proxy;
-          res.send({"code": 200, "proxy": proxy.base_url, "url": baseURL + "/redirect?port=" + port});
+          let proxy_url = this.proxyBaseURL + ":" + port;
+          proxy.start_proxy(kernelId, app, this.listen_ip, port, proxy_url);
+          this.proxies[p] = proxy;
+          res.send({"code": 200, "proxy": proxy.base_url, "url": this.baseURL + "/redirect?port=" + port});
         });
 
       } else {
-        let proxy = proxies[p];
-        res.send({"code": 200, "proxy": proxy.base_url, "url": baseURL + "/redirect?port=" + proxy.port});
+        let proxy = this.proxies[p];
+        res.send({"code": 200, "proxy": proxy.base_url, "url": this.baseURL + "/redirect?port=" + proxy.port});
       }
     });
 
@@ -113,20 +122,20 @@ class Manager extends EventEmitter {
         res.send({"code": 401});
         return;
       }
-      if (kernelId in proxies) {
-        proxies[kernelId].stop_proxy();
+      if (kernelId in this.proxies) {
+        this.proxies[kernelId].stop_proxy();
         res.send({"code": 200});
-        delete proxies[kernelId];
+        delete this.proxies[kernelId];
       } else {
         res.send({"code": 404});
       }
-    });
+    }.bind(this));
 
     this.app.get('/redirect', function (req, res) {
       let port = req.query.port;
       let path = req.query.redirect || "";
-      res.redirect("http://" + this.listen_ip + ":" + this.port + path)
-    });
+      res.redirect("http://" + this.listen_ip + ":" + port + path)
+    }.bind(this));
   }
 
   start() {
@@ -134,6 +143,7 @@ class Manager extends EventEmitter {
       this.listener = this.app.listen(this.port, () => {
         console.log(`Listening on port ${this.listener.address().port}!`)
         this.port = this.listener.address().port;
+        this.baseURL = "http://" + this.listen_ip + ":" + this.port;
         resolve(this.listener.address().port);
         this.emit("ready");
       });
