@@ -1098,7 +1098,7 @@ class BackendAiSessionView extends LitElement {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
-      <wl-card class="item" elevation="1">
+      <wl-card class="item">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
             <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>  
@@ -1169,7 +1169,7 @@ class BackendAiSessionView extends LitElement {
         <wl-dialog id="new-session-dialog"
                       fixed backdrop blockscrolling persistent
                       style="padding:0;">
-          <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <wl-card class="login-panel intro centered" style="margin: 0;">
             <h3 class="horizontal center layout">
               <span>Start a new session</span>
               <div class="flex"></div>
