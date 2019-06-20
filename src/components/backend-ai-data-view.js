@@ -56,6 +56,7 @@ class BackendAIData extends LitElement {
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
+    this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
   }
 
   static get properties() {
@@ -443,16 +444,8 @@ class BackendAIData extends LitElement {
             <vaadin-grid-sort-column flex-grow="2" resizable header="Name" path="filename" .renderer="${this._boundFileNameRenderer}">
             </vaadin-grid-sort-column>
 
-            <vaadin-grid-column flex-grow="2" resizable>
-              <template class="header">
-                <vaadin-grid-sorter path="ctime">Created</vaadin-grid-sorter>
-              </template>
-              <template>
-                <div class="layout vertical">
-                  <span>[[_humanReadableTime(item.ctime)]]</span>
-                </div>
-              </template>
-            </vaadin-grid-column>
+            <vaadin-grid-sort-column flex-grow="2" resizable header="Created" path="ctime" .renderer="${this._boundCreatedTimeRenderer}">
+            </vaadin-grid-sort-column>
 
             <vaadin-grid-column flex-grow="1" resizable>
               <template class="header">
@@ -564,6 +557,15 @@ class BackendAIData extends LitElement {
         ${this._hasPermission(rowData.item, 'd') ? html`
             <lablup-shields app="" color="red"
                             description="D" ui="flat"></lablup-shields>` : html``}
+        </div>`, root
+    )
+  }
+
+  createdTimeRenderer(root, column, rowData) {
+    render(
+      html`
+        <div class="layout vertical">
+            <span>${this._humanReadableTime(rowData.item.ctime)}</span>
         </div>`, root
     )
   }
