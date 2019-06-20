@@ -27,6 +27,8 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
+import 'weightless/tab';
+import 'weightless/tab-group';
 
 import './lablup-notification.js';
 import '../lablup-activity-panel.js';
@@ -142,12 +144,12 @@ class BackendAIData extends LitElement {
         }
 
         #folder-explorer-dialog {
-          --dialog-height: calc(100vh - 120px);
-          height: calc(100vh - 120px);
+          --dialog-height: calc(100vh - 170px);
+          height: calc(100vh - 170px);
           right: 0;
           top: 0;
           position: fixed;
-          margin: 120px 0 0 0;
+          margin: 170px 0 0 0;
         }
 
         @media screen and (max-width: 899px) {
@@ -175,10 +177,16 @@ class BackendAIData extends LitElement {
           display: none;
         }
 
+        vaadin-grid.folderlist {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 260px);
+        }
+
         vaadin-grid.explorer {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 320px);
+          height: calc(100vh - 370px);
         }
 
         wl-button.goto {
@@ -222,6 +230,28 @@ class BackendAIData extends LitElement {
           padding: 10px 30px;
         }
 
+        wl-card h3.tab {
+          padding-top: 0;
+          padding-bottom: 0;
+          padding-left: 0;
+        }
+
+        wl-tab-group {
+          --tab-group-indicator-bg: var(--paper-orange-500);
+        }
+
+        wl-tab {
+          --tab-color: #666;
+          --tab-color-hover: #222;
+          --tab-color-hover-filled: #222;
+          --tab-color-active: #222;
+          --tab-color-active-hover: #222;
+          --tab-color-active-filled: #ccc;
+          --tab-bg-active: var(--paper-orange-50);
+          --tab-bg-filled: var(--paper-orange-50);
+          --tab-bg-active-hover: var(--paper-orange-100);
+        }
+
         wl-button {
           --button-bg: var(--paper-orange-50);
           --button-bg-hover: var(--paper-orange-100);
@@ -246,8 +276,12 @@ class BackendAIData extends LitElement {
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="horizontal center flex layout">
-          <span>Folders</span>
+        <h3 class="horizontal center flex layout tab">
+          <wl-tab-group>
+            <wl-tab value="folder-lists" checked>Folders</wl-tab>  
+            <wl-tab value="shared-folder-lists" disabled>Shared Data</wl-tab>  
+            <wl-tab value="model-lists" disabled>Models</wl-tab>
+          </wl-tab-group>
           <span class="flex"></span>
           <wl-button class="fg red" id="add-folder" outlined @click="${(e) => this._addFolderDialog(e)}">
             <wl-icon>add</wl-icon>
@@ -255,7 +289,7 @@ class BackendAIData extends LitElement {
           </wl-button>
         </h3>
 
-        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
+        <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
           </vaadin-grid-column>
 
@@ -285,14 +319,6 @@ class BackendAIData extends LitElement {
           <vaadin-grid-column width="85px" flex-grow="0" resizable header="Permission" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
           <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
         </vaadin-grid>
-      </wl-card>
-      <wl-card>
-        <h4 class="horizontal center layout">
-          <span>Public Data</span>
-        </h4>
-        <div class="horizontal center flex layout" style="padding:15px;">
-          <div>No data present.</div>
-        </div>
       </wl-card>
       <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered">
