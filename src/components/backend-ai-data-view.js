@@ -50,6 +50,7 @@ class BackendAIData extends LitElement {
     this.uploadFiles = [];
     this.vhost = 'local';
     this.vhosts = ['local'];
+    this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
@@ -249,9 +250,7 @@ class BackendAIData extends LitElement {
         </h3>
 
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
-          <vaadin-grid-column width="40px" flex-grow="0" resizable>
-            <template class="header">#</template>
-            <template>[[_indexFrom1(index)]]</template>
+          <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
           </vaadin-grid-column>
 
           <vaadin-grid-column resizable header="Name">
@@ -386,22 +385,23 @@ class BackendAIData extends LitElement {
           </h3>
 
           <div class="breadcrumb">
-            <template is="dom-repeat" items="[[explorer.breadcrumb]]">
-              <span>&gt;</span>
-              <wl-button outlined class="goto" path="item" on-click="_gotoFolder" dest="[[item]]">[[item]]</wl-button>
-            </template>
+          ${this.explorer.breadcrumb ? html`
+              ${this.explorer.breadcrumb.map(item => html`
+               <span>&gt;</span>
+               <wl-button outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</wl-button>
+              `)}
+              ` : html``}
           </div>
-
           <div>
-            <wl-button outlined raised id="add-btn" @click="_uploadFileBtnClick">Upload Files...</wl-button>
-            <wl-button outlined id="mkdir" on-click="_mkdirDialog">New Directory</wl-button>
+            <wl-button outlined raised id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">Upload Files...</wl-button>
+            <wl-button outlined id="mkdir" @click="${(e) => this._mkdirDialog(e)}">New Directory</wl-button>
           </div>
 
           <div id="upload">
             <div id="dropzone"><p>drag</p></div>
             <input type="file" id="fileInput" on-change="_uploadFileChange" hidden multiple>
-            <template is="dom-if" if="[[uploadFiles.length]]">
-              <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" items="[[uploadFiles]]"
+            ${this.uploadFiles.length ? html`
+              <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
                            height-by-rows>
                 <vaadin-grid-column width="100px" flex-grow="0">
                   <template>
@@ -428,12 +428,11 @@ class BackendAIData extends LitElement {
                   </template>
                 </vaadin-grid-column>
               </vaadin-grid>
-            </template>
+            ` : html``}
           </div>
 
           <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorer.files}">
-            <vaadin-grid-column width="40px" flex-grow="0" resizable header="#">
-              <template>[[_indexFrom1(index)]]</template>
+            <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
 
             <vaadin-grid-sort-column flex-grow="2" resizable header="Name" path="filename">
@@ -502,6 +501,12 @@ class BackendAIData extends LitElement {
         </wl-card>
       </wl-dialog>
     `;
+  }
+
+  indexRenderer(root, column, rowData) {
+    render(
+      html`${this._indexFrom1(rowData.index)}`, root
+    );
   }
 
   controlFolderListRenderer(root, column, rowData) {
@@ -721,18 +726,16 @@ class BackendAIData extends LitElement {
                  dialog = false) {
     let job = window.backendaiclient.vfolder.list_files(path, id);
     job.then(value => {
+      console.log(value);
       this.explorer.files = JSON.parse(value.files);
-
       if (dialog) {
         this.openDialog('folder-explorer-dialog');
       }
-
     });
   }
 
   _folderExplorer(e) {
     let folderId = this._getControlId(e);
-    console.log(folderId);
     let explorer = {
       id: folderId,
       breadcrumb: ['.'],
