@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html, PolymerElement} from '@polymer/polymer';
+import {css, html, LitElement} from "lit-element";
 import '@polymer/polymer/lib/elements/dom-if.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/iron-flex-layout/iron-flex-layout';
@@ -12,7 +12,7 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
 import '@polymer/paper-item/paper-item.js';
-import './components/lablup-loading-indicator';
+import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
@@ -26,63 +26,62 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
 
-import './components/lablup-notification.js';
-import './backend-ai-styles.js';
-import './lablup-activity-panel.js';
-import './plastics/lablup-shields/lablup-shields';
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import './lablup-notification.js';
+import '../lablup-activity-panel.js';
+import '../plastics/lablup-shields/lablup-shields';
 
-class BackendAIData extends PolymerElement {
+import {BackendAiStyles} from "./backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
+
+class BackendAIData extends LitElement {
   constructor() {
     super();
     // Resolve warning about scroll performance
     // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
     setPassiveTouchGestures(true);
+    this.folders = {};
+    this.folderInfo = {};
+    this.is_admin = false;
+    this.authenticated = false;
+    this.deleteFolderId = '';
+    this.active = false;
+    this.explorer = {};
+    this.uploadFiles = [];
+    this.vhost = 'local';
+    this.vhosts = ['local'];
   }
 
   static get properties() {
     return {
       folders: {
-        type: Object,
-        value: {}
+        type: Object
       },
       folderInfo: {
-        type: Object,
-        value: {}
+        type: Object
       },
       is_admin: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       authenticated: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       deleteFolderId: {
-        type: String,
-        value: ''
+        type: String
       },
       active: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       explorer: {
-        type: Object,
-        value: {},
+        type: Object
       },
       uploadFiles: {
-        type: Array,
-        value: [],
+        type: Array
       },
       vhost: {
-        type: String,
-        value: 'local'
-        //value: 'cephfs'
+        type: String
       },
       vhosts: {
-        type: Array,
-        value: ['local']
-        //value: 'cephfs'
+        type: Array
       },
     };
   }
@@ -95,10 +94,14 @@ class BackendAIData extends PolymerElement {
     ]
   }
 
-  static get template() {
-    // language=HTML
-    return html`
-      <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronPositioning,
+      // language=CSS
+      css`
         vaadin-grid {
           border: 0 !important;
           font-size: 12px;
@@ -222,8 +225,12 @@ class BackendAIData extends PolymerElement {
           --button-bg-active: var(--paper-orange-600);
           color: var(--paper-orange-900);
         }
+      `];
+  }
 
-      </style>
+  render() {
+    // language=HTML
+    return html`
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
@@ -236,7 +243,7 @@ class BackendAIData extends PolymerElement {
           </wl-button>
         </h3>
 
-        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Folder list" items="[[folders]]">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable>
             <template class="header">#</template>
             <template>[[_indexFrom1(index)]]</template>
@@ -245,7 +252,7 @@ class BackendAIData extends PolymerElement {
           <vaadin-grid-column resizable>
             <template class="header">Folder Name</template>
             <template>
-              <div class="indicator" on-tap="_folderExplorer" folder-id="[[item.name]]">[[item.name]]</div>
+              <div class="indicator" @click="${(e) => this._folderExplorer(e)}" folder-id="[[item.name]]">[[item.name]]</div>
             </template>
           </vaadin-grid-column>
 
@@ -292,16 +299,16 @@ class BackendAIData extends PolymerElement {
               <div id="controls" class="layout horizontal flex center"
                    folder-id="[[item.name]]">
                 <paper-icon-button class="fg green controls-running" icon="vaadin:info-circle-o"
-                                   on-tap="_infoFolder"></paper-icon-button>
+                                   @click="${(e) => this._infoFolder(e)}"></paper-icon-button>
                 <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
                   <paper-icon-button class="fg blue controls-running" icon="folder-open"
-                                     on-tap="_folderExplorer" folder-id="[[item.name]]"></paper-icon-button>
+                                     @click="_folderExplorer" folder-id="[[item.name]]"></paper-icon-button>
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'w')]]">
                 </template>
                 <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
                   <paper-icon-button class="fg red controls-running" icon="delete"
-                                     on-tap="_deleteFolderDialog"></paper-icon-button>
+                                     @click="_deleteFolderDialog"></paper-icon-button>
                 </template>
               </div>
             </template>
@@ -321,7 +328,7 @@ class BackendAIData extends PolymerElement {
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted on-tap="_hideDialog">
+            <wl-button fab flat inverted @click="_hideDialog">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -348,7 +355,7 @@ class BackendAIData extends PolymerElement {
           <h3 class="horizontal center layout">
             <span>Delete a virtual folder</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted on-tap="_hideDialog">
+            <wl-button fab flat inverted @click="_hideDialog">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -372,7 +379,7 @@ class BackendAIData extends PolymerElement {
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span>[[folderInfo.name]]</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted on-tap="_hideDialog">
+            <wl-button fab flat inverted @click="_hideDialog">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -407,7 +414,7 @@ class BackendAIData extends PolymerElement {
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>[[explorer.id]]</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted on-tap="_hideDialog">
+            <wl-button fab flat inverted @click="_hideDialog">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -420,7 +427,7 @@ class BackendAIData extends PolymerElement {
           </div>
 
           <div>
-            <wl-button outlined raised id="add-btn" on-tap="_uploadFileBtnClick">Upload Files...</wl-button>
+            <wl-button outlined raised id="add-btn" @click="_uploadFileBtnClick">Upload Files...</wl-button>
             <wl-button outlined id="mkdir" on-click="_mkdirDialog">New Directory</wl-button>
           </div>
 
@@ -514,7 +521,7 @@ class BackendAIData extends PolymerElement {
                 <template is="dom-if" if="[[!_isDir(item)]]">
                   <template is="dom-if" if="[[_isDownloadable(item)]]">
                     <paper-icon-button id="download-btn" class="tiny fg red" icon="vaadin:download"
-                                       filename="[[item.filename]]" on-tap="_downloadFile"></paper-icon-button>
+                                       filename="[[item.filename]]" @click="_downloadFile"></paper-icon-button>
                   </template>
                 </template>
               </template>
@@ -528,7 +535,7 @@ class BackendAIData extends PolymerElement {
           <h3 class="horizontal center layout">
             <span>Create a new folder</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted on-tap="_hideDialog">
+            <wl-button fab flat inverted @click="_hideDialog">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -546,17 +553,16 @@ class BackendAIData extends PolymerElement {
     `;
   }
 
-  ready() {
-    super.ready();
+  firstUpdated() {
     this._addEventListenerDropZone();
     document.addEventListener('backend-ai-connected', () => {
       this.is_admin = window.backendaiclient.is_admin;
       this.authenticated = true;
       this._refreshFolderList();
     }, true);
-    this.$['add-folder'].addEventListener('tap', this._addFolderDialog.bind(this));
-    this.$['add-button'].addEventListener('tap', this._addFolder.bind(this));
-    this.$['delete-button'].addEventListener('tap', this._deleteFolderWithCheck.bind(this));
+    this.shadowRoot.querySelector('#add-folder').addEventListener('tap', this._addFolderDialog.bind(this));
+    this.shadowRoot.querySelector('#add-button').addEventListener('tap', this._addFolder.bind(this));
+    this.shadowRoot.querySelector('#delete-button').addEventListener('tap', this._deleteFolderWithCheck.bind(this));
 
     this._clearExplorer = this._clearExplorer.bind(this);
     this._mkdir = this._mkdir.bind(this);
@@ -619,18 +625,18 @@ class BackendAIData extends PolymerElement {
   }
 
   _mkdirDialog() {
-    this.$['mkdir-name'].value = '';
+    this.shadowRoot.querySelector('#mkdir-name').value = '';
     this.openDialog('mkdir-dialog');
   }
 
   openDialog(id) {
     //var body = document.querySelector('body');
     //body.appendChild(this.$[id]);
-    this.$[id].show();
+    this.shadowRoot.querySelector('#' + id).show();
   }
 
   closeDialog(id) {
-    this.$[id].hide();
+    this.shadowRoot.querySelector('#' + id).hide();
   }
 
   _indexFrom1(index) {
@@ -648,18 +654,18 @@ class BackendAIData extends PolymerElement {
   }
 
   _addFolder() {
-    let name = this.$['add-folder-name'].value;
+    let name = this.shadowRoot.querySelector('#add-folder-name').value;
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
     let job = window.backendaiclient.vfolder.create(name, host);
     job.then((value) => {
-      this.$.notification.text = 'Virtual folder is successfully created.';
-      this.$.notification.show();
+      this.shadowRoot.querySelector('#notification').text = 'Virtual folder is successfully created.';
+      this.shadowRoot.querySelector('#notification').show();
       this._refreshFolderList();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
     this.closeDialog('add-folder-dialog');
@@ -680,23 +686,23 @@ class BackendAIData extends PolymerElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
 
   _deleteFolderDialog(e) {
     this.deleteFolderId = this._getControlId(e);
-    this.$['delete-folder-name'].value = '';
+    this.shadowRoot.querySelector('#delete-folder-name').value = '';
     this.openDialog('delete-folder-dialog');
   }
 
   _deleteFolderWithCheck() {
-    let typedDeleteFolderName = this.$['delete-folder-name'].value;
+    let typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
     if (typedDeleteFolderName != this.deleteFolderId) {
-      this.$.notification.text = 'Folder name mismatched. Check your typing.';
-      this.$.notification.show();
+      this.shadowRoot.querySelector('#notification').text = 'Folder name mismatched. Check your typing.';
+      this.shadowRoot.querySelector('#notification').show();
       return;
     }
     this.closeDialog('delete-folder-dialog');
@@ -706,14 +712,14 @@ class BackendAIData extends PolymerElement {
   _deleteFolder(folderId) {
     let job = window.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
-      this.$.notification.text = 'Virtual folder is successfully deleted.';
-      this.$.notification.show();
+      this.shadowRoot.querySelector('#notification').text = 'Virtual folder is successfully deleted.';
+      this.shadowRoot.querySelector('#notification').show();
       this._refreshFolderList();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
@@ -767,7 +773,7 @@ class BackendAIData extends PolymerElement {
   }
 
   _mkdir(e) {
-    const newfolder = this.$['mkdir-name'].value;
+    const newfolder = this.shadowRoot.querySelector('#mkdir-name').value;
     const explorer = this.explorer;
     let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id);
     job.then(res => {
@@ -782,7 +788,8 @@ class BackendAIData extends PolymerElement {
 
   /* File upload and download */
   _addEventListenerDropZone() {
-    const dndZoneEl = this.$['folder-explorer-dialog'];
+    const dndZoneEl = this.shadowRoot.querySelector('#folder-explorer-dialog';
+  ]
     const dndZonePlaceholderEl = this.$.dropzone;
 
     dndZonePlaceholderEl.addEventListener('dragleave', () => {

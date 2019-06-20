@@ -321,7 +321,7 @@ class BackendAICredentialList extends LitElement {
               
               ${this._isActive() ? html`
                   <paper-icon-button class="fg blue controls-running" icon="icons:redo"
-                                     on-tap="_reuseKey"></paper-icon-button>
+                                     @click="${(e) => this._reuseKey(e)}"></paper-icon-button>
               ` : html``}
             </div>
       `, root
