@@ -230,12 +230,6 @@ class BackendAIData extends LitElement {
           padding: 10px 30px;
         }
 
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
-        }
-
         wl-tab-group {
           --tab-group-indicator-bg: var(--paper-orange-500);
         }
@@ -432,7 +426,7 @@ class BackendAIData extends LitElement {
           <div id="upload">
             <div id="dropzone"><p>drag</p></div>
             <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
-            ${this.uploadFiles.length ? html`
+            ${this.uploadFiles.length > 0 ? html`
               <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
                            height-by-rows>
                 <vaadin-grid-column width="100px" flex-grow="0">
@@ -603,7 +597,6 @@ class BackendAIData extends LitElement {
 
   firstUpdated() {
     this._addEventListenerDropZone();
-    this._clearExplorer = this._clearExplorer.bind(this);
     this._mkdir = this._mkdir.bind(this);
   }
 
@@ -877,6 +870,7 @@ class BackendAIData extends LitElement {
   _uploadFileChange(e) {
     console.log(e.target);
     const length = e.target.files.length;
+    console.log(length);
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
 
@@ -893,7 +887,6 @@ class BackendAIData extends LitElement {
 
     for (let i = 0; i < length; i++) {
       this.fileUpload(this.uploadFiles[i]);
-      this._clearExplorer();
     }
 
     this.shadowRoot.querySelector('#fileInput').value = '';

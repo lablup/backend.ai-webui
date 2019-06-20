@@ -458,12 +458,6 @@ class BackendAICredentialView extends LitElement {
           font-weight: 200;
           border-bottom: 0;
         }
-
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
-        }
       `];
   }
 

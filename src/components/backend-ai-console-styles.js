@@ -881,6 +881,13 @@ export const BackendAiStyles =
       --paper-spinner-stroke-width: 6px;
     }
 
+    /* Tab on head */
+    wl-card h3.tab {
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-left: 0;
+    }
+
     /* Button */
     wl-button {
       --button-padding: 8px;
