@@ -41,6 +41,7 @@
     body {
       margin: 0;
       font-family: "Montserrat", Roboto, sans-serif;
+      background-color: rgba(244, 245, 247, 1);
     }
 
     .splash {
@@ -50,6 +51,11 @@
       width: 340px;
       height: 300px;
       border: 1px solid #aaa;
+    }
+
+    .splash {
+      background-color: #ffffff;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
     }
 
     .splash-header {
@@ -62,9 +68,6 @@
       font-size: 28px;
       font-weight: 400;
       line-height: 60px;
-    }
-
-    .splash-information {
     }
 
     ul {
@@ -80,7 +83,7 @@
       position: absolute;
       top: calc(50% + 100px);
       left: calc(50% - 155px);
-      width: 200px;
+      width: 300px;
       text-align: center;
       font-size: 18px;
     }
@@ -191,17 +194,17 @@
 </head>
 
 <body>
-<backend-ai-console id="console-shell">
+<backend-ai-console id="console-shell" style="background-color:#222;">
   <div class="splash">
     <div class="splash-header">
-      <img src="/manifest/backend.ai-brand.svg" style="height:60px;padding-top:20px;padding-left:20px;">
+      <img src="manifest/backend.ai-brand.svg" style="height:60px;padding-top:20px;padding-left:20px;">
       Backend.AI
     </div>
     <div class="splash-information">
       <ul>
         <li>Backend.AI <span id="version-detail" class="detail"></span></li>
-        <li><span id="build-detail" class="detail"></span></li>
         <li><span id="license-detail"></span></li>
+        <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
       </ul>
     </div>
 
@@ -211,20 +214,23 @@
       <div class="sk-cube4 sk-cube"></div>
       <div class="sk-cube3 sk-cube"></div>
     </div>
-    <div class="loading-message">Loading...</div>
+    <div class="loading-message">Loading components...</div>
   </div>
 </backend-ai-console>
 <noscript>
   <p>Could not render Backend.AI console. Check that JavaScript is enabled. (190518.3)</p>
 </noscript>
-<script src="./node_modules/web-animations-js/web-animations-next-lite.min.js"></script>
 <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 <script src="./src/components/backend-ai-console.js" type="module"></script>
 <script>
   document.getElementById('version-detail').innerText = window.packageVersion;
-  document.getElementById('build-detail').innerText = 'Build ' + window.buildVersion;
+  document.getElementById('build-detail').innerText = ' Build ' + window.buildVersion;
   document.getElementById('license-detail').innerText = 'Enterprise Edition';
-
+  if (window.isElectron) {
+    document.getElementById('mode-detail').innerText = 'App';
+  } else {
+    document.getElementById('mode-detail').innerText = 'WebServer';
+  }
   window.isUpdateAvailable = new Promise(function (resolve, reject) {
     if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
       window.addEventListener('load', function () {
