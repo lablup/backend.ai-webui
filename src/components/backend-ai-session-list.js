@@ -263,13 +263,13 @@ class BackendAiSessionList extends LitElement {
         'name': 'jupyter',
         'title': 'Jupyter Notebook',
         'redirect': "&redirect=/tree",
-        'src': '/resources/icons/jupyter.png'
+        'src': './resources/icons/jupyter.png'
       },
       {
         'name': 'jupyterlab',
         'title': 'JupyterLab',
         'redirect': "&redirect=/lab",
-        'src': '/resources/icons/jupyterlab.png',
+        'src': './resources/icons/jupyterlab.png',
         'icon': 'vaadin:flask'
       }];
     let TFBase = jupyterBase.concat(
@@ -277,14 +277,14 @@ class BackendAiSessionList extends LitElement {
         'name': 'tensorboard',
         'title': 'TensorBoard',
         'redirect': "&redirect=/",
-        'src': '/resources/icons/tensorflow.png'
+        'src': './resources/icons/tensorflow.png'
       });
     let FFBase = TFBase.concat(
       {
         'name': 'jupyter',
         'title': 'Jupyter Extension',
         'redirect': "&redirect=/nbextensions",
-        'src': '/resources/icons/jupyter.png',
+        'src': './resources/icons/jupyter.png',
         'icon': 'vaadin:clipboard-pulse'
       });
     this.appTemplate = {
@@ -299,7 +299,7 @@ class BackendAiSessionList extends LitElement {
             'name': 'digits',
             'title': 'DIGITS',
             'redirect': "&redirect=/",
-            'src': '/resources/icons/nvidia.png'
+            'src': './resources/icons/nvidia.png'
           }),
       'ngc-tensorflow': TFBase,
       'ngc-pytorch': TFBase,
