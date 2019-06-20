@@ -53,6 +53,7 @@ class BackendAIData extends LitElement {
     this.uploadFiles = [];
     this.vhost = 'local';
     this.vhosts = ['local'];
+    this.uploadFilesExist = false;
     this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
@@ -89,6 +90,9 @@ class BackendAIData extends LitElement {
       },
       uploadFiles: {
         type: Array
+      },
+      uploadFilesExist: {
+        type: Boolean
       },
       vhost: {
         type: String
@@ -413,7 +417,7 @@ class BackendAIData extends LitElement {
           <div class="breadcrumb">
           ${this.explorer.breadcrumb ? html`
               ${this.explorer.breadcrumb.map(item => html`
-               <span>&gt;</span>
+               <wl-icon>keyboard_arrow_right</wl-icon>
                <wl-button outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</wl-button>
               `)}
               ` : html``}
@@ -423,10 +427,9 @@ class BackendAIData extends LitElement {
             <wl-button outlined id="mkdir" @click="${(e) => this._mkdirDialog(e)}">New Directory</wl-button>
           </div>
 
-          <div id="upload">
             <div id="dropzone"><p>drag</p></div>
             <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
-            ${this.uploadFiles.length > 0 ? html`
+            ${this.uploadFilesExist ? html`
               <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
                            height-by-rows>
                 <vaadin-grid-column width="100px" flex-grow="0">
@@ -893,6 +896,7 @@ class BackendAIData extends LitElement {
   }
 
   fileUpload(fileObj) {
+    this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
     const fd = new FormData();
     const explorer = this.explorer;
     const path = explorer.breadcrumb.concat(fileObj.name).join("/");
@@ -905,6 +909,7 @@ class BackendAIData extends LitElement {
       this.uploadFiles[index].complete = true;
       setTimeout(() => {
         this.uploadFiles.splice(this.uploadFiles.indexOf(fileObj), 1);
+        this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
       }, 1000);
     });
   }
