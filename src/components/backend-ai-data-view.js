@@ -55,6 +55,7 @@ class BackendAIData extends LitElement {
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
+    this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
   }
 
   static get properties() {
@@ -439,23 +440,7 @@ class BackendAIData extends LitElement {
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
 
-            <vaadin-grid-sort-column flex-grow="2" resizable header="Name" path="filename">
-              <template>
-                <template is="dom-if" if="[[_isDir(item)]]">
-                  <div class="indicator" on-click="_enqueueFolder" name="[[item.filename]]">
-                    <paper-icon-button class="fg controls-running" icon="folder-open"
-                                       name="[[item.filename]]"></paper-icon-button>
-                    [[item.filename]]
-                  </div>
-                </template>
-
-                <template is="dom-if" if="[[!_isDir(item)]]">
-                  <div class="indicator">
-                    <paper-icon-button class="fg controls-running" icon="insert-drive-file"></paper-icon-button>
-                    [[item.filename]]
-                  </div>
-                </template>
-              </template>
+            <vaadin-grid-sort-column flex-grow="2" resizable header="Name" path="filename" .renderer="${this._boundFileNameRenderer}">
             </vaadin-grid-sort-column>
 
             <vaadin-grid-column flex-grow="2" resizable>
@@ -540,9 +525,29 @@ class BackendAIData extends LitElement {
         ${!this._isDir(rowData.item) && this._isDownloadable(rowData.item) ?
         html`
             <paper-icon-button id="download-btn" class="tiny fg red" icon="vaadin:download"
-                               filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
+                               .filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
                                ` : html``}
        `, root
+    );
+  }
+
+  fileNameRenderer(root, column, rowData) {
+    render(
+      html`
+        ${this._isDir(rowData.item) ?
+        html`
+          <div class="indicator" @click="${(e) => this._enqueueFolder(e)}" name="${rowData.item.filename}">
+            <paper-icon-button class="fg controls-running" icon="folder-open"
+                               name="${rowData.item.filename}"></paper-icon-button>
+            ${rowData.item.filename}
+          </div>
+       ` : html`
+          <div class="indicator">
+            <paper-icon-button class="fg controls-running" icon="insert-drive-file"></paper-icon-button>
+            ${rowData.item.filename}
+          </div>
+       `}
+      `, root
     );
   }
 
@@ -750,13 +755,13 @@ class BackendAIData extends LitElement {
   }
 
   _enqueueFolder(e) {
-    const fn = e.target.name;
-    this.push('explorer.breadcrumb', fn);
+    const fn = e.target.getAttribute('name');
+    this.explorer.breadcrumb.push(fn);
     this._clearExplorer();
   }
 
   _gotoFolder(e) {
-    const dest = e.target.dest;
+    const dest = e.target.getAttribute('dest');
     let tempBreadcrumb = this.explorer.breadcrumb;
     const index = tempBreadcrumb.indexOf(dest);
 
@@ -880,6 +885,7 @@ class BackendAIData extends LitElement {
 
   _downloadFile(e) {
     let fn = e.target.filename;
+    console.log(fn);
     let path = this.explorer.breadcrumb.concat(fn).join("/");
     let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
     job.then(res => {
