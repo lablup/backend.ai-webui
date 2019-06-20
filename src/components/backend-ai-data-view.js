@@ -47,6 +47,7 @@ class BackendAIData extends LitElement {
     this.deleteFolderId = '';
     this.active = false;
     this.explorer = {};
+    this.explorerFiles = [];
     this.uploadFiles = [];
     this.vhost = 'local';
     this.vhosts = ['local'];
@@ -78,6 +79,9 @@ class BackendAIData extends LitElement {
       },
       explorer: {
         type: Object
+      },
+      explorerFiles: {
+        type: Array
       },
       uploadFiles: {
         type: Array
@@ -431,7 +435,7 @@ class BackendAIData extends LitElement {
             ` : html``}
           </div>
 
-          <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorer.files}">
+          <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
 
@@ -475,7 +479,7 @@ class BackendAIData extends LitElement {
                 </div>
               </template>
             </vaadin-grid-column>
-            <vaadin-grid-column resizable flex-grow="2" header="Actions" .renderer="${this._boundFileListControlRenderer}"></vaadin-grid-column>
+            <vaadin-grid-column resizable flex-grow="2" header="Actions" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
           </vaadin-grid>
         </wl-card>
       </wl-dialog>
@@ -726,8 +730,8 @@ class BackendAIData extends LitElement {
                  dialog = false) {
     let job = window.backendaiclient.vfolder.list_files(path, id);
     job.then(value => {
-      console.log(value);
       this.explorer.files = JSON.parse(value.files);
+      this.explorerFiles = this.explorer.files;
       if (dialog) {
         this.openDialog('folder-explorer-dialog');
       }
