@@ -313,10 +313,10 @@ class BackendAiSessionList extends LitElement {
   }
 
   _refreshJobData(refresh = false) {
-    this.shadowRoot.querySelector('#loading-indicator').show();
     if (this.active !== true) {
       return;
     }
+    this.shadowRoot.querySelector('#loading-indicator').show();
     let status = 'RUNNING';
     switch (this.condition) {
       case 'running':
@@ -387,6 +387,7 @@ class BackendAiSessionList extends LitElement {
         }, refreshTime);
       }
     }).catch(err => {
+      this.shadowRoot.querySelector('#loading-indicator').hide();
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#notification').text = err.message;
