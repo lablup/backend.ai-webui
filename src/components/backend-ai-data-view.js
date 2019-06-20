@@ -405,7 +405,7 @@ class BackendAIData extends LitElement {
 
           <div id="upload">
             <div id="dropzone"><p>drag</p></div>
-            <input type="file" id="fileInput" on-change="_uploadFileChange" hidden multiple>
+            <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
             ${this.uploadFiles.length ? html`
               <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
                            height-by-rows>
@@ -487,12 +487,14 @@ class BackendAIData extends LitElement {
 
   indexRenderer(root, column, rowData) {
     render(
+      // language=HTML
       html`${this._indexFrom1(rowData.index)}`, root
     );
   }
 
   controlFolderListRenderer(root, column, rowData) {
     render(
+      // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center"
              folder-id="${rowData.item.name}">
@@ -514,6 +516,7 @@ class BackendAIData extends LitElement {
 
   controlFileListRenderer(root, column, rowData) {
     render(
+      // language=HTML
       html`
         ${!this._isDir(rowData.item) && this._isDownloadable(rowData.item) ?
         html`
@@ -546,6 +549,7 @@ class BackendAIData extends LitElement {
 
   permissionViewRenderer(root, column, rowData) {
     render(
+      // language=HTML
       html`
         <div class="horizontal center-justified wrap layout">
         ${this._hasPermission(rowData.item, 'r') ? html`
@@ -563,6 +567,7 @@ class BackendAIData extends LitElement {
 
   createdTimeRenderer(root, column, rowData) {
     render(
+      // language=HTML
       html`
         <div class="layout vertical">
             <span>${this._humanReadableTime(rowData.item.ctime)}</span>
@@ -823,7 +828,7 @@ class BackendAIData extends LitElement {
           file.error = false;
           file.complete = false;
           temp.push(file);
-          this.push("uploadFiles", file);
+          this.uploadFiles.push(file);
         }
       }
 
@@ -844,6 +849,7 @@ class BackendAIData extends LitElement {
   }
 
   _uploadFileChange(e) {
+    console.log(e.target);
     const length = e.target.files.length;
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
@@ -856,7 +862,7 @@ class BackendAIData extends LitElement {
       file.progress = 0;
       file.error = false;
       file.complete = false;
-      this.push("uploadFiles", file);
+      this.uploadFiles.push(file);
     }
 
     for (let i = 0; i < length; i++) {
@@ -873,14 +879,13 @@ class BackendAIData extends LitElement {
     const path = explorer.breadcrumb.concat(fileObj.name).join("/");
     fd.append("src", fileObj, path);
     const index = this.uploadFiles.indexOf(fileObj);
-
+    console.log(fd);
     let job = window.backendaiclient.vfolder.uploadFormData(fd, explorer.id);
     job.then(resp => {
       this._clearExplorer();
       this.uploadFiles[index].complete = true;
-
       setTimeout(() => {
-        this.splice('uploadFiles', this.uploadFiles.indexOf(fileObj), 1);
+        this.uploadFiles.splice(this.uploadFiles.indexOf(fileObj), 1);
       }, 1000);
     });
   }
