@@ -54,6 +54,7 @@ class BackendAIData extends LitElement {
     this.vhosts = ['local'];
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
+    this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
   }
 
   static get properties() {
@@ -258,7 +259,7 @@ class BackendAIData extends LitElement {
           <vaadin-grid-column resizable>
             <template class="header">Folder Name</template>
             <template>
-              <div class="indicator" @click="${(e) => this._folderExplorer(e)}" folder-id="[[item.name]]">[[item.name]]</div>
+              <div class="indicator" @click="${(e) => this._folderExplorer(e)}" .folder-id="[[item.name]]">[[item.name]]</div>
             </template>
           </vaadin-grid-column>
 
@@ -279,26 +280,7 @@ class BackendAIData extends LitElement {
               </div>
             </template>
           </vaadin-grid-column>
-
-          <vaadin-grid-column width="85px" flex-grow="0" resizable>
-            <template class="header">Permission</template>
-            <template>
-              <div class="horizontal center-justified wrap layout">
-                <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
-                  <lablup-shields app="" color="green"
-                                  description="R" ui="flat"></lablup-shields>
-                </template>
-                <template is="dom-if" if="[[_hasPermission(item, 'w')]]">
-                  <lablup-shields app="" color="blue"
-                                  description="W" ui="flat"></lablup-shields>
-                </template>
-                <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
-                  <lablup-shields app="" color="red"
-                                  description="D" ui="flat"></lablup-shields>
-                </template>
-              </div>
-            </template>
-          </vaadin-grid-column>
+          <vaadin-grid-column width="85px" flex-grow="0" resizable header="Permission" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
           <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
         </vaadin-grid>
       </wl-card>
@@ -534,7 +516,7 @@ class BackendAIData extends LitElement {
                              @click="${(e) => this._infoFolder(e)}"></paper-icon-button>
           ${this._hasPermission(rowData.item, 'r') ? html`
             <paper-icon-button class="fg blue controls-running" icon="folder-open"
-                               @click="_folderExplorer" folder-id="${rowData.item.name}"></paper-icon-button>
+                               @click="_folderExplorer" .folder-id="${rowData.item.name}"></paper-icon-button>
                                ` : html``}
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
           ${this._hasPermission(rowData.item, 'd') ? html`
@@ -555,6 +537,23 @@ class BackendAIData extends LitElement {
                                filename="[[item.filename]]" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
                                ` : html``}
        `, root
+    );
+  }
+
+  permissionViewRenderer(root, column, rowData) {
+    render(
+      html`
+        <div class="horizontal center-justified wrap layout">
+        ${this._hasPermission(rowData.item, 'r') ? html`
+            <lablup-shields app="" color="green"
+                            description="R" ui="flat"></lablup-shields>` : html``}
+        ${this._hasPermission(rowData.item, 'w') ? html`
+            <lablup-shields app="" color="blue"
+                            description="W" ui="flat"></lablup-shields>` : html``}
+        ${this._hasPermission(rowData.item, 'd') ? html`
+            <lablup-shields app="" color="red"
+                            description="D" ui="flat"></lablup-shields>` : html``}
+        </div>`, root
     );
   }
 
@@ -666,9 +665,10 @@ class BackendAIData extends LitElement {
   }
 
   _getControlId(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
-    return controls.folderId;
+    const controller = e.target;
+    const controls = controller.closest('#controls');
+    const folderId = controls.getAttribute('folder-id');
+    return folderId;
   }
 
   _infoFolder(e) {
