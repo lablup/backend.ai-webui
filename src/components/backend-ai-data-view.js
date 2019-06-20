@@ -453,15 +453,11 @@ class BackendAIData extends LitElement {
           </div>
 
           <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorer.files}">
-            <vaadin-grid-column width="40px" flex-grow="0" resizable>
-              <template class="header">#</template>
+            <vaadin-grid-column width="40px" flex-grow="0" resizable header="#">
               <template>[[_indexFrom1(index)]]</template>
             </vaadin-grid-column>
 
-            <vaadin-grid-column flex-grow="2" resizable>
-              <template class="header">
-                <vaadin-grid-sorter path="filename">Name</vaadin-grid-sorter>
-              </template>
+            <vaadin-grid-sort-column flex-grow="2" resizable header="Name" path="filename">
               <template>
                 <template is="dom-if" if="[[_isDir(item)]]">
                   <div class="indicator" on-click="_enqueueFolder" name="[[item.filename]]">
@@ -478,7 +474,7 @@ class BackendAIData extends LitElement {
                   </div>
                 </template>
               </template>
-            </vaadin-grid-column>
+            </vaadin-grid-sort-column>
 
             <vaadin-grid-column flex-grow="2" resizable>
               <template class="header">
