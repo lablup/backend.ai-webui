@@ -127,6 +127,7 @@ class BackendAIData extends LitElement {
 
         span.indicator {
           width: 100px;
+          font-size: 10px;
         }
 
         wl-button.button {
@@ -301,13 +302,12 @@ class BackendAIData extends LitElement {
             <template class="header">id</template>
             <template>
               <div class="layout vertical">
-                <span>[[item.id]]</span>
+                <span class="indicator">[[item.id]]</span>
               </div>
             </template>
           </vaadin-grid-column>
 
-          <vaadin-grid-column width="85px" flex-grow="0" resizable>
-            <template class="header">Location</template>
+          <vaadin-grid-column width="85px" flex-grow="0" resizable header="Location">
             <template>
               <div class="layout vertical">
                 <span>[[item.host]]</span>
@@ -333,7 +333,8 @@ class BackendAIData extends LitElement {
             <paper-dropdown-menu id="add-folder-host" label="Host">
               <paper-listbox slot="dropdown-content" selected="0">
               ${this.vhosts.map(item => html`
-                    <paper-item id="${item}" label="${item}">${item}</paper-item>`)}
+                <paper-item id="${item}" label="${item}">${item}</paper-item>
+              `)}
               </paper-listbox>
             </paper-dropdown-menu>
             <br/>
