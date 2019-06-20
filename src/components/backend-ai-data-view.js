@@ -7,7 +7,6 @@ import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
 import '@polymer/polymer/lib/elements/dom-if.js';
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -41,7 +40,6 @@ class BackendAIData extends LitElement {
     super();
     // Resolve warning about scroll performance
     // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
-    setPassiveTouchGestures(true);
     this.folders = {};
     this.folderInfo = {};
     this.is_admin = false;
@@ -88,7 +86,7 @@ class BackendAIData extends LitElement {
       },
       vhosts: {
         type: Array
-      },
+      }
     };
   }
 
@@ -242,7 +240,7 @@ class BackendAIData extends LitElement {
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="horizontal center flex layout">
-          <span>Virtual Folders</span>
+          <span>Folders</span>
           <span class="flex"></span>
           <wl-button class="fg red" id="add-folder" outlined @click="${(e) => this._addFolderDialog(e)}">
             <wl-icon>add</wl-icon>
@@ -256,10 +254,9 @@ class BackendAIData extends LitElement {
             <template>[[_indexFrom1(index)]]</template>
           </vaadin-grid-column>
 
-          <vaadin-grid-column resizable>
-            <template class="header">Folder Name</template>
+          <vaadin-grid-column resizable header="Name">
             <template>
-              <div class="indicator" @click="${(e) => this._folderExplorer(e)}" .folder-id="[[item.name]]">[[item.name]]</div>
+              <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="[[item.name]]">[[item.name]]</div>
             </template>
           </vaadin-grid-column>
 
@@ -324,7 +321,7 @@ class BackendAIData extends LitElement {
           <h3 class="horizontal center layout">
             <span>Delete a virtual folder</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="_hideDialog">
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -346,34 +343,34 @@ class BackendAIData extends LitElement {
       <wl-dialog id="info-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card class="intro centered" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span>[[folderInfo.name]]</span>
+            <span>${this.folderInfo.name}</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="_hideDialog">
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
           <div role="listbox" style="margin: 0;">
             <vaadin-item>
               <div><strong>ID</strong></div>
-              <div secondary>[[folderInfo.id]]</div>
+              <div secondary>${this.folderInfo.id}</div>
             </vaadin-item>
             <vaadin-item>
               <div><strong>Location</strong></div>
-              <div secondary>[[folderInfo.host]]</div>
+              <div secondary>${this.folderInfo.host}</div>
             </vaadin-item>
             <vaadin-item>
               <div><strong>Number of Files</strong></div>
-              <div secondary>[[folderInfo.numFiles]]</div>
+              <div secondary>${this.folderInfo.numFiles}</div>
             </vaadin-item>
-            <template is="dom-if" if="[[folderInfo.is_owner]]">
+            ${this.folderInfo.is_owner ? html`
               <vaadin-item>
                 <div><strong>Ownership</strong></div>
                 <div secondary>You are the owner of this folder.</div>
               </vaadin-item>
-            </template>
+            ` : html``}
             <vaadin-item>
               <div><strong>Permission</strong></div>
-              <div secondary>[[folderInfo.permission]]</div>
+              <div secondary>${this.folderInfo.permission}</div>
             </vaadin-item>
           </div>
         </wl-card>
@@ -381,9 +378,9 @@ class BackendAIData extends LitElement {
       <wl-dialog id="folder-explorer-dialog">
         <wl-card>
           <h3 class="horizontal center layout" style="font-weight:bold">
-            <span>[[explorer.id]]</span>
+            <span>${this.explorer.id}</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="_hideDialog">
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -516,7 +513,7 @@ class BackendAIData extends LitElement {
                              @click="${(e) => this._infoFolder(e)}"></paper-icon-button>
           ${this._hasPermission(rowData.item, 'r') ? html`
             <paper-icon-button class="fg blue controls-running" icon="folder-open"
-                               @click="_folderExplorer" .folder-id="${rowData.item.name}"></paper-icon-button>
+                               @click="${(e) => this._folderExplorer(e)}" .folder-id="${rowData.item.name}"></paper-icon-button>
                                ` : html``}
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
           ${this._hasPermission(rowData.item, 'd') ? html`
@@ -651,7 +648,7 @@ class BackendAIData extends LitElement {
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
     let job = window.backendaiclient.vfolder.create(name, host);
     job.then((value) => {
-      this.shadowRoot.querySelector('#notification').text = 'Virtual folder is successfully created.';
+      this.shadowRoot.querySelector('#notification').text = 'Folder is successfully created.';
       this.shadowRoot.querySelector('#notification').show();
       this._refreshFolderList();
     }).catch(err => {
@@ -706,7 +703,7 @@ class BackendAIData extends LitElement {
   _deleteFolder(folderId) {
     let job = window.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
-      this.shadowRoot.querySelector('#notification').text = 'Virtual folder is successfully deleted.';
+      this.shadowRoot.querySelector('#notification').text = 'Folder is successfully deleted.';
       this.shadowRoot.querySelector('#notification').show();
       this._refreshFolderList();
     }).catch(err => {
@@ -724,7 +721,7 @@ class BackendAIData extends LitElement {
                  dialog = false) {
     let job = window.backendaiclient.vfolder.list_files(path, id);
     job.then(value => {
-      this.set('explorer.files', JSON.parse(value.files));
+      this.explorer.files = JSON.parse(value.files);
 
       if (dialog) {
         this.openDialog('folder-explorer-dialog');
@@ -734,14 +731,14 @@ class BackendAIData extends LitElement {
   }
 
   _folderExplorer(e) {
-    const folderId = e.target.folderId;
-
+    let folderId = this._getControlId(e);
+    console.log(folderId);
     let explorer = {
       id: folderId,
       breadcrumb: ['.'],
     };
 
-    this.set('explorer', explorer);
+    this.explorer = explorer;
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
   }
 
@@ -762,7 +759,7 @@ class BackendAIData extends LitElement {
 
     tempBreadcrumb = tempBreadcrumb.slice(0, index + 1);
 
-    this.set('explorer.breadcrumb', tempBreadcrumb);
+    this.explorer.breadcrumb = tempBreadcrumb;
     this._clearExplorer(tempBreadcrumb.join('/'), this.explorer.id, false);
   }
 
@@ -866,7 +863,7 @@ class BackendAIData extends LitElement {
     let job = window.backendaiclient.vfolder.uploadFormData(fd, explorer.id);
     job.then(resp => {
       this._clearExplorer();
-      this.set('uploadFiles.' + index + '.complete', true);
+      this.uploadFiles[index].complete = true;
 
       setTimeout(() => {
         this.splice('uploadFiles', this.uploadFiles.indexOf(fileObj), 1);

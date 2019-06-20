@@ -895,6 +895,11 @@ export const BackendAiStyles =
     wl-dialog > wl-card {
       --card-elevation: 0;
     }
+
+    wl-dialog > wl-card > section {
+      margin: 5px 20px;
+    }
+
     wl-dialog.dialog-ask {
       --dialog-min-width: 350px;
     }
