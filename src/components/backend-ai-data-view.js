@@ -243,7 +243,7 @@ class BackendAIData extends LitElement {
         <h3 class="horizontal center flex layout">
           <span>Virtual Folders</span>
           <span class="flex"></span>
-          <wl-button class="fg red" id="add-folder" outlined>
+          <wl-button class="fg red" id="add-folder" outlined @click="${(e) => this._addFolderDialog(e)}">
             <wl-icon>add</wl-icon>
             New folder
           </wl-button>
@@ -330,7 +330,7 @@ class BackendAIData extends LitElement {
               </paper-listbox>
             </paper-dropdown-menu>
             <br/>
-            <wl-button class="blue button" type="button" id="add-button" outlined>
+            <wl-button class="blue button" type="button" id="add-button" outlined @click="${(e) => this._addFolder(e)}">
               <wl-icon>rowing</wl-icon>
               Create
             </wl-button>
@@ -353,7 +353,7 @@ class BackendAIData extends LitElement {
                            pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
               <br/>
-              <wl-button class="blue button" type="submit" id="delete-button" outlined>
+              <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${(e) => this._deleteFolderWithCheck(e)}">
                 <wl-icon>close</wl-icon>
                 Delete
               </wl-button>
@@ -560,15 +560,6 @@ class BackendAIData extends LitElement {
 
   firstUpdated() {
     this._addEventListenerDropZone();
-    document.addEventListener('backend-ai-connected', () => {
-      this.is_admin = window.backendaiclient.is_admin;
-      this.authenticated = true;
-      this._refreshFolderList();
-    }, true);
-    this.shadowRoot.querySelector('#add-folder').addEventListener('tap', this._addFolderDialog.bind(this));
-    this.shadowRoot.querySelector('#add-button').addEventListener('tap', this._addFolder.bind(this));
-    this.shadowRoot.querySelector('#delete-button').addEventListener('tap', this._deleteFolderWithCheck.bind(this));
-
     this._clearExplorer = this._clearExplorer.bind(this);
     this._mkdir = this._mkdir.bind(this);
   }
