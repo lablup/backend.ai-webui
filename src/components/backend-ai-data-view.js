@@ -332,9 +332,8 @@ class BackendAIData extends LitElement {
                          error-message="Allows letters, numbers and -_." auto-validate></paper-input>
             <paper-dropdown-menu id="add-folder-host" label="Host">
               <paper-listbox slot="dropdown-content" selected="0">
-                <template is="dom-repeat" items="[[ vhosts ]]">
-                  <paper-item id="[[ item ]]" label="[[ item ]]">[[ item ]]</paper-item>
-                </template>
+              ${this.vhosts.map(item => html`
+                    <paper-item id="${item}" label="${item}">${item}</paper-item>`)}
               </paper-listbox>
             </paper-dropdown-menu>
             <br/>
