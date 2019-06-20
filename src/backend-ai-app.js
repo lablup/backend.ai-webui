@@ -47,7 +47,7 @@ const loadPage = (page) => (dispatch) => {
       import('./components/backend-ai-experiment-view.js');
       break;
     case 'data':
-      import('./backend-ai-data-view.js');
+      import('./components/backend-ai-data-view.js');
       break;
     case 'agent':
       import('./backend-ai-agent-view.js');

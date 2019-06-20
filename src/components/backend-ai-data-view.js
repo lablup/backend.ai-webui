@@ -4,6 +4,8 @@
  */
 
 import {css, html, LitElement} from "lit-element";
+import {render} from 'lit-html';
+
 import '@polymer/polymer/lib/elements/dom-if.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/iron-flex-layout/iron-flex-layout';
@@ -18,6 +20,7 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
 import '@vaadin/vaadin-item/vaadin-item.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js';
 
@@ -49,6 +52,8 @@ class BackendAIData extends LitElement {
     this.uploadFiles = [];
     this.vhost = 'local';
     this.vhosts = ['local'];
+    this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
+    this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
   }
 
   static get properties() {
@@ -86,12 +91,13 @@ class BackendAIData extends LitElement {
     };
   }
 
-  static get observers() {
-    return [
-      '_routeChanged(route.*)',
-      '_viewChanged(routeData.view)',
-      '_menuChanged(active)'
-    ]
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this._menuChanged(true);
+    } else {
+      this._menuChanged(false);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
   }
 
   static get styles() {
@@ -293,26 +299,7 @@ class BackendAIData extends LitElement {
               </div>
             </template>
           </vaadin-grid-column>
-          <vaadin-grid-column resizable>
-            <template class="header">Control</template>
-            <template>
-              <div id="controls" class="layout horizontal flex center"
-                   folder-id="[[item.name]]">
-                <paper-icon-button class="fg green controls-running" icon="vaadin:info-circle-o"
-                                   @click="${(e) => this._infoFolder(e)}"></paper-icon-button>
-                <template is="dom-if" if="[[_hasPermission(item, 'r')]]">
-                  <paper-icon-button class="fg blue controls-running" icon="folder-open"
-                                     @click="_folderExplorer" folder-id="[[item.name]]"></paper-icon-button>
-                </template>
-                <template is="dom-if" if="[[_hasPermission(item, 'w')]]">
-                </template>
-                <template is="dom-if" if="[[_hasPermission(item, 'd')]]">
-                  <paper-icon-button class="fg red controls-running" icon="delete"
-                                     @click="_deleteFolderDialog"></paper-icon-button>
-                </template>
-              </div>
-            </template>
-          </vaadin-grid-column>
+          <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
         </vaadin-grid>
       </wl-card>
       <wl-card>
@@ -328,7 +315,7 @@ class BackendAIData extends LitElement {
           <h3 class="horizontal center layout">
             <span>Create a new virtual folder</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="_hideDialog">
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -465,7 +452,7 @@ class BackendAIData extends LitElement {
             </template>
           </div>
 
-          <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" items="[[explorer.files]]">
+          <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorer.files}">
             <vaadin-grid-column width="40px" flex-grow="0" resizable>
               <template class="header">#</template>
               <template>[[_indexFrom1(index)]]</template>
@@ -514,18 +501,7 @@ class BackendAIData extends LitElement {
                 </div>
               </template>
             </vaadin-grid-column>
-
-            <vaadin-grid-column flex-grow="2" resizable>
-              <template class="header">Actions</template>
-              <template>
-                <template is="dom-if" if="[[!_isDir(item)]]">
-                  <template is="dom-if" if="[[_isDownloadable(item)]]">
-                    <paper-icon-button id="download-btn" class="tiny fg red" icon="vaadin:download"
-                                       filename="[[item.filename]]" @click="_downloadFile"></paper-icon-button>
-                  </template>
-                </template>
-              </template>
-            </vaadin-grid-column>
+            <vaadin-grid-column resizable flex-grow="2" header="Actions" .renderer="${this._boundFileListControlRenderer}"></vaadin-grid-column>
           </vaadin-grid>
         </wl-card>
       </wl-dialog>
@@ -535,7 +511,7 @@ class BackendAIData extends LitElement {
           <h3 class="horizontal center layout">
             <span>Create a new folder</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="_hideDialog">
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -543,7 +519,7 @@ class BackendAIData extends LitElement {
             <paper-input id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                          error-message="Allows letters, numbers and -_." auto-validate></paper-input>
             <br/>
-            <wl-button class="blue button" type="submit" id="mkdir-btn" on-click="_mkdir" outlined>
+            <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
               <wl-icon>rowing</wl-icon>
               Create
             </wl-button>
@@ -551,6 +527,39 @@ class BackendAIData extends LitElement {
         </wl-card>
       </wl-dialog>
     `;
+  }
+
+  controlFolderListRenderer(root, column, rowData) {
+    render(
+      html`
+        <div id="controls" class="layout horizontal flex center"
+             folder-id="${rowData.item.name}">
+          <paper-icon-button class="fg green controls-running" icon="vaadin:info-circle-o"
+                             @click="${(e) => this._infoFolder(e)}"></paper-icon-button>
+          ${this._hasPermission(rowData.item, 'r') ? html`
+            <paper-icon-button class="fg blue controls-running" icon="folder-open"
+                               @click="_folderExplorer" folder-id="${rowData.item.name}"></paper-icon-button>
+                               ` : html``}
+          ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
+          ${this._hasPermission(rowData.item, 'd') ? html`
+              <paper-icon-button class="fg red controls-running" icon="delete"
+                                 @click="${(e) => this._deleteFolderDialog(e)}"></paper-icon-button>
+          ` : html``}
+          </div>
+       `, root
+    );
+  }
+
+  controlFileListRenderer(root, column, rowData) {
+    render(
+      html`
+        ${!this._isDir(rowData.item) && this._isDownloadable(rowData.item) ?
+        html`
+            <paper-icon-button id="download-btn" class="tiny fg red" icon="vaadin:download"
+                               filename="[[item.filename]]" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
+                               ` : html``}
+       `, root
+    );
   }
 
   firstUpdated() {
@@ -570,8 +579,6 @@ class BackendAIData extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    afterNextRender(this, function () {
-    });
   }
 
   shouldUpdate() {
@@ -591,21 +598,21 @@ class BackendAIData extends LitElement {
     });
   }
 
-  _menuChanged(active) {
-    if (!active) {
-
-    } else {
-      if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-        document.addEventListener('backend-ai-connected', () => {
-          this.is_admin = window.backendaiclient.is_admin;
-          this.authenticated = true;
-          this._refreshFolderList();
-        }, true);
-      } else {
+  async _menuChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
         this.is_admin = window.backendaiclient.is_admin;
         this.authenticated = true;
         this._refreshFolderList();
-      }
+      }, true);
+    } else {
+      this.is_admin = window.backendaiclient.is_admin;
+      this.authenticated = true;
+      this._refreshFolderList();
     }
   }
 
@@ -788,9 +795,8 @@ class BackendAIData extends LitElement {
 
   /* File upload and download */
   _addEventListenerDropZone() {
-    const dndZoneEl = this.shadowRoot.querySelector('#folder-explorer-dialog';
-  ]
-    const dndZonePlaceholderEl = this.$.dropzone;
+    const dndZoneEl = this.shadowRoot.querySelector('#folder-explorer-dialog');
+    const dndZonePlaceholderEl = this.shadowRoot.querySelector('#dropzone');
 
     dndZonePlaceholderEl.addEventListener('dragleave', () => {
       dndZonePlaceholderEl.style.display = "none";
@@ -831,7 +837,7 @@ class BackendAIData extends LitElement {
   }
 
   _uploadFileBtnClick(e) {
-    const elem = this.$.fileInput;
+    const elem = this.shadowRoot.querySelector('#fileInput');
     if (elem && document.createEvent) {  // sanity check
       const evt = document.createEvent("MouseEvents");
       evt.initEvent("click", true, false);
@@ -860,7 +866,7 @@ class BackendAIData extends LitElement {
       this._clearExplorer();
     }
 
-    this.$.fileInput.value = '';
+    this.shadowRoot.querySelector('#fileInput').value = '';
   }
 
   fileUpload(fileObj) {
@@ -911,7 +917,7 @@ class BackendAIData extends LitElement {
   _isDownloadable(file) {
     return file.size < 209715200
   }
-  
+
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
