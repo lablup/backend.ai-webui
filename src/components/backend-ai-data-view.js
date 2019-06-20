@@ -33,7 +33,7 @@ import '../lablup-activity-panel.js';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment, IronPositioning} from "../layout/iron-flex-layout-classes";
 
 class BackendAIData extends LitElement {
   constructor() {
@@ -94,15 +94,6 @@ class BackendAIData extends LitElement {
         type: Array
       }
     };
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this._menuChanged(true);
-    } else {
-      this._menuChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   static get styles() {
@@ -237,6 +228,15 @@ class BackendAIData extends LitElement {
           color: var(--paper-orange-900);
         }
       `];
+  }
+
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this._menuChanged(true);
+    } else {
+      this._menuChanged(false);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
   }
 
   render() {
