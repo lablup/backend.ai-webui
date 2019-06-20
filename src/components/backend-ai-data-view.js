@@ -536,7 +536,7 @@ class BackendAIData extends LitElement {
         ${!this._isDir(rowData.item) && this._isDownloadable(rowData.item) ?
         html`
             <paper-icon-button id="download-btn" class="tiny fg red" icon="vaadin:download"
-                               filename="[[item.filename]]" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
+                               filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
                                ` : html``}
        `, root
     );
@@ -556,7 +556,7 @@ class BackendAIData extends LitElement {
             <lablup-shields app="" color="red"
                             description="D" ui="flat"></lablup-shields>` : html``}
         </div>`, root
-    );
+    )
   }
 
   firstUpdated() {
