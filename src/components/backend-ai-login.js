@@ -180,7 +180,6 @@ class BackendAiLogin extends LitElement {
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
       this.client.login().then(response => {
-        console.log(response);
         if (response.authenticated === false) {
           throw {"message": "Authentication failed. Check information and manager status."};
         } else {
