@@ -123,7 +123,9 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
     this.resources = new Resources(this);
-    this.getManagerVersion();
+    if (this._config.connectionMode === 'API') {
+      this.getManagerVersion();
+    }
   }
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
