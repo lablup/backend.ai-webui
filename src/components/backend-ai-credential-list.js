@@ -26,8 +26,6 @@ import './lablup-notification.js';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
-
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -86,6 +84,7 @@ class BackendAICredentialList extends LitElement {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
+    console.log(this.notification);
   }
 
   connectedCallback() {
@@ -184,12 +183,13 @@ class BackendAICredentialList extends LitElement {
         }
       });
       this.keypairs = keypairs;
+      console.log(this.keypairs);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -203,8 +203,8 @@ class BackendAICredentialList extends LitElement {
       this.shadowRoot.querySelector('#keypair-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     }
   }
@@ -328,9 +328,6 @@ class BackendAICredentialList extends LitElement {
   }
 
   _hideDialog(e) {
-    console.log(this);
-    console.log(this.notification);
-    this.notification.text = "hi all";
     this.notification.show();
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');

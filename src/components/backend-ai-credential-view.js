@@ -88,6 +88,9 @@ class BackendAICredentialView extends LitElement {
       },
       _status: {
         type: Boolean
+      },
+      notification: {
+        type: Object
       }
     }
   }
@@ -122,6 +125,7 @@ class BackendAICredentialView extends LitElement {
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
     if (this.shadowRoot.querySelector('#add-keypair')) {
       this.shadowRoot.querySelector('#add-keypair').addEventListener('tap', this._launchKeyPairDialog.bind(this));
     }
@@ -189,8 +193,8 @@ class BackendAICredentialView extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -230,7 +234,6 @@ class BackendAICredentialView extends LitElement {
     } else {
       user_id = window.backendaiclient.email;
     }
-    console.log(user_id);
     let resource_policy = this.shadowRoot.querySelector('#resource-policy').value;
     let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
 
@@ -238,15 +241,15 @@ class BackendAICredentialView extends LitElement {
     window.backendaiclient.keypair.add(user_id, is_active, is_admin,
       resource_policy, rate_limit).then(response => {
       this.shadowRoot.querySelector('#new-keypair-dialog').hide();
-      this.shadowRoot.querySelector('#notification').text = "Keypair successfully created.";
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = "Keypair successfully created.";
+      this.notification.show();
       this.shadowRoot.querySelector('#active-credential-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-keypair-dialog').hide();
-        this.shadowRoot.querySelector('#notification').text = err.message;
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -307,23 +310,23 @@ class BackendAICredentialView extends LitElement {
       }
       name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     } else {
-      this.$.notification.text = "Please input policy name";
-      this.$.notification.show();
+      this.notification.text = "Please input policy name";
+      this.notification.show();
       return;
     }
     let input = this._readResourcePolicyInput();
     console.log(input);
     window.backendaiclient.resourcePolicy.add(name, input).then(response => {
       this.shadowRoot.querySelector('#new-policy-dialog').close();
-      this.$.notification.text = "Resource policy successfully created.";
-      this.$.notification.show();
+      this.notification.text = "Resource policy successfully created.";
+      this.notification.show();
       this.shadowRoot.querySelector('#resource-policy-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -336,15 +339,15 @@ class BackendAICredentialView extends LitElement {
 
     window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#new-policy-dialog').close();
-      this.$.notification.text = "Resource policy successfully updated.";
-      this.$.notification.show();
+      this.notification.text = "Resource policy successfully updated.";
+      this.notification.show();
       this.shadowRoot.querySelector('#resource-policy-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -468,9 +471,9 @@ class BackendAICredentialView extends LitElement {
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="credential-lists" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
+            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
-            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">Users</wl-tab>
+            <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
           <wl-button class="fg green" id="add-keypair" outlined>
@@ -478,7 +481,7 @@ class BackendAICredentialView extends LitElement {
             Add credential
           </wl-button>
         </h3>
-        <wl-card id="credential-lists" class="tab-content" style="display:none;">
+        <wl-card id="credential-lists" class="tab-content">
           <wl-expansion name="credential-group" open>
             <h4 slot="title">Active</h4>
             <span slot="description">
@@ -507,7 +510,7 @@ class BackendAICredentialView extends LitElement {
             <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
           </div>
         </wl-card>
-        <wl-card id="user-lists" class="admin item tab-content">
+        <wl-card id="user-lists" class="admin item tab-content" style="display:none;">
           <h4 class="horizontal flex center center-justified layout">
             <span>Users</span>
             <span class="flex"></span>
