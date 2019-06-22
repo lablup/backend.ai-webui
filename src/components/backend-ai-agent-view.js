@@ -4,15 +4,6 @@
  */
 
 import {css, html, LitElement} from "lit-element";
-import '@polymer/polymer/lib/elements/dom-if.js';
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-image/iron-image';
-import '@polymer/iron-flex-layout/iron-flex-layout';
 import 'weightless/card';
 
 import './backend-ai-agent-list.js';
@@ -44,7 +35,6 @@ class BackendAIAgentView extends LitElement {
   constructor() {
     super();
     this.active = false;
-    setPassiveTouchGestures(true);
   }
 
   firstUpdated() {
