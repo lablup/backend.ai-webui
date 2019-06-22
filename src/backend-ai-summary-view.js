@@ -3,9 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html, PolymerElement} from '@polymer/polymer';
+import {css, html, LitElement} from "lit-element";
 import '@polymer/polymer/lib/elements/dom-if.js';
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';
@@ -22,74 +21,121 @@ import '@polymer/paper-progress/paper-progress';
 import 'weightless/card';
 
 import './components/lablup-notification.js';
-import './backend-ai-styles.js';
 import './components/lablup-activity-panel.js';
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
-class BackendAISummary extends PolymerElement {
+import {BackendAiStyles} from "./components/backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment, IronPositioning} from "./layout/iron-flex-layout-classes";
+
+class BackendAISummary extends LitElement {
+  constructor() {
+    super();
+    this.condition = 'running';
+    this.jobs = {};
+    this.sessions = {};
+    this.agents = 0;
+    this.is_superadmin = false;
+    this.resources = {};
+    this.authenticated = false;
+    this.active = false;
+    this.manager_version = '';
+  }
+
   static get properties() {
     return {
       condition: {
-        type: String,
-        default: 'running'  // finished, running, archived
+        type: String
       },
       jobs: {
-        type: Object,
-        value: {}
+        type: Object
       },
       sessions: {
-        type: Object,
-        value: {}
+        type: Object
       },
       agents: {
-        type: Number,
-        value: 0
+        type: Number
       },
       is_superadmin: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       resources: {
-        type: Object,
-        value: {}
+        type: Object
       },
       authenticated: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       active: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       manager_version: {
-        type: String,
-        value: ''
-      }
+        type: String
+      },
+      cpu_total: {type: Number},
+      cpu_used: {type: Number},
+      cpu_percent: {type: Number},
+      cpu_total_percent: {type: Number},
+      cpu_total_usage_ratio: {type: Number},
+      cpu_current_usage_ratio: {type: Number},
+      mem_total: {type: Number},
+      mem_used: {type: Number},
+      mem_allocated: {type: Number},
+      mem_total_usage_ratio: {type: Number},
+      mem_current_usage_ratio: {type: Number},
+      mem_current_usage_percent: {type: Number},
+      gpu_total: {type: Number},
+      gpu_used: {type: Number},
+      vgpu_total: {type: Number},
+      vgpu_used: {type: Number}
     };
   }
 
-  constructor() {
-    super();
-    // Resolve warning about scroll performance
-    // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
-    setPassiveTouchGestures(true);
-  }
-
-  ready() {
-    super.ready();
-  }
-
-  static get observers() {
+  static get styles() {
     return [
-      '_refreshHealthPanel(window.backendaiclient)',
-      '_menuChanged(active)'
-    ]
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronPositioning,
+      // language=CSS
+      css`
+        ul {
+          padding-left: 0;
+        }
+
+        ul li {
+          list-style: none;
+          font-size: 13px;
+        }
+
+        span.indicator {
+          width: 100px;
+        }
+
+        div.big.indicator {
+          font-size: 48px;
+        }
+
+        vaadin-progress-bar {
+          width: 190px;
+          height: 10px;
+        }
+
+        paper-progress {
+          width: 190px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677EB;
+          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }`];
+  }
+
+  firstupdated() {
+
   }
 
   connectedCallback() {
     super.connectedCallback();
-    afterNextRender(this, function () {
-    });
   }
 
   shouldUpdate() {
@@ -123,7 +169,7 @@ class BackendAISummary extends PolymerElement {
 
       this.jobs = response;
       this.sessions = response.compute_sessions;
-      if (this.active == true) {
+      if (this.active === true) {
         setTimeout(() => {
           this._refreshSessionInformation()
         }, 15000);
@@ -131,8 +177,8 @@ class BackendAISummary extends PolymerElement {
     }).catch(err => {
       this.jobs = [];
       this.sessions = [];
-      this.$.notification.text = 'Couldn\'t connect to manager.';
-      this.$.notification.show();
+      this.shadowRoot.querySelector('#notification').text = 'Couldn\'t connect to manager.';
+      this.shadowRoot.querySelector('#notification').show();
     });
   }
 
@@ -177,8 +223,8 @@ class BackendAISummary extends PolymerElement {
       }
     }).catch(err => {
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
@@ -237,11 +283,20 @@ class BackendAISummary extends PolymerElement {
     }
   }
 
-  _menuChanged(active) {
-    if (!active) {
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this._menuChanged(true);
+    } else {
+      this._menuChanged(false);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  async _menuChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
       return;
     }
-
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         console.log('queueing');
@@ -251,7 +306,7 @@ class BackendAISummary extends PolymerElement {
         this._refreshHealthPanel();
       }, true);
     } else {
-        console.log('running');
+      console.log('running');
       this._init_resource_values();
       this.is_superadmin = window.backendaiclient.is_superadmin;
       this.authenticated = true;
@@ -272,43 +327,9 @@ class BackendAISummary extends PolymerElement {
     return num.toString().replace(regexp, ',');
   }
 
-  static get template() {
+  render() {
     // language=HTML
     return html`
-      <style is="custom-style" include="backend-ai-styles iron-flex iron-flex-alignment iron-positioning">
-        ul {
-          padding-left: 0;
-        }
-
-        ul li {
-          list-style: none;
-          font-size: 13px;
-        }
-
-        span.indicator {
-          width: 100px;
-        }
-
-        div.big.indicator {
-          font-size: 48px;
-        }
-
-        vaadin-progress-bar {
-          width: 190px;
-          height: 10px;
-        }
-
-        paper-progress {
-          width: 190px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677EB;
-          --paper-progress-secondary-color: #98BE5A;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
-      </style>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
@@ -317,14 +338,13 @@ class BackendAISummary extends PolymerElement {
           <lablup-activity-panel title="Health" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <template is="dom-if" if="{{is_superadmin}}">
+                ${this.is_superadmin ? html`
                   <div class="vertical layout center">
-                    <div class="big indicator">[[agents]]</div>
+                    <div class="big indicator">${this.agents}</div>
                     <span>Connected nodes</span>
-                  </div>
-                </template>
+                  </div>` : html``}
                 <div class="vertical layout center">
-                  <div class="big indicator">[[_countObject(sessions)]]</div>
+                  <div class="big indicator">${this._countObject(this.sessions)}</div>
                   <span>Active sessions</span>
                 </div>
               </div>
@@ -333,9 +353,9 @@ class BackendAISummary extends PolymerElement {
 
           <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
-              <template is="dom-if" if="{{is_superadmin}}">
+                ${this.is_superadmin ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                  Manager version : [[manager_version]]
+                  Manager version : ${this.manager_version}
                 </div>
 
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
@@ -344,12 +364,12 @@ class BackendAISummary extends PolymerElement {
                     <span>CPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
-                    <paper-progress id="cpu-usage-bar" value="[[cpu_current_usage_ratio]]"
-                                    secondary-progress="[[cpu_total_usage_ratio]]"></paper-progress>
-                    <div><span class="progress-value"> [[_addComma(cpu_used)]]</span>/[[_addComma(cpu_total)]]
+                    <paper-progress id="cpu-usage-bar" value="${this.cpu_current_usage_ratio}"
+                                    secondary-progress="${this.cpu_total_usage_ratio}"></paper-progress>
+                    <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
                       Cores reserved.
                     </div>
-                    <div>Using <span class="progress-value"> [[cpu_total_percent]]</span>% (util. [[cpu_percent]] %)
+                    <div>Using <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
                     </div>
                   </div>
                 </div>
@@ -359,77 +379,69 @@ class BackendAISummary extends PolymerElement {
                     <span>RAM</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
-                    <paper-progress id="mem-usage-bar" value="[[mem_current_usage_ratio]]"
-                                    secondary-progress="[[mem_total_usage_ratio]]"></paper-progress>
-                    <div><span class="progress-value"> [[_addComma(mem_allocated)]]</span>/[[_addComma(mem_total)]] GB
+                    <paper-progress id="mem-usage-bar" value="${this.mem_current_usage_ratio}"
+                                    secondary-progress="${this.mem_total_usage_ratio}"></paper-progress>
+                    <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
                       reserved.
                     </div>
-                    <div>Using <span class="progress-value"> [[_addComma(mem_used)]]</span> GB
-                      ([[mem_current_usage_percent]] %)
+                    <div>Using <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
+                      (${this.mem_current_usage_percent} %)
                     </div>
                   </div>
                 </div>
-                <template is="dom-if" if="[[gpu_total]]">
+                ${this.gpu_total ? html`
                   <div class="layout horizontal center flex" style="margin-bottom:5px;">
                     <div class="layout vertical start center-justified">
                       <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                       <span>GPU</span>
                     </div>
                     <div class="layout vertical start" style="padding-left:15px;">
-                      <vaadin-progress-bar id="gpu-bar" value="[[gpu_used]]" max="[[gpu_total]]"></vaadin-progress-bar>
-                      <div><span class="progress-value"> [[gpu_used]]</span>/[[gpu_total]] GPUs</div>
+                      <vaadin-progress-bar id="gpu-bar" .value="${this.gpu_used}" .max="${this.gpu_total}"></vaadin-progress-bar>
+                      <div><span class="progress-value"> ${this.gpu_used}</span>/${this.gpu_total} GPUs</div>
                     </div>
-                  </div>
-                </template>
-                <template is="dom-if" if="[[vgpu_total]]">
+                  </div>` : html``}
+                ${this.vgpu_total ? html`
                   <div class="layout horizontal center flex" style="margin-bottom:5px;">
                     <div class="layout vertical start center-justified">
                       <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                       <span>GPU</span>
                     </div>
                     <div class="layout vertical start" style="padding-left:15px;">
-                      <vaadin-progress-bar id="vgpu-bar" value="[[vgpu_used]]"
-                                           max="[[vgpu_total]]"></vaadin-progress-bar>
-                      <div><span class="progress-value"> [[vgpu_used]]</span>/[[vgpu_total]] vGPUs</div>
+                      <vaadin-progress-bar id="vgpu-bar" value="${this.vgpu_used}"
+                                           max="${this.vgpu_total}"></vaadin-progress-bar>
+                      <div><span class="progress-value"> ${this.vgpu_used}</span>/${this.vgpu_total} vGPUs</div>
                     </div>
-                  </div>
-                </template>
-                <template is="dom-if" if="[[!vgpu_total]]">
-                  <div>GPU disabled on this cluster.</div>
-                </template>
-              </template>
-              <template is="dom-if" if="{{!is_superadmin}}">
+                  </div>` : html`
+                  <div>GPU disabled on this cluster.</div>`}
+                ` : html`
                 <ul>
                   <li>Login with administrator privileges required.</li>
-                </ul>
-              </template>
+                </ul>`}
             </div>
           </lablup-activity-panel>
         </div>
         <h3 class="plastic-material-title">Actions</h3>
         <div class="horizontal wrap layout">
-          <template is="dom-if" if="{{is_superadmin}}">
-            <lablup-activity-panel title="Keypair" elevation="1">
-              <div slot="message">
-                <ul>
-                  <li><a href="/credential">Create a new key pair</a></li>
-                  <li><a href="/credential">Maintain keypairs</a></li>
-                </ul>
-              </div>
-            </lablup-activity-panel>
-          </template>
-          <template is="dom-if" if="{{!authenticated}}">
-            <lablup-activity-panel title="No action" elevation="1">
-              <div slot="message">
-                <ul>
-                  <li>You need an administrator privileges.</li>
-                </ul>
-              </div>
-            </lablup-activity-panel>
-          </template>
-        </div>
-      </wl-card>
-    `;
+             ${this.is_superadmin ? html`
+              <lablup-activity-panel title="Keypair" elevation="1">
+                <div slot="message">
+                  <ul>
+                    <li><a href="/credential">Create a new key pair</a></li>
+                    <li><a href="/credential">Maintain keypairs</a></li>
+                  </ul>
+                </div>
+              </lablup-activity-panel>` : html``}
+              ${!this.authenticated ? html`
+              <lablup-activity-panel title="No action" elevation="1">
+                <div slot="message">
+                  <ul>
+                    <li>You need an administrator privileges.</li>
+                  </ul>
+                </div>
+              </lablup-activity-panel>` : html``}
+          </div>
+        </wl-card>
+`;
   }
 }
 
