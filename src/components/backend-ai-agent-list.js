@@ -4,13 +4,13 @@
  */
 
 import {css, html, LitElement} from "lit-element";
+import {render} from 'lit-html';
 
-import '@polymer/polymer/lib/elements/dom-if.js';
-import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
+import '@polymer/iron-icons/av-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '../plastics/lablup-shields/lablup-shields.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
@@ -18,9 +18,8 @@ import '@polymer/paper-progress/paper-progress';
 
 import './lablup-notification.js';
 
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment} from "../layout/iron-flex-layout-classes";
 
 
 class BackendAIAgentList extends LitElement {
@@ -31,8 +30,11 @@ class BackendAIAgentList extends LitElement {
   constructor() {
     super();
     this.condition = 'running';
-    this.jobs = {};
     this.active = false;
+    this.agents = [];
+    this._boundContactDateRenderer = this.contactDateRenderer.bind(this);
+    this._boundStatusRenderer = this.statusRenderer.bind(this);
+    this._boundControlRenderer = this.controlRenderer.bind(this);
   }
 
   static get properties() {
@@ -40,11 +42,11 @@ class BackendAIAgentList extends LitElement {
       condition: {
         type: String  // finished, running, archived
       },
-      jobs: {
-        type: Object
-      },
       active: {
         type: Boolean
+      },
+      agents: {
+        type: Array
       }
     };
   }
@@ -193,7 +195,6 @@ class BackendAIAgentList extends LitElement {
   _humanReadableDate(start) {
     var startDate = new Date(start);
     return startDate.toLocaleString('ko-KR');
-
   }
 
   _indexFrom1(index) {
@@ -236,6 +237,7 @@ class BackendAIAgentList extends LitElement {
           width: 16px;
           height: 16px;
           min-width: 16px;
+
           min-height: 16px;
           padding: 0;
         }
@@ -275,15 +277,59 @@ class BackendAIAgentList extends LitElement {
       `];
   }
 
+  _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
+  }
+
+  contactDateRenderer(root, column, rowData) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout vertical">
+            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
+        </div>`, root
+    );
+  }
+
+  statusRenderer(root, column, rowData) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal justified wrap">
+          <lablup-shields app="" color="${this._heartbeatColor(rowData.item.status)}"
+                          description="${this._heartbeatStatus(rowData.item.status)}" ui="flat"></lablup-shields>
+        </div>`, root
+    );
+  }
+
+  controlRenderer(root, column, rowData) {
+    render(
+      // language=HTML
+      html`
+        <div id="controls" class="layout horizontal flex center" kernel-id="${rowData.item.sess_id}">
+          <paper-icon-button disabled class="fg" icon="assignment"></paper-icon-button>
+          ${this._isRunning() ? html`
+            <paper-icon-button disabled class="fg controls-running" icon="build"></paper-icon-button>
+            <paper-icon-button disabled class="fg controls-running" icon="alarm-add"></paper-icon-button>
+            <paper-icon-button disabled class="fg controls-running" icon="av:pause"></paper-icon-button>
+            <paper-icon-button disabled class="fg red controls-running" icon="delete"></paper-icon-button>          
+          ` : html``}
+    </div>`, root
+    );
+  }
+
   render() {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable header="#">
-          <template>[[_indexFrom1(index)]]</template>
-        </vaadin-grid-column>
-
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable>
           <template class="header">Endpoint</template>
           <template>
@@ -292,13 +338,8 @@ class BackendAIAgentList extends LitElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
+        <vaadin-grid-column resizable .renderer="${this._boundContactDateRenderer}">
           <template class="header">Starts</template>
-          <template>
-            <div class="layout vertical">
-              <span>[[_humanReadableDate(item.first_contact)]]</span>
-            </div>
-          </template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
@@ -361,35 +402,8 @@ class BackendAIAgentList extends LitElement {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable>
-          <template class="header">Status</template>
-          <template>
-            <div class="layout horizontal justified wrap">
-              <lablup-shields app="" color="[[_heartbeatColor(item.status)]]"
-                              description="[[_heartbeatStatus(item.status)]]" ui="flat"></lablup-shields>
-            </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">Control</template>
-          <template>
-            <div id="controls" class="layout horizontal flex center"
-                 kernel-id="[[item.sess_id]]">
-              <paper-icon-button disabled class="fg"
-                                 icon="assignment"></paper-icon-button>
-              <template is="dom-if" if="[[_isRunning()]]">
-                <paper-icon-button disabled class="fg controls-running"
-                                   icon="build"></paper-icon-button>
-                <paper-icon-button disabled class="fg controls-running"
-                                   icon="alarm-add"></paper-icon-button>
-                <paper-icon-button disabled class="fg controls-running"
-                                   icon="av:pause"></paper-icon-button>
-                <paper-icon-button disabled class="fg red controls-running" icon="delete"
-                                   on-tap="_terminateAgent"></paper-icon-button>
-              </template>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-column width="100px" flex-grow="0" resizable header="Status" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
     `;
   }

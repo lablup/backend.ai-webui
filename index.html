@@ -32,6 +32,7 @@
       return false;
     }
     window.isElectron = isElectron();
+    window.enableSW = false;
 
     window.process = {env: {NODE_ENV: 'production'}};
     window.packageVersion = "19.06.0";
@@ -232,42 +233,44 @@
   } else {
     document.getElementById('mode-detail').innerText = 'WebServer';
   }
-  window.isUpdateAvailable = new Promise(function (resolve, reject) {
-    if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('service-worker.js').then(registration => {
-          console.log('ServiceWorker registered with scope: ', registration.scope);
-          registration.onupdatefound = () => {
-            const installingWorker = registration.installing;
-            installingWorker.onstatechange = () => {
-              switch (installingWorker.state) {
-                case 'installed':
-                  if (navigator.serviceWorker.controller) {
-                    // new update available
-                    resolve(true);
-                  } else {
-                    // no update available
-                    resolve(false);
-                  }
-                  break;
-              }
+  if (window.enableSW === true) {
+    window.isUpdateAvailable = new Promise(function (resolve, reject) {
+      if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('service-worker.js').then(registration => {
+            console.log('ServiceWorker registered with scope: ', registration.scope);
+            registration.onupdatefound = () => {
+              const installingWorker = registration.installing;
+              installingWorker.onstatechange = () => {
+                switch (installingWorker.state) {
+                  case 'installed':
+                    if (navigator.serviceWorker.controller) {
+                      // new update available
+                      resolve(true);
+                    } else {
+                      // no update available
+                      resolve(false);
+                    }
+                    break;
+                }
+              };
             };
-          };
-        }).catch(function (err) {
-          console.log('ServiceWorker registration failed: ', err);
+          }).catch(function (err) {
+            console.log('ServiceWorker registration failed: ', err);
+          });
         });
-      });
-    }
-  });
-  window['isUpdateAvailable']
-    .then(isAvailable => {
-      if (isAvailable) {
-        document.addEventListener('backend-ai-connected', (e) => {
-          document.querySelector('#console-shell').showUpdateNotifier();
-        });
-        console.log('New console available. Please reload to update.');
       }
     });
+    window['isUpdateAvailable']
+      .then(isAvailable => {
+        if (isAvailable) {
+          document.addEventListener('backend-ai-connected', (e) => {
+            document.querySelector('#console-shell').showUpdateNotifier();
+          });
+          console.log('New console available. Please reload to update.');
+        }
+      });
+  }
 </script>
 </body>
 </html>
