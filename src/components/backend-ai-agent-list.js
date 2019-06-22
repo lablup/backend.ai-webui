@@ -11,11 +11,11 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@vaadin/vaadin-grid/vaadin-grid.js';
-import './plastics/lablup-shields/lablup-shields.js';
+import '../plastics/lablup-shields/lablup-shields.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-progress/paper-progress';
 
-import './components/lablup-notification.js';
+import './lablup-notification.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 

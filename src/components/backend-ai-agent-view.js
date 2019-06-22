@@ -15,9 +15,20 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import 'weightless/card';
 
-import '../backend-ai-agent-list.js';
+import './backend-ai-agent-list.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 
+/**
+ Backend.AI Agent view page
+
+ Example:
+
+ <backend-ai-agent-view active=true>
+ ... content ...
+ </backend-ai-agent-view>
+
+ @group Backend.AI Console
+ */
 class BackendAIAgentView extends LitElement {
   static get properties() {
     return {
