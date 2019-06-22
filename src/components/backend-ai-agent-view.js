@@ -1,8 +1,9 @@
 /**
- * Backend.AI-agent-view
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {PolymerElement, html} from '@polymer/polymer';
+import {css, html, LitElement} from "lit-element";
 import '@polymer/polymer/lib/elements/dom-if.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -14,50 +15,62 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import 'weightless/card';
 
-import '../backend-ai-styles.js';
 import '../backend-ai-agent-list.js';
+import {BackendAiStyles} from "./backend-ai-console-styles";
 
-class BackendAIAgentView extends PolymerElement {
+class BackendAIAgentView extends LitElement {
   static get properties() {
     return {
       active: {
-        type: Boolean,
-        value: false
+        type: Boolean
+      },
+      _status: {
+        type: Boolean
       }
     };
   }
 
   constructor() {
     super();
+    this.active = false;
     setPassiveTouchGestures(true);
   }
 
-  ready() {
-    super.ready();
+  firstUpdated() {
   }
 
   shouldUpdate() {
     return this.active;
   }
 
-  static get observers() {
-    return [
-      '_routeChanged(route.*)',
-      '_viewChanged(routeData.view)',
-      '_menuChanged(active)'
-    ]
-  }
-  _menuChanged(active) {
-    if (!active) {
-      this.$['running-agents'].active = false;
-      this.$['finished-agents'].active = false;
-      return;
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this._menuChanged(true);
+    } else {
+      this._menuChanged(false);
     }
-    this.$['running-agents'].active = true;
-    this.$['finished-agents'].active = true;
+    super.attributeChangedCallback(name, oldval, newval);
   }
 
-  static get template() {
+  async _menuChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+      this.shadowRoot.querySelector('#running-agents').active = false;
+      this.shadowRoot.querySelector('#finished-agents').active = false;
+      this._status = 'inactive';
+      return;
+    }
+    this.shadowRoot.querySelector('#running-agents').active = true;
+    this.shadowRoot.querySelector('#finished-agents').active = true;
+    this._status = 'active';
+  }
+
+  static get styles() {
+    return [
+      BackendAiStyles];
+  }
+
+  render() {
     // language=HTML
     return html`
       <style is="custom-style" include="backend-ai-styles">
