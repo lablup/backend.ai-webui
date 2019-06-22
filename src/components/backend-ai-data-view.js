@@ -34,7 +34,7 @@ import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment, IronPositioning} from "../layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIData extends LitElement {
   constructor() {
@@ -619,7 +619,6 @@ class BackendAIData extends LitElement {
     });
     let vhosts = window.backendaiclient.vfolder.list_hosts();
     vhosts.then((response) => {
-      console.log(response);
     });
   }
 
@@ -870,9 +869,7 @@ class BackendAIData extends LitElement {
   }
 
   _uploadFileChange(e) {
-    console.log(e.target);
     const length = e.target.files.length;
-    console.log(length);
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
 
@@ -915,7 +912,6 @@ class BackendAIData extends LitElement {
 
   _downloadFile(e) {
     let fn = e.target.filename;
-    console.log(fn);
     let path = this.explorer.breadcrumb.concat(fn).join("/");
     let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
     job.then(res => {

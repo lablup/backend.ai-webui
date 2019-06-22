@@ -38,7 +38,7 @@ import 'weightless/divider';
 import './lablup-notification.js';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiExperimentView extends LitElement {
   static get is() {

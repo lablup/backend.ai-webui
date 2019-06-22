@@ -1,7 +1,12 @@
-import {PolymerElement, html} from '@polymer/polymer';
+/**
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ */
+import {css, html, LitElement} from "lit-element";
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment } from '../layout/iron-flex-layout-classes';
 
 /**
  `<lablup-piechart>` is a convenient svg-format pie chart.
@@ -14,7 +19,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
  @element lablup-piechart
  */
 
-class LablupPiechart extends PolymerElement {
+class LablupPiechart extends LitElement {
   static get is() {
     return 'lablup-piechart';
   }
@@ -22,39 +27,31 @@ class LablupPiechart extends PolymerElement {
   static get properties() {
     return {
       currentNumber: {
-        type: Number,
-        value: 50
+        type: Number
       },
       maxNumber: {
-        type: Number,
-        value: 100
+        type: Number
       },
       unit: {
-        type: String,
-        value: '%'
+        type: String
       },
       url: {
         type: String
       },
       textcolor: {
-        type: String,
-        value: '#888'
+        type: String
       },
       chartcolor: {
-        type: String,
-        value: '#F22'
+        type: String
       },
       size: {
-        type: Number,
-        value: 200
+        type: Number
       },
       fontsize: {
-        type: Number,
-        value: 60
+        type: Number
       },
       prefix: {
-        type: String,
-        value: ''
+        type: String
       },
       sizeParam: String
     }
@@ -62,10 +59,19 @@ class LablupPiechart extends PolymerElement {
 
   constructor() {
     super();
+    this.currentNumber = 50;
+    this.maxNumber = 100;
+    this.unit = '%';
+    this.url = '';
+    this.textcolor = '#888';
+    this.chartcolor = '#F22';
+    this.size = 200;
+    this.fontsize = 60;
+    this.prefix = '';
+    this.sizeParam = '';
   }
 
-  ready() {
-    super.ready();
+  firstUpdated() {
     this.sizeParam = this.size + "px";
     this.chartFontSize = this.fontsize / this.size;
     if (this.chartFontSize >= 0.5) {
@@ -92,10 +98,10 @@ class LablupPiechart extends PolymerElement {
     if (number > 87.5) {
       this.indicatorPath = this.indicatorPath + "L0 0 ";
     }
-    var th = (number / 100) * 2 * Math.PI;
-    var angle = Math.sin(th) / Math.cos(th);
-    var x = 0;
-    var y = 0;
+    let th = (number / 100) * 2 * Math.PI;
+    let angle = Math.sin(th) / Math.cos(th);
+    let x = 0;
+    let y = 0;
     if (number <= 12.5 || number > 87.5) {
       y = 0.5;
       x = y * angle;
@@ -112,7 +118,7 @@ class LablupPiechart extends PolymerElement {
     x = x + 0.5;
     y = -y + 0.5;
     this.indicatorPath = this.indicatorPath + "L" + x + " " + y + " z";
-    this.$.pievalue.setAttribute("d", this.indicatorPath);
+    this.shadorRoot.querySelector('#pievalue').setAttribute("d", this.indicatorPath);
     if (this.url !== undefined && this.url !== "") {
       this.shadowRoot.querySelector("#chart").addEventListener('tap', this._moveTo.bind(this));
     }
@@ -127,14 +133,21 @@ class LablupPiechart extends PolymerElement {
     window.location.href = this.url;
   }
 
-  static get template() {
-    // language=HTML
-    return html`
-      <style is="custom-style" include="iron-flex iron-flex-alignment">
+  static get styles() {
+    return [
+      IronFlex,
+      IronFlexAlignment
+      // language=CSS
+      css`
         #chart {
           cursor: pointer;
         }
-      </style>
+      `];
+  }
+
+  render() {
+    // language=HTML
+    return html`
       <svg id="chart"
            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
            viewBox="0 0 1 1" style="background-color:transparent;">
@@ -144,9 +157,9 @@ class LablupPiechart extends PolymerElement {
           <path id="pievalue" stroke="none" fill="rgba(255, 255, 255, 0.75)"/>
           <text id="chart-text" x="0.5" y="0.5" font-family="Roboto" text-anchor="middle"
                 dy="0.1">
-            <tspan>{{ prefix }}</tspan>
-            <tspan>{{ currentNumber }}</tspan>
-            <tspan id="unit-text" font-size="0.2" dy="-0.07">{{ unit }}</tspan>
+            <tspan>${ this.prefix }</tspan>
+            <tspan>${ this.currentNumber }</tspan>
+            <tspan id="unit-text" font-size="0.2" dy="-0.07">${ this.unit }</tspan>
           </text>
         </g>
       </svg>

@@ -15,7 +15,7 @@ import './lablup-notification.js';
 import './lablup-activity-panel.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment, IronPositioning} from "../layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAISummary extends LitElement {
   constructor() {

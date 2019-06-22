@@ -4,7 +4,7 @@
  */
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../../layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
 
 /**
  `<lablup-shields>` is a complement lit-element of shields.io

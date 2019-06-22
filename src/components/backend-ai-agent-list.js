@@ -19,7 +19,7 @@ import '@polymer/paper-progress/paper-progress';
 import './lablup-notification.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment} from "../layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 
 class BackendAIAgentList extends LitElement {

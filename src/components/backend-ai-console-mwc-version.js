@@ -42,7 +42,7 @@ import '@polymer/app-route/app-route.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '../backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 import '../backend-ai-offline-indicator.js';
 import '../backend-ai-login.js';
 

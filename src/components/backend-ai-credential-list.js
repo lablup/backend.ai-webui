@@ -29,7 +29,7 @@ import 'weightless/snackbar';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAICredentialList extends LitElement {
 
