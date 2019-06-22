@@ -31,7 +31,6 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 
 import './lablup-notification.js';
-import '../lablup-activity-panel.js';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";

@@ -3,7 +3,7 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/color';
 import 'weightless/card';
 
-import {IronFlex, IronFlexAlignment} from './layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
 
 class LablupActivityPanel extends LitElement {
   static get is() {

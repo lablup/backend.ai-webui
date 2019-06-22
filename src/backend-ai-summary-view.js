@@ -23,7 +23,7 @@ import 'weightless/card';
 
 import './components/lablup-notification.js';
 import './backend-ai-styles.js';
-import './lablup-activity-panel.js';
+import './components/lablup-activity-panel.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 
 class BackendAISummary extends PolymerElement {
