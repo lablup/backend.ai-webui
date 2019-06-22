@@ -35,7 +35,7 @@ const loadPage = (page) => (dispatch) => {
   console.log("Loading page:", page);
   switch (page) {
     case 'summary':
-      import('./backend-ai-summary-view.js').then((module) => {
+      import('./components/backend-ai-summary-view.js').then((module) => {
         // Put code in here that you want to run every time when
         // navigating to view1 after my-view1.js is loaded.
       });

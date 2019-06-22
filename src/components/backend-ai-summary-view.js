@@ -4,18 +4,18 @@
  */
 
 import {css, html, LitElement} from "lit-element";
-import './components/lablup-loading-indicator';
+import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
 
-import './components/lablup-notification.js';
-import './components/lablup-activity-panel.js';
+import './lablup-notification.js';
+import './lablup-activity-panel.js';
 
-import {BackendAiStyles} from "./components/backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment, IronPositioning} from "./layout/iron-flex-layout-classes";
+import {BackendAiStyles} from "./backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment, IronPositioning} from "../layout/iron-flex-layout-classes";
 
 class BackendAISummary extends LitElement {
   constructor() {
