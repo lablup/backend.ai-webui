@@ -32,12 +32,11 @@ export const navigate = (path) => (dispatch) => {
 
 const loadPage = (page) => (dispatch) => {
   let view = page;
-  console.log("Loading page:", page);
+  console.log("Navigating page:", page);
   switch (page) {
     case 'summary':
       import('./components/backend-ai-summary-view.js').then((module) => {
-        // Put code in here that you want to run every time when
-        // navigating to view1 after my-view1.js is loaded.
+        // TODO: after page changing?
       });
       break;
     case 'job':
@@ -65,7 +64,7 @@ const loadPage = (page) => (dispatch) => {
       import('./components/backend-ai-maintenance-view.js');
       break;
     default:
-      import('./backend-ai-summary-view.js').then((module) => {
+      import('./components/backend-ai-summary-view.js').then((module) => {
       });
       break;
   }
