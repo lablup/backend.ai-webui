@@ -23,7 +23,6 @@ import 'weightless/button';
 import 'weightless/icon';
 
 import './backend-ai-styles.js';
-import './lablup-piechart.js';
 import './plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
 

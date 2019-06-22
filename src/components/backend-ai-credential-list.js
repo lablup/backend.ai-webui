@@ -20,7 +20,6 @@ import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
 import '../backend-ai-styles.js';
-import '../lablup-piechart.js';
 import '../plastics/lablup-shields/lablup-shields';
 
 import './lablup-notification.js';

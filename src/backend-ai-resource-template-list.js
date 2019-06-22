@@ -22,7 +22,6 @@ import 'weightless/icon';
 
 import './components/lablup-notification.js';
 import './backend-ai-styles.js';
-import './lablup-piechart.js';
 import './plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
 
