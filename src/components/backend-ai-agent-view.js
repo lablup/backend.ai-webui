@@ -80,11 +80,11 @@ class BackendAIAgentView extends LitElement {
         <h3 class="wl-card-title">Registered nodes</h3>
         <h4>Connected</h4>
         <div>
-          <backend-ai-agent-list id="running-agents" condition="running"></backend-ai-agent-list>
+          <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active'}"></backend-ai-agent-list>
         </div>
         <h4>Terminated</h4>
         <div>
-          <backend-ai-agent-list id="finished-agents" condition="finished"></backend-ai-agent-list>
+          <backend-ai-agent-list id="finished-agents" condition="finished" ?active="${this._status === 'active'}"></backend-ai-agent-list>
         </div>
       </wl-card>
     `;

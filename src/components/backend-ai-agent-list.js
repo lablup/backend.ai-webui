@@ -3,7 +3,8 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {html, PolymerElement} from '@polymer/polymer';
+import {css, html, LitElement} from "lit-element";
+
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -18,52 +19,59 @@ import '@polymer/paper-progress/paper-progress';
 import './lablup-notification.js';
 
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import {BackendAiStyles} from "./backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
 
 
-class BackendAIAgentList extends PolymerElement {
+class BackendAIAgentList extends LitElement {
   static get is() {
     return 'backend-ai-agent-list';
+  }
+
+  constructor() {
+    super();
+    this.condition = 'running';
+    this.jobs = {};
+    this.active = false;
   }
 
   static get properties() {
     return {
       condition: {
-        type: String,
-        default: 'running'  // finished, running, archived
+        type: String  // finished, running, archived
       },
       jobs: {
-        type: Object,
-        value: {}
+        type: Object
       },
       active: {
-        type: Boolean,
-        value: false
+        type: Boolean
       }
     };
   }
 
-  ready() {
-    super.ready();
+  firstUpdated() {
   }
 
   connectedCallback() {
     super.connectedCallback();
-    afterNextRender(this, function () {
-    });
   }
 
   shouldUpdate() {
     return this.active;
   }
 
-  static get observers() {
-    return [
-      '_menuChanged(active)'
-    ]
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this._menuChanged(true);
+    } else {
+      this._menuChanged(false);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
   }
 
-  _menuChanged(active) {
-    if (!active) {
+  async _menuChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
       return;
     }
     // If disconnected
@@ -141,15 +149,15 @@ class BackendAIAgentList extends PolymerElement {
         });
       }
       this.agents = agents;
-      if (this.active == true) {
+      if (this.active === true) {
         setTimeout(() => {
           this._loadAgentList(status)
-        }, 5000);
+        }, 15000);
       }
     }).catch(err => {
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
@@ -168,13 +176,13 @@ class BackendAIAgentList extends PolymerElement {
 
   _elapsed(start, end) {
     var startDate = new Date(start);
-    if (this.condition == 'running') {
+    if (this.condition === 'running') {
       var endDate = new Date();
     } else {
       var endDate = new Date(end);
     }
     var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
-    if (this.condition == 'running') {
+    if (this.condition === 'running') {
       return 'Running ' + seconds + 'sec.';
     } else {
       return 'Reserved for ' + seconds + 'sec.';
@@ -207,10 +215,13 @@ class BackendAIAgentList extends PolymerElement {
     }
   }
 
-  static get template() {
-    // language=HTML
-    return html`
-      <style include="iron-flex iron-flex-alignment">
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      // language=CSS
+      css`
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -261,11 +272,15 @@ class BackendAIAgentList extends PolymerElement {
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
         }
-      </style>
+      `];
+  }
+
+  render() {
+    // language=HTML
+    return html`
       <lablup-notification id="notification"></lablup-notification>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" items="[[agents]]">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
+        <vaadin-grid-column width="40px" flex-grow="0" resizable header="#">
           <template>[[_indexFrom1(index)]]</template>
         </vaadin-grid-column>
 
