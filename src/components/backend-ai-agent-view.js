@@ -14,8 +14,8 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import 'weightless/card';
 
-import './backend-ai-styles.js';
-import './backend-ai-agent-list.js';
+import '../backend-ai-styles.js';
+import '../backend-ai-agent-list.js';
 
 class BackendAIAgentView extends PolymerElement {
   static get properties() {

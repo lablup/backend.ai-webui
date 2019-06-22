@@ -50,7 +50,7 @@ const loadPage = (page) => (dispatch) => {
       import('./components/backend-ai-data-view.js');
       break;
     case 'agent':
-      import('./backend-ai-agent-view.js');
+      import('./components/backend-ai-agent-view.js');
       break;
     case 'credential':
       import('./components/backend-ai-credential-view.js');
