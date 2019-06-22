@@ -4,15 +4,6 @@
  */
 
 import {css, html, LitElement} from "lit-element";
-import '@polymer/polymer/lib/elements/dom-if.js';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-image/iron-image';
-import '@polymer/iron-flex-layout/iron-flex-layout';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import './components/lablup-loading-indicator';
 
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
