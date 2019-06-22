@@ -91,6 +91,9 @@ class BackendAICredentialView extends LitElement {
       },
       notification: {
         type: Object
+      },
+      use_user_list: {
+        type: Boolean
       }
     }
   }
@@ -122,6 +125,7 @@ class BackendAICredentialView extends LitElement {
     this.allowed_vfolder_hosts = [];
     this.default_vfolder_host = '';
     this._status = false;
+    this.use_user_list = false;
   }
 
   firstUpdated() {
@@ -146,10 +150,16 @@ class BackendAICredentialView extends LitElement {
         if (window.backendaiclient.is_admin !== true) {
           this.disablePage();
         }
+        if (window.backendaiclient.isManagerVersionCompatibleWith('19.06.0') === true) {
+          this.use_user_list = true;
+        }
       });
     } else {
       if (window.backendaiclient.is_admin !== true) {
         this.disablePage();
+      }
+      if (window.backendaiclient.isManagerVersionCompatibleWith('19.06.0') === true) {
+        this.use_user_list = true;
       }
     }
   }
@@ -187,7 +197,6 @@ class BackendAICredentialView extends LitElement {
 
   _readVFolderHostInfo() {
     window.backendaiclient.vfolder.list_hosts().then(response => {
-      console.log(response);
       this.allowed_vfolder_hosts = response.allowed;
       this.default_vfolder_host = response.default;
     }).catch(err => {
@@ -315,7 +324,6 @@ class BackendAICredentialView extends LitElement {
       return;
     }
     let input = this._readResourcePolicyInput();
-    console.log(input);
     window.backendaiclient.resourcePolicy.add(name, input).then(response => {
       this.shadowRoot.querySelector('#new-policy-dialog').close();
       this.notification.text = "Resource policy successfully created.";
@@ -473,7 +481,9 @@ class BackendAICredentialView extends LitElement {
           <wl-tab-group>
             <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
-            <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>
+            ${this._status === 'active' && this.use_user_list === true ? html`
+            <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>`: 
+            html``}
           </wl-tab-group>
           <div class="flex"></div>
           <wl-button class="fg green" id="add-keypair" outlined>
@@ -520,7 +530,7 @@ class BackendAICredentialView extends LitElement {
             </wl-button>
           </h4>
           <div>
-            <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
+            <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
           </div>
         </wl-card>
       </wl-card>

@@ -10,8 +10,6 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
-import '@polymer/paper-spinner/paper-spinner-lite';
 import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-grid/vaadin-grid.js';
@@ -19,7 +17,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import '../backend-ai-styles.js';
 import '../plastics/lablup-shields/lablup-shields';
 
 import './lablup-notification.js';
@@ -84,7 +81,6 @@ class BackendAICredentialList extends LitElement {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
-    console.log(this.notification);
   }
 
   connectedCallback() {
@@ -183,7 +179,6 @@ class BackendAICredentialList extends LitElement {
         }
       });
       this.keypairs = keypairs;
-      console.log(this.keypairs);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -578,7 +573,7 @@ class BackendAICredentialList extends LitElement {
                 </vaadin-item>
                 <vaadin-item>
                   <div><strong>Concurrent Sessions</strong></div>
-                  <div secondary${this.keypairInfo.concurrency_used} active / ${this.keypairInfo.concurrency_used} concurrent
+                  <div secondary>${this.keypairInfo.concurrency_used} active / ${this.keypairInfo.concurrency_used} concurrent
                     sessions.
                   </div>
                 </vaadin-item>

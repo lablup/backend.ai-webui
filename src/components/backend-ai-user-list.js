@@ -29,12 +29,26 @@ import 'weightless/dialog';
 import 'weightless/snackbar';
 import 'weightless/switch';
 import 'weightless/textfield';
-
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIUserList extends LitElement {
+
+  constructor() {
+    super();
+    this.active = false;
+    this.condition = 'active';
+    this.users = {};
+    this.isAdmin = false;
+    this.userInfo = {};
+    this.userInfoGroups = [];
+    this._boundControlRenderer = this.controlRenderer.bind(this);
+  }
 
   static get is() {
     return 'backend-ai-user-list';
@@ -75,15 +89,83 @@ class BackendAIUserList extends LitElement {
     };
   }
 
-  constructor() {
-    super();
-    this.active = false;
-    this.condition = 'active';
-    this.users = {};
-    this.isAdmin = false;
-    this.userInfo = {};
-    this.userInfoGroups = [];
-    this._boundControlRenderer = this.controlRenderer.bind(this);
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 365px);
+        }
+
+        }
+
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
+
+        iron-icon {
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+          min-height: 16px;
+          padding: 0;
+        }
+
+        paper-icon-button {
+          --paper-icon-button: {
+            width: 25px;
+            height: 25px;
+            min-width: 25px;
+            min-height: 25px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
+
+        wl-card h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          border-bottom: 1px solid #DDD;
+        }
+
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
+
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
+
+        div.configuration {
+          width: 70px !important;
+        }
+
+        div.configuration iron-icon {
+          padding-right: 5px;
+        }
+
+        wl-dialog wl-textfield {
+          padding-left: 15px;
+          --input-font-family: Roboto, Noto, sans-serif;
+          --input-color-disabled: #222;
+          --input-label-color-disabled: #222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #ccc;
+        }
+      `];
   }
 
   firstUpdated() {
@@ -297,85 +379,6 @@ class BackendAIUserList extends LitElement {
     dialog.hide();
   }
 
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-          height: calc(100vh - 365px);
-        }
-
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
-        }
-
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        wl-card h4 {
-          font-size: 14px;
-          padding: 5px 15px 5px 12px;
-          margin: 0 0 10px 0;
-          display: block;
-          border-bottom: 1px solid #DDD;
-        }
-
-        vaadin-item {
-          font-size: 13px;
-          font-weight: 100;
-        }
-
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
-
-        div.configuration {
-          width: 70px !important;
-        }
-
-        div.configuration iron-icon {
-          padding-right: 5px;
-        }
-
-        wl-dialog wl-textfield {
-          padding-left: 15px;
-          --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
-        }
-      `];
-  }
-
   render() {
     // language=HTML
     return html`
@@ -426,8 +429,8 @@ class BackendAIUserList extends LitElement {
                   <div><strong>Description</strong></div>
                   <div secondary>${this.userInfo.description}</div>
                 </vaadin-item>
-                <wl-textfield label="Active user?" disabled value="${this.userInfo.is_active ? `Yes`:`No`}"></wl-textfield>
-                <wl-textfield label="Require password change?" disabled value="${this.userInfo.need_password_change ? `Yes`:`No`}"></wl-textfield>
+                <wl-textfield label="Active user?" disabled value="${this.userInfo.is_active ? `Yes` : `No`}"></wl-textfield>
+                <wl-textfield label="Require password change?" disabled value="${this.userInfo.need_password_change ? `Yes` : `No`}"></wl-textfield>
               </div>
             </div>
             <div style="width:335px;">

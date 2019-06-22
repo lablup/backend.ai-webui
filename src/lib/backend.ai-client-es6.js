@@ -252,7 +252,7 @@ class Client {
    */
   async getResourceSlots() {
     let rqst;
-    if (await this.isManagerVersionCompatibleWith('19.06')) {
+    if (await this.isManagerVersionCompatibleWith('19.06.0')) {
       rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
     } else {
       rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
