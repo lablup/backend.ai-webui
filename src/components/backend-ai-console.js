@@ -32,7 +32,7 @@ import '@vaadin/vaadin-icons/vaadin-icons.js';
 
 import 'weightless/select';
 
-import '../backend.ai-client-es6.js';
+import '../lib/backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator.js';

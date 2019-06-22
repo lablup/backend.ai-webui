@@ -14,7 +14,7 @@ import 'weightless/dialog';
 import 'weightless/card';
 import './lablup-notification.js';
 
-import '../backend.ai-client-es6.js';
+import '../lib/backend.ai-client-es6.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 
