@@ -24,7 +24,7 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
 
-import { default as AnsiUp} from '../lib/ansiup.js';
+import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
 
@@ -187,10 +187,12 @@ class BackendAiSessionList extends LitElement {
         div.configuration iron-icon {
           padding-right: 5px;
         }
+
         paper-icon-button.apps {
           width: 48px;
           height: 48px;
         }
+
         .app-icon .label {
           display: block;
           width: 60px;
@@ -553,7 +555,7 @@ class BackendAiSessionList extends LitElement {
   }
 
   _getProxyURL() {
-    let url = 'http://127.0.0.1:5050/'
+    let url = 'http://127.0.0.1:5050/';
     if (window.__local_proxy !== undefined) {
       url = window.__local_proxy;
     } else if (window.backendaiclient._config.proxyURL !== undefined) {
