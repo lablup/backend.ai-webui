@@ -81,7 +81,7 @@ class LablupLoadingIndicator extends LitElement {
   }
 
   async getMoreState() {
-    return;
+
   }
 
   async show() {

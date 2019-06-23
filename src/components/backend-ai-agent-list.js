@@ -23,10 +23,6 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 
 
 class BackendAIAgentList extends LitElement {
-  static get is() {
-    return 'backend-ai-agent-list';
-  }
-
   constructor() {
     super();
     this.condition = 'running';
@@ -35,6 +31,10 @@ class BackendAIAgentList extends LitElement {
     this._boundContactDateRenderer = this.contactDateRenderer.bind(this);
     this._boundStatusRenderer = this.statusRenderer.bind(this);
     this._boundControlRenderer = this.controlRenderer.bind(this);
+  }
+
+  static get is() {
+    return 'backend-ai-agent-list';
   }
 
   static get properties() {
@@ -49,6 +49,67 @@ class BackendAIAgentList extends LitElement {
         type: Array
       }
     };
+  }
+
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      // language=CSS
+      css`
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+        }
+
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
+
+        iron-icon {
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+
+          min-height: 16px;
+          padding: 0;
+        }
+
+        paper-icon-button {
+          --paper-icon-button: {
+            width: 25px;
+            height: 25px;
+            min-width: 25px;
+            min-height: 25px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
+
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
+
+        vaadin-progress-bar {
+          width: 100px;
+          height: 6px;
+        }
+
+        paper-progress {
+          width: 100px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677EB;
+          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
+      `];
   }
 
   firstUpdated() {
@@ -214,67 +275,6 @@ class BackendAIAgentList extends LitElement {
       default:
         return 'blue';
     }
-  }
-
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      // language=CSS
-      css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-
-          min-height: 16px;
-          padding: 0;
-        }
-
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
-
-        vaadin-progress-bar {
-          width: 100px;
-          height: 6px;
-        }
-
-        paper-progress {
-          width: 100px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677EB;
-          --paper-progress-secondary-color: #98BE5A;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
-      `];
   }
 
   _indexRenderer(root, column, rowData) {
