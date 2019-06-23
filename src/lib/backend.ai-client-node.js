@@ -123,6 +123,14 @@ class Client {
       this.getManagerVersion();
     }
   }
+
+  /**
+   * Return the server-side manager version.
+   */
+  get managerVersion() {
+    return this._managerVersion;
+  }
+
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
@@ -182,12 +190,7 @@ class Client {
     let rqst = this.newPublicRequest('GET', '', null, '');
     return this._wrapWithPromise(rqst);
   }
-  /**
-   * Return the server-side manager version.
-   */
-  get managerVersion() {
-    return this._managerVersion;
-  }
+
   /**
    * Get the server-side manager version.
    */
@@ -198,15 +201,17 @@ class Client {
     }
     return this._managerVersion;
   }
+
   /**
    * Return if manager is compatible with given version.
    */
   async isManagerVersionCompatibleWith(version) {
     let managerVersion = await this.getManagerVersion();
-    managerVersion = managerVersion.split('.').map( s => s.padStart(10) ).join('.');
-    version = version.split('.').map( s => s.padStart(10) ).join('.');
+    managerVersion = managerVersion.split('.').map(s => s.padStart(10)).join('.');
+    version = version.split('.').map(s => s.padStart(10)).join('.');
     return version <= managerVersion;
   }
+
   /**
    * Check if console-server is authenticated. This requires additional console-server package.
    *
@@ -221,6 +226,7 @@ class Client {
     }
     return result.authenticated;
   }
+
   /**
    * Login into console-server with given ID/Password. This requires additional console-server package.
    *
@@ -243,6 +249,7 @@ class Client {
     let rqst = this.newSignedRequest('POST', `/server/logout`, body);
     return this._wrapWithPromise(rqst);
   }
+
   /**
    * Return the resource slots.
    */
@@ -1037,6 +1044,7 @@ class ResourcePolicy {
   constructor(client) {
     this.client = client;
   }
+
   /**
    * get resource policy with given name and fields.
    *
@@ -1067,11 +1075,12 @@ class ResourcePolicy {
     }
     return this.client.gql(q, v);
   }
+
   /**
    * add resource policy with given name and fields.
    *
    * @param {string} name - resource policy name.
-   * @param {json} input - resource policy specification and data. Required fields are: 
+   * @param {json} input - resource policy specification and data. Required fields are:
    * {
    *   'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
    *   'total_resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
@@ -1109,11 +1118,12 @@ class ResourcePolicy {
       return resolve(false);
     }
   }
+
   /**
    * mutate specified resource policy with given name with new values.
    *
    * @param {string} name - resource policy name to mutate.
-   * @param {json} input - resource policy specification and data. Required fields are: 
+   * @param {json} input - resource policy specification and data. Required fields are:
    * {
    *   'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
    *   'total_resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
@@ -1162,6 +1172,7 @@ class Image {
   constructor(client) {
     this.client = client;
   }
+
   /**
    * list container images registered on the manager.
    *
@@ -1314,8 +1325,10 @@ class User {
    * @param {Client} client - the Client API wrapper object to bind
    */
   constructor(client) {
-    this.client = client;4
+    this.client = client;
+    4
   }
+
   /**
    * List registred users.
    *
@@ -1383,6 +1396,7 @@ class User {
     }
     return this.client.gql(q, v);
   }
+
   /**
    * add new user with given information.
    *
@@ -1401,7 +1415,7 @@ class User {
    * };
    */
   add(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids']
+    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
         `  create_user(email: $email, props: $input) {` +
@@ -1417,6 +1431,7 @@ class User {
       return resolve(false);
     }
   }
+
   /**
    * modify user information with given user id with new values.
    *
@@ -1435,7 +1450,7 @@ class User {
    * };
    */
   modify(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids']
+    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
@@ -1451,6 +1466,7 @@ class User {
       return resolve(false);
     }
   }
+
   /**
    * delete user information with given user id
    *
