@@ -1,12 +1,13 @@
-import { LitElement, html, css } from 'lit-element';
+import {css, html, LitElement} from 'lit-element';
 
 class BackendAiOfflineIndicator extends LitElement {
   static get is() {
     return 'backend-ai-offline-indicator';
   }
+
   static get properties() {
     return {
-      active: { type: Boolean }
+      active: {type: Boolean}
     };
   }
 

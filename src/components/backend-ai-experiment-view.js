@@ -13,7 +13,6 @@ import '@polymer/iron-icons/iron-icons';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
@@ -38,13 +37,14 @@ import 'weightless/divider';
 import './lablup-notification.js';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiExperimentView extends LitElement {
-  static get is() {
-    return 'backend-ai-experiment-view';
-  }
-
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -96,6 +96,10 @@ class BackendAiExperimentView extends LitElement {
     this.concurrency_used = 0;
     this.concurrency_max = 0;
     this._status = 'inactive';
+  }
+
+  static get is() {
+    return 'backend-ai-experiment-view';
   }
 
   static get properties() {
@@ -182,6 +186,151 @@ class BackendAiExperimentView extends LitElement {
         type: Boolean
       }
     }
+  }
+
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
+        wl-card h4 {
+          padding: 5px 20px;
+          border-bottom: 1px solid #ddd;
+          font-weight: 100;
+        }
+
+        paper-slider {
+          width: 285px;
+          --paper-slider-input: {
+            width: 70px;
+          };
+          --paper-slider-height: 3px;
+        }
+
+        paper-slider.mem {
+          --paper-slider-knob-color: var(--paper-orange-400);
+          --paper-slider-active-color: var(--paper-orange-400);
+        }
+
+        paper-slider.cpu {
+          --paper-slider-knob-color: var(--paper-light-green-400);
+          --paper-slider-active-color: var(--paper-light-green-400);
+        }
+
+        paper-slider.gpu {
+          --paper-slider-knob-color: var(--paper-cyan-400);
+          --paper-slider-active-color: var(--paper-cyan-400);
+        }
+
+        paper-progress {
+          width: 100px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677EB;
+          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
+
+        .short-indicator paper-progress {
+          width: 50px;
+        }
+
+        .short-indicator .gauge-label {
+          width: 80px;
+        }
+
+        .custom {
+          color: var(--paper-red-800);
+        }
+
+        span.caption {
+          width: 30px;
+          padding-left: 10px;
+        }
+
+        div.caption {
+          width: 100px;
+        }
+
+        .gauge-name {
+          font-size: 10px;
+        }
+
+        .gauge-label {
+          width: 120px;
+          font-weight: 300;
+          font-size: 12px;
+        }
+
+        .indicator {
+          font-family: monospace;
+        }
+
+        .resource-button {
+          height: 140px;
+          width: 120px;
+          margin: 5px;
+          padding: 0;
+          font-size: 14px;
+        }
+
+        .resource-button h4 {
+          padding: 5px 0;
+          margin: 0;
+          font-weight: 400;
+        }
+
+        .resource-button ul {
+          padding: 0;
+          list-style-type: none;
+        }
+
+        backend-ai-dropdown-menu {
+          width: 100%;
+        }
+
+        wl-button.button {
+          --button-bg: var(--paper-blue-50);
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
+        }
+
+        wl-button.launch-button {
+          width: 335px;
+          --button-bg: var(--paper-blue-50);
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
+        }
+
+        wl-button.resource-button {
+          --button-bg: white;
+          --button-bg-active: var(--paper-blue-600);
+          --button-bg-hover: var(--paper-blue-600);
+          --button-bg-active-flat: var(--paper-blue-50);
+          --button-color: #89A;
+          --button-color-active: blue;
+          --button-color-hover: blue;
+        }
+
+        wl-card h3.tab {
+          padding-top: 0;
+          padding-bottom: 0;
+          padding-left: 0;
+        }
+
+        wl-expansion {
+          --expansion-elevation: 0;
+          --expansion-elevation-open: 0;
+          --expansion-elevation-hover: 0;
+          --expansion-margin-open: 0;
+        }
+      `];
   }
 
   firstUpdated() {
@@ -917,151 +1066,6 @@ class BackendAiExperimentView extends LitElement {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
-  }
-
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-        wl-card h4 {
-          padding: 5px 20px;
-          border-bottom: 1px solid #ddd;
-          font-weight: 100;
-        }
-
-        paper-slider {
-          width: 285px;
-          --paper-slider-input: {
-            width: 70px;
-          };
-          --paper-slider-height: 3px;
-        }
-
-        paper-slider.mem {
-          --paper-slider-knob-color: var(--paper-orange-400);
-          --paper-slider-active-color: var(--paper-orange-400);
-        }
-
-        paper-slider.cpu {
-          --paper-slider-knob-color: var(--paper-light-green-400);
-          --paper-slider-active-color: var(--paper-light-green-400);
-        }
-
-        paper-slider.gpu {
-          --paper-slider-knob-color: var(--paper-cyan-400);
-          --paper-slider-active-color: var(--paper-cyan-400);
-        }
-
-        paper-progress {
-          width: 100px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677EB;
-          --paper-progress-secondary-color: #98BE5A;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
-
-        .short-indicator paper-progress {
-          width: 50px;
-        }
-
-        .short-indicator .gauge-label {
-          width: 80px;
-        }
-
-        .custom {
-          color: var(--paper-red-800);
-        }
-
-        span.caption {
-          width: 30px;
-          padding-left: 10px;
-        }
-
-        div.caption {
-          width: 100px;
-        }
-
-        .gauge-name {
-          font-size: 10px;
-        }
-
-        .gauge-label {
-          width: 120px;
-          font-weight: 300;
-          font-size: 12px;
-        }
-
-        .indicator {
-          font-family: monospace;
-        }
-
-        .resource-button {
-          height: 140px;
-          width: 120px;
-          margin: 5px;
-          padding: 0;
-          font-size: 14px;
-        }
-
-        .resource-button h4 {
-          padding: 5px 0;
-          margin: 0;
-          font-weight: 400;
-        }
-
-        .resource-button ul {
-          padding: 0;
-          list-style-type: none;
-        }
-
-        backend-ai-dropdown-menu {
-          width: 100%;
-        }
-
-        wl-button.button {
-          --button-bg: var(--paper-blue-50);
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
-        }
-
-        wl-button.launch-button {
-          width: 335px;
-          --button-bg: var(--paper-blue-50);
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
-        }
-
-        wl-button.resource-button {
-          --button-bg: white;
-          --button-bg-active: var(--paper-blue-600);
-          --button-bg-hover: var(--paper-blue-600);
-          --button-bg-active-flat: var(--paper-blue-50);
-          --button-color: #89A;
-          --button-color-active: blue;
-          --button-color-hover: blue;
-        }
-
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
-        }
-
-        wl-expansion {
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-margin-open: 0;
-        }
-      `];
   }
 
   render() {

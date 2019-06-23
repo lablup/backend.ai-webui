@@ -14,17 +14,13 @@ import '@polymer/iron-dropdown/iron-dropdown'
 import {setPassiveTouchGestures} from "@polymer/polymer/lib/utils/settings";
 
 class BackendAIDropdownMenu extends PolymerElement {
-  static get is() {
-    return 'backend-ai-dropdown-menu';
-  }
-
-  ready() {
-    super.ready();
-  }
-
   constructor() {
     super();
     setPassiveTouchGestures(true);
+  }
+
+  static get is() {
+    return 'backend-ai-dropdown-menu';
   }
 
   static get properties() {
@@ -158,65 +154,6 @@ class BackendAIDropdownMenu extends PolymerElement {
     };
   }
 
-  /**
-   * See paper-listbox documentation.
-   */
-  select() {
-    this.$.listbox.select();
-  }
-
-  /**
-   * See paper-listbox documentation.
-   */
-  selectIndex() {
-    this.$.listbox.selectIndex();
-  }
-
-  /**
-   * See paper-listbox documentation.
-   */
-  selectNext() {
-    this.$.listbox.selectNext();
-  }
-
-  /**
-   * See paper-listbox documentation.
-   */
-  selectPrevious() {
-    this.$.listbox.selectPrevious();
-  }
-
-  /**
-   * See iron-dropdown documentation.
-   */
-  open() {
-    if (!this.readonly) {
-      this.$.dropdown.open();
-    }
-  }
-
-  /**
-   * See iron-dropdown documentation.
-   */
-  close() {
-    this.$.dropdown.close();
-  }
-
-  _onIronActivate(event) {
-    if (this.closeOnActivate) {
-      this.close();
-    }
-  }
-
-  _computeInputValue(selectedItems) {
-    var selectedLabels = [];
-    for (var i = 0; i < selectedItems.length; i++) {
-      var label = selectedItems[i].label || selectedItems[i].getAttribute('label') || selectedItems[i].textContent.trim();
-      selectedLabels.push(label);
-    }
-    return selectedLabels.join(', ');
-  }
-
   static get template() {
     // language=HTML
     return html`
@@ -280,6 +217,69 @@ class BackendAIDropdownMenu extends PolymerElement {
         </paper-listbox>
       </iron-dropdown>
     `;
+  }
+
+  ready() {
+    super.ready();
+  }
+
+  /**
+   * See paper-listbox documentation.
+   */
+  select() {
+    this.$.listbox.select();
+  }
+
+  /**
+   * See paper-listbox documentation.
+   */
+  selectIndex() {
+    this.$.listbox.selectIndex();
+  }
+
+  /**
+   * See paper-listbox documentation.
+   */
+  selectNext() {
+    this.$.listbox.selectNext();
+  }
+
+  /**
+   * See paper-listbox documentation.
+   */
+  selectPrevious() {
+    this.$.listbox.selectPrevious();
+  }
+
+  /**
+   * See iron-dropdown documentation.
+   */
+  open() {
+    if (!this.readonly) {
+      this.$.dropdown.open();
+    }
+  }
+
+  /**
+   * See iron-dropdown documentation.
+   */
+  close() {
+    this.$.dropdown.close();
+  }
+
+  _onIronActivate(event) {
+    if (this.closeOnActivate) {
+      this.close();
+    }
+  }
+
+  _computeInputValue(selectedItems) {
+    var selectedLabels = [];
+    for (var i = 0; i < selectedItems.length; i++) {
+      var label = selectedItems[i].label || selectedItems[i].getAttribute('label') || selectedItems[i].textContent.trim();
+      selectedLabels.push(label);
+    }
+    return selectedLabels.join(', ');
   }
 }
 

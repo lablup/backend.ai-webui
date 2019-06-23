@@ -10,6 +10,12 @@ import 'weightless/progress-bar';
 import 'weightless/title';
 
 class BackendAIIndicator extends LitElement {
+  constructor() {
+    super();
+    this.value = 0;
+    this.text = '';
+  }
+
   static get is() {
     return 'backend-ai-indicator';
   }
@@ -28,10 +34,19 @@ class BackendAIIndicator extends LitElement {
     };
   }
 
-  constructor() {
-    super();
-    this.value = 0;
-    this.text = '';
+  static get styles() {
+    return [
+      // language=CSS
+      css`
+        wl-dialog {
+          position: fixed;
+          right: 20px;
+          bottom: 20px;
+          --dialog-height: 80px;
+          --dialog-width: 250px;
+          --dialog-content-padding: 15px;
+        }
+      `];
   }
 
   firstUpdated() {
@@ -57,20 +72,6 @@ class BackendAIIndicator extends LitElement {
     this.dialog.hide();
   }
 
-  static get styles() {
-    return [
-      // language=CSS
-      css`
-        wl-dialog {
-          position: fixed;
-          right: 20px;
-          bottom: 20px;
-          --dialog-height: 80px;
-          --dialog-width: 250px;
-          --dialog-content-padding: 15px;
-        }
-      `];
-  }
   render() {
     // language=HTML
     return html`

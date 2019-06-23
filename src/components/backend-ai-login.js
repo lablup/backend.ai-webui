@@ -222,7 +222,7 @@ class BackendAiLogin extends LitElement {
   _connectGQL() {
     // Test connection
     this.client.getManagerVersion().then(response => {
-      return this.client.isManagerVersionCompatibleWith('19.06');
+      return this.client.isManagerVersionCompatibleWith('19.06.0');
     }).then(response => {
       if (response === false) {// Legacy code to support 19.03
         this._connectViaGQLLegacy();

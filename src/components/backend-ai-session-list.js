@@ -45,7 +45,6 @@ class BackendAiSessionList extends LitElement {
     this.appSupportList = [];
     this.appTemplate = {};
     this._boundControlRenderer = this.controlRenderer.bind(this);
-    const ansi_up = new AnsiUp();
   }
 
   static get is() {

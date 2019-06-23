@@ -7,7 +7,12 @@ import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -21,6 +26,13 @@ import '@material/mwc-checkbox';
 import '../backend-ai-resource-template-list';
 
 class BackendAiEnvironmentView extends LitElement {
+  constructor() {
+    super();
+    setPassiveTouchGestures(true);
+    this.images = {};
+    this.active = false;
+  }
+
   static get is() {
     return 'backend-ai-environment-view';
   }
@@ -46,6 +58,18 @@ class BackendAiEnvironmentView extends LitElement {
           margin-right: 5px;
         }
       `];
+  }
+
+  static get properties() {
+    return {
+      active: {
+        type: Boolean
+      },
+      images: {
+        type: Object,
+        hasChanged: () => true
+      }
+    }
   }
 
   render() {
@@ -195,25 +219,6 @@ class BackendAiEnvironmentView extends LitElement {
         <backend-ai-resource-template-list></backend-ai-resource-template-list>
       </wl-card>
     `;
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      images: {
-        type: Object,
-        hasChanged: () => true
-      }
-    }
-  }
-
-  constructor() {
-    super();
-    setPassiveTouchGestures(true);
-    this.images = {};
-    this.active = false;
   }
 
   shouldUpdate() {

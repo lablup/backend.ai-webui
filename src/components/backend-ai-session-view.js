@@ -27,7 +27,12 @@ import 'weightless/slider';
 
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiSessionView extends LitElement {
   constructor() {
@@ -284,6 +289,7 @@ class BackendAiSessionView extends LitElement {
           --button-bg-active-flat: var(--paper-orange-50);
           --button-bg-flat: var(--paper-orange-50);
         }
+
         .resource-button h4 {
           padding: 5px 0;
           margin: 0;
@@ -323,9 +329,9 @@ class BackendAiSessionView extends LitElement {
         }
 
         wl-card h3.tab {
-          padding-top:0;
-          padding-bottom:0;
-          padding-left:0;
+          padding-top: 0;
+          padding-bottom: 0;
+          padding-left: 0;
         }
 
         wl-tab-group {
@@ -343,7 +349,7 @@ class BackendAiSessionView extends LitElement {
           --tab-bg-filled: var(--paper-red-50);
           --tab-bg-active-hover: var(--paper-red-100);
         }
-        
+
         wl-expansion {
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
