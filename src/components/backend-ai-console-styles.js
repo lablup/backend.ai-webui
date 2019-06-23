@@ -115,6 +115,7 @@ export const BackendAiStyles =
     footer a {
       color: #ccc !important;
     }
+
     #content {
       padding: 0 auto;
       margin: 0 auto 45px auto;
@@ -285,6 +286,7 @@ export const BackendAiStyles =
       margin: 0 0 0 15px;
       font-weight: 300;
     }
+
     .drawer-menu footer {
       bottom: 0;
       color: var(--general-sidebar-footer-color, #AAAAAA);
@@ -410,7 +412,7 @@ export const BackendAiStyles =
       display: block;
       margin-bottom: 40px;
     }
-    
+
     iron-icon.tiny {
       --iron-icon-height: 12px;
       --iron-icon-width: 12px;
@@ -424,7 +426,7 @@ export const BackendAiStyles =
       padding: 0;
       border-radius: 2px;
     }
-    
+
     #content > wl-card {
       max-width: var(--general-content-container-width, 980px);
     }
@@ -893,6 +895,7 @@ export const BackendAiStyles =
       --button-padding: 8px;
       --button-font-size: 14px;
     }
+
     wl-button,
     wl-expansion {
       --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;

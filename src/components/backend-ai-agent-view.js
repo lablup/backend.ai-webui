@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {html, LitElement} from "lit-element";
 import 'weightless/card';
 
 import './backend-ai-agent-list.js';

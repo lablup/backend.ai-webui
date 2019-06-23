@@ -22,7 +22,12 @@ import '../backend-ai-resource-policy-list.js';
 import './backend-ai-user-list.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from "../plastics/layout/iron-flex-layout-classes";
 
 /**
  Backend.AI Credential view page
@@ -36,6 +41,28 @@ import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../
  @group Backend.AI Console
  */
 class BackendAICredentialView extends LitElement {
+  constructor() {
+    super();
+    this.active = false;
+    this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
+    this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
+    this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+    this.vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+    this.rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
+    this.concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
+    this.container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
+    this.idle_timeout_metric = [60, 180, 540, 900, 1800, 3600];
+    this.vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
+    this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
+    this.resource_policies = {};
+    this.resource_policy_names = [];
+    this.is_admin = false;
+    this.allowed_vfolder_hosts = [];
+    this.default_vfolder_host = '';
+    this._status = false;
+    this.use_user_list = false;
+  }
+
   static get properties() {
     return {
       active: {
@@ -102,30 +129,106 @@ class BackendAICredentialView extends LitElement {
     return 'backend-ai-credential-view';
   }
 
-  shouldUpdate() {
-    return this.active;
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
+        wl-button.create-button {
+          width: 335px;
+        }
+
+        #new-keypair-dialog {
+          min-width: 350px;
+        }
+
+        fieldset {
+          padding: 0;
+        }
+
+        fieldset div {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        fieldset wl-button {
+          margin-left: 20px;
+          margin-right: 20px;
+          margin-bottom: 20px;
+        }
+
+        wl-dialog wl-textfield {
+          padding-left: 20px;
+          padding-right: 20px;
+          --input-font-family: Roboto, Noto, sans-serif;
+        }
+
+        wl-textfield {
+          --input-state-color-invalid: red;
+        }
+
+        wl-dialog h4 {
+          margin: 15px 0 5px 0;
+          font-weight: 100;
+          font-size: 16px;
+          padding-left: 20px;
+          border-bottom: 1px solid #ccc;
+        }
+
+        wl-button {
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
+
+        wl-card h3 {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+
+        wl-card wl-card {
+          margin: 0;
+          padding: 0;
+          --card-elevation: 0;
+        }
+
+        wl-tab-group {
+          --tab-group-indicator-bg: var(--paper-green-600);
+        }
+
+        wl-tab {
+          --tab-color: #666;
+          --tab-color-hover: #222;
+          --tab-color-hover-filled: #222;
+          --tab-color-active: var(--paper-green-600);
+          --tab-color-active-hover: var(--paper-green-600);
+          --tab-color-active-filled: #ccc;
+          --tab-bg-active: var(--paper-lime-200);
+          --tab-bg-filled: var(--paper-lime-200);
+          --tab-bg-active-hover: var(--paper-lime-200);
+        }
+
+        wl-expansion {
+          --expansion-elevation: 0;
+          --expansion-elevation-open: 0;
+          --expansion-elevation-hover: 0;
+          --expansion-margin-open: 0;
+          border-bottom: 1px solid #DDD;
+        }
+
+        wl-expansion h4 {
+          font-weight: 200;
+          border-bottom: 0;
+        }
+      `];
   }
 
-  constructor() {
-    super();
-    this.active = false;
-    this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
-    this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
-    this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
-    this.concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
-    this.container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
-    this.idle_timeout_metric = [60, 180, 540, 900, 1800, 3600];
-    this.vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
-    this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
-    this.resource_policies = {};
-    this.resource_policy_names = [];
-    this.is_admin = false;
-    this.allowed_vfolder_hosts = [];
-    this.default_vfolder_host = '';
-    this._status = false;
-    this.use_user_list = false;
+  shouldUpdate() {
+    return this.active;
   }
 
   firstUpdated() {
@@ -375,103 +478,6 @@ class BackendAICredentialView extends LitElement {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-        wl-button.create-button {
-          width: 335px;
-        }
-
-        #new-keypair-dialog {
-          min-width: 350px;
-        }
-
-        fieldset {
-          padding: 0;
-        }
-
-        fieldset div {
-          padding-left: 20px;
-          padding-right: 20px;
-        }
-
-        fieldset wl-button {
-          margin-left: 20px;
-          margin-right: 20px;
-          margin-bottom: 20px;
-        }
-        
-        wl-dialog wl-textfield {
-          padding-left: 20px;
-          padding-right: 20px;
-          --input-font-family: Roboto, Noto, sans-serif;
-        }
-
-        wl-textfield {
-          --input-state-color-invalid: red;
-        }
-
-        wl-dialog h4 {
-          margin: 15px 0 5px 0;
-          font-weight: 100;
-          font-size: 16px;
-          padding-left: 20px;
-          border-bottom: 1px solid #ccc;
-        }
-
-        wl-button {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-        wl-card h3 {
-          padding-top:0;
-          padding-bottom:0;
-        }
-        
-        wl-card wl-card {
-          margin: 0;
-          padding: 0;
-          --card-elevation: 0;
-        }
-
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-green-600);
-        }
-
-        wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: var(--paper-green-600);
-          --tab-color-active-hover: var(--paper-green-600);
-          --tab-color-active-filled: #ccc;
-          --tab-bg-active: var(--paper-lime-200);
-          --tab-bg-filled: var(--paper-lime-200);
-          --tab-bg-active-hover: var(--paper-lime-200);
-        }
-        
-        wl-expansion {
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-margin-open: 0;
-          border-bottom: 1px solid #DDD;
-        }
-        
-        wl-expansion h4 {
-          font-weight: 200;
-          border-bottom: 0;
-        }
-      `];
-  }
-
   render() {
     // language=HTML
     return html`
@@ -482,8 +488,8 @@ class BackendAICredentialView extends LitElement {
             <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
             ${this._status === 'active' && this.use_user_list === true ? html`
-            <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>`: 
-            html``}
+            <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>` :
+      html``}
           </wl-tab-group>
           <div class="flex"></div>
           <wl-button class="fg green" id="add-keypair" outlined>

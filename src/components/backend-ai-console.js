@@ -34,7 +34,12 @@ import 'weightless/select';
 
 import '../lib/backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator.js';
 import './backend-ai-login.js';
 
@@ -53,6 +58,19 @@ import './backend-ai-login.js';
  @group Backend.AI Console
  */
 class BackendAiConsole extends connect(store)(LitElement) {
+  constructor() {
+    super();
+    setPassiveTouchGestures(true);
+    this.menuTitle = 'LOGIN REQUIRED';
+    this.user_id = 'DISCONNECTED';
+    this.domain = 'CLICK TO CONNECT';
+    this.is_connected = false;
+    this.is_admin = false;
+    this._page = '';
+    this.groups = [];
+    this.connection_mode = 'API';
+  }
+
   static get is() {
     return 'backend-ai-console';
   }
@@ -99,17 +117,75 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
   }
 
-  constructor() {
-    super();
-    setPassiveTouchGestures(true);
-    this.menuTitle = 'LOGIN REQUIRED';
-    this.user_id = 'DISCONNECTED';
-    this.domain = 'CLICK TO CONNECT';
-    this.is_connected = false;
-    this.is_admin = false;
-    this._page = '';
-    this.groups = [];
-    this.connection_mode = 'API';
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
+
+        app-drawer-layout:not([narrow]) [drawer-toggle] {
+          display: none;
+        }
+
+        .page {
+          display: none;
+        }
+
+        .page[active] {
+          display: block;
+        }
+
+        paper-spinner-lite {
+          --paper-spinner-layer-1-color: #9c27b0;
+          --paper-spinner-layer-2-color: #00bcd4;
+          --paper-spinner-layer-3-color: #607d8b;
+          --paper-spinner-layer-4-color: #ffc107;
+          --paper-spinner-stroke-width: 6px;
+          width: 48px;
+          height: 48px;
+          position: fixed;
+          top: calc(50vh - 24px);
+        }
+
+        @media screen and (max-width: 899px) {
+          paper-spinner-lite {
+            left: calc(50% - 24px);
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          paper-spinner-lite {
+            left: calc(50% + 71px);
+          }
+        }
+
+        .draggable {
+          -webkit-user-select: none !important;
+          -webkit-app-region: drag !important;
+        }
+
+        mwc-tab {
+          color: #ffffff;
+        }
+
+        wl-select {
+          --input-bg: transparent;
+          --input-color: rgb(221, 221, 221);
+          --input-color-disabled: rgb(221, 221, 221);
+          --input-label-color: rgb(221, 221, 221);
+          --input-label-font-size: 10px;
+          --input-padding-left-right: 20px;
+          --input-border-style: 0;
+          --input-font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+        }
+      `];
   }
 
   firstUpdated() {
@@ -318,80 +394,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.shadowRoot.querySelector('#main-toolbar').style.backgroundColor = backgroundColorVal;
     this.shadowRoot.querySelector('#main-toolbar').style.color = colorVal;
   }
+
   changeGroup(e) {
     window.backendaiclient.current_group = e.target.value;
     this.current_group = window.backendaiclient.current_group;
     let event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
     document.dispatchEvent(event);
-  }
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
-
-        .page {
-          display: none;
-        }
-
-        .page[active] {
-          display: block;
-        }
-
-        paper-spinner-lite {
-          --paper-spinner-layer-1-color: #9c27b0;
-          --paper-spinner-layer-2-color: #00bcd4;
-          --paper-spinner-layer-3-color: #607d8b;
-          --paper-spinner-layer-4-color: #ffc107;
-          --paper-spinner-stroke-width: 6px;
-          width: 48px;
-          height: 48px;
-          position: fixed;
-          top: calc(50vh - 24px);
-        }
-
-        @media screen and (max-width: 899px) {
-          paper-spinner-lite {
-            left: calc(50% - 24px);
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          paper-spinner-lite {
-            left: calc(50% + 71px);
-          }
-        }
-
-        .draggable {
-          -webkit-user-select: none !important;
-          -webkit-app-region: drag !important;
-        }
-
-        mwc-tab {
-          color: #ffffff;
-        }
-        wl-select {
-          --input-bg: transparent;
-          --input-color: rgb(221,221,221);
-          --input-color-disabled:rgb(221,221,221);
-          --input-label-color: rgb(221,221,221);
-          --input-label-font-size: 10px;
-          --input-padding-left-right: 20px;
-          --input-border-style: 0;
-          --input-font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-        }
-      `];
   }
 
   render() {
