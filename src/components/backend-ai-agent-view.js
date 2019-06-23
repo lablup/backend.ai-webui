@@ -74,8 +74,6 @@ class BackendAIAgentView extends LitElement {
   render() {
     // language=HTML
     return html`
-      <style is="custom-style" include="backend-ai-styles">
-      </style>
       <wl-card class="item" elevation="1">
         <h3 class="wl-card-title">Registered nodes</h3>
         <h4>Connected</h4>
