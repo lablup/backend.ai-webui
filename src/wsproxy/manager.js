@@ -5,7 +5,7 @@ const express = require('express'),
 const {isFreePort} = require('node-port-check');
 
 const Client = require("./lib/WstClient"),
-  ai = require('../backend.ai-client-node'),
+  ai = require('../lib/backend.ai-client-node'),
   Proxy = require("./proxy");
 
 class Manager extends EventEmitter {

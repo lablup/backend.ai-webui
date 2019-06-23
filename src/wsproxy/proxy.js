@@ -1,5 +1,5 @@
 const Client = require("./lib/WstClient"),
-  ai = require('../backend.ai-client-node');
+  ai = require('../lib/backend.ai-client-node');
 
 module.exports = (proxy = class Proxy extends ai.backend.Client {
   get_header(queryString) {
