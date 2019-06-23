@@ -24,7 +24,7 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/neon-animation/animations/slide-from-right-animation.js';
 import '@polymer/neon-animation/animations/slide-right-animation.js';
 
-//import {AnsiUp} from 'ansi_up/ansi_up';
+import { default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
 
@@ -45,6 +45,7 @@ class BackendAiSessionList extends LitElement {
     this.appSupportList = [];
     this.appTemplate = {};
     this._boundControlRenderer = this.controlRenderer.bind(this);
+    const ansi_up = new AnsiUp();
   }
 
   static get is() {
@@ -567,9 +568,11 @@ class BackendAiSessionList extends LitElement {
     const accessKey = controls['access-key'];
 
     window.backendaiclient.getLogs(kernelId, accessKey).then((req) => {
+      const ansi_up = new AnsiUp();
+      let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${kernelId}`;
-        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${req.result.logs}</pre>` || 'No logs.';
+        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || 'No logs.';
         this.shadowRoot.querySelector('#work-dialog').open();
       }, 100);
     }).catch((err) => {

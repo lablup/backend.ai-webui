@@ -526,7 +526,7 @@ class BackendAiSessionView extends LitElement {
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
-    this.mem_request = this.shadowRoot.querySelector('#ram-resource').value;
+    this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
 
     let config = {};
@@ -543,8 +543,8 @@ class BackendAiSessionView extends LitElement {
       config['gpu'] = this.gpu_request;
     }
 
-    if (String(this.shadowRoot.querySelector('#ram-resource').value) === "Infinity") {
-      config['mem'] = String(this.shadowRoot.querySelector('#ram-resource').value);
+    if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
+      config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
     } else {
       config['mem'] = String(this.mem_request) + 'g';
     }
@@ -971,10 +971,10 @@ class BackendAiSessionView extends LitElement {
           this.shadowRoot.querySelector('#cpu-resource').disabled = false;
         }
         if (this.mem_metric.min == this.mem_metric.max) {
-          this.shadowRoot.querySelector('#ram-resource').max = this.mem_metric.max + 1;
-          this.shadowRoot.querySelector('#ram-resource').disabled = true
+          this.shadowRoot.querySelector('#mem-resource').max = this.mem_metric.max + 1;
+          this.shadowRoot.querySelector('#mem-resource').disabled = true
         } else {
-          this.shadowRoot.querySelector('#ram-resource').disabled = false;
+          this.shadowRoot.querySelector('#mem-resource').disabled = false;
         }
         if (this.gpu_metric.min == this.gpu_metric.max) {
           this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
@@ -1262,7 +1262,7 @@ ${this.resource_templates.map(item => html`
                   </div>
                   <div class="horizontal center layout">
                     <span style="width:30px;">RAM</span>
-                    <paper-slider id="ram-resource" class="mem"
+                    <paper-slider id="mem-resource" class="mem"
                                   pin snaps step=0.1 editable
                                   .min="${this.mem_metric.min}" .max="${this.mem_metric.max}"
                                   value="${this.mem_request}"></paper-slider>
