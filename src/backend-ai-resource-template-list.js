@@ -58,6 +58,188 @@ class BackendAIResourceTemplateList extends PolymerElement {
     };
   }
 
+  static get observers() {
+    return [
+      '_menuChanged(active)'
+    ]
+  }
+
+  static get template() {
+    // language=HTML
+
+    return html`
+      <style include="backend-ai-styles iron-flex iron-flex-alignment">
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+        }
+
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
+
+        iron-icon {
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+          min-height: 16px;
+          padding: 0;
+        }
+
+        paper-icon-button {
+          --paper-icon-button: {
+            width: 25px;
+            height: 25px;
+            min-width: 25px;
+            min-height: 25px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
+
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
+
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
+
+        div.configuration {
+          width: 70px !important;
+        }
+
+        div.configuration iron-icon {
+          padding-right: 5px;
+        }
+      </style>
+      <lablup-notification id="notification"></lablup-notification>
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
+                   items="[[resourcePolicy]]">
+        <vaadin-grid-column width="40px" flex-grow="0" resizable>
+          <template class="header">#</template>
+          <template>[[_indexFrom1(index)]]</template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column resizable>
+          <template class="header">
+            <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
+          </template>
+          <template>
+            <div class="layout horizontal center flex">
+              <div>[[item.name]]</div>
+            </div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="150px" resizable>
+          <template class="header">Resources</template>
+          <template>
+            <div class="layout horizontal wrap center">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <span>[[_markIfUnlimited(item.total_resource_slots.cpu)]]</span>
+                <span class="indicator">cores</span>
+              </div>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <span>[[_markIfUnlimited(item.total_resource_slots.mem)]]</span>
+                <span class="indicator">GB</span>
+              </div>
+            </div>
+            <div class="layout horizontal wrap center">
+              <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
+                <div class="layout horizontal configuration">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_device)]]</span>
+                  <span class="indicator">GPU</span>
+                </div>
+              </template>
+              <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
+                <div class="layout horizontal configuration">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_shares)]]</span>
+                  <span class="indicator">vGPU</span>
+                </div>
+              </template>
+            </div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column resizable>
+          <template class="header">Control</template>
+          <template>
+            <div id="controls" class="layout horizontal flex center"
+                 policy-name="[[item.name]]">
+              <template is="dom-if" if="[[is_admin]]">
+                <paper-icon-button class="controls-running" icon="settings"
+                                   on-tap="_launchResourcePolicyDialog"></paper-icon-button>
+              </template>
+            </div>
+          </template>
+        </vaadin-grid-column>
+      </vaadin-grid>
+      <paper-dialog id="modify-template-dialog"
+                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3>Modify</h3>
+          <form id="login-form" onSubmit="this._modifyResourceTemplate()">
+            <fieldset>
+              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Template Name"
+                           auto-validate required
+                           pattern="[a-zA-Z0-9]*"
+                           error-message="Policy name only accepts letters and numbers"></paper-input>
+              <h4>Resource Template</h4>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="cpu-resource" label="CPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ cpu_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ ram_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="gpu-resource" label="GPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ gpu_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <template is="dom-repeat" items="{{ vgpu_metric }}">
+                      <paper-item label="{{item}}">{{ item }}</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <br/><br/>
+              <wl-button class="fg blue create-button" id="create-policy-button" outlined>
+                <wl-icon>add</wl-icon>
+                Add
+              </wl-button>
+            </fieldset>
+          </form>
+        </wl-card>
+      </paper-dialog>
+    `;
+  }
+
   ready() {
     super.ready();
   }
@@ -66,12 +248,6 @@ class BackendAIResourceTemplateList extends PolymerElement {
     super.connectedCallback();
     afterNextRender(this, function () {
     });
-  }
-
-  static get observers() {
-    return [
-      '_menuChanged(active)'
-    ]
   }
 
   _menuChanged(active) {
@@ -254,181 +430,6 @@ class BackendAIResourceTemplateList extends PolymerElement {
     } else {
       return value;
     }
-  }
-
-  static get template() {
-    // language=HTML
-
-    return html`
-      <style include="backend-ai-styles iron-flex iron-flex-alignment">
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
-        }
-
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        vaadin-item {
-          font-size: 13px;
-          font-weight: 100;
-        }
-
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
-
-        div.configuration {
-          width: 70px !important;
-        }
-
-        div.configuration iron-icon {
-          padding-right: 5px;
-        }
-      </style>
-      <lablup-notification id="notification"></lablup-notification>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
-                   items="[[resourcePolicy]]">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[_indexFrom1(index)]]</template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div>[[item.name]]</div>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column width="150px" resizable>
-          <template class="header">Resources</template>
-          <template>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[_markIfUnlimited(item.total_resource_slots.cpu)]]</span>
-                <span class="indicator">cores</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[_markIfUnlimited(item.total_resource_slots.mem)]]</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal wrap center">
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_device)]]</span>
-                  <span class="indicator">GPU</span>
-                </div>
-              </template>
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_shares)]]</span>
-                  <span class="indicator">vGPU</span>
-                </div>
-              </template>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">Control</template>
-          <template>
-            <div id="controls" class="layout horizontal flex center"
-                 policy-name="[[item.name]]">
-              <template is="dom-if" if="[[is_admin]]">
-                <paper-icon-button class="controls-running" icon="settings"
-                                   on-tap="_launchResourcePolicyDialog"></paper-icon-button>
-              </template>
-            </div>
-          </template>
-        </vaadin-grid-column>
-      </vaadin-grid>
-      <paper-dialog id="modify-template-dialog"
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Modify</h3>
-          <form id="login-form" onSubmit="this._modifyResourceTemplate()">
-            <fieldset>
-              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Template Name"
-                           auto-validate required
-                           pattern="[a-zA-Z0-9]*"
-                           error-message="Policy name only accepts letters and numbers"></paper-input>
-              <h4>Resource Template</h4>
-              <div class="horizontal center layout">
-                <paper-dropdown-menu id="cpu-resource" label="CPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ cpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ ram_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-              <div class="horizontal center layout">
-                <paper-dropdown-menu id="gpu-resource" label="GPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ gpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vgpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-              <br/><br/>
-              <wl-button class="fg blue create-button" id="create-policy-button" outlined>
-                <wl-icon>add</wl-icon>
-                Add</wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </paper-dialog>
-    `;
   }
 }
 

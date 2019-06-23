@@ -16,6 +16,16 @@ import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../
  @element lablup-shields
  */
 class LablupShields extends LitElement {
+  constructor() {
+    super();
+    setPassiveTouchGestures(true);
+    this.app = '';
+    this.description = '';
+    this.color = 'green';
+    this.appColor = 'grey';
+    this.ui = 'flat';
+  }
+
   static get styles() {
     return [
       IronFlex,
@@ -37,20 +47,6 @@ class LablupShields extends LitElement {
           border-radius: 4px;
         }
       `];
-  }
-
-  render() {
-    // language=HTML
-    return html`
-      <div class="shields layout horizontal flex">
-        <div class="app horizontal layout center">
-          <slot name="app-icon"></slot>
-          <span id="app-text" class="text app-text">${this.app}</span></div>
-        <div class="desc horizontal layout center">
-          <slot name="desc-icon"></slot>
-          <span id="desc-text" class="text desc-text">${this.description}</span></div>
-      </div>
-    `;
   }
 
   static get is() {
@@ -95,14 +91,18 @@ class LablupShields extends LitElement {
     }
   }
 
-  constructor() {
-    super();
-    setPassiveTouchGestures(true);
-    this.app = '';
-    this.description = '';
-    this.color = 'green';
-    this.appColor = 'grey';
-    this.ui = 'flat';
+  render() {
+    // language=HTML
+    return html`
+      <div class="shields layout horizontal flex">
+        <div class="app horizontal layout center">
+          <slot name="app-icon"></slot>
+          <span id="app-text" class="text app-text">${this.app}</span></div>
+        <div class="desc horizontal layout center">
+          <slot name="desc-icon"></slot>
+          <span id="desc-text" class="text desc-text">${this.description}</span></div>
+      </div>
+    `;
   }
 
   firstUpdated() {

@@ -6,7 +6,7 @@ import {css, html, LitElement} from "lit-element";
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
-import {IronFlex, IronFlexAlignment } from '../layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
 
 /**
  `<lablup-piechart>` is a convenient svg-format pie chart.
@@ -20,6 +20,20 @@ import {IronFlex, IronFlexAlignment } from '../layout/iron-flex-layout-classes';
  */
 
 class LablupPiechart extends LitElement {
+  constructor() {
+    super();
+    this.currentNumber = 50;
+    this.maxNumber = 100;
+    this.unit = '%';
+    this.url = '';
+    this.textcolor = '#888';
+    this.chartcolor = '#F22';
+    this.size = 200;
+    this.fontsize = 60;
+    this.prefix = '';
+    this.sizeParam = '';
+  }
+
   static get is() {
     return 'lablup-piechart';
   }
@@ -57,18 +71,16 @@ class LablupPiechart extends LitElement {
     }
   }
 
-  constructor() {
-    super();
-    this.currentNumber = 50;
-    this.maxNumber = 100;
-    this.unit = '%';
-    this.url = '';
-    this.textcolor = '#888';
-    this.chartcolor = '#F22';
-    this.size = 200;
-    this.fontsize = 60;
-    this.prefix = '';
-    this.sizeParam = '';
+  static get styles() {
+    return [
+      IronFlex,
+      IronFlexAlignment
+      // language=CSS
+      css`
+        #chart {
+          cursor: pointer;
+        }
+      `];
   }
 
   firstUpdated() {
@@ -133,18 +145,6 @@ class LablupPiechart extends LitElement {
     window.location.href = this.url;
   }
 
-  static get styles() {
-    return [
-      IronFlex,
-      IronFlexAlignment
-      // language=CSS
-      css`
-        #chart {
-          cursor: pointer;
-        }
-      `];
-  }
-
   render() {
     // language=HTML
     return html`
@@ -157,9 +157,9 @@ class LablupPiechart extends LitElement {
           <path id="pievalue" stroke="none" fill="rgba(255, 255, 255, 0.75)"/>
           <text id="chart-text" x="0.5" y="0.5" font-family="Roboto" text-anchor="middle"
                 dy="0.1">
-            <tspan>${ this.prefix }</tspan>
-            <tspan>${ this.currentNumber }</tspan>
-            <tspan id="unit-text" font-size="0.2" dy="-0.07">${ this.unit }</tspan>
+            <tspan>${this.prefix}</tspan>
+            <tspan>${this.currentNumber}</tspan>
+            <tspan id="unit-text" font-size="0.2" dy="-0.07">${this.unit}</tspan>
           </text>
         </g>
       </svg>

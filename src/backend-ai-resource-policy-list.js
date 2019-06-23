@@ -108,213 +108,12 @@ class BackendAIResourcePolicyList extends PolymerElement {
     };
   }
 
-  ready() {
-    super.ready();
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    afterNextRender(this, function () {
-    });
-  }
-
   static get observers() {
     return [
       '_menuChanged(active)'
     ]
   }
 
-  _menuChanged(active) {
-    if (!active) {
-      return;
-    }
-    // If disconnected
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._refreshPolicyData();
-        this.is_admin = window.backendaiclient.is_admin;
-      }, true);
-    } else { // already connected
-      this._refreshPolicyData();
-      this.is_admin = window.backendaiclient.is_admin;
-    }
-  }
-
-  _launchResourcePolicyDialog(e) {
-    this.updateCurrentPolicyToDialog(e);
-    this.$['modify-policy-dialog'].open();
-  }
-
-  updateCurrentPolicyToDialog(e) {
-    const controls = e.target.closest('#controls');
-    const policyName = controls.policyName;
-    let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
-    let resourcePolicy = resourcePolicies[policyName];
-    this.$['id_new_policy_name'].value = policyName;
-    this.$['cpu-resource'].value = resourcePolicy.total_resource_slots.cpu;
-    this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda_device'];
-    this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda_shares'];
-    this.$['ram-resource'].value = resourcePolicy.total_resource_slots['mem'];
-
-    this.$['concurrency-limit'].value = resourcePolicy.max_concurrent_sessions;
-    this.$['container-per-session-limit'].value = resourcePolicy.max_containers_per_session;
-    this.$['vfolder-count-limit'].value = resourcePolicy.max_vfolder_count;
-    this.$['vfolder-capacity-limit'].value = resourcePolicy.max_vfolder_size;
-    this.$['idle-timeout'].value = resourcePolicy.idle_timeout;
-    this.$['allowed_vfolder-hosts'].value = resourcePolicy.allowed_vfolder_hosts[0]; /* TODO: multiple vfolder hosts */
-  }
-
-  _refreshPolicyData() {
-    return window.backendaiclient.resourcePolicy.get().then((response) => {
-      let rp = response.keypair_resource_policies;
-      let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
-      return rp;
-    }).then((response) => {
-      let resourcePolicies = response;
-      Object.keys(resourcePolicies).map((objectKey, index) => {
-        var policy = resourcePolicies[objectKey];
-        policy['total_resource_slots'] = JSON.parse(policy['total_resource_slots']);
-        if ('cpu' in policy['total_resource_slots']) {
-        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cpu = 'Unlimited';
-        }
-        if ('mem' in policy['total_resource_slots']) {
-          policy['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
-        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].mem = 'Unlimited';
-        }
-        if ('cuda.device' in policy['total_resource_slots']) {
-          if (policy['total_resource_slots']['cuda.device'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
-            policy['total_resource_slots'].cuda_device = 'Unlimited';
-          } else {
-            policy['total_resource_slots'].cuda_device = policy['total_resource_slots']['cuda.device'];
-          }
-        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cuda_device = 'Unlimited';
-        }
-        if ('cuda.shares' in policy['total_resource_slots']) {
-          if (policy['total_resource_slots']['cuda.shares'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
-            policy['total_resource_slots'].cuda_shares = 'Unlimited';
-          } else {
-            policy['total_resource_slots'].cuda_shares = policy['total_resource_slots']['cuda.shares'];
-          }
-        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cuda_shares = 'Unlimited';
-        }
-      });
-      this.resourcePolicy = resourcePolicies;
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-  }
-
-  refresh() {
-    //let user_id = window.backendaiclient_email;
-    let user_id = null;
-    this._refreshPolicyData();
-  }
-
-  _isActive() {
-    return this.condition === 'active';
-  }
-
-  _readResourcePolicyInput() {
-    let cpu_resource = this.$['cpu-resource'].value;
-    let ram_resource = this.$['ram-resource'].value;
-    let gpu_resource = this.$['gpu-resource'].value;
-    let vgpu_resource = this.$['vgpu-resource'].value;
-    let vfolder_hosts = this.$['allowed_vfolder-hosts'].value;
-    if (cpu_resource === "Unlimited") {
-      cpu_resource = "Infinity";
-    }
-    if (ram_resource === "Unlimited") {
-      ram_resource = "Infinity";
-    }
-    if (gpu_resource === "Unlimited") {
-      gpu_resource = "Infinity";
-    } else {
-      gpu_resource = parseInt(gpu_resource).toString();
-    }
-    if (vgpu_resource === "Unlimited") {
-      vgpu_resource = "Infinity";
-    } else {
-      vgpu_resource = parseFloat(vgpu_resource).toString();
-    }
-
-    let total_resource_slots = {
-      "cpu": cpu_resource,
-      "mem": ram_resource + 'g',
-      "cuda.device": gpu_resource,
-      "cuda.shares": vgpu_resource
-    };
-    let concurrency_limit = this.$['concurrency-limit'].value;
-    let containers_per_session_limit = this.$['container-per-session-limit'].value;
-    let vfolder_count_limit = this.$['vfolder-count-limit'].value;
-    let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
-    let rate_limit = this.$['rate-limit'].value;
-    let idle_timeout = this.$['idle-timeout'].value;
-    let input = {
-      'default_for_unspecified': 'UNLIMITED',
-      'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': concurrency_limit,
-      'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': idle_timeout,
-      'max_vfolder_count': vfolder_count_limit,
-      'max_vfolder_size': vfolder_capacity_limit,
-      'allowed_vfolder_hosts': vfolder_hosts
-    };
-  }
-
-  _modifyResourcePolicy() {
-    let is_active = true;
-    let is_admin = false;
-    let name = this.$['id_new_policy_name'].value;
-    let input = this._readResourcePolicyInput();
-
-    window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
-      this.$['new-policy-dialog'].close();
-      this.$.notification.text = "Resource policy successfully updated.";
-      this.$.notification.show();
-      this.$['resource-policy-list'].refresh();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.$['new-policy-dialog'].close();
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-  }
-
-  _deleteKey(e) {
-    const termButton = e.target;
-    const controls = e.target.closest('#controls');
-    const accessKey = controls.accessKey;
-    window.backendaiclient.keypair.delete(accessKey).then(response => {
-      this.refresh();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
-      }
-    });
-  }
-  _indexFrom1(index) {
-    return index + 1;
-  }
-
-  _markIfUnlimited(value) {
-    if (['Unlimited', 0].includes(value)) {
-      return '∞';
-    } else {
-      return value;
-    }
-  }
   static get template() {
     // language=HTML
 
@@ -609,12 +408,215 @@ class BackendAIResourcePolicyList extends PolymerElement {
                 <wl-icon>add</wl-icon>
                 Create
               </wl-button>
-              
+
             </fieldset>
           </form>
         </wl-card>
       </paper-dialog>
     `;
+  }
+
+  ready() {
+    super.ready();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    afterNextRender(this, function () {
+    });
+  }
+
+  _menuChanged(active) {
+    if (!active) {
+      return;
+    }
+    // If disconnected
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._refreshPolicyData();
+        this.is_admin = window.backendaiclient.is_admin;
+      }, true);
+    } else { // already connected
+      this._refreshPolicyData();
+      this.is_admin = window.backendaiclient.is_admin;
+    }
+  }
+
+  _launchResourcePolicyDialog(e) {
+    this.updateCurrentPolicyToDialog(e);
+    this.$['modify-policy-dialog'].open();
+  }
+
+  updateCurrentPolicyToDialog(e) {
+    const controls = e.target.closest('#controls');
+    const policyName = controls.policyName;
+    let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
+    let resourcePolicy = resourcePolicies[policyName];
+    this.$['id_new_policy_name'].value = policyName;
+    this.$['cpu-resource'].value = resourcePolicy.total_resource_slots.cpu;
+    this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda_device'];
+    this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda_shares'];
+    this.$['ram-resource'].value = resourcePolicy.total_resource_slots['mem'];
+
+    this.$['concurrency-limit'].value = resourcePolicy.max_concurrent_sessions;
+    this.$['container-per-session-limit'].value = resourcePolicy.max_containers_per_session;
+    this.$['vfolder-count-limit'].value = resourcePolicy.max_vfolder_count;
+    this.$['vfolder-capacity-limit'].value = resourcePolicy.max_vfolder_size;
+    this.$['idle-timeout'].value = resourcePolicy.idle_timeout;
+    this.$['allowed_vfolder-hosts'].value = resourcePolicy.allowed_vfolder_hosts[0]; /* TODO: multiple vfolder hosts */
+  }
+
+  _refreshPolicyData() {
+    return window.backendaiclient.resourcePolicy.get().then((response) => {
+      let rp = response.keypair_resource_policies;
+      let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      return rp;
+    }).then((response) => {
+      let resourcePolicies = response;
+      Object.keys(resourcePolicies).map((objectKey, index) => {
+        var policy = resourcePolicies[objectKey];
+        policy['total_resource_slots'] = JSON.parse(policy['total_resource_slots']);
+        if ('cpu' in policy['total_resource_slots']) {
+        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
+          policy['total_resource_slots'].cpu = 'Unlimited';
+        }
+        if ('mem' in policy['total_resource_slots']) {
+          policy['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
+        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
+          policy['total_resource_slots'].mem = 'Unlimited';
+        }
+        if ('cuda.device' in policy['total_resource_slots']) {
+          if (policy['total_resource_slots']['cuda.device'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
+            policy['total_resource_slots'].cuda_device = 'Unlimited';
+          } else {
+            policy['total_resource_slots'].cuda_device = policy['total_resource_slots']['cuda.device'];
+          }
+        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
+          policy['total_resource_slots'].cuda_device = 'Unlimited';
+        }
+        if ('cuda.shares' in policy['total_resource_slots']) {
+          if (policy['total_resource_slots']['cuda.shares'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
+            policy['total_resource_slots'].cuda_shares = 'Unlimited';
+          } else {
+            policy['total_resource_slots'].cuda_shares = policy['total_resource_slots']['cuda.shares'];
+          }
+        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
+          policy['total_resource_slots'].cuda_shares = 'Unlimited';
+        }
+      });
+      this.resourcePolicy = resourcePolicies;
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+  }
+
+  refresh() {
+    //let user_id = window.backendaiclient_email;
+    let user_id = null;
+    this._refreshPolicyData();
+  }
+
+  _isActive() {
+    return this.condition === 'active';
+  }
+
+  _readResourcePolicyInput() {
+    let cpu_resource = this.$['cpu-resource'].value;
+    let ram_resource = this.$['ram-resource'].value;
+    let gpu_resource = this.$['gpu-resource'].value;
+    let vgpu_resource = this.$['vgpu-resource'].value;
+    let vfolder_hosts = this.$['allowed_vfolder-hosts'].value;
+    if (cpu_resource === "Unlimited") {
+      cpu_resource = "Infinity";
+    }
+    if (ram_resource === "Unlimited") {
+      ram_resource = "Infinity";
+    }
+    if (gpu_resource === "Unlimited") {
+      gpu_resource = "Infinity";
+    } else {
+      gpu_resource = parseInt(gpu_resource).toString();
+    }
+    if (vgpu_resource === "Unlimited") {
+      vgpu_resource = "Infinity";
+    } else {
+      vgpu_resource = parseFloat(vgpu_resource).toString();
+    }
+
+    let total_resource_slots = {
+      "cpu": cpu_resource,
+      "mem": ram_resource + 'g',
+      "cuda.device": gpu_resource,
+      "cuda.shares": vgpu_resource
+    };
+    let concurrency_limit = this.$['concurrency-limit'].value;
+    let containers_per_session_limit = this.$['container-per-session-limit'].value;
+    let vfolder_count_limit = this.$['vfolder-count-limit'].value;
+    let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
+    let rate_limit = this.$['rate-limit'].value;
+    let idle_timeout = this.$['idle-timeout'].value;
+    let input = {
+      'default_for_unspecified': 'UNLIMITED',
+      'total_resource_slots': JSON.stringify(total_resource_slots),
+      'max_concurrent_sessions': concurrency_limit,
+      'max_containers_per_session': containers_per_session_limit,
+      'idle_timeout': idle_timeout,
+      'max_vfolder_count': vfolder_count_limit,
+      'max_vfolder_size': vfolder_capacity_limit,
+      'allowed_vfolder_hosts': vfolder_hosts
+    };
+  }
+
+  _modifyResourcePolicy() {
+    let is_active = true;
+    let is_admin = false;
+    let name = this.$['id_new_policy_name'].value;
+    let input = this._readResourcePolicyInput();
+
+    window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
+      this.$['new-policy-dialog'].close();
+      this.$.notification.text = "Resource policy successfully updated.";
+      this.$.notification.show();
+      this.$['resource-policy-list'].refresh();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$['new-policy-dialog'].close();
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+  }
+
+  _deleteKey(e) {
+    const termButton = e.target;
+    const controls = e.target.closest('#controls');
+    const accessKey = controls.accessKey;
+    window.backendaiclient.keypair.delete(accessKey).then(response => {
+      this.refresh();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.$.notification.text = err.message;
+        this.$.notification.show();
+      }
+    });
+  }
+
+  _indexFrom1(index) {
+    return index + 1;
+  }
+
+  _markIfUnlimited(value) {
+    if (['Unlimited', 0].includes(value)) {
+      return '∞';
+    } else {
+      return value;
+    }
   }
 }
 
