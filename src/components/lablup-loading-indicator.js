@@ -7,6 +7,11 @@ import {css, html, LitElement} from 'lit-element';
 import '@polymer/paper-spinner/paper-spinner-lite';
 
 class LablupLoadingIndicator extends LitElement {
+  constructor() {
+    super();
+    this.active = true;
+  }
+
   static get is() {
     return 'lablup-loading-indicator';
   }
@@ -44,13 +49,6 @@ class LablupLoadingIndicator extends LitElement {
       `];
   }
 
-  render() {
-    // language=HTML
-    return html`
-      <paper-spinner-lite></paper-spinner-lite>
-    `;
-  }
-
   static get properties() {
     return {
       active: {
@@ -59,9 +57,11 @@ class LablupLoadingIndicator extends LitElement {
     };
   }
 
-  constructor() {
-    super();
-    this.active = true;
+  render() {
+    // language=HTML
+    return html`
+      <paper-spinner-lite></paper-spinner-lite>
+    `;
   }
 
   shouldUpdate() {

@@ -7,7 +7,12 @@ import {css, html, LitElement} from 'lit-element';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from '../plastics/layout/iron-flex-layout-classes';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -16,6 +21,13 @@ import 'weightless/card';
 import 'weightless/switch';
 
 class BackendAiSettingsView extends LitElement {
+  constructor() {
+    super();
+    setPassiveTouchGestures(true);
+    this.images = {};
+    this.active = false;
+  }
+
   static get is() {
     return 'backend-ai-settings-view';
   }
@@ -54,6 +66,18 @@ class BackendAiSettingsView extends LitElement {
           padding: 15px;
         }
       `];
+  }
+
+  static get properties() {
+    return {
+      active: {
+        type: Boolean
+      },
+      images: {
+        type: Object,
+        hasChanged: () => true
+      }
+    };
   }
 
   render() {
@@ -166,25 +190,6 @@ class BackendAiSettingsView extends LitElement {
 
       </wl-card>
     `;
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      images: {
-        type: Object,
-        hasChanged: () => true
-      }
-    };
-  }
-
-  constructor() {
-    super();
-    setPassiveTouchGestures(true);
-    this.images = {};
-    this.active = false;
   }
 
   shouldUpdate() {

@@ -7,6 +7,12 @@ import {css, html, LitElement} from 'lit-element';
 import 'weightless/snackbar';
 
 class LablupNotification extends LitElement {
+  constructor() {
+    super();
+    this.active = true;
+    this.message = '';
+  }
+
   static get is() {
     return 'lablup-notification';
   }
@@ -23,13 +29,6 @@ class LablupNotification extends LitElement {
       `];
   }
 
-  render() {
-    // language=HTML
-    return html`
-      <wl-snackbar id="notification" backdrop hideDelay="3000"></wl-snackbar>
-    `;
-  }
-
   static get properties() {
     return {
       active: {
@@ -41,10 +40,11 @@ class LablupNotification extends LitElement {
     };
   }
 
-  constructor() {
-    super();
-    this.active = true;
-    this.message = '';
+  render() {
+    // language=HTML
+    return html`
+      <wl-snackbar id="notification" backdrop hideDelay="3000"></wl-snackbar>
+    `;
   }
 
   shouldUpdate() {

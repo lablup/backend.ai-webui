@@ -6,6 +6,17 @@ import 'weightless/card';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 class LablupActivityPanel extends LitElement {
+  constructor() {
+    super();
+    this.title = '';
+    this.elevation = 1;
+    this.message = '';
+    this.panelId = '';
+    this.width = 280;
+    this.horizontalsize = '';
+    this.marginWidth = 16;
+  }
+
   static get is() {
     return 'lablup-activity-panel';
   }
@@ -70,20 +81,6 @@ class LablupActivityPanel extends LitElement {
       `];
   }
 
-  render() {
-    // language=HTML
-    return html`
-      <wl-card id="activity" elevation="${this.elevation}">
-        <h4 class="layout flex justified center">${this.title}
-          <paper-icon-button id="button" icon="close"></paper-icon-button>
-        </h4>
-        <div>
-          <slot name="message"></slot>
-        </div>
-      </wl-card>
-    `;
-  }
-
   static get properties() {
     return {
       title: {
@@ -121,15 +118,18 @@ class LablupActivityPanel extends LitElement {
     }
   }
 
-  constructor() {
-    super();
-    this.title = '';
-    this.elevation = 1;
-    this.message = '';
-    this.panelId = '';
-    this.width = 280;
-    this.horizontalsize = '';
-    this.marginWidth = 16;
+  render() {
+    // language=HTML
+    return html`
+      <wl-card id="activity" elevation="${this.elevation}">
+        <h4 class="layout flex justified center">${this.title}
+          <paper-icon-button id="button" icon="close"></paper-icon-button>
+        </h4>
+        <div>
+          <slot name="message"></slot>
+        </div>
+      </wl-card>
+    `;
   }
 
   firstUpdated() {
