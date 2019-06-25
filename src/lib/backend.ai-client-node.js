@@ -144,6 +144,8 @@ class Client {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
       }
+      rqst.credentials = 'include';
+      rqst.mode = 'cors';
       resp = await fetch(rqst.uri, rqst);
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
@@ -187,7 +189,7 @@ class Client {
    * Return the server-side API version.
    */
   getServerVersion() {
-    let rqst = this.newPublicRequest('GET', '', null, '');
+    let rqst = this.newPublicRequest('GET', '/', null, '');
     return this._wrapWithPromise(rqst);
   }
 
@@ -474,8 +476,6 @@ class Client {
         "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
         "X-BackendAI-Version": this._config.apiVersion,
         "X-BackendAI-Date": d.toISOString(),
-        "credentials": 'include',
-        "mode": 'cors'
       });
     } else {
       let signKey = this.getSignKey(this._config.secretKey, d);
@@ -485,8 +485,6 @@ class Client {
         "X-BackendAI-Version": this._config.apiVersion,
         "X-BackendAI-Date": d.toISOString(),
         "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
-        "credentials": 'include',
-        "mode": 'cors'
       });
     }
     if (body != undefined) {
@@ -502,6 +500,7 @@ class Client {
       hdrs.set('Content-Type', content_type);
     }
     let uri;
+    console.log(queryString);
     if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
       uri = this._config.endpoint + '/func' + queryString;
     } else {
