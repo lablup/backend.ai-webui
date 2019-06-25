@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 // PWA components
@@ -42,8 +41,6 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator.js';
 import './backend-ai-login.js';
-
-
 /**
  Backend.AI GUI Console
 
@@ -515,7 +512,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.06.0.190623</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.06.0.190625</small>
               </address>
             </div>
           </app-header-layout>
