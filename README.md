@@ -37,6 +37,9 @@ Backend.AI console focuses to
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
 	 * Needs backend.ai-wsproxy package
+ * Work with console server
+    * Delegate login to console server
+    * Support userid / password login
 
 ## Setup Guide
 ### Configuration
