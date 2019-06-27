@@ -58,7 +58,7 @@ connectionMode = [Connection mode. Default is API. Currenly supports API and SES
 [wsproxy]
 proxyURL = [Proxy URL]
 proxyBaseURL = [Base URL of websocket proxy,]
-proxyListenIP = [Websocekt proxy configuration IP.]
+proxyListenIP = [Websocket proxy configuration IP.]
 ```
 
 ## Development Guide
