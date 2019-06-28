@@ -503,6 +503,7 @@ class Client {
     }
     let uri;
     if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
+      console.log(queryString);
       uri = this._config.endpoint + '/func' + queryString;
     } else {
       uri = this._config.endpoint + queryString;
