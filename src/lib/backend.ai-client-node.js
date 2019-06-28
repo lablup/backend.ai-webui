@@ -502,8 +502,9 @@ class Client {
       hdrs.set('Content-Type', content_type);
     }
     let uri;
-    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
-      console.log(queryString);
+    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
+      uri = this._config.endpoint + queryString;
+    } else if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
       uri = this._config.endpoint + '/func' + queryString;
     } else {
       uri = this._config.endpoint + queryString;
