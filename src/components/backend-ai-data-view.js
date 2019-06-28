@@ -909,7 +909,7 @@ class BackendAIData extends LitElement {
   }
 
   _downloadFile(e) {
-    let fn = e.target.filename;
+    let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
     let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
     job.then(res => {
