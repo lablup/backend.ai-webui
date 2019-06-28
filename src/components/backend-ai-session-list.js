@@ -446,7 +446,8 @@ class BackendAiSessionList extends LitElement {
       'python-pytorch':'PyTorch',
       'ngc-digits': 'DIGITS',
       'ngc-tensorflow': [
-        {'TensorFlow': 'yellow'},{'NGC': 'green'}],
+        {'tag':'TensorFlow', 'color': 'yellow'},
+        {'tag':'NGC', 'color': 'green'}],
       'ngc-pytorch':'PyTorch',
       'julia': 'Julia',
       'r': 'R'
@@ -456,6 +457,10 @@ class BackendAiSessionList extends LitElement {
     let name = lang.split('/')[2].split(':')[0];
     if (name in kernel_alias) {
       tags.push(kernel_alias[name]);
+    } else {
+      tags = [
+        {'tag': lang, 'color': 'green'}
+      ]
     }
     return tags;
   }
