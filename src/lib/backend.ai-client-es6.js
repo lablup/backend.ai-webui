@@ -550,12 +550,13 @@ class Client {
       mode: 'cors',
       cache: 'default'
     };
-    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
+    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
+      requestInfo.uri = this._config.endpoint + queryString;
+    } else if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
       requestInfo.uri = this._config.endpoint + '/func' + queryString;
     } else {
       requestInfo.uri = this._config.endpoint + queryString;
     }
-
     return requestInfo;
   }
 
