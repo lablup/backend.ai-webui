@@ -77,10 +77,6 @@ class ClientConfig {
     return this._connectionMode;
   }
 
-  get accessKey() {
-    return this._accessKey;
-  }
-
   /**
    * Create a ClientConfig object from environment variables.
    */
@@ -229,6 +225,10 @@ class Client {
     let result;
     try {
       result = await this._wrapWithPromise(rqst);
+      if (result.authenticated === true) {
+        let data = result.data;
+        this._config._accessKey = result.data.access_key;
+      }
     } catch (err) {
       return false;
     }
@@ -506,7 +506,6 @@ class Client {
       hdrs.set('Content-Type', content_type);
     }
     let uri;
-    console.log(queryString);
     if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
       uri = this._config.endpoint + '/func' + queryString;
     } else {
