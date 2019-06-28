@@ -29,6 +29,7 @@ import 'weightless/dialog';
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-indicator.js';
 
 class BackendAiSessionList extends LitElement {
@@ -43,6 +44,7 @@ class BackendAiSessionList extends LitElement {
     this.appSupportList = [];
     this.appTemplate = {};
     this._boundControlRenderer = this.controlRenderer.bind(this);
+    this._boundSessionIDRenderer = this.sessionIDRenderer.bind(this);
   }
 
   static get is() {
@@ -74,14 +76,11 @@ class BackendAiSessionList extends LitElement {
       },
       appTemplate: {
         type: Object
+      },
+      notification: {
+        type: Object
       }
     };
-  }
-
-  static get observers() {
-    return [
-      '_menuChanged(active)'
-    ]
   }
 
   static get styles() {
@@ -219,6 +218,7 @@ class BackendAiSessionList extends LitElement {
       !window.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
     }
+    this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   connectedCallback() {
@@ -390,8 +390,8 @@ class BackendAiSessionList extends LitElement {
       this.shadowRoot.querySelector('#loading-indicator').hide();
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -436,6 +436,15 @@ class BackendAiSessionList extends LitElement {
     return this.condition === 'running' && support_kernels.includes(lang);
   }
 
+  _getKernelName(lang, type='name') {
+    if (lang === undefined) return '';
+    if (type == 'name') {
+      return lang.split(':')[0];
+    } else if (type == 'version') {
+      return lang.split(':')[1];
+    }
+  }
+
   _byteToMB(value) {
     return Math.floor(value / 1000000);
   }
@@ -472,12 +481,12 @@ class BackendAiSessionList extends LitElement {
     const accessKey = controls['access-key'];
 
     if (this.terminationQueue.includes(kernelId)) {
-      this.shadowRoot.querySelector('#notification').text = 'Already terminating the session.';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = 'Already terminating the session.';
+      this.notification.show();
       return false;
     }
-    this.shadowRoot.querySelector('#notification').text = 'Terminating session...';
-    this.shadowRoot.querySelector('#notification').show();
+    this.notification.text = 'Terminating session...';
+    this.notification.show();
     this.terminationQueue.push(kernelId);
     this._terminateApp(kernelId).then(() => {
       window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
@@ -486,14 +495,14 @@ class BackendAiSessionList extends LitElement {
           this.refreshList();
         }, 1000);
       }).catch((err) => {
-        this.shadowRoot.querySelector('#notification').text = 'Problem occurred during termination.';
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = 'Problem occurred during termination.';
+        this.notification.show();
       });
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -545,8 +554,8 @@ class BackendAiSessionList extends LitElement {
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
-          this.shadowRoot.querySelector('#notification').text = err.message;
-          this.shadowRoot.querySelector('#notification').show();
+          this.notification.text = err.message;
+          this.notification.show();
         }
       });
   }
@@ -576,11 +585,11 @@ class BackendAiSessionList extends LitElement {
       }, 100);
     }).catch((err) => {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = err.message;
+        this.notification.show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = err.title;
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = err.title;
+        this.notification.show();
       }
     });
   }
@@ -710,6 +719,15 @@ class BackendAiSessionList extends LitElement {
     }
   }
 
+  sessionIDRenderer(root, column, rowData) {
+    render(
+      html`
+        <div class="layout vertical start">
+            <div>${rowData.item.sess_id}</div>
+            <lablup-shields app="" color="blue" description="${this._getKernelName(rowData.item.kernel_image)}"></lablup-shields>            
+        </div>`, root
+    );
+  }
   controlRenderer(root, column, rowData) {
     render(
       html`
@@ -766,11 +784,7 @@ class BackendAiSessionList extends LitElement {
             </template>
           </vaadin-grid-sort-column>
         ` : html``}
-        <vaadin-grid-column resizable header="Job ID">
-          <template>
-            <div>[[item.sess_id]]</div>
-            <div class="indicator">([[item.kernel_image]])</div>
-          </template>
+        <vaadin-grid-column resizable header="Session ID" .renderer="${this._boundSessionIDRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="190px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
