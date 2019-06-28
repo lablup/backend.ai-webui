@@ -28,15 +28,15 @@ Backend.AI console focuses to
     * Allocate resource limitation for keys
  * Kernel managements
     * List supported kernels
-	 * Add kernels
-	 * Refresh kernel list
-	 * Categorize repository
-	 * Add/update resource templates (under development)
+     * Add kernels
+     * Refresh kernel list
+     * Categorize repository
+     * Add/update resource templates (under development)
  * Manager settings
     * Add repository
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
-	 * Needs backend.ai-wsproxy package
+    * Needs backend.ai-wsproxy package
  * Work with console server
     * Delegate login to console server
     * Support userid / password login
