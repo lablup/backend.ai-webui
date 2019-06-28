@@ -367,6 +367,8 @@ class BackendAiSessionList extends LitElement {
             sessions[objectKey].vgpu_slot = parseFloat(parseFloat(occupied_slots['cuda.shares']) * (1.0 / 1.0)).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
+          sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
+          console.log(sessions[objectKey].sessionTags);
         });
       }
       this.compute_sessions = sessions;
@@ -436,13 +438,26 @@ class BackendAiSessionList extends LitElement {
     return this.condition === 'running' && support_kernels.includes(lang);
   }
 
-  _getKernelName(lang, type='name') {
-    if (lang === undefined) return '';
-    if (type == 'name') {
-      return lang.split(':')[0];
-    } else if (type == 'version') {
-      return lang.split(':')[1];
+  _getKernelInfo(lang) {
+    const kernel_alias = {
+      'python': 'Python',
+      'python-ff': 'Lablup Research',
+      'python-tensorflow': 'TensorFlow',
+      'python-pytorch':'PyTorch',
+      'ngc-digits': 'DIGITS',
+      'ngc-tensorflow': [
+        {'TensorFlow': 'yellow'},{'NGC': 'green'}],
+      'ngc-pytorch':'PyTorch',
+      'julia': 'Julia',
+      'r': 'R'
+    };
+    let tags = [];
+    if (lang === undefined) return [];
+    let name = lang.split('/')[2].split(':')[0];
+    if (name in kernel_alias) {
+      tags.push(kernel_alias[name]);
     }
+    return tags;
   }
 
   _byteToMB(value) {
@@ -724,7 +739,11 @@ class BackendAiSessionList extends LitElement {
       html`
         <div class="layout vertical start">
             <div>${rowData.item.sess_id}</div>
-            <lablup-shields app="" color="blue" description="${this._getKernelName(rowData.item.kernel_image)}"></lablup-shields>            
+              ${rowData.item.sessionTags.map(item => html`
+${item.map(item => html`
+            <lablup-shields app="" color="${item.color}" description="${item.tag}"></lablup-shields>
+            `)}
+                `)}
         </div>`, root
     );
   }
