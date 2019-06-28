@@ -7,8 +7,6 @@ import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
 import '@polymer/polymer/lib/elements/dom-if.js';
-import '@polymer/iron-flex-layout/iron-flex-layout';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
 import '@polymer/paper-styles/color';

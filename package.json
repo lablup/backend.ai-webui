@@ -60,7 +60,6 @@
     "electron-tabs": "^0.9.5",
     "eslint": "^5.16.0",
     "eslint-config-google": "^0.12.0",
-    "express": "^4.17.1",
     "graphql": "^14.3.1",
     "node-fetch": "^2.6.0",
     "node-port-check": "^2.0.1",

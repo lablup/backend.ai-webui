@@ -38,7 +38,7 @@
 
  ```js
  import {html} from '@polymer/polymer/lib/utils/html-tag.js';
- import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+ import 'plastics/layout/iron-flex-layout/iron-flex-layout-classes.js';
 
  const template = html`
  <style is="custom-style" include="iron-flex iron-flex-alignment"></style>

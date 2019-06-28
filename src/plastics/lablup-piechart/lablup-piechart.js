@@ -4,8 +4,6 @@
  */
 import {css, html, LitElement} from "lit-element";
 import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-flex-layout/iron-flex-layout';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
 
 /**

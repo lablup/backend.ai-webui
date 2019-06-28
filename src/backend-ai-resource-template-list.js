@@ -5,7 +5,6 @@
 
 import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/polymer/lib/elements/dom-if.js';
-import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -21,7 +20,7 @@ import 'weightless/button';
 import 'weightless/icon';
 
 import './components/lablup-notification.js';
-import './backend-ai-styles.js';
+//import './backend-ai-styles.js';
 import './plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
 
