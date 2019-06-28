@@ -440,17 +440,27 @@ class BackendAiSessionList extends LitElement {
 
   _getKernelInfo(lang) {
     const kernel_alias = {
-      'python': 'Python',
-      'python-ff': 'Lablup Research',
-      'python-tensorflow': 'TensorFlow',
-      'python-pytorch':'PyTorch',
-      'ngc-digits': 'DIGITS',
+      'python': [
+        {'tag':'Python', 'color': 'yellow'}],
+      'python-ff': [
+        {'tag':'Lablup Research', 'color': 'yellow'},
+        {'tag':'NGC', 'color': 'green'}],
+      'python-tensorflow': [
+        {'tag':'TensorFlow', 'color': 'yellow'}],
+      'python-pytorch':[
+        {'tag':'PyTorch', 'color': 'yellow'}],
+      'ngc-digits': [
+        {'tag':'DIGITS', 'color': 'yellow'}],
       'ngc-tensorflow': [
         {'tag':'TensorFlow', 'color': 'yellow'},
         {'tag':'NGC', 'color': 'green'}],
-      'ngc-pytorch':'PyTorch',
-      'julia': 'Julia',
-      'r': 'R'
+      'ngc-pytorch':[
+        {'tag':'PyTorch', 'color': 'yellow'},
+        {'tag':'NGC', 'color': 'green'}],
+      'julia': [
+        {'tag':'Julia', 'color': 'yellow'}],
+      'r': [
+        {'tag':'R', 'color': 'yellow'}],
     };
     let tags = [];
     if (lang === undefined) return [];
