@@ -6,7 +6,7 @@
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
-import '@polymer/iron-ajax/iron-ajax';
+
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
@@ -21,8 +21,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@polymer/neon-animation/animations/slide-from-right-animation.js';
-import '@polymer/neon-animation/animations/slide-right-animation.js';
 
 import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
@@ -853,23 +851,22 @@ class BackendAiSessionList extends LitElement {
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
-      <paper-dialog id="work-dialog"
-                    entry-animation="slide-from-right-animation" exit-animation="slide-right-animation"
+      <wl-dialog id="work-dialog" fixed backdrop blockscrolling
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span id="work-title"></span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" dialog-dismiss>
-              Close
-            </paper-icon-button>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
           <paper-dialog-scrollable id="work-area" style="overflow:scroll;"></paper-dialog-scrollable>
           <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                   style="border-style: none;width: 100%;"></iframe>
 
         </wl-card>
-      </paper-dialog>
+      </wl-dialog>
       <wl-dialog id="app-dialog" fixed backdrop blockscrolling
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">

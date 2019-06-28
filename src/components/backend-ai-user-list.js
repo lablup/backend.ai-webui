@@ -5,7 +5,7 @@
 
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
-import '@polymer/iron-ajax/iron-ajax';
+
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';

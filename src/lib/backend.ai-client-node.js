@@ -473,12 +473,20 @@ class Client {
       aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
     }
     let hdrs;
+    let uri;
+    uri = '';
     if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
       hdrs = new Headers({
         "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
         "X-BackendAI-Version": this._config.apiVersion,
         "X-BackendAI-Date": d.toISOString(),
       });
+      console.log(queryString.startsWith('/server') ===true);
+      if (queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
+        uri = this._config.endpoint + queryString;
+      } else  { // Force request to use Public when session mode is enabled
+        uri = this._config.endpoint + '/func' + queryString;
+      }
     } else {
       let signKey = this.getSignKey(this._config.secretKey, d);
       let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
@@ -488,6 +496,7 @@ class Client {
         "X-BackendAI-Date": d.toISOString(),
         "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
       });
+      uri = this._config.endpoint + queryString;
     }
     if (body != undefined) {
       if (typeof body.getBoundary === 'function') {
@@ -501,15 +510,6 @@ class Client {
     } else {
       hdrs.set('Content-Type', content_type);
     }
-    let uri;
-    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
-      uri = this._config.endpoint + queryString;
-    } else if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
-      uri = this._config.endpoint + '/func' + queryString;
-    } else {
-      uri = this._config.endpoint + queryString;
-    }
-
     let requestInfo = {
       method: method,
       headers: hdrs,
