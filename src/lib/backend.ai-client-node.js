@@ -766,13 +766,14 @@ class VFolder {
    * @param {string} file - File to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
    */
-  download(file, name = false) {
+  async download(file, name = false) {
     let params = {
       'file': file
     };
     let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-    return this.client._wrapWithPromise(rqst, true);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/request_download?${q}`, null);
+    let res = await this.client._wrapWithPromise(rqst);
+    return {"url": this.client._config.endpoint + `${this.urlPrefix}/${name}/download_with_token?token=` + res.token};
   }
 
   /**
