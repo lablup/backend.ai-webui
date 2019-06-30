@@ -745,7 +745,11 @@ class BackendAiResourceMonitor extends LitElement {
           }
         }
       });
-      used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
+      if (this.concurrency_max === 0) {
+        used_slot_percent['concurrency'] = 0;
+      } else {
+        used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
+      }
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
       return this.available_slot;
