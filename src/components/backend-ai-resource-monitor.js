@@ -254,6 +254,10 @@ class BackendAiResourceMonitor extends LitElement {
           width: 100px;
         }
 
+        span.resource-type {
+          font-size: 14px;
+        }
+
         .gauge-name {
           font-size: 10px;
         }
@@ -1049,7 +1053,7 @@ class BackendAiResourceMonitor extends LitElement {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
+      <lablup-notification id="notification" open></lablup-notification>
       <div class="layout horizontal center resources wrap" style="margin-left:20px;">
         <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
           <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
@@ -1190,7 +1194,7 @@ ${this.resource_templates.map(item => html`
               <span slot="title">Advanced</span>
               <span slot="description">Free resource allocation</span>
               <div class="horizontal center layout">
-                <span style="width:30px;">CPU</span>
+                <span class="resource-type" style="width:30px;">CPU</span>
                 <paper-slider id="cpu-resource" class="cpu"
                               pin snaps expand editable
                               .min="${this.cpu_metric.min}" .max="${this.cpu_metric.max}"
@@ -1198,7 +1202,7 @@ ${this.resource_templates.map(item => html`
                 <span class="caption">Core</span>
               </div>
               <div class="horizontal center layout">
-                <span style="width:30px;">RAM</span>
+                <span class="resource-type" style="width:30px;">RAM</span>
                 <paper-slider id="mem-resource" class="mem"
                               pin snaps step=0.1 editable
                               .min="${this.mem_metric.min}" .max="${this.mem_metric.max}"
@@ -1206,7 +1210,7 @@ ${this.resource_templates.map(item => html`
                 <span class="caption">GB</span>
               </div>
               <div class="horizontal center layout">
-                <span style="width:30px;">GPU</span>
+                <span class="resource-type" style="width:30px;">GPU</span>
                 <paper-slider id="gpu-resource" class="gpu"
                               pin snaps editable .step="${this.gpu_step}"
                               .min="0.0" .max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
