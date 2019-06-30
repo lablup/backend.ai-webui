@@ -44,7 +44,7 @@ class BackendAiSessionList extends LitElement {
     this.appSupportList = [];
     this.appTemplate = {};
     this._boundControlRenderer = this.controlRenderer.bind(this);
-    this._boundSessionIDRenderer = this.sessionIDRenderer.bind(this);
+    this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
   }
 
   static get is() {
@@ -132,24 +132,22 @@ class BackendAiSessionList extends LitElement {
         }
 
         #work-dialog {
-          height: calc(100vh - 130px);
+          --dialog-height: calc(100vh - 130px);
           right: 0;
-          top: 0;
-          position: fixed;
-          margin: 100px 0 0 0;
+          top: 50px;
         }
 
         @media screen and (max-width: 899px) {
           #work-dialog {
             left: 0;
-            width: 100%;
+            --dialog-width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
-            left: 200px;
-            width: calc(100% - 200px);
+            left: 100px;
+            --dialog-width: calc(100% - 220px);
           }
         }
 
@@ -440,27 +438,27 @@ class BackendAiSessionList extends LitElement {
   _getKernelInfo(lang) {
     const kernel_alias = {
       'python': [
-        {'category': 'Runtime', 'tag': 'Python', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Python', 'color': 'yellow'}],
       'python-ff': [
-        {'category': 'Runtime', 'tag': 'Lablup Research', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'Lablup Research', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
-        {'category': 'Runtime', 'tag': 'TensorFlow', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'}],
       'python-pytorch':[
-        {'category': 'Runtime', 'tag': 'PyTorch', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'}],
       'ngc-digits': [
-        {'category': 'Runtime', 'tag': 'DIGITS', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'DIGITS', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
-        {'category': 'Runtime', 'tag': 'TensorFlow', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-pytorch':[
-        {'category': 'Runtime', 'tag': 'PyTorch', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'julia': [
-        {'category': 'Runtime', 'tag': 'Julia', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Julia', 'color': 'yellow'}],
       'r': [
-        {'category': 'Runtime', 'tag': 'R', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
     };
     let tags = [];
     if (lang === undefined) return [];
@@ -611,7 +609,7 @@ class BackendAiSessionList extends LitElement {
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${kernelId}`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || 'No logs.';
-        this.shadowRoot.querySelector('#work-dialog').open();
+        this.shadowRoot.querySelector('#work-dialog').show();
       }, 100);
     }).catch((err) => {
       if (err && err.message) {
@@ -818,7 +816,7 @@ ${item.map(item => html`
             </template>
           </vaadin-grid-sort-column>
         ` : html``}
-        <vaadin-grid-column resizable header="Session ID" .renderer="${this._boundSessionIDRenderer}">
+        <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="190px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
@@ -899,7 +897,7 @@ ${item.map(item => html`
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
-      <wl-dialog id="work-dialog" fixed backdrop blockscrolling
+      <wl-dialog id="work-dialog" fixed blockscrolling scrollable
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
