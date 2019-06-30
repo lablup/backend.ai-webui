@@ -38,6 +38,7 @@ dep:
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/bundle build/electron-app/app
+	cp -Rp build/bundle/resources build/electron-app/resources
 	cp ./config.ini ./build/electron-app/app/config.ini
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js

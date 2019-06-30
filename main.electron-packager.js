@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, Menu, shell, BrowserWindow} = require('electron');
+const {app, Menu, shell, BrowserWindow, protocol} = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
