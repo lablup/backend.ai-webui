@@ -5,32 +5,22 @@
 
 import {css, html, LitElement} from "lit-element";
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-button/paper-button';
-import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
-import '@polymer/neon-animation/animations/scale-up-animation.js';
-import '@polymer/neon-animation/animations/fade-out-animation.js';
 
-import '@vaadin/vaadin-dialog/vaadin-dialog.js';
-import './backend-ai-session-list.js';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/card';
-import 'weightless/tab';
-import 'weightless/tab-group';
+import 'weightless/slider';
 
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -48,6 +38,18 @@ class BackendAiResourceMonitor extends LitElement {
     this.supports = {};
     this.resourceLimits = {};
     this.userResourceLimit = {};
+    this.aliases = {
+      'TensorFlow': 'python-tensorflow',
+      'Lablup ResearchEnv.': 'python-ff',
+      'Python': 'python',
+      'PyTorch': 'python-pytorch',
+      'Chainer': 'chainer',
+      'R': 'r',
+      'Julia': 'julia',
+      'Lua': 'lua',
+    };
+    this.versions = ['3.6'];
+    this.languages = [];
     this.gpu_mode = 'no';
     this.gpu_step = 0.05;
     this.cpu_metric = {
@@ -80,6 +82,9 @@ class BackendAiResourceMonitor extends LitElement {
     this.concurrency_used = 0;
     this.concurrency_max = 0;
     this._status = 'inactive';
+    this.cpu_request = 1;
+    this.mem_request = 1;
+    this.gpu_request = 0;
   }
 
   static get is() {
@@ -166,6 +171,15 @@ class BackendAiResourceMonitor extends LitElement {
       launch_ready: {
         type: Boolean
       },
+      cpu_request: {
+        type: Number
+      },
+      mem_request: {
+        type: Number
+      },
+      gpu_request: {
+        type: Number
+      },
       _status: {
         type: Boolean
       }
@@ -229,16 +243,14 @@ class BackendAiResourceMonitor extends LitElement {
           width: 80px;
         }
 
-        .custom {
-          color: var(--paper-red-800);
-        }
-
         span.caption {
           width: 30px;
+          font-size: 12px;
           padding-left: 10px;
         }
 
         div.caption {
+          font-size: 12px;
           width: 100px;
         }
 
@@ -264,6 +276,15 @@ class BackendAiResourceMonitor extends LitElement {
           font-size: 14px;
         }
 
+        wl-button.resource-button.iron-selected {
+          --button-color: var(--paper-red-600);
+          --button-bg: var(--paper-red-600);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-bg-flat: var(--paper-orange-50);
+        }
+
         .resource-button h4 {
           padding: 5px 0;
           margin: 0;
@@ -287,7 +308,7 @@ class BackendAiResourceMonitor extends LitElement {
 
         wl-button.launch-button {
           width: 335px;
-          --button-bg: var(--paper-red-50);
+          --button-bg: white;
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
@@ -302,28 +323,6 @@ class BackendAiResourceMonitor extends LitElement {
           --button-color-hover: red;
         }
 
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
-        }
-
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-red-500);
-        }
-
-        wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: #222;
-          --tab-color-active-hover: #222;
-          --tab-color-active-filled: #ccc;
-          --tab-bg-active: var(--paper-red-50);
-          --tab-bg-filled: var(--paper-red-50);
-          --tab-bg-active-hover: var(--paper-red-100);
-        }
-
         wl-expansion {
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
@@ -334,17 +333,40 @@ class BackendAiResourceMonitor extends LitElement {
   }
 
   firstUpdated() {
-    this.shadowRoot.querySelector('#launch-session').addEventListener('tap', this._launchSessionDialog.bind(this));
-    this.shadowRoot.querySelector('#launch-button').addEventListener('tap', this._newSession.bind(this));
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-    //this.shadowRoot.querySelector('#advanced-resource-settings-button').addEventListener('tap', this._toggleAdvancedSettings.bind(this));
     this._initAliases();
     this.updateResourceIndicator();
+    const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
       this.updateResourceIndicator();
       this._refreshResourceTemplate();
     });
+    gpu_resource.addEventListener('value-change', () => {
+      if (gpu_resource.value > 0) {
+        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
+      } else {
+        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
+      }
+    });
+    this.shadowRoot.querySelector('#use-gpu-checkbox').addEventListener('change', () => {
+      if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked === true) {
+        if (this.gpu_metric.min === this.gpu_metric.max) {
+          this.shadowRoot.querySelector('#gpu-resource').disabled = true
+        } else {
+          this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+        }
+      } else {
+        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+      }
+    });
+    //this._initTabBar();
+  }
+
+  _initAliases() {
+    for (let item in this.aliases) {
+      this.aliases[this.aliases[item]] = item;
+    }
   }
 
   connectedCallback() {
@@ -366,11 +388,6 @@ class BackendAiResourceMonitor extends LitElement {
 
   async _menuChanged(active) {
     await this.updateComplete;
-    if (active === false) {
-      this._status = 'inactive';
-      return;
-    }
-    this._status = 'active';
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -385,7 +402,7 @@ class BackendAiResourceMonitor extends LitElement {
     window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
       this.concurrency_used = response.keypair.concurrency_used;
-      // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
+      // Workaround: We need a new API for user mode resource policy access, and current resource usage.
       // TODO: Fix it to use API-based resource max.
       return window.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
         'total_resource_slots',
@@ -423,6 +440,24 @@ class BackendAiResourceMonitor extends LitElement {
     this.updateMetric();
   }
 
+  _launchSessionDialog() {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      this.shadowRoot.querySelector('#notification').text = 'Please wait while initializing...';
+      this.shadowRoot.querySelector('#notification').show();
+    } else {
+      this.selectDefaultLanguage();
+      this.updateMetric();
+      const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+      //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
+      if (gpu_resource.value > 0) {
+        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
+      } else {
+        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
+      }
+      this.shadowRoot.querySelector('#new-session-dialog').show();
+    }
+  }
+
   _updateGPUMode() {
     window.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
@@ -435,6 +470,170 @@ class BackendAiResourceMonitor extends LitElement {
         this.gpu_step = 0.05;
       }
     });
+  }
+
+  _generateKernelIndex(kernel, version) {
+    if (kernel in this.aliases) {
+      return this.aliases[kernel] + ':' + version;
+    }
+    return kernel + ':' + version;
+  }
+
+  _newSession() {
+    let kernel = this.shadowRoot.querySelector('#environment').value;
+    let version = this.shadowRoot.querySelector('#version').value;
+    let sessionName = this.shadowRoot.querySelector('#session-name').value;
+    let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
+    this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
+    this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
+    this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
+
+    let config = {};
+    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
+      config['group_name'] = window.backendaiclient.current_group;
+    }
+    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
+      config['domain'] = window.backendaiclient._config.domainName;
+    }
+    config['cpu'] = this.cpu_request;
+    if (this.gpu_mode == 'vgpu') {
+      config['vgpu'] = this.gpu_request;
+    } else {
+      config['gpu'] = this.gpu_request;
+    }
+
+    if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
+      config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
+    } else {
+      config['mem'] = String(this.mem_request) + 'g';
+    }
+
+    if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
+      if (this.gpu_mode == 'vgpu') {
+        config['vgpu'] = 0.0;
+      } else {
+        config['gpu'] = 0.0;
+      }
+    }
+    if (sessionName.length < 4) {
+      sessionName = undefined;
+    }
+    if (vfolder.length !== 0) {
+      config['mounts'] = vfolder;
+    }
+    const kernelName = this._generateKernelIndex(kernel, version);
+    this.shadowRoot.querySelector('#launch-button').disabled = true;
+    this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
+    this.shadowRoot.querySelector('#notification').text = 'Preparing session...';
+    this.shadowRoot.querySelector('#notification').show();
+    window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
+      this.shadowRoot.querySelector('#new-session-dialog').hide();
+      this.shadowRoot.querySelector('#launch-button').disabled = false;
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
+    }).catch((err) => {
+      console.log(err);
+      if (err && err.message) {
+        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').show();
+      } else if (err && err.title) {
+        this.shadowRoot.querySelector('#notification').text = err.title;
+        this.shadowRoot.querySelector('#notification').show();
+      }
+      this.shadowRoot.querySelector('#launch-button').disabled = false;
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+    });
+  }
+
+  _hideSessionDialog() {
+    this.shadowRoot.querySelector('#new-session-dialog').hide();
+  }
+
+  _guessHumanizedNames(kernelName) {
+    const candidate = {
+      'cpp': 'C++',
+      'gcc': 'C',
+      'go': 'Go',
+      'haskell': 'Haskell',
+      'java': 'Java',
+      'julia': 'Julia',
+      'lua': 'Lua',
+      'ngc-rapid': 'RAPID (NGC)',
+      'ngc-digits': 'DIGITS (NGC)',
+      'ngc-pytorch': 'PyTorch (NGC)',
+      'ngc-tensorflow': 'TensorFlow (NGC)',
+      'nodejs': 'Node.js',
+      'octave': 'Octave',
+      'php': 'PHP',
+      'python': 'Python',
+      'python-ff': 'Lablup ResearchEnv.',
+      'python-cntk': 'CNTK',
+      'python-pytorch': 'PyTorch',
+      'python-tensorflow': 'TensorFlow',
+      'r-base': 'R',
+      'rust': 'Rust',
+      'scala': 'Scala',
+      'scheme': 'Scheme',
+    };
+    let humanizedName = null;
+    let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
+    Object.keys(candidate).forEach((item, index) => {
+      if (kernelName.endsWith(item) && item.length < matchedString.length) {
+        humanizedName = candidate[item];
+        matchedString = item;
+      }
+    });
+    return humanizedName;
+  }
+
+  _updateEnvironment() {
+    // this.languages = Object.keys(this.supports);
+    // this.languages.sort();
+    const langs = Object.keys(this.supports);
+    if (langs === undefined) return;
+    langs.sort();
+    this.languages = [];
+    langs.forEach((item, index) => {
+      if (!(Object.keys(this.aliases).includes(item))) {
+        const humanizedName = this._guessHumanizedNames(item);
+        if (humanizedName !== null) {
+          this.aliases[item] = humanizedName;
+        }
+      }
+      const alias = this.aliases[item];
+      if (alias !== undefined) {
+        this.languages.push({name: item, alias: alias});
+      }
+    });
+    this._initAliases();
+  }
+
+  _updateVersions(lang) {
+    if (this.aliases[lang] in this.supports) {
+      this.versions = this.supports[this.aliases[lang]];
+      this.versions = this.versions.sort();
+    }
+    if (this.versions !== undefined) {
+      this.shadowRoot.querySelector('#version').value = this.versions[0];
+      this.updateMetric();
+    }
+  }
+
+  _updateVirtualFolderList() {
+    let l = window.backendaiclient.vfolder.list();
+    l.then((value) => {
+      this.vfolders = value;
+    });
+  }
+
+  _supportLanguages() {
+    return Object.keys(this.supports);
+  }
+
+  _supportVersions() {
+    let lang = this.shadowRoot.querySelector('#environment').value;
+    return this.supports[lang];
   }
 
   async _aggregateResourceUse() {
@@ -557,6 +756,30 @@ class BackendAiResourceMonitor extends LitElement {
     } else {
       this._aggregateResourceUse();
     }
+  }
+
+  _refreshResourceTemplate() {
+    window.backendaiclient.resourcePreset.check().then((response) => {
+      if (response.presets) {
+        let presets = response.presets;
+        let available_presets = [];
+        presets.forEach((item) => {
+          if (item.allocatable === true) {
+            if ('cuda.shares' in item.resource_slots) {
+              item.gpu = item.resource_slots['cuda.shares'];
+            } else if ('cuda.device' in item) {
+              item.gpu = item.resource_slots['cuda.device'];
+            } else {
+              item.gpu = 0;
+            }
+            item.cpu = item.resource_slots.cpu;
+            item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+            available_presets.push(item);
+          }
+        });
+        this.resource_templates = available_presets;
+      }
+    });
   }
 
   async updateMetric() {
@@ -690,10 +913,13 @@ class BackendAiResourceMonitor extends LitElement {
           this.shadowRoot.querySelector('#gpu-resource').disabled = false;
           this.shadowRoot.querySelector('#gpu-resource').value = this.gpu_metric.max;
         }
+
         // Refresh with resource template
         if (this.resource_templates !== [] && this.resource_templates.length > 0) {
           let resource = this.resource_templates[0];
           this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
+          let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('wl-button')[0];
+          default_template.setAttribute('active', true);
           //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
         }
 
@@ -705,10 +931,10 @@ class BackendAiResourceMonitor extends LitElement {
           this.shadowRoot.querySelector('#cpu-resource').disabled = false;
         }
         if (this.mem_metric.min == this.mem_metric.max) {
-          this.shadowRoot.querySelector('#ram-resource').max = this.mem_metric.max + 1;
-          this.shadowRoot.querySelector('#ram-resource').disabled = true
+          this.shadowRoot.querySelector('#mem-resource').max = this.mem_metric.max + 1;
+          this.shadowRoot.querySelector('#mem-resource').disabled = true
         } else {
-          this.shadowRoot.querySelector('#ram-resource').disabled = false;
+          this.shadowRoot.querySelector('#mem-resource').disabled = false;
         }
         if (this.gpu_metric.min == this.gpu_metric.max) {
           this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
@@ -787,206 +1013,219 @@ class BackendAiResourceMonitor extends LitElement {
   }
 
   _updateResourceIndicator(cpu, mem, gpu) {
-    this.shadowRoot.querySelector('#cpu-resource').value = cpu;
-    this.shadowRoot.querySelector('#ram-resource').value = mem;
     this.shadowRoot.querySelector('#gpu-resource').value = gpu;
+    this.cpu_request = cpu;
+    this.mem_request = mem;
+    this.gpu_request = gpu;
+  }
+
+  selectDefaultLanguage() {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._selectDefaultLanguage();
+      }, true);
+    } else {
+      this._selectDefaultLanguage();
+    }
+  }
+
+  _selectDefaultLanguage() {
+    if (window.backendaiclient._config.default_session_environment !== undefined &&
+      'default_session_environment' in window.backendaiclient._config &&
+      window.backendaiclient._config.default_session_environment !== '') {
+      this.default_language = window.backendaiclient._config.default_session_environment;
+    } else if (this.languages.length !== 0) {
+      this.default_language = this.languages[0].name;
+    } else {
+      this.default_language = 'index.docker.io/lablup/ngc-tensorflow';
+    }
+    return true;
+  }
+
+  _selectDefaultVersion(version) {
+    return false;
   }
 
   render() {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
-      <wl-card class="item" elevation="1">
-        <h3 class="tab horizontal center layout">
-          <wl-tab-group>
-            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>  
-            <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
-          </wl-tab-group>
-          <div class="layout horizontal center resources wrap" style="margin-left:20px;">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
-              <div class="gauge-name">CPU</div>
-            </div>
-            <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
-              <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
-            </div>
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
-              <span class="gauge-name">RAM</span>
-            </div>
-            <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
-              <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
-            </div>
-            ${this.total_slot.gpu_slot ?
+      <div class="layout horizontal center resources wrap" style="margin-left:20px;">
+        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+          <div class="gauge-name">CPU</div>
+        </div>
+        <div class="layout vertical start-justified wrap">
+          <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
+          <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
+        </div>
+        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+          <span class="gauge-name">RAM</span>
+        </div>
+        <div class="layout vertical start-justified wrap">
+          <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
+          <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+        </div>
+        ${this.total_slot.gpu_slot ?
       html`
-              <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-                <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-                <span class="gauge-name">GPU</span>
-              </div>
-              <div class="layout vertical start-justified wrap short-indicator">
-                <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
-                <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
-              </div>` :
+        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+          <span class="gauge-name">GPU</span>
+        </div>
+        <div class="layout vertical start-justified wrap short-indicator">
+          <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
+          <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
+        </div>` :
       html``}
-            ${this.total_slot.vgpu_slot ?
+        ${this.total_slot.vgpu_slot ?
       html`
-                <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-                  <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-                  <span class="gauge-name">GPU</span>
-                </div>
-                <div class="layout vertical start-justified wrap short-indicator">
-                  <span class="gauge-label">${this.used_slot.vgpu_slot}/${this.total_slot.vgpu_slot}</span>
-                  <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
-                </div>` :
+        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+          <span class="gauge-name">GPU</span>
+        </div>
+        <div class="layout vertical start-justified wrap short-indicator">
+          <span class="gauge-label">${this.used_slot.vgpu_slot}/${this.total_slot.vgpu_slot}</span>
+          <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
+        </div>` :
       html``}
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
-              <span class="gauge-name">Session</span>
-            </div>
-            <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-              <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
-            </div>
-
-            </div>
-            <span class="flex"></span>
-            <wl-button class="fg red" id="launch-session" outlined>
-              <wl-icon>add</wl-icon>
-              Start
-            </wl-button>
+        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
+          <span class="gauge-name">Session</span>
+        </div>
+        <div class="layout vertical start-justified wrap short-indicator">
+          <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
+          <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+        </div>
+        <span class="flex"></span>
+        <wl-button class="fg red" id="launch-session" outlined @click="${() => this._launchSessionDialog()}">
+          <wl-icon>add</wl-icon>
+          Start
+        </wl-button>
+      </div>
+      <wl-dialog id="new-session-dialog"
+                    fixed backdrop blockscrolling persistent
+                    style="padding:0;">
+        <wl-card class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span>Start a new session</span>
+            <div class="flex"></div>
+            <paper-icon-button icon="close" class="blue close-button" 
+              @click="${() => this._hideSessionDialog()}">
+              Close
+            </paper-icon-button>
           </h3>
-          <div id="running-lists" class="tab-content">
-            <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
-          </div>
-          <div id="finished-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
-          </div>
-        </wl-card>
-        <wl-dialog id="new-session-dialog"
-                      fixed backdrop blockscrolling persistent
-                      style="padding:0;">
-          <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-            <h3 class="horizontal center layout">
-              <span>Start a new session</span>
-              <div class="flex"></div>
-              <paper-icon-button icon="close" class="blue close-button" 
-                @click="${() => this._hideSessionDialog()}">
-                Close
-              </paper-icon-button>
-            </h3>
-            <form id="launch-session-form" onSubmit="this._launchSession()">
-              <fieldset>
-                <div class="horizontal center layout">
-                  <paper-dropdown-menu id="environment" label="Environments">
-                    <paper-listbox slot="dropdown-content" attr-for-selected="id"
-                                   selected="${this.default_language}">
-                  ${this.languages.map(item => html`
-                          <paper-item id="${item.name}" label="${item.alias}">${item.alias}</paper-item>
-                  `)}
-                      </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu id="version" label="Version">
-                      <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.versions.map(item => html`
-                        <paper-item id="${item}" label="${item}">${item}</paper-item>
-                  `)}
-                      </paper-listbox>
-                    </paper-dropdown-menu>
-                    </div>
-                    <div style="display:none;">
-                      <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
-                    </div>
-                    <div class="layout vertical">
-                      <paper-input id="session-name" label="Session name (optional)"
-                                   value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
-                                   error-message="4 or more characters">
-                      </paper-input>
-                      <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
-                      ${this.vfolders.map(item => html`
-                        <paper-item value="${item.name}">${item.name}</paper-item>
-                      `)}    
-                      </backend-ai-dropdown-menu>
-                  </div>
-                </fieldset>
-                <wl-expansion name="resource-group" open>
-                  <span slot="title">Resource allocation</span>
-                  <span slot="description"></span>
-                  <paper-listbox selected="0" class="horizontal center layout"
-                                 style="width:350px; overflow:scroll;">
-${this.resource_templates.map(item => html`
-                    <wl-button class="resource-button vertical center start layout" role="option"
-                                style="height:140px;min-width:120px;" type="button"
-                                flat outlined 
-                                @click="${this._chooseResourceTemplate}"
-                                id="${item.name}-button"
-                                .cpu="${item.cpu}"
-                                .mem="${item.mem}"
-                                .gpu="${item.gpu}">
-                      <div>
-                        <h4>${item.name}</h4>
-                        <ul>
-                          <li>${item.cpu} CPU</li>
-                          <li>${item.mem}GB RAM</li>
-                          ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} vGPU</li>`}
-                          </ul>
-                      </div>
-                    </wl-button>
-                  `)}
-                  ${this.isEmpty(this.resource_templates) ?
-      html`
-                    <wl-button class="resource-button vertical center start layout" role="option"
-                                style="height:140px;width:350px;" type="button"
-                                flat inverted outlined disabled>
-                      <div>
-                        <h4>No suitable preset</h4>
-                        <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
-                      </div>
-                    </wl-button>
-` : html``}
+          <form id="launch-session-form">
+            <fieldset>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="environment" label="Environments">
+                  <paper-listbox slot="dropdown-content" attr-for-selected="id"
+                                 selected="${this.default_language}">
+                ${this.languages.map(item => html`
+                    <paper-item id="${item.name}" label="${item.alias}">${item.alias}</paper-item>
+                `)}
                   </paper-listbox>
-                </wl-expansion>
-                <wl-expansion name="resource-group">
-                  <span slot="title">Advanced</span>
-                  <span slot="description">Free resource allocation</span>
-                  <div class="horizontal center layout">
-                    <span style="width:30px;">CPU</span>
-                    <paper-slider id="cpu-resource" class="cpu"
-                                  pin snaps expand editable
-                                  min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                                  value="${this.cpu_metric.max}"></paper-slider>
-                    <span class="caption">Core</span>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="version" label="Version">
+                  <paper-listbox slot="dropdown-content" selected="0">
+              ${this.versions.map(item => html`
+                    <paper-item id="${item}" label="${item}">${item}</paper-item>
+              `)}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <div style="display:none;">
+                <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
+              </div>
+              <div class="layout vertical">
+                <paper-input id="session-name" label="Session name (optional)"
+                             value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
+                             error-message="4 or more characters">
+                </paper-input>
+                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
+                ${this.vfolders.map(item => html`
+                  <paper-item value="${item.name}">${item.name}</paper-item>
+                `)}    
+                </backend-ai-dropdown-menu>
+              </div>
+            </fieldset>
+            <wl-expansion name="resource-group" open>
+              <span slot="title">Resource allocation</span>
+              <span slot="description"></span>
+              <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
+                             style="width:350px; overflow:scroll;">
+${this.resource_templates.map(item => html`
+                <wl-button class="resource-button vertical center start layout" role="option"
+                            style="height:140px;min-width:120px;" type="button"
+                            flat outlined
+                            @click="${this._chooseResourceTemplate}"
+                            id="${item.name}-button"
+                            .cpu="${item.cpu}"
+                            .mem="${item.mem}"
+                            .gpu="${item.gpu}">
+                  <div>
+                    <h4>${item.name}</h4>
+                    <ul>
+                      <li>${item.cpu} CPU</li>
+                      <li>${item.mem}GB RAM</li>
+                      ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} vGPU</li>`}
+                      </ul>
                   </div>
-                  <div class="horizontal center layout">
-                    <span style="width:30px;">RAM</span>
-                    <paper-slider id="ram-resource" class="mem"
-                                  pin snaps step=0.1 editable
-                                  min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                                  value="${this.mem_metric.max}"></paper-slider>
-                    <span class="caption">GB</span>
+                </wl-button>
+              `)}
+              ${this.isEmpty(this.resource_templates) ?
+      html`
+                <wl-button class="resource-button vertical center start layout" role="option"
+                            style="height:140px;width:350px;" type="button"
+                            flat inverted outlined disabled>
+                  <div>
+                    <h4>No suitable preset</h4>
+                    <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
                   </div>
-                  <div class="horizontal center layout">
-                    <span style="width:30px;">GPU</span>
-                    <paper-slider id="gpu-resource" class="gpu"
-                                  pin snaps editable step="${this.gpu_step}"
-                                  min="0.0" max="${this.gpu_metric.max}" value="1.0"></paper-slider>
-                    <span class="caption">GPU</span>
-                  </div>
-                </wl-expansion>
-                
-                <fieldset style="padding-top:0;">
-                  <wl-button class="launch-button fg red" type="button" id="launch-button"
-                                               outlined>
-                                              <wl-icon>rowing</wl-icon>
-                    <span id="launch-button-msg">Launch</span>
-                  </wl-button>
-                </fieldset>
-            </form>
-          </wl-card>
-        </wl-dialog>
+                </wl-button>
+` : html``}
+              </paper-listbox>
+            </wl-expansion>
+            <wl-expansion name="resource-group">
+              <span slot="title">Advanced</span>
+              <span slot="description">Free resource allocation</span>
+              <div class="horizontal center layout">
+                <span style="width:30px;">CPU</span>
+                <paper-slider id="cpu-resource" class="cpu"
+                              pin snaps expand editable
+                              .min="${this.cpu_metric.min}" .max="${this.cpu_metric.max}"
+                              value="${this.cpu_request}"></paper-slider>
+                <span class="caption">Core</span>
+              </div>
+              <div class="horizontal center layout">
+                <span style="width:30px;">RAM</span>
+                <paper-slider id="mem-resource" class="mem"
+                              pin snaps step=0.1 editable
+                              .min="${this.mem_metric.min}" .max="${this.mem_metric.max}"
+                              value="${this.mem_request}"></paper-slider>
+                <span class="caption">GB</span>
+              </div>
+              <div class="horizontal center layout">
+                <span style="width:30px;">GPU</span>
+                <paper-slider id="gpu-resource" class="gpu"
+                              pin snaps editable .step="${this.gpu_step}"
+                              .min="0.0" .max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
+                <span class="caption">GPU</span>
+              </div>
+            </wl-expansion>
+              
+            <fieldset style="padding-top:0;">
+              <wl-button class="launch-button fg red" type="button" id="launch-button"
+                                           outlined @click="${() => this._newSession()}">
+                                          <wl-icon>rowing</wl-icon>
+                <span id="launch-button-msg">Launch</span>
+              </wl-button>
+            </fieldset>
+          </form>
+        </wl-card>
+      </wl-dialog>
 `;
   }
 }
 
-customElements.define(BackendAiSessionView.is, BackendAiSessionView);
+customElements.define(BackendAiResourceMonitor.is, BackendAiResourceMonitor);
