@@ -313,7 +313,7 @@ class BackendAiSessionView extends LitElement {
 
         wl-button.launch-button {
           width: 335px;
-          --button-bg: var(--paper-red-50);
+          --button-bg: white;
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
