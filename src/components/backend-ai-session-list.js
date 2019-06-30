@@ -440,27 +440,27 @@ class BackendAiSessionList extends LitElement {
   _getKernelInfo(lang) {
     const kernel_alias = {
       'python': [
-        {'tag':'Python', 'color': 'yellow'}],
+        {'category': 'Runtime', 'tag': 'Python', 'color': 'yellow'}],
       'python-ff': [
-        {'tag':'Lablup Research', 'color': 'yellow'},
+        {'category': 'Runtime', 'tag': 'Lablup Research', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
-        {'tag':'TensorFlow', 'color': 'yellow'}],
+        {'category': 'Runtime', 'tag': 'TensorFlow', 'color': 'yellow'}],
       'python-pytorch':[
-        {'tag':'PyTorch', 'color': 'yellow'}],
+        {'category': 'Runtime', 'tag': 'PyTorch', 'color': 'yellow'}],
       'ngc-digits': [
-        {'tag':'DIGITS', 'color': 'yellow'},
+        {'category': 'Runtime', 'tag': 'DIGITS', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
-        {'tag':'TensorFlow', 'color': 'yellow'},
+        {'category': 'Runtime', 'tag': 'TensorFlow', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-pytorch':[
-        {'tag':'PyTorch', 'color': 'yellow'},
+        {'category': 'Runtime', 'tag': 'PyTorch', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'julia': [
-        {'tag':'Julia', 'color': 'yellow'}],
+        {'category': 'Runtime', 'tag': 'Julia', 'color': 'yellow'}],
       'r': [
-        {'tag':'R', 'color': 'yellow'}],
+        {'category': 'Runtime', 'tag': 'R', 'color': 'yellow'}],
     };
     let tags = [];
     if (lang === undefined) return [];
@@ -756,7 +756,7 @@ class BackendAiSessionList extends LitElement {
             <div>${rowData.item.sess_id}</div>
               ${rowData.item.sessionTags.map(item => html`
 ${item.map(item => html`
-            <lablup-shields app="" color="${item.color}" description="${item.tag}"></lablup-shields>
+            <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
             `)}
                 `)}
         </div>`, root
