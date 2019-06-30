@@ -368,7 +368,6 @@ class BackendAiSessionList extends LitElement {
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
-          console.log(sessions[objectKey].sessionTags);
         });
       }
       this.compute_sessions = sessions;
