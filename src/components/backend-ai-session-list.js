@@ -443,19 +443,20 @@ class BackendAiSessionList extends LitElement {
         {'tag':'Python', 'color': 'yellow'}],
       'python-ff': [
         {'tag':'Lablup Research', 'color': 'yellow'},
-        {'tag':'NGC', 'color': 'green'}],
+        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
         {'tag':'TensorFlow', 'color': 'yellow'}],
       'python-pytorch':[
         {'tag':'PyTorch', 'color': 'yellow'}],
       'ngc-digits': [
-        {'tag':'DIGITS', 'color': 'yellow'}],
+        {'tag':'DIGITS', 'color': 'yellow'},
+        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
         {'tag':'TensorFlow', 'color': 'yellow'},
-        {'tag':'NGC', 'color': 'green'}],
+        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-pytorch':[
         {'tag':'PyTorch', 'color': 'yellow'},
-        {'tag':'NGC', 'color': 'green'}],
+        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
       'julia': [
         {'tag':'Julia', 'color': 'yellow'}],
       'r': [
