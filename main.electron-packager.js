@@ -312,7 +312,7 @@ function createWindow () {
   });
 
   mainWindow.loadURL(url.format({ // Load HTML into new Window
-    pathname: path.join(__dirname, mainIndex),
+    pathname: path.join(mainIndex),
     protocol: 'file',
     slashes: true
   }));
@@ -341,7 +341,15 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  protocol.interceptFileProtocol('file', (request, callback) => {
+    const url = request.url.substr(7)    /* all urls start with 'file://' */
+    callback({ path: path.normalize(`${__dirname}/${url}`)})
+  }, (err) => {
+    if (err) console.error('Failed to register protocol')
+  })
+  createWindow()
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -350,7 +358,7 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
     app.quit()
   }
-});
+})
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the

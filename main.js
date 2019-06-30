@@ -1,18 +1,18 @@
-// Local tester file
-// Modules to control application life and create native browser window
-const {app, Menu, shell, BrowserWindow} = require('electron');
+// Modules to control application life and create native browser window / Local tester file
+const {app, Menu, shell, BrowserWindow, protocol } = require('electron');
+process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
 const ProxyManager = require('./src/wsproxy/dist/wsproxy.js');
 const { ipcMain } = require('electron')
-
+process.env.liveDebugMode = false;
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 var mainIndex = 'build/electron-app/app/index.html';
-
 // Modules to control application life and create native browser window
 app.once('ready', function() {
+  let port = 5050;
   //Add handler for proxy
   ipcMain.once('ready', (event) => {
     let manager = new ProxyManager();
@@ -322,27 +322,25 @@ function createWindow () {
     }  
   })
   // and load the index.html of the app.
-  //mainWindow.loadFile('build/electron-app/app/index.html')
-
-  // Load HTML into new Window (file-based serving)
-  //mainWindow.loadURL(url.format({
-  //  pathname: path.join(__dirname, mainIndex),
-  //  protocol: 'file',
-  //  slashes: true
-  //}));
-  // Load HTML into new Window (dynamic serving for develop)
-  mainWindow.loadURL(url.format({
-    pathname: '127.0.0.1:9080',
-    protocol: 'http',
-    slashes: true
-  }));
+  if (process.env.liveDebugMode === true) {
+    // Load HTML into new Window (dynamic serving for develop)
+    mainWindow.loadURL(url.format({
+      pathname: '127.0.0.1:9080',
+      protocol: 'http',
+      slashes: true
+    }));
+  } else {
+    // Load HTML into new Window (file-based serving)
+    mainWindow.loadURL(url.format({
+      pathname: path.join(mainIndex),
+      protocol: 'file',
+      slashes: true
+    }));
+  }  
 
   mainWindow.webContents.openDevTools();
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null
   })
 
@@ -364,7 +362,15 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  protocol.interceptFileProtocol('file', (request, callback) => {
+    const url = request.url.substr(7)    /* all urls start with 'file://' */
+    callback({ path: path.normalize(`${__dirname}/${url}`)})
+  }, (err) => {
+    if (err) console.error('Failed to register protocol')
+  })
+  createWindow()
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -403,17 +409,3 @@ app.on('web-contents-created', (event, contents) => {
     //}
   })
 })
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-//process.env.NODE_CONFIG_DIR = './src/wsproxy/config';
-//const {fork, spawn} = require('child_process')
-//let options = {}
-//options.cwd = '.'
-//options.setsid = false
-//proxy_env = {}
-//proxy_env.NODE_CONFIG_DIR = './config';
-//options.env = proxy_env
-//options.slient = false;
-//options.stdio = options.silent ? ['pipe', 'pipe', 'pipe', 'ipc'] :
-//        [0, 1, 2, 'ipc'];
-//var ls = spawn(process.execPath, ['./src/wsproxy/dist/wsproxy.js'], [], options)
