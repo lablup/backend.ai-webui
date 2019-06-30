@@ -314,6 +314,9 @@ class BackendAISummary extends LitElement {
   }
 
   _addComma(num) {
+    if (num === undefined) { 
+      return '';
+    }
     var regexp = /\B(?=(\d{3})+(?!\d))/g;
     return num.toString().replace(regexp, ',');
   }
