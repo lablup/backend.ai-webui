@@ -410,10 +410,14 @@ class BackendAIResourceTemplateList extends LitElement {
 
     let resource_slots = {
       "cpu": cpu_resource,
-      "mem": ram_resource + 'g',
-      "cuda.device": parseInt(gpu_resource),
-      "cuda.shares": parseFloat(vgpu_resource)
+      "mem": ram_resource + 'g'
     };
+    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "") {
+      resource_slots["cuda.device"] = parseInt(gpu_resource);
+    }
+    if (vgpu_resource !== undefined && vgpu_resource !== null && vgpu_resource !== "") {
+      resource_slots["cuda.shares"] = parseFloat(vgpu_resource);
+    }
     let input = {
       'resource_slots': JSON.stringify(resource_slots)
     };
@@ -425,14 +429,14 @@ class BackendAIResourceTemplateList extends LitElement {
     let input = this._readResourcePresetInput();
     console.log(input);
     window.backendaiclient.resourcePreset.mutate(name, input).then(response => {
-      this.shadowRoot.querySelector('#new-template-dialog').close();
+      this.shadowRoot.querySelector('#modify-template-dialog').hide();
       this.notification.text = "Resource policy successfully updated.";
       this.notification.show();
-      this.shadowRoot.querySelector('#resource-policy-list').refresh();
+      this._refreshTemplateData();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#new-template-dialog').close();
+        this.shadowRoot.querySelector('#modify-template-dialog').hide();
         this.notification.text = err.message;
         this.notification.show();
       }

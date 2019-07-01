@@ -638,7 +638,7 @@ class ResourcePreset {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: CreateResourcePresetInput!) {` +
         `  create_resource_preset(name: $name, props: $input) {` +
-        `    ok msg resource_preset { ${fields.join(" ")} }` +
+        `    ok msg ` +
         `  }` +
         `}`;
       let v = {
@@ -666,7 +666,7 @@ class ResourcePreset {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
         `  modify_resource_preset(name: $name, props: $input) {` +
-        `    ok msg resource_preset { ${fields.join(" ")} }` +
+        `    ok msg ` +
         `  }` +
         `}`;
       let v = {
