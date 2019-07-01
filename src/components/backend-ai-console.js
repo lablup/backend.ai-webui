@@ -550,11 +550,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-maintenance-view>
               </div>
             </section>
-            <app-toolbar id="app-navbar-footer" style="height:45px;" class="bar layout flex horizontal">
-              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <paper-icon-button id="back-button" icon="icons:arrow-back"></paper-icon-button>
-              <div id="lablup-notification-navbar" style="color: #999999; font-size:10px;"></div>
-            </app-toolbar>
           </div>
         </app-header-layout>
       </app-drawer-layout>
