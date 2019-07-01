@@ -167,6 +167,13 @@ class BackendAIResourceTemplateList extends LitElement {
         div.configuration iron-icon {
           padding-right: 5px;
         }
+
+        wl-button.create-button {
+          width: 335px;
+          --button-bg: white;
+          --button-bg-hover: var(--paper-yellow-100);
+          --button-bg-active: var(--paper-yellow-600);
+        }
       `];
   }
 
@@ -295,7 +302,7 @@ class BackendAIResourceTemplateList extends LitElement {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <wl-button class="fg blue create-button" id="create-policy-button" outlined @click="${() => this._modifyResourceTemplate()}">
+              <wl-button class="fg orange create-button" id="create-policy-button" outlined @click="${() => this._modifyResourceTemplate()}">
                 <wl-icon>add</wl-icon>
                 Add
               </wl-button>
