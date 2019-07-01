@@ -18,7 +18,7 @@ import 'weightless/expansion';
 import './lablup-notification.js';
 
 import './backend-ai-credential-list.js';
-import '../backend-ai-resource-policy-list.js';
+import './backend-ai-resource-policy-list.js';
 import './backend-ai-user-list.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";

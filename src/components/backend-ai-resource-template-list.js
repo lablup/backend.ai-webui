@@ -228,6 +228,15 @@ class BackendAIResourceTemplateList extends LitElement {
     );
   }
 
+  _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
+  }
   render() {
     // language=HTML
     return html`      
@@ -236,6 +245,8 @@ class BackendAIResourceTemplateList extends LitElement {
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                    .items="${this.resourcePresets}">
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+
         <vaadin-grid-column resizable>
           <template class="header">
             <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>

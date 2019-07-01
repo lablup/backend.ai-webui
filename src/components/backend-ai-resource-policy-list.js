@@ -24,12 +24,12 @@ import '@vaadin/vaadin-item/vaadin-item';
 import 'weightless/button';
 import 'weightless/icon';
 
-import './plastics/lablup-shields/lablup-shields';
+import '../plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
 
-import './components/lablup-notification.js';
-import {BackendAiStyles} from "./components/backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment} from "./plastics/layout/iron-flex-layout-classes";
+import './lablup-notification.js';
+import {BackendAiStyles} from "./backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIResourcePolicyList extends LitElement {
 
@@ -58,6 +58,7 @@ class BackendAIResourcePolicyList extends LitElement {
     this.is_admin = false;
     this.allowed_vfolder_hosts = [];
     this.default_vfolder_host = '';
+    this._boundResourceRenderer = this.resourceRenderer.bind(this);
   }
   static get properties() {
     return {
@@ -217,10 +218,8 @@ class BackendAIResourcePolicyList extends LitElement {
       <lablup-notification id="notification"></lablup-notification>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                    .items="${this.resourcePolicy}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[_indexFrom1(index)]]</template>
-        </vaadin-grid-column>
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+
 
         <vaadin-grid-column resizable>
           <template class="header">
@@ -233,50 +232,7 @@ class BackendAIResourcePolicyList extends LitElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="150px" resizable>
-          <template class="header">Resources</template>
-          <template>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[_markIfUnlimited(item.total_resource_slots.cpu)]]</span>
-                <span class="indicator">cores</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[_markIfUnlimited(item.total_resource_slots.mem)]]</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal wrap center">
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_device)]]</span>
-                  <span class="indicator">GPU</span>
-                </div>
-              </template>
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_shares)]]</span>
-                  <span class="indicator">vGPU</span>
-                </div>
-              </template>
-            </div>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
-                <span>[[_markIfUnlimited(item.max_vfolder_size)]]</span>
-                <span class="indicator">GB</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:folder"></iron-icon>
-                <span>[[_markIfUnlimited(item.max_vfolder_count)]]</span>
-                <span class="indicator">Folders</span>
-              </div>
-            </div>
-          </template>
+        <vaadin-grid-column width="150px" resizable header="Resources" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
@@ -427,6 +383,66 @@ class BackendAIResourcePolicyList extends LitElement {
         </wl-card>
       </paper-dialog>
     `;
+  }
+
+  _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
+  }
+
+  resourceRenderer(root, column, rowData) {
+    render(
+      html`
+            <div class="layout horizontal wrap center">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
+                <span class="indicator">cores</span>
+              </div>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
+                <span class="indicator">GB</span>
+              </div>
+            </div>
+            <div class="layout horizontal wrap center">
+        ${rowData.item.total_resource_slots['cuda_device'] ?
+        html`
+
+                <div class="layout horizontal configuration">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
+                  <span class="indicator">GPU</span>
+                </div>
+` : html``}
+        ${rowData.item.total_resource_slots['cuda_shares'] ?
+        html`
+                <div class="layout horizontal configuration">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
+                  <span class="indicator">vGPU</span>
+                </div>
+` : html``}
+            </div>
+            <div class="layout horizontal wrap center">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
+                <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
+                <span class="indicator">GB</span>
+              </div>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:folder"></iron-icon>
+                <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
+                <span class="indicator">Folders</span>
+              </div>
+            </div>
+      `, root
+    );
   }
 
   firstUpdated() {
