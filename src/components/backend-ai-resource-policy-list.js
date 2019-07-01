@@ -182,21 +182,6 @@ class BackendAIResourcePolicyList extends LitElement {
           width: calc(100% - 40px);
         }
 
-        fieldset {
-          padding: 0;
-        }
-
-        fieldset div {
-          padding-left: 20px;
-          padding-right: 20px;
-        }
-
-        fieldset wl-button {
-          padding-left: 20px;
-          padding-right: 20px;
-          padding-bottom: 20px;
-        }
-
         paper-dialog paper-input {
           padding-left: 20px;
           padding-right: 20px;
@@ -208,7 +193,15 @@ class BackendAIResourcePolicyList extends LitElement {
           font-size: 13px;
           padding-left: 20px;
           border-bottom: 1px solid #ccc;
-        }`];
+        }
+
+        wl-button.create-button {
+          width: 335px;
+          --button-bg: white;
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
+      `];
   }
 
   render() {
@@ -286,30 +279,30 @@ class BackendAIResourcePolicyList extends LitElement {
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ cpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                  ${this.cpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ ram_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                  ${this.ram_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="gpu-resource" label="GPU">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ gpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                  ${this.gpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="vgpu-resource" label="vGPU">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vgpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                  ${this.vgpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
@@ -317,16 +310,16 @@ class BackendAIResourcePolicyList extends LitElement {
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ container_per_session_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                    ${this.container_per_session_metric.map(item => html`
+                      <paper-item value="${item}">${item}</paper-item>
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="idle-timeout" label="Idle timeout (sec.)">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ idle_timeout_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                    ${this.idle_timeout_metric.map(item => html`
+                      <paper-item value="${item}">${item}</paper-item>
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
@@ -334,9 +327,9 @@ class BackendAIResourcePolicyList extends LitElement {
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ concurrency_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                    ${this.concurrency_metric.map(item => html`
+                      <paper-item value="${item}">${item}</paper-item>
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
@@ -344,23 +337,23 @@ class BackendAIResourcePolicyList extends LitElement {
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ allowed_vfolder_hosts }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                    ${this.allowed_vfolder_hosts.map(item => html`
+                      <paper-item value="${item}">${item}</paper-item>
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="vfolder-capacity-limit" label="Capacity (GB)">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vfolder_capacity_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                    ${this.vfolder_capacity_metric.map(item => html`
+                      <paper-item value="${item}">${item}</paper-item>
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="vfolder-count-limit" label="Max.#">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vfolder_count_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                    ${this.vfolder_count_metric.map(item => html`
+                      <paper-item value="${item}">${item}</paper-item>
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
@@ -450,7 +443,7 @@ class BackendAIResourcePolicyList extends LitElement {
         <div id="controls" class="layout horizontal flex center"
              .policy-name="${rowData.item.name}">
         ${this.is_admin ? html`
-              <paper-icon-button class="controls-running" icon="settings"
+              <paper-icon-button class="fg green controls-running" icon="settings"
                                  @click="${(e) => this._launchResourcePolicyDialog(e)}"></paper-icon-button>
                                  ` : html``}
         </div>

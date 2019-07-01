@@ -6,8 +6,6 @@
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
@@ -127,23 +125,14 @@ class BackendAIResourceTemplateList extends LitElement {
           --paper-item-min-height: 30px;
         }
 
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
+        wl-button > wl-icon {
+          --icon-size: 24px;
           padding: 0;
         }
 
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
         }
 
         vaadin-item {
@@ -161,7 +150,7 @@ class BackendAIResourceTemplateList extends LitElement {
           width: 70px !important;
         }
 
-        div.configuration iron-icon {
+        div.configuration wl-icon {
           padding-right: 5px;
         }
 
@@ -179,12 +168,12 @@ class BackendAIResourceTemplateList extends LitElement {
       html`
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+            <wl-icon class="fg green">developer_board</wl-icon>            
             <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+            <wl-icon class="fg green">memory</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gb)}</span>
             <span class="indicator">GB</span>
           </div>
@@ -193,7 +182,7 @@ class BackendAIResourceTemplateList extends LitElement {
         ${rowData.item.resource_slots['cuda.device'] ?
         html`
         <div class="layout horizontal configuration">
-          <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+          <wl-icon class="fg green">view_module</wl-icon>
           <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
           <span class="indicator">GPU</span>
         </div>              
@@ -201,7 +190,7 @@ class BackendAIResourceTemplateList extends LitElement {
         ${rowData.item.resource_slots['cuda.shares'] ?
         html`
             <div class="layout horizontal configuration">
-              <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+              <wl-icon class="fg green">view_module</wl-icon>
               <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
               <span class="indicator">GPU</span>
             </div>              
@@ -217,8 +206,10 @@ class BackendAIResourceTemplateList extends LitElement {
             <div id="controls" class="layout horizontal flex center"
                  .preset-name="${rowData.item.name}">
               ${this.is_admin ? html`
-                    <paper-icon-button class="fg blue controls-running" icon="settings"
-                                       @click="${(e) => this._launchResourcePresetDialog(e)}"></paper-icon-button>
+                    <wl-button class="fg blue controls-running" fab flat inverted 
+                      @click="${(e) => this._launchResourcePresetDialog(e)}">
+                       <wl-icon>settings</wl-icon>
+                    </wl-button>
               ` : html``}              
             </div>
       `, root

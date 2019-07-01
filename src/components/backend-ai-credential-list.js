@@ -6,23 +6,18 @@
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import './lablup-loading-indicator';
-
 import '@vaadin/vaadin-grid/vaadin-grid.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import '../plastics/lablup-shields/lablup-shields';
-
-import './lablup-notification.js';
 import 'weightless/card';
 import 'weightless/dialog';
-import 'weightless/snackbar';
+import 'weightless/button';
+
+import '../plastics/lablup-shields/lablup-shields';
+import './lablup-loading-indicator';
+import './lablup-notification.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
@@ -316,18 +311,21 @@ class BackendAICredentialList extends LitElement {
       html`
             <div id="controls" class="layout horizontal flex center"
                  .access-key="${rowData.item.access_key}">
-              <paper-icon-button class="fg green" icon="assignment"
-                                 @click="${(e) => this._showKeypairDetail(e)}"></paper-icon-button>
+              <wl-button class="fg green" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
+                 <wl-icon>assignment</wl-icon>
+              </wl-button>
               ${this.isAdmin && this._isActive() && rowData.item.is_admin ? html`
-                    <paper-icon-button class="fg blue controls-running" icon="delete"
-                                       @click="${(e) => this._revokeKey(e)}"></paper-icon-button>
-                    <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                       @click="${(e) => this._deleteKey(e)}"></paper-icon-button>
+                <wl-button class="fg blue" fab flat inverted @click="${(e) => this._revokeKey(e)}">
+                   <wl-icon>delete</wl-icon>
+                </wl-button>
+                <wl-button class="fg red" fab flat inverted @click="${(e) => this._deleteKey(e)}">
+                   <wl-icon>delete_forever</wl-icon>
+                </wl-button>
               ` : html``}
-              
               ${this._isActive() ? html`
-                  <paper-icon-button class="fg blue controls-running" icon="icons:redo"
-                                     @click="${(e) => this._reuseKey(e)}"></paper-icon-button>
+                <wl-button class="fg blue" fab flat inverted @click="${(e) => this._reuseKey(e)}">
+                   <wl-icon>redo</wl-icon>
+                </wl-button>
               ` : html``}
             </div>
       `, root
@@ -361,23 +359,14 @@ class BackendAICredentialList extends LitElement {
           --paper-item-min-height: 30px;
         }
 
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
+        wl-button > wl-icon {
+          --icon-size: 24px;
           padding: 0;
         }
 
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
         }
 
         wl-card h4 {
@@ -403,7 +392,7 @@ class BackendAICredentialList extends LitElement {
           width: 70px !important;
         }
 
-        div.configuration iron-icon {
+        div.configuration wl-icon {
           padding-right: 5px;
         }
       `];
@@ -467,12 +456,12 @@ class BackendAICredentialList extends LitElement {
           <template>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <wl-icon class="fg green">developer_board</wl-icon>
                 <span>[[item.total_resource_slots.cpu]]</span>
                 <span class="indicator">cores</span>
               </div>
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <wl-icon class="fg green">memory</wl-icon>
                 <span>[[item.total_resource_slots.mem]]</span>
                 <span class="indicator">GB</span>
               </div>
@@ -480,14 +469,14 @@ class BackendAICredentialList extends LitElement {
             <div class="layout horizontal wrap center">
               <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
                 <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <wl-icon class="fg green">view_module</wl-icon>
                   <span>[[item.total_resource_slots.cuda_device]]</span>
                   <span class="indicator">GPU</span>
                 </div>
               </template>
               <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
                 <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <wl-icon class="fg green">view_module</wl-icon>
                   <span>[[item.total_resource_slots.cuda_shares]]</span>
                   <span class="indicator">vGPU</span>
                 </div>
@@ -495,12 +484,12 @@ class BackendAICredentialList extends LitElement {
             </div>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
+                <wl-icon class="fg green">cloud_queue</wl-icon>
                 <span>[[item.max_vfolder_size]]</span>
                 <span class="indicator">GB</span>
               </div>
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:folder"></iron-icon>
+                <wl-icon class="fg green">folder</wl-icon>
                 <span>[[item.max_vfolder_count]]</span>
                 <span class="indicator">Folders</span>
               </div>
@@ -526,7 +515,7 @@ class BackendAICredentialList extends LitElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
+        <vaadin-grid-column width="150px" resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling>

@@ -52,6 +52,16 @@ class BackendAiEnvironmentList extends LitElement {
           height: calc(100vh - 250px);
         }
 
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
+
         div.indicator,
         span.indicator {
           font-size: 9px;

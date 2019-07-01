@@ -69,11 +69,20 @@ class BackendAIAgentList extends LitElement {
           --paper-item-min-height: 30px;
         }
 
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
+
         iron-icon {
           width: 16px;
           height: 16px;
           min-width: 16px;
-
           min-height: 16px;
           padding: 0;
         }

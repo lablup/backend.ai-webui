@@ -109,6 +109,16 @@ class BackendAiSessionList extends LitElement {
           padding: 0;
         }
 
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
+
         paper-icon-button.controls-running {
           --paper-icon-button: {
             width: 25px;

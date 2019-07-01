@@ -474,6 +474,12 @@ class BackendAICredentialView extends LitElement {
     }
   }
 
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
+
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
     for (var x = 0; x < els.length; x++) {
@@ -549,7 +555,14 @@ class BackendAICredentialView extends LitElement {
 
       <wl-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Add credential</h3>
+
+          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
+            <span style="margin-right:15px;">Add credential</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>          
           <form id="login-form" onSubmit="this._addKeyPair()">
             <fieldset>
               <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"

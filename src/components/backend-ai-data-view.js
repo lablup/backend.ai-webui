@@ -127,6 +127,16 @@ class BackendAIData extends LitElement {
           font-size: 10px;
         }
 
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
+
         wl-button.button {
           width: 330px;
         }
