@@ -12,6 +12,8 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
+import '@polymer/paper-listbox/paper-listbox';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -54,6 +56,7 @@ class BackendAIResourceTemplateList extends LitElement {
     this.vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
     this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
+    this._boundControlRenderer = this.controlRenderer.bind(this);
   }
 
   static get properties() {
@@ -203,6 +206,21 @@ class BackendAIResourceTemplateList extends LitElement {
       `, root
     );
   }
+
+  controlRenderer(root, column, rowData) {
+    render(
+      html`
+            <div id="controls" class="layout horizontal flex center"
+                 .preset-name="${rowData.item.name}">
+              ${this.is_admin ? html`
+                    <paper-icon-button class="fg blue controls-running" icon="settings"
+                                       @click="${(e) => this._launchResourcePresetDialog(e)}"></paper-icon-button>
+              ` : html``}              
+            </div>
+      `, root
+    );
+  }
+
   render() {
     // language=HTML
     return html`      
@@ -225,25 +243,21 @@ class BackendAIResourceTemplateList extends LitElement {
         <vaadin-grid-column width="150px" resizable header="Resources" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">Control</template>
-          <template>
-            <div id="controls" class="layout horizontal flex center"
-                 policy-name="[[item.name]]">
-              <template is="dom-if" if="[[is_admin]]">
-                <paper-icon-button class="controls-running" icon="settings"
-                                   on-tap="_launchResourcePolicyDialog"></paper-icon-button>
-              </template>
-            </div>
-          </template>
+        <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Modify</h3>
+          <h3 class="horizontal center layout">
+            <span>Modify resource preset</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Preset Name"
+              <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
                            auto-validate required
                            pattern="[a-zA-Z0-9]*"
                            error-message="Policy name only accepts letters and numbers"></paper-input>
@@ -325,21 +339,32 @@ class BackendAIResourceTemplateList extends LitElement {
     }
   }
 
-  _launchResourcePolicyDialog(e) {
-    this.updateCurrentPolicyToDialog(e);
-    this.shadowRoot.querySelector('#modify-template-dialog').open();
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
   }
 
-  updateCurrentPolicyToDialog(e) {
+  _launchResourcePresetDialog(e) {
+    this.updateCurrentPresetToDialog(e);
+    this.shadowRoot.querySelector('#modify-template-dialog').show();
+  }
+
+  updateCurrentPresetToDialog(e) {
     const controls = e.target.closest('#controls');
-    const policyName = controls.policyName;
-    let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
-    let resourcePolicy = resourcePolicies[policyName];
+    const preset_name = controls['preset-name'];
+
+    console.log(preset_name);
+
+    let resourcePresets = window.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
+    let resourcePreset = resourcePresets[preset_name];
+    console.log(resourcePreset);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
-    this.shadowRoot.querySelector('#cpu-resource').value = resourcePolicy.total_resource_slots.cpu;
-    this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots['cuda.device'];
-    this.shadowRoot.querySelector('#vgpu-resource').value = resourcePolicy.total_resource_slots['cuda.shares'];
-    this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
+    this.shadowRoot.querySelector('#id_preset_name').value = preset_name;
+    this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
+    this.shadowRoot.querySelector('#gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
+    this.shadowRoot.querySelector('#vgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
+    this.shadowRoot.querySelector('#ram-resource').value = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
   }
 
   _refreshTemplateData() {

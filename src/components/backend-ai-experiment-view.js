@@ -563,10 +563,6 @@ class BackendAiExperimentView extends LitElement {
     });
   }
 
-  _hideSessionDialog() {
-    this.shadowRoot.querySelector('#new-session-dialog').hide();
-  }
-
   _guessHumanizedNames(kernelName) {
     const candidate = {
       'cpp': 'C++',
@@ -1068,6 +1064,11 @@ class BackendAiExperimentView extends LitElement {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
   render() {
     // language=HTML
     return html`
@@ -1293,10 +1294,9 @@ class BackendAiExperimentView extends LitElement {
             <h3 class="horizontal center layout">
               <span>Add a new component</span>
               <div class="flex"></div>
-              <paper-icon-button icon="close" class="blue close-button" 
-                @click="${() => this._hideSessionDialog()}">
-                Close
-              </paper-icon-button>
+              <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+                <wl-icon>close</wl-icon>
+              </wl-button>
             </h3>
             <form id="launch-session-form" onSubmit="this._launchSession()">
               <fieldset>
