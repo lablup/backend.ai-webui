@@ -23,7 +23,7 @@ import 'weightless/card';
 
 import '@material/mwc-checkbox';
 
-import '../backend-ai-resource-template-list';
+import './backend-ai-resource-template-list';
 
 class BackendAiEnvironmentList extends LitElement {
   constructor() {

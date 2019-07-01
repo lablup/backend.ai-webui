@@ -3,15 +3,12 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html, LitElement} from "lit-element";
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
+import {html, css, LitElement} from "lit-element";
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
-  IronFlexAlignment,
-  IronFlexFactors,
-  IronPositioning
+  IronFlexAlignment
 } from '../plastics/layout/iron-flex-layout-classes';
 import './lablup-loading-indicator';
 import 'weightless/button';
@@ -21,12 +18,11 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 
 import './backend-ai-environment-list';
-import '../backend-ai-resource-template-list';
+import './backend-ai-resource-template-list';
 
 class BackendAiEnvironmentView extends LitElement {
   constructor() {
     super();
-    setPassiveTouchGestures(true);
     this.images = {};
     this.active = false;
     this._activeTab = 'image-lists';
@@ -41,8 +37,25 @@ class BackendAiEnvironmentView extends LitElement {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning];
+      // language=CSS
+      css`
+        wl-tab-group {
+          --tab-group-indicator-bg: var(--paper-yellow-600);
+        }
+
+        wl-tab {
+          --tab-color: #666;
+          --tab-color-hover: #222;
+          --tab-color-hover-filled: #222;
+          --tab-color-active: var(--paper-yellow-900);
+          --tab-color-active-hover: var(--paper-yellow-900);
+          --tab-color-active-filled: #ccc;
+          --tab-bg-active: var(--paper-yellow-200);
+          --tab-bg-filled: var(--paper-yellow-200);
+          --tab-bg-active-hover: var(--paper-yellow-200);
+        }
+      `
+    ];
   }
 
   static get properties() {
@@ -89,7 +102,7 @@ class BackendAiEnvironmentView extends LitElement {
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
             <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">Images</wl-tab>  
-            <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">Resource Templates</wl-tab>
+            <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">Resource Presets</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
         </h3>

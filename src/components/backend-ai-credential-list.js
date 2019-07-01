@@ -348,8 +348,6 @@ class BackendAICredentialList extends LitElement {
           height: calc(100vh - 365px);
         }
 
-        }
-
         paper-item {
           height: 30px;
           --paper-item-min-height: 30px;

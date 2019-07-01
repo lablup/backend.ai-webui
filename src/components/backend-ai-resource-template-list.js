@@ -6,7 +6,6 @@
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
-//import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -20,16 +19,16 @@ import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 import 'weightless/button';
 import 'weightless/icon';
-
-import './components/lablup-notification.js';
-import './plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
+import 'weightless/dialog';
 
-import {BackendAiStyles} from "./components/backend-ai-console-styles";
+import './lablup-notification.js';
+import '../plastics/lablup-shields/lablup-shields';
+import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
   IronFlexAlignment
-} from "./plastics/layout/iron-flex-layout-classes";
+} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIResourceTemplateList extends LitElement {
 
@@ -44,8 +43,17 @@ class BackendAIResourceTemplateList extends LitElement {
     this.keypairInfo = {};
     this.is_admin = false;
     this.active = false;
+    this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
+    this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
+    this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+    this.vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+    this.rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
+    this.concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
+    this.container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
+    this.idle_timeout_metric = [60, 180, 540, 900, 1800, 3600];
+    this.vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
+    this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
-
   }
 
   static get properties() {
@@ -67,6 +75,36 @@ class BackendAIResourceTemplateList extends LitElement {
       },
       active: {
         type: Boolean
+      },
+      cpu_metric: {
+        type: Array
+      },
+      ram_metric: {
+        type: Array
+      },
+      gpu_metric: {
+        type: Array
+      },
+      vgpu_metric: {
+        type: Array
+      },
+      rate_metric: {
+        type: Array
+      },
+      concurrency_metric: {
+        type: Array
+      },
+      container_per_session_metric: {
+        type: Array
+      },
+      idle_timeout_metric: {
+        type: Array
+      },
+      vfolder_capacity_metric: {
+        type: Array
+      },
+      vfolder_count_metric: {
+        type: Array
       }
     };
   }
@@ -200,58 +238,57 @@ class BackendAIResourceTemplateList extends LitElement {
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-      <paper-dialog id="modify-template-dialog"
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3>Modify</h3>
-          <form id="login-form" onSubmit="this._modifyResourceTemplate()">
+          <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Template Name"
+              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Preset Name"
                            auto-validate required
                            pattern="[a-zA-Z0-9]*"
                            error-message="Policy name only accepts letters and numbers"></paper-input>
-              <h4>Resource Template</h4>
+              <h4>Resource Preset</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ cpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                  ${this.cpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}    
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ ram_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                  ${this.ram_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}    
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="gpu-resource" label="GPU">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ gpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                  ${this.gpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}    
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="vgpu-resource" label="vGPU">
                   <paper-listbox slot="dropdown-content" selected="0">
-                    <template is="dom-repeat" items="{{ vgpu_metric }}">
-                      <paper-item label="{{item}}">{{ item }}</paper-item>
-                    </template>
+                  ${this.vgpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}    
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <wl-button class="fg blue create-button" id="create-policy-button" outlined>
+              <wl-button class="fg blue create-button" id="create-policy-button" outlined @click="${() => this._modifyResourceTemplate()}">
                 <wl-icon>add</wl-icon>
                 Add
               </wl-button>
             </fieldset>
           </form>
         </wl-card>
-      </paper-dialog>
+      </wl-dialog>
     `;
   }
 
