@@ -385,7 +385,7 @@ class BackendAIResourcePolicyList extends LitElement {
     `;
   }
 
-  _indexRenderer(root, column, rowData) {
+  static _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
       html`

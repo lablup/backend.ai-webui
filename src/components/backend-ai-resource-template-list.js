@@ -27,16 +27,9 @@ import 'weightless/dialog';
 import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import {
-  IronFlex,
-  IronFlexAlignment
-} from "../plastics/layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIResourceTemplateList extends LitElement {
-
-  static get is() {
-    return 'backend-ai-resource-template-list';
-  }
 
   constructor() {
     super();
@@ -57,6 +50,10 @@ class BackendAIResourceTemplateList extends LitElement {
     this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
     this._boundControlRenderer = this.controlRenderer.bind(this);
+  }
+
+  static get is() {
+    return 'backend-ai-resource-template-list';
   }
 
   static get properties() {
@@ -228,7 +225,7 @@ class BackendAIResourceTemplateList extends LitElement {
     );
   }
 
-  _indexRenderer(root, column, rowData) {
+  static _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
       html`
@@ -237,6 +234,7 @@ class BackendAIResourceTemplateList extends LitElement {
       root
     );
   }
+
   render() {
     // language=HTML
     return html`      
