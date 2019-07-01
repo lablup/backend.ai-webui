@@ -398,49 +398,48 @@ class BackendAIResourcePolicyList extends LitElement {
   resourceRenderer(root, column, rowData) {
     render(
       html`
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
-                <span class="indicator">cores</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal wrap center">
+        <div class="layout horizontal wrap center">
+          <div class="layout horizontal configuration">
+            <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
+            <span class="indicator">cores</span>
+          </div>
+          <div class="layout horizontal configuration">
+            <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
+            <span class="indicator">GB</span>
+          </div>
+        </div>
+        <div class="layout horizontal wrap center">
         ${rowData.item.total_resource_slots['cuda_device'] ?
         html`
-
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
-                  <span class="indicator">GPU</span>
-                </div>
+          <div class="layout horizontal configuration">
+            <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
+            <span class="indicator">GPU</span>
+          </div>
 ` : html``}
         ${rowData.item.total_resource_slots['cuda_shares'] ?
         html`
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
-                  <span class="indicator">vGPU</span>
-                </div>
+          <div class="layout horizontal configuration">
+            <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
+            <span class="indicator">vGPU</span>
+          </div>
 ` : html``}
-            </div>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
-                <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
-                <span class="indicator">GB</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:folder"></iron-icon>
-                <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
-                <span class="indicator">Folders</span>
-              </div>
-            </div>
+        </div>
+        <div class="layout horizontal wrap center">
+          <div class="layout horizontal configuration">
+            <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
+            <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
+            <span class="indicator">GB</span>
+          </div>
+          <div class="layout horizontal configuration">
+            <iron-icon class="fg green" icon="icons:folder"></iron-icon>
+            <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
+            <span class="indicator">Folders</span>
+          </div>
+        </div>
       `, root
     );
   }
