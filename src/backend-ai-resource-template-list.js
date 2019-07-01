@@ -4,8 +4,9 @@
  */
 
 import {css, html, LitElement} from "lit-element";
+import {render} from 'lit-html';
 
-import '@polymer/polymer/lib/elements/dom-if.js';
+//import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -38,22 +39,21 @@ class BackendAIResourceTemplateList extends LitElement {
 
   constructor() {
     super();
-    this.visible = false;
     this.keypairs = {};
     this.resourcePolicy = {};
     this.keypairInfo = {};
     this.is_admin = false;
+    this.active = false;
+    this._boundResourceRenderer = this.resourceRenderer.bind(this);
+
   }
 
   static get properties() {
     return {
-      visible: {
-        type: Boolean
-      },
       keypairs: {
         type: Object
       },
-      resourcePolicy: {
+      resourcePresets: {
         type: Object
       },
       keypairInfo: {
@@ -64,6 +64,9 @@ class BackendAIResourceTemplateList extends LitElement {
       },
       notification: {
         type: Object
+      },
+      active: {
+        type: Boolean
       }
     };
   }
@@ -78,6 +81,7 @@ class BackendAIResourceTemplateList extends LitElement {
         vaadin-grid {
           border: 0;
           font-size: 14px;
+          height: calc(100vh - 250px);
         }
 
         paper-item {
@@ -125,6 +129,42 @@ class BackendAIResourceTemplateList extends LitElement {
       `];
   }
 
+  resourceRenderer(root, column, rowData) {
+    render(
+      html`
+            <div class="layout horizontal wrap center">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
+                <span class="indicator">cores</span>
+              </div>
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gb)}</span>
+                <span class="indicator">GB</span>
+              </div>
+            </div>
+            <div class="layout horizontal wrap center">
+            ${rowData.item.resource_slots['cuda.device'] ?
+        html`
+                <div class="layout horizontal configuration">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
+                  <span class="indicator">GPU</span>
+                </div>              
+              ` : html``}
+            ${rowData.item.resource_slots['cuda.shares'] ?
+        html`
+                <div class="layout horizontal configuration">
+                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
+                  <span class="indicator">GPU</span>
+                </div>              
+              ` : html``}        
+            </div>
+      `, root
+    );
+  }
   render() {
     // language=HTML
     return html`      
@@ -132,7 +172,7 @@ class BackendAIResourceTemplateList extends LitElement {
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
-                   .items="${this.resourcePolicy}">
+                   .items="${this.resourcePresets}">
         <vaadin-grid-column resizable>
           <template class="header">
             <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
@@ -144,38 +184,7 @@ class BackendAIResourceTemplateList extends LitElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="150px" resizable>
-          <template class="header">Resources</template>
-          <template>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[_markIfUnlimited(item.total_resource_slots.cpu)]]</span>
-                <span class="indicator">cores</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[_markIfUnlimited(item.total_resource_slots.mem)]]</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal wrap center">
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_device)]]</span>
-                  <span class="indicator">GPU</span>
-                </div>
-              </template>
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[_markIfUnlimited(item.total_resource_slots.cuda_shares)]]</span>
-                  <span class="indicator">vGPU</span>
-                </div>
-              </template>
-            </div>
-          </template>
+        <vaadin-grid-column width="150px" resizable header="Resources" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
@@ -298,47 +307,12 @@ class BackendAIResourceTemplateList extends LitElement {
 
   _refreshTemplateData() {
     return window.backendaiclient.resourcePreset.check().then((response) => {
-      console.log(response);
-    });
-
-    return window.backendaiclient.resourcePolicy.get().then((response) => {
-      let rp = response.keypair_resource_policies;
-      let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
-      return rp;
-    }).then((response) => {
-      let resourcePolicies = response;
-      Object.keys(resourcePolicies).map((objectKey, index) => {
-        var policy = resourcePolicies[objectKey];
-        policy['total_resource_slots'] = JSON.parse(policy['total_resource_slots']);
-        if ('cpu' in policy['total_resource_slots']) {
-        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cpu = '-';
-        }
-        if ('mem' in policy['total_resource_slots']) {
-          policy['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
-        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].mem = '-';
-        }
-        if ('cuda.device' in policy['total_resource_slots']) {
-          if (policy['total_resource_slots']['cuda.device'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
-            policy['total_resource_slots'].cuda_device = '-';
-          } else {
-            policy['total_resource_slots'].cuda_device = policy['total_resource_slots']['cuda.device'];
-          }
-        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cuda_device = '-';
-        }
-        if ('cuda.shares' in policy['total_resource_slots']) {
-          if (policy['total_resource_slots']['cuda.shares'] === 0 && policy['default_for_unspecified'] === 'UNLIMITED') {
-            policy['total_resource_slots'].cuda_shares = '-';
-          } else {
-            policy['total_resource_slots'].cuda_shares = policy['total_resource_slots']['cuda.shares'];
-          }
-        } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
-          policy['total_resource_slots'].cuda_shares = '-';
-        }
+      let resourcePresets = response.presets;
+      Object.keys(resourcePresets).map((objectKey, index) => {
+        let preset = resourcePresets[objectKey];
+        preset.resource_slots.mem_gb = parseFloat(window.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
       });
-      this.resourcePolicy = resourcePolicies;
+      this.resourcePresets = resourcePresets;
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
