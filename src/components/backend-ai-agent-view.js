@@ -5,6 +5,8 @@
 
 import {html, LitElement} from "lit-element";
 import 'weightless/card';
+import 'weightless/tab';
+import 'weightless/tab-group';
 
 import './backend-ai-agent-list.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -71,17 +73,31 @@ class BackendAIAgentView extends LitElement {
       BackendAiStyles];
   }
 
+  _showTab(tab) {
+    var els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (var x = 0; x < els.length; x++) {
+      els[x].style.display = 'none';
+    }
+    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+  }
+
   render() {
     // language=HTML
     return html`
       <wl-card class="item" elevation="1">
-        <h3 class="wl-card-title">Registered nodes</h3>
-        <h4>Connected</h4>
-        <div>
+        <h3 class="tab horizontal center layout">
+          <wl-tab-group>
+            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Connected</wl-tab>  
+            <wl-tab value="terminated-lists" @click="${(e) => this._showTab(e.target)}">Terminated</wl-tab>
+            <wl-tab value="maintenance-lists" disabled>Maintaining</wl-tab>
+          </wl-tab-group>
+          <div class="flex"></div>
+        </h3>
+
+        <div id="running-lists" class="tab-content">
           <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active'}"></backend-ai-agent-list>
         </div>
-        <h4>Terminated</h4>
-        <div>
+        <div id="terminated-lists" class="tab-content" style="display:none;">
           <backend-ai-agent-list id="finished-agents" condition="finished" ?active="${this._status === 'active'}"></backend-ai-agent-list>
         </div>
       </wl-card>
