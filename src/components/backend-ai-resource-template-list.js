@@ -180,36 +180,36 @@ class BackendAIResourceTemplateList extends LitElement {
   resourceRenderer(root, column, rowData) {
     render(
       html`
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
-                <span class="indicator">cores</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gb)}</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal wrap center">
-            ${rowData.item.resource_slots['cuda.device'] ?
+        <div class="layout horizontal wrap center">
+          <div class="layout horizontal configuration">
+            <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+            <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
+            <span class="indicator">cores</span>
+          </div>
+          <div class="layout horizontal configuration">
+            <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+            <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gb)}</span>
+            <span class="indicator">GB</span>
+          </div>
+        </div>
+        <div class="layout horizontal wrap center">
+        ${rowData.item.resource_slots['cuda.device'] ?
         html`
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
-                  <span class="indicator">GPU</span>
-                </div>              
-              ` : html``}
-            ${rowData.item.resource_slots['cuda.shares'] ?
+        <div class="layout horizontal configuration">
+          <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+          <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
+          <span class="indicator">GPU</span>
+        </div>              
+      ` : html``}
+        ${rowData.item.resource_slots['cuda.shares'] ?
         html`
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
-                  <span class="indicator">GPU</span>
-                </div>              
-              ` : html``}        
-            </div>
+            <div class="layout horizontal configuration">
+              <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+              <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
+              <span class="indicator">GPU</span>
+            </div>              
+          ` : html``}        
+        </div>
       `, root
     );
   }
@@ -302,7 +302,8 @@ class BackendAIResourceTemplateList extends LitElement {
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <wl-button class="fg orange create-button" id="create-policy-button" outlined @click="${() => this._modifyResourceTemplate()}">
+              <wl-button class="fg orange create-button" id="create-policy-button" outlined type="button" 
+                @click="${() => this._modifyResourceTemplate()}">
                 <wl-icon>add</wl-icon>
                 Add
               </wl-button>
@@ -401,30 +402,28 @@ class BackendAIResourceTemplateList extends LitElement {
     return this.condition === 'active';
   }
 
-  _readResourcePolicyInput() {
+  _readResourcePresetInput() {
     let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
 
-    let total_resource_slots = {
+    let resource_slots = {
       "cpu": cpu_resource,
       "mem": ram_resource + 'g',
       "cuda.device": parseInt(gpu_resource),
       "cuda.shares": parseFloat(vgpu_resource)
     };
     let input = {
-      'default_for_unspecified': 'UNLIMITED',
-      'total_resource_slots': JSON.stringify(total_resource_slots)
+      'resource_slots': JSON.stringify(resource_slots)
     };
+    return input;
   }
 
   _modifyResourceTemplate() {
-    let is_active = true;
-    let is_admin = false;
-    let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
-    let input = this._readResourcePolicyInput();
-
+    let name = this.shadowRoot.querySelector('#id_preset_name').value;
+    let input = this._readResourcePresetInput();
+    console.log(input);
     window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#new-template-dialog').close();
       this.notification.text = "Resource policy successfully updated.";
