@@ -68,12 +68,8 @@ class BackendAiEnvironmentView extends LitElement {
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('#image-list').active = false;
-      this.shadowRoot.querySelector('#resource-template-list').active = false;
-      return;
+      return true;
     }
-    this.shadowRoot.querySelector('#image-list').active = true;
-    this.shadowRoot.querySelector('#resource-template-list').active = true;
   }
 
   _showTab(tab) {

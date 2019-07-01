@@ -3,7 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html, PolymerElement} from '@polymer/polymer';
+import {css, html, LitElement} from "lit-element";
+
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -20,54 +21,60 @@ import 'weightless/button';
 import 'weightless/icon';
 
 import './components/lablup-notification.js';
-//import './backend-ai-styles.js';
 import './plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
 
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import {BackendAiStyles} from "./components/backend-ai-console-styles";
+import {
+  IronFlex,
+  IronFlexAlignment
+} from "./plastics/layout/iron-flex-layout-classes";
 
-class BackendAIResourceTemplateList extends PolymerElement {
+class BackendAIResourceTemplateList extends LitElement {
 
   static get is() {
     return 'backend-ai-resource-template-list';
   }
 
+  constructor() {
+    super();
+    this.visible = false;
+    this.keypairs = {};
+    this.resourcePolicy = {};
+    this.keypairInfo = {};
+    this.is_admin = false;
+  }
+
   static get properties() {
     return {
       visible: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       keypairs: {
-        type: Object,
-        value: {}
+        type: Object
       },
       resourcePolicy: {
-        type: Object,
-        value: {}
+        type: Object
       },
       keypairInfo: {
-        type: Object,
-        value: {}
+        type: Object
       },
       is_admin: {
-        type: Boolean,
-        value: false
+        type: Boolean
+      },
+      notification: {
+        type: Object
       }
     };
   }
 
-  static get observers() {
+  static get styles() {
     return [
-      '_menuChanged(active)'
-    ]
-  }
-
-  static get template() {
-    // language=HTML
-
-    return html`
-      <style include="backend-ai-styles iron-flex iron-flex-alignment">
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      // language=CSS
+      css`
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -115,17 +122,17 @@ class BackendAIResourceTemplateList extends PolymerElement {
         div.configuration iron-icon {
           padding-right: 5px;
         }
-      </style>
+      `];
+  }
+
+  render() {
+    // language=HTML
+    return html`      
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
-                   items="[[resourcePolicy]]">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[_indexFrom1(index)]]</template>
-        </vaadin-grid-column>
-
+                   .items="${this.resourcePolicy}">
         <vaadin-grid-column resizable>
           <template class="header">
             <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
@@ -239,21 +246,28 @@ class BackendAIResourceTemplateList extends PolymerElement {
     `;
   }
 
-  ready() {
-    super.ready();
+  firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   connectedCallback() {
     super.connectedCallback();
-    afterNextRender(this, function () {
-    });
   }
 
-  _menuChanged(active) {
-    if (!active) {
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this._menuChanged(true);
+    } else {
+      this._menuChanged(false);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  async _menuChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
       return;
     }
-    // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshTemplateData();
@@ -267,7 +281,7 @@ class BackendAIResourceTemplateList extends PolymerElement {
 
   _launchResourcePolicyDialog(e) {
     this.updateCurrentPolicyToDialog(e);
-    this.$['modify-template-dialog'].open();
+    this.shadowRoot.querySelector('#modify-template-dialog').open();
   }
 
   updateCurrentPolicyToDialog(e) {
@@ -276,10 +290,10 @@ class BackendAIResourceTemplateList extends PolymerElement {
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
-    this.$['cpu-resource'].value = resourcePolicy.total_resource_slots.cpu;
-    this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda.device'];
-    this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda.shares'];
-    this.$['ram-resource'].value = resourcePolicy.total_resource_slots['mem'];
+    this.shadowRoot.querySelector('#cpu-resource').value = resourcePolicy.total_resource_slots.cpu;
+    this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots['cuda.device'];
+    this.shadowRoot.querySelector('#vgpu-resource').value = resourcePolicy.total_resource_slots['cuda.shares'];
+    this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
   }
 
   _refreshTemplateData() {
@@ -328,8 +342,8 @@ class BackendAIResourceTemplateList extends PolymerElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -345,10 +359,10 @@ class BackendAIResourceTemplateList extends PolymerElement {
   }
 
   _readResourcePolicyInput() {
-    let cpu_resource = this.$['cpu-resource'].value;
-    let ram_resource = this.$['ram-resource'].value;
-    let gpu_resource = this.$['gpu-resource'].value;
-    let vgpu_resource = this.$['vgpu-resource'].value;
+    let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
+    let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
+    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
+    let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
 
     let total_resource_slots = {
       "cpu": cpu_resource,
@@ -365,20 +379,20 @@ class BackendAIResourceTemplateList extends PolymerElement {
   _modifyResourceTemplate() {
     let is_active = true;
     let is_admin = false;
-    let name = this.$['id_new_policy_name'].value;
+    let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     let input = this._readResourcePolicyInput();
 
     window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
-      this.$['new-template-dialog'].close();
-      this.$.notification.text = "Resource policy successfully updated.";
-      this.$.notification.show();
-      this.$['resource-policy-list'].refresh();
+      this.shadowRoot.querySelector('#new-template-dialog').close();
+      this.notification.text = "Resource policy successfully updated.";
+      this.notification.show();
+      this.shadowRoot.querySelector('#resource-policy-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$['new-template-dialog'].close();
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#new-template-dialog').close();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -392,8 +406,8 @@ class BackendAIResourceTemplateList extends PolymerElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
