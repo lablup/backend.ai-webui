@@ -622,6 +622,62 @@ class ResourcePreset {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, null);
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * add resource preset with given name and fields.
+   *
+   * @param {string} name - resource preset name.
+   * @param {json} input - resource preset specification and data. Required fields are:
+   * {
+   *   'resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
+   * };
+   */
+  add(name = null, input) {
+    let fields = ['name',
+      'resource_slots'];
+    if (this.client.is_admin === true && name !== null) {
+      let q = `mutation($name: String!, $input: CreateResourcePresetInput!) {` +
+        `  create_resource_preset(name: $name, props: $input) {` +
+        `    ok msg resource_preset { ${fields.join(" ")} }` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': name,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+
+  /**
+   * mutate specified resource preset with given name with new values.
+   *
+   * @param {string} name - resource preset name to mutate.
+   * @param {json} input - resource preset specification and data. Required fields are:
+   * {
+   *   'resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
+   * };
+   */
+  mutate(name = null, input) {
+    let fields = ['name',
+      'resource_slots'];
+    if (this.client.is_admin === true && name !== null) {
+      let q = `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
+        `  modify_resource_preset(name: $name, props: $input) {` +
+        `    ok msg resource_preset { ${fields.join(" ")} }` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': name,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
 }
 
 class VFolder {

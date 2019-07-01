@@ -424,7 +424,7 @@ class BackendAIResourceTemplateList extends LitElement {
     let name = this.shadowRoot.querySelector('#id_preset_name').value;
     let input = this._readResourcePresetInput();
     console.log(input);
-    window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
+    window.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#new-template-dialog').close();
       this.notification.text = "Resource policy successfully updated.";
       this.notification.show();
