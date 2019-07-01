@@ -5,17 +5,14 @@
 
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
-
-
-import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
-import '@polymer/neon-animation/animations/scale-up-animation.js';
-import '@polymer/neon-animation/animations/fade-out-animation.js';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
+import '@polymer/paper-listbox/paper-listbox';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -23,10 +20,10 @@ import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 import 'weightless/button';
 import 'weightless/icon';
-
-import '../plastics/lablup-shields/lablup-shields';
+import 'weightless/dialog';
 import 'weightless/card';
 
+import '../plastics/lablup-shields/lablup-shields';
 import './lablup-notification.js';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
@@ -59,7 +56,9 @@ class BackendAIResourcePolicyList extends LitElement {
     this.allowed_vfolder_hosts = [];
     this.default_vfolder_host = '';
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
+    this._boundControlRenderer = this.controlRenderer.bind(this);
   }
+
   static get properties() {
     return {
       visible: {
@@ -219,8 +218,6 @@ class BackendAIResourcePolicyList extends LitElement {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                    .items="${this.resourcePolicy}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-
-
         <vaadin-grid-column resizable>
           <template class="header">
             <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
@@ -255,7 +252,7 @@ class BackendAIResourcePolicyList extends LitElement {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Data Nodes</template>
+          <template class="header">Storage Nodes</template>
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">
@@ -266,24 +263,20 @@ class BackendAIResourcePolicyList extends LitElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">Control</template>
-          <template>
-            <div id="controls" class="layout horizontal flex center"
-                 policy-name="[[item.name]]">
-              <template is="dom-if" if="[[is_admin]]">
-                <paper-icon-button class="controls-running" icon="settings"
-                                   on-tap="_launchResourcePolicyDialog"></paper-icon-button>
-              </template>
-            </div>
-          </template>
+        <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
+        
       </vaadin-grid>
-      <paper-dialog id="modify-policy-dialog"
-                    entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <wl-dialog id="modify-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Modify</h3>
-          <form id="login-form" onSubmit="this._modifyResourcePolicy()">
+          <h3 class="horizontal center layout">
+            <span>Modify resource policy</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <form id="login-form">
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
                            auto-validate required
@@ -373,7 +366,8 @@ class BackendAIResourcePolicyList extends LitElement {
               </div>
 
               <br/><br/>
-              <wl-button class="fg blue create-button" id="create-policy-button" outlined>
+              <wl-button class="fg blue create-button" id="create-policy-button" type="button"
+                outlined @click="${() => this._modifyResourcePolicy()}">
                 <wl-icon>add</wl-icon>
                 Create
               </wl-button>
@@ -381,11 +375,11 @@ class BackendAIResourcePolicyList extends LitElement {
             </fieldset>
           </form>
         </wl-card>
-      </paper-dialog>
+      </wl-dialog>
     `;
   }
 
-  static _indexRenderer(root, column, rowData) {
+  _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
       html`
@@ -393,6 +387,12 @@ class BackendAIResourcePolicyList extends LitElement {
       `,
       root
     );
+  }
+
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
   }
 
   resourceRenderer(root, column, rowData) {
@@ -444,6 +444,20 @@ class BackendAIResourcePolicyList extends LitElement {
     );
   }
 
+  controlRenderer(root, column, rowData) {
+    render(
+      html`
+        <div id="controls" class="layout horizontal flex center"
+             .policy-name="${rowData.item.name}">
+        ${this.is_admin ? html`
+              <paper-icon-button class="controls-running" icon="settings"
+                                 @click="${(e) => this._launchResourcePolicyDialog(e)}"></paper-icon-button>
+                                 ` : html``}
+        </div>
+    `, root
+    );
+  }
+
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
   }
@@ -475,12 +489,12 @@ class BackendAIResourcePolicyList extends LitElement {
 
   _launchResourcePolicyDialog(e) {
     this.updateCurrentPolicyToDialog(e);
-    this.shadowRoot.querySelector('#modify-policy-dialog').open();
+    this.shadowRoot.querySelector('#modify-policy-dialog').show();
   }
 
   updateCurrentPolicyToDialog(e) {
     const controls = e.target.closest('#controls');
-    const policyName = controls.policyName;
+    const policyName = controls['policy-name'];
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
@@ -546,8 +560,6 @@ class BackendAIResourcePolicyList extends LitElement {
   }
 
   refresh() {
-    //let user_id = window.backendaiclient_email;
-    let user_id = null;
     this._refreshPolicyData();
   }
 
@@ -636,10 +648,6 @@ class BackendAIResourcePolicyList extends LitElement {
         this.notification.show();
       }
     });
-  }
-
-  _indexFrom1(index) {
-    return index + 1;
   }
 
   _markIfUnlimited(value) {

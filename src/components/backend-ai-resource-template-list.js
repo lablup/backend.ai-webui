@@ -225,7 +225,7 @@ class BackendAIResourceTemplateList extends LitElement {
     );
   }
 
-  static _indexRenderer(root, column, rowData) {
+  _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
       html`

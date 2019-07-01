@@ -292,9 +292,16 @@ class BackendAICredentialList extends LitElement {
     return new Date(d).toUTCString();
   }
 
-  _indexFrom1(index) {
-    return index + 1;
+  _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
   }
+
 
   _markIfUnlimited(value) {
     if (['-', 0].includes(value)) {
@@ -333,6 +340,7 @@ class BackendAICredentialList extends LitElement {
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
   }
+
   static get styles() {
     return [
       BackendAiStyles,
@@ -408,10 +416,7 @@ class BackendAICredentialList extends LitElement {
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairs}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[index]]</template>
-        </vaadin-grid-column>
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
         <vaadin-grid-column resizable>
           <template class="header">
