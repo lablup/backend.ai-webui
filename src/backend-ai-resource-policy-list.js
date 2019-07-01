@@ -24,12 +24,10 @@ import '@vaadin/vaadin-item/vaadin-item';
 import 'weightless/button';
 import 'weightless/icon';
 
-//import './backend-ai-styles.js';
 import './plastics/lablup-shields/lablup-shields';
 import 'weightless/card';
 
 import './components/lablup-notification.js';
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import {BackendAiStyles} from "./components/backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "./plastics/layout/iron-flex-layout-classes";
 
@@ -45,6 +43,8 @@ class BackendAIResourcePolicyList extends LitElement {
     this.keypairs = {};
     this.resourcePolicy = {};
     this.keypairInfo = {};
+    this.is_admin = false;
+    this.active = false;
     this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
     this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
     this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
@@ -66,6 +66,12 @@ class BackendAIResourcePolicyList extends LitElement {
       },
       keypairs: {
         type: Object
+      },
+      notification: {
+        type: Object
+      },
+      active: {
+        type: Boolean
       },
       resourcePolicy: {
         type: Object
@@ -207,7 +213,6 @@ class BackendAIResourcePolicyList extends LitElement {
 
   render() {
     // language=HTML
-
     return html`
       <lablup-notification id="notification"></lablup-notification>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"

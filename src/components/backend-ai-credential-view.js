@@ -61,12 +61,16 @@ class BackendAICredentialView extends LitElement {
     this.default_vfolder_host = '';
     this._status = false;
     this.use_user_list = false;
+    this._activeTab = 'credential-lists';
   }
 
   static get properties() {
     return {
       active: {
         type: Boolean
+      },
+      _activeTab: {
+        type: String
       },
       cpu_metric: {
         type: Array
@@ -475,6 +479,7 @@ class BackendAICredentialView extends LitElement {
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
+    this._activeTab = tab.value;
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
@@ -503,13 +508,13 @@ class BackendAICredentialView extends LitElement {
             <span slot="description">
             </span>
             <div>
-              <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._status === 'active'}"></backend-ai-credential-list>
+              <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
             </div>
           </wl-expansion>
           <wl-expansion name="credential-group">
             <h4 slot="title">Inactive</h4>
             <div>
-              <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._status === 'active'}"></backend-ai-credential-list>
+              <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
             </div>
           </wl-expansion>
         </wl-card>
@@ -523,7 +528,7 @@ class BackendAICredentialView extends LitElement {
             </wl-button>
           </h4>
           <div>
-            <backend-ai-resource-policy-list id="resource-policy-list"></backend-ai-resource-policy-list>
+            <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
           </div>
         </wl-card>
         <wl-card id="user-lists" class="admin item tab-content" style="display:none;">
