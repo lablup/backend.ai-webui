@@ -3,7 +3,10 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html, PolymerElement} from '@polymer/polymer';
+import {css, html, LitElement} from "lit-element";
+import {render} from 'lit-html';
+
+
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -27,97 +30,99 @@ import 'weightless/card';
 
 import './components/lablup-notification.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import {BackendAiStyles} from "./components/backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment} from "./plastics/layout/iron-flex-layout-classes";
 
-class BackendAIResourcePolicyList extends PolymerElement {
+class BackendAIResourcePolicyList extends LitElement {
 
   static get is() {
     return 'backend-ai-resource-policy-list';
   }
 
+  constructor() {
+    super();
+    this.visible = false;
+    this.keypairs = {};
+    this.resourcePolicy = {};
+    this.keypairInfo = {};
+    this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
+    this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
+    this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+    this.vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+    this.rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
+    this.concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
+    this.container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
+    this.idle_timeout_metric = [60, 180, 540, 900, 1800, 3600];
+    this.vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
+    this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
+    this.is_admin = false;
+    this.allowed_vfolder_hosts = [];
+    this.default_vfolder_host = '';
+  }
   static get properties() {
     return {
       visible: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       keypairs: {
-        type: Object,
-        value: {}
+        type: Object
       },
       resourcePolicy: {
-        type: Object,
-        value: {}
+        type: Object
       },
       keypairInfo: {
-        type: Object,
-        value: {}
+        type: Object
       },
       cpu_metric: {
-        type: Array,
-        value: [1, 2, 3, 4, 8, 16, 24, "Unlimited"]
+        type: Array
       },
       ram_metric: {
-        type: Array,
-        value: [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"]
+        type: Array
       },
       gpu_metric: {
-        type: Array,
-        value: [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"]
+        type: Array
       },
       vgpu_metric: {
-        type: Array,
-        value: [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"]
+        type: Array
       },
       rate_metric: {
-        type: Array,
-        value: [1000, 2000, 3000, 4000, 5000, 10000, 50000]
+        type: Array
       },
       concurrency_metric: {
-        type: Array,
-        value: [1, 2, 3, 4, 5, 10, 50, "Unlimited"]
+        type: Array
       },
       container_per_session_metric: {
-        type: Array,
-        value: [1, 2, 3, 4, 8, "Unlimited"]
+        type: Array
       },
       idle_timeout_metric: {
-        type: Array,
-        value: [60, 180, 540, 900, 1800, 3600]
+        type: Array
       },
       vfolder_capacity_metric: {
-        type: Array,
-        value: [1, 2, 5, 10, 50, 100, 200, 1000]
+        type: Array
       },
       vfolder_count_metric: {
-        type: Array,
-        value: [1, 2, 3, 4, 5, 10, 30, 50, 100]
+        type: Array
       },
       is_admin: {
-        type: Boolean,
-        value: false
+        type: Boolean
       },
       allowed_vfolder_hosts: {
-        type: Array,
-        value: []
+        type: Array
       },
       default_vfolder_host: {
-        type: String,
-        value: ''
+        type: String
       }
     };
   }
 
-  static get observers() {
+
+  static get styles() {
     return [
-      '_menuChanged(active)'
-    ]
-  }
-
-  static get template() {
-    // language=HTML
-
-    return html`
-      <style include="backend-ai-styles iron-flex iron-flex-alignment">
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      // language=CSS
+      css`
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -197,12 +202,16 @@ class BackendAIResourcePolicyList extends PolymerElement {
           font-size: 13px;
           padding-left: 20px;
           border-bottom: 1px solid #ccc;
-        }
+        }`];
+  }
 
-      </style>
+  render() {
+    // language=HTML
+
+    return html`
       <lablup-notification id="notification"></lablup-notification>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
-                   items="[[resourcePolicy]]">
+                   .items="${this.resourcePolicy}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable>
           <template class="header">#</template>
           <template>[[_indexFrom1(index)]]</template>
@@ -415,21 +424,24 @@ class BackendAIResourcePolicyList extends PolymerElement {
     `;
   }
 
-  ready() {
-    super.ready();
+  firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    afterNextRender(this, function () {
-    });
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this._menuChanged(true);
+    } else {
+      this._menuChanged(false);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
   }
 
-  _menuChanged(active) {
-    if (!active) {
+  async _menuChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
       return;
     }
-    // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshPolicyData();
@@ -443,7 +455,7 @@ class BackendAIResourcePolicyList extends PolymerElement {
 
   _launchResourcePolicyDialog(e) {
     this.updateCurrentPolicyToDialog(e);
-    this.$['modify-policy-dialog'].open();
+    this.shadowRoot.querySelector('#modify-policy-dialog').open();
   }
 
   updateCurrentPolicyToDialog(e) {
@@ -451,18 +463,18 @@ class BackendAIResourcePolicyList extends PolymerElement {
     const policyName = controls.policyName;
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
-    this.$['id_new_policy_name'].value = policyName;
-    this.$['cpu-resource'].value = resourcePolicy.total_resource_slots.cpu;
-    this.$['gpu-resource'].value = resourcePolicy.total_resource_slots['cuda_device'];
-    this.$['vgpu-resource'].value = resourcePolicy.total_resource_slots['cuda_shares'];
-    this.$['ram-resource'].value = resourcePolicy.total_resource_slots['mem'];
+    this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
+    this.shadowRoot.querySelector('#cpu-resource').value = resourcePolicy.total_resource_slots.cpu;
+    this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots['cuda_device'];
+    this.shadowRoot.querySelector('#vgpu-resource').value = resourcePolicy.total_resource_slots['cuda_shares'];
+    this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
 
-    this.$['concurrency-limit'].value = resourcePolicy.max_concurrent_sessions;
-    this.$['container-per-session-limit'].value = resourcePolicy.max_containers_per_session;
-    this.$['vfolder-count-limit'].value = resourcePolicy.max_vfolder_count;
-    this.$['vfolder-capacity-limit'].value = resourcePolicy.max_vfolder_size;
-    this.$['idle-timeout'].value = resourcePolicy.idle_timeout;
-    this.$['allowed_vfolder-hosts'].value = resourcePolicy.allowed_vfolder_hosts[0]; /* TODO: multiple vfolder hosts */
+    this.shadowRoot.querySelector('#concurrency-limit').value = resourcePolicy.max_concurrent_sessions;
+    this.shadowRoot.querySelector('#container-per-session-limit').value = resourcePolicy.max_containers_per_session;
+    this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
+    this.shadowRoot.querySelector('#vfolder-capacity-limit').value = resourcePolicy.max_vfolder_size;
+    this.shadowRoot.querySelector('#idle-timeout').value = resourcePolicy.idle_timeout;
+    this.shadowRoot.querySelector('#allowed_vfolder-hosts').value = resourcePolicy.allowed_vfolder_hosts[0]; /* TODO: multiple vfolder hosts */
   }
 
   _refreshPolicyData() {
@@ -507,8 +519,8 @@ class BackendAIResourcePolicyList extends PolymerElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -524,11 +536,11 @@ class BackendAIResourcePolicyList extends PolymerElement {
   }
 
   _readResourcePolicyInput() {
-    let cpu_resource = this.$['cpu-resource'].value;
-    let ram_resource = this.$['ram-resource'].value;
-    let gpu_resource = this.$['gpu-resource'].value;
-    let vgpu_resource = this.$['vgpu-resource'].value;
-    let vfolder_hosts = this.$['allowed_vfolder-hosts'].value;
+    let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
+    let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
+    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
+    let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
+    let vfolder_hosts = this.shadowRoot.querySelector('#allowed_vfolder-hosts').value;
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
     }
@@ -552,12 +564,12 @@ class BackendAIResourcePolicyList extends PolymerElement {
       "cuda.device": gpu_resource,
       "cuda.shares": vgpu_resource
     };
-    let concurrency_limit = this.$['concurrency-limit'].value;
-    let containers_per_session_limit = this.$['container-per-session-limit'].value;
-    let vfolder_count_limit = this.$['vfolder-count-limit'].value;
-    let vfolder_capacity_limit = this.$['vfolder-capacity-limit'].value;
-    let rate_limit = this.$['rate-limit'].value;
-    let idle_timeout = this.$['idle-timeout'].value;
+    let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit').value;
+    let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit').value;
+    let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
+    let vfolder_capacity_limit = this.shadowRoot.querySelector('#vfolder-capacity-limit').value;
+    let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+    let idle_timeout = this.shadowRoot.querySelector('#idle-timeout').value;
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
@@ -573,20 +585,20 @@ class BackendAIResourcePolicyList extends PolymerElement {
   _modifyResourcePolicy() {
     let is_active = true;
     let is_admin = false;
-    let name = this.$['id_new_policy_name'].value;
+    let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     let input = this._readResourcePolicyInput();
 
     window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
-      this.$['new-policy-dialog'].close();
-      this.$.notification.text = "Resource policy successfully updated.";
-      this.$.notification.show();
-      this.$['resource-policy-list'].refresh();
+      this.shadowRoot.querySelector('#new-policy-dialog').close();
+      this.notification.text = "Resource policy successfully updated.";
+      this.notification.show();
+      this.shadowRoot.querySelector('#resource-policy-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$['new-policy-dialog'].close();
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#new-policy-dialog').close();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
@@ -600,8 +612,8 @@ class BackendAIResourcePolicyList extends PolymerElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.$.notification.text = err.message;
-        this.$.notification.show();
+        this.notification.text = err.message;
+        this.notification.show();
       }
     });
   }
