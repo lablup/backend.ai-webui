@@ -74,8 +74,8 @@ class BackendAISummary extends LitElement {
       mem_current_usage_percent: {type: Number},
       gpu_total: {type: Number},
       gpu_used: {type: Number},
-      vgpu_total: {type: Number},
-      vgpu_used: {type: Number}
+      fgpu_total: {type: Number},
+      fgpu_used: {type: Number}
     };
   }
 
@@ -250,14 +250,14 @@ class BackendAISummary extends LitElement {
       this.gpu_total = this.resources.gpu.total;
     }
     if (isNaN(this.resources.vgpu.total)) {
-      this.vgpu_total = null;
+      this.fgpu_total = null;
     } else {
-      this.vgpu_total = this.resources.vgpu.total;
+      this.fgpu_total = this.resources.vgpu.total;
     }
     this.cpu_used = this.resources.cpu.used;
     this.mem_used = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
     this.gpu_used = this.resources.gpu.used;
-    this.vgpu_used = this.resources.vgpu.used;
+    this.fgpu_used = this.resources.vgpu.used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / parseFloat(this.cpu_total * 100)) * 100.0).toFixed(2);
@@ -394,19 +394,19 @@ class BackendAISummary extends LitElement {
                       <div><span class="progress-value"> ${this.gpu_used}</span>/${this.gpu_total} GPUs</div>
                     </div>
                   </div>` : html``}
-                ${this.vgpu_total ? html`
+                ${this.fgpu_total ? html`
                   <div class="layout horizontal center flex" style="margin-bottom:5px;">
                     <div class="layout vertical start center-justified">
                       <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                       <span>GPU</span>
                     </div>
                     <div class="layout vertical start" style="padding-left:15px;">
-                      <vaadin-progress-bar id="vgpu-bar" value="${this.vgpu_used}"
-                                           max="${this.vgpu_total}"></vaadin-progress-bar>
-                      <div><span class="progress-value"> ${this.vgpu_used}</span>/${this.vgpu_total} vGPUs</div>
+                      <vaadin-progress-bar id="vgpu-bar" value="${this.fgpu_used}"
+                                           max="${this.fgpu_total}"></vaadin-progress-bar>
+                      <div><span class="progress-value"> ${this.fgpu_used}</span>/${this.fgpu_total} GPUs</div>
+                      <div><span class="progress-value">Fractional GPU scaling enabled</div>
                     </div>
-                  </div>` : html`
-                  <div>GPU disabled on this cluster.</div>`}
+                  </div>` : html``}
                 ` : html`
                 <ul>
                   <li>Login with administrator privileges required.</li>
