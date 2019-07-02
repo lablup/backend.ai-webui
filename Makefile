@@ -55,10 +55,13 @@ web:
 	cp ./configs/$(site).ini deploy/$(site)/console/config.ini
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
+	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
 win: dep
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
+	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
 linux: dep
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico
+	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
 build_docker: compile
 	docker build -t backend.ai-console:$(BUILD_DATE) .
 pack:
