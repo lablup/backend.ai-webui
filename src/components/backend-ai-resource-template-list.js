@@ -39,7 +39,7 @@ class BackendAIResourceTemplateList extends LitElement {
     this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
     this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
     this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+    this.fgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
     this.rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
     this.concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
     this.container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
@@ -83,7 +83,7 @@ class BackendAIResourceTemplateList extends LitElement {
       gpu_metric: {
         type: Array
       },
-      vgpu_metric: {
+      fgpu_metric: {
         type: Array
       },
       rate_metric: {
@@ -293,9 +293,9 @@ class BackendAIResourceTemplateList extends LitElement {
                   `)}    
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
+                <paper-dropdown-menu id="vgpu-resource" label="fGPU">
                   <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.vgpu_metric.map(item => html`
+                  ${this.fgpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}    
                   </paper-listbox>
@@ -406,7 +406,7 @@ class BackendAIResourceTemplateList extends LitElement {
     let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
-    let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
+    let fgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
 
     let resource_slots = {
       "cpu": cpu_resource,
@@ -415,8 +415,8 @@ class BackendAIResourceTemplateList extends LitElement {
     if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "") {
       resource_slots["cuda.device"] = parseInt(gpu_resource);
     }
-    if (vgpu_resource !== undefined && vgpu_resource !== null && vgpu_resource !== "") {
-      resource_slots["cuda.shares"] = parseFloat(vgpu_resource);
+    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== "") {
+      resource_slots["cuda.shares"] = parseFloat(fgpu_resource);
     }
     let input = {
       'resource_slots': JSON.stringify(resource_slots)
