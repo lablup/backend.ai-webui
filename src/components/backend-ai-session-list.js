@@ -371,8 +371,8 @@ class BackendAiSessionList extends LitElement {
             sessions[objectKey].gpu_slot = parseInt(occupied_slots['cuda.device']);
           }
           if ('cuda.shares' in occupied_slots) {
-            //sessions[objectKey].vgpu_slot = parseFloat(occupied_slots['cuda.shares']);
-            sessions[objectKey].vgpu_slot = parseFloat(parseFloat(occupied_slots['cuda.shares']) * (1.0 / 1.0)).toFixed(2);
+            //sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
+            sessions[objectKey].fgpu_slot = parseFloat(parseFloat(occupied_slots['cuda.shares']) * (1.0 / 1.0)).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
@@ -851,14 +851,14 @@ ${item.map(item => html`
                   <span class="indicator">GPU</span>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
-                  <template is="dom-if" if="[[item.vgpu_slot]]">
+                  <template is="dom-if" if="[[item.fgpu_slot]]">
                     <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                    <span>[[item.vgpu_slot]]</span>
-                    <span class="indicator">vGPU</span>
+                    <span>[[item.fgpu_slot]]</span>
+                    <span class="indicator">GPU</span>
                   </template>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
-                  <template is="dom-if" if="[[!item.vgpu_slot]]">
+                  <template is="dom-if" if="[[!item.fgpu_slot]]">
                     <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                     <span>-</span>
                     <span class="indicator">GPU</span>

@@ -156,8 +156,8 @@ class BackendAiSettingsView extends LitElement {
         <div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Virtual GPU</div>
-              <div class="description">Use Virtual GPU feature. <br/>Requires Backend.AI Virtual CUDA API Layer Plugin.
+              <div>Fractional GPU</div>
+              <div class="description">Use Fractional GPU feature with GPU virtualization. <br/>Requires Backend.AI Virtual CUDA API Layer Plugin.
               </div>
             </div>
             <div class="vertical center-justified layout">
