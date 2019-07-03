@@ -102,11 +102,9 @@ class BackendAiSessionView extends LitElement {
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
       this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector('backend-ai-resource-monitor').active = true;
     this._status = 'active';
   }
 
@@ -129,7 +127,7 @@ class BackendAiSessionView extends LitElement {
             <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
-          <backend-ai-resource-monitor active></backend-ai-resource-monitor>
+          <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
         </h3>
         <div id="running-lists" class="tab-content">
           <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>

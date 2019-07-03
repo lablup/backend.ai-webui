@@ -391,6 +391,7 @@ class BackendAiResourceMonitor extends LitElement {
   }
 
   async _menuChanged(active) {
+    console.log("resource monitor:", this.active);
     await this.updateComplete;
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
