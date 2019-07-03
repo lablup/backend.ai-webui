@@ -102,13 +102,9 @@ class BackendAiSessionView extends LitElement {
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('#running-jobs').active = false;
-      this.shadowRoot.querySelector('#finished-jobs').active = false;
       this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector('#running-jobs').active = true;
-    this.shadowRoot.querySelector('#finished-jobs').active = true;
     this._status = 'active';
   }
 
