@@ -13,6 +13,8 @@ import 'weightless/card';
 
 import './lablup-notification.js';
 import './lablup-activity-panel.js';
+import './backend-ai-resource-monitor.js';
+
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
@@ -411,6 +413,13 @@ class BackendAISummary extends LitElement {
                 <ul>
                   <li>Login with administrator privileges required.</li>
                 </ul>`}
+            </div>
+          </lablup-activity-panel>
+          <lablup-activity-panel title="Resource Monitor" elevation="1" width=530>
+            <div slot="message">
+              <div class="horizontal justified layout wrap">
+                <backend-ai-resource-monitor active></backend-ai-resource-monitor>
+              </div>
             </div>
           </lablup-activity-panel>
         </div>
