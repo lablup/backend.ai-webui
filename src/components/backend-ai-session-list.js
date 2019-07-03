@@ -564,10 +564,7 @@ class BackendAiSessionList extends LitElement {
       } else if (contentType.startsWith('text/')) {
         body = await resp.text();
       } else {
-        if (resp.blob === undefined)
-          body = await resp.buffer();  // for node-fetch
-        else
-          body = await resp.blob();
+        body = await resp.blob();
       }
       if (!resp.ok) {
         throw body;
