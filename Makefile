@@ -28,6 +28,8 @@ compile: versiontag
 	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 	cp -Rp ./resources ./build/bundle/
+compile_wsproxy:
+	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
 dep:
 	if [ ! -d "./build/bundle/" ];then \

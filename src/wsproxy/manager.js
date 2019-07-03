@@ -9,7 +9,7 @@ const Client = require("./lib/WstClient"),
   Proxy = require("./proxy");
 
 class Manager extends EventEmitter {
-  constructor(listen_ip, proxyBaseURL) {
+  constructor(listen_ip, proxyBaseURL, proxyBasePort) {
     super();
     if(listen_ip === undefined) {
       this.listen_ip = "127.0.0.1"
@@ -22,14 +22,18 @@ class Manager extends EventEmitter {
     } else {
       this.proxyBaseURL = proxyBaseURL;
     }
-    this.port = undefined;
+    if (proxyBasePort !== undefined) {
+      this.proxyBasePort = proxyBasePort;
+      this.port = this.proxyBasePort;
+    } else {
 
+      this.port = undefined;
+    }
     this.app = express();
     this.aiclient = undefined;
     this.proxies = {};
     this.ports = [];
     this.baseURL = "http://" + this.listen_ip + ":" + this.port;
-
     this.init();
   }
 
@@ -42,6 +46,9 @@ class Manager extends EventEmitter {
 
   getPort() {
     return new Promise((resolve, reject) => {
+      if (this.proxyBasePort) {
+        return this.proxyBasePort;
+      }
       if (this.ports.length == 0) {
         this.refreshPorts();
       }
