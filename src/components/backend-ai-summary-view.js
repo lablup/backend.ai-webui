@@ -288,8 +288,11 @@ class BackendAISummary extends LitElement {
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
+      this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
       return;
     }
+
+    this.shadowRoot.querySelector('backend-ai-resource-monitor').active = true;
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         console.log('queueing');

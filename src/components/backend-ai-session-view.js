@@ -102,9 +102,11 @@ class BackendAiSessionView extends LitElement {
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
+      this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
       this._status = 'inactive';
       return;
     }
+    this.shadowRoot.querySelector('backend-ai-resource-monitor').active = true;
     this._status = 'active';
   }
 
