@@ -143,7 +143,6 @@ $ docker build -t backendai-console .
 This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
 
 ```
-$ make compile
 $ npm run wsproxy
 ```
 
