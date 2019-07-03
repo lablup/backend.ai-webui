@@ -15,7 +15,7 @@ import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
-import './lablup-loading-indicator';
+import './lablup-loading-indicator.js';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
@@ -78,6 +78,9 @@ class BackendAiSessionList extends LitElement {
         type: Object
       },
       notification: {
+        type: Object
+      },
+      loadingIndicator: {
         type: Object
       }
     };
@@ -220,6 +223,7 @@ class BackendAiSessionList extends LitElement {
   }
 
   firstUpdated() {
+    this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this._initializeAppTemplate();
     this.refreshTimer = null;
     if (!window.backendaiclient ||
@@ -320,11 +324,12 @@ class BackendAiSessionList extends LitElement {
     return this._refreshJobData(true);
   }
 
-  _refreshJobData(refresh = false) {
+  async _refreshJobData(refresh = false) {
+    await this.updateComplete;
     if (this.active !== true) {
       return;
     }
-    this.shadowRoot.querySelector('#loading-indicator').show();
+    this.loadingIndicator.show();
     let status = 'RUNNING';
     switch (this.condition) {
       case 'running':
@@ -344,7 +349,7 @@ class BackendAiSessionList extends LitElement {
     ];
     window.backendaiclient.computeSession.list(fields, status,
       this.filterAccessKey).then((response) => {
-      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.loadingIndicator.hide();
 
       var sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
@@ -396,7 +401,7 @@ class BackendAiSessionList extends LitElement {
         }, refreshTime);
       }
     }).catch(err => {
-      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.loadingIndicator.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = err.message;
