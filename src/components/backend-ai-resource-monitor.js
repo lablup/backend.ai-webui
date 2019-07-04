@@ -1065,7 +1065,6 @@ class BackendAiResourceMonitor extends LitElement {
   }
 
   render() {
-    console.log(this.direction);
     // language=HTML
     return html`
       <lablup-notification id="notification" open></lablup-notification>
@@ -1112,12 +1111,12 @@ class BackendAiResourceMonitor extends LitElement {
           <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
           <span class="gauge-name">Session</span>
         </div>
-        <div class="layout vertical start-justified wrap short-indicator">
+        <div class="layout vertical start-justified wrap short-indicator gutterBottom">
           <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
           <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
         </div>
         <span class="flex"></span>
-        <wl-button class="fg red" id="launch-session" style="margin-top: 15px;" outlined @click="${() => this._launchSessionDialog()}">
+        <wl-button class="fg red" id="launch-session" outlined @click="${() => this._launchSessionDialog()}">
           <wl-icon>add</wl-icon>
           Start
         </wl-button>
