@@ -1111,7 +1111,7 @@ class BackendAiResourceMonitor extends LitElement {
           <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
           <span class="gauge-name">Session</span>
         </div>
-        <div class="layout vertical start-justified wrap short-indicator gutterBottom">
+        <div class="layout vertical start-justified wrap short-indicator gutterBottom" style="margin-left: 0; margin-right: auto">
           <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
           <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
         </div>
