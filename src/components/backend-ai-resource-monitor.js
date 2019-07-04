@@ -85,6 +85,7 @@ class BackendAiResourceMonitor extends LitElement {
     this.cpu_request = 1;
     this.mem_request = 1;
     this.gpu_request = 0;
+    this.direction = "horizontal";
   }
 
   static get is() {
@@ -182,6 +183,9 @@ class BackendAiResourceMonitor extends LitElement {
       },
       _status: {
         type: Boolean
+      },
+      direction: {
+        type: String
       }
     }
   }
@@ -332,6 +336,10 @@ class BackendAiResourceMonitor extends LitElement {
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
+        }
+
+        .gutterBottom {
+          margin-bottom: 15px;
         }
       `];
   }
@@ -1057,15 +1065,16 @@ class BackendAiResourceMonitor extends LitElement {
   }
 
   render() {
+    console.log(this.direction);
     // language=HTML
     return html`
       <lablup-notification id="notification" open></lablup-notification>
-      <div class="layout horizontal center resources wrap" style="margin-left:20px;">
+      <div class="layout ${this.direction} center resources wrap" style="margin-left:20px;">
         <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
           <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
           <div class="gauge-name">CPU</div>
         </div>
-        <div class="layout vertical start-justified wrap">
+        <div class="layout vertical start-justified wrap gutterBottom">
           <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
           <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
         </div>
@@ -1073,7 +1082,7 @@ class BackendAiResourceMonitor extends LitElement {
           <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
           <span class="gauge-name">RAM</span>
         </div>
-        <div class="layout vertical start-justified wrap">
+        <div class="layout vertical start-justified wrap gutterBottom">
           <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
           <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
         </div>
@@ -1083,7 +1092,7 @@ class BackendAiResourceMonitor extends LitElement {
           <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
           <span class="gauge-name">GPU</span>
         </div>
-        <div class="layout vertical start-justified wrap short-indicator">
+        <div class="layout vertical start-justified wrap short-indicator gutterBottom">
           <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
           <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
         </div>` :
@@ -1108,7 +1117,7 @@ class BackendAiResourceMonitor extends LitElement {
           <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
         </div>
         <span class="flex"></span>
-        <wl-button class="fg red" id="launch-session" outlined @click="${() => this._launchSessionDialog()}">
+        <wl-button class="fg red" id="launch-session" style="margin-top: 15px;" outlined @click="${() => this._launchSessionDialog()}">
           <wl-icon>add</wl-icon>
           Start
         </wl-button>

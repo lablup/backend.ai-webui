@@ -420,10 +420,10 @@ class BackendAISummary extends LitElement {
                 </ul>`}
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="Resource Monitor" elevation="1" width=530>
+          <lablup-activity-panel title="Resource Monitor" elevation="1" width=200>
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
+                <backend-ai-resource-monitor ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
               </div>
             </div>
           </lablup-activity-panel>
