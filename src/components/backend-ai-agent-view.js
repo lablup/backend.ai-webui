@@ -48,8 +48,10 @@ class BackendAIAgentView extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
+      this.active = true;
       this._menuChanged(true);
     } else {
+      this.active = false;
       this._menuChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);

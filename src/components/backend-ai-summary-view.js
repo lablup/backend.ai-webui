@@ -278,8 +278,10 @@ class BackendAISummary extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
+      this.active = true;
       this._menuChanged(true);
     } else {
+      this.active = false;
       this._menuChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
@@ -288,11 +290,11 @@ class BackendAISummary extends LitElement {
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
+      //this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
       return;
     }
 
-    this.shadowRoot.querySelector('backend-ai-resource-monitor').active = true;
+    //this.shadowRoot.querySelector('backend-ai-resource-monitor').active = true;
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         console.log('queueing');
@@ -421,7 +423,7 @@ class BackendAISummary extends LitElement {
           <lablup-activity-panel title="Resource Monitor" elevation="1" width=530>
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor active></backend-ai-resource-monitor>
+                <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
               </div>
             </div>
           </lablup-activity-panel>

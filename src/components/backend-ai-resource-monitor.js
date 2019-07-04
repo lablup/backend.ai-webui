@@ -383,15 +383,16 @@ class BackendAiResourceMonitor extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
+      this.active = true;
       this._menuChanged(true);
     } else {
+      this.active = false;
       this._menuChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
 
   async _menuChanged(active) {
-    console.log("resource monitor:", this.active);
     await this.updateComplete;
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {

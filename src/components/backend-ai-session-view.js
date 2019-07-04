@@ -92,8 +92,10 @@ class BackendAiSessionView extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
+      this.active = true;
       this._menuChanged(true);
     } else {
+      this.active = false;
       this._menuChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
@@ -130,10 +132,10 @@ class BackendAiSessionView extends LitElement {
           <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
         </h3>
         <div id="running-lists" class="tab-content">
-          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
+          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this.active}"></backend-ai-session-list>
         </div>
         <div id="finished-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
+          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this.active}"></backend-ai-session-list>
         </div>
       </wl-card>
 `;
