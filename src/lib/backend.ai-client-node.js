@@ -104,6 +104,7 @@ class Client {
       this._config = config;
     }
     this._managerVersion = null;
+    this._apiVersion = null;
     this.kernelPrefix = '/kernel';
     this.resourcePreset = new ResourcePreset(this);
     this.vfolder = new VFolder(this);
@@ -115,9 +116,9 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
     this.resources = new Resources(this);
-    if (this._config.connectionMode === 'API') {
-      this.getManagerVersion();
-    }
+    //if (this._config.connectionMode === 'API') {
+    //this.getManagerVersion();
+    //}
   }
 
   /**
@@ -198,6 +199,7 @@ class Client {
     if (this._managerVersion === null) {
       let v = await this.getServerVersion();
       this._managerVersion = v.manager;
+      this._apiVersion = v.version;
     }
     return this._managerVersion;
   }
@@ -205,11 +207,21 @@ class Client {
   /**
    * Return if manager is compatible with given version.
    */
-  async isManagerVersionCompatibleWith(version) {
-    let managerVersion = await this.getManagerVersion();
+  isManagerVersionCompatibleWith(version) {
+    let managerVersion = this._managerVersion;
     managerVersion = managerVersion.split('.').map(s => s.padStart(10)).join('.');
     version = version.split('.').map(s => s.padStart(10)).join('.');
     return version <= managerVersion;
+  }
+
+  /**
+   * Return if api is compatible with given version.
+   */
+  isAPIVersionCompatibleWith(version) {
+    let apiVersion = this._apiVersion;
+    apiVersion = apiVersion.split('.').map(s => s.padStart(10)).join('.');
+    version = version.split('.').map(s => s.padStart(10)).join('.');
+    return version <= apiVersion;
   }
 
   /**

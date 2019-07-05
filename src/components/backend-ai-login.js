@@ -235,7 +235,7 @@ class BackendAiLogin extends LitElement {
   _connectGQL() {
     // Test connection
     this.client.getManagerVersion().then(response => {
-      return this.client.isManagerVersionCompatibleWith('19.06.0');
+      return this.client.isAPIVersionCompatibleWith('v4.20190601');
     }).then(response => {
       if (response === false) {// Legacy code to support 19.03
         this._connectViaGQLLegacy();
@@ -299,7 +299,6 @@ class BackendAiLogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
-
       window.backendaiclient.ready = true;
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
@@ -342,6 +341,8 @@ class BackendAiLogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = 'default';
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
+      return window.backendaiclient.getManagerVersion();
+    }).then(response => {
       window.backendaiclient.ready = true;
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
