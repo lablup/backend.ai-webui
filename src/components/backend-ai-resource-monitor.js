@@ -338,7 +338,7 @@ class BackendAiResourceMonitor extends LitElement {
           --expansion-margin-open: 0;
         }
 
-        .gutterBottom {
+        .resources.vertical .monitor {
           margin-bottom: 15px;
         }
       `];
@@ -1069,51 +1069,61 @@ class BackendAiResourceMonitor extends LitElement {
     return html`
       <lablup-notification id="notification" open></lablup-notification>
       <div class="layout ${this.direction} center resources wrap" style="margin-left:20px;">
-        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
-          <div class="gauge-name">CPU</div>
+        <div class="layout horizontal start-justified">
+          <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+            <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+            <div class="gauge-name">CPU</div>
+          </div>
+          <div class="layout vertical start-justified wrap monitor">
+            <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
+            <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
+          </div>
         </div>
-        <div class="layout vertical start-justified wrap gutterBottom">
-          <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
-          <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
-        </div>
-        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
-          <span class="gauge-name">RAM</span>
-        </div>
-        <div class="layout vertical start-justified wrap gutterBottom">
-          <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
-          <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+        <div class="layout horizontal start-justified ">
+          <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+            <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+            <span class="gauge-name">RAM</span>
+          </div>
+          <div class="layout vertical start-justified wrap monitor">
+            <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
+            <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+          </div>
         </div>
         ${this.total_slot.gpu_slot ?
       html`
-        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-          <span class="gauge-name">GPU</span>
-        </div>
-        <div class="layout vertical start-justified wrap short-indicator gutterBottom">
-          <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
-          <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
+        <div class="layout horizontal start-justified ">
+          <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+            <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+            <span class="gauge-name">GPU</span>
+          </div>
+          <div class="layout vertical start-justified wrap short-indicator monitor">
+            <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
+            <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
+          </div>
         </div>` :
       html``}
         ${this.total_slot.vgpu_slot ?
       html`
-        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-          <span class="gauge-name">GPU</span>
-        </div>
-        <div class="layout vertical start-justified wrap short-indicator">
-          <span class="gauge-label">${this.used_slot.vgpu_slot}/${this.total_slot.vgpu_slot}</span>
-          <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
+        <div class="layout horizontal start-justified ">
+          <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+            <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+            <span class="gauge-name">GPU</span>
+          </div>
+          <div class="layout vertical start-justified wrap short-indicator">
+            <span class="gauge-label">${this.used_slot.vgpu_slot}/${this.total_slot.vgpu_slot}</span>
+            <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
+          </div>
         </div>` :
       html``}
-        <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-          <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
-          <span class="gauge-name">Session</span>
-        </div>
-        <div class="layout vertical start-justified wrap short-indicator gutterBottom" style="margin-left: 0; margin-right: auto">
-          <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-          <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+        <div class="layout horizontal start-justified ">
+          <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+            <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
+            <span class="gauge-name">Session</span>
+          </div>
+          <div class="layout vertical start-justified wrap short-indicator monitor" style="margin-left: 0; margin-right: auto">
+            <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
+            <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+          </div>
         </div>
         <span class="flex"></span>
         <wl-button class="fg red" id="launch-session" outlined @click="${() => this._launchSessionDialog()}">
