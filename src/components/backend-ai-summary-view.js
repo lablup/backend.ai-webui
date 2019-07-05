@@ -430,23 +430,21 @@ class BackendAISummary extends LitElement {
         </div>
         <h3 class="plastic-material-title">Actions</h3>
         <div class="horizontal wrap layout">
+              <lablup-activity-panel title="Shortcut" elevation="1">
+                <div slot="message">
+                  <ul>
+                    <li><a href="/data">Upload files</a></li>
+                  </ul>
+                  <ul>
+                    <li><a href="/job">Start a session</a></li>
+                  </ul>
              ${this.is_superadmin ? html`
-              <lablup-activity-panel title="Keypair" elevation="1">
-                <div slot="message">
-                  <ul>
-                    <li><a href="/credential">Create a new key pair</a></li>
-                    <li><a href="/credential">Maintain keypairs</a></li>
-                  </ul>
-                </div>
-              </lablup-activity-panel>` : html``}
-              ${!this.authenticated ? html`
-              <lablup-activity-panel title="No action" elevation="1">
-                <div slot="message">
-                  <ul>
-                    <li>You need an administrator privileges.</li>
-                  </ul>
-                </div>
-              </lablup-activity-panel>` : html``}
+                    <ul>
+                      <li><a href="/credential">Create a new key pair</a></li>
+                      <li><a href="/credential">Maintain keypairs</a></li>
+                    </ul>` : html``}                    
+                  </div>
+                </lablup-activity-panel>
           </div>
         </wl-card>
 `;
