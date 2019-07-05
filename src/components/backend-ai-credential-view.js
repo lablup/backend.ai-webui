@@ -193,6 +193,12 @@ class BackendAICredentialView extends LitElement {
           --button-bg-active: var(--paper-green-600);
         }
 
+        wl-button.fab {
+          --button-bg: var(--paper-light-green-600);
+          --button-bg-hover: var(--paper-green-600);
+          --button-bg-active: var(--paper-green-900);
+        }
+
         wl-card h3 {
           padding-top: 0;
           padding-bottom: 0;
@@ -604,7 +610,7 @@ class BackendAICredentialView extends LitElement {
           <h3 class="horizontal center layout">
             <span>Create resource policy</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
