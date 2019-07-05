@@ -257,7 +257,7 @@ class BackendAICredentialView extends LitElement {
         if (window.backendaiclient.is_admin !== true) {
           this.disablePage();
         }
-        if (window.backendaiclient.isManagerVersionCompatibleWith('19.06.0') === true) {
+        if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
           this.use_user_list = true;
         }
       });
@@ -265,7 +265,7 @@ class BackendAICredentialView extends LitElement {
       if (window.backendaiclient.is_admin !== true) {
         this.disablePage();
       }
-      if (window.backendaiclient.isManagerVersionCompatibleWith('19.06.0') === true) {
+      if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
         this.use_user_list = true;
       }
     }
