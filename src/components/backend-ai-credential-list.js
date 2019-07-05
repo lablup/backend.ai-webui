@@ -316,7 +316,7 @@ class BackendAICredentialList extends LitElement {
               <wl-button class="fg green" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
                  <wl-icon>assignment</wl-icon>
               </wl-button>
-              ${this.isAdmin && this._isActive() && rowData.item.is_admin ? html`
+              ${this.isAdmin && this._isActive() ? html`
                 <wl-button class="fg blue" fab flat inverted @click="${(e) => this._revokeKey(e)}">
                    <wl-icon>delete</wl-icon>
                 </wl-button>

@@ -336,7 +336,14 @@ class BackendAISummary extends LitElement {
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">Statistics</h3>
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="Health" elevation="1">
+          <lablup-activity-panel title="Start Menu" elevation="1">
+            <div slot="message">
+              <div class="horizontal justified layout wrap">
+                <backend-ai-resource-monitor ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
+              </div>
+            </div>
+          </lablup-activity-panel>
+          <lablup-activity-panel title="System Health" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
                 ${this.is_superadmin ? html`
@@ -418,13 +425,6 @@ class BackendAISummary extends LitElement {
                 <ul>
                   <li>Login with administrator privileges required.</li>
                 </ul>`}
-            </div>
-          </lablup-activity-panel>
-          <lablup-activity-panel title="Resource Monitor" elevation="1">
-            <div slot="message">
-              <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
-              </div>
             </div>
           </lablup-activity-panel>
         </div>

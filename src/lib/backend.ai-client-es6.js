@@ -1418,7 +1418,7 @@ class User {
    *   'is_active': Boolean,    // Flag if user is active or not.
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
-   *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   *   'groups': {id name}  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
   list(is_active = true,

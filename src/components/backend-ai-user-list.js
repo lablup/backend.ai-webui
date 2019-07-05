@@ -242,8 +242,7 @@ class BackendAIUserList extends LitElement {
       const data = await this._getUserData(user_id);
       this.userInfo = data.user;
       groupNames = this.userInfo.groups.map((item) => {
-        const parsedItem = JSON.parse(item);
-        return parsedItem.name;
+        return item.name;
       });
       this.userInfoGroups = groupNames;
       this.shadowRoot.querySelector('#user-info-dialog').show();
@@ -256,7 +255,7 @@ class BackendAIUserList extends LitElement {
   }
 
   async _getUserData(user_id) {
-    let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups'];
+    let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return window.backendaiclient.user.get(user_id, fields);
   }
 
