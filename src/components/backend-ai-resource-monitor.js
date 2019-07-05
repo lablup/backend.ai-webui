@@ -1135,6 +1135,7 @@ class BackendAiResourceMonitor extends LitElement {
               <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
             </div>
           </div>
+          <div class="flex"></div>
         </div>
         <div class="layout vertical" style="align-self: center;">
           <wl-button class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
