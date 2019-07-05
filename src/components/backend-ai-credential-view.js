@@ -175,6 +175,10 @@ class BackendAICredentialView extends LitElement {
           --input-state-color-invalid: red;
         }
 
+        wl-dialog paper-input {
+          margin: 15px 0 5px 0;
+          width: 100%;
+        }
         wl-dialog h4 {
           margin: 15px 0 5px 0;
           font-weight: 100;
@@ -597,14 +601,22 @@ class BackendAICredentialView extends LitElement {
       </wl-dialog>
       <wl-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Create</h3>
+          <h3 class="horizontal center layout">
+            <span>Create resource policy</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
           <form id="login-form" onSubmit="this._addResourcePolicy()">
             <fieldset>
-              <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           type="text"
-                           auto-validate required
-                           pattern="[a-zA-Z0-9]*"
-                           error-message="Policy name only accepts letters and numbers"></paper-input>
+              <div class="vertical center layout">
+                <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
+                             type="text"
+                             auto-validate required
+                             pattern="[a-zA-Z0-9]*"
+                             error-message="Policy name only accepts letters and numbers"></paper-input>
+              </div>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">
