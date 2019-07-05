@@ -58,6 +58,9 @@ class BackendAiLogin extends LitElement {
       },
       config: {
         type: Object
+      },
+      notification: {
+        type: Object
       }
     };
   }
@@ -77,6 +80,7 @@ class BackendAiLogin extends LitElement {
 
   firstUpdated() {
     this.shadowRoot.querySelector('#login-button').addEventListener('tap', this._login.bind(this));
+    this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   refreshPanel(config) {
@@ -134,6 +138,8 @@ class BackendAiLogin extends LitElement {
     if (this.api_endpoint === '') {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
+    this.notification.text = 'Please wait to login...';
+    this.notification.show();
     if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       if (this.connection_mode === 'SESSION') {
         this._connectUsingSession();
@@ -157,7 +163,8 @@ class BackendAiLogin extends LitElement {
     this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
-
+    this.notification.text = 'Please wait to login...';
+    this.notification.show();
     if (this.connection_mode === 'SESSION') {
       this._connectUsingSession();
     } else {
@@ -201,15 +208,15 @@ class BackendAiLogin extends LitElement {
       }).catch((err) => {   // Connection failed
         if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
           if (err.message !== undefined) {
-            this.shadowRoot.querySelector('#notification').text = this._politeErrorMessage(err.message);
+            this.notification.text = this._politeErrorMessage(err.message);
           } else {
-            this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+            this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
           }
-          this.shadowRoot.querySelector('#notification').show();
+          this.notification.show();
           this.open();
         } else {
-          this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
-          this.shadowRoot.querySelector('#notification').show();
+          this.notification.text = 'Login failed. Check login information.';
+          this.notification.show();
         }
         this.open();
       });
@@ -245,15 +252,15 @@ class BackendAiLogin extends LitElement {
     }).catch((err) => {   // Connection failed
       if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
         if (err.message !== undefined) {
-          this.shadowRoot.querySelector('#notification').text = err.message;
+          this.notification.text = err.message;
         } else {
-          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
         }
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.show();
         this.open();
       } else {
-        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = 'Login failed. Check login information.';
+        this.notification.show();
       }
       this.open();
     });
@@ -303,18 +310,20 @@ class BackendAiLogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
+      this.notification.text = 'Connected.';
+      this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
         if (err.message !== undefined) {
-          this.shadowRoot.querySelector('#notification').text = err.message;
+          this.notification.text = err.message;
         } else {
-          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
         }
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.show();
         this.open();
       } else {
-        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = 'Login failed. Check login information.';
+        this.notification.show();
       }
       this.open();
     });
@@ -347,18 +356,20 @@ class BackendAiLogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
+      this.notification.text = 'Connected.';
+      this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
         if (err.message !== undefined) {
-          this.shadowRoot.querySelector('#notification').text = err.message;
+          this.notification.text = err.message;
         } else {
-          this.shadowRoot.querySelector('#notification').text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
         }
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.show();
         this.open();
       } else {
-        this.shadowRoot.querySelector('#notification').text = 'Login failed. Check login information.';
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = 'Login failed. Check login information.';
+        this.notification.show();
       }
       this.open();
     });

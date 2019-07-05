@@ -508,10 +508,8 @@ class BackendAiResourceMonitor extends LitElement {
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
 
     let config = {};
-    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       config['group_name'] = window.backendaiclient.current_group;
-    }
-    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
       config['domain'] = window.backendaiclient._config.domainName;
     }
     config['cpu'] = this.cpu_request;

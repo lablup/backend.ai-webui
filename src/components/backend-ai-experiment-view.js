@@ -509,10 +509,8 @@ class BackendAiExperimentView extends LitElement {
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
 
     let config = {};
-    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       config['group_name'] = window.backendaiclient.current_group;
-    }
-    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05')) {
       config['domain'] = window.backendaiclient._config.domainName;
     }
     config['cpu'] = this.shadowRoot.querySelector('#cpu-resource').value;

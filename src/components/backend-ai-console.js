@@ -300,7 +300,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.domain = window.backendaiclient._config.domainName;
     this.current_group = window.backendaiclient.current_group;
     this.groups = window.backendaiclient.groups;
-    if (window.backendaiclient.isManagerVersionCompatibleWith('19.05') === false) {
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
       this.shadowRoot.getElementById('group-select').disabled = true;
       this.shadowRoot.getElementById('group-select').label = 'No Project';
     }
