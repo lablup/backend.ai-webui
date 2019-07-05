@@ -243,7 +243,7 @@ class BackendAiResourceMonitor extends LitElement {
           width: 50px;
         }
 
-        .short-indicator .gauge-label {
+        .resources.horizontal .short-indicator .gauge-label {
           width: 80px;
         }
 
@@ -341,7 +341,10 @@ class BackendAiResourceMonitor extends LitElement {
         .resources.vertical .monitor {
           margin-bottom: 10px;
         }
-
+        .resources.vertical .monitor div:first-child {
+          width: 40px;
+          display: block;
+        }
         wl-button[fab] {
           --button-fab-size: 70px;
           border-radius: 6px;
@@ -1067,16 +1070,12 @@ class BackendAiResourceMonitor extends LitElement {
     return false;
   }
 
-  _centerIfHorizontal() {
-    return this.direction === 'horizontal' ? 'center' : '';
-  }
-
   render() {
     // language=HTML
     return html`
       <lablup-notification id="notification" open></lablup-notification>
       <div class="layout horizontal">
-        <div class="layout ${this.direction} ${this._centerIfHorizontal()} resources wrap" style="align-items: flex-start">
+        <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
@@ -1124,7 +1123,7 @@ class BackendAiResourceMonitor extends LitElement {
           </div>` :
         html``}
           <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical ${this._centerIfHorizontal()} center-justified wrap" style="margin-right:5px;">
+            <div class="layout vertical center-justified wrap" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
             </div>
