@@ -239,7 +239,7 @@ class BackendAiResourceMonitor extends LitElement {
           --paper-progress-transition-delay: 0s;
         }
 
-        .short-indicator paper-progress {
+        .resources.horizontal .short-indicator paper-progress {
           width: 50px;
         }
 
