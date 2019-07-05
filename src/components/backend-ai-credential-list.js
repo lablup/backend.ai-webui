@@ -324,7 +324,7 @@ class BackendAICredentialList extends LitElement {
                    <wl-icon>delete_forever</wl-icon>
                 </wl-button>
               ` : html``}
-              ${this._isActive() ? html`
+              ${this._isActive() === false ? html`
                 <wl-button class="fg blue" fab flat inverted @click="${(e) => this._reuseKey(e)}">
                    <wl-icon>redo</wl-icon>
                 </wl-button>
