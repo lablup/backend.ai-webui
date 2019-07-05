@@ -344,6 +344,7 @@ class BackendAiResourceMonitor extends LitElement {
         .resources.vertical .monitor div:first-child {
           width: 40px;
           display: block;
+          text-align: center;
         }
 
         .resources.vertical .monitor .gauge-name {
