@@ -345,6 +345,12 @@ class BackendAiResourceMonitor extends LitElement {
           width: 40px;
           display: block;
         }
+
+        .resources.vertical .monitor .gauge-name {
+          display: block;
+          text-align: center;
+        }
+
         wl-button[fab] {
           --button-fab-size: 70px;
           border-radius: 6px;
@@ -1076,8 +1082,8 @@ class BackendAiResourceMonitor extends LitElement {
       <lablup-notification id="notification" open></lablup-notification>
       <div class="layout horizontal">
         <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
               <div class="gauge-name">CPU</div>
             </div>
@@ -1086,8 +1092,8 @@ class BackendAiResourceMonitor extends LitElement {
               <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
             </div>
           </div>
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
               <span class="gauge-name">RAM</span>
             </div>
@@ -1098,12 +1104,12 @@ class BackendAiResourceMonitor extends LitElement {
           </div>
           ${this.total_slot.gpu_slot ?
         html`
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
               <span class="gauge-name">GPU</span>
             </div>
-            <div class="layout vertical start-justified wrap short-indicator">
+            <div class="layout vertical center-justified wrap short-indicator">
               <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
               <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
             </div>
@@ -1111,8 +1117,8 @@ class BackendAiResourceMonitor extends LitElement {
         html``}
           ${this.total_slot.vgpu_slot ?
         html`
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
               <span class="gauge-name">GPU</span>
             </div>
@@ -1122,8 +1128,8 @@ class BackendAiResourceMonitor extends LitElement {
             </div>
           </div>` :
         html``}
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center-justified wrap" style="margin-right:5px;">
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
             </div>
