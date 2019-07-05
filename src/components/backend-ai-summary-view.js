@@ -14,6 +14,7 @@ import 'weightless/card';
 import './lablup-notification.js';
 import './lablup-activity-panel.js';
 import './backend-ai-resource-monitor.js';
+import '../plastics/lablup-shields/lablup-shields';
 
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -362,10 +363,9 @@ class BackendAISummary extends LitElement {
           <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
                 ${this.is_superadmin ? html`
-                <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                  Manager version : ${this.manager_version}
+                <div class="layout vertical center flex" style="margin-bottom:5px;">
+                  <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
                 </div>
-
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
                     <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
@@ -438,7 +438,7 @@ class BackendAISummary extends LitElement {
                   <ul>
                     <li><a href="/job">Start a session</a></li>
                   </ul>
-             ${this.is_superadmin ? html`
+             ${this.is_admin ? html`
                     <ul>
                       <li><a href="/credential">Create a new key pair</a></li>
                       <li><a href="/credential">Maintain keypairs</a></li>
