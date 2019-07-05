@@ -343,7 +343,6 @@ class BackendAiResourceMonitor extends LitElement {
         }
         .resources.vertical .monitor div:first-child {
           width: 40px;
-          display: block;
         }
         wl-button[fab] {
           --button-fab-size: 70px;
@@ -1077,7 +1076,7 @@ class BackendAiResourceMonitor extends LitElement {
       <div class="layout horizontal">
         <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
           <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
               <div class="gauge-name">CPU</div>
             </div>
@@ -1123,7 +1122,7 @@ class BackendAiResourceMonitor extends LitElement {
           </div>` :
         html``}
           <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center-justified wrap" style="margin-right:5px;">
+            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
             </div>
