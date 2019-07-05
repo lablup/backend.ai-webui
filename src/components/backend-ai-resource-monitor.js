@@ -339,7 +339,7 @@ class BackendAiResourceMonitor extends LitElement {
         }
 
         .resources.vertical .monitor {
-          margin-bottom: 15px;
+          margin-bottom: 10px;
         }
       `];
   }
@@ -1064,39 +1064,43 @@ class BackendAiResourceMonitor extends LitElement {
     return false;
   }
 
+  _centerIfHorizontal() {
+    return this.direction === 'horizontal' ? 'center' : '';
+  }
+
   render() {
     // language=HTML
     return html`
       <lablup-notification id="notification" open></lablup-notification>
-      <div class="layout ${this.direction} center resources wrap" style="margin-left:20px;">
-        <div class="layout horizontal start-justified">
+      <div class="layout ${this.direction} ${this._centerIfHorizontal()} resources wrap" style="align-items: flex-start">
+        <div class="layout horizontal start-justified monitor">
           <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
             <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
             <div class="gauge-name">CPU</div>
           </div>
-          <div class="layout vertical start-justified wrap monitor">
+          <div class="layout vertical start-justified wrap">
             <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
             <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
           </div>
         </div>
-        <div class="layout horizontal start-justified ">
+        <div class="layout horizontal start-justified monitor">
           <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
             <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
             <span class="gauge-name">RAM</span>
           </div>
-          <div class="layout vertical start-justified wrap monitor">
+          <div class="layout vertical start-justified wrap">
             <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
             <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
           </div>
         </div>
         ${this.total_slot.gpu_slot ?
       html`
-        <div class="layout horizontal start-justified ">
+        <div class="layout horizontal start-justified monitor">
           <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
             <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
             <span class="gauge-name">GPU</span>
           </div>
-          <div class="layout vertical start-justified wrap short-indicator monitor">
+          <div class="layout vertical start-justified wrap short-indicator">
             <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
             <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
           </div>
@@ -1104,7 +1108,7 @@ class BackendAiResourceMonitor extends LitElement {
       html``}
         ${this.total_slot.vgpu_slot ?
       html`
-        <div class="layout horizontal start-justified ">
+        <div class="layout horizontal start-justified monitor">
           <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
             <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
             <span class="gauge-name">GPU</span>
@@ -1115,12 +1119,12 @@ class BackendAiResourceMonitor extends LitElement {
           </div>
         </div>` :
       html``}
-        <div class="layout horizontal start-justified ">
-          <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+        <div class="layout horizontal start-justified monitor">
+          <div class="layout vertical ${this._centerIfHorizontal()} center-justified wrap" style="margin-right:5px;">
             <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
             <span class="gauge-name">Session</span>
           </div>
-          <div class="layout vertical start-justified wrap short-indicator monitor" style="margin-left: 0; margin-right: auto">
+          <div class="layout vertical start-justified wrap short-indicator" style="margin-left: 0; margin-right: auto">
             <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
             <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
           </div>
