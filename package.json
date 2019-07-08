@@ -82,6 +82,8 @@
     "rollup-plugin-babel": "^4.3.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "serve": "^11.0.2",
+    "tinyify": "^2.5.1",
+    "uglify-js": "^3.6.0",
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.2",
     "webpack": "^4.35.2",

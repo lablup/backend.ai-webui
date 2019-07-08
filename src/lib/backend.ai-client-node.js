@@ -13,7 +13,7 @@ var Headers = fetch.Headers; /* Exclude for ES6 */
 var crypto = require('crypto');
 var FormData = require('form-data');
 
-const querystring = require('querystring');
+var querystring = require('querystring');
 
 
 class ClientConfig {
