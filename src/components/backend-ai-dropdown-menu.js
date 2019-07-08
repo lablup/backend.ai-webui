@@ -6,8 +6,6 @@
 import {html, PolymerElement} from '@polymer/polymer';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-input/paper-input'
-import '@polymer/paper-styles/shadow'
-
 import '@polymer/iron-icon/iron-icon'
 import '@polymer/iron-icons/iron-icons'
 import '@polymer/iron-dropdown/iron-dropdown'

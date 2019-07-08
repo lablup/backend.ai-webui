@@ -14,8 +14,6 @@ import {navigate, updateOffline} from '../backend-ai-app.js';
 
 import '@polymer/app-layout/app-layout';
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '@polymer/paper-spinner/paper-spinner-lite';

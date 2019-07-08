@@ -8,8 +8,6 @@ import {render} from 'lit-html';
 
 import '@polymer/polymer/lib/elements/dom-if.js';
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
 import '@polymer/paper-item/paper-item.js';
 import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
