@@ -497,6 +497,28 @@ class BackendAICredentialView extends LitElement {
       this.notification.show();
       return;
     }
+
+    // all values except 'username', and 'password' are arbitrarily designated default values
+    const input = {
+      'username': name,
+      'password': password,
+      'need_password_change': false,
+      'full_name': name,
+      'description': `${name}'s Account`,
+      'is_active': true,
+      'domain_name': 'default',
+      'role': 'user',
+      'group_ids': ['2de2b969-1d04-48a6-af16-0bc8adb3c831'] // uuid for group 'default'
+    }
+
+    window.backendaiclient.user.add(email, input)
+    .then(res => {
+      this.shadowRoot.querySelector('#new-user-dialog').hide();
+      this.notification.text = "User successfully created";
+      this.notification.show();
+
+      this.shadowRoot.querySelector('#user-list').refresh();
+    })
   }
 
   _modifyResourcePolicy() {
@@ -608,8 +630,6 @@ class BackendAICredentialView extends LitElement {
           </div>
         </wl-card>
       </wl-card>
-
-
       <wl-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
 
@@ -619,7 +639,7 @@ class BackendAICredentialView extends LitElement {
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
-          </h3>          
+          </h3>
           <form id="login-form" onSubmit="this._addKeyPair()">
             <fieldset>
               <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
@@ -754,7 +774,7 @@ class BackendAICredentialView extends LitElement {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="new-user-dialog" fixed backdrop blockscrolling>
-        <div slot="header" class="horizontal center layout" style="border-bottom:1px solid #ddd;">
+        <div slot="header" class="horizontal justified layout" style="border-bottom:1px solid #ddd;">
           <span style="margin-right:15px;">Create User</span>
           <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
             <wl-icon>close</wl-icon>

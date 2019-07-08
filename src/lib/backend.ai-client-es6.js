@@ -1401,7 +1401,6 @@ class User {
    */
   constructor(client) {
     this.client = client;
-    4
   }
 
   /**
@@ -1490,7 +1489,7 @@ class User {
    * };
    */
   add(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
+    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups { id name }'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
         `  create_user(email: $email, props: $input) {` +
