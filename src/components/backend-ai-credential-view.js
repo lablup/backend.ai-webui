@@ -251,21 +251,6 @@ class BackendAICredentialView extends LitElement {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
-    if (this.shadowRoot.querySelector('#add-keypair')) {
-      this.shadowRoot.querySelector('#add-keypair').addEventListener('tap', this._launchKeyPairDialog.bind(this));
-    }
-    this.shadowRoot.querySelector('#create-keypair-button').addEventListener('tap', this._addKeyPair.bind(this));
-
-    if (this.shadowRoot.querySelector('#add-policy')) {
-      this.shadowRoot.querySelector('#add-policy').addEventListener('tap', this._launchResourcePolicyDialog.bind(this));
-    }
-    this.shadowRoot.querySelector('#create-policy-button').addEventListener('tap', this._addResourcePolicy.bind(this));
-
-    if (this.shadowRoot.querySelector('#add-user')) {
-      this.shadowRoot.querySelector('#add-user').addEventListener('tap', this._launchUserAddDialog.bind(this));
-    }
-    this.shadowRoot.querySelector('#create-user-button').addEventListener('tap', this._addUser.bind(this));
-
     document.addEventListener('backend-ai-credential-refresh', () => {
       this.shadowRoot.querySelector('#active-credential-list').refresh();
       this.shadowRoot.querySelector('#inactive-credential-list').refresh();
@@ -592,7 +577,7 @@ class BackendAICredentialView extends LitElement {
       html``}
           </wl-tab-group>
           <div class="flex"></div>
-          <wl-button class="fg green" id="add-keypair" outlined>
+          <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
             <wl-icon>add</wl-icon>
             Add credential
           </wl-button>
@@ -617,7 +602,7 @@ class BackendAICredentialView extends LitElement {
           <h4 class="horizontal flex center center-justified layout">
             <span>Policy groups</span>
             <span class="flex"></span>
-            <wl-button class="fg green" id="add-policy" outlined>
+            <wl-button class="fg green" id="add-policy" outlined @click="${this._launchResourcePolicyDialog}">
               <wl-icon>add</wl-icon>
               Create policy
             </wl-button>
@@ -630,7 +615,7 @@ class BackendAICredentialView extends LitElement {
           <h4 class="horizontal flex center center-justified layout">
             <span>Users</span>
             <span class="flex"></span>
-            <wl-button class="fg green" id="add-user" outlined>
+            <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
               <wl-icon>add</wl-icon>
               Create user
             </wl-button>
