@@ -1413,7 +1413,7 @@ class Group {
    * };
    */
   list(is_active = true, domain_name = false,
-       fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
+       fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($is_active:Boolean) {` +
