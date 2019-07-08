@@ -519,7 +519,7 @@ class BackendAICredentialView extends LitElement {
       'domain_name': 'default',
       'role': 'user',
       'group_ids': ['2de2b969-1d04-48a6-af16-0bc8adb3c831'] // uuid for group 'default'
-    }
+    };
 
     window.backendaiclient.user.add(email, input)
     .then(res => {
@@ -650,7 +650,7 @@ class BackendAICredentialView extends LitElement {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <form id="login-form" onSubmit="this._addKeyPair()">
+          <form id="login-form">
             <fieldset>
               <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
                            auto-validate></wl-textfield>
@@ -689,7 +689,7 @@ class BackendAICredentialView extends LitElement {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <form id="login-form" onSubmit="this._addResourcePolicy()">
+          <form id="login-form">
             <fieldset>
               <div class="vertical center layout">
                 <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
