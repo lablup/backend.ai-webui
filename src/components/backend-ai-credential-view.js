@@ -60,7 +60,7 @@ class BackendAICredentialView extends LitElement {
     this.allowed_vfolder_hosts = [];
     this.default_vfolder_host = '';
     this._status = false;
-    this.use_user_list = false;
+    this.use_user_list = true;
     this._activeTab = 'credential-lists';
   }
 
@@ -506,7 +506,7 @@ class BackendAICredentialView extends LitElement {
       'description': `${name}'s Account`,
       'is_active': true,
       'domain_name': 'default',
-      'role': 'user',
+      'role': 'user'
     }
 
     window.backendaiclient.group.list()
@@ -517,10 +517,20 @@ class BackendAICredentialView extends LitElement {
     })
     .then(res => {
       this.shadowRoot.querySelector('#new-user-dialog').hide();
-      this.notification.text = "User successfully created";
+      if (res['create_user'].ok) {
+        this.notification.text = "User successfully created";
+
+        this.shadowRoot.querySelector('#user-list').refresh();
+      } else {
+        console.error(res['create_user'].msg);
+        this.notification.text = "Error on user creation";
+      }
       this.notification.show();
 
-      this.shadowRoot.querySelector('#user-list').refresh();
+      this.shadowRoot.querySelector('#id_user_email').value = '';
+      this.shadowRoot.querySelector('#id_user_name').value = '';
+      this.shadowRoot.querySelector('#id_user_password').value = '';
+      this.shadowRoot.querySelector('#id_user_confirm').value = '';
     })
   }
 
