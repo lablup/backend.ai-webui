@@ -238,6 +238,10 @@ class BackendAICredentialView extends LitElement {
           font-weight: 200;
           border-bottom: 0;
         }
+
+        #new-user-dialog wl-textfield {
+          margin-bottom: 15px;
+        }
       `];
   }
 
@@ -256,6 +260,11 @@ class BackendAICredentialView extends LitElement {
       this.shadowRoot.querySelector('#add-policy').addEventListener('tap', this._launchResourcePolicyDialog.bind(this));
     }
     this.shadowRoot.querySelector('#create-policy-button').addEventListener('tap', this._addResourcePolicy.bind(this));
+
+    if (this.shadowRoot.querySelector('#add-user')) {
+      this.shadowRoot.querySelector('#add-user').addEventListener('tap', this._launchUserAddDialog.bind(this));
+    }
+    this.shadowRoot.querySelector('#create-user-button').addEventListener('tap', this._addUser.bind(this));
 
     document.addEventListener('backend-ai-credential-refresh', () => {
       this.shadowRoot.querySelector('#active-credential-list').refresh();
@@ -458,6 +467,70 @@ class BackendAICredentialView extends LitElement {
     });
   }
 
+  _addUser() {
+    const email    = this.shadowRoot.querySelector('#id_user_email').value,
+          name     = this.shadowRoot.querySelector('#id_user_name').value,
+          password = this.shadowRoot.querySelector('#id_user_password').value,
+          confirm  = this.shadowRoot.querySelector('#id_user_confirm').value;
+
+    // email verification
+    if (email !== '') {
+      // invalid email
+      if (this.shadowRoot.querySelector('#id_user_email').hasAttribute('invalid')) {
+        this.notification.text = "Email Is Invalid!";
+        this.notification.show();
+        return;
+      }
+    } else {
+      // empty email
+      this.notification.text = "Please Input User Id(Email)!";
+      this.notification.show();
+      return;
+    }
+
+    // username verification
+    if (name === '') {
+      this.notification.text = "Username Is Empty!";
+      this.notification.show();
+      return;
+    }
+
+    // password - confirm verification
+    if (password === '') {
+      this.notification.text = "Password Is Empty!";
+      this.notification.show();
+      return;
+    }
+
+    if (password !== confirm) {
+      this.notification.text = "Confirmation Does Not Match With Original Password!";
+      this.notification.show();
+      return;
+    }
+
+    // all values except 'username', and 'password' are arbitrarily designated default values
+    const input = {
+      'username': name,
+      'password': password,
+      'need_password_change': false,
+      'full_name': name,
+      'description': `${name}'s Account`,
+      'is_active': true,
+      'domain_name': 'default',
+      'role': 'user',
+      'group_ids': ['2de2b969-1d04-48a6-af16-0bc8adb3c831'] // uuid for group 'default'
+    }
+
+    window.backendaiclient.user.add(email, input)
+    .then(res => {
+      this.shadowRoot.querySelector('#new-user-dialog').hide();
+      this.notification.text = "User successfully created";
+      this.notification.show();
+
+      this.shadowRoot.querySelector('#user-list').refresh();
+    })
+  }
+
   _modifyResourcePolicy() {
     let is_active = true;
     let is_admin = false;
@@ -499,6 +572,10 @@ class BackendAICredentialView extends LitElement {
     }
     this._activeTab = tab.value;
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+  }
+
+  _launchUserAddDialog() {
+    this.shadowRoot.querySelector('#new-user-dialog').show();
   }
 
   render() {
@@ -553,7 +630,7 @@ class BackendAICredentialView extends LitElement {
           <h4 class="horizontal flex center center-justified layout">
             <span>Users</span>
             <span class="flex"></span>
-            <wl-button class="fg green" id="add-policy" outlined>
+            <wl-button class="fg green" id="add-user" outlined>
               <wl-icon>add</wl-icon>
               Create user
             </wl-button>
@@ -563,8 +640,6 @@ class BackendAICredentialView extends LitElement {
           </div>
         </wl-card>
       </wl-card>
-
-
       <wl-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
 
@@ -574,7 +649,7 @@ class BackendAICredentialView extends LitElement {
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
-          </h3>          
+          </h3>
           <form id="login-form" onSubmit="this._addKeyPair()">
             <fieldset>
               <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
@@ -715,6 +790,51 @@ class BackendAICredentialView extends LitElement {
             </fieldset>
           </form>
         </wl-card>
+      </wl-dialog>
+      <wl-dialog id="new-user-dialog" fixed backdrop blockscrolling>
+        <div slot="header" class="horizontal justified layout" style="border-bottom:1px solid #ddd;">
+          <span style="margin-right:15px;">Create User</span>
+          <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+            <wl-icon>close</wl-icon>
+          </wl-button>
+        </div>
+        <form slot="content" onSubmit="this._addUser()">
+          <fieldset>
+            <wl-textfield
+              type="email"
+              name="user_email"
+              id="id_user_email"
+              label="E-mail"
+            >
+            </wl-textfield>
+            <wl-textfield
+              type="text"
+              name="user_name"
+              id="id_user_name"
+              label="Username"
+            >
+            </wl-textfield>
+            <wl-textfield
+              type="password"
+              name="user_password"
+              id="id_user_password"
+              label="Password"
+            >
+            </wl-textfield>
+            <wl-textfield
+              type="password"
+              name="user_confirm"
+              id="id_user_confirm"
+              label="Password Confirm"
+            >
+            </wl-textfield>
+            <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
+            @click="${this._addUser}">
+              <wl-icon>add</wl-icon>
+              Create User
+            </wl-button>
+            </fieldset>
+        </form>
       </wl-dialog>
     `;
   }
