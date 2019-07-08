@@ -336,6 +336,10 @@ class BackendAICredentialView extends LitElement {
     this.shadowRoot.querySelector('#new-policy-dialog').show();
   }
 
+  _launchUserAddDialog() {
+    this.shadowRoot.querySelector('#new-user-dialog').show();
+  }
+
   async _getResourcePolicies() {
     return window.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
       'total_resource_slots',
@@ -508,10 +512,14 @@ class BackendAICredentialView extends LitElement {
       'is_active': true,
       'domain_name': 'default',
       'role': 'user',
-      'group_ids': ['2de2b969-1d04-48a6-af16-0bc8adb3c831'] // uuid for group 'default'
     }
 
-    window.backendaiclient.user.add(email, input)
+    window.backendaiclient.group.list()
+    .then(res => {
+      const default_id = res.groups.find(x => x.name === 'default').id
+
+      return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
+    })
     .then(res => {
       this.shadowRoot.querySelector('#new-user-dialog').hide();
       this.notification.text = "User successfully created";
@@ -562,10 +570,6 @@ class BackendAICredentialView extends LitElement {
     }
     this._activeTab = tab.value;
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
-  }
-
-  _launchUserAddDialog() {
-    this.shadowRoot.querySelector('#new-user-dialog').show();
   }
 
   render() {
