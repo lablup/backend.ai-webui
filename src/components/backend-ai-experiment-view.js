@@ -17,8 +17,6 @@ import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
-import '@polymer/neon-animation/animations/scale-up-animation.js';
-import '@polymer/neon-animation/animations/fade-out-animation.js';
 
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-session-list.js';
