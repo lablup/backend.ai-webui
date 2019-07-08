@@ -1,17 +1,22 @@
 {
   "name": "backend.ai-console",
-  "version": "19.06.1",
+  "version": "19.07.1",
   "repository": "https://github.com/lablup/backend.ai-console.git",
   "author": "Jeongkyu Shin",
   "license": "LGPL-3.0-or-later",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "make all",
+    "electron": "electron .",
     "lint": "eslint *.js",
     "test": "node ./src/wsproxy/local_proxy.js",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
-    "polymer": "node ./node_modules/polymer-cli/bin/polymer.js serve --npm"
+    "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copyresource && npm run copyconfig && rollup -c",
+    "runserver": "./node_modules/serve/bin/serve.js build/rollup",
+    "polymer": "node ./node_modules/polymer-cli/bin/polymer.js serve --npm",
+    "copywc": "cp -r node_modules/@webcomponents/webcomponentsjs/bundles build/rollup/src && cp node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js build/rollup/src",
+    "copyresource": "cp -Rp resources build/rollup && cp -Rp manifest build/rollup",
+    "copyconfig": "cp config.ini build/rollup && cp manifest.json build/rollup",
+    "copyindex": "cp index.html build/rollup"
   },
   "dependencies": {
     "@material/mwc-checkbox": "^0.3.6",
@@ -72,6 +77,13 @@
     "web-animations-js": "^2.3.2",
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5",
-    "websocket": "^1.0.29"
+    "websocket": "^1.0.29",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/plugin-proposal-decorators": "^7.2.3",
+    "rollup-plugin-babel": "^4.3.0",
+    "rollup": "^1.16.6",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "serve": "^11.0.2"
   }
 }
