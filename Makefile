@@ -18,13 +18,13 @@ versiontag:
 	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.js
 compile: versiontag
 	npm run build
-	cd ./src/wsproxy; npx webpack --config webpack.config.js
 compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
 dep:
-	if [ ! -d "./build/bundle/" ];then \
+	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
+		make compile_wsproxy; \
 	fi
 	rm -rf build/electron-app
 	mkdir -p build/electron-app
