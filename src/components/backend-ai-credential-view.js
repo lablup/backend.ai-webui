@@ -175,6 +175,10 @@ class BackendAICredentialView extends LitElement {
           --input-state-color-invalid: red;
         }
 
+        wl-dialog paper-input {
+          margin: 15px 0 5px 0;
+          width: 100%;
+        }
         wl-dialog h4 {
           margin: 15px 0 5px 0;
           font-weight: 100;
@@ -187,6 +191,12 @@ class BackendAICredentialView extends LitElement {
           --button-bg: var(--paper-light-green-50);
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
+        }
+
+        wl-button.fab {
+          --button-bg: var(--paper-light-green-600);
+          --button-bg-hover: var(--paper-green-600);
+          --button-bg-active: var(--paper-green-900);
         }
 
         wl-card h3 {
@@ -241,21 +251,6 @@ class BackendAICredentialView extends LitElement {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
-    if (this.shadowRoot.querySelector('#add-keypair')) {
-      this.shadowRoot.querySelector('#add-keypair').addEventListener('tap', this._launchKeyPairDialog.bind(this));
-    }
-    this.shadowRoot.querySelector('#create-keypair-button').addEventListener('tap', this._addKeyPair.bind(this));
-
-    if (this.shadowRoot.querySelector('#add-policy')) {
-      this.shadowRoot.querySelector('#add-policy').addEventListener('tap', this._launchResourcePolicyDialog.bind(this));
-    }
-    this.shadowRoot.querySelector('#create-policy-button').addEventListener('tap', this._addResourcePolicy.bind(this));
-
-    if (this.shadowRoot.querySelector('#add-user')) {
-      this.shadowRoot.querySelector('#add-user').addEventListener('tap', this._launchUserAddDialog.bind(this));
-    }
-    this.shadowRoot.querySelector('#create-user-button').addEventListener('tap', this._addUser.bind(this));
-
     document.addEventListener('backend-ai-credential-refresh', () => {
       this.shadowRoot.querySelector('#active-credential-list').refresh();
       this.shadowRoot.querySelector('#inactive-credential-list').refresh();
@@ -586,7 +581,7 @@ class BackendAICredentialView extends LitElement {
       html``}
           </wl-tab-group>
           <div class="flex"></div>
-          <wl-button class="fg green" id="add-keypair" outlined>
+          <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
             <wl-icon>add</wl-icon>
             Add credential
           </wl-button>
@@ -611,7 +606,7 @@ class BackendAICredentialView extends LitElement {
           <h4 class="horizontal flex center center-justified layout">
             <span>Policy groups</span>
             <span class="flex"></span>
-            <wl-button class="fg green" id="add-policy" outlined>
+            <wl-button class="fg green" id="add-policy" outlined @click="${this._launchResourcePolicyDialog}">
               <wl-icon>add</wl-icon>
               Create policy
             </wl-button>
@@ -624,7 +619,7 @@ class BackendAICredentialView extends LitElement {
           <h4 class="horizontal flex center center-justified layout">
             <span>Users</span>
             <span class="flex"></span>
-            <wl-button class="fg green" id="add-user" outlined>
+            <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
               <wl-icon>add</wl-icon>
               Create user
             </wl-button>
@@ -644,7 +639,7 @@ class BackendAICredentialView extends LitElement {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <form id="login-form" onSubmit="this._addKeyPair()">
+          <form id="login-form">
             <fieldset>
               <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
                            auto-validate></wl-textfield>
@@ -676,14 +671,22 @@ class BackendAICredentialView extends LitElement {
       </wl-dialog>
       <wl-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3>Create</h3>
-          <form id="login-form" onSubmit="this._addResourcePolicy()">
+          <h3 class="horizontal center layout">
+            <span>Create resource policy</span>
+            <div class="flex"></div>
+            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <form id="login-form">
             <fieldset>
-              <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           type="text"
-                           auto-validate required
-                           pattern="[a-zA-Z0-9]*"
-                           error-message="Policy name only accepts letters and numbers"></paper-input>
+              <div class="vertical center layout">
+                <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
+                             type="text"
+                             auto-validate required
+                             pattern="[a-zA-Z0-9]*"
+                             error-message="Policy name only accepts letters and numbers"></paper-input>
+              </div>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="cpu-resource" label="CPU">

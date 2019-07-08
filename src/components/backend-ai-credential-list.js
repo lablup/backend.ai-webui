@@ -324,7 +324,7 @@ class BackendAICredentialList extends LitElement {
                    <wl-icon>delete_forever</wl-icon>
                 </wl-button>
               ` : html``}
-              ${this._isActive() ? html`
+              ${this._isActive() === false ? html`
                 <wl-button class="fg blue" fab flat inverted @click="${(e) => this._reuseKey(e)}">
                    <wl-icon>redo</wl-icon>
                 </wl-button>
@@ -396,6 +396,12 @@ class BackendAICredentialList extends LitElement {
 
         div.configuration wl-icon {
           padding-right: 5px;
+        }
+
+        wl-button.fab {
+          --button-bg: var(--paper-light-green-600);
+          --button-bg-hover: var(--paper-green-600);
+          --button-bg-active: var(--paper-green-900);
         }
       `];
   }
@@ -529,7 +535,7 @@ class BackendAICredentialList extends LitElement {
               ` : html``}
             <lablup-shields app="" description="user" ui="flat"></lablup-shields>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>

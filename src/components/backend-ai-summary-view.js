@@ -14,6 +14,7 @@ import 'weightless/card';
 import './lablup-notification.js';
 import './lablup-activity-panel.js';
 import './backend-ai-resource-monitor.js';
+import '../plastics/lablup-shields/lablup-shields';
 
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -362,10 +363,9 @@ class BackendAISummary extends LitElement {
           <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
                 ${this.is_superadmin ? html`
-                <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                  Manager version : ${this.manager_version}
+                <div class="layout vertical center flex" style="margin-bottom:5px;">
+                  <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
                 </div>
-
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
                     <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
@@ -430,23 +430,21 @@ class BackendAISummary extends LitElement {
         </div>
         <h3 class="plastic-material-title">Actions</h3>
         <div class="horizontal wrap layout">
-             ${this.is_superadmin ? html`
-              <lablup-activity-panel title="Keypair" elevation="1">
+              <lablup-activity-panel title="Shortcut" elevation="1">
                 <div slot="message">
                   <ul>
-                    <li><a href="/credential">Create a new key pair</a></li>
-                    <li><a href="/credential">Maintain keypairs</a></li>
+                    <li><a href="/data">Upload files</a></li>
                   </ul>
-                </div>
-              </lablup-activity-panel>` : html``}
-              ${!this.authenticated ? html`
-              <lablup-activity-panel title="No action" elevation="1">
-                <div slot="message">
                   <ul>
-                    <li>You need an administrator privileges.</li>
+                    <li><a href="/job">Start a session</a></li>
                   </ul>
-                </div>
-              </lablup-activity-panel>` : html``}
+             ${this.is_admin ? html`
+                    <ul>
+                      <li><a href="/credential">Create a new key pair</a></li>
+                      <li><a href="/credential">Maintain keypairs</a></li>
+                    </ul>` : html``}                    
+                  </div>
+                </lablup-activity-panel>
           </div>
         </wl-card>
 `;

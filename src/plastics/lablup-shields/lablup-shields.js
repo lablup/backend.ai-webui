@@ -78,6 +78,7 @@ class LablupShields extends LitElement {
       "brightgreen": {"colorB": "#4c1", "colorT": "#222222"},
       "lightgreen": {"colorB": "#F3F5D0", "colorT": "#222222"},
       "green": {"colorB": "#97CA00"},
+      "darkgreen": {"colorB": "#457B3B"},
       "yellow": {"colorB": "#dfb317"},
       "yellowgreen": {"colorB": "#a4a61d"},
       "orange": {"colorB": "#fe7d37"},
@@ -95,10 +96,10 @@ class LablupShields extends LitElement {
     // language=HTML
     return html`
       <div class="shields layout horizontal flex">
-        <div class="app horizontal layout center">
+        <div id="app" class="app horizontal layout center">
           <slot name="app-icon"></slot>
           <span id="app-text" class="text app-text">${this.app}</span></div>
-        <div class="desc horizontal layout center">
+        <div id="description" class="desc horizontal layout center">
           <slot name="desc-icon"></slot>
           <span id="desc-text" class="text desc-text">${this.description}</span></div>
       </div>
@@ -117,6 +118,14 @@ class LablupShields extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+  }
+
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'description') {
+      this.description = newval;
+      this._descriptionChanged();
+    }
+    super.attributeChangedCallback(name, oldval, newval);
   }
 
   _classChanged() {
@@ -143,11 +152,12 @@ class LablupShields extends LitElement {
     }
   }
 
-  _descriptionChanged() {
+  async _descriptionChanged() {
+    await this.updateComplete;
     if (typeof this.description == 'undefined' || this.description == 'undefined' || this.description === '') {
-      this.shadowRoot.querySelector('.desc').style.display = 'none';
+      this.shadowRoot.querySelector('#description').style.display = 'none';
     } else {
-      this.shadowRoot.querySelector('.desc').style.display = 'block';
+      this.shadowRoot.querySelector('#description').style.display = 'block';
     }
   }
 

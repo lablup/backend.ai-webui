@@ -115,6 +115,7 @@ class Client {
     this.computeSession = new ComputeSession(this);
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
+    this.group = new Group(this);
     this.resources = new Resources(this);
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
@@ -1389,6 +1390,52 @@ class Resources {
   }
 }
 
+class Group {
+  /**
+   * The group API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+   * List registred groups.
+   * @param {string} domain_name - domain name of group
+   * @param {boolean} is_active - List whether active users or inactive users.
+   * {
+   *   'name': String,          // Group name.
+   *   'description': String,   // Description for group.
+   *   'is_active': Boolean,    // Whether the group is active or not.
+   *   'created_at': String,    // Created date of group.
+   *   'modified_at': String,   // Modified date of group.
+   *   'domain_name': String,   // Domain for group.
+   * };
+   */
+  list(is_active = true, domain_name = false,
+       fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
+    let q, v;
+    if (this.client.is_admin === true) {
+      q = `query($is_active:Boolean) {` +
+        `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
+        '}';
+      v = {'is_active': is_active};
+      if (domain_name !== false) {
+        q = `query($domain_name: String, $is_active:Boolean) {` +
+          `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(" ")} }` +
+          '}';
+        v = {'is_active': is_active,
+           'domain_name': domain_name};
+      }
+    } else {
+      q = `query {` +
+        `  groups { ${fields.join(" ")} }` +
+        '}';
+      v = {};
+    }
+    return this.client.gql(q, v);
+  }
+}
 class User {
   /**
    * The user API wrapper.
@@ -1397,7 +1444,6 @@ class User {
    */
   constructor(client) {
     this.client = client;
-    4
   }
 
   /**
