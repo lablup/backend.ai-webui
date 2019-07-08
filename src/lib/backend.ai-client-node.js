@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI Node.JS / Javascript ES6 API Library (v19.05.1)
+Backend.AI Node.JS / Javascript ES6 API Library (v19.07.1)
 ==========================================================
 
 (C) Copyright 2016-2019 Lablup Inc.
@@ -20,7 +20,7 @@ class ClientConfig {
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // fixed configs with this implementation
     this._apiVersionMajor = 'v4';
-    this._apiVersion = 'v4.20190315';
+    this._apiVersion = 'v4.20190615';
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
