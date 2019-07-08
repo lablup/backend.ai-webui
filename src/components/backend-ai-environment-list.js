@@ -20,8 +20,7 @@ import './lablup-loading-indicator';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
-
-import '@material/mwc-checkbox';
+import 'weightless/checkbox';
 
 import './backend-ai-resource-template-list';
 
@@ -94,10 +93,10 @@ class BackendAiEnvironmentList extends LitElement {
           <template>
             <div class="layout vertical" style="margin:0; padding:0;">
               <template is="dom-if" if="[[item.installed]]">
-                <mwc-checkbox checked></mwc-checkbox>
+                <wl-checkbox checked></wl-checkbox>
               </template>
               <template is="dom-if" if="[[!item.installed]]">
-                <mwc-checkbox></mwc-checkbox>
+                <wl-checkbox></wl-checkbox>
               </template>
             </div>
           </template>

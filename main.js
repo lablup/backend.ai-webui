@@ -3,9 +3,19 @@ const {app, Menu, shell, BrowserWindow, protocol } = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
+const BASE_DIR = __dirname;
 const ProxyManager = require('./src/wsproxy/dist/wsproxy.js');
-const { ipcMain } = require('electron')
+const { ipcMain } = require('electron');
 process.env.liveDebugMode = false;
+
+// ES6 module loader with custom protocol
+const nfs = require('fs');
+const npjoin = require('path').join;
+const es6Path = npjoin(__dirname, 'build/electron-app/app');
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
+]);
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -41,7 +51,7 @@ app.once('ready', function() {
             label: 'Login',
             click: function() {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
-                pathname: path.join(__dirname, mainIndex),
+                pathname: path.join(BASE_DIR, mainIndex),
                 protocol: 'file',
                 slashes: true
               }));
@@ -318,14 +328,14 @@ function createWindow () {
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(BASE_DIR, 'preload.js')
     }  
-  })
+  });
   // and load the index.html of the app.
   if (process.env.liveDebugMode === true) {
     // Load HTML into new Window (dynamic serving for develop)
     mainWindow.loadURL(url.format({
-      pathname: '127.0.0.1:9080',
+      pathname: '127.0.0.1:8081',
       protocol: 'http',
       slashes: true
     }));
@@ -364,13 +374,21 @@ function createWindow () {
 
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
-    const url = request.url.substr(7)    /* all urls start with 'file://' */
-    callback({ path: path.normalize(`${__dirname}/${url}`)})
+    const url = request.url.substr(7);    /* all urls start with 'file://' */
+    const extension = url.split('.').pop();
+    let options = { path: path.normalize(`${BASE_DIR}/${url}`)};
+    callback(options);
   }, (err) => {
     if (err) console.error('Failed to register protocol')
-  })
+  });
+  protocol.registerBufferProtocol('es6', (req, cb) => {
+    nfs.readFile(
+      npjoin(es6Path, req.url.replace('es6://', '')),
+      (e, b) => { cb({ mimeType: 'text/javascript', data: b }) }
+    )
+  });
   createWindow()
-})
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -379,7 +397,7 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
     app.quit()
   }
-})
+});
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
@@ -387,7 +405,7 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
-})
+});
 app.on('certificate-error', function(event, webContents, url, error, 
   certificate, callback) {
       event.preventDefault();
@@ -408,4 +426,4 @@ app.on('web-contents-created', (event, contents) => {
     //  event.preventDefault()
     //}
   })
-})
+});

@@ -14,8 +14,6 @@ import {navigate, updateOffline} from '../backend-ai-app.js';
 
 import '@polymer/app-layout/app-layout';
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '@polymer/paper-spinner/paper-spinner-lite';
@@ -204,6 +202,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       }
     }).catch(err => {
       console.log("Initialization failed.");
+      if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+        this.shadowRoot.querySelector('#login-panel').block('Configuration is not loaded.');
+      }
     });
   }
 
@@ -292,7 +293,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
           }
         });
         this.config = value;
-      })
+      }).catch(err => {
+        console.log("Configuration file missing.");
+      });
   }
 
   _refreshUserInfoPanel() {
@@ -512,7 +515,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.06.1.190707</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.07.0.190709</small>
               </address>
             </div>
           </app-header-layout>

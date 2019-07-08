@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI Node.JS / Javascript ES6 API Library (v19.05.1)
+Backend.AI Node.JS / Javascript ES6 API Library (v19.07.1)
 ==========================================================
 
 (C) Copyright 2016-2019 Lablup Inc.
@@ -13,14 +13,14 @@ var Headers = fetch.Headers; /* Exclude for ES6 */
 var crypto = require('crypto');
 var FormData = require('form-data');
 
-const querystring = require('querystring');
+var querystring = require('querystring');
 
 
 class ClientConfig {
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // fixed configs with this implementation
     this._apiVersionMajor = 'v4';
-    this._apiVersion = 'v4.20190315';
+    this._apiVersion = 'v4.20190615';
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
@@ -272,7 +272,7 @@ class Client {
    */
   async getResourceSlots() {
     let rqst;
-    if (await this.isManagerVersionCompatibleWith('19.06.0')) {
+    if (this.isAPIVersionCompatibleWith('v4.20190601')) {
       rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
     } else {
       rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');

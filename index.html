@@ -31,12 +31,13 @@
       }
       return false;
     }
+
     window.isElectron = isElectron();
     window.enableSW = false;
 
     window.process = {env: {NODE_ENV: 'production'}};
-    window.packageVersion = "19.06.1";
-    window.buildVersion = "190707.190711";
+    window.packageVersion = "19.07.0";
+    window.buildVersion = "190709.000751";
   </script>
   <style>
     body {
@@ -220,10 +221,10 @@
   </div>
 </backend-ai-console>
 <noscript>
-  <p>Could not render Backend.AI console. Check that JavaScript is enabled. (190518.3)</p>
+  <p>Could not render Backend.AI console. Check that JavaScript is enabled.</p>
 </noscript>
-<script src="./node_modules/web-animations-js/web-animations-next-lite.min.js"></script>
-<script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+<script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
+<script src="./src/lib/webcomponents-loader.js"></script>
 <script src="./src/components/backend-ai-console.js" type="module"></script>
 <script>
   document.getElementById('version-detail').innerText = window.packageVersion;

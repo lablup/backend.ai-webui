@@ -1,6 +1,5 @@
 import {css, html, LitElement} from "lit-element";
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/color';
 import 'weightless/card';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';

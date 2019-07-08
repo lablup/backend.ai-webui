@@ -61,6 +61,9 @@ class BackendAiLogin extends LitElement {
       },
       notification: {
         type: Object
+      },
+      errorMsg: {
+        type: String
       }
     };
   }
@@ -75,6 +78,7 @@ class BackendAiLogin extends LitElement {
     this.proxy_url = 'http://127.0.0.1:5050/';
     this.connection_mode = 'API';
     this.default_session_environment = '';
+    this.errorMsg = '';
     this.config = null;
   }
 
@@ -149,6 +153,11 @@ class BackendAiLogin extends LitElement {
     } else {
       this.open();
     }
+  }
+
+  block(message = '') {
+    this.errorMsg = message;
+    this.shadowRoot.querySelector('#block-panel').show();
   }
 
   _validate_data(value) {
@@ -430,7 +439,7 @@ class BackendAiLogin extends LitElement {
             <div>Login</div> 
             <div class="flex"></div>
           </h3>
-          <form id="login-form" onSubmit="this._login()">
+          <form id="login-form">
             <fieldset>
               <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
                            label="API Key" value="${this.api_key}"></paper-input>
@@ -448,6 +457,14 @@ class BackendAiLogin extends LitElement {
                           Login</wl-button>
             </fieldset>
           </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="block-panel" fixed backdrop blockscrolling persistent>
+        <wl-card>
+          <h3>Error</h3>
+          <div style="text-align:center;">
+          ${this.errorMsg}
+          </div>
         </wl-card>
       </wl-dialog>
       <lablup-notification id="notification"></lablup-notification>

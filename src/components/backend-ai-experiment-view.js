@@ -6,8 +6,6 @@
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/color';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 
@@ -19,8 +17,6 @@ import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
-import '@polymer/neon-animation/animations/scale-up-animation.js';
-import '@polymer/neon-animation/animations/fade-out-animation.js';
 
 import '@vaadin/vaadin-dialog/vaadin-dialog.js';
 import './backend-ai-session-list.js';

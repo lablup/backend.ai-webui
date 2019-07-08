@@ -118,7 +118,7 @@ export const BackendAiStyles =
 
     #content {
       padding: 0 auto;
-      margin: 0 auto 45px auto;
+      margin: 0 auto 5px auto;
     }
 
     .site-name {

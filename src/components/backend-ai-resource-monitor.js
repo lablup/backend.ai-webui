@@ -23,6 +23,7 @@ import 'weightless/card';
 import 'weightless/slider';
 
 import './lablup-notification.js';
+import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -42,11 +43,31 @@ class BackendAiResourceMonitor extends LitElement {
       'TensorFlow': 'python-tensorflow',
       'Lablup ResearchEnv.': 'python-ff',
       'Python': 'python',
+      'Python (Intel)': 'python-intel',
       'PyTorch': 'python-pytorch',
       'Chainer': 'chainer',
       'R': 'r',
       'Julia': 'julia',
       'Lua': 'lua',
+      'RAPID (NGC)':'ngc-rapid',
+      'DIGITS (NGC)':'ngc-digits',
+      'PyTorch (NGC)':'ngc-pytorch',
+      'TensorFlow (NGC)':'ngc-tensorflow'
+    };
+    this.tags = {
+      'TensorFlow': [],
+      'Lablup ResearchEnv.': [],
+      'Python': [],
+      'Python': ['Intel MKL'],
+      'PyTorch': [],
+      'Chainer': [],
+      'R': [],
+      'Julia': [],
+      'Lua': [],
+      'RAPID (NGC)':['NVidia GPU Cloud'],
+      'DIGITS (NGC)':['NVidia GPU Cloud'],
+      'PyTorch (NGC)':['NVidia GPU Cloud'],
+      'TensorFlow (NGC)':['NVidia GPU Cloud']
     };
     this.versions = ['3.6'];
     this.languages = [];
@@ -107,6 +128,9 @@ class BackendAiResourceMonitor extends LitElement {
         type: Object
       },
       aliases: {
+        type: Object
+      },
+      tags: {
         type: Object
       },
       versions: {
@@ -586,6 +610,7 @@ class BackendAiResourceMonitor extends LitElement {
       'octave': 'Octave',
       'php': 'PHP',
       'python': 'Python',
+      'python-intel': 'Python (Intel)',
       'python-ff': 'Lablup ResearchEnv.',
       'python-cntk': 'CNTK',
       'python-pytorch': 'PyTorch',
@@ -621,8 +646,9 @@ class BackendAiResourceMonitor extends LitElement {
         }
       }
       const alias = this.aliases[item];
+      const tags = this.tags[alias];
       if (alias !== undefined) {
-        this.languages.push({name: item, alias: alias});
+        this.languages.push({name: item, alias: alias, tags: tags});
       }
     });
     this._initAliases();
@@ -1159,7 +1185,11 @@ class BackendAiResourceMonitor extends LitElement {
                   <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                  selected="${this.default_language}">
                 ${this.languages.map(item => html`
-                    <paper-item id="${item.name}" label="${item.alias}">${item.alias}</paper-item>
+                    <paper-item id="${item.name}" label="${item.alias}">${item.alias}
+                    ${item.tags ? item.tags.map(item => html`
+                      <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                    `) : ''}
+                    </paper-item>
                 `)}
                   </paper-listbox>
                 </paper-dropdown-menu>

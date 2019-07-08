@@ -304,6 +304,7 @@ class BackendAiSessionList extends LitElement {
     this.appTemplate = {
       'tensorflow': TFBase,
       'python': jupyterBase,
+      'python-intel': jupyterBase,
       'python-tensorflow': TFBase,
       'python-ff': FFBase,
       'python-pytorch': TFBase,
@@ -436,6 +437,7 @@ class BackendAiSessionList extends LitElement {
     if (this.condition != 'running') return false;
     let support_kernels = [
       'python',
+      'python-intel',
       'python-ff',
       'python-tensorflow',
       'python-pytorch',
@@ -456,6 +458,8 @@ class BackendAiSessionList extends LitElement {
     const kernel_alias = {
       'python': [
         {'category': 'Env', 'tag': 'Python', 'color': 'yellow'}],
+      'python-intel': [
+        {'category': 'Env', 'tag': 'Python (Intel MKL)', 'color': 'yellow'}],
       'python-ff': [
         {'category': 'Env', 'tag': 'Lablup Research', 'color': 'yellow'},
         {'tag':'NVidia GPU Cloud', 'color': 'green'}],
