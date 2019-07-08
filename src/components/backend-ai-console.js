@@ -290,7 +290,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
           }
         });
         this.config = value;
-      })
+      }).catch(err => {
+        console.log("Configuration file missing.");
+      });
   }
 
   _refreshUserInfoPanel() {
