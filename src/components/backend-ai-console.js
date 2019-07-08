@@ -202,6 +202,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       }
     }).catch(err => {
       console.log("Initialization failed.");
+      if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+        this.shadowRoot.querySelector('#login-panel').block('Configuration is not loaded.');
+      }
     });
   }
 
