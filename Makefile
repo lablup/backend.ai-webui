@@ -15,7 +15,7 @@ test:
 	cd build/electron-app; npm install --only=prod
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 test_web:
-	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js serve --npm --port 9080
+	npm run server:d
 test_electron:
 	electron .
 proxy:
@@ -25,9 +25,8 @@ versiontag:
 	sed -i -E 's/window.buildVersion = "\(.*\)"/window.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
 	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.js
 compile: versiontag
-	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
+	npm run build
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
-	cp -Rp ./resources ./build/bundle/
 compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
@@ -39,21 +38,19 @@ dep:
 	mkdir -p build/electron-app
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
-	cp -Rp build/bundle build/electron-app/app
-	cp -Rp build/bundle/resources build/electron-app/resources
-	cp ./config.ini ./build/electron-app/app/config.ini
+	cp -Rp build/rollup build/electron-app/app
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	cp ./preload.js ./build/electron-app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
 web:
-	if [ ! -d "./build/bundle/" ];then \
+	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 	fi
 	mkdir -p ./deploy/$(site)
 	cd deploy/$(site); rm -rf ./*; mkdir console
-	cp -Rp build/bundle/* deploy/$(site)/console
+	cp -Rp build/rollup/* deploy/$(site)/console
 	cp ./configs/$(site).ini deploy/$(site)/console/config.ini
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
@@ -73,4 +70,4 @@ pack:
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
 clean:
 	cd app;	rm -rf ./backend*
-	cd build;rm -rf ./unbundle ./bundle ./electron-app
+	cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app
