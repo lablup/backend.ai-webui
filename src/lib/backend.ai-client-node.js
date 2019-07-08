@@ -269,7 +269,7 @@ class Client {
   /**
    * Return the resource slots.
    */
-  getResourceSlots() {
+  async getResourceSlots() {
     let rqst;
     if (await this.isAPIVersionCompatibleWith('20190601')) {
       rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
