@@ -6,14 +6,6 @@ BUILD_VERSION := $(shell grep version package.json | cut -c 15- | rev | cut -c 3
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
-test:
-	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
-	mkdir -p build/electron-app/wsproxy
-	cp -Rp build/unbundle build/electron-app/app
-	rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
-	cp ./wsproxy/package.json build/electron-app/package.json
-	cd build/electron-app; npm install --only=prod
-	cp ./main.electron-packager.js ./build/electron-app/main.js
 test_web:
 	npm run server:d
 test_electron:
