@@ -2,7 +2,7 @@
   "name": "backend.ai-console",
   "version": "19.07.0",
   "repository": "https://github.com/lablup/backend.ai-console.git",
-  "author": "Jeongkyu Shin",
+  "author": "Jeongkyu Shin <jshin@lablup.com>",
   "license": "LGPL-3.0-or-later",
   "main": "main.js",
   "scripts": {
@@ -20,7 +20,6 @@
     "copyindex": "cp index.html build/rollup"
   },
   "dependencies": {
-    "@material/mwc-checkbox": "^0.3.6",
     "@polymer/app-layout": "^3.0.2",
     "@polymer/app-route": "^3.0.2",
     "@polymer/app-storage": "^3.0.2",
