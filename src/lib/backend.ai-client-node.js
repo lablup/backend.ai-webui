@@ -271,7 +271,7 @@ class Client {
    */
   async getResourceSlots() {
     let rqst;
-    if (await this.isAPIVersionCompatibleWith('20190601')) {
+    if (await this.isAPIVersionCompatibleWith('v4.20190601')) {
       rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
     } else {
       rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
