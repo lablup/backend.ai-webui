@@ -9,7 +9,7 @@ current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 test_web:
 	npm run server:d
 test_electron:
-	electron .
+	./node_modules/electron/cli.js .
 proxy:
 	node ./src/wsproxy/local_proxy.js
 versiontag:

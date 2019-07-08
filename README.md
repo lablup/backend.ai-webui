@@ -67,32 +67,34 @@ proxyListenIP = [Websocket proxy configuration IP.]
 
 Backend.AI console is built with  
  * `litelement` / `Polymer 3 `as webcomponent framework
- * `yarn` as package manager
- * `polymer-cli` as bundler
+ * `npm` as package manager
+ * `rollup` as bundler
  * `electron` as app shell
 
 ### Initializing
 
 ```
-$ yarn install
+$ npm i
 ```
 
 ### Developing / testing without bundling
 
 ```
-$ yarn run polymer # To run web server
-$ yarn run wsproxy # To run websocket proxy
+$ npm run server:d # To run dev. web server
+$ npm run wsproxy # To run websocket proxy
 ```
 
 ### Electron testing
 
+#### Live testing
+
 Terminal 1:
 ```
-$ make test_web # To run test server
+$ npm run test_web # To run test server
 ```
 Terminal 2:
 ```
-$ make test_electron # Run Electron as dev mode.
+$ npm run electron:d # Run Electron as dev mode.
 ```
 
 ## Serving Guide
@@ -103,7 +105,7 @@ $ make test_electron # Run Electron as dev mode.
 $ make compile
 ```
 
-Then bundled resource will be prepared in `build/bundle`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
+Then bundled resource will be prepared in `build/rollup`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
 
 ### Serving with nginx
 
@@ -206,5 +208,5 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 
 ```
 $ make dep # Compile with app dependencies
-$ electron . 
+$ ./node_modules/electron/cli.js . 
 ```
