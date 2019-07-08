@@ -3,8 +3,18 @@ const {app, Menu, shell, BrowserWindow, protocol} = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
+const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron')
+
+// ES6 module loader with custom protocol
+const nfs = require('fs');
+const npjoin = require('path').join;
+const es6Path = npjoin(__dirname, 'app');
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
+]);
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -41,7 +51,7 @@ app.once('ready', function() {
             label: 'Login',
             click: function() {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
-                pathname: path.join(__dirname, mainIndex),
+                pathname: path.join(BASE_DIR, mainIndex),
                 protocol: 'file',
                 slashes: true
               }));
@@ -306,7 +316,7 @@ function createWindow () {
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(BASE_DIR, 'preload.js'),
       devTools: false 
     }
   });
@@ -344,10 +354,16 @@ function createWindow () {
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
     const url = request.url.substr(7)    /* all urls start with 'file://' */
-    callback({ path: path.normalize(`${__dirname}/${url}`)})
+    callback({ path: path.normalize(`${BASE_DIR}/${url}`)})
   }, (err) => {
     if (err) console.error('Failed to register protocol')
-  })
+  });
+  protocol.registerBufferProtocol('es6', (req, cb) => {
+    nfs.readFile(
+      npjoin(es6Path, req.url.replace('es6://', '')),
+      (e, b) => { cb({ mimeType: 'text/javascript', data: b }) }
+    )
+  });
   createWindow()
 });
 
