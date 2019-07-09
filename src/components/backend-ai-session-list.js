@@ -319,7 +319,8 @@ class BackendAiSessionList extends LitElement {
       'ngc-tensorflow': TFBase,
       'ngc-pytorch': TFBase,
       'julia': jupyterBase,
-      'r': jupyterBase
+      'r': jupyterBase,
+      'r-base': FFBase
     };
   }
 
@@ -446,6 +447,7 @@ class BackendAiSessionList extends LitElement {
       'ngc-pytorch',
       'julia',
       'r',
+      'r-base',
     ];
     //let support_kernels = this.appTemplate.keys;
     //console.log(support_kernels);
@@ -479,6 +481,8 @@ class BackendAiSessionList extends LitElement {
       'julia': [
         {'category': 'Env', 'tag': 'Julia', 'color': 'yellow'}],
       'r': [
+        {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
+      'r-base': [
         {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
     };
     let tags = [];
