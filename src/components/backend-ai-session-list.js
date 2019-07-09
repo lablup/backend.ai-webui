@@ -293,6 +293,14 @@ class BackendAiSessionList extends LitElement {
         'redirect': "&redirect=/",
         'src': './resources/icons/tensorflow.png'
       });
+    let RBase = jupyterBase.concat(
+      {
+        'name': 'jupyter',
+        'title': 'Jupyter Extension',
+        'redirect': "&redirect=/nbextensions",
+        'src': './resources/icons/jupyter.png',
+        'icon': 'vaadin:clipboard-pulse'
+      });
     let FFBase = TFBase.concat(
       {
         'name': 'jupyter',
@@ -320,7 +328,7 @@ class BackendAiSessionList extends LitElement {
       'ngc-pytorch': TFBase,
       'julia': jupyterBase,
       'r': jupyterBase,
-      'r-base': FFBase
+      'r-base': RBase
     };
   }
 
