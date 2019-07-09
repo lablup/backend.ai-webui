@@ -60,7 +60,7 @@ class BackendAICredentialView extends LitElement {
     this.allowed_vfolder_hosts = [];
     this.default_vfolder_host = '';
     this._status = false;
-    this.use_user_list = true;
+    this.use_user_list = false;
     this._activeTab = 'credential-lists';
   }
 
@@ -792,7 +792,7 @@ class BackendAICredentialView extends LitElement {
       </wl-dialog>
       <wl-dialog id="new-user-dialog" fixed backdrop blockscrolling>
         <div slot="header" class="horizontal justified layout" style="border-bottom:1px solid #ddd;">
-          <span style="margin-right:15px;">Create User</span>
+        <div style="line-height: 40px; margin-right:15px;">Create User</div>
           <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
             <wl-icon>close</wl-icon>
           </wl-button>
