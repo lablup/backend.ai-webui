@@ -27,6 +27,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
 import 'weightless/switch';
+import 'weightless/textarea';
 import 'weightless/textfield';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
@@ -164,13 +165,20 @@ class BackendAIUserList extends LitElement {
           padding-right: 5px;
         }
 
-        wl-dialog wl-textfield {
+        wl-dialog wl-textfield,
+        wl-dialog wl-textarea {
           padding-left: 15px;
           --input-font-family: Roboto, Noto, sans-serif;
           --input-color-disabled: #222;
           --input-label-color-disabled: #222;
           --input-label-font-size: 12px;
           --input-border-style-disabled: 1px solid #ccc;
+        }
+
+        wl-textfield:not([disabled]),
+        wl-textarea:not([disabled]) {
+          margin-bottom: 15px;
+          width: 280px;
         }
       `];
   }
@@ -387,8 +395,57 @@ class BackendAIUserList extends LitElement {
     dialog.hide();
   }
 
-  _onEditmodeToggle(e) {
+  _editModeToggle(e) {
     this.editMode = !this.editMode;
+
+    // if the user just entered edit mode:
+    if (this.editMode) return;
+
+    // if the user attempted to save changes:
+    const username    = this.shadowRoot.querySelector('#username').value,
+          password    = this.shadowRoot.querySelector('#password').value,
+          confirm     = this.shadowRoot.querySelector('#confirm').value,
+          description = this.shadowRoot.querySelector('#description').value;
+    
+    if (password !== confirm) {
+      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match."
+      this.shadowRoot.querySelector("#notification").show();
+
+      return;
+    }
+
+    let input = {}
+
+    if (password !== '')
+      input.password = password;
+    if (username !== this.userInfo.username)
+      input.username = username;
+    if (description !== this.userInfo.description)
+      input.description = description;
+    
+    if (Object.entries(input).length === 0) {
+      this.shadowRoot.querySelector("#notification").text = "No Changes Made"
+      this.shadowRoot.querySelector("#notification").show();
+
+      return;
+    }
+
+    window.backendaiclient.user.modify(this.userInfo.email, input)
+    .then(res => {
+      if (res.modify_user.ok) {
+        this.shadowRoot.querySelector("#notification").text = "Modification Successful";
+        this.userInfo = {...this.userInfo, username, description};
+        this._refreshUserData();
+      } else {
+        this.shadowRoot.querySelector("#notification").text = `Error: ${res.modify_user.msg}`;
+
+        this.shadowRoot.querySelector("#username").value = this.userInfo.username;
+        this.shadowRoot.querySelector("#description").value = this.userInfo.description;
+      }
+
+      this.shadowRoot.querySelector("#notification").show();
+    })
+    
   }
 
   render() {
@@ -434,17 +491,38 @@ class BackendAIUserList extends LitElement {
             <div style="width:335px;">
               <h4>Information</h4>
               <div role="listbox" style="margin: 0;">
-                <wl-textfield label="User ID" id="userid" disabled value="${this.userInfo.email}"></wl-textfield>
-                <wl-textfield label="User name" id="username" ?disabled=${this.editMode} value="${this.userInfo.username}"></wl-textfield>
-                <wl-textfield label="Full name" id="fullname" disabled value="${this.userInfo.full_name}"></wl-textfield>
-                ${this.editMode
-                ? html``
-                : html`<wl-textfield label="Password" id="password"></wl-textfield>`
+                <wl-textfield
+                  label="User ID"
+                  disabled
+                  value="${this.userInfo.email}"
+                ></wl-textfield>
+                <wl-textfield 
+                  label="User name"
+                  id="username"
+                  ?disabled=${!this.editMode}
+                  value="${this.userInfo.username}"
+                ></wl-textfield>
+                <wl-textfield 
+                  label="Full name"
+                  disabled
+                  value="${this.userInfo.full_name}"
+                ></wl-textfield>
+                ${
+                  this.editMode
+                  ? html`
+                      <wl-textfield type="password" label="New Password" id="password"></wl-textfield>
+                      <wl-textfield type="password" label="Confirm" id="confirm"></wl-textfield>
+                    `
+                  : html``
                 }
-                <vaadin-item>
-                  <div><strong>Description</strong></div>
-                  <div secondary>${this.userInfo.description}</div>
-                </vaadin-item>
+
+                <wl-textarea
+                  label="Description"
+                  id="description"
+                  value="${this.userInfo.description}"
+                  ?disabled=${!this.editMode}
+                >
+                </wl-textarea>
                 <wl-textfield label="Active user?" disabled value="${this.userInfo.is_active ? `Yes` : `No`}"></wl-textfield>
                 <wl-textfield label="Require password change?" disabled value="${this.userInfo.need_password_change ? `Yes` : `No`}"></wl-textfield>
               </div>
@@ -472,10 +550,10 @@ class BackendAIUserList extends LitElement {
                 </vaadin-item>
               </div>
             </div>
-            <div style="width: 140px;">
+            <div style="width: 160px;">
               <wl-label>
-                <wl-switch ?checked=${this.editMode} @change=${this._onEditmodeToggle}></wl-switch>
-                Edit Mode
+                <wl-switch ?checked=${this.editMode} @change=${this._editModeToggle}></wl-switch>
+                ${this.editMode ? 'Save Changes' : 'Edit Mode'}
               </wl-label>
             </div>
           </div>

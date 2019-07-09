@@ -1569,7 +1569,7 @@ class User {
   modify(email = null, input) {
     let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
     if (this.client.is_admin === true) {
-      let q = `mutation($email: String!, $input: UserInput!) {` +
+      let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
         `    ok msg` +
         `  }` +
