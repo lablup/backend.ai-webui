@@ -47,6 +47,7 @@ class BackendAIUserList extends LitElement {
     this.userInfo = {};
     this.userInfoGroups = [];
     this._boundControlRenderer = this.controlRenderer.bind(this);
+    this.editMode = false;
   }
 
   static get is() {
@@ -84,6 +85,9 @@ class BackendAIUserList extends LitElement {
       },
       userInfoGroups: {
         type: Object
+      },
+      editMode: {
+        type: Boolean
       }
     };
   }
@@ -127,12 +131,18 @@ class BackendAIUserList extends LitElement {
           };
         }
 
-        wl-card h4 {
+        wl-card h4,
+        wl-card wl-label {
           font-size: 14px;
           padding: 5px 15px 5px 12px;
           margin: 0 0 10px 0;
           display: block;
           border-bottom: 1px solid #DDD;
+          height: 20px;
+        }
+
+        wl-label {
+          font-family: Roboto
         }
 
         vaadin-item {
@@ -377,6 +387,10 @@ class BackendAIUserList extends LitElement {
     dialog.hide();
   }
 
+  _onEditmodeToggle(e) {
+    this.editMode = !this.editMode;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -420,9 +434,13 @@ class BackendAIUserList extends LitElement {
             <div style="width:335px;">
               <h4>Information</h4>
               <div role="listbox" style="margin: 0;">
-                <wl-textfield label="User ID" disabled value="${this.userInfo.email}"></wl-textfield>
-                <wl-textfield label="User name" disabled value="${this.userInfo.username}"></wl-textfield>
-                <wl-textfield label="Full name" disabled value="${this.userInfo.full_name}"></wl-textfield>
+                <wl-textfield label="User ID" id="userid" disabled value="${this.userInfo.email}"></wl-textfield>
+                <wl-textfield label="User name" id="username" ?disabled=${this.editMode} value="${this.userInfo.username}"></wl-textfield>
+                <wl-textfield label="Full name" id="fullname" disabled value="${this.userInfo.full_name}"></wl-textfield>
+                ${this.editMode
+                ? html``
+                : html`<wl-textfield label="Password" id="password"></wl-textfield>`
+                }
                 <vaadin-item>
                   <div><strong>Description</strong></div>
                   <div secondary>${this.userInfo.description}</div>
@@ -431,7 +449,7 @@ class BackendAIUserList extends LitElement {
                 <wl-textfield label="Require password change?" disabled value="${this.userInfo.need_password_change ? `Yes` : `No`}"></wl-textfield>
               </div>
             </div>
-            <div style="width:335px;">
+            <div style="width:270px;">
               <h4>Association</h4>
               <div role="listbox" style="margin: 0;">
                 <vaadin-item>
@@ -453,6 +471,12 @@ class BackendAIUserList extends LitElement {
                   </div>
                 </vaadin-item>
               </div>
+            </div>
+            <div style="width: 140px;">
+              <wl-label>
+                <wl-switch ?checked=${this.editMode} @change=${this._onEditmodeToggle}></wl-switch>
+                Edit Mode
+              </wl-label>
             </div>
           </div>
         </wl-card>
