@@ -793,49 +793,52 @@ class BackendAICredentialView extends LitElement {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="new-user-dialog" fixed backdrop blockscrolling>
-        <div slot="header" class="horizontal justified layout" style="border-bottom:1px solid #ddd;">
-          <h3>Create User</h3>
-          <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
-        </div>
-        <form slot="content" onSubmit="this._addUser()">
-          <fieldset>
-            <wl-textfield
-              type="email"
-              name="user_email"
-              id="id_user_email"
-              label="E-mail"
-            >
-            </wl-textfield>
-            <wl-textfield
-              type="text"
-              name="user_name"
-              id="id_user_name"
-              label="Username"
-            >
-            </wl-textfield>
-            <wl-textfield
-              type="password"
-              name="user_password"
-              id="id_user_password"
-              label="Password"
-            >
-            </wl-textfield>
-            <wl-textfield
-              type="password"
-              name="user_confirm"
-              id="id_user_confirm"
-              label="Password Confirm"
-            >
-            </wl-textfield>
-            <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
-            @click="${this._addUser}">
-              <wl-icon>add</wl-icon>
-              Create User
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span>Create User</span>
+            <div class="flex"></div>
+            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
             </wl-button>
+          </h3>
+          <form onSubmit="this._addUser()">
+            <fieldset>
+              <wl-textfield
+                type="email"
+                name="user_email"
+                id="id_user_email"
+                label="E-mail"
+              >
+              </wl-textfield>
+              <wl-textfield
+                type="text"
+                name="user_name"
+                id="id_user_name"
+                label="Username"
+              >
+              </wl-textfield>
+              <wl-textfield
+                type="password"
+                name="user_password"
+                id="id_user_password"
+                label="Password"
+              >
+              </wl-textfield>
+              <wl-textfield
+                type="password"
+                name="user_confirm"
+                id="id_user_confirm"
+                label="Password Confirm"
+              >
+              </wl-textfield>
+              <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
+              @click="${this._addUser}">
+                <wl-icon>add</wl-icon>
+                Create User
+              </wl-button>
             </fieldset>
-        </form>
+          </form>
+        </wl-card>
       </wl-dialog>
     `;
   }
