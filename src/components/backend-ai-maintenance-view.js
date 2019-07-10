@@ -25,6 +25,7 @@ class BackendAiMaintenanceView extends LitElement {
     this.images = {};
     this.active = false;
     this.scanning = false;
+    this.recalculating = false;
   }
 
   static get is() {
@@ -85,6 +86,9 @@ class BackendAiMaintenanceView extends LitElement {
       scanning: {
         type: Boolean
       },
+      recalculating: {
+        type: Boolean
+      },
       images: {
         type: Object,
         hasChanged: () => true
@@ -115,9 +119,9 @@ class BackendAiMaintenanceView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <wl-button class="fg red" outlined label="Recalculate usage" icon="refresh">
+              <wl-button class="fg red" ?disabled="${this.recalculating}" outlined label="Recalculate usage" icon="refresh" @click="${() => this.recalculate_usage()}">
                 <wl-icon>refresh</wl-icon>
-                Recalculate usage
+                <span id="recalculate_usage-button-desc">Recalculate usage</span>
               </wl-button>
             </div>
           </div>
@@ -178,18 +182,39 @@ class BackendAiMaintenanceView extends LitElement {
   }
 
   async rescan_images() {
-    this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Scanning';
+    this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Scanning...';
     this.scanning = true;
     this.notification.text = 'Rescan image started.';
-    this.shadowRoot.querySelector('#notification').show();
+    this.notification.show();
     window.backendaiclient.maintenance.rescan_images().then((response) => {
       this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
       this.scanning = false;
       this.notification.text = 'Rescan image finished.';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.show();
     }).catch(err => {
       this.scanning = false;
       this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.message;
+        this.notification.show();
+      }
+    });
+  }
+
+  async recalculate_usage() {
+    this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculating...';
+    this.recalculating = true;
+    this.notification.text = 'Recalculating started.';
+    this.notification.show();
+    window.backendaiclient.maintenance.recalculate_usage().then((response) => {
+      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
+      this.recalculating = false;
+      this.notification.text = 'Recalculating finished.';
+      this.notification.show();
+    }).catch(err => {
+      this.recalculating = false;
+      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
       console.log(err);
       if (err && err.message) {
         this.notification.text = err.message;
