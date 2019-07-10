@@ -138,12 +138,19 @@ class BackendAIUserList extends LitElement {
           padding: 5px 15px 5px 12px;
           margin: 0 0 10px 0;
           display: block;
-          border-bottom: 1px solid #DDD;
           height: 20px;
         }
 
+        wl-card h4 {
+          border-bottom: 1px solid #DDD;
+        }
+
         wl-label {
-          font-family: Roboto
+          font-family: Roboto;
+        }
+
+        wl-switch {
+          margin-right: 15px;
         }
 
         vaadin-item {
@@ -179,6 +186,12 @@ class BackendAIUserList extends LitElement {
         wl-textarea:not([disabled]) {
           margin-bottom: 15px;
           width: 280px;
+        }
+
+        wl-button {
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
         }
       `];
   }
@@ -252,7 +265,17 @@ class BackendAIUserList extends LitElement {
     });
   }
 
+  async _editUserDetail(e) {
+    this.editMode = true;
+    return this._showUserDetailDialog(e);
+  }
+
   async _showUserDetail(e) {
+    this.editMode = false;
+    return this._showUserDetailDialog(e);
+  }
+
+  async _showUserDetailDialog(e) {
     const controls = e.target.closest('#controls');
     const user_id = controls['user-id'];
     let groupNames;
@@ -369,10 +392,23 @@ class BackendAIUserList extends LitElement {
   controlRenderer(root, column, rowData) {
     render(
       html`
-            <div id="controls" class="layout horizontal flex center"
-                 .user-id="${rowData.item.email}">
-              <paper-icon-button class="fg green" icon="assignment"
-                                 @click="${(e) => this._showUserDetail(e)}"></paper-icon-button>
+            <div 
+              id="controls"
+              class="layout horizontal flex center"
+              .user-id="${rowData.item.email}"
+            >
+              <paper-icon-button
+                class="fg green"
+                icon="assignment"
+                @click="${(e) => this._showUserDetail(e)}"
+              ></paper-icon-button>
+
+              <paper-icon-button 
+                class="fg blue" 
+                icon="settings"
+                @click="${(e) => this._editUserDetail(e)}"
+              ></paper-icon-button>
+
               ${this.isAdmin && this._isActive() && rowData.item.is_admin ? html`
                     <paper-icon-button class="fg blue controls-running" icon="delete"
                                        @click="${(e) => this._revokeKey(e)}"></paper-icon-button>
@@ -395,17 +431,14 @@ class BackendAIUserList extends LitElement {
     dialog.hide();
   }
 
-  _editModeToggle(e) {
-    this.editMode = !this.editMode;
-
-    // if the user just entered edit mode:
-    if (this.editMode) return;
-
-    // if the user attempted to save changes:
-    const username    = this.shadowRoot.querySelector('#username').value,
-          password    = this.shadowRoot.querySelector('#password').value,
-          confirm     = this.shadowRoot.querySelector('#confirm').value,
-          description = this.shadowRoot.querySelector('#description').value;
+  _saveChanges(e) {
+    const username             = this.shadowRoot.querySelector('#username').value,
+          full_name            = this.shadowRoot.querySelector('#full_name').value,
+          password             = this.shadowRoot.querySelector('#password').value,
+          confirm              = this.shadowRoot.querySelector('#confirm').value,
+          description          = this.shadowRoot.querySelector('#description').value,
+          is_active            = this.shadowRoot.querySelector('#is_active').checked,
+          need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
     
     if (password !== confirm) {
       this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match."
@@ -418,10 +451,21 @@ class BackendAIUserList extends LitElement {
 
     if (password !== '')
       input.password = password;
+
     if (username !== this.userInfo.username)
       input.username = username;
+
+    if (full_name !== this.userInfo.full_name)
+      input.full_name = full_name;
+
     if (description !== this.userInfo.description)
       input.description = description;
+
+    if (need_password_change !== this.userInfo.need_password_change)
+      input.need_password_change = need_password_change;
+
+    if (is_active !== this.userInfo.is_active)
+      input.is_active = is_active;
     
     if (Object.entries(input).length === 0) {
       this.shadowRoot.querySelector("#notification").text = "No Changes Made"
@@ -434,7 +478,7 @@ class BackendAIUserList extends LitElement {
     .then(res => {
       if (res.modify_user.ok) {
         this.shadowRoot.querySelector("#notification").text = "Modification Successful";
-        this.userInfo = {...this.userInfo, username, description};
+        this.userInfo = {...this.userInfo, ...input, password: null};
         this._refreshUserData();
       } else {
         this.shadowRoot.querySelector("#notification").text = `Error: ${res.modify_user.msg}`;
@@ -504,7 +548,8 @@ class BackendAIUserList extends LitElement {
                 ></wl-textfield>
                 <wl-textfield 
                   label="Full name"
-                  disabled
+                  id="full_name"
+                  ?disabled=${!this.editMode}
                   value="${this.userInfo.full_name}"
                 ></wl-textfield>
                 ${
@@ -515,7 +560,6 @@ class BackendAIUserList extends LitElement {
                     `
                   : html``
                 }
-
                 <wl-textarea
                   label="Description"
                   id="description"
@@ -523,39 +567,79 @@ class BackendAIUserList extends LitElement {
                   ?disabled=${!this.editMode}
                 >
                 </wl-textarea>
-                <wl-textfield label="Active user?" disabled value="${this.userInfo.is_active ? `Yes` : `No`}"></wl-textfield>
-                <wl-textfield label="Require password change?" disabled value="${this.userInfo.need_password_change ? `Yes` : `No`}"></wl-textfield>
+
+                ${this.editMode
+                  ? html`
+                      <wl-label label for="is_active_label" style="margin-bottom: auto">
+                        Active user?
+                      </wl-label>
+                      <wl-label label id="is_active_label">
+                        <wl-switch
+                          id="is_active"
+                          ?checked=${this.userInfo.is_active}
+                        ></wl-switch>
+                      </wl-label>
+                      <wl-label label for="need_password_change_label" style="margin-bottom: auto">
+                        Require password change?
+                      </wl-label>
+                      <wl-label label id="need_password_change_label">
+                        <wl-switch id="need_password_change" ?checked=${this.userInfo.need_password_change}></wl-switch>
+                      </wl-label>
+                      <div style="padding-left: 15px" >
+                        <wl-button
+                          class="fg green"
+                          type="button"
+                          outlined
+                          @click=${this._saveChanges}  
+                        >
+                          <wl-icon>send</wl-icon>
+                          Save Changes
+                        </wl-button>
+                      </div>
+                    `
+                  : html`
+                      <wl-textfield
+                        label="Active user?"
+                        disabled
+                        value="${this.userInfo.is_active ? `Yes` : `No`}"
+                      ></wl-textfield>
+                      <wl-textfield
+                        label="Require password change?"
+                        disabled
+                        value="${this.userInfo.need_password_change ? `Yes` : `No`}"
+                      ></wl-textfield>
+                    `
+                }
               </div>
             </div>
-            <div style="width:270px;">
-              <h4>Association</h4>
-              <div role="listbox" style="margin: 0;">
-                <vaadin-item>
-                  <div><strong>Domain</strong></div>
-                  <div secondary>${this.userInfo.domain_name}</div>
-                </vaadin-item>
-                <vaadin-item>
-                  <div><strong>Role</strong></div>
-                  <div secondary>${this.userInfo.role}</div>
-                </vaadin-item>
-                <vaadin-item>
-                  <div><strong>Groups</strong></div>
-                  <div secondary>
-                  <ul>
-                  ${this.userInfoGroups.map(item => html`
-                    <li>${item}</li>
-                  `)}
-                  </ul>
+            ${this.editMode
+              ? html``
+              : html`
+                <div style="width:270px;">
+                  <h4>Association</h4>
+                  <div role="listbox" style="margin: 0;">
+                    <vaadin-item>
+                      <div><strong>Domain</strong></div>
+                      <div secondary>${this.userInfo.domain_name}</div>
+                    </vaadin-item>
+                    <vaadin-item>
+                      <div><strong>Role</strong></div>
+                      <div secondary>${this.userInfo.role}</div>
+                    </vaadin-item>
+                    <vaadin-item>
+                      <div><strong>Groups</strong></div>
+                      <div secondary>
+                      <ul>
+                      ${this.userInfoGroups.map(item => html`
+                        <li>${item}</li>
+                      `)}
+                      </ul>
+                      </div>
+                    </vaadin-item>
                   </div>
-                </vaadin-item>
-              </div>
-            </div>
-            <div style="width: 160px;">
-              <wl-label>
-                <wl-switch ?checked=${this.editMode} @change=${this._editModeToggle}></wl-switch>
-                ${this.editMode ? 'Save Changes' : 'Edit Mode'}
-              </wl-label>
-            </div>
+                </div>
+                `
+            }
           </div>
         </wl-card>
       </wl-dialog>
