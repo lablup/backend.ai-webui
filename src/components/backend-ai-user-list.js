@@ -468,7 +468,7 @@ class BackendAIUserList extends LitElement {
       input.is_active = is_active;
     
     if (Object.entries(input).length === 0) {
-      e.target.closest('wl-dialog').hide();
+      this._hideDialog(e);
 
       this.shadowRoot.querySelector("#notification").text = "No Changes Made"
       this.shadowRoot.querySelector("#notification").show();
@@ -479,7 +479,7 @@ class BackendAIUserList extends LitElement {
     window.backendaiclient.user.modify(this.userInfo.email, input)
     .then(res => {
       if (res.modify_user.ok) {
-        e.target.closest('wl-dialog').hide();
+        this._hideDialog(e);
 
         this.shadowRoot.querySelector("#notification").text = "Successfully Modified";
         this.userInfo = {...this.userInfo, ...input, password: null};
@@ -593,7 +593,7 @@ class BackendAIUserList extends LitElement {
                         class="fg green"
                         type="button"
                         outlined
-                        @click=${this._saveChanges}
+                        @click=${(e) => this._saveChanges(e)}
                         style="width: 100%; box-sizing: border-box;"
                       >
                         <wl-icon>check</wl-icon>
