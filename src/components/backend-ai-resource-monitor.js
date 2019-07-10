@@ -646,9 +646,10 @@ class BackendAiResourceMonitor extends LitElement {
         }
       }
       const alias = this.aliases[item];
+      const basename = alias.split(' (')[0];
       const tags = this.tags[alias];
       if (alias !== undefined) {
-        this.languages.push({name: item, alias: alias, tags: tags});
+        this.languages.push({name: item, alias: alias, basename: basename, tags: tags});
       }
     });
     this._initAliases();
@@ -1181,11 +1182,11 @@ class BackendAiResourceMonitor extends LitElement {
           <form id="launch-session-form">
             <fieldset>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="environment" label="Environments">
+                <paper-dropdown-menu id="environment" label="Environments" horizontal-align="left">
                   <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                  selected="${this.default_language}">
                 ${this.languages.map(item => html`
-                    <paper-item id="${item.name}" label="${item.alias}">${item.alias}
+                    <paper-item id="${item.name}" label="${item.alias}">${item.basename}
                     ${item.tags ? item.tags.map(item => html`
                       <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
                     `) : ''}

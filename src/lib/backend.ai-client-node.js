@@ -1,26 +1,34 @@
 'use babel';
 /*
-Backend.AI Node.JS / Javascript ES6 API Library (v19.07.1)
-==========================================================
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v19.07.2)
+====================================================================
 
 (C) Copyright 2016-2019 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
-var fetch = require('node-fetch'); /* Exclude for ES6 */
-var Headers = fetch.Headers; /* Exclude for ES6 */
+const fetch = require('node-fetch'); /* Exclude for ES6 */
+const Headers = fetch.Headers; /* Exclude for ES6 */
 
-var crypto = require('crypto');
-var FormData = require('form-data');
+const crypto = require('crypto');
+const FormData = require('form-data');
 
-var querystring = require('querystring');
+const querystring = require('querystring');
 
 
 class ClientConfig {
+  /**
+   * The client Configuration object.
+   *
+   * @param {string} accessKey - access key to connect Backend.AI manager
+   * @param {string} secretKey - secret key to connect Backend.AI manager
+   * @param {string} endpoint  - endpoint of Backend.AI manager
+   * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
+   */
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // fixed configs with this implementation
     this._apiVersionMajor = 'v4';
-    this._apiVersion = 'v4.20190615';
+    this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
@@ -149,7 +157,12 @@ class Client {
       resp = await fetch(rqst.uri, rqst);
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (rawFile === false && (contentType.startsWith('application/json') ||
+      if (rawFile === false && contentType === null) {
+        if (resp.blob === undefined)
+          body = await resp.buffer();  // for node-fetch
+        else
+          body = await resp.blob();
+      } else if (rawFile === false && (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json'))) {
         body = await resp.json();
       } else if (rawFile === false && contentType.startsWith('text/')) {
