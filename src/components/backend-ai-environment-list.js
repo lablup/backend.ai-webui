@@ -86,7 +86,7 @@ class BackendAiEnvironmentList extends LitElement {
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-        <vaadin-grid-column width="40px">
+        <vaadin-grid-column width="20px">
           <template class="header">
             <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
           </template>
@@ -313,6 +313,7 @@ class BackendAiEnvironmentList extends LitElement {
       'pytorch': 'PyTorch',
       'lua': 'Lua',
       'r': 'R',
+      'r-base': 'R',
       'julia': 'Julia',
       'rust': 'Rust',
       'cpp': 'C++',
@@ -340,7 +341,8 @@ class BackendAiEnvironmentList extends LitElement {
       'ubuntu18.04': 'Ubuntu 18.04',
       'anaconda2018.12': 'Anaconda 2018.12',
       'alpine3.8': 'Alpine Lunux 3.8',
-      'ngc': 'NVidia GPU Cloud'
+      'ngc': 'NVidia GPU Cloud',
+      'ff': 'Research Env.',
     };
     if (value in this.alias) {
       return this.alias[value];
