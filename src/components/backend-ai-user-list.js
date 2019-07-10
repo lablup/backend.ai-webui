@@ -468,6 +468,8 @@ class BackendAIUserList extends LitElement {
       input.is_active = is_active;
     
     if (Object.entries(input).length === 0) {
+      e.target.closest('wl-dialog').hide();
+
       this.shadowRoot.querySelector("#notification").text = "No Changes Made"
       this.shadowRoot.querySelector("#notification").show();
 
@@ -477,6 +479,8 @@ class BackendAIUserList extends LitElement {
     window.backendaiclient.user.modify(this.userInfo.email, input)
     .then(res => {
       if (res.modify_user.ok) {
+        e.target.closest('wl-dialog').hide();
+
         this.shadowRoot.querySelector("#notification").text = "Modification Successful";
         this.userInfo = {...this.userInfo, ...input, password: null};
         this._refreshUserData();
@@ -585,17 +589,16 @@ class BackendAIUserList extends LitElement {
                       <wl-label label id="need_password_change_label">
                         <wl-switch id="need_password_change" ?checked=${this.userInfo.need_password_change}></wl-switch>
                       </wl-label>
-                      <div style="padding-left: 15px" >
-                        <wl-button
-                          class="fg green"
-                          type="button"
-                          outlined
-                          @click=${this._saveChanges}  
-                        >
-                          <wl-icon>send</wl-icon>
-                          Save Changes
-                        </wl-button>
-                      </div>
+                      <wl-button
+                        class="fg green"
+                        type="button"
+                        outlined
+                        @click=${this._saveChanges}
+                        style="width: 100%; box-sizing: border-box;"
+                      >
+                        <wl-icon>check</wl-icon>
+                        Save Changes
+                      </wl-button>
                     `
                   : html`
                       <wl-textfield
