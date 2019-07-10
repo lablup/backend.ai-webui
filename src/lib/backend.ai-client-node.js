@@ -1062,7 +1062,7 @@ class Keypair {
       'concurrency_limit',
       'rate_limit'
     ];
-    if (accessKey !== null) {
+    if (accessKey !== null || accessKey !== '') {
       fields = fields.concat(['accessKey', 'secretKey']);
     }
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
@@ -1071,7 +1071,7 @@ class Keypair {
       `  }` +
       `}`;
     let v;
-    if (accessKey !== null) {
+    if (accessKey !== null || accessKey !== '') {
       v = {
         'user_id': userId,
         'input': {

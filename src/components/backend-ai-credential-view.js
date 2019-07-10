@@ -370,14 +370,13 @@ class BackendAICredentialView extends LitElement {
     } else {
       user_id = window.backendaiclient.email;
     }
-    let access_key = this.shadowRoot.querySelector('#id_new_access_key').value;
-    let secret_key = this.shadowRoot.querySelector('#id_new_secret_key').value;
     let resource_policy = this.shadowRoot.querySelector('#resource-policy').value;
     let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
-
+    let access_key = this.shadowRoot.querySelector('#id_new_access_key').value;
+    let secret_key = this.shadowRoot.querySelector('#id_new_secret_key').value;
     // Read resources
     window.backendaiclient.keypair.add(user_id, is_active, is_admin,
-      resource_policy, rate_limit).then(response => {
+      resource_policy, rate_limit, access_key, secret_key).then(response => {
       this.shadowRoot.querySelector('#new-keypair-dialog').hide();
       this.notification.text = "Keypair successfully created.";
       this.notification.show();
