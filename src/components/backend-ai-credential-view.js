@@ -794,7 +794,7 @@ class BackendAICredentialView extends LitElement {
       </wl-dialog>
       <wl-dialog id="new-user-dialog" fixed backdrop blockscrolling>
         <div slot="header" class="horizontal justified layout" style="border-bottom:1px solid #ddd;">
-        <div style="line-height: 40px; margin-right:15px;">Create User</div>
+          <h3>Create User</h3>
           <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
             <wl-icon>close</wl-icon>
           </wl-button>
