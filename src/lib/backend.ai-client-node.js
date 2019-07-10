@@ -125,6 +125,8 @@ class Client {
     this.user = new User(this);
     this.group = new Group(this);
     this.resources = new Resources(this);
+    this.maintenance = new Maintenance(this);
+
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -1470,6 +1472,37 @@ class Group {
     return this.client.gql(q, v);
   }
 }
+
+class Maintenance {
+  /**
+   * The Maintenance API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+   * Rescan image from repository
+   * @param {string} registry - registry. default is ''
+   */
+  rescan_images(registry = '') {
+    if (this.client.is_admin === true) {
+      let q = `mutation($registry: String) {` +
+        `  rescan_images(registry: $registry) {` +
+        `    ok msg ` +
+        `  }` +
+        `}`;
+      let v = {
+        'registry': registry
+      };
+      return this.client.gql(q, v);
+    } else {
+      return resolve(false);
+    }
+  }
+}
+
 class User {
   /**
    * The user API wrapper.

@@ -330,7 +330,7 @@ class BackendAIAgentList extends LitElement {
             <paper-icon-button disabled class="fg controls-running" icon="build"></paper-icon-button>
             <paper-icon-button disabled class="fg controls-running" icon="alarm-add"></paper-icon-button>
             <paper-icon-button disabled class="fg controls-running" icon="av:pause"></paper-icon-button>
-            <paper-icon-button disabled class="fg red controls-running" icon="delete"></paper-icon-button>          
+            <paper-icon-button disabled class="fg controls-running" icon="delete"></paper-icon-button>          
           ` : html``}
     </div>`, root
     );
