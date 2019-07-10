@@ -1063,7 +1063,7 @@ class Keypair {
       'rate_limit'
     ];
     if (accessKey !== null || accessKey !== '') {
-      fields = fields.concat(['accessKey', 'secretKey']);
+      fields = fields.concat(['access_key', 'secret_key']);
     }
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
       `  create_keypair(user_id: $user_id, props: $input) {` +
