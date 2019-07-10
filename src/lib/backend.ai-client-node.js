@@ -1488,14 +1488,24 @@ class Maintenance {
    */
   rescan_images(registry = '') {
     if (this.client.is_admin === true) {
-      let q = `mutation($registry: String) {` +
-        `  rescan_images(registry: $registry) {` +
-        `    ok msg ` +
-        `  }` +
-        `}`;
-      let v = {
-        'registry': registry
-      };
+      let q, v;
+      if (registry !== '') {
+        q = `mutation($registry: String) {` +
+          `  rescan_images(registry: $registry) {` +
+          `    ok msg ` +
+          `  }` +
+          `}`;
+        v = {
+          'registry': registry
+        };
+      } else {
+        q = `mutation {` +
+          `  rescan_images {` +
+          `    ok msg ` +
+          `  }` +
+          `}`;
+        v = {};
+      }
       return this.client.gql(q, v);
     } else {
       return resolve(false);

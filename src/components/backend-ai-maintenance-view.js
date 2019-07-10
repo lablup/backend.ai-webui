@@ -24,6 +24,7 @@ class BackendAiMaintenanceView extends LitElement {
     setPassiveTouchGestures(true);
     this.images = {};
     this.active = false;
+    this.scanning = false;
   }
 
   static get is() {
@@ -68,8 +69,11 @@ class BackendAiMaintenanceView extends LitElement {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-100);
+          --button-bg-disabled: #ccc;
+          --button-color: var(--paper-red-100);
+          --button-color-hover: var(--paper-red-100);
+          --button-color-disabled: #ccc;
         }
-
       `];
   }
 
@@ -78,9 +82,15 @@ class BackendAiMaintenanceView extends LitElement {
       active: {
         type: Boolean
       },
+      scanning: {
+        type: Boolean
+      },
       images: {
         type: Object,
         hasChanged: () => true
+      },
+      notification: {
+        type: Object
       }
     }
   }
@@ -88,6 +98,7 @@ class BackendAiMaintenanceView extends LitElement {
   render() {
     // language=HTML
     return html`
+      <lablup-notification id="notification"></lablup-notification>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>General</span>
@@ -116,13 +127,14 @@ class BackendAiMaintenanceView extends LitElement {
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>Rescan image list from repository</div>
-              <div class="description">Rescan image list from registered repositories.
+              <div class="description">Rescan image list from registered repositories.<br />
+              It may take a long time, so please wait after execution.
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <wl-button class="fg red" outlined label="Rescan images" icon="refresh">
+              <wl-button class="fg red" ?disabled="${this.scanning}" outlined label="Rescan images" icon="refresh" @click="${() => this.rescan_images()}">
                 <wl-icon>refresh</wl-icon>
-                Rescan images
+                <span id="rescan-image-button-desc">Rescan images</span>
               </wl-button>
             </div>
           </div>
@@ -133,7 +145,7 @@ class BackendAiMaintenanceView extends LitElement {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <wl-button class="fg red" outlined label="Clean up images" icon="delete">
+              <wl-button class="fg red" disabled outlined label="Clean up images" icon="delete">
                 <wl-icon>delete</wl-icon>
                 Clean up images
               </wl-button>
@@ -149,6 +161,7 @@ class BackendAiMaintenanceView extends LitElement {
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
@@ -162,6 +175,27 @@ class BackendAiMaintenanceView extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+  }
+
+  async rescan_images() {
+    this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Scanning';
+    this.scanning = true;
+    this.notification.text = 'Rescan image started.';
+    this.shadowRoot.querySelector('#notification').show();
+    window.backendaiclient.maintenance.rescan_images().then((response) => {
+      this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
+      this.scanning = false;
+      this.notification.text = 'Rescan image finished.';
+      this.shadowRoot.querySelector('#notification').show();
+    }).catch(err => {
+      this.scanning = false;
+      this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.message;
+        this.notification.show();
+      }
+    });
   }
 }
 
