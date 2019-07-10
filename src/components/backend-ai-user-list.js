@@ -481,7 +481,7 @@ class BackendAIUserList extends LitElement {
       if (res.modify_user.ok) {
         e.target.closest('wl-dialog').hide();
 
-        this.shadowRoot.querySelector("#notification").text = "Modification Successful";
+        this.shadowRoot.querySelector("#notification").text = "Successfully Modified";
         this.userInfo = {...this.userInfo, ...input, password: null};
         this._refreshUserData();
       } else {
