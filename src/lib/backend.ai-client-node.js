@@ -1,7 +1,7 @@
 'use babel';
 /*
-Backend.AI Node.JS / Javascript ES6 API Library (v19.07.1)
-==========================================================
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v19.07.1)
+====================================================================
 
 (C) Copyright 2016-2019 Lablup Inc.
 Licensed under MIT
@@ -17,10 +17,18 @@ const querystring = require('querystring');
 
 
 class ClientConfig {
+  /**
+   * The client Configuration object.
+   *
+   * @param {string} accessKey - access key to connect Backend.AI manager
+   * @param {string} secretKey - secret key to connect Backend.AI manager
+   * @param {string} endpoint  - endpoint of Backend.AI manager
+   * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
+   */
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // fixed configs with this implementation
     this._apiVersionMajor = 'v4';
-    this._apiVersion = 'v4.20190315';
+    this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
     this._hashType = 'sha256';
     // dynamic configs
     if (accessKey === undefined || accessKey === null)
