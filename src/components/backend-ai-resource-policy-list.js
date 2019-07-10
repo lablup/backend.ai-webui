@@ -132,7 +132,7 @@ class BackendAIResourcePolicyList extends LitElement {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 300px);
+          height: calc(100vh - 260px);
         }
 
         paper-item {

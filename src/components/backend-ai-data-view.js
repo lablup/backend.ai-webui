@@ -189,7 +189,7 @@ class BackendAIData extends LitElement {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 260px);
+          height: calc(100vh - 220px);
         }
 
         vaadin-grid.explorer {

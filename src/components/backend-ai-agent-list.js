@@ -61,7 +61,7 @@ class BackendAIAgentList extends LitElement {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 250px);
+          height: calc(100vh - 210px);
         }
 
         paper-item {

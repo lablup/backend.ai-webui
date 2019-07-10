@@ -353,7 +353,7 @@ class BackendAICredentialList extends LitElement {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 365px);
+          height: calc(100vh - 325px);
         }
 
         paper-item {
