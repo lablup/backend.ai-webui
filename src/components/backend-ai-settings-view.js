@@ -19,7 +19,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
 import 'weightless/card';
 import 'weightless/switch';
-import 'weightless/tooltip';
 
 class BackendAiSettingsView extends LitElement {
   constructor() {
