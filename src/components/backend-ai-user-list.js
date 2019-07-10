@@ -192,6 +192,7 @@ class BackendAIUserList extends LitElement {
           --button-bg: var(--paper-light-green-50);
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
+          color: var(--paper-green-900);
         }
       `];
   }
@@ -554,7 +555,7 @@ class BackendAIUserList extends LitElement {
                   label="Full name"
                   id="full_name"
                   ?disabled=${!this.editMode}
-                  value="${this.userInfo.full_name}"
+                  value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
                 ></wl-textfield>
                 ${
                   this.editMode
@@ -567,7 +568,7 @@ class BackendAIUserList extends LitElement {
                 <wl-textarea
                   label="Description"
                   id="description"
-                  value="${this.userInfo.description}"
+                  value="${this.userInfo.description ? this.userInfo.description : ' '}"
                   ?disabled=${!this.editMode}
                 >
                 </wl-textarea>

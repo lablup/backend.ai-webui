@@ -402,6 +402,7 @@ class BackendAICredentialList extends LitElement {
           --button-bg: var(--paper-light-green-600);
           --button-bg-hover: var(--paper-green-600);
           --button-bg-active: var(--paper-green-900);
+          color: var(--paper-green-900);
         }
       `];
   }
