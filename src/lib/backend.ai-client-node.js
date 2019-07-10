@@ -634,7 +634,7 @@ class ResourcePreset {
    */
   constructor(client) {
     this.client = client;
-    this.urlPrefix = '/resource'
+    this.urlPrefix = '/resource';
   }
 
   /**
@@ -1483,6 +1483,7 @@ class Maintenance {
    */
   constructor(client) {
     this.client = client;
+    this.urlPrefix = '/resource';
   }
   /**
    * Rescan image from repository
