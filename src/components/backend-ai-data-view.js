@@ -45,8 +45,8 @@ class BackendAIData extends LitElement {
     this.explorer = {};
     this.explorerFiles = [];
     this.uploadFiles = [];
-    this.vhost = 'local';
-    this.vhosts = ['local'];
+    this.vhost = '';
+    this.vhosts = [];
     this.uploadFilesExist = false;
     this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);

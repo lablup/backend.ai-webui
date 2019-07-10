@@ -157,7 +157,12 @@ class Client {
       resp = await fetch(rqst.uri, rqst);
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (rawFile === false && (contentType.startsWith('application/json') ||
+      if (rawFile === false && contentType === null) {
+        if (resp.blob === undefined)
+          body = await resp.buffer();  // for node-fetch
+        else
+          body = await resp.blob();
+      } else if (rawFile === false && (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json'))) {
         body = await resp.json();
       } else if (rawFile === false && contentType.startsWith('text/')) {
