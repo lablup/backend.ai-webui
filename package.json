@@ -9,7 +9,7 @@
     "lint": "eslint *.js",
     "test": "node ./src/wsproxy/local_proxy.js",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
-    "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copywa && npm run copyresource && npm run copyconfig && rollup -c",
+    "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copywa && npm run copyresource && npm run copyconfig && rollup -c rollup.config.ts",
     "server:p": "./node_modules/serve/bin/serve.js build/rollup",
     "server:d": "./node_modules/es-dev-server/dist/cli.js --app-index index.html --watch --node-resolve --port 9081 --compatibility esm",
     "electron:d": "./node_modules/electron/cli.js .",
