@@ -113,6 +113,8 @@ class Client {
     }
     this._managerVersion = null;
     this._apiVersion = null;
+    this.is_admin = false;
+    this.is_superadmin = false;
     this.kernelPrefix = '/kernel';
     this.resourcePreset = new ResourcePreset(this);
     this.vfolder = new VFolder(this);
@@ -1509,6 +1511,12 @@ class Maintenance {
       return this.client.gql(q, v);
     } else {
       return resolve(false);
+    }
+  }
+  recalculate_usage() {
+    if (this.client.is_superadmin === true) {
+      let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
+      return this.client._wrapWithPromise(rqst);
     }
   }
 }
