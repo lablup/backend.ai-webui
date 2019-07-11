@@ -218,6 +218,7 @@ class Client {
       let v = await this.getServerVersion();
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
+      this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
     }
     return this._managerVersion;
   }
