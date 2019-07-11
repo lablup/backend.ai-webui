@@ -1308,6 +1308,13 @@ class ComputeSession {
     this.client = client;
   }
 
+  /**
+   * list compute sessions with specific conditions.
+   *
+   * @param {array} fields - fields to query. Default fields are: ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"]
+   * @param {string} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   * @param {string} accessKey - access key that is used to start compute sessions.
+   */
   list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
        status = 'RUNNING', accessKey = null) {
     let q, v;
