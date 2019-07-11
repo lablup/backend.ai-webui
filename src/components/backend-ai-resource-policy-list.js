@@ -272,8 +272,7 @@ class BackendAIResourcePolicyList extends LitElement {
           <form id="login-form">
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           auto-validate required
-                           pattern="[a-zA-Z0-9]*"
+                           required
                            error-message="Policy name only accepts letters and numbers"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">

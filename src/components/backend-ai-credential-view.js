@@ -453,14 +453,14 @@ class BackendAICredentialView extends LitElement {
     }
     let input = this._readResourcePolicyInput();
     window.backendaiclient.resourcePolicy.add(name, input).then(response => {
-      this.shadowRoot.querySelector('#new-policy-dialog').close();
+      this.shadowRoot.querySelector('#new-policy-dialog').hide();
       this.notification.text = "Resource policy successfully created.";
       this.notification.show();
       this.shadowRoot.querySelector('#resource-policy-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#new-policy-dialog').close();
+        this.shadowRoot.querySelector('#new-policy-dialog').hides();
         this.notification.text = err.message;
         this.notification.show();
       }
@@ -518,11 +518,11 @@ class BackendAICredentialView extends LitElement {
       'is_active': true,
       'domain_name': 'default',
       'role': 'user'
-    }
+    };
 
     window.backendaiclient.group.list()
     .then(res => {
-      const default_id = res.groups.find(x => x.name === 'default').id
+      const default_id = res.groups.find(x => x.name === 'default').id;
 
       return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
     })
@@ -714,8 +714,7 @@ class BackendAICredentialView extends LitElement {
               <div class="vertical center layout">
                 <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
                              type="text"
-                             auto-validate required
-                             pattern="[a-zA-Z0-9]*"
+                             required
                              error-message="Policy name only accepts letters and numbers"></paper-input>
               </div>
               <h4>Resource Policy</h4>
