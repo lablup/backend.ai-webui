@@ -37,7 +37,7 @@ class BackendAiSessionList extends LitElement {
     super();
     this.condition = 'running';
     this.jobs = {};
-    this.compute_sessions = {};
+    this.compute_sessions = [];
     this.terminationQueue = [];
     this.filterAccessKey = '';
     this.appSupportList = [];
@@ -344,23 +344,24 @@ class BackendAiSessionList extends LitElement {
     this.loadingIndicator.show();
     let status = 'RUNNING';
     switch (this.condition) {
-      case 'running':
-        status = 'RUNNING';
+      case "running":
+        status = "RUNNING";
         break;
-      case 'finished':
-        status = 'TERMINATED';
+      case "finished":
+        status = "TERMINATED";
         break;
-      case 'archived':
+      case "intermediate":
+        status = ["PREPARING", "RESTARTING", "TERMINATING"];
+        break;
       default:
-        status = 'RUNNING';
+        status = "RUNNING";
     }
 
     let fields = [
       "sess_id", "lang", "created_at", "terminated_at", "status",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
-    window.backendaiclient.computeSession.list(fields, status,
-      this.filterAccessKey).then((response) => {
+    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
 
       var sessions = response.compute_sessions;

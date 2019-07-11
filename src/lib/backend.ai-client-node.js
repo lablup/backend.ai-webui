@@ -1319,6 +1319,29 @@ class ComputeSession {
   list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
        status = 'RUNNING', accessKey = null) {
     let q, v;
+
+    if (Array.isArray(status)) {
+      const promiseArray = status.map(statusElement => {
+        if (this.client.is_admin === true) {
+          if (!accessKey) accessKey = null;
+          q = `query($ak:String, $status:String) {` +
+            `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
+            '}';
+          v = {'status': statusElement, 'ak': accessKey};
+        } else {
+          q = `query($status:String) {` +
+            `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
+            '}';
+          v = {'status': statusElement};
+        }
+        
+        return this.client.gql(q, v);
+      });
+
+      // return a flattened array
+      return Promise.all(promiseArray).then(res => [].concat.apply([], res));
+    }
+
     if (this.client.is_admin === true) {
       if (!accessKey) accessKey = null;
       q = `query($ak:String, $status:String) {` +

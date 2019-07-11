@@ -140,6 +140,7 @@ class BackendAiSessionView extends LitElement {
           <wl-tab-group>
             <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>  
             <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
+            <wl-tab value="intermediate-lists" @click="${(e) => this._showTab(e.target)}">Intermediate</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
           <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
@@ -150,6 +151,10 @@ class BackendAiSessionView extends LitElement {
         <div id="finished-lists" class="tab-content" style="display:none;">
           <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
         </div>
+        <div id="intermediate-lists" class="tab-content" style="display:none;">
+          <backend-ai-session-list id="intermediate-jobs" condition="intermediate" ?active="${this.active}"></backend-ai-session-list>
+        </div>
+
       </wl-card>
 `;
   }
