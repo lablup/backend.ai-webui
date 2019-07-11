@@ -141,6 +141,11 @@ server {
 $ make compile
 $ docker build -t backendai-console .
 ```
+Testing (e.g. with 8090 port)
+
+```
+$  docker run --name test_backendai_console -p 8090:80 -d backendai-console
+```
 
 ### Running websocket proxy with node.js
 
