@@ -82,3 +82,8 @@ dist
 
 # deploy makefile
 deploy
+
+# build output
+src/lib/bundles/
+src/lib/web-animations-js/
+src/lib/webcomponents-loader.js
