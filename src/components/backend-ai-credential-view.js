@@ -460,7 +460,7 @@ class BackendAICredentialView extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#new-policy-dialog').hides();
+        this.shadowRoot.querySelector('#new-policy-dialog').hide();
         this.notification.text = err.message;
         this.notification.show();
       }
