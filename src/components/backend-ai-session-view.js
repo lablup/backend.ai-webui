@@ -35,10 +35,14 @@ class BackendAiSessionView extends LitElement {
   static get properties() {
     return {
       active: {
-        type: Boolean
+        type: Boolean,
+        reflect: true
       },
       _status: {
         type: Boolean
+      },
+      _lists: {
+        type: Object
       }
     }
   }
@@ -77,6 +81,8 @@ class BackendAiSessionView extends LitElement {
   }
 
   firstUpdated() {
+    this._lists = this.shadowRoot.querySelectorAll("backend-ai-session-list");
+
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.shadowRoot.querySelector('#running-jobs').refreshList();
     });
@@ -105,9 +111,16 @@ class BackendAiSessionView extends LitElement {
     await this.updateComplete;
     if (active === false) {
       this._status = 'inactive';
+      for (var x = 0; x < this._lists.length; x++) {
+        this._lists[x].removeAttribute('active');
+      }
       return;
     }
+    for (var x = 0; x < this._lists.length; x++) {
+      this._lists[x].setAttribute('active', true);
+    }
     this._status = 'active';
+     console.log(this._status);
   }
 
   _showTab(tab) {
@@ -133,10 +146,10 @@ class BackendAiSessionView extends LitElement {
           <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
         </h3>
         <div id="running-lists" class="tab-content">
-          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this.active}"></backend-ai-session-list>
+          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
         </div>
         <div id="finished-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this.active}"></backend-ai-session-list>
+          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
         </div>
         <div id="others-lists" class="tab-content" style="display:none;">
           <backend-ai-session-list id="others-jobs" condition="others" ?active="${this.active}"></backend-ai-session-list>

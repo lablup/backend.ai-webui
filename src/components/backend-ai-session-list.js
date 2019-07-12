@@ -35,7 +35,6 @@ import './backend-ai-indicator.js';
 class BackendAiSessionList extends LitElement {
   constructor() {
     super();
-    this.active = false;
     this.condition = 'running';
     this.jobs = {};
     this.compute_sessions = [];
@@ -54,7 +53,8 @@ class BackendAiSessionList extends LitElement {
   static get properties() {
     return {
       active: {
-        type: Boolean
+        type: Boolean,
+        reflect: true
       },
       condition: {
         type: String
