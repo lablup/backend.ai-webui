@@ -6,6 +6,7 @@
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
+import '@polymer/iron-icons/social-icons';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-item/paper-item.js';
 import './lablup-loading-indicator';
@@ -24,6 +25,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/tab';
 import 'weightless/tab-group';
+import 'weightless/textfield';
 
 import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
@@ -44,6 +46,7 @@ class BackendAIData extends LitElement {
     this.active = false;
     this.explorer = {};
     this.explorerFiles = [];
+    this.selectedFolder = '';
     this.uploadFiles = [];
     this.vhost = '';
     this.vhosts = [];
@@ -261,6 +264,18 @@ class BackendAIData extends LitElement {
           --button-bg-active: var(--paper-orange-600);
           color: var(--paper-orange-900);
         }
+
+        wl-dialog wl-textfield {
+          --input-font-family: Roboto, Noto, sans-serif;
+          --input-color-disabled: #222;
+          --input-label-color-disabled: #222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #ccc;
+        }
+
+        #textfields wl-textfield {
+          margin-bottom: 20px;
+        }
       `];
   }
 
@@ -283,8 +298,8 @@ class BackendAIData extends LitElement {
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="horizontal center flex layout tab">
           <wl-tab-group>
-            <wl-tab value="folder-lists" checked>Folders</wl-tab>  
-            <wl-tab value="shared-folder-lists" disabled>Shared Data</wl-tab>  
+            <wl-tab value="folder-lists" checked>Folders</wl-tab>
+            <wl-tab value="shared-folder-lists" disabled>Shared Data</wl-tab>
             <wl-tab value="model-lists" disabled>Models</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
@@ -511,7 +526,62 @@ class BackendAIData extends LitElement {
           </section>
         </wl-card>
       </wl-dialog>
+
+      <wl-dialog
+        id="share-folder-dialog"
+        class="dialog-ask"
+        fixed
+        backdrop
+        blockscrolling
+      >
+        <wl-card class="intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
+            <span>Share Folder</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <div role="listbox" style="margin: 0; padding: 20px 25px 25px 25px;">
+            <div style="display: flex;">
+              <div id="textfields" style="flex-grow: 2">
+                <wl-textfield label="Enter e-mail address"></wl-textfield>
+              </div>
+              <div>
+                <wl-button fab flat @click="${(e) => this._addTextField(e)}">
+                  <wl-icon>add</wl-icon>
+                </wl-button>
+                <wl-button fab flat @click="${(e) => this._removeTextField(e)}">
+                  <wl-icon>remove</wl-icon>
+                </wl-button>
+              </div>
+            </div>
+            <wl-button
+              type="button"
+              outlined
+              id="share-button"
+              style="width: 100%; box-sizing: border-box;"
+              @click=${e => this._shareFolder(e)}
+            >
+              <wl-icon>share</wl-icon>
+              Share
+            </wl-button>
+          </div>
+        </wl-card>
+      </wl-dialog>
     `;
+  }
+
+  _addTextField(e) {
+    let newTextField = document.createElement('wl-textfield');
+    newTextField.label = "Enter e-mail address";
+
+    this.shadowRoot.querySelector('#textfields').appendChild(newTextField)
+  }
+
+  _removeTextField(e) {
+    const textfields = this.shadowRoot.querySelector('#textfields');
+    textfields.removeChild(textfields.lastChild);
   }
 
   indexRenderer(root, column, rowData) {
@@ -525,20 +595,47 @@ class BackendAIData extends LitElement {
     render(
       // language=HTML
       html`
-        <div id="controls" class="layout horizontal flex center"
-             folder-id="${rowData.item.name}">
-          <paper-icon-button class="fg green controls-running" icon="vaadin:info-circle-o"
-                             @click="${(e) => this._infoFolder(e)}"></paper-icon-button>
-          ${this._hasPermission(rowData.item, 'r') ? html`
-            <paper-icon-button class="fg blue controls-running" icon="folder-open"
-                               @click="${(e) => this._folderExplorer(e)}" .folder-id="${rowData.item.name}"></paper-icon-button>
-                               ` : html``}
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+          folder-id="${rowData.item.name}"
+        >
+          <paper-icon-button
+            class="fg green controls-running"
+            icon="vaadin:info-circle-o"
+            @click="${(e) => this._infoFolder(e)}"
+          ></paper-icon-button>
+
+          ${this._hasPermission(rowData.item, 'r')
+            ? html`
+              <paper-icon-button
+                class="fg blue controls-running"
+                icon="folder-open"
+                @click="${(e) => this._folderExplorer(e)}" .folder-id="${rowData.item.name}"
+              ></paper-icon-button>
+            `
+            : html``
+          }
+
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
-          ${this._hasPermission(rowData.item, 'd') ? html`
-              <paper-icon-button class="fg red controls-running" icon="delete"
-                                 @click="${(e) => this._deleteFolderDialog(e)}"></paper-icon-button>
-          ` : html``}
-          </div>
+
+          ${this._hasPermission(rowData.item, 'd')
+            ? html`
+              <paper-icon-button
+                class="fg red controls-running"
+                icon="delete"
+                @click="${(e) => this._deleteFolderDialog(e)}"
+              ></paper-icon-button>
+            `
+            : html``
+          }
+
+          <paper-icon-button
+            class="fg pink controls-running"
+            icon="social:share"
+            @click="${(e) => this._shareFolderDialog(e)}"
+          ></paper-icon-button>
+        </div>
        `, root
     );
   }
@@ -952,6 +1049,15 @@ class BackendAIData extends LitElement {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _shareFolderDialog(e) {
+    this.selectedFolder = this._getControlId(e);
+
+    this.openDialog('share-folder-dialog');
+  }
+
+  _shareFolder(e) {
   }
 }
 
