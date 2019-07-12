@@ -152,7 +152,7 @@ class BackendAiSessionView extends LitElement {
           <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
         </div>
         <div id="others-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="others-jobs" condition="others" ?active="${this.active}"></backend-ai-session-list>
+          <backend-ai-session-list id="others-jobs" condition="others" ?active="${this._status === 'active'}"></backend-ai-session-list>
         </div>
 
       </wl-card>
