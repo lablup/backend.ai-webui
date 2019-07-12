@@ -20,9 +20,12 @@ import '@vaadin/vaadin-item/vaadin-item.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js';
 
 import 'weightless/button';
-import 'weightless/icon';
 import 'weightless/card';
+import 'weightless/checkbox';
 import 'weightless/dialog';
+import 'weightless/divider';
+import 'weightless/icon';
+import 'weightless/label';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/textfield';
@@ -273,8 +276,22 @@ class BackendAIData extends LitElement {
           --input-border-style-disabled: 1px solid #ccc;
         }
 
-        #textfields wl-textfield {
+        #textfields wl-textfield,
+        wl-label {
           margin-bottom: 20px;
+        }
+
+        wl-label {
+          --label-font-family: Roboto, Noto, sans-serif;
+          --label-color: black;
+        }
+
+        wl-checkbox {
+          --checkbox-color: var(--paper-orange-900);
+          --checkbox-color-checked: var(--paper-orange-900);
+          --checkbox-bg-checked: var(--paper-orange-900);
+          --checkbox-color-disabled-checked: var(--paper-orange-900);
+          --checkbox-bg-disabled-checked: var(--paper-orange-900);
         }
       `];
   }
@@ -543,6 +560,7 @@ class BackendAIData extends LitElement {
             </wl-button>
           </h3>
           <div role="listbox" style="margin: 0; padding: 20px 25px 25px 25px;">
+            <div style="margin: 10px 0px">People</div>
             <div style="display: flex;">
               <div id="textfields" style="flex-grow: 2">
                 <wl-textfield label="Enter e-mail address"></wl-textfield>
@@ -556,6 +574,18 @@ class BackendAIData extends LitElement {
                 </wl-button>
               </div>
             </div>
+            <div style="margin: 10px 0px">Permissions</div>
+            <div style="display: flex; justify-content: space-evenly;">
+              <wl-label>
+                <wl-checkbox id="read" checked disabled></wl-checkbox>
+                Read
+              </wl-label>
+              <wl-label>
+                <wl-checkbox id="write"></wl-checkbox>
+                Write
+              </wl-label>
+            </div>
+
             <wl-button
               type="button"
               outlined
@@ -1058,6 +1088,26 @@ class BackendAIData extends LitElement {
   }
 
   _shareFolder(e) {
+    // the .children property is an HtmlCollection. They don't have the map function like an array would
+    const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
+    const emailArray = Array.prototype.map.call(emailHtmlCollection, e => e.value);
+    const permission = 'r' + (this.shadowRoot.querySelector('#write').checked ? 'w' : '');
+
+    // TODO: validation for empty email inputs
+
+    window.backendaiclient.vfolder.invite(permission, emailArray, this.selectedFolder)
+    .then(res => {
+      let msg;
+      if (res.invited_ids && res.invited_ids.length > 0) {
+        msg = res.invited_ids.reduce((cur, val) => cur + val + " ", "") + "were successfully invited";
+      } else {
+        msg = "No one was invited";
+      }
+      this.shadowRoot.querySelector('#notification').text = msg;
+      this.shadowRoot.querySelector('#notification').show();
+
+      this.shadowRoot.querySelector('share-folder-dialog').hide();
+    })
   }
 }
 
