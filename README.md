@@ -175,10 +175,13 @@ $ make compile
 $ docker build -t backendai-console .
 ```
 
-Testing (e.g. with 8090 port)
+Testing / Running example
+
+Check your image name is `backendai-console_console` or `backendai-console_console-ssl`. Otherwise, change the image name in the script below.
 
 ```
-$  docker run --name test_backendai_console -p 8090:80 -d backendai-console
+$ docker run --name backendai-console -v $(pwd)/config.ini:/usr/share/nginx/html/config.ini -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+$ docker run --name backendai-console-ssl -v $(pwd)/config.ini:/usr/share/nginx/html/config.ini -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
 
 ### Running websocket proxy with node.js
