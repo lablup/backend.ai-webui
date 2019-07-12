@@ -128,7 +128,11 @@ class BackendAiSessionView extends LitElement {
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.value + '-lists').style.display = 'block';
+    for (var x = 0; x < this._lists.length; x++) {
+      this._lists[x].removeAttribute('active');
+    }
+    this.shadowRoot.querySelector('#' + tab.value + '-jobs').setAttribute('active', true);
   }
 
   render() {
@@ -138,9 +142,9 @@ class BackendAiSessionView extends LitElement {
       <wl-card class="item">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
-            <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
-            <wl-tab value="others-lists" @click="${(e) => this._showTab(e.target)}">Others</wl-tab>
+            <wl-tab value="running" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
+            <wl-tab value="finished" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
+            <wl-tab value="others" @click="${(e) => this._showTab(e.target)}">Others</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
           <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
