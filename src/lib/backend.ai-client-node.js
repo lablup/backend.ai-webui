@@ -1334,12 +1334,16 @@ class ComputeSession {
             '}';
           v = {'status': statusElement};
         }
-        
+
         return this.client.gql(q, v);
       });
 
-      // return a flattened array
-      return Promise.all(promiseArray).then(res => [].concat.apply([], res));
+      // return an object that contains flattened array
+      return Promise.all(promiseArray).then(res => {
+        return {
+          'compute_sessions': res.reduce((acc, cur) => acc.concat(cur.compute_sessions), [])
+        }
+      });
     }
 
     if (this.client.is_admin === true) {
