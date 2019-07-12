@@ -1316,7 +1316,7 @@ class ComputeSession {
    * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    */
-  list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+  async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
        status = 'RUNNING', accessKey = null) {
     let q, v;
 
@@ -1340,6 +1340,13 @@ class ComputeSession {
 
       // return an object that contains flattened array
       return Promise.all(promiseArray).then(res => {
+        console.log(res);
+        res.forEach((arr, idx) => {
+          arr.compute_sessions.forEach(e => {
+            e.status = status[idx];
+          })
+        })
+
         return {
           'compute_sessions': res.reduce((acc, cur) => acc.concat(cur.compute_sessions), [])
         }

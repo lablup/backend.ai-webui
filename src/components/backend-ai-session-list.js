@@ -350,9 +350,8 @@ class BackendAiSessionList extends LitElement {
       case "finished":
         status = "TERMINATED";
         break;
-      case "intermediate":
-        //status = ["PREPARING", "RESTARTING", "TERMINATING"];
-        status = ["RUNNING", "TERMINATED"];
+      case "others":
+        status = ["PREPARING", "RESTARTING", "TERMINATING"];
         break;
       default:
         status = "RUNNING";
@@ -850,6 +849,16 @@ ${item.map(item => html`
         ` : html``}
         <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
+        ${this.condition === 'others'
+          ? html`
+          <vaadin-grid-column width="150px" flex-grow="0" header="Status" resizable>
+            <template>
+              <span style="font-size: 12px;">[[item.status]]</span>
+            </template>
+          </vaadin-grid-column>
+          `
+          : html``
+        }
         <vaadin-grid-column width="190px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
