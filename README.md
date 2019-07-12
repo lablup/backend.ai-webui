@@ -135,12 +135,46 @@ server {
 }
 ```
 
-### Building docker image
+### Building docker image using docker-compose
 
+Make sure that you compile the console.
+
+```
+$ make compile
+```
+
+#### HTTP server
+Good for develop phase. Not recommended for production environment.
+
+```
+$ docker-compose build console // build only
+$ docker-compose up console    // for testing
+$ docker-compose up -d console // as a daemon
+```
+
+#### HTTPS with SSL
+Recommended for production.
+
+Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
+
+```
+$ docker-compose build console-ssl  // build only
+$ docker-compose up console-ssl     // for testing
+$ docker-compose up -d console-ssl  // as a daemon
+```
+
+#### Removing
+
+```
+$ docker-compose down
+```
+
+#### Manual image build
 ```
 $ make compile
 $ docker build -t backendai-console .
 ```
+
 Testing (e.g. with 8090 port)
 
 ```
