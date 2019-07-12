@@ -836,7 +836,7 @@ ${item.map(item => html`
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list" 
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
