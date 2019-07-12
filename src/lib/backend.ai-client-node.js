@@ -883,7 +883,7 @@ class VFolder {
   /**
    * Invite someone to specific virtual folder with permission.
    *
-   * @param {string} perm - Directory path to list.
+   * @param {string} perm - Permission to give to. `rw` or `ro`.
    * @param {array} emails - User E-mail to invite.
    * @param {string} name - Virtual folder name to invite.
    */
