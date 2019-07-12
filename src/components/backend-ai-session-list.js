@@ -351,7 +351,8 @@ class BackendAiSessionList extends LitElement {
         status = "TERMINATED";
         break;
       case "intermediate":
-        status = ["PREPARING", "RESTARTING", "TERMINATING"];
+        //status = ["PREPARING", "RESTARTING", "TERMINATING"];
+        status = ["RUNNING", "TERMINATED"];
         break;
       default:
         status = "RUNNING";
