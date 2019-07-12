@@ -5,8 +5,15 @@ services:
   console:
     build:
       context: .
-      dockerfile: ./Dockerfile-dev
+      dockerfile: ./Dockerfile
     ports:
-      - "8000:80"
+      - "8090:80"
     volumes:
-      - ./:/usr/share/nginx/html
+      - ./config.ini:/usr/share/nginx/html/config.ini
+      - ./certificates:/etc/certificates
+    command: /bin/bash -c "nginx -g 'daemon off;'"
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
