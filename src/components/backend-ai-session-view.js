@@ -116,11 +116,11 @@ class BackendAiSessionView extends LitElement {
       }
       return;
     }
-    for (var x = 0; x < this._lists.length; x++) {
-      this._lists[x].setAttribute('active', true);
-    }
+    this.shadowRoot.querySelector('#running-jobs').setAttribute('active', true);
+    //for (var x = 0; x < this._lists.length; x++) {
+    //  this._lists[x].setAttribute('active', true);
+    //}
     this._status = 'active';
-     console.log(this._status);
   }
 
   _showTab(tab) {
@@ -150,13 +150,13 @@ class BackendAiSessionView extends LitElement {
           <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
         </h3>
         <div id="running-lists" class="tab-content">
-          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
+          <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
         </div>
         <div id="finished-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
+          <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
         </div>
         <div id="others-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="others-jobs" condition="others" ?active="${this._status === 'active'}"></backend-ai-session-list>
+          <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
         </div>
 
       </wl-card>
