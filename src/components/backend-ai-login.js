@@ -338,18 +338,21 @@ class BackendAiLogin extends LitElement {
         this.email = email;
       }
       let groups = response['user'].groups;
-      window.backendaiclient.groups = groups.map((item) => {
-        //item = item.replace(/\'/g, '"');
-        //const parsedItem = JSON.parse(item);
-        return item.name;
-      });
+      if (groups !== null) {
+        window.backendaiclient.groups = groups.map((item) => {
+          //item = item.replace(/\'/g, '"');
+          //const parsedItem = JSON.parse(item);
+          return item.name;
+        });
+      } else {
+        window.backendaiclient.groups = ['default'];
+      }
       let role = response['user'].role;
       this.domain_name = response['user'].domain_name;
       window.backendaiclient.email = this.email;
       window.backendaiclient.current_group = window.backendaiclient.groups[0];
       window.backendaiclient.is_admin = false;
       window.backendaiclient.is_superadmin = false;
-
       if (["superadmin", "admin"].includes(role)) {
         window.backendaiclient.is_admin = true;
       }

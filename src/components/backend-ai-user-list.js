@@ -283,9 +283,13 @@ class BackendAIUserList extends LitElement {
     try {
       const data = await this._getUserData(user_id);
       this.userInfo = data.user;
-      groupNames = this.userInfo.groups.map((item) => {
-        return item.name;
-      });
+      if (this.userInfo.groups !== null) {
+        groupNames = this.userInfo.groups.map((item) => {
+          return item.name;
+        });
+      } else {
+        groupNames = [];
+      }
       this.userInfoGroups = groupNames;
       this.shadowRoot.querySelector('#user-info-dialog').show();
     } catch (err) {

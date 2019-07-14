@@ -102,6 +102,7 @@ class BackendAiSignup extends LitElement {
         connectionMode: 'SESSION',
         apiVersionMajor: 'v4',
         apiVersion:'v4.20190615',
+        _apiVersion:'v4.20190615',
         endpoint: this.endpoint
       };
       this.client = new ai.backend.Client(
@@ -123,17 +124,6 @@ class BackendAiSignup extends LitElement {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._menuChanged(true);
-    } else {
-      this.active = false;
-      this._menuChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   block(message = '') {
@@ -166,7 +156,7 @@ class BackendAiSignup extends LitElement {
       }
     }).catch((e)=>{
       if (e.message) {
-        this.notification.text = e.message;
+        this.notification.text = 'Found no user in the system. Make sure you entered a correct E-mail.';//e.message;
         this.notification.show();
       }
       console.log(e);
@@ -189,11 +179,11 @@ class BackendAiSignup extends LitElement {
     }
     this.notification.text = 'Processing...';
     this.notification.show();
-    // TODO : send signup request.
     let body = {
-      'email': this.email,
+      'email': this.user_email,
       'password': password1
     };
+    console.log(body);
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
       this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', true);
