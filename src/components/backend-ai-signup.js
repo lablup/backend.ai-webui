@@ -125,9 +125,15 @@ class BackendAiSignup extends LitElement {
     dialog.hide();
   }
 
-  signup() {
-    this.notification.text = 'Please wait to signup...';
-    this.notification.show();
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'active' && newval !== null) {
+      this.active = true;
+      this._menuChanged(true);
+    } else {
+      this.active = false;
+      this._menuChanged(false);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
   }
 
   block(message = '') {
@@ -167,6 +173,12 @@ class BackendAiSignup extends LitElement {
     });
   }
 
+  _clear_info() {
+    this.company_name = '';
+    this.user_name = '';
+    this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', true);
+  }
+
   _signup() {
     let password1 = this.shadowRoot.querySelector('#id_password1').value;
     let password2 = this.shadowRoot.querySelector('#id_password2').value;
@@ -178,6 +190,24 @@ class BackendAiSignup extends LitElement {
     this.notification.text = 'Processing...';
     this.notification.show();
     // TODO : send signup request.
+    let body = {
+      'email': this.email,
+      'password': password1
+    };
+    let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
+    this.client._wrapWithPromise(rqst).then((response) => {
+      this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', true);
+      this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', true);
+      this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
+      this.notification.text = 'Signup succeed.';
+      this.notification.show();
+    }).catch((e) => {
+      if (e.message) {
+        this.notification.text = e.message;
+        this.notification.show();
+      }
+      console.log(e);
+    });
   }
 
   // TODO: global error message patcher
@@ -185,7 +215,7 @@ class BackendAiSignup extends LitElement {
     const errorMsgSet = {
       "Cannot read property 'map' of null": "User has no group. Please contact administrator to fix it.",
       "Cannot read property 'split' of undefined": 'Wrong API server address.'
-    }
+    };
     console.log(err);
     if (err in errorMsgSet) {
       return errorMsgSet[err];
@@ -265,7 +295,8 @@ class BackendAiSignup extends LitElement {
             <fieldset>
               <div class="horizontal center layout">
                 <paper-input type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                             style="width:260px;" label="E-mail" value="${this.user_email}"></paper-input>
+                             style="width:260px;" label="E-mail" value="${this.user_email}"
+                             @change="${() => this._clear_info()}"></paper-input>
                 <wl-button class="fg red" id="check-info-button" outlined type="button"
                             @click="${(e) => this._check_info(e)}">
                             <wl-icon>check</wl-icon>
@@ -283,7 +314,7 @@ class BackendAiSignup extends LitElement {
               <wl-button class="full" id="signup-button" disabled outlined type="button"
                           @click="${(e) => this._signup(e)}">
                           <wl-icon>check</wl-icon>
-                          Signup</wl-button>
+                          <span id="signup-button-message">Signup</span></wl-button>
             </fieldset>
           </form>
         </wl-card>
