@@ -13,10 +13,17 @@ import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
 import './lablup-notification.js';
-
+import '../plastics/lablup-shields/lablup-shields';
 import '../lib/backend.ai-client-es6.js';
+import './backend-ai-signup.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from "../plastics/layout/iron-flex-layout-classes";
 
 /**
  Backend.AI Login for GUI Console
@@ -187,6 +194,16 @@ class BackendAiLogin extends LitElement {
     this.shadowRoot.querySelector('#block-panel').show();
   }
 
+  _showSignupDialog() {
+    this.shadowRoot.querySelector('#signup-dialog').endpoint = this.api_endpoint;
+    this.shadowRoot.querySelector('#signup-dialog').open();
+  }
+
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
   _validate_data(value) {
     if (value != undefined && value != null && value != '') {
       return true;
@@ -413,6 +430,10 @@ class BackendAiLogin extends LitElement {
   static get styles() {
     return [
       BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
       // language=CSS
       css`
         paper-icon-button {
@@ -442,10 +463,23 @@ class BackendAiLogin extends LitElement {
         }
 
         wl-button {
-          width: 335px;
           --button-bg: transparent;
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
+        }
+
+        wl-button.full {
+          width: 335px;
+        }
+        wl-button.fab {
+          --button-bg: var(--paper-light-green-600);
+          --button-bg-hover: var(--paper-green-600);
+          --button-bg-active: var(--paper-green-900);
+        }
+        wl-button.signup {
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-green-300);
+          --button-bg-active: var(--paper-green-300);
         }
       `];
   }
@@ -461,9 +495,14 @@ class BackendAiLogin extends LitElement {
                                  data="${this.api_endpoint}"></app-localstorage-document>
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center-justified flex layout">
+          <h3 class="horizontal center layout">
             <div>Login</div> 
             <div class="flex"></div>
+            <span style="font-size:14px;margin-right:10px;">Not a user? </span>
+            <wl-button style="width:80px;" class="fg green signup" outlined type="button" @click="${()=>this._showSignupDialog()}">Sign up</wl-button>
+            <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
           <form id="login-form">
             <fieldset>
@@ -477,7 +516,7 @@ class BackendAiLogin extends LitElement {
                            style="display:none;"
                            label="API Endpoint" value=""></paper-input>
               <br/><br/>
-              <wl-button class="fg red" id="login-button" outlined type="button"
+              <wl-button class="fg red full" id="login-button" outlined type="button"
                           @click="${(e) => this._login(e)}">
                           <wl-icon>check</wl-icon>
                           Login</wl-button>
@@ -493,6 +532,7 @@ class BackendAiLogin extends LitElement {
           </div>
         </wl-card>
       </wl-dialog>
+      <backend-ai-signup id="signup-dialog"></backend-ai-signup>
       <lablup-notification id="notification"></lablup-notification>
     `;
   }
