@@ -128,18 +128,6 @@ class BackendAiSignup extends LitElement {
   signup() {
     this.notification.text = 'Please wait to signup...';
     this.notification.show();
-
-
-
-    if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      if (this.connection_mode === 'SESSION') {
-        this._connectUsingSession();
-      } else {
-        this._connectUsingAPI();
-      }
-    } else {
-      this.open();
-    }
   }
 
   block(message = '') {
@@ -156,28 +144,39 @@ class BackendAiSignup extends LitElement {
 
   _check_info() {
     this.user_email = this.shadowRoot.querySelector('#id_user_email').value;
-      this.shadowRoot.querySelector('#signup-button').removeAttribute('disabled');
-    let rqst = this.client.newPublicRequest('GET', '/server/hanati/user', `?email=${this.user_email}`, '');
+    let rqst = this.client.newPublicRequest('GET', `/hanati/user?email=${this.user_email}`, null, '');
     this.client._wrapWithPromise(rqst).then((response)=>{
+      console.log(response);
       // If user exists:
       let data = response;
-      let company = data.company;
-      this.company_name = company.name;
-      this.user_name = data.name;
-      this.shadowRoot.querySelector('#signup-button').removeAttribute('disabled');
+      if (data.id) {
+        let company = data.company;
+        this.company_name = company.name;
+        this.user_name = data.name;
+        this.shadowRoot.querySelector('#signup-button').removeAttribute('disabled');
+      } else {
+        this.notification.text = 'Found no user in the system. Make sure you entered a correct E-mail.';
+        this.notification.show();
+      }
     }).catch((e)=>{
-
+      if (e.message) {
+        this.notification.text = e.message;
+        this.notification.show();
+      }
+      console.log(e);
     });
   }
 
   _signup() {
-    this.notification.text = 'Please wait to signup...';
     let password1 = this.shadowRoot.querySelector('#id_password1').value;
     let password2 = this.shadowRoot.querySelector('#id_password2').value;
     if (password1 !== password2) {
       this.notification.text = 'Password mismatch. Please check your password.';
+      this.notification.show();
       return;
     }
+    this.notification.text = 'Processing...';
+    this.notification.show();
     // TODO : send signup request.
   }
 
@@ -253,7 +252,7 @@ class BackendAiSignup extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="signup-panel" fixed backdrop blockscrolling persistent>
+      <wl-dialog id="signup-panel" fixed blockscrolling persistent>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <div>Signup</div> 
