@@ -229,6 +229,9 @@ class BackendAiSignup extends LitElement {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
+          --button-bg-disabled: #ddd;
+          --button-color: var(--paper-red-600);
+          --button-color-disabled: #222;
         }
 
         wl-button.full {
@@ -278,7 +281,7 @@ class BackendAiSignup extends LitElement {
               <paper-input type="password" name="password2" id="id_password2"
                            label="Password (again)" value=""></paper-input>
               <br/><br/>
-              <wl-button class="fg red full" id="signup-button" disabled outlined type="button"
+              <wl-button class="full" id="signup-button" disabled outlined type="button"
                           @click="${(e) => this._signup(e)}">
                           <wl-icon>check</wl-icon>
                           Signup</wl-button>

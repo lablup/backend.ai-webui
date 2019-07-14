@@ -500,9 +500,6 @@ class BackendAiLogin extends LitElement {
             <div class="flex"></div>
             <span style="font-size:14px;margin-right:10px;">Not a user? </span>
             <wl-button style="width:80px;" class="fg green signup" outlined type="button" @click="${()=>this._showSignupDialog()}">Sign up</wl-button>
-            <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
           </h3>
           <form id="login-form">
             <fieldset>
