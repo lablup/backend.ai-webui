@@ -378,8 +378,14 @@ class BackendAIUserList extends LitElement {
     return new Date(d).toUTCString();
   }
 
-  _indexFrom1(index) {
-    return index + 1;
+  _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
   }
 
   _markIfUnlimited(value) {
@@ -504,11 +510,7 @@ class BackendAIUserList extends LitElement {
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="User list"
                    id="user-grid" .items="${this.users}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[index]]</template>
-        </vaadin-grid-column>
-
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
             <div class="layout horizontal center flex">
