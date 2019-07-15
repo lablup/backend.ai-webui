@@ -1340,7 +1340,6 @@ class ComputeSession {
 
       // return an object that contains flattened array
       return Promise.all(promiseArray).then(res => {
-        console.log(res);
         res.forEach((arr, idx) => {
           arr.compute_sessions.forEach(e => {
             e.status = status[idx];

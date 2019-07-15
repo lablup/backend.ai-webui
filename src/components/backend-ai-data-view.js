@@ -563,7 +563,7 @@ class BackendAIData extends LitElement {
             <div style="margin: 10px 0px">People</div>
             <div style="display: flex;">
               <div id="textfields" style="flex-grow: 2">
-                <wl-textfield label="Enter e-mail address"></wl-textfield>
+                <wl-textfield type="email" label="Enter e-mail address"></wl-textfield>
               </div>
               <div>
                 <wl-button fab flat @click="${(e) => this._addTextField(e)}">
@@ -605,6 +605,7 @@ class BackendAIData extends LitElement {
   _addTextField(e) {
     let newTextField = document.createElement('wl-textfield');
     newTextField.label = "Enter e-mail address";
+    newTextField.type = "email";
 
     this.shadowRoot.querySelector('#textfields').appendChild(newTextField)
   }
@@ -1090,23 +1091,31 @@ class BackendAIData extends LitElement {
   _shareFolder(e) {
     // the .children property is an HtmlCollection. They don't have the map function like an array would
     const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
-    const emailArray = Array.prototype.map.call(emailHtmlCollection, e => e.value);
+
+    // filter invalid and empty fields
+    const emailArray = Array.prototype.filter.call(emailHtmlCollection, e => !e.hasAttribute('invalid') && e.value !== '').map(e => e.value);
     const permission = 'r' + (this.shadowRoot.querySelector('#write').checked ? 'w' : '');
 
-    // TODO: validation for empty email inputs
+    if (emailArray.length === 0) {
+      this.shadowRoot.querySelector('#notification').text = 'No valid emails were entered';
+      this.shadowRoot.querySelector('#notification').show();
+      this.shadowRoot.querySelector('#share-folder-dialog').hide();
+      Array.prototype.forEach.call(emailHtmlCollection, e => {e.value = ''});
+      return;
+    }
 
     window.backendaiclient.vfolder.invite(permission, emailArray, this.selectedFolder)
     .then(res => {
       let msg;
       if (res.invited_ids && res.invited_ids.length > 0) {
-        msg = res.invited_ids.reduce((cur, val) => cur + val + " ", "") + "were successfully invited";
+        msg = res.invited_ids.reduce((cur, val) => cur + val + " ", "") + (emailArray.length === 1 ? 'was' : 'were') + " successfully invited";
       } else {
         msg = "No one was invited";
       }
       this.shadowRoot.querySelector('#notification').text = msg;
       this.shadowRoot.querySelector('#notification').show();
-
-      this.shadowRoot.querySelector('share-folder-dialog').hide();
+      this.shadowRoot.querySelector('#share-folder-dialog').hide();
+      Array.prototype.forEach.call(emailHtmlCollection, e => {e.value = ''});
     })
   }
 }
