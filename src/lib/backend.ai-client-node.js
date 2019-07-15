@@ -911,12 +911,10 @@ class VFolder {
    * Accept specific invitation.
    *
    * @param {string} inv_id - Invitation ID.
-   * @param {string} inv_ak - Access key to accept the invitation.
    */
-  accept_invitation(inv_id, inv_ak) {
+  accept_invitation(inv_id) {
     let body = {
-      'inv_id': inv_id,
-      'inv_ak': inv_ak
+      'inv_id': inv_id
     };
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/invitations/accept`, body);
     return this.client._wrapWithPromise(rqst);
