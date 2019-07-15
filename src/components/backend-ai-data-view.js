@@ -661,11 +661,16 @@ class BackendAIData extends LitElement {
             : html``
           }
 
-          <paper-icon-button
-            class="fg pink controls-running"
-            icon="social:share"
-            @click="${(e) => this._shareFolderDialog(e)}"
-          ></paper-icon-button>
+          ${rowData.item.is_owner
+            ? html`
+              <paper-icon-button
+                class="fg pink controls-running"
+                icon="social:share"
+                @click="${(e) => this._shareFolderDialog(e)}"
+              ></paper-icon-button>
+            `
+            : html ``
+          }
         </div>
        `, root
     );
