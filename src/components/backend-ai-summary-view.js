@@ -348,17 +348,21 @@ class BackendAISummary extends LitElement {
       if (this.active) {
         setTimeout(() => {
           this._refreshInvitations()
-        }, 15000);
+        }, 10000);
       }
     });
   }
 
   _acceptInvitation(invitation) {
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
-    .then(res => {
-      this.shadowRoot.querySelector('#notification').text = res.msg;
+    .then(response => {
+      this.shadowRoot.querySelector('#notification').text = response.msg;
       this.shadowRoot.querySelector('#notification').show();
       this._refreshInvitations();
+    })
+    .catch(reason => {
+      this.shadowRoot.querySelector('#notification').text = reason.message;
+      this.shadowRoot.querySelector('#notification').show();
     })
   }
 
