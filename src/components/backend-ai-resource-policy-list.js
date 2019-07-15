@@ -263,7 +263,7 @@ class BackendAIResourcePolicyList extends LitElement {
       <wl-dialog id="modify-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Modify resource policy</span>
+            <span>Update resource policy</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -361,7 +361,7 @@ class BackendAIResourcePolicyList extends LitElement {
               <wl-button class="fg blue create-button" id="create-policy-button" type="button"
                 outlined @click="${() => this._modifyResourcePolicy()}">
                 <wl-icon>add</wl-icon>
-                Create
+                Update
               </wl-button>
 
             </fieldset>
@@ -594,7 +594,6 @@ class BackendAIResourcePolicyList extends LitElement {
     let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit').value;
     let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
     let vfolder_capacity_limit = this.shadowRoot.querySelector('#vfolder-capacity-limit').value;
-    let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
     let idle_timeout = this.shadowRoot.querySelector('#idle-timeout').value;
     let input = {
       'default_for_unspecified': 'UNLIMITED',
@@ -606,6 +605,7 @@ class BackendAIResourcePolicyList extends LitElement {
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
     };
+    return input;
   }
 
   _modifyResourcePolicy() {
@@ -615,14 +615,14 @@ class BackendAIResourcePolicyList extends LitElement {
     let input = this._readResourcePolicyInput();
 
     window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
-      this.shadowRoot.querySelector('#new-policy-dialog').close();
+      this.shadowRoot.querySelector('#modify-policy-dialog').hide();
       this.notification.text = "Resource policy successfully updated.";
       this.notification.show();
       this.shadowRoot.querySelector('#resource-policy-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#new-policy-dialog').close();
+        this.shadowRoot.querySelector('#modify-policy-dialog').hide();
         this.notification.text = err.message;
         this.notification.show();
       }
