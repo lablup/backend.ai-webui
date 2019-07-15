@@ -32,6 +32,7 @@ class BackendAISummary extends LitElement {
     this.authenticated = false;
     this.active = false;
     this.manager_version = '';
+    this.invitations = []
   }
 
   static get properties() {
@@ -78,7 +79,10 @@ class BackendAISummary extends LitElement {
       gpu_total: {type: Number},
       gpu_used: {type: Number},
       fgpu_total: {type: Number},
-      fgpu_used: {type: Number}
+      fgpu_used: {type: Number},
+      invitations: {
+        type: Array
+      }
     };
   }
 
@@ -121,11 +125,19 @@ class BackendAISummary extends LitElement {
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
-        }`];
+        }
+
+        wl-button {
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
+        `
+    ];
   }
 
-  firstupdated() {
-
+  firstUpdated() {
+    this._refreshInvitations();
   }
 
   connectedCallback() {
@@ -322,11 +334,41 @@ class BackendAISummary extends LitElement {
   }
 
   _addComma(num) {
-    if (num === undefined) { 
+    if (num === undefined) {
       return '';
     }
     var regexp = /\B(?=(\d{3})+(?!\d))/g;
     return num.toString().replace(regexp, ',');
+  }
+
+  _refreshInvitations() {
+    window.backendaiclient.vfolder.invitations().then(res => {
+      this.invitations = res.invitations;
+
+      if (this.active) {
+        setTimeout(() => {
+          this._refreshInvitations()
+        }, 15000);
+      }
+    });
+  }
+
+  _acceptInvitation(invitation) {
+    window.backendaiclient.vfolder.accept_invitation(invitation.id)
+    .then(res => {
+      this.shadowRoot.querySelector('#notification').text = res.msg;
+      this.shadowRoot.querySelector('#notification').show();
+      this._refreshInvitations();
+    })
+  }
+
+  _deleteInvitation(invitation) {
+    window.backendaiclient.vfolder.delete_invitation(invitation.id)
+    .then(res => {
+      this.shadowRoot.querySelector('#notification').text = res.msg;
+      this.shadowRoot.querySelector('#notification').show();
+      this._refreshInvitations();
+    })
   }
 
   render() {
@@ -430,23 +472,56 @@ class BackendAISummary extends LitElement {
         </div>
         <h3 class="plastic-material-title">Actions</h3>
         <div class="horizontal wrap layout">
-              <lablup-activity-panel title="Shortcut" elevation="1">
-                <div slot="message">
-                  <ul>
-                    <li><a href="/data">Upload files</a></li>
-                  </ul>
-                  <ul>
-                    <li><a href="/job">Start a session</a></li>
-                  </ul>
-             ${this.is_admin ? html`
-                    <ul>
-                      <li><a href="/credential">Create a new key pair</a></li>
-                      <li><a href="/credential">Maintain keypairs</a></li>
-                    </ul>` : html``}                    
-                  </div>
-                </lablup-activity-panel>
-          </div>
-        </wl-card>
+          <lablup-activity-panel title="Shortcut" elevation="1">
+            <div slot="message">
+              <ul>
+                <li><a href="/data">Upload files</a></li>
+              </ul>
+              <ul>
+                <li><a href="/job">Start a session</a></li>
+              </ul>
+              ${this.is_admin
+              ? html`
+                <ul>
+                  <li><a href="/credential">Create a new key pair</a></li>
+                  <li><a href="/credential">Maintain keypairs</a></li>
+                </ul>`
+              : html``}
+            </div>
+          </lablup-activity-panel>
+          ${this.invitations.map(invitation =>
+            html`
+            <lablup-activity-panel title="Invitation">
+              <div slot="message">
+                <ul>
+                  <li style="font-size: 15px"> Inviter: ${invitation.inviter} </li>
+                  <li style="font-size: 15px"> Folder: ${invitation.vfolder_id} </li>
+                  <li style="font-size: 15px"> Permission: ${invitation.perm === 'ro' ? 'Read Only' : 'Read & Write'} </li>
+                </ul>
+                <div class="horizontal layout justified">
+                  <wl-button
+                    class="fg green"
+                    outlined
+                    @click=${e => this._acceptInvitation(invitation)}
+                  >
+                    <wl-icon>add</wl-icon>
+                    Accept
+                  </wl-button>
+                  <wl-button
+                    class="fg green"
+                    outlined
+                    @click=${e => this._deleteInvitation(invitation)}
+                  >
+                    <wl-icon>remove</wl-icon>
+                    Reject
+                  </wl-button>
+                </div>
+              </div>
+            </lablup-activity-panel>
+            `
+          )}
+        </div>
+      </wl-card>
 `;
   }
 }

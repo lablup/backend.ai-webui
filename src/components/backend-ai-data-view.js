@@ -1094,7 +1094,7 @@ class BackendAIData extends LitElement {
 
     // filter invalid and empty fields
     const emailArray = Array.prototype.filter.call(emailHtmlCollection, e => !e.hasAttribute('invalid') && e.value !== '').map(e => e.value);
-    const permission = 'r' + (this.shadowRoot.querySelector('#write').checked ? 'w' : '');
+    const permission = 'r' + (this.shadowRoot.querySelector('#write').checked ? 'w' : 'o');
 
     if (emailArray.length === 0) {
       this.shadowRoot.querySelector('#notification').text = 'No valid emails were entered';
