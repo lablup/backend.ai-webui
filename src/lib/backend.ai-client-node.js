@@ -498,11 +498,6 @@ class Client {
     }
     //queryString = '/' + this._config.apiVersionMajor + queryString;
     let aStr;
-    if (this._config._apiVersion[1] < 4) {
-      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), authBody, content_type);
-    } else {
-      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
-    }
     let hdrs;
     let uri;
     uri = '';
@@ -519,6 +514,11 @@ class Client {
         uri = this._config.endpoint + '/func' + queryString;
       }
     } else {
+      if (this._config._apiVersion[1] < 4) {
+        aStr = this.getAuthenticationString(method, queryString, d.toISOString(), authBody, content_type);
+      } else {
+        aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
+      }
       let signKey = this.getSignKey(this._config.secretKey, d);
       let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
       hdrs = new Headers({
