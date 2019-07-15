@@ -418,7 +418,7 @@ class BackendAICredentialView extends LitElement {
     }
     let total_resource_slots = {
       "cpu": cpu_resource,
-      "mem": ram_resource + 'g',
+      "mem": ram_resource,
       "cuda.device": gpu_resource,
       "cuda.shares": vgpu_resource
     };
