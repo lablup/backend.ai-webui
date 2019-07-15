@@ -209,6 +209,7 @@ class BackendAICredentialView extends LitElement {
 
         wl-card h3 {
           padding-top: 0;
+          padding-right: 15px;
           padding-bottom: 0;
         }
 
