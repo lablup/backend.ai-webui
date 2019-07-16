@@ -1105,7 +1105,10 @@ class BackendAIData extends LitElement {
       this.shadowRoot.querySelector('#notification').text = 'No valid emails were entered';
       this.shadowRoot.querySelector('#notification').show();
       this.shadowRoot.querySelector('#share-folder-dialog').hide();
-      Array.prototype.forEach.call(emailHtmlCollection, e => {e.value = ''});
+      for (let element of emailHtmlCollection) {
+        element.value = '';
+      }
+
       return;
     }
 
@@ -1120,7 +1123,9 @@ class BackendAIData extends LitElement {
       this.shadowRoot.querySelector('#notification').text = msg;
       this.shadowRoot.querySelector('#notification').show();
       this.shadowRoot.querySelector('#share-folder-dialog').hide();
-      Array.prototype.forEach.call(emailHtmlCollection, e => {e.value = ''});
+      for (let element of emailHtmlCollection) {
+        element.value = '';
+      }
     })
   }
 }
