@@ -13,10 +13,12 @@ import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
 import './lablup-notification.js';
+import { BackendAIPainKiller } from './backend-ai-painkiller';
 
 import '../lib/backend.ai-client-es6.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
+
 
 /**
  Backend.AI Login for GUI Console
@@ -262,7 +264,7 @@ class BackendAiLogin extends LitElement {
         this.free();
         if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
-            this.notification.text = this._politeErrorMessage(err.message);
+            this.notification.text = BackendAIPainKiller.relieve(err.message);
           } else {
             this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
           }
@@ -482,7 +484,7 @@ class BackendAiLogin extends LitElement {
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center-justified flex layout">
-            <div>Login</div> 
+            <div>Login</div>
             <div class="flex"></div>
           </h3>
           <form id="login-form">
