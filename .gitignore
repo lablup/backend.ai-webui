@@ -77,6 +77,8 @@ app
 .idea
 .vscode
 
+# console config
+config.ini
 # webpack
 dist
 
