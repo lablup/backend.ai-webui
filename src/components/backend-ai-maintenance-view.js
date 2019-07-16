@@ -18,6 +18,9 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 
+import './lablup-loading-indicator.js';
+import './backend-ai-indicator.js';
+
 class BackendAiMaintenanceView extends LitElement {
   constructor() {
     super();
@@ -95,6 +98,9 @@ class BackendAiMaintenanceView extends LitElement {
       },
       notification: {
         type: Object
+      },
+      indicator: {
+        type: Object
       }
     }
   }
@@ -103,6 +109,7 @@ class BackendAiMaintenanceView extends LitElement {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
+      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>General</span>
@@ -166,6 +173,8 @@ class BackendAiMaintenanceView extends LitElement {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
+    this.indicator = this.shadowRoot.querySelector('#indicator');
+
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
@@ -184,17 +193,21 @@ class BackendAiMaintenanceView extends LitElement {
   async rescan_images() {
     this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Scanning...';
     this.scanning = true;
-    this.notification.text = 'Rescan image started.';
-    this.notification.show();
+    //this.notification.text = 'Rescan image started.';
+    //this.notification.show();
+    this.indicator.start('indeterminate');
+    this.indicator.set(10, 'Scanning...');
     window.backendaiclient.maintenance.rescan_images().then((response) => {
       this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
       this.scanning = false;
-      this.notification.text = 'Rescan image finished.';
-      this.notification.show();
+      this.indicator.set(100, 'Rescan image finished.');
+      this.indicator.end(1000);
     }).catch(err => {
       this.scanning = false;
       this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
       console.log(err);
+      this.indicator.set(50, 'Rescan failed.');
+      this.indicator.end(1000);
       if (err && err.message) {
         this.notification.text = err.message;
         this.notification.show();
@@ -205,17 +218,19 @@ class BackendAiMaintenanceView extends LitElement {
   async recalculate_usage() {
     this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculating...';
     this.recalculating = true;
-    this.notification.text = 'Recalculating started.';
-    this.notification.show();
+    this.indicator.start('indeterminate');
+    this.indicator.set(10, 'Recalculating...');
     window.backendaiclient.maintenance.recalculate_usage().then((response) => {
       this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
       this.recalculating = false;
-      this.notification.text = 'Recalculating finished.';
-      this.notification.show();
+      this.indicator.set(100, 'Recalculation finished.');
+      this.indicator.end(1000);
     }).catch(err => {
       this.recalculating = false;
       this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
       console.log(err);
+      this.indicator.set(50, 'Recalculation failed.');
+      this.indicator.end(1000);
       if (err && err.message) {
         this.notification.text = err.message;
         this.notification.show();

@@ -62,11 +62,17 @@ class BackendAiLogin extends LitElement {
       notification: {
         type: Object
       },
-      errorMsg: {
-        type: String
-      },
       loginPanel: {
         type: Object
+      },
+      blockPanel: {
+        type: Object
+      },
+      blockMessage: {
+        type: String
+      },
+      blockType: {
+        type: String
       }
     };
   }
@@ -81,12 +87,15 @@ class BackendAiLogin extends LitElement {
     this.proxy_url = 'http://127.0.0.1:5050/';
     this.connection_mode = 'API';
     this.default_session_environment = '';
-    this.errorMsg = '';
+    this.blockMessage = '';
+    this.blockType = '';
     this.config = null;
   }
 
   firstUpdated() {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
+    this.blockPanel = this.shadowRoot.querySelector('#block-panel');
+
     this.shadowRoot.querySelector('#login-button').addEventListener('tap', this._login.bind(this));
     this.notification = this.shadowRoot.querySelector('#notification');
   }
@@ -161,6 +170,9 @@ class BackendAiLogin extends LitElement {
     if (this.loginPanel.open === true) {
       this.loginPanel.hide();
     }
+    if (this.blockPanel.open === true) {
+      this.blockPanel.hide();
+    }
   }
 
   login() {
@@ -182,9 +194,14 @@ class BackendAiLogin extends LitElement {
     }
   }
 
-  block(message = '') {
-    this.errorMsg = message;
+  block(message = '', type = '') {
+    this.blockMessage = message;
+    this.blockType = type;
     this.shadowRoot.querySelector('#block-panel').show();
+  }
+
+  free() {
+    this.shadowRoot.querySelector('#block-panel').hide();
   }
 
   _validate_data(value) {
@@ -201,6 +218,7 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this.notification.text = 'Please wait to login...';
     this.notification.show();
+    this.block();
     if (this.connection_mode === 'SESSION') {
       this._connectUsingSession();
     } else {
@@ -213,7 +231,7 @@ class BackendAiLogin extends LitElement {
     const errorMsgSet = {
       "Cannot read property 'map' of null": "User has no group. Please contact administrator to fix it.",
       "Cannot read property 'split' of undefined": 'Wrong API server address.'
-    }
+    };
     console.log(err);
     if (err in errorMsgSet) {
       return errorMsgSet[err];
@@ -232,7 +250,6 @@ class BackendAiLogin extends LitElement {
       this.clientConfig,
       `Backend.AI Console.`,
     );
-
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
       this.client.login().then(response => {
@@ -242,6 +259,7 @@ class BackendAiLogin extends LitElement {
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
+        this.free();
         if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
             this.notification.text = this._politeErrorMessage(err.message);
@@ -277,6 +295,7 @@ class BackendAiLogin extends LitElement {
 
   _connectGQL() {
     // Test connection
+    this.block();
     this.client.getManagerVersion().then(response => {
       return this.client.isAPIVersionCompatibleWith('v4.20190601');
     }).then(response => {
@@ -298,6 +317,7 @@ class BackendAiLogin extends LitElement {
         this.notification.text = 'Login failed. Check login information.';
         this.notification.show();
       }
+      this.free();
       this.open();
     });
   }
@@ -486,12 +506,16 @@ class BackendAiLogin extends LitElement {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="block-panel" fixed backdrop blockscrolling persistent>
+        ${this.blockMessage != '' ? html`
         <wl-card>
-          <h3>Error</h3>
+          ${this.blockType !== '' ? html`
+          <h3>${this.blockType}</h3>
+          ` : html``}
           <div style="text-align:center;">
-          ${this.errorMsg}
+          ${this.blockMessage}
           </div>
         </wl-card>
+        ` : html``}
       </wl-dialog>
       <lablup-notification id="notification"></lablup-notification>
     `;

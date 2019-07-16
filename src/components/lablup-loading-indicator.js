@@ -4,12 +4,12 @@
  */
 
 import {css, html, LitElement} from 'lit-element';
-import '@polymer/paper-spinner/paper-spinner-lite';
+import 'weightless/progress-spinner';
 
 class LablupLoadingIndicator extends LitElement {
   constructor() {
     super();
-    this.active = true;
+    this.active = false;
   }
 
   static get is() {
@@ -20,16 +20,12 @@ class LablupLoadingIndicator extends LitElement {
     return [
       // language=CSS
       css`
-        paper-spinner-lite {
-          --paper-spinner-layer-1-color: #9c27b0;
-          --paper-spinner-layer-2-color: #00bcd4;
-          --paper-spinner-layer-3-color: #607d8b;
-          --paper-spinner-layer-4-color: #ffc107;
-          --paper-spinner-stroke-width: 6px;
+        wl-progress-spinner {
+          --progress-spinner-size: 48px;
+          --progress-spinner-stroke-width: 12px;
           width: 48px;
           height: 48px;
           position: fixed;
-          /*top: calc(50vh - 24px);*/
           bottom: 60px;
           right: 60px;
         }
@@ -40,6 +36,9 @@ class LablupLoadingIndicator extends LitElement {
     return {
       active: {
         type: Boolean
+      },
+      indicator: {
+        type: Object
       }
     };
   }
@@ -47,7 +46,7 @@ class LablupLoadingIndicator extends LitElement {
   render() {
     // language=HTML
     return html`
-      <paper-spinner-lite></paper-spinner-lite>
+      <wl-progress-spinner id="indicator"></wl-progress-spinner>
     `;
   }
 
@@ -56,7 +55,8 @@ class LablupLoadingIndicator extends LitElement {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('paper-spinner-lite');
+    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.active = true;
   }
 
   connectedCallback() {
@@ -72,21 +72,27 @@ class LablupLoadingIndicator extends LitElement {
   }
 
   async show() {
+    this.active = true;
     await this.updateComplete;
-    this.indicator.active = true;
+    this.indicator.style.display = 'block';
   }
 
   async hide() {
+    this.active = true;
     await this.updateComplete;
-    this.indicator.active = false;
+    this.indicator.style.display = 'none';
+    this.active = false;
   }
 
   async toggle() {
     await this.updateComplete;
     if (this.indicator.active === true) {
-      this.indicator.active = false;
+      this.active = true;
+      this.indicator.style.display = 'none';
+      this.active = false;
     } else {
-      this.indicator.active = true;
+      this.active = true;
+      this.indicator.style.display = 'block';
     }
   }
 
