@@ -1098,7 +1098,7 @@ class BackendAIData extends LitElement {
     const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
 
     // filter invalid and empty fields
-    const emailArray = Array.prototype.filter.call(emailHtmlCollection, e => !e.hasAttribute('invalid') && e.value !== '').map(e => e.value);
+    const emailArray = Array.prototype.filter.call(emailHtmlCollection, e => !e.hasAttribute('invalid') && e.value !== '').map(e => e.value.trim());
     const permission = 'r' + (this.shadowRoot.querySelector('#write').checked ? 'w' : 'o');
 
     if (emailArray.length === 0) {
@@ -1108,7 +1108,6 @@ class BackendAIData extends LitElement {
       for (let element of emailHtmlCollection) {
         element.value = '';
       }
-
       return;
     }
 

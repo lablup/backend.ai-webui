@@ -517,7 +517,7 @@ class BackendAISummary extends LitElement {
                     @click=${e => this._deleteInvitation(invitation)}
                   >
                     <wl-icon>remove</wl-icon>
-                    Reject
+                    Decline
                   </wl-button>
                 </div>
               </div>
