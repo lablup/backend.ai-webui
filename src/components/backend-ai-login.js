@@ -170,6 +170,9 @@ class BackendAiLogin extends LitElement {
     if (this.loginPanel.open === true) {
       this.loginPanel.hide();
     }
+    if (this.blockPanel.open === true) {
+      this.blockPanel.hide();
+    }
   }
 
   login() {
@@ -191,10 +194,14 @@ class BackendAiLogin extends LitElement {
     }
   }
 
-  block(message = '', type = 'Error') {
+  block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
     this.shadowRoot.querySelector('#block-panel').show();
+  }
+
+  free() {
+    this.shadowRoot.querySelector('#block-panel').hide();
   }
 
   _validate_data(value) {
@@ -211,6 +218,7 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this.notification.text = 'Please wait to login...';
     this.notification.show();
+    this.block();
     if (this.connection_mode === 'SESSION') {
       this._connectUsingSession();
     } else {
@@ -242,7 +250,6 @@ class BackendAiLogin extends LitElement {
       this.clientConfig,
       `Backend.AI Console.`,
     );
-
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
       this.client.login().then(response => {
@@ -252,6 +259,7 @@ class BackendAiLogin extends LitElement {
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
+        this.free();
         if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
             this.notification.text = this._politeErrorMessage(err.message);
@@ -287,6 +295,7 @@ class BackendAiLogin extends LitElement {
 
   _connectGQL() {
     // Test connection
+    this.block();
     this.client.getManagerVersion().then(response => {
       return this.client.isAPIVersionCompatibleWith('v4.20190601');
     }).then(response => {
@@ -308,6 +317,7 @@ class BackendAiLogin extends LitElement {
         this.notification.text = 'Login failed. Check login information.';
         this.notification.show();
       }
+      this.free();
       this.open();
     });
   }

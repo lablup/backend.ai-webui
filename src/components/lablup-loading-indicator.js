@@ -4,7 +4,6 @@
  */
 
 import {css, html, LitElement} from 'lit-element';
-import '@polymer/paper-spinner/paper-spinner-lite';
 import 'weightless/progress-spinner';
 
 class LablupLoadingIndicator extends LitElement {
@@ -36,6 +35,9 @@ class LablupLoadingIndicator extends LitElement {
     return {
       active: {
         type: Boolean
+      },
+      indicator: {
+        type: Object
       }
     };
   }
@@ -43,7 +45,7 @@ class LablupLoadingIndicator extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-progress-spinner></wl-progress-spinner>
+      <wl-progress-spinner id="indicator"></wl-progress-spinner>
     `;
   }
 
@@ -52,7 +54,8 @@ class LablupLoadingIndicator extends LitElement {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('wl-progress-spinner');
+    this.indicator = this.shadowRoot.querySelector('#indicator');
+    console.log('indicator', this.indicator);
     this.active = true;
   }
 
@@ -69,6 +72,7 @@ class LablupLoadingIndicator extends LitElement {
   }
 
   async show() {
+    this.active = true;
     await this.updateComplete;
     this.indicator.style.display = 'block';
   }
@@ -76,13 +80,16 @@ class LablupLoadingIndicator extends LitElement {
   async hide() {
     await this.updateComplete;
     this.indicator.style.display = 'none';
+    this.active = false;
   }
 
   async toggle() {
     await this.updateComplete;
     if (this.indicator.active === true) {
       this.indicator.style.display = 'none';
+      this.active = false;
     } else {
+      this.active = true;
       this.indicator.style.display = 'block';
     }
   }
