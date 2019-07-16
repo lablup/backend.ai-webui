@@ -14,6 +14,7 @@ class BackendAIIndicator extends LitElement {
     super();
     this.value = 0;
     this.text = '';
+    this.mode = 'determinate';
   }
 
   static get is() {
@@ -30,6 +31,9 @@ class BackendAIIndicator extends LitElement {
       },
       dialog: {
         type: Object
+      },
+      mode: {
+        type: String
       }
     };
   }
@@ -58,9 +62,10 @@ class BackendAIIndicator extends LitElement {
     super.connectedCallback();
   }
 
-  start() {
+  start(mode = 'determinate') {
     this.value = 0;
     this.text = 'Initializing...';
+    this.mode = mode;
     this.dialog.show();
   }
 
@@ -69,8 +74,10 @@ class BackendAIIndicator extends LitElement {
     this.text = text;
   }
 
-  end() {
-    this.dialog.hide();
+  end(delay = 0) {
+    setTimeout(() => {
+      this.dialog.hide();
+    }, delay);
   }
 
   render() {
@@ -79,7 +86,7 @@ class BackendAIIndicator extends LitElement {
       <wl-dialog id="app-progress-dialog" blockscrolling>
         <wl-title level="5" id="app-progress-text" slot="header">${this.text}</wl-title>
         <div slot="content">
-        <wl-progress-bar mode="determinate" id="app-progress" .value="${this.value}"></wl-progress-bar>
+        <wl-progress-bar .mode="${this.mode}" id="app-progress" .value="${this.value}"></wl-progress-bar>
         </div>
       </wl-dialog>
     `;
