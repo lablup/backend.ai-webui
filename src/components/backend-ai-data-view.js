@@ -336,9 +336,6 @@ class BackendAIData extends LitElement {
           --dialog-min-width: 600px;
         }
 
-        wl-select {
-          --input-state-color-active: var(--paper-orange-900);
-        }
       `];
   }
 
@@ -624,11 +621,11 @@ class BackendAIData extends LitElement {
             <div style="display: flex; justify-content: space-evenly;">
               <wl-label>
                 <wl-checkbox checked disabled></wl-checkbox>
-                Read
+                View
               </wl-label>
               <wl-label>
                 <wl-checkbox id="share-folder-write"></wl-checkbox>
-                Write
+                Edit
               </wl-label>
             </div>
 
@@ -701,9 +698,9 @@ class BackendAIData extends LitElement {
       html`
         <div>
           <wl-select outlined label="Select Permission">
-            <option ?selected=${rowData.item.perm === 'r'} value="r">Read</option>
-            <option ?selected=${rowData.item.perm === 'rw'} value="rw">Read+Write</option>
-            <option ?selected=${rowData.item.perm === 'rwd'} value="rwd">Read+Write+Delete</option>
+            <option ?selected=${rowData.item.perm === 'r'} value="r">View</option>
+            <option ?selected=${rowData.item.perm === 'rw'} value="rw">Edit</option>
+            <option ?selected=${rowData.item.perm === 'rwd'} value="rwd">Edit+Delete</option>
           </wl-select>
         </div>
       `, root
