@@ -487,7 +487,7 @@ class BackendAICredentialList extends LitElement {
                 <div class="layout horizontal configuration">
                   <wl-icon class="fg green">view_module</wl-icon>
                   <span>[[item.total_resource_slots.cuda_shares]]</span>
-                  <span class="indicator">vGPU</span>
+                  <span class="indicator">fGPU</span>
                 </div>
               </template>
             </div>

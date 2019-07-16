@@ -61,7 +61,6 @@ class BackendAiSessionView extends LitElement {
           padding-bottom: 0;
           padding-left: 0;
         }
-
         wl-tab-group {
           --tab-group-indicator-bg: var(--paper-red-500);
         }
@@ -116,11 +115,11 @@ class BackendAiSessionView extends LitElement {
       }
       return;
     }
-    for (var x = 0; x < this._lists.length; x++) {
-      this._lists[x].setAttribute('active', true);
-    }
+    this.shadowRoot.querySelector('#running-jobs').setAttribute('active', true);
+    //for (var x = 0; x < this._lists.length; x++) {
+    //  this._lists[x].setAttribute('active', true);
+    //}
     this._status = 'active';
-     console.log(this._status);
   }
 
   _showTab(tab) {
@@ -128,7 +127,11 @@ class BackendAiSessionView extends LitElement {
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.value + '-lists').style.display = 'block';
+    for (var x = 0; x < this._lists.length; x++) {
+      this._lists[x].removeAttribute('active');
+    }
+    this.shadowRoot.querySelector('#' + tab.value + '-jobs').setAttribute('active', true);
   }
 
   render() {
@@ -138,21 +141,21 @@ class BackendAiSessionView extends LitElement {
       <wl-card class="item">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
-            <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
-            <wl-tab value="others-lists" @click="${(e) => this._showTab(e.target)}">Others</wl-tab>
+            <wl-tab value="running" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
+            <wl-tab value="finished" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
+            <wl-tab value="others" @click="${(e) => this._showTab(e.target)}">Others</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
           <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
         </h3>
         <div id="running-lists" class="tab-content">
-          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
+          <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
         </div>
         <div id="finished-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
+          <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
         </div>
         <div id="others-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="others-jobs" condition="others" ?active="${this._status === 'active'}"></backend-ai-session-list>
+          <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
         </div>
 
       </wl-card>

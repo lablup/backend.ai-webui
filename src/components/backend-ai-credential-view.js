@@ -209,6 +209,7 @@ class BackendAICredentialView extends LitElement {
 
         wl-card h3 {
           padding-top: 0;
+          padding-right: 15px;
           padding-bottom: 0;
         }
 
@@ -396,12 +397,15 @@ class BackendAICredentialView extends LitElement {
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
-    let vfolder_hosts = this.shadowRoot.querySelector('#allowed_vfolder-hosts').value;
+    let vfolder_hosts = [];
+    vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
     }
     if (ram_resource === "Unlimited") {
       ram_resource = "Infinity";
+    } else {
+      ram_resource = ram_resource + 'g';
     }
     if (gpu_resource === "Unlimited") {
       gpu_resource = "Infinity";
@@ -415,7 +419,7 @@ class BackendAICredentialView extends LitElement {
     }
     let total_resource_slots = {
       "cpu": cpu_resource,
-      "mem": ram_resource + 'g',
+      "mem": ram_resource,
       "cuda.device": gpu_resource,
       "cuda.shares": vgpu_resource
     };
@@ -429,7 +433,7 @@ class BackendAICredentialView extends LitElement {
       'total_resource_slots': JSON.stringify(total_resource_slots),
       'max_concurrent_sessions': concurrency_limit,
       'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': idle_timeout,
+      'idle_timeout': parseInt(idle_timeout),
       'max_vfolder_count': vfolder_count_limit,
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts

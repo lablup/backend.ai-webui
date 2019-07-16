@@ -64,6 +64,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this._page = '';
     this.groups = [];
     this.connection_mode = 'API';
+    this.plugins = {};
   }
 
   static get is() {
@@ -104,6 +105,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       },
       current_group: {
         type: String
+      },
+      plugins: {
+        type: Object
       },
       _page: {type: String},
       _drawerOpened: {type: Boolean},
@@ -234,7 +238,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       console.log(this.connection_server);
     }
-    var loginPanel = this.shadowRoot.querySelector('#login-panel');
+    if (typeof config.plugin !== "undefined" && 'login' in config.plugin) {
+      this.plugins['login'] = config.plugin.login;
+    }
+    let loginPanel = this.shadowRoot.querySelector('#login-panel');
     loginPanel.refreshPanel(config);
   }
 
@@ -242,13 +249,13 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.shadowRoot.getElementById('sign-button').icon = 'icons:exit-to-app';
     this.is_connected = true;
     window.backendaiclient.proxyURL = this.proxy_url;
-    if (window.backendaiclient != undefined && window.backendaiclient != null && window.backendaiclient.is_admin != undefined && window.backendaiclient.is_admin == true) {
+    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
+      && typeof window.backendaiclient.is_admin !== "undefined" && window.backendaiclient.is_admin === true) {
       this.is_admin = true;
     } else {
       this.is_admin = false;
     }
     this._refreshUserInfoPanel();
-    //this._loadPageElement();
   }
 
   showUpdateNotifier() {
@@ -288,7 +295,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             var match = line.match(regex.section);
             value[match[1]] = {};
             section = match[1];
-          } else if (line.length == 0 && section) {
+          } else if (line.length === 0 && section) {
             section = null;
           }
         });
@@ -320,7 +327,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance'].includes(view) != true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance'].includes(view) !== true) { // Fallback for Windows OS
         view = view.split(/[\/]+/).pop();
         this._page = view;
       }
@@ -515,7 +522,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.07.0.190712</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.07.0.190715</small>
               </address>
             </div>
           </app-header-layout>

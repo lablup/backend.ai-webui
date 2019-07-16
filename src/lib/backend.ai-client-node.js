@@ -498,11 +498,6 @@ class Client {
     }
     //queryString = '/' + this._config.apiVersionMajor + queryString;
     let aStr;
-    if (this._config._apiVersion[1] < 4) {
-      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), authBody, content_type);
-    } else {
-      aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
-    }
     let hdrs;
     let uri;
     uri = '';
@@ -519,6 +514,11 @@ class Client {
         uri = this._config.endpoint + '/func' + queryString;
       }
     } else {
+      if (this._config._apiVersion[1] < 4) {
+        aStr = this.getAuthenticationString(method, queryString, d.toISOString(), authBody, content_type);
+      } else {
+        aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
+      }
       let signKey = this.getSignKey(this._config.secretKey, d);
       let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
       hdrs = new Headers({
@@ -1234,14 +1234,14 @@ class ResourcePolicy {
    * @param {string} name - resource policy name to mutate.
    * @param {json} input - resource policy specification and data. Required fields are:
    * {
-   *   'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
-   *   'total_resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
-   *   'max_concurrent_sessions': concurrency_limit,
-   *   'max_containers_per_session': containers_per_session_limit,
-   *   'idle_timeout': idle_timeout,
-   *   'max_vfolder_count': vfolder_count_limit,
-   *   'max_vfolder_size': vfolder_capacity_limit,
-   *   'allowed_vfolder_hosts': vfolder_hosts
+   *   {string} 'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
+   *   {JSONString} 'total_resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
+   *   {int} 'max_concurrent_sessions': concurrency_limit,
+   *   {int} 'max_containers_per_session': containers_per_session_limit,
+   *   {bigint} 'idle_timeout': idle_timeout,
+   *   {int} 'max_vfolder_count': vfolder_count_limit,
+   *   {bigint} 'max_vfolder_size': vfolder_capacity_limit,
+   *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts
    * };
    */
   mutate(name = null, input) {
@@ -1258,7 +1258,7 @@ class ResourcePolicy {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
         `  modify_keypair_resource_policy(name: $name, props: $input) {` +
-        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `    ok msg ` +
         `  }` +
         `}`;
       let v = {
