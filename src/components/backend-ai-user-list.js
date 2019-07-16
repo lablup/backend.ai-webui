@@ -14,7 +14,7 @@ import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-spinner/paper-spinner-lite';
 import './lablup-loading-indicator';
 
-import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -448,13 +448,13 @@ class BackendAIUserList extends LitElement {
           need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
     
     if (password !== confirm) {
-      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match."
+      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match.";
       this.shadowRoot.querySelector("#notification").show();
 
       return;
     }
 
-    let input = {}
+    let input = {};
 
     if (password !== '')
       input.password = password;
@@ -477,7 +477,7 @@ class BackendAIUserList extends LitElement {
     if (Object.entries(input).length === 0) {
       this._hideDialog(e);
 
-      this.shadowRoot.querySelector("#notification").text = "No Changes Made"
+      this.shadowRoot.querySelector("#notification").text = "No Changes Made";
       this.shadowRoot.querySelector("#notification").show();
 
       return;

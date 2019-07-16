@@ -28,6 +28,7 @@ class LablupNotification extends LitElement {
           font-size: 16px;
           font-weight: 400;
           font-family: "Montserrat", Roboto, sans-serif;
+          z-index: 10000;
         }
       `];
   }

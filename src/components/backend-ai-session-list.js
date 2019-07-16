@@ -15,8 +15,7 @@ import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
-import './lablup-loading-indicator.js';
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
@@ -26,6 +25,7 @@ import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
 
+import './lablup-loading-indicator.js';
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';

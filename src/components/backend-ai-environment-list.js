@@ -14,7 +14,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
 import 'weightless/button';

@@ -11,7 +11,7 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
-import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields.js';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
 import '@polymer/paper-progress/paper-progress';
