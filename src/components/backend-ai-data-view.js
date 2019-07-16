@@ -60,6 +60,38 @@ class BackendAIData extends LitElement {
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
+    this._boundPermCheckboxRenderer = this.permCheckboxRenderer.bind(this);
+    // mock data for shared users (permission modification)
+    this._sharedUsers = [
+      {
+        'name': 'test01@lablup.com',
+        'perm': 'rw'
+      },
+      {
+        'name': 'test02@lablup.com',
+        'perm': 'rd'
+      },
+      {
+        'name': 'test03@lablup.com',
+        'perm': 'r'
+      },
+      {
+        'name': 'test04@lablup.com',
+        'perm': 'rw'
+      },
+      {
+        'name': 'test05@lablup.com',
+        'perm': 'rw'
+      },
+      {
+        'name': 'test06@lablup.com',
+        'perm': 'rw'
+      },
+      {
+        'name': 'test07@lablup.com',
+        'perm': 'rwd'
+      }
+    ]
   }
 
   static get properties() {
@@ -98,6 +130,10 @@ class BackendAIData extends LitElement {
         type: String
       },
       vhosts: {
+        type: Array
+      },
+      // mock data for shared users
+      _sharedUsers: {
         type: Array
       }
     };
@@ -292,6 +328,10 @@ class BackendAIData extends LitElement {
           --checkbox-bg-checked: var(--paper-orange-900);
           --checkbox-color-disabled-checked: var(--paper-orange-900);
           --checkbox-bg-disabled-checked: var(--paper-orange-900);
+        }
+
+        #modify-permission-dialog {
+          --dialog-min-width: 600px;
         }
       `];
   }
@@ -577,11 +617,11 @@ class BackendAIData extends LitElement {
             <div style="margin: 10px 0px">Permissions</div>
             <div style="display: flex; justify-content: space-evenly;">
               <wl-label>
-                <wl-checkbox id="read" checked disabled></wl-checkbox>
+                <wl-checkbox checked disabled></wl-checkbox>
                 Read
               </wl-label>
               <wl-label>
-                <wl-checkbox id="write"></wl-checkbox>
+                <wl-checkbox id="share-folder-write"></wl-checkbox>
                 Write
               </wl-label>
             </div>
@@ -599,7 +639,73 @@ class BackendAIData extends LitElement {
           </div>
         </wl-card>
       </wl-dialog>
+      <wl-dialog
+        id="modify-permission-dialog"
+        class="dialog-ask"
+        fixed backdrop blockscrolling
+      >
+        <wl-card class="intro" style="margin: 0; width: 100%;">
+          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
+            <span>Modify Permissions</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <div role="listbox" style="margin: 0; padding: 10px;">
+            <vaadin-grid theme="row-stripes column-borders compact" .items="${this._sharedUsers}">
+              <vaadin-grid-column
+                width="30px"
+                flex-grow="0"
+                resizable header="#"
+                .renderer="${this._boundIndexRenderer}"
+              ></vaadin-grid-column>
+              <vaadin-grid-column header="Name">
+                <template>
+                  <div>[[item.name]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column header="Permission" .renderer="${this._boundPermCheckboxRenderer}">
+              </vaadin-grid-column>
+            </vaadin-grid>
+          </div>
+        </wl-card>
+      </wl-dialog>
     `;
+  }
+
+  permCheckboxRenderer(root, column, rowData) {
+    render(
+      // language=HTML
+      html`
+        <div>
+        <wl-label>
+          <wl-checkbox
+            id="shared-permission-read"
+            ?checked=${rowData.item.perm.includes('r')}
+            ?disabled=${rowData.item.perm.includes('r')}
+          ></wl-checkbox>
+          Read
+        </wl-label>
+        <wl-label>
+          <wl-checkbox
+            id="shared-permission-write"
+            ?checked=${rowData.item.perm.includes('w')}
+            ?disabled=${rowData.item.perm.includes('w')}
+          ></wl-checkbox>
+          Write
+        </wl-label>
+        <wl-label>
+          <wl-checkbox
+            id="shared-permission-delete"
+            ?checked=${rowData.item.perm.includes('d')}
+            ?disabled=${rowData.item.perm.includes('d')}
+          ></wl-checkbox>
+          Delete
+        </wl-label>
+        </div>
+      `, root
+    )
   }
 
   _addTextField(e) {
@@ -669,7 +775,18 @@ class BackendAIData extends LitElement {
                 @click="${(e) => this._shareFolderDialog(e)}"
               ></paper-icon-button>
             `
-            : html ``
+            : html``
+          }
+
+          ${rowData.item.is_owner
+            ? html`
+              <paper-icon-button
+                class="fg cyan controls-running"
+                icon="perm-identity"
+                @click=${e => this._modifyPermissionDialog(e)}
+              ></paper-icon-button>
+            `
+            : html``
           }
         </div>
        `, root
@@ -1093,13 +1210,17 @@ class BackendAIData extends LitElement {
     this.openDialog('share-folder-dialog');
   }
 
+  _modifyPermissionDialog(e) {
+    this.openDialog('modify-permission-dialog');
+  }
+
   _shareFolder(e) {
     // the .children property is an HtmlCollection. They don't have the map function like an array would
     const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
 
     // filter invalid and empty fields
     const emailArray = Array.prototype.filter.call(emailHtmlCollection, e => !e.hasAttribute('invalid') && e.value !== '').map(e => e.value.trim());
-    const permission = 'r' + (this.shadowRoot.querySelector('#write').checked ? 'w' : 'o');
+    const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
 
     if (emailArray.length === 0) {
       this.shadowRoot.querySelector('#notification').text = 'No valid emails were entered';
