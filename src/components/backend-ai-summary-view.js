@@ -127,11 +127,18 @@ class BackendAISummary extends LitElement {
           --paper-progress-transition-delay: 0s;
         }
 
-        wl-button {
+        wl-button[class*="green"] {
           --button-bg: var(--paper-light-green-50);
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
         }
+
+        wl-button[class*="red"] {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
+
         .invitation_folder_name {
           font-size:13px;
         }
@@ -504,10 +511,10 @@ class BackendAISummary extends LitElement {
                 <span class="invitation_folder_name">${invitation.vfolder_id}</span>
                 <div class="horizontal center layout">
                 Permission:
-                ${[...invitation.perm].map(c => { 
+                ${[...invitation.perm].map(c => {
                   return html`
                   <lablup-shields app="" color="${['green','blue','red'][['r','w','d'].indexOf(c)]}"
-                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})} 
+                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
                 </div>
                 <div style="margin-top:25px;" class="horizontal layout justified">
                   <wl-button
