@@ -26,6 +26,7 @@ import 'weightless/dialog';
 import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/label';
+import 'weightless/select';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/textfield';
@@ -69,7 +70,7 @@ class BackendAIData extends LitElement {
       },
       {
         'name': 'test02@lablup.com',
-        'perm': 'rd'
+        'perm': 'r'
       },
       {
         'name': 'test03@lablup.com',
@@ -81,7 +82,7 @@ class BackendAIData extends LitElement {
       },
       {
         'name': 'test05@lablup.com',
-        'perm': 'rw'
+        'perm': 'rwd'
       },
       {
         'name': 'test06@lablup.com',
@@ -304,7 +305,8 @@ class BackendAIData extends LitElement {
           color: var(--paper-orange-900);
         }
 
-        wl-dialog wl-textfield {
+        wl-dialog wl-textfield,
+        wl-dialog wl-select {
           --input-font-family: Roboto, Noto, sans-serif;
           --input-color-disabled: #222;
           --input-label-color-disabled: #222;
@@ -332,6 +334,10 @@ class BackendAIData extends LitElement {
 
         #modify-permission-dialog {
           --dialog-min-width: 600px;
+        }
+
+        wl-select {
+          --input-state-color-active: var(--paper-orange-900);
         }
       `];
   }
@@ -693,31 +699,12 @@ class BackendAIData extends LitElement {
     render(
       // language=HTML
       html`
-        <div class="horizontal layout justified">
-          <wl-label>
-            <wl-checkbox
-              id="shared-permission-read"
-              ?checked=${rowData.item.perm.includes('r')}
-              ?disabled=${rowData.item.perm.includes('r')}
-            ></wl-checkbox>
-            Read
-          </wl-label>
-          <wl-label>
-            <wl-checkbox
-              id="shared-permission-write"
-              ?checked=${rowData.item.perm.includes('w')}
-              ?disabled=${rowData.item.perm.includes('w')}
-            ></wl-checkbox>
-            Write
-          </wl-label>
-          <wl-label>
-            <wl-checkbox
-              id="shared-permission-delete"
-              ?checked=${rowData.item.perm.includes('d')}
-              ?disabled=${rowData.item.perm.includes('d')}
-            ></wl-checkbox>
-            Delete
-          </wl-label>
+        <div>
+          <wl-select outlined label="Select Permission">
+            <option ?selected=${rowData.item.perm === 'r'} value="r">Read</option>
+            <option ?selected=${rowData.item.perm === 'rw'} value="rw">Read+Write</option>
+            <option ?selected=${rowData.item.perm === 'rwd'} value="rwd">Read+Write+Delete</option>
+          </wl-select>
         </div>
       `, root
     )
