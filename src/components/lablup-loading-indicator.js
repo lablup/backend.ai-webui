@@ -9,6 +9,7 @@ import 'weightless/progress-spinner';
 class LablupLoadingIndicator extends LitElement {
   constructor() {
     super();
+    this.active = false;
   }
 
   static get is() {
@@ -55,7 +56,6 @@ class LablupLoadingIndicator extends LitElement {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#indicator');
-    console.log('indicator', this.indicator);
     this.active = true;
   }
 
@@ -78,6 +78,7 @@ class LablupLoadingIndicator extends LitElement {
   }
 
   async hide() {
+    this.active = true;
     await this.updateComplete;
     this.indicator.style.display = 'none';
     this.active = false;
@@ -86,6 +87,7 @@ class LablupLoadingIndicator extends LitElement {
   async toggle() {
     await this.updateComplete;
     if (this.indicator.active === true) {
+      this.active = true;
       this.indicator.style.display = 'none';
       this.active = false;
     } else {
