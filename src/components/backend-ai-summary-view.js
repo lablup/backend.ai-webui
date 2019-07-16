@@ -137,7 +137,6 @@ class BackendAISummary extends LitElement {
   }
 
   firstUpdated() {
-    this._refreshInvitations();
   }
 
   connectedCallback() {
@@ -315,6 +314,7 @@ class BackendAISummary extends LitElement {
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
         this._refreshHealthPanel();
+        this._refreshInvitations();
       }, true);
     } else {
       console.log('running');
@@ -322,6 +322,7 @@ class BackendAISummary extends LitElement {
       this.is_superadmin = window.backendaiclient.is_superadmin;
       this.authenticated = true;
       this._refreshHealthPanel();
+      this._refreshInvitations();
     }
   }
 
@@ -344,7 +345,6 @@ class BackendAISummary extends LitElement {
   _refreshInvitations() {
     window.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
-
       if (this.active) {
         setTimeout(() => {
           this._refreshInvitations()
