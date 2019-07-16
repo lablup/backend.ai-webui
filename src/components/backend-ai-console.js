@@ -207,7 +207,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }).catch(err => {
       console.log("Initialization failed.");
       if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-        this.shadowRoot.querySelector('#login-panel').block('Configuration is not loaded.');
+        this.shadowRoot.querySelector('#login-panel').block('Configuration is not loaded.', 'Error');
       }
     });
   }
@@ -522,7 +522,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.07.0.190715</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.07.1.190716</small>
               </address>
             </div>
           </app-header-layout>

@@ -14,7 +14,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
 import 'weightless/card';

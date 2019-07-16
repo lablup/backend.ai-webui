@@ -42,6 +42,7 @@ class BackendAIIndicator extends LitElement {
           position: fixed;
           right: 20px;
           bottom: 20px;
+          z-index: 9000;
           --dialog-height: 80px;
           --dialog-width: 250px;
           --dialog-content-padding: 15px;
