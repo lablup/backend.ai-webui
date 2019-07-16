@@ -132,6 +132,9 @@ class BackendAISummary extends LitElement {
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
         }
+        .invitation_folder_name {
+          font-size:13px;
+        }
         `
     ];
   }
@@ -497,12 +500,16 @@ class BackendAISummary extends LitElement {
             html`
             <lablup-activity-panel title="Invitation">
               <div slot="message">
-                <ul>
-                  <li style="font-size: 15px"> Inviter: ${invitation.inviter} </li>
-                  <li style="font-size: 15px"> Folder: ${invitation.vfolder_id} </li>
-                  <li style="font-size: 15px"> Permission: ${invitation.perm === 'ro' ? 'Read Only' : 'Read & Write'} </li>
-                </ul>
-                <div class="horizontal layout justified">
+                <h3>From ${invitation.inviter}</h3>
+                <span class="invitation_folder_name">${invitation.vfolder_id}</span>
+                <div class="horizontal center layout">
+                Permission:
+                ${[...invitation.perm].map(c => { 
+                  return html`
+                  <lablup-shields app="" color="${['green','blue','red'][['r','w','d'].indexOf(c)]}"
+                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})} 
+                </div>
+                <div style="margin-top:25px;" class="horizontal layout justified">
                   <wl-button
                     class="fg green"
                     outlined
@@ -512,7 +519,7 @@ class BackendAISummary extends LitElement {
                     Accept
                   </wl-button>
                   <wl-button
-                    class="fg green"
+                    class="fg red"
                     outlined
                     @click=${e => this._deleteInvitation(invitation)}
                   >
