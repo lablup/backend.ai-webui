@@ -657,7 +657,7 @@ class BackendAIData extends LitElement {
               <vaadin-grid-column
                 width="30px"
                 flex-grow="0"
-                resizable header="#"
+                header="#"
                 .renderer="${this._boundIndexRenderer}"
               ></vaadin-grid-column>
               <vaadin-grid-column header="Name">
@@ -670,39 +670,54 @@ class BackendAIData extends LitElement {
             </vaadin-grid>
           </div>
         </wl-card>
+        <div slot="footer">
+          <wl-button
+            type="button"
+            outlined
+            style="width: 100%; box-sizing: border-box;"
+            @click=${this._modifySharedFolderPermissions}
+          >
+            <wl-icon>check</wl-icon>
+            Save Changes
+          </wl-button>
+        </div>
       </wl-dialog>
     `;
+  }
+
+  _modifySharedFolderPermissions() {
+
   }
 
   permCheckboxRenderer(root, column, rowData) {
     render(
       // language=HTML
       html`
-        <div>
-        <wl-label>
-          <wl-checkbox
-            id="shared-permission-read"
-            ?checked=${rowData.item.perm.includes('r')}
-            ?disabled=${rowData.item.perm.includes('r')}
-          ></wl-checkbox>
-          Read
-        </wl-label>
-        <wl-label>
-          <wl-checkbox
-            id="shared-permission-write"
-            ?checked=${rowData.item.perm.includes('w')}
-            ?disabled=${rowData.item.perm.includes('w')}
-          ></wl-checkbox>
-          Write
-        </wl-label>
-        <wl-label>
-          <wl-checkbox
-            id="shared-permission-delete"
-            ?checked=${rowData.item.perm.includes('d')}
-            ?disabled=${rowData.item.perm.includes('d')}
-          ></wl-checkbox>
-          Delete
-        </wl-label>
+        <div class="horizontal layout justified">
+          <wl-label>
+            <wl-checkbox
+              id="shared-permission-read"
+              ?checked=${rowData.item.perm.includes('r')}
+              ?disabled=${rowData.item.perm.includes('r')}
+            ></wl-checkbox>
+            Read
+          </wl-label>
+          <wl-label>
+            <wl-checkbox
+              id="shared-permission-write"
+              ?checked=${rowData.item.perm.includes('w')}
+              ?disabled=${rowData.item.perm.includes('w')}
+            ></wl-checkbox>
+            Write
+          </wl-label>
+          <wl-label>
+            <wl-checkbox
+              id="shared-permission-delete"
+              ?checked=${rowData.item.perm.includes('d')}
+              ?disabled=${rowData.item.perm.includes('d')}
+            ></wl-checkbox>
+            Delete
+          </wl-label>
         </div>
       `, root
     )
@@ -756,21 +771,10 @@ class BackendAIData extends LitElement {
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
 
-          ${this._hasPermission(rowData.item, 'd')
-            ? html`
-              <paper-icon-button
-                class="fg red controls-running"
-                icon="delete"
-                @click="${(e) => this._deleteFolderDialog(e)}"
-              ></paper-icon-button>
-            `
-            : html``
-          }
-
           ${rowData.item.is_owner
             ? html`
               <paper-icon-button
-                class="fg pink controls-running"
+                class="fg blue controls-running"
                 icon="social:share"
                 @click="${(e) => this._shareFolderDialog(e)}"
               ></paper-icon-button>
@@ -784,6 +788,17 @@ class BackendAIData extends LitElement {
                 class="fg cyan controls-running"
                 icon="perm-identity"
                 @click=${e => this._modifyPermissionDialog(e)}
+              ></paper-icon-button>
+            `
+            : html``
+          }
+
+          ${this._hasPermission(rowData.item, 'd')
+            ? html`
+              <paper-icon-button
+                class="fg red controls-running"
+                icon="delete"
+                @click="${(e) => this._deleteFolderDialog(e)}"
               ></paper-icon-button>
             `
             : html``
