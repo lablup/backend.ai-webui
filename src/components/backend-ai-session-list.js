@@ -15,8 +15,7 @@ import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
-import './lablup-loading-indicator.js';
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
@@ -26,6 +25,7 @@ import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
 
+import './lablup-loading-indicator.js';
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -35,10 +35,9 @@ import './backend-ai-indicator.js';
 class BackendAiSessionList extends LitElement {
   constructor() {
     super();
-    this.active = false;
     this.condition = 'running';
     this.jobs = {};
-    this.compute_sessions = {};
+    this.compute_sessions = [];
     this.terminationQueue = [];
     this.filterAccessKey = '';
     this.appSupportList = [];
@@ -54,7 +53,8 @@ class BackendAiSessionList extends LitElement {
   static get properties() {
     return {
       active: {
-        type: Boolean
+        type: Boolean,
+        reflect: true
       },
       condition: {
         type: String
@@ -344,23 +344,24 @@ class BackendAiSessionList extends LitElement {
     this.loadingIndicator.show();
     let status = 'RUNNING';
     switch (this.condition) {
-      case 'running':
-        status = 'RUNNING';
+      case "running":
+        status = "RUNNING";
         break;
-      case 'finished':
-        status = 'TERMINATED';
+      case "finished":
+        status = "TERMINATED";
         break;
-      case 'archived':
+      case "others":
+        status = ["PREPARING", "RESTARTING", "TERMINATING"];
+        break;
       default:
-        status = 'RUNNING';
+        status = "RUNNING";
     }
 
     let fields = [
       "sess_id", "lang", "created_at", "terminated_at", "status",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
-    window.backendaiclient.computeSession.list(fields, status,
-      this.filterAccessKey).then((response) => {
+    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
 
       var sessions = response.compute_sessions;
@@ -834,7 +835,7 @@ ${item.map(item => html`
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list" 
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
@@ -848,6 +849,16 @@ ${item.map(item => html`
         ` : html``}
         <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
+        ${this.condition === 'others'
+          ? html`
+          <vaadin-grid-column width="150px" flex-grow="0" header="Status" resizable>
+            <template>
+              <span style="font-size: 12px;">[[item.status]]</span>
+            </template>
+          </vaadin-grid-column>
+          `
+          : html``
+        }
         <vaadin-grid-column width="190px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>

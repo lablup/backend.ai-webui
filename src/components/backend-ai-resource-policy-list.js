@@ -14,7 +14,7 @@ import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -263,7 +263,7 @@ class BackendAIResourcePolicyList extends LitElement {
       <wl-dialog id="modify-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Modify resource policy</span>
+            <span>Update resource policy</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -272,8 +272,7 @@ class BackendAIResourcePolicyList extends LitElement {
           <form id="login-form">
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           auto-validate required
-                           pattern="[a-zA-Z0-9]*"
+                           required
                            error-message="Policy name only accepts letters and numbers"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
@@ -362,7 +361,7 @@ class BackendAIResourcePolicyList extends LitElement {
               <wl-button class="fg blue create-button" id="create-policy-button" type="button"
                 outlined @click="${() => this._modifyResourcePolicy()}">
                 <wl-icon>add</wl-icon>
-                Create
+                Update
               </wl-button>
 
             </fieldset>
@@ -567,12 +566,15 @@ class BackendAIResourcePolicyList extends LitElement {
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
-    let vfolder_hosts = this.shadowRoot.querySelector('#allowed_vfolder-hosts').value;
+    let vfolder_hosts = [];
+    vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
     }
     if (ram_resource === "Unlimited") {
       ram_resource = "Infinity";
+    } else {
+      ram_resource = ram_resource + 'g';
     }
     if (gpu_resource === "Unlimited") {
       gpu_resource = "Infinity";
@@ -584,10 +586,9 @@ class BackendAIResourcePolicyList extends LitElement {
     } else {
       vgpu_resource = parseFloat(vgpu_resource).toString();
     }
-
     let total_resource_slots = {
       "cpu": cpu_resource,
-      "mem": ram_resource + 'g',
+      "mem": ram_resource,
       "cuda.device": gpu_resource,
       "cuda.shares": vgpu_resource
     };
@@ -595,18 +596,18 @@ class BackendAIResourcePolicyList extends LitElement {
     let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit').value;
     let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
     let vfolder_capacity_limit = this.shadowRoot.querySelector('#vfolder-capacity-limit').value;
-    let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
     let idle_timeout = this.shadowRoot.querySelector('#idle-timeout').value;
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
       'max_concurrent_sessions': concurrency_limit,
       'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': idle_timeout,
+      'idle_timeout': parseInt(idle_timeout),
       'max_vfolder_count': vfolder_count_limit,
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
     };
+    return input;
   }
 
   _modifyResourcePolicy() {
@@ -616,14 +617,14 @@ class BackendAIResourcePolicyList extends LitElement {
     let input = this._readResourcePolicyInput();
 
     window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
-      this.shadowRoot.querySelector('#new-policy-dialog').close();
+      this.shadowRoot.querySelector('#modify-policy-dialog').hide();
       this.notification.text = "Resource policy successfully updated.";
       this.notification.show();
       this.shadowRoot.querySelector('#resource-policy-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#new-policy-dialog').close();
+        this.shadowRoot.querySelector('#modify-policy-dialog').hide();
         this.notification.text = err.message;
         this.notification.show();
       }

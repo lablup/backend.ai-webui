@@ -6,7 +6,7 @@
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
-import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -487,7 +487,7 @@ class BackendAICredentialList extends LitElement {
                 <div class="layout horizontal configuration">
                   <wl-icon class="fg green">view_module</wl-icon>
                   <span>[[item.total_resource_slots.cuda_shares]]</span>
-                  <span class="indicator">vGPU</span>
+                  <span class="indicator">fGPU</span>
                 </div>
               </template>
             </div>

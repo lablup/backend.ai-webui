@@ -14,7 +14,7 @@ import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-spinner/paper-spinner-lite';
 import './lablup-loading-indicator';
 
-import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -378,8 +378,14 @@ class BackendAIUserList extends LitElement {
     return new Date(d).toUTCString();
   }
 
-  _indexFrom1(index) {
-    return index + 1;
+  _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
   }
 
   _markIfUnlimited(value) {
@@ -442,13 +448,13 @@ class BackendAIUserList extends LitElement {
           need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
     
     if (password !== confirm) {
-      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match."
+      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match.";
       this.shadowRoot.querySelector("#notification").show();
 
       return;
     }
 
-    let input = {}
+    let input = {};
 
     if (password !== '')
       input.password = password;
@@ -471,7 +477,7 @@ class BackendAIUserList extends LitElement {
     if (Object.entries(input).length === 0) {
       this._hideDialog(e);
 
-      this.shadowRoot.querySelector("#notification").text = "No Changes Made"
+      this.shadowRoot.querySelector("#notification").text = "No Changes Made";
       this.shadowRoot.querySelector("#notification").show();
 
       return;
@@ -504,11 +510,7 @@ class BackendAIUserList extends LitElement {
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="User list"
                    id="user-grid" .items="${this.users}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[index]]</template>
-        </vaadin-grid-column>
-
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
             <div class="layout horizontal center flex">

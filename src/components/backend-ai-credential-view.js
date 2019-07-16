@@ -209,6 +209,7 @@ class BackendAICredentialView extends LitElement {
 
         wl-card h3 {
           padding-top: 0;
+          padding-right: 15px;
           padding-bottom: 0;
         }
 
@@ -239,6 +240,7 @@ class BackendAICredentialView extends LitElement {
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
+          --expansion-content-padding: 0;
           border-bottom: 1px solid #DDD;
         }
 
@@ -396,12 +398,15 @@ class BackendAICredentialView extends LitElement {
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
-    let vfolder_hosts = this.shadowRoot.querySelector('#allowed_vfolder-hosts').value;
+    let vfolder_hosts = [];
+    vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
     }
     if (ram_resource === "Unlimited") {
       ram_resource = "Infinity";
+    } else {
+      ram_resource = ram_resource + 'g';
     }
     if (gpu_resource === "Unlimited") {
       gpu_resource = "Infinity";
@@ -415,7 +420,7 @@ class BackendAICredentialView extends LitElement {
     }
     let total_resource_slots = {
       "cpu": cpu_resource,
-      "mem": ram_resource + 'g',
+      "mem": ram_resource,
       "cuda.device": gpu_resource,
       "cuda.shares": vgpu_resource
     };
@@ -429,7 +434,7 @@ class BackendAICredentialView extends LitElement {
       'total_resource_slots': JSON.stringify(total_resource_slots),
       'max_concurrent_sessions': concurrency_limit,
       'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': idle_timeout,
+      'idle_timeout': parseInt(idle_timeout),
       'max_vfolder_count': vfolder_count_limit,
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
@@ -453,14 +458,14 @@ class BackendAICredentialView extends LitElement {
     }
     let input = this._readResourcePolicyInput();
     window.backendaiclient.resourcePolicy.add(name, input).then(response => {
-      this.shadowRoot.querySelector('#new-policy-dialog').close();
+      this.shadowRoot.querySelector('#new-policy-dialog').hide();
       this.notification.text = "Resource policy successfully created.";
       this.notification.show();
       this.shadowRoot.querySelector('#resource-policy-list').refresh();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#new-policy-dialog').close();
+        this.shadowRoot.querySelector('#new-policy-dialog').hide();
         this.notification.text = err.message;
         this.notification.show();
       }
@@ -518,11 +523,11 @@ class BackendAICredentialView extends LitElement {
       'is_active': true,
       'domain_name': 'default',
       'role': 'user'
-    }
+    };
 
     window.backendaiclient.group.list()
     .then(res => {
-      const default_id = res.groups.find(x => x.name === 'default').id
+      const default_id = res.groups.find(x => x.name === 'default').id;
 
       return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
     })
@@ -714,8 +719,7 @@ class BackendAICredentialView extends LitElement {
               <div class="vertical center layout">
                 <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
                              type="text"
-                             auto-validate required
-                             pattern="[a-zA-Z0-9]*"
+                             required
                              error-message="Policy name only accepts letters and numbers"></paper-input>
               </div>
               <h4>Resource Policy</h4>

@@ -32,6 +32,7 @@ class BackendAISummary extends LitElement {
     this.authenticated = false;
     this.active = false;
     this.manager_version = '';
+    this.invitations = []
   }
 
   static get properties() {
@@ -78,7 +79,10 @@ class BackendAISummary extends LitElement {
       gpu_total: {type: Number},
       gpu_used: {type: Number},
       fgpu_total: {type: Number},
-      fgpu_used: {type: Number}
+      fgpu_used: {type: Number},
+      invitations: {
+        type: Array
+      }
     };
   }
 
@@ -121,11 +125,28 @@ class BackendAISummary extends LitElement {
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
-        }`];
+        }
+
+        wl-button[class*="green"] {
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
+
+        wl-button[class*="red"] {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
+
+        .invitation_folder_name {
+          font-size:13px;
+        }
+        `
+    ];
   }
 
-  firstupdated() {
-
+  firstUpdated() {
   }
 
   connectedCallback() {
@@ -303,6 +324,7 @@ class BackendAISummary extends LitElement {
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
         this._refreshHealthPanel();
+        this._refreshInvitations();
       }, true);
     } else {
       console.log('running');
@@ -310,6 +332,7 @@ class BackendAISummary extends LitElement {
       this.is_superadmin = window.backendaiclient.is_superadmin;
       this.authenticated = true;
       this._refreshHealthPanel();
+      this._refreshInvitations();
     }
   }
 
@@ -322,11 +345,44 @@ class BackendAISummary extends LitElement {
   }
 
   _addComma(num) {
-    if (num === undefined) { 
+    if (num === undefined) {
       return '';
     }
     var regexp = /\B(?=(\d{3})+(?!\d))/g;
     return num.toString().replace(regexp, ',');
+  }
+
+  _refreshInvitations() {
+    window.backendaiclient.vfolder.invitations().then(res => {
+      this.invitations = res.invitations;
+      if (this.active) {
+        setTimeout(() => {
+          this._refreshInvitations()
+        }, 10000);
+      }
+    });
+  }
+
+  _acceptInvitation(invitation) {
+    window.backendaiclient.vfolder.accept_invitation(invitation.id)
+    .then(response => {
+      this.shadowRoot.querySelector('#notification').text = response.msg;
+      this.shadowRoot.querySelector('#notification').show();
+      this._refreshInvitations();
+    })
+    .catch(reason => {
+      this.shadowRoot.querySelector('#notification').text = reason.message;
+      this.shadowRoot.querySelector('#notification').show();
+    })
+  }
+
+  _deleteInvitation(invitation) {
+    window.backendaiclient.vfolder.delete_invitation(invitation.id)
+    .then(res => {
+      this.shadowRoot.querySelector('#notification').text = res.msg;
+      this.shadowRoot.querySelector('#notification').show();
+      this._refreshInvitations();
+    })
   }
 
   render() {
@@ -430,23 +486,60 @@ class BackendAISummary extends LitElement {
         </div>
         <h3 class="plastic-material-title">Actions</h3>
         <div class="horizontal wrap layout">
-              <lablup-activity-panel title="Shortcut" elevation="1">
-                <div slot="message">
-                  <ul>
-                    <li><a href="/data">Upload files</a></li>
-                  </ul>
-                  <ul>
-                    <li><a href="/job">Start a session</a></li>
-                  </ul>
-             ${this.is_admin ? html`
-                    <ul>
-                      <li><a href="/credential">Create a new key pair</a></li>
-                      <li><a href="/credential">Maintain keypairs</a></li>
-                    </ul>` : html``}                    
-                  </div>
-                </lablup-activity-panel>
-          </div>
-        </wl-card>
+          <lablup-activity-panel title="Shortcut" elevation="1">
+            <div slot="message">
+              <ul>
+                <li><a href="/data">Upload files</a></li>
+              </ul>
+              <ul>
+                <li><a href="/job">Start a session</a></li>
+              </ul>
+              ${this.is_admin
+              ? html`
+                <ul>
+                  <li><a href="/credential">Create a new key pair</a></li>
+                  <li><a href="/credential">Maintain keypairs</a></li>
+                </ul>`
+              : html``}
+            </div>
+          </lablup-activity-panel>
+          ${this.invitations.map(invitation =>
+            html`
+            <lablup-activity-panel title="Invitation">
+              <div slot="message">
+                <h3>From ${invitation.inviter}</h3>
+                <span class="invitation_folder_name">${invitation.vfolder_id}</span>
+                <div class="horizontal center layout">
+                Permission:
+                ${[...invitation.perm].map(c => {
+                  return html`
+                  <lablup-shields app="" color="${['green','blue','red'][['r','w','d'].indexOf(c)]}"
+                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
+                </div>
+                <div style="margin-top:25px;" class="horizontal layout justified">
+                  <wl-button
+                    class="fg green"
+                    outlined
+                    @click=${e => this._acceptInvitation(invitation)}
+                  >
+                    <wl-icon>add</wl-icon>
+                    Accept
+                  </wl-button>
+                  <wl-button
+                    class="fg red"
+                    outlined
+                    @click=${e => this._deleteInvitation(invitation)}
+                  >
+                    <wl-icon>remove</wl-icon>
+                    Decline
+                  </wl-button>
+                </div>
+              </div>
+            </lablup-activity-panel>
+            `
+          )}
+        </div>
+      </wl-card>
 `;
   }
 }

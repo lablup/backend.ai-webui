@@ -64,6 +64,9 @@ class BackendAiLogin extends LitElement {
       },
       errorMsg: {
         type: String
+      },
+      loginPanel: {
+        type: Object
       }
     };
   }
@@ -83,11 +86,31 @@ class BackendAiLogin extends LitElement {
   }
 
   firstUpdated() {
+    this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.shadowRoot.querySelector('#login-button').addEventListener('tap', this._login.bind(this));
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   refreshPanel(config) {
+    if (typeof config.plugin === "undefined" || typeof config.plugin.login === "undefined" || config.plugin.login === '') {
+    } else {
+      import('../plugins/' + config.plugin.login).then(()=>{
+        console.log("Plugin loaded.");
+      }).catch((err) => {   // Connection failed
+        if (this.loginPanel.open !== true) {
+          if (err.message !== undefined) {
+            this.notification.text = err.message;
+          } else {
+            this.notification.text = 'Plugin loading failed.';
+          }
+          this.notification.show();
+          this.open();
+        } else {
+          this.notification.text = 'Login failed. Check login information.';
+          this.notification.show();
+        }
+      });
+    }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
@@ -129,11 +152,15 @@ class BackendAiLogin extends LitElement {
   }
 
   open() {
-    this.shadowRoot.querySelector('#login-panel').show();
+    if (this.loginPanel.open !== true) {
+      this.loginPanel.show();
+    }
   }
 
   close() {
-    this.shadowRoot.querySelector('#login-panel').hide();
+    if (this.loginPanel.open === true) {
+      this.loginPanel.hide();
+    }
   }
 
   login() {
@@ -215,7 +242,7 @@ class BackendAiLogin extends LitElement {
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
-        if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+        if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
             this.notification.text = this._politeErrorMessage(err.message);
           } else {
@@ -259,7 +286,7 @@ class BackendAiLogin extends LitElement {
         this._connectViaGQL();
       }
     }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+      if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
           this.notification.text = err.message;
         } else {
@@ -322,7 +349,7 @@ class BackendAiLogin extends LitElement {
       this.notification.text = 'Connected.';
       this.notification.show();
     }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+      if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
           this.notification.text = err.message;
         } else {
@@ -334,7 +361,6 @@ class BackendAiLogin extends LitElement {
         this.notification.text = 'Login failed. Check login information.';
         this.notification.show();
       }
-      this.open();
     });
   }
 
@@ -368,7 +394,7 @@ class BackendAiLogin extends LitElement {
       this.notification.text = 'Connected.';
       this.notification.show();
     }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+      if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
           this.notification.text = err.message;
         } else {
