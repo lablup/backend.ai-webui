@@ -13,7 +13,7 @@ import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
 import './lablup-notification.js';
-import { BackendAIPainKiller } from './backend-ai-painkiller';
+import { BackendAIPainKiller as PainKiller } from './backend-ai-painkiller';
 
 import '../lib/backend.ai-client-es6.js';
 
@@ -264,7 +264,7 @@ class BackendAiLogin extends LitElement {
         this.free();
         if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
-            this.notification.text = BackendAIPainKiller.relieve(err.message);
+            this.notification.text = PainKiller.relieve(err.message);
           } else {
             this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
           }
