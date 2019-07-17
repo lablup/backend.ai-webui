@@ -16,6 +16,7 @@ import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
@@ -25,7 +26,7 @@ import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
 
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
+import {BackendAIPainKiller as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -43,6 +44,7 @@ class BackendAiSessionList extends LitElement {
     this.filterAccessKey = '';
     this.appSupportList = [];
     this.appTemplate = {};
+    this._selected_items = {};
     this._boundControlRenderer = this.controlRenderer.bind(this);
     this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
   }
@@ -59,6 +61,12 @@ class BackendAiSessionList extends LitElement {
       },
       condition: {
         type: String
+      },
+      _grid: {
+        type: Object
+      },
+      _selected_items: {
+        type: Object
       },
       jobs: {
         type: Object
@@ -225,6 +233,7 @@ class BackendAiSessionList extends LitElement {
 
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
+    this._grid = this.shadowRoot.querySelector('#list-grid');
     this._initializeAppTemplate();
     this.refreshTimer = null;
     if (!window.backendaiclient ||
@@ -232,6 +241,11 @@ class BackendAiSessionList extends LitElement {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
     }
     this.notification = this.shadowRoot.querySelector('#notification');
+    this._grid.addEventListener('selected-items-changed', (event) => {
+      console.log(this._selected_items);
+      console.log('items:', this._grid.selectedItems);
+      this._selected_items = this._grid.selectedItems;
+    });
   }
 
   connectedCallback() {
@@ -474,20 +488,20 @@ class BackendAiSessionList extends LitElement {
         {'category': 'Env', 'tag': 'Python (Intel MKL)', 'color': 'yellow'}],
       'python-ff': [
         {'category': 'Env', 'tag': 'Lablup Research', 'color': 'yellow'},
-        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
         {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'}],
-      'python-pytorch':[
+      'python-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'}],
       'ngc-digits': [
         {'category': 'Env', 'tag': 'DIGITS', 'color': 'yellow'},
-        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
         {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'},
-        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
-      'ngc-pytorch':[
+        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+      'ngc-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
-        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'julia': [
         {'category': 'Env', 'tag': 'Julia', 'color': 'yellow'}],
       'r': [
@@ -792,6 +806,7 @@ ${item.map(item => html`
         </div>`, root
     );
   }
+
   controlRenderer(root, column, rowData) {
     render(
       html`
@@ -836,8 +851,9 @@ ${item.map(item => html`
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list"
-         .items="${this.compute_sessions}">
+      <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
+         .items="${this.compute_sessions}" .selected-items="${this._selected_items}">
+        <vaadin-grid-selection-column></vaadin-grid-selection-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
           <vaadin-grid-sort-column resizable width="100px" header="API Key" flex-grow="0" path="access_key">
@@ -851,15 +867,15 @@ ${item.map(item => html`
         <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
         ${this.condition === 'others'
-          ? html`
+      ? html`
           <vaadin-grid-column width="150px" flex-grow="0" header="Status" resizable>
             <template>
               <span style="font-size: 12px;">[[item.status]]</span>
             </template>
           </vaadin-grid-column>
           `
-          : html``
-        }
+      : html``
+      }
         <vaadin-grid-column width="190px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
@@ -906,7 +922,6 @@ ${item.map(item => html`
             </div>
           </template>
         </vaadin-grid-column>
-
         <vaadin-grid-column width="100px" flex-grow="0" resizable header="Usage">
           <template>
             <div class="layout horizontal center flex">
@@ -966,18 +981,18 @@ ${item.map(item => html`
             </wl-button>
           </h4>
           <div style="padding:15px;" class="horizontal layout wrap center center-justified">
-              ${this.appSupportList.map(item => html`
-                <div class="vertical layout center center-justified app-icon">
-                  <paper-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                     .url-postfix="${item.redirect}"
-                                     @click="${(e) => this._runApp(e)}"
-                                     src="${item.src}"></paper-icon-button>
-                  <span class="label">${item.title}</span>
-                </div>
-                `)}
+          ${this.appSupportList.map(item => html`
+            <div class="vertical layout center center-justified app-icon">
+              <paper-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                 .url-postfix="${item.redirect}"
+                                 @click="${(e) => this._runApp(e)}"
+                                 src="${item.src}"></paper-icon-button>
+              <span class="label">${item.title}</span>
             </div>
-          </wl-card>
-        </wl-dialog>
+          `)}
+           </div>
+         </wl-card>
+       </wl-dialog>
 `;
   }
 }
