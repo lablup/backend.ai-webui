@@ -18,6 +18,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
 import './backend-ai-indicator.js';
 
@@ -209,7 +210,7 @@ class BackendAiMaintenanceView extends LitElement {
       this.indicator.set(50, 'Rescan failed.');
       this.indicator.end(1000);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -232,7 +233,7 @@ class BackendAiMaintenanceView extends LitElement {
       this.indicator.set(50, 'Recalculation failed.');
       this.indicator.end(1000);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });

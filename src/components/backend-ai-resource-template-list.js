@@ -22,6 +22,7 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
 
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -168,7 +169,7 @@ class BackendAIResourceTemplateList extends LitElement {
       html`
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">developer_board</wl-icon>            
+            <wl-icon class="fg green">developer_board</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
             <span class="indicator">cores</span>
           </div>
@@ -185,7 +186,7 @@ class BackendAIResourceTemplateList extends LitElement {
           <wl-icon class="fg green">view_module</wl-icon>
           <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
           <span class="indicator">GPU</span>
-        </div>              
+        </div>
       ` : html``}
         ${rowData.item.resource_slots['cuda.shares'] ?
         html`
@@ -193,8 +194,8 @@ class BackendAIResourceTemplateList extends LitElement {
               <wl-icon class="fg green">view_module</wl-icon>
               <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
               <span class="indicator">GPU</span>
-            </div>              
-          ` : html``}        
+            </div>
+          ` : html``}
         </div>
       `, root
     );
@@ -206,11 +207,11 @@ class BackendAIResourceTemplateList extends LitElement {
             <div id="controls" class="layout horizontal flex center"
                  .preset-name="${rowData.item.name}">
               ${this.is_admin ? html`
-                    <wl-button class="fg blue controls-running" fab flat inverted 
+                    <wl-button class="fg blue controls-running" fab flat inverted
                       @click="${(e) => this._launchResourcePresetDialog(e)}">
                        <wl-icon>settings</wl-icon>
                     </wl-button>
-              ` : html``}              
+              ` : html``}
             </div>
       `, root
     );
@@ -228,7 +229,7 @@ class BackendAIResourceTemplateList extends LitElement {
 
   render() {
     // language=HTML
-    return html`      
+    return html`
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
@@ -274,14 +275,14 @@ class BackendAIResourceTemplateList extends LitElement {
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.cpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
-                  `)}    
+                  `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.ram_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
-                  `)}    
+                  `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
@@ -290,19 +291,19 @@ class BackendAIResourceTemplateList extends LitElement {
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.gpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
-                  `)}    
+                  `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="vgpu-resource" label="fGPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.fgpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
-                  `)}    
+                  `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
               <br/><br/>
-              <wl-button class="fg orange create-button" id="create-policy-button" outlined type="button" 
+              <wl-button class="fg orange create-button" id="create-policy-button" outlined type="button"
                 @click="${() => this._modifyResourceTemplate()}">
                 <wl-icon>add</wl-icon>
                 Add
@@ -388,7 +389,7 @@ class BackendAIResourceTemplateList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -439,7 +440,7 @@ class BackendAIResourceTemplateList extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -454,7 +455,7 @@ class BackendAIResourceTemplateList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });

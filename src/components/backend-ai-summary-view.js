@@ -192,7 +192,7 @@ class BackendAISummary extends LitElement {
     }).catch(err => {
       this.jobs = [];
       this.sessions = [];
-      this.shadowRoot.querySelector('#notification').text = 'Couldn\'t connect to manager.';
+      this.shadowRoot.querySelector('#notification').text = PainKiller.relieve('Couldn\'t connect to manager.');
       this.shadowRoot.querySelector('#notification').show();
     });
   }
@@ -238,7 +238,7 @@ class BackendAISummary extends LitElement {
       }
     }).catch(err => {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });

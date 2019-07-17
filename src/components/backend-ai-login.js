@@ -110,14 +110,14 @@ class BackendAiLogin extends LitElement {
       }).catch((err) => {   // Connection failed
         if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
-            this.notification.text = err.message;
+            this.notification.text = PainKiller.relieve(err.message);
           } else {
-            this.notification.text = 'Plugin loading failed.';
+            this.notification.text = PainKiller.relieve('Plugin loading failed.');
           }
           this.notification.show();
           this.open();
         } else {
-          this.notification.text = 'Login failed. Check login information.';
+          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
           this.notification.show();
         }
       });
@@ -266,12 +266,12 @@ class BackendAiLogin extends LitElement {
           if (err.message !== undefined) {
             this.notification.text = PainKiller.relieve(err.message);
           } else {
-            this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+            this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
           this.notification.show();
           this.open();
         } else {
-          this.notification.text = 'Login failed. Check login information.';
+          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
           this.notification.show();
         }
         this.open();
@@ -309,14 +309,14 @@ class BackendAiLogin extends LitElement {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = err.message;
+          this.notification.text = PainKiller.relieve(err.message);
         } else {
-          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
         this.notification.show();
         this.open();
       } else {
-        this.notification.text = 'Login failed. Check login information.';
+        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show();
       }
       this.free();
@@ -373,14 +373,14 @@ class BackendAiLogin extends LitElement {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = err.message;
+          this.notification.text = PainKiller.relieve(err.message);
         } else {
-          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
         this.notification.show();
         this.open();
       } else {
-        this.notification.text = 'Login failed. Check login information.';
+        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show();
       }
     });
@@ -418,14 +418,14 @@ class BackendAiLogin extends LitElement {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = err.message;
+          this.notification.text = PainKiller.relieve(err.message);
         } else {
-          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
         this.notification.show();
         this.open();
       } else {
-        this.notification.text = 'Login failed. Check login information.';
+        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show();
       }
       this.open();
