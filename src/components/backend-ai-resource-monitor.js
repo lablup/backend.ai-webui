@@ -469,10 +469,10 @@ class BackendAiResourceMonitor extends LitElement {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = err.title;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -578,10 +578,10 @@ class BackendAiResourceMonitor extends LitElement {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = err.title;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
       this.shadowRoot.querySelector('#launch-button').disabled = false;
@@ -1031,7 +1031,7 @@ class BackendAiResourceMonitor extends LitElement {
       this._updateEnvironment();
     }).catch((err) => {
       if (err && err.message) {
-        this.$.notification.text = err.message;
+        this.$.notification.text = PainKiller.relieve(err.message);
         this.$.notification.show();
       }
     });
@@ -1174,7 +1174,7 @@ class BackendAiResourceMonitor extends LitElement {
           <h3 class="horizontal center layout">
             <span>Start a new session</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" 
+            <paper-icon-button icon="close" class="blue close-button"
               @click="${() => this._hideSessionDialog()}">
               Close
             </paper-icon-button>
@@ -1213,7 +1213,7 @@ class BackendAiResourceMonitor extends LitElement {
                 <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
                 ${this.vfolders.map(item => html`
                   <paper-item value="${item.name}">${item.name}</paper-item>
-                `)}    
+                `)}
                 </backend-ai-dropdown-menu>
               </div>
             </fieldset>
@@ -1281,7 +1281,7 @@ ${this.resource_templates.map(item => html`
                 <span class="caption">GPU</span>
               </div>
             </wl-expansion>
-              
+
             <fieldset style="padding-top:0;">
               <wl-button class="launch-button fg red" type="button" id="launch-button"
                                            outlined @click="${() => this._newSession()}">

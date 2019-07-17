@@ -33,6 +33,7 @@ import 'weightless/textfield';
 
 import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
+import { BackendAIPainKiller as PainKiller } from './backend-ai-painkiller';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
@@ -951,7 +952,7 @@ class BackendAIData extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -974,7 +975,7 @@ class BackendAIData extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -1006,7 +1007,7 @@ class BackendAIData extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });

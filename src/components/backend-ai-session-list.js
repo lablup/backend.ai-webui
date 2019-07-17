@@ -25,6 +25,7 @@ import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
 
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
 import './lablup-notification.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -417,7 +418,7 @@ class BackendAiSessionList extends LitElement {
       this.loadingIndicator.hide();
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -557,13 +558,13 @@ class BackendAiSessionList extends LitElement {
           this.refreshList();
         }, 1000);
       }).catch((err) => {
-        this.notification.text = 'Problem occurred during termination.';
+        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
         this.notification.show();
       });
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -613,7 +614,7 @@ class BackendAiSessionList extends LitElement {
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
-          this.notification.text = err.message;
+          this.notification.text = PainKiller.relieve(err.message);
           this.notification.show();
         }
       });
@@ -644,10 +645,10 @@ class BackendAiSessionList extends LitElement {
       }, 100);
     }).catch((err) => {
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       } else if (err && err.title) {
-        this.notification.text = err.title;
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.show();
       }
     });

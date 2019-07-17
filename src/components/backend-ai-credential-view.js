@@ -20,6 +20,7 @@ import './lablup-notification.js';
 import './backend-ai-credential-list.js';
 import './backend-ai-resource-policy-list.js';
 import './backend-ai-user-list.js';
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
@@ -327,7 +328,7 @@ class BackendAICredentialView extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -387,7 +388,7 @@ class BackendAICredentialView extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-keypair-dialog').hide();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -466,7 +467,7 @@ class BackendAICredentialView extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -565,7 +566,7 @@ class BackendAICredentialView extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -600,7 +601,7 @@ class BackendAICredentialView extends LitElement {
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
+            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
             ${this._status === 'active' && this.use_user_list === true ? html`
             <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>` :

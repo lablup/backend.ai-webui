@@ -29,6 +29,7 @@ import '@vaadin/vaadin-icons/vaadin-icons.js';
 import 'weightless/select';
 import 'weightless/progress-spinner';
 
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import '../lib/backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -428,7 +429,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <span class="flex"></span>
               </div>
             </app-header>
-            <wl-select id="group-select" name="group-select" label="Project" 
+            <wl-select id="group-select" name="group-select" label="Project"
               @input="${this.changeGroup}" .value="${this.current_group}">
                <option value disabled>Select group</option>
                 ${this.groups.map(group => html`
@@ -465,7 +466,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               ${this.is_admin ?
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
-      
+
               <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
@@ -475,7 +476,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       html``}
               ${this.is_admin ?
       html`
-      
+
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>

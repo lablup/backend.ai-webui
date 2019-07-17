@@ -16,7 +16,7 @@ import './lablup-activity-panel.js';
 import './backend-ai-resource-monitor.js';
 import '../plastics/lablup-shields/lablup-shields';
 
-
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -192,7 +192,7 @@ class BackendAISummary extends LitElement {
     }).catch(err => {
       this.jobs = [];
       this.sessions = [];
-      this.shadowRoot.querySelector('#notification').text = 'Couldn\'t connect to manager.';
+      this.shadowRoot.querySelector('#notification').text = PainKiller.relieve('Couldn\'t connect to manager.');
       this.shadowRoot.querySelector('#notification').show();
     });
   }
@@ -238,7 +238,7 @@ class BackendAISummary extends LitElement {
       }
     }).catch(err => {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -370,8 +370,8 @@ class BackendAISummary extends LitElement {
       this.shadowRoot.querySelector('#notification').show();
       this._refreshInvitations();
     })
-    .catch(reason => {
-      this.shadowRoot.querySelector('#notification').text = reason.message;
+    .catch(err => {
+      this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
       this.shadowRoot.querySelector('#notification').show();
     })
   }
