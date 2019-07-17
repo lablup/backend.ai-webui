@@ -207,6 +207,21 @@ class BackendAICredentialList extends LitElement {
     }
   }
 
+  async _modifyResourcePolicy(e) {
+    const controls = e.target.closest('#controls');
+    const access_key = controls['access-key'];
+    try {
+      const data = await this._getKeyData(access_key);
+      this.keypairInfo = data.keypair;
+      this.shadowRoot.querySelector('#keypair-modify-dialog').show();
+    } catch (err) {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
+      }
+    }
+  }
+
   async _getKeyData(accessKey) {
     let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
@@ -317,6 +332,9 @@ class BackendAICredentialList extends LitElement {
               <wl-button class="fg green" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
                  <wl-icon>assignment</wl-icon>
               </wl-button>
+              <wl-button class="fg blue" fab flat inverted @click="${e => this._modifyResourcePolicy(e)}">
+                <wl-icon>settings</wl-icon>
+              </wl-button>
               ${this.isAdmin && this._isActive() ? html`
                 <wl-button class="fg blue" fab flat inverted @click="${(e) => this._revokeKey(e)}">
                    <wl-icon>delete</wl-icon>
@@ -340,6 +358,26 @@ class BackendAICredentialList extends LitElement {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _saveKeypairModification(e) {
+    const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
+    if (resource_policy === this.keypairInfo.resource_policy || resource_policy === "") {
+      this.notification.text = "No changes were made"
+    } else {
+      window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, { resource_policy })
+      .then(res => {
+        if (res.modify_keypair.ok) {
+          this.notification.text = "Resource policy successfully modified";
+        } else {
+          this.notification.text = "Error";
+        }
+      })
+    }
+
+    this.shadowRoot.querySelector('#policy-list').value = "";
+    this.notification.show();
+    this._hideDialog(e);
   }
 
   static get styles() {
@@ -404,6 +442,22 @@ class BackendAICredentialList extends LitElement {
           --button-bg-hover: var(--paper-green-600);
           --button-bg-active: var(--paper-green-900);
           color: var(--paper-green-900);
+        }
+
+        .gutterBottom {
+          margin-bottom: 20px;
+        }
+
+        #keypair-modify-save {
+          width: 100%;
+          box-sizing: border-box;
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
+
+        #policy-list {
+          width: 100%;
         }
       `];
   }
@@ -590,6 +644,39 @@ class BackendAICredentialList extends LitElement {
                 </vaadin-item>
               </div>
             </div>
+          </div>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="keypair-modify-dialog" fixed backdrop blockscrolling>
+        <wl-card elevation="0" class="intro" style="margin: 0;">
+          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
+            <span>Modify Keypair Resource Policy</span>
+            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <div class="vertical layout" style="padding: 20px">
+            <div class="horizontal layout around-justified gutterBottom">
+                <strong>Current Resource Policy:</strong>
+                ${this.keypairInfo.resource_policy}
+            </div>
+            <div class="horizontal layout center-justified gutterBottom">
+              <wl-select outlined label="Select Policy" id="policy-list">
+                <option value="" selected disabled>Select Policy</option>
+                ${Object.keys(this.resourcePolicy).map(rp =>
+                  html`<option value=${this.resourcePolicy[rp].name}>${this.resourcePolicy[rp].name}</option>`
+                )}
+              </wl-select>
+            </div>
+            <wl-button
+              id="keypair-modify-save"
+              class="fg green"
+              outlined
+              @click=${e => this._saveKeypairModification(e)}
+            >
+              <wl-icon>check</wl-icon>
+              Save Changes
+            </wl-button>
           </div>
         </wl-card>
       </wl-dialog>
