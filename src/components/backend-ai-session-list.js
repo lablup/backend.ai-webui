@@ -44,7 +44,7 @@ class BackendAiSessionList extends LitElement {
     this.filterAccessKey = '';
     this.appSupportList = [];
     this.appTemplate = {};
-    this._selected_items = {};
+    this._selected_items = [];
     this._boundControlRenderer = this.controlRenderer.bind(this);
     this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
   }
@@ -242,7 +242,7 @@ class BackendAiSessionList extends LitElement {
     }
     this.notification = this.shadowRoot.querySelector('#notification');
     this._grid.addEventListener('selected-items-changed', (event) => {
-      console.log(this._selected_items);
+      console.log(this._grid.items);
       console.log('items:', this._grid.selectedItems);
       this._selected_items = this._grid.selectedItems;
     });
@@ -378,9 +378,13 @@ class BackendAiSessionList extends LitElement {
     ];
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
-
       var sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
+        let previous_sessions = this.compute_sessions;
+        let previous_session_keys = [];
+        Object.keys(previous_sessions).map((objectKey, index) => {
+          previous_session_keys.push(previous_sessions[objectKey].sess_id);
+        });
         Object.keys(sessions).map((objectKey, index) => {
           var session = sessions[objectKey];
           var occupied_slots = JSON.parse(session.occupied_slots);
@@ -409,10 +413,16 @@ class BackendAiSessionList extends LitElement {
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
+          Object.keys(this.compute_sessions).map((key, index) => {
+            if (previous_session_keys.includes(sessions[objectKey].sess_id)) {
+              this.compute_sessions[key] = sessions[objectKey];
+            }
+          });
         });
       }
-      this.compute_sessions = sessions;
-      //this.jobs = response;
+      if (this.compute_sessions.length === 0 && sessions.length !== 0) {
+        this.compute_sessions = sessions;
+      }
       let refreshTime;
       if (this.active === true) {
         if (refresh === true) {
