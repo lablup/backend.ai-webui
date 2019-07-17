@@ -32,7 +32,7 @@ class BackendAISummary extends LitElement {
     this.authenticated = false;
     this.active = false;
     this.manager_version = '';
-    this.invitations = []
+    this.invitations = [];
   }
 
   static get properties() {
