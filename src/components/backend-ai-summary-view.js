@@ -16,7 +16,7 @@ import './lablup-activity-panel.js';
 import './backend-ai-resource-monitor.js';
 import '../plastics/lablup-shields/lablup-shields';
 
-
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -127,11 +127,18 @@ class BackendAISummary extends LitElement {
           --paper-progress-transition-delay: 0s;
         }
 
-        wl-button {
+        wl-button[class*="green"] {
           --button-bg: var(--paper-light-green-50);
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
         }
+
+        wl-button[class*="red"] {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
+
         .invitation_folder_name {
           font-size:13px;
         }
@@ -185,7 +192,7 @@ class BackendAISummary extends LitElement {
     }).catch(err => {
       this.jobs = [];
       this.sessions = [];
-      this.shadowRoot.querySelector('#notification').text = 'Couldn\'t connect to manager.';
+      this.shadowRoot.querySelector('#notification').text = PainKiller.relieve('Couldn\'t connect to manager.');
       this.shadowRoot.querySelector('#notification').show();
     });
   }
@@ -231,7 +238,7 @@ class BackendAISummary extends LitElement {
       }
     }).catch(err => {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -363,8 +370,8 @@ class BackendAISummary extends LitElement {
       this.shadowRoot.querySelector('#notification').show();
       this._refreshInvitations();
     })
-    .catch(reason => {
-      this.shadowRoot.querySelector('#notification').text = reason.message;
+    .catch(err => {
+      this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
       this.shadowRoot.querySelector('#notification').show();
     })
   }
@@ -504,10 +511,10 @@ class BackendAISummary extends LitElement {
                 <span class="invitation_folder_name">${invitation.vfolder_id}</span>
                 <div class="horizontal center layout">
                 Permission:
-                ${[...invitation.perm].map(c => { 
+                ${[...invitation.perm].map(c => {
                   return html`
                   <lablup-shields app="" color="${['green','blue','red'][['r','w','d'].indexOf(c)]}"
-                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})} 
+                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
                 </div>
                 <div style="margin-top:25px;" class="horizontal layout justified">
                   <wl-button

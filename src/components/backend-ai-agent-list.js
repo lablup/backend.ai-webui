@@ -18,6 +18,7 @@ import '@polymer/paper-progress/paper-progress';
 
 import './lablup-notification.js';
 
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -231,7 +232,7 @@ class BackendAIAgentList extends LitElement {
       }
     }).catch(err => {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -330,7 +331,7 @@ class BackendAIAgentList extends LitElement {
             <paper-icon-button disabled class="fg controls-running" icon="build"></paper-icon-button>
             <paper-icon-button disabled class="fg controls-running" icon="alarm-add"></paper-icon-button>
             <paper-icon-button disabled class="fg controls-running" icon="av:pause"></paper-icon-button>
-            <paper-icon-button disabled class="fg controls-running" icon="delete"></paper-icon-button>          
+            <paper-icon-button disabled class="fg controls-running" icon="delete"></paper-icon-button>
           ` : html``}
     </div>`, root
     );
