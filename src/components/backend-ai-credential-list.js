@@ -215,6 +215,7 @@ class BackendAICredentialList extends LitElement {
     try {
       const data = await this._getKeyData(access_key);
       this.keypairInfo = data.keypair;
+      this.shadowRoot.querySelector('#policy-list').value = this.keypairInfo.resource_policy;
       this.shadowRoot.querySelector('#keypair-modify-dialog').show();
     } catch (err) {
       if (err && err.message) {
@@ -363,21 +364,31 @@ class BackendAICredentialList extends LitElement {
 
   _saveKeypairModification(e) {
     const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
-    if (resource_policy === this.keypairInfo.resource_policy || resource_policy === "") {
+    const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+
+    let input = {}
+    if (resource_policy !== this.keypairInfo.resource_policy) {
+      input = {...input, resource_policy};
+    }
+    if (rate_limit !== this.keypairInfo.rate_limit) {
+      input = {...input, rate_limit};
+    }
+
+    if (Object.entries(input).length === 0) {
       this.notification.text = "No changes were made"
+      this.notification.show();
     } else {
       window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, { resource_policy })
       .then(res => {
         if (res.modify_keypair.ok) {
-          this.notification.text = "Resource policy successfully modified";
+          this.notification.text = "Successfully modified";
         } else {
           this.notification.text = "Error";
         }
+        this.notification.show();
       })
     }
 
-    this.shadowRoot.querySelector('#policy-list').value = "";
-    this.notification.show();
     this._hideDialog(e);
   }
 
@@ -684,6 +695,7 @@ class BackendAICredentialList extends LitElement {
                   id="rate-limit"
                   min="1"
                   label="Enter Rate Limit"
+                  value="${this.keypairInfo.rate_limit}"
                 ></wl-textfield>
               </wl-label>
             </div>
