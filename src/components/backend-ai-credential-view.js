@@ -614,7 +614,7 @@ class BackendAICredentialView extends LitElement {
           </wl-button>
         </h3>
         <wl-card id="credential-lists" class="tab-content">
-          <wl-expansion name="credential-group" open>
+          <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>
             <span slot="description">
             </span>
@@ -622,7 +622,7 @@ class BackendAICredentialView extends LitElement {
               <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
             </div>
           </wl-expansion>
-          <wl-expansion name="credential-group">
+          <wl-expansion name="credential-group" role="list">
             <h4 slot="title">Inactive</h4>
             <div>
               <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>

@@ -29,7 +29,6 @@ import '@vaadin/vaadin-icons/vaadin-icons.js';
 import 'weightless/select';
 import 'weightless/progress-spinner';
 
-import {default as PainKiller} from "./backend-ai-painkiller.js";
 import '../lib/backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
