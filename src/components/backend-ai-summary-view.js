@@ -475,7 +475,7 @@ class BackendAISummary extends LitElement {
                     <div><span class="progress-value"> ${this.fgpu_used}</span>/${this.fgpu_total} GPUs</div>
                     <div><span class="progress-value">Fractional GPU scaling enabled</div>
                   </div>
-                </div>
+                </div>` : html``}
             </div>
           </lablup-activity-panel>` : html``}
         </div>
