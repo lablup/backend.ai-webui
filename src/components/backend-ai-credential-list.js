@@ -215,7 +215,9 @@ class BackendAICredentialList extends LitElement {
     try {
       const data = await this._getKeyData(access_key);
       this.keypairInfo = data.keypair;
+
       this.shadowRoot.querySelector('#policy-list').value = this.keypairInfo.resource_policy;
+
       this.shadowRoot.querySelector('#keypair-modify-dialog').show();
     } catch (err) {
       if (err && err.message) {
@@ -476,6 +478,7 @@ class BackendAICredentialList extends LitElement {
         wl-label {
           --label-color: black;
         }
+
       `];
   }
 
