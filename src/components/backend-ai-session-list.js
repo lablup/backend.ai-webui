@@ -998,6 +998,7 @@ ${item.map(item => html`
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
+
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
         <vaadin-grid-column width="15px" text-align="center" .renderer="${this._boundCheckboxRenderer}">

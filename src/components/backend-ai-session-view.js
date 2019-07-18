@@ -157,7 +157,6 @@ class BackendAiSessionView extends LitElement {
         <div id="others-lists" class="tab-content" style="display:none;">
           <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
         </div>
-
       </wl-card>
 `;
   }
