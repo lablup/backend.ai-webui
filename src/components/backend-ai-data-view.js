@@ -51,6 +51,7 @@ class BackendAIData extends LitElement {
     this.active = false;
     this.explorer = {};
     this.explorerFiles = [];
+    this.invitees = [];
     this.selectedFolder = '';
     this.uploadFiles = [];
     this.vhost = '';
@@ -62,38 +63,7 @@ class BackendAIData extends LitElement {
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
-    this._boundPermCheckboxRenderer = this.permCheckboxRenderer.bind(this);
-    // mock data for shared users (permission modification)
-    this._sharedUsers = [
-      {
-        'name': 'test01@lablup.com',
-        'perm': 'rw'
-      },
-      {
-        'name': 'test02@lablup.com',
-        'perm': 'r'
-      },
-      {
-        'name': 'test03@lablup.com',
-        'perm': 'r'
-      },
-      {
-        'name': 'test04@lablup.com',
-        'perm': 'rw'
-      },
-      {
-        'name': 'test05@lablup.com',
-        'perm': 'rwd'
-      },
-      {
-        'name': 'test06@lablup.com',
-        'perm': 'rw'
-      },
-      {
-        'name': 'test07@lablup.com',
-        'perm': 'rwd'
-      }
-    ]
+    this._boundPermissionRenderer = this.permissionRenderer.bind(this);
   }
 
   static get properties() {
@@ -134,8 +104,7 @@ class BackendAIData extends LitElement {
       vhosts: {
         type: Array
       },
-      // mock data for shared users
-      _sharedUsers: {
+      invitees: {
         type: Array
       }
     };
@@ -657,19 +626,19 @@ class BackendAIData extends LitElement {
             </wl-button>
           </h3>
           <div role="listbox" style="margin: 0; padding: 10px;">
-            <vaadin-grid theme="row-stripes column-borders compact" .items="${this._sharedUsers}">
+            <vaadin-grid theme="row-stripes column-borders compact" .items="${this.invitees}">
               <vaadin-grid-column
                 width="30px"
                 flex-grow="0"
                 header="#"
                 .renderer="${this._boundIndexRenderer}"
               ></vaadin-grid-column>
-              <vaadin-grid-column header="Name">
+              <vaadin-grid-column header="Invitee Email">
                 <template>
-                  <div>[[item.name]]</div>
+                  <div>[[item.shared_to.email]]</div>
                 </template>
               </vaadin-grid-column>
-              <vaadin-grid-column header="Permission" .renderer="${this._boundPermCheckboxRenderer}">
+              <vaadin-grid-column header="Permission" .renderer="${this._boundPermissionRenderer}">
               </vaadin-grid-column>
             </vaadin-grid>
           </div>
@@ -690,18 +659,34 @@ class BackendAIData extends LitElement {
   }
 
   _modifySharedFolderPermissions() {
-
+    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
+    const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== this.invitees[idx].perm)
+                                     .map((pulldown, idx) => ({
+                                       'perm': pulldown.value,
+                                       'user': this.invitees[idx].shared_to.uuid,
+                                       'vfolder': this.invitees[idx].vfolder_id
+                                     }));
+    const promiseArray = inputList.map(input => window.backendaiclient.vfolder.modify_invitee_permission(input));
+    Promise.all(promiseArray).then(res => {
+      if (res.length === 0) {
+        this.shadowRoot.querySelector('#notification').text = 'No changes made.';
+      } else {
+        this.shadowRoot.querySelector('#notification').text = 'Permission successfully modified.';
+      }
+      this.shadowRoot.querySelector('#notification').show();
+      this.shadowRoot.querySelector('#modify-permission-dialog').hide();
+    })
   }
 
-  permCheckboxRenderer(root, column, rowData) {
+  permissionRenderer(root, column, rowData) {
     render(
       // language=HTML
       html`
         <div>
           <wl-select outlined label="Select Permission">
-            <option ?selected=${rowData.item.perm === 'r'} value="r">View</option>
+            <option ?selected=${rowData.item.perm === 'ro'} value="ro">View</option>
             <option ?selected=${rowData.item.perm === 'rw'} value="rw">Edit</option>
-            <option ?selected=${rowData.item.perm === 'rwd'} value="rwd">Edit+Delete</option>
+            <option ?selected=${rowData.item.perm === 'wd'} value="wd">Edit+Delete</option>
           </wl-select>
         </div>
       `, root
@@ -772,7 +757,7 @@ class BackendAIData extends LitElement {
               <paper-icon-button
                 class="fg cyan controls-running"
                 icon="perm-identity"
-                @click=${e => this._modifyPermissionDialog(e)}
+                @click=${e => this._modifyPermissionDialog(rowData.item.id)}
               ></paper-icon-button>
             `
             : html``
@@ -1210,8 +1195,12 @@ class BackendAIData extends LitElement {
     this.openDialog('share-folder-dialog');
   }
 
-  _modifyPermissionDialog(e) {
-    this.openDialog('modify-permission-dialog');
+  _modifyPermissionDialog(vfolder_id) {
+    window.backendaiclient.vfolder.list_invitees(vfolder_id)
+    .then(res => {
+      this.invitees = res.shared;
+      this.openDialog('modify-permission-dialog');
+    })
   }
 
   _shareFolder(e) {
