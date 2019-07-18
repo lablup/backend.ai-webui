@@ -27,7 +27,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/checkbox';
 
-import {BackendAIPainKiller as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
 import './lablup-notification.js';
 import './backend-ai-indicator.js';

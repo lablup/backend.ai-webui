@@ -18,7 +18,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
 import './backend-ai-indicator.js';
 

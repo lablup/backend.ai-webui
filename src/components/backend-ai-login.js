@@ -13,7 +13,7 @@ import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
 import './lablup-notification.js';
-import { BackendAIPainKiller as PainKiller } from './backend-ai-painkiller';
+import {default as PainKiller} from './backend-ai-painkiller';
 
 import '../lib/backend.ai-client-es6.js';
 
