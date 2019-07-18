@@ -431,6 +431,8 @@ class BackendAiSessionList extends LitElement {
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
           if (this._selected_items.includes(sessions[objectKey].sess_id)) {
             sessions[objectKey].checked = true;
+          } else {
+            sessions[objectKey].checked = false;
           }
         });
       }
@@ -810,16 +812,20 @@ class BackendAiSessionList extends LitElement {
     let terminateSessionQueue = this._selected_items.map(item => {
       return this._terminateKernel(item.sess_id, item.access_key);
     });
+    this._selected_items = [];
     return Promise.all(terminateSessionQueue).then(response => {
-      this._selected_items = [];
       this.terminateSelectedSessionsDialog.hide();
       this.notification.text = "Sessions terminated.";
       this.notification.show();
+      this._grid.clearCache();
+      this._grid.render();
+
     }).catch((err) => {
-      this._selected_items = [];
       this.terminateSelectedSessionsDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
       this.notification.show();
+      this._grid.clearCache();
+      this._grid.render();
     });
   }
 
@@ -954,12 +960,8 @@ ${item.map(item => html`
   checkboxRenderer(root, column, rowData) {
     render(
       html`
-        <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
-        ${rowData.item.checked ? html`
-            <wl-checkbox style="--checkbox-size:12px;" checked @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
-            ` : html`
-            <wl-checkbox style="--checkbox-size:12px;" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>`}
-        </div>`, root
+        <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+      `, root
     );
   }
 
@@ -983,14 +985,14 @@ ${item.map(item => html`
       </div>
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
-        <vaadin-grid-column width="25px" .renderer="${this._boundCheckboxRenderer}">
+        <vaadin-grid-column width="15px" text-align="center" .renderer="${this._boundCheckboxRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
           <vaadin-grid-sort-column resizable width="100px" header="API Key" flex-grow="0" path="access_key">
             <template>
               <div class="layout vertical">
-                <span class="indicator">{{item.access_key}}</span>
+                <span class="indicator">[[item.access_key]]</span>
               </div>
             </template>
           </vaadin-grid-sort-column>
@@ -1007,7 +1009,7 @@ ${item.map(item => html`
           `
       : html``
       }
-        <vaadin-grid-column width="190px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="100px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
             <div class="layout horizontal center flex">
