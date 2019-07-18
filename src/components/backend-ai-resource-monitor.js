@@ -1214,7 +1214,7 @@ class BackendAiResourceMonitor extends LitElement {
               <div class="layout vertical">
                 <paper-input id="session-name" label="Session name (optional)"
                              value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
-                             error-message="4 or more characters">
+                             error-message="4 or more characters / no whitespace">
                 </paper-input>
                 <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
                 ${this.vfolders.map(item => html`
