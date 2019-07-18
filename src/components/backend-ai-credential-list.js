@@ -599,7 +599,7 @@ class BackendAICredentialList extends LitElement {
         <vaadin-grid-column width="150px" resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling>
+      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span style="margin-right:15px;">Keypair Detail</span>
@@ -676,7 +676,7 @@ class BackendAICredentialList extends LitElement {
             <div class="vertical layout center-justified gutterBottom">
               <wl-label>
                 Resource Policy
-                <wl-select outlined id="policy-list" label="Select Policy">
+                <wl-select id="policy-list" label="Select Policy">
                   ${Object.keys(this.resourcePolicy).map(rp =>
                     html`
                       <option value=${this.resourcePolicy[rp].name}>
@@ -692,10 +692,9 @@ class BackendAICredentialList extends LitElement {
                 Rate Limit
                 <wl-textfield
                   type="number"
-                  outlined
                   id="rate-limit"
                   min="1"
-                  label="Enter Rate Limit"
+                  label="Rate Limit"
                   value="${this.keypairInfo.rate_limit}"
                 ></wl-textfield>
               </wl-label>
