@@ -11,9 +11,11 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
+import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
-import 'weightless/button';
+import 'weightless/label';
+import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
@@ -213,6 +215,9 @@ class BackendAICredentialList extends LitElement {
     try {
       const data = await this._getKeyData(access_key);
       this.keypairInfo = data.keypair;
+
+      this.shadowRoot.querySelector('#policy-list').value = this.keypairInfo.resource_policy;
+
       this.shadowRoot.querySelector('#keypair-modify-dialog').show();
     } catch (err) {
       if (err && err.message) {
@@ -354,7 +359,6 @@ class BackendAICredentialList extends LitElement {
   }
 
   _hideDialog(e) {
-    this.notification.show();
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
@@ -362,21 +366,32 @@ class BackendAICredentialList extends LitElement {
 
   _saveKeypairModification(e) {
     const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
-    if (resource_policy === this.keypairInfo.resource_policy || resource_policy === "") {
+    const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+
+    let input = {}
+    if (resource_policy !== this.keypairInfo.resource_policy) {
+      input = {...input, resource_policy};
+    }
+    if (rate_limit !== this.keypairInfo.rate_limit) {
+      input = {...input, rate_limit};
+    }
+
+    if (Object.entries(input).length === 0) {
       this.notification.text = "No changes were made"
+      this.notification.show();
     } else {
-      window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, { resource_policy })
+      window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
       .then(res => {
         if (res.modify_keypair.ok) {
-          this.notification.text = "Resource policy successfully modified";
+          this.notification.text = "Successfully modified";
+          this.refresh();
         } else {
           this.notification.text = "Error";
         }
+        this.notification.show();
       })
     }
 
-    this.shadowRoot.querySelector('#policy-list').value = "";
-    this.notification.show();
     this._hideDialog(e);
   }
 
@@ -459,6 +474,11 @@ class BackendAICredentialList extends LitElement {
         #policy-list {
           width: 100%;
         }
+
+        wl-label {
+          --label-color: black;
+        }
+
       `];
   }
 
@@ -582,7 +602,7 @@ class BackendAICredentialList extends LitElement {
         <vaadin-grid-column width="150px" resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling>
+      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span style="margin-right:15px;">Keypair Detail</span>
@@ -656,17 +676,31 @@ class BackendAICredentialList extends LitElement {
             </wl-button>
           </h3>
           <div class="vertical layout" style="padding: 20px">
-            <div class="horizontal layout around-justified gutterBottom">
-                <strong>Current Resource Policy:</strong>
-                ${this.keypairInfo.resource_policy}
+            <div class="vertical layout center-justified gutterBottom">
+              <wl-label>
+                Resource Policy
+                <wl-select id="policy-list" label="Select Policy">
+                  ${Object.keys(this.resourcePolicy).map(rp =>
+                    html`
+                      <option value=${this.resourcePolicy[rp].name}>
+                        ${this.resourcePolicy[rp].name}
+                      </option>
+                    `
+                  )}
+                </wl-select>
+              </wl-label>
             </div>
-            <div class="horizontal layout center-justified gutterBottom">
-              <wl-select outlined label="Select Policy" id="policy-list">
-                <option value="" selected disabled>Select Policy</option>
-                ${Object.keys(this.resourcePolicy).map(rp =>
-                  html`<option value=${this.resourcePolicy[rp].name}>${this.resourcePolicy[rp].name}</option>`
-                )}
-              </wl-select>
+            <div class="vertical layout center-justified gutterBottom">
+              <wl-label>
+                Rate Limit
+                <wl-textfield
+                  type="number"
+                  id="rate-limit"
+                  min="1"
+                  label="Rate Limit"
+                  value="${this.keypairInfo.rate_limit}"
+                ></wl-textfield>
+              </wl-label>
             </div>
             <wl-button
               id="keypair-modify-save"
