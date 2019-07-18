@@ -911,12 +911,10 @@ class VFolder {
    * Accept specific invitation.
    *
    * @param {string} inv_id - Invitation ID.
-   * @param {string} inv_ak - Access key to accept the invitation.
    */
-  accept_invitation(inv_id, inv_ak) {
+  accept_invitation(inv_id) {
     let body = {
-      'inv_id': inv_id,
-      'inv_ak': inv_ak
+      'inv_id': inv_id
     };
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/invitations/accept`, body);
     return this.client._wrapWithPromise(rqst);
@@ -1236,14 +1234,14 @@ class ResourcePolicy {
    * @param {string} name - resource policy name to mutate.
    * @param {json} input - resource policy specification and data. Required fields are:
    * {
-   *   'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
-   *   'total_resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
-   *   'max_concurrent_sessions': concurrency_limit,
-   *   'max_containers_per_session': containers_per_session_limit,
-   *   'idle_timeout': idle_timeout,
-   *   'max_vfolder_count': vfolder_count_limit,
-   *   'max_vfolder_size': vfolder_capacity_limit,
-   *   'allowed_vfolder_hosts': vfolder_hosts
+   *   {string} 'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
+   *   {JSONString} 'total_resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
+   *   {int} 'max_concurrent_sessions': concurrency_limit,
+   *   {int} 'max_containers_per_session': containers_per_session_limit,
+   *   {bigint} 'idle_timeout': idle_timeout,
+   *   {int} 'max_vfolder_count': vfolder_count_limit,
+   *   {bigint} 'max_vfolder_size': vfolder_capacity_limit,
+   *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts
    * };
    */
   mutate(name = null, input) {
@@ -1260,7 +1258,7 @@ class ResourcePolicy {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
         `  modify_keypair_resource_policy(name: $name, props: $input) {` +
-        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `    ok msg ` +
         `  }` +
         `}`;
       let v = {

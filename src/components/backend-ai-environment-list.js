@@ -14,7 +14,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
 import 'weightless/button';
@@ -91,12 +91,12 @@ class BackendAiEnvironmentList extends LitElement {
             <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
           </template>
           <template>
-            <div class="layout vertical" style="margin:0; padding:0;">
+            <div "layout horizontal center center-justified"  style="margin:0; padding:0;">
               <template is="dom-if" if="[[item.installed]]">
-                <wl-checkbox checked></wl-checkbox>
+                <wl-checkbox style="--checkbox-size:12px;" checked></wl-checkbox>
               </template>
               <template is="dom-if" if="[[!item.installed]]">
-                <wl-checkbox></wl-checkbox>
+                <wl-checkbox style="--checkbox-size:12px;"></wl-checkbox>
               </template>
             </div>
           </template>

@@ -49,10 +49,10 @@ class BackendAiResourceMonitor extends LitElement {
       'R': 'r-base',
       'Julia': 'julia',
       'Lua': 'lua',
-      'RAPID (NGC)':'ngc-rapid',
-      'DIGITS (NGC)':'ngc-digits',
-      'PyTorch (NGC)':'ngc-pytorch',
-      'TensorFlow (NGC)':'ngc-tensorflow'
+      'RAPID (NGC)': 'ngc-rapid',
+      'DIGITS (NGC)': 'ngc-digits',
+      'PyTorch (NGC)': 'ngc-pytorch',
+      'TensorFlow (NGC)': 'ngc-tensorflow'
     };
     this.tags = {
       'TensorFlow': [],
@@ -64,10 +64,10 @@ class BackendAiResourceMonitor extends LitElement {
       'R': [],
       'Julia': [],
       'Lua': [],
-      'RAPID (NGC)':['NVidia GPU Cloud'],
-      'DIGITS (NGC)':['NVidia GPU Cloud'],
-      'PyTorch (NGC)':['NVidia GPU Cloud'],
-      'TensorFlow (NGC)':['NVidia GPU Cloud']
+      'RAPID (NGC)': ['NVidia GPU Cloud'],
+      'DIGITS (NGC)': ['NVidia GPU Cloud'],
+      'PyTorch (NGC)': ['NVidia GPU Cloud'],
+      'TensorFlow (NGC)': ['NVidia GPU Cloud']
     };
     this.versions = ['3.6'];
     this.languages = [];
@@ -340,9 +340,13 @@ class BackendAiResourceMonitor extends LitElement {
 
         wl-button.launch-button {
           width: 335px;
-          --button-bg: white;
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
+          --button-bg: var(--paper-red-50);
+          --button-bg-active: var(--paper-red-300);
+          --button-bg-hover: var(--paper-red-300);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
         }
 
         wl-button.resource-button {
@@ -365,9 +369,11 @@ class BackendAiResourceMonitor extends LitElement {
         .resources.vertical .monitor {
           margin-bottom: 10px;
         }
+
         .resources.vertical .monitor div:first-child {
           width: 40px;
         }
+
         wl-button[fab] {
           --button-fab-size: 70px;
           border-radius: 6px;
@@ -469,10 +475,10 @@ class BackendAiResourceMonitor extends LitElement {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = err.title;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -578,10 +584,10 @@ class BackendAiResourceMonitor extends LitElement {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = err.title;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
       this.shadowRoot.querySelector('#launch-button').disabled = false;
@@ -1031,7 +1037,7 @@ class BackendAiResourceMonitor extends LitElement {
       this._updateEnvironment();
     }).catch((err) => {
       if (err && err.message) {
-        this.$.notification.text = err.message;
+        this.$.notification.text = PainKiller.relieve(err.message);
         this.$.notification.show();
       }
     });
@@ -1123,7 +1129,7 @@ class BackendAiResourceMonitor extends LitElement {
             </div>
           </div>
           ${this.total_slot.gpu_slot ?
-        html`
+      html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
@@ -1134,9 +1140,9 @@ class BackendAiResourceMonitor extends LitElement {
               <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
             </div>
           </div>` :
-        html``}
+      html``}
           ${this.total_slot.vgpu_slot ?
-        html`
+      html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
@@ -1147,7 +1153,7 @@ class BackendAiResourceMonitor extends LitElement {
               <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
             </div>
           </div>` :
-        html``}
+      html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
@@ -1174,7 +1180,7 @@ class BackendAiResourceMonitor extends LitElement {
           <h3 class="horizontal center layout">
             <span>Start a new session</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button" 
+            <paper-icon-button icon="close" class="blue close-button"
               @click="${() => this._hideSessionDialog()}">
               Close
             </paper-icon-button>
@@ -1213,7 +1219,7 @@ class BackendAiResourceMonitor extends LitElement {
                 <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
                 ${this.vfolders.map(item => html`
                   <paper-item value="${item.name}">${item.name}</paper-item>
-                `)}    
+                `)}
                 </backend-ai-dropdown-menu>
               </div>
             </fieldset>
@@ -1281,9 +1287,9 @@ ${this.resource_templates.map(item => html`
                 <span class="caption">GPU</span>
               </div>
             </wl-expansion>
-              
+
             <fieldset style="padding-top:0;">
-              <wl-button class="launch-button fg red" type="button" id="launch-button"
+              <wl-button class="launch-button" type="button" id="launch-button"
                                            outlined @click="${() => this._newSession()}">
                                           <wl-icon>rowing</wl-icon>
                 <span id="launch-button-msg">Launch</span>

@@ -6,7 +6,7 @@
 import {css, html, LitElement} from "lit-element";
 import {render} from 'lit-html';
 
-import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -18,6 +18,7 @@ import 'weightless/button';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
 import './lablup-notification.js';
+import { BackendAIPainKiller as PainKiller } from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
@@ -185,7 +186,7 @@ class BackendAICredentialList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -200,7 +201,7 @@ class BackendAICredentialList extends LitElement {
       this.shadowRoot.querySelector('#keypair-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     }
@@ -231,7 +232,7 @@ class BackendAICredentialList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -263,7 +264,7 @@ class BackendAICredentialList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -487,7 +488,7 @@ class BackendAICredentialList extends LitElement {
                 <div class="layout horizontal configuration">
                   <wl-icon class="fg green">view_module</wl-icon>
                   <span>[[item.total_resource_slots.cuda_shares]]</span>
-                  <span class="indicator">vGPU</span>
+                  <span class="indicator">fGPU</span>
                 </div>
               </template>
             </div>

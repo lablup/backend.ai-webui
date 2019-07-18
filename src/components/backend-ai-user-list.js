@@ -14,7 +14,7 @@ import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-spinner/paper-spinner-lite';
 import './lablup-loading-indicator';
 
-import '@vaadin/vaadin-grid/vaadin-grid.js';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -29,6 +29,7 @@ import 'weightless/snackbar';
 import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
@@ -260,7 +261,7 @@ class BackendAIUserList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -294,7 +295,7 @@ class BackendAIUserList extends LitElement {
       this.shadowRoot.querySelector('#user-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     }
@@ -324,7 +325,7 @@ class BackendAIUserList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -356,7 +357,7 @@ class BackendAIUserList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -382,8 +383,14 @@ class BackendAIUserList extends LitElement {
     return new Date(d).toUTCString();
   }
 
-  _indexFrom1(index) {
-    return index + 1;
+  _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
   }
 
   _markIfUnlimited(value) {
@@ -397,7 +404,7 @@ class BackendAIUserList extends LitElement {
   controlRenderer(root, column, rowData) {
     render(
       html`
-            <div 
+            <div
               id="controls"
               class="layout horizontal flex center"
               .user-id="${rowData.item.email}"
@@ -408,8 +415,8 @@ class BackendAIUserList extends LitElement {
                 @click="${(e) => this._showUserDetail(e)}"
               ></paper-icon-button>
 
-              <paper-icon-button 
-                class="fg blue" 
+              <paper-icon-button
+                class="fg blue"
                 icon="settings"
                 @click="${(e) => this._editUserDetail(e)}"
               ></paper-icon-button>
@@ -420,7 +427,7 @@ class BackendAIUserList extends LitElement {
                     <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
                                        @click="${(e) => this._deleteKey(e)}"></paper-icon-button>
               ` : html``}
-              
+
               ${this._isActive() ? html`
                   <paper-icon-button class="fg blue controls-running" icon="icons:redo"
                                      on-tap="_reuseKey"></paper-icon-button>
@@ -444,15 +451,15 @@ class BackendAIUserList extends LitElement {
           description          = this.shadowRoot.querySelector('#description').value,
           is_active            = this.shadowRoot.querySelector('#is_active').checked,
           need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
-    
+
     if (password !== confirm) {
-      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match."
+      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match.";
       this.shadowRoot.querySelector("#notification").show();
 
       return;
     }
 
-    let input = {}
+    let input = {};
 
     if (password !== '')
       input.password = password;
@@ -471,11 +478,11 @@ class BackendAIUserList extends LitElement {
 
     if (is_active !== this.userInfo.is_active)
       input.is_active = is_active;
-    
+
     if (Object.entries(input).length === 0) {
       this._hideDialog(e);
 
-      this.shadowRoot.querySelector("#notification").text = "No Changes Made"
+      this.shadowRoot.querySelector("#notification").text = "No Changes Made";
       this.shadowRoot.querySelector("#notification").show();
 
       return;
@@ -498,7 +505,7 @@ class BackendAIUserList extends LitElement {
 
       this.shadowRoot.querySelector("#notification").show();
     })
-    
+
   }
 
   render() {
@@ -508,11 +515,7 @@ class BackendAIUserList extends LitElement {
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="User list"
                    id="user-grid" .items="${this.users}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable>
-          <template class="header">#</template>
-          <template>[[index]]</template>
-        </vaadin-grid-column>
-
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
             <div class="layout horizontal center flex">
@@ -549,13 +552,13 @@ class BackendAIUserList extends LitElement {
                   disabled
                   value="${this.userInfo.email}"
                 ></wl-textfield>
-                <wl-textfield 
+                <wl-textfield
                   label="User name"
                   id="username"
                   ?disabled=${!this.editMode}
                   value="${this.userInfo.username}"
                 ></wl-textfield>
-                <wl-textfield 
+                <wl-textfield
                   label="Full name"
                   id="full_name"
                   ?disabled=${!this.editMode}

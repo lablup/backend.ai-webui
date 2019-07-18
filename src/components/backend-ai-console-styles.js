@@ -700,12 +700,7 @@ export const BackendAiStyles =
     }
 
     wl-card .flex {
-
       display: flex;
-    }
-
-    wl-card > div {
-      margin: 10px;
     }
 
     wl-card.entries > div {

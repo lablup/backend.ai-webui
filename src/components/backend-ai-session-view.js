@@ -61,7 +61,6 @@ class BackendAiSessionView extends LitElement {
           padding-bottom: 0;
           padding-left: 0;
         }
-
         wl-tab-group {
           --tab-group-indicator-bg: var(--paper-red-500);
         }
