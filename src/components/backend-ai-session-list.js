@@ -771,6 +771,7 @@ class BackendAiSessionList extends LitElement {
     }
   }
 
+  // Single session closing
   _openTerminateSessionDialog(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
@@ -779,71 +780,6 @@ class BackendAiSessionList extends LitElement {
     this.terminateSessionDialog.kernelId = kernelId;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
-  }
-
-  _terminateKernelWithCheck(e) {
-    if (this.terminationQueue.includes(this.terminateSessionDialog.kernelId)) {
-      this.notification.text = 'Already terminating the session.';
-      this.notification.show();
-      return false;
-    }
-    this.notification.text = 'Terminating session...';
-    this.notification.show();
-    return this._terminateKernel(this.terminateSessionDialog.kernelId, this.terminateSessionDialog.accessKey).then(response => {
-      this._selected_items = [];
-      this.terminateSessionDialog.hide();
-      this.notification.text = "Session terminated.";
-      this.notification.show();
-    }).catch((err) => {
-      this._selected_items = [];
-      this.terminateSessionDialog.hide();
-      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
-    });
-  }
-
-  _openTerminateSelectedSessionsDialog(e) {
-    this.terminateSelectedSessionsDialog.show();
-  }
-
-  _terminateSelectedSessionsWithCheck() {
-    this.notification.text = 'Terminating sessions...';
-    this.notification.show();
-    let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item.sess_id, item.access_key);
-    });
-    this._selected_items = [];
-    return Promise.all(terminateSessionQueue).then(response => {
-      this.terminateSelectedSessionsDialog.hide();
-      this.notification.text = "Sessions terminated.";
-      this.notification.show();
-      this._grid.clearCache();
-      this._grid.render();
-
-    }).catch((err) => {
-      this.terminateSelectedSessionsDialog.hide();
-      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
-      this._grid.clearCache();
-      this._grid.render();
-    });
-  }
-
-  _terminateSelectedSessions() {
-    this.notification.text = 'Terminating sessions...';
-    this.notification.show();
-    let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item.sess_id, item.access_key);
-    });
-    return Promise.all(terminateSessionQueue).then(response => {
-      this._selected_items = [];
-      this.notification.text = "Sessions terminated.";
-      this.notification.show();
-    }).catch((err) => {
-      this._selected_items = [];
-      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
-    });
   }
 
   _terminateSession(e) {
@@ -860,6 +796,85 @@ class BackendAiSessionList extends LitElement {
     this.notification.show();
     return this._terminateKernel(kernelId, accessKey);
   }
+
+  _terminateSessionWithCheck(e) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.kernelId)) {
+      this.notification.text = 'Already terminating the session.';
+      this.notification.show();
+      return false;
+    }
+    this.notification.text = 'Terminating session...';
+    this.notification.show();
+    return this._terminateKernel(this.terminateSessionDialog.kernelId, this.terminateSessionDialog.accessKey).then(response => {
+      this._selected_items = [];
+      this._clearCheckboxes();
+      this.terminateSessionDialog.hide();
+      this.notification.text = "Session terminated.";
+      this.notification.show();
+    }).catch((err) => {
+      this._selected_items = [];
+      this._clearCheckboxes();
+      this.terminateSessionDialog.hide();
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  // Multiple sessions closing
+  _openTerminateSelectedSessionsDialog(e) {
+    this.terminateSelectedSessionsDialog.show();
+  }
+
+  _clearCheckboxes() {
+    let elm = this.shadowRoot.querySelectorAll('wl-checkbox.list-check');
+    [...elm].forEach((checkbox) => {
+      checkbox.removeAttribute('checked');
+    });
+  }
+
+  _terminateSelectedSessionsWithCheck() {
+    this.notification.text = 'Terminating sessions...';
+    this.notification.show();
+
+    let terminateSessionQueue = this._selected_items.map(item => {
+      return this._terminateKernel(item.sess_id, item.access_key);
+    });
+    this._selected_items = [];
+    return Promise.all(terminateSessionQueue).then(response => {
+      this.terminateSelectedSessionsDialog.hide();
+      this._clearCheckboxes();
+      this.notification.text = "Sessions terminated.";
+      this.notification.show();
+
+    }).catch((err) => {
+      this.terminateSelectedSessionsDialog.hide();
+      this._clearCheckboxes();
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  _terminateSelectedSessions() {
+    this.notification.text = 'Terminating sessions...';
+    this.notification.show();
+
+    let terminateSessionQueue = this._selected_items.map(item => {
+      return this._terminateKernel(item.sess_id, item.access_key);
+    });
+    return Promise.all(terminateSessionQueue).then(response => {
+      this._selected_items = [];
+      this._clearCheckboxes();
+      this.notification.text = "Sessions terminated.";
+      this.notification.show();
+    }).catch((err) => {
+      this._selected_items = [];
+      this._clearCheckboxes();
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  // General closing
 
   async _terminateKernel(kernelId, accessKey) {
     this.terminationQueue.push(kernelId);
@@ -960,7 +975,7 @@ ${item.map(item => html`
   checkboxRenderer(root, column, rowData) {
     render(
       html`
-        <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+        <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
       `, root
     );
   }
@@ -1133,7 +1148,7 @@ ${item.map(item => html`
          </div>
          <div slot="footer">
             <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button @click="${(e) => this._terminateKernelWithCheck(e)}">Okay</wl-button>
+            <wl-button @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
          </div>
       </wl-dialog>
       <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
