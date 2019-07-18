@@ -218,6 +218,15 @@ class BackendAiSessionList extends LitElement {
           height: 25px;
         }
 
+        wl-button.multiple-action-button {
+          --button-color: red;
+          --button-color-active: red;
+          --button-color-hover: red;
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
+
         div.filters #access-key-filter {
           --paper-input-container-input: {
             font-size: small;
@@ -854,6 +863,11 @@ ${item.map(item => html`
     } else {
       this._selected_items.splice(exist, 1);
     }
+    if (this._selected_items.length > 0) {
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'block';
+    } else {
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
+    }
     console.log(this._selected_items);
   }
 
@@ -875,7 +889,9 @@ ${item.map(item => html`
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
-        <div>${this._selected_items ? html`EMPTY` : html`EXIST`}</div>
+        <div id="multiple-action-buttons" style="display:none;">
+          <wl-button flat outlined class="multiple-action-button">Stop sessions</wl-button>
+        </div>
         <span class="flex"></span>
         <paper-input id="access-key-filter" type="search" size=30
                      label="access key" no-label-float .value="${this.filterAccessKey}"
