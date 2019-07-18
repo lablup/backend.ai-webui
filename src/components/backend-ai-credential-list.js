@@ -11,9 +11,11 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
+import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
-import 'weightless/button';
+import 'weightless/label';
+import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
@@ -458,6 +460,10 @@ class BackendAICredentialList extends LitElement {
         #policy-list {
           width: 100%;
         }
+
+        wl-label {
+          --label-color: black;
+        }
       `];
   }
 
@@ -655,17 +661,31 @@ class BackendAICredentialList extends LitElement {
             </wl-button>
           </h3>
           <div class="vertical layout" style="padding: 20px">
-            <div class="horizontal layout around-justified gutterBottom">
-                <strong>Current Resource Policy:</strong>
-                ${this.keypairInfo.resource_policy}
+            <div class="vertical layout center-justified gutterBottom">
+              <wl-label>
+                Resource Policy
+                <wl-select outlined id="policy-list" label="Select Policy">
+                  ${Object.keys(this.resourcePolicy).map(rp =>
+                    html`
+                      <option value=${this.resourcePolicy[rp].name}>
+                        ${this.resourcePolicy[rp].name}
+                      </option>
+                    `
+                  )}
+                </wl-select>
+              </wl-label>
             </div>
-            <div class="horizontal layout center-justified gutterBottom">
-              <wl-select outlined label="Select Policy" id="policy-list">
-                <option value="" selected disabled>Select Policy</option>
-                ${Object.keys(this.resourcePolicy).map(rp =>
-                  html`<option value=${this.resourcePolicy[rp].name}>${this.resourcePolicy[rp].name}</option>`
-                )}
-              </wl-select>
+            <div class="vertical layout center-justified gutterBottom">
+              <wl-label>
+                Rate Limit
+                <wl-textfield
+                  type="number"
+                  outlined
+                  id="rate-limit"
+                  min="1"
+                  label="Enter Rate Limit"
+                ></wl-textfield>
+              </wl-label>
             </div>
             <wl-button
               id="keypair-modify-save"
