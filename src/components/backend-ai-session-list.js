@@ -30,10 +30,11 @@ import 'weightless/checkbox';
 import {BackendAIPainKiller as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
 import './lablup-notification.js';
+import './backend-ai-indicator.js';
+import '../plastics/lablup-shields/lablup-shields';
+
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import '../plastics/lablup-shields/lablup-shields';
-import './backend-ai-indicator.js';
 
 class BackendAiSessionList extends LitElement {
   constructor() {
@@ -219,12 +220,13 @@ class BackendAiSessionList extends LitElement {
         }
 
         wl-button.multiple-action-button {
-          --button-color: red;
+          --button-color: var(--paper-red-600);
           --button-color-active: red;
           --button-color-hover: red;
           --button-bg: var(--paper-red-50);
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-red-600);
         }
 
         div.filters #access-key-filter {
@@ -569,7 +571,20 @@ class BackendAiSessionList extends LitElement {
     );
   }
 
-  _terminateKernel(e) {
+  _terminateSelectedSessions() {
+    this.notification.text = 'Terminating sessions...';
+    this.notification.show();
+    let terminateSessionQueue = this._selected_items.map(item => {
+      return this._terminateKernel(item.sess_id, item.access_key);
+    });
+    return Promise.all(terminateSessionQueue).then(response => {
+    }).catch((err) => {
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  _terminateSession(e) {
     const controls = e.target.closest('#controls');
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
@@ -581,8 +596,12 @@ class BackendAiSessionList extends LitElement {
     }
     this.notification.text = 'Terminating session...';
     this.notification.show();
+    return this._terminateKernel(kernelId, accessKey);
+  }
+
+  async _terminateKernel(kernelId, accessKey) {
     this.terminationQueue.push(kernelId);
-    this._terminateApp(kernelId).then(() => {
+    return this._terminateApp(kernelId).then(() => {
       window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
         setTimeout(() => {
           this.terminationQueue = [];
@@ -849,7 +868,7 @@ ${item.map(item => html`
                                ` : html``}
              ${this.condition === 'running' ? html`
             <paper-icon-button class="fg red controls-running"
-                               @click="${(e) => this._terminateKernel(e)}"
+                               @click="${(e) => this._terminateSession(e)}"
                                icon="delete"></paper-icon-button>
                                ` : html``}
         </div>`, root
@@ -868,7 +887,6 @@ ${item.map(item => html`
     } else {
       this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
     }
-    console.log(this._selected_items);
   }
 
   checkboxRenderer(root, column, rowData) {
@@ -890,7 +908,10 @@ ${item.map(item => html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
-          <wl-button flat outlined class="multiple-action-button">Stop sessions</wl-button>
+          <wl-button outlined class="multiple-action-button" @click="${() => this._terminateSelectedSessions()}">
+            <wl-icon style="--icon-size: 20px;">delete</wl-icon>
+            Stop sessions
+          </wl-button>
         </div>
         <span class="flex"></span>
         <paper-input id="access-key-filter" type="search" size=30
