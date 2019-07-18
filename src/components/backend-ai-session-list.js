@@ -94,6 +94,9 @@ class BackendAiSessionList extends LitElement {
       },
       loadingIndicator: {
         type: Object
+      },
+      terminateSessionDialog: {
+        type: Object
       }
     };
   }
@@ -254,11 +257,7 @@ class BackendAiSessionList extends LitElement {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
     }
     this.notification = this.shadowRoot.querySelector('#notification');
-    this._grid.addEventListener('selected-items-changed', (event) => {
-      console.log(this._grid.items);
-      console.log('items:', this._grid.selectedItems);
-      this._selected_items = this._grid.selectedItems;
-    });
+    this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
   }
 
   connectedCallback() {
@@ -571,55 +570,6 @@ class BackendAiSessionList extends LitElement {
     );
   }
 
-  _terminateSelectedSessions() {
-    this.notification.text = 'Terminating sessions...';
-    this.notification.show();
-    let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item.sess_id, item.access_key);
-    });
-    return Promise.all(terminateSessionQueue).then(response => {
-    }).catch((err) => {
-      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
-    });
-  }
-
-  _terminateSession(e) {
-    const controls = e.target.closest('#controls');
-    const kernelId = controls['kernel-id'];
-    const accessKey = controls['access-key'];
-
-    if (this.terminationQueue.includes(kernelId)) {
-      this.notification.text = 'Already terminating the session.';
-      this.notification.show();
-      return false;
-    }
-    this.notification.text = 'Terminating session...';
-    this.notification.show();
-    return this._terminateKernel(kernelId, accessKey);
-  }
-
-  async _terminateKernel(kernelId, accessKey) {
-    this.terminationQueue.push(kernelId);
-    return this._terminateApp(kernelId).then(() => {
-      window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
-        setTimeout(() => {
-          this.terminationQueue = [];
-          this.refreshList();
-        }, 1000);
-      }).catch((err) => {
-        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-        this.notification.show();
-      });
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
-      }
-    });
-  }
-
   async sendRequest(rqst) {
     let resp, body;
     try {
@@ -815,6 +765,84 @@ class BackendAiSessionList extends LitElement {
     }
   }
 
+  _openTerminateSessionDialog(e) {
+    const controller = e.target;
+    const controls = controller.closest('#controls');
+    const kernelId = controls['kernel-id'];
+    const accessKey = controls['access-key'];
+    this.terminateSessionDialog.kernelId = kernelId;
+    this.terminateSessionDialog.accessKey = accessKey;
+    this.terminateSessionDialog.show();
+  }
+
+  _terminateKernelWithCheck(e) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.kernelId)) {
+      this.notification.text = 'Already terminating the session.';
+      this.notification.show();
+      return false;
+    }
+    this.notification.text = 'Terminating session...';
+    this.notification.show();
+    return this._terminateKernel(this.terminateSessionDialog.kernelId, this.terminateSessionDialog.accessKey).then(response => {
+      this.terminateSessionDialog.hide();
+      this.notification.text = "Session terminated.";
+      this.notification.show();
+    }).catch((err) => {
+      this.terminateSessionDialog.hide();
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  _terminateSelectedSessions() {
+    this.notification.text = 'Terminating sessions...';
+    this.notification.show();
+    let terminateSessionQueue = this._selected_items.map(item => {
+      return this._terminateKernel(item.sess_id, item.access_key);
+    });
+    return Promise.all(terminateSessionQueue).then(response => {
+    }).catch((err) => {
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  _terminateSession(e) {
+    const controls = e.target.closest('#controls');
+    const kernelId = controls['kernel-id'];
+    const accessKey = controls['access-key'];
+
+    if (this.terminationQueue.includes(kernelId)) {
+      this.notification.text = 'Already terminating the session.';
+      this.notification.show();
+      return false;
+    }
+    this.notification.text = 'Terminating session...';
+    this.notification.show();
+    return this._terminateKernel(kernelId, accessKey);
+  }
+
+  async _terminateKernel(kernelId, accessKey) {
+    this.terminationQueue.push(kernelId);
+    return this._terminateApp(kernelId).then(() => {
+      window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
+        setTimeout(() => {
+          this.terminationQueue = [];
+          this.refreshList();
+        }, 1000);
+      }).catch((err) => {
+        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+        this.notification.show();
+      });
+    }).catch((err) => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
+      }
+    });
+  }
+
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
@@ -868,7 +896,8 @@ ${item.map(item => html`
                                ` : html``}
              ${this.condition === 'running' ? html`
             <paper-icon-button class="fg red controls-running"
-                               @click="${(e) => this._terminateSession(e)}"
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"            
+                               @click2="${(e) => this._terminateSession(e)}"
                                icon="delete"></paper-icon-button>
                                ` : html``}
         </div>`, root
@@ -1062,14 +1091,14 @@ ${item.map(item => html`
            </div>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="terminate-session-dialog" open fixed backdrop blockscrolling>
+      <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
             <wl-text>This action cannot be undone. Do you want to proceed?</wl-text>
          </div>
          <div slot="footer">
             <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button @click="${(e) => this._deleteFolderWithCheck(e)}">Okay</wl-button>
+            <wl-button @click="${(e) => this._terminateKernelWithCheck(e)}">Okay</wl-button>
          </div>
       </wl-dialog>
 `;
