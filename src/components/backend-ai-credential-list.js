@@ -354,7 +354,6 @@ class BackendAICredentialList extends LitElement {
   }
 
   _hideDialog(e) {
-    this.notification.show();
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
