@@ -1060,8 +1060,18 @@ ${item.map(item => html`
             </div>
           `)}
            </div>
-         </wl-card>
-       </wl-dialog>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="terminate-session-dialog" open fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <wl-text>This action cannot be undone. Do you want to proceed?</wl-text>
+         </div>
+         <div slot="footer">
+            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button @click="${(e) => this._deleteFolderWithCheck(e)}">Okay</wl-button>
+         </div>
+      </wl-dialog>
 `;
   }
 }
