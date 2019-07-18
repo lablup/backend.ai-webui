@@ -16,7 +16,6 @@ import '@polymer/app-layout/app-layout';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
-import '@polymer/paper-spinner/paper-spinner-lite';
 
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -28,7 +27,9 @@ import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
 
 import 'weightless/select';
+import 'weightless/progress-spinner';
 
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import '../lib/backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -141,12 +142,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
           display: block;
         }
 
-        paper-spinner-lite {
-          --paper-spinner-layer-1-color: #9c27b0;
-          --paper-spinner-layer-2-color: #00bcd4;
-          --paper-spinner-layer-3-color: #607d8b;
-          --paper-spinner-layer-4-color: #ffc107;
-          --paper-spinner-stroke-width: 6px;
+        wl-progress-spinner {
+          --progress-spinner-size: 48px;
+          --progress-spinner-stroke-width: 12px;
           width: 48px;
           height: 48px;
           position: fixed;
@@ -154,13 +152,13 @@ class BackendAiConsole extends connect(store)(LitElement) {
         }
 
         @media screen and (max-width: 899px) {
-          paper-spinner-lite {
+          wl-progress-spinner {
             left: calc(50% - 24px);
           }
         }
 
         @media screen and (min-width: 900px) {
-          paper-spinner-lite {
+          wl-progress-spinner {
             left: calc(50% + 71px);
           }
         }
@@ -207,7 +205,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }).catch(err => {
       console.log("Initialization failed.");
       if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-        this.shadowRoot.querySelector('#login-panel').block('Configuration is not loaded.');
+        this.shadowRoot.querySelector('#login-panel').block('Configuration is not loaded.', 'Error');
       }
     });
   }
@@ -431,7 +429,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <span class="flex"></span>
               </div>
             </app-header>
-            <wl-select id="group-select" name="group-select" label="Project" 
+            <wl-select id="group-select" name="group-select" label="Project"
               @input="${this.changeGroup}" .value="${this.current_group}">
                <option value disabled>Select group</option>
                 ${this.groups.map(group => html`
@@ -468,7 +466,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               ${this.is_admin ?
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
-      
+
               <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
@@ -478,7 +476,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       html``}
               ${this.is_admin ?
       html`
-      
+
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
@@ -522,7 +520,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.07.0.190715</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.07.1.190716</small>
               </address>
             </div>
           </app-header-layout>
@@ -550,14 +548,14 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <section role="main" id="content" class="container layout vertical center">
               <div id="app-page">
                 <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
-                <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-session-view>
-                <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-experiment-view>
-                <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-credential-view>
-                <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-agent-view>
-                <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-data-view>
-                <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-environment-view>
-                <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-settings-view>
-                <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><paper-spinner-lite active></paper-spinner-lite></backend-ai-maintenance-view>
+                <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
+                <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
+                <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-credential-view>
+                <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-agent-view>
+                <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-data-view>
+                <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
+                <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
+                <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
               </div>
             </section>
           </div>

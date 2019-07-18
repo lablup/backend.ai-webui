@@ -31,6 +31,7 @@ import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
 import './lablup-notification.js';
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -443,10 +444,10 @@ class BackendAiExperimentView extends LitElement {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = err.title;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
     });
@@ -548,10 +549,10 @@ class BackendAiExperimentView extends LitElement {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = err.message;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
         this.shadowRoot.querySelector('#notification').show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = err.title;
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
       this.shadowRoot.querySelector('#launch-button').disabled = false;
@@ -988,7 +989,7 @@ class BackendAiExperimentView extends LitElement {
       this._updateEnvironment();
     }).catch((err) => {
       if (err && err.message) {
-        this.$.notification.text = err.message;
+        this.$.notification.text = PainKiller.relieve(err.message);
         this.$.notification.show();
       }
     });
@@ -1072,8 +1073,8 @@ class BackendAiExperimentView extends LitElement {
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="exp-lists" checked @click="${(e) => this._showTab(e.target)}">List</wl-tab>  
-            <wl-tab value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>  
+            <wl-tab value="exp-lists" checked @click="${(e) => this._showTab(e.target)}">List</wl-tab>
+            <wl-tab value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
             <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
@@ -1122,7 +1123,7 @@ class BackendAiExperimentView extends LitElement {
                    <wl-title level="2" style="margin: 0">Facet data cleaner</wl-title>
                    <span style="font-size: 11px;">Data preprocessing using Facet</span>
                 </wl-list-item>
-              </div>             
+              </div>
               <div class="layout vertical">
                 <wl-list-item active style="width:calc(100% - 55px);height:80px;">
                   <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
@@ -1147,8 +1148,8 @@ class BackendAiExperimentView extends LitElement {
                           <span>-</span>
                           <span class="indicator">GPU</span>
                         </div>
-                      </div>               
-                    </div>   
+                      </div>
+                    </div>
                   </div>
                   <wl-title level="4" style="margin: 0">Backend.AI Data Uploader</wl-title>
                   <div style="font-size:11px;max-width:450px;">Backend.AI data uploader helps users uploading the data to experiment store.</div>
@@ -1176,8 +1177,8 @@ class BackendAiExperimentView extends LitElement {
                           <span>-</span>
                           <span class="indicator">GPU</span>
                         </div>
-                      </div>               
-                    </div>   
+                      </div>
+                    </div>
                   </div>
                   <wl-title level="4" style="margin: 0">Facet</wl-title>
                   <div style="font-size:11px;max-width:450px;">Facets contains two robust visualizations to aid in understanding and analyzing machine learning datasets.</div>
@@ -1205,8 +1206,8 @@ class BackendAiExperimentView extends LitElement {
                           <span>1.5</span>
                           <span class="indicator">GPU</span>
                         </div>
-                      </div>                 
-                    </div> 
+                      </div>
+                    </div>
                   </div>
                   <wl-title level="4" style="margin: 0">TensorFlow</wl-title>
                   <div style="font-size:11px;max-width:450px;">TensorFlow is an end-to-end open source platform for machine learning.</div>
@@ -1234,8 +1235,8 @@ class BackendAiExperimentView extends LitElement {
                           <span>1.5</span>
                           <span class="indicator">GPU</span>
                         </div>
-                      </div>                 
-                    </div> 
+                      </div>
+                    </div>
                   </div>
                   <wl-title level="4" style="margin: 0">TensorFlow Validate</wl-title>
                   <div style="font-size:11px;max-width:450px;">TensorFlow is an end-to-end open source platform for machine learning.</div>
@@ -1263,8 +1264,8 @@ class BackendAiExperimentView extends LitElement {
                           <span>-</span>
                           <span class="indicator">GPU</span>
                         </div>
-                      </div>                 
-                    </div> 
+                      </div>
+                    </div>
                   </div>
                   <wl-title level="4" style="margin: 0">TensorFlow Serving</wl-title>
                   <div style="font-size: 11px;max-width:450px;">TensorFlow Serving is a flexible, high-performance serving system for machine learning models, designed for production environments.</div>
@@ -1324,7 +1325,7 @@ class BackendAiExperimentView extends LitElement {
                       <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
                       ${this.vfolders.map(item => html`
                         <paper-item value="${item.name}">${item.name}</paper-item>
-                      `)}    
+                      `)}
                       </backend-ai-dropdown-menu>
                   </div>
                 </fieldset>
@@ -1336,7 +1337,7 @@ class BackendAiExperimentView extends LitElement {
 ${this.resource_templates.map(item => html`
                     <wl-button class="resource-button vertical center start layout" role="option"
                                 style="height:140px;min-width:120px;" type="button"
-                                flat outlined 
+                                flat outlined
                                 @click="${this._chooseResourceTemplate}"
                                 id="${item.name}-button"
                                 .cpu="${item.cpu}"
@@ -1392,7 +1393,7 @@ ${this.resource_templates.map(item => html`
                     <span class="caption">GPU</span>
                   </div>
                 </wl-expansion>
-                
+
                 <fieldset style="padding-top:0;">
                   <wl-button class="launch-button fg blue" type="button" id="launch-button"
                                                outlined>

@@ -14,7 +14,7 @@ import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
 
-import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -25,6 +25,7 @@ import 'weightless/card';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-notification.js';
+import { BackendAIPainKiller as PainKiller } from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -258,7 +259,7 @@ class BackendAIResourcePolicyList extends LitElement {
 
         <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
-        
+
       </vaadin-grid>
       <wl-dialog id="modify-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
@@ -547,7 +548,7 @@ class BackendAIResourcePolicyList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -625,7 +626,7 @@ class BackendAIResourcePolicyList extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -640,7 +641,7 @@ class BackendAIResourcePolicyList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });

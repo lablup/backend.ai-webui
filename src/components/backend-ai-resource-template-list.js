@@ -22,6 +22,7 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
 
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -389,7 +390,7 @@ class BackendAIResourceTemplateList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -440,7 +441,7 @@ class BackendAIResourceTemplateList extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -455,7 +456,7 @@ class BackendAIResourceTemplateList extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
