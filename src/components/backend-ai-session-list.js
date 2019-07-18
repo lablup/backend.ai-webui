@@ -97,6 +97,9 @@ class BackendAiSessionList extends LitElement {
       },
       terminateSessionDialog: {
         type: Object
+      },
+      terminateSelectedSessionsDialog: {
+        type: Object
       }
     };
   }
@@ -258,6 +261,7 @@ class BackendAiSessionList extends LitElement {
     }
     this.notification = this.shadowRoot.querySelector('#notification');
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
+    this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
   }
 
   connectedCallback() {
@@ -794,6 +798,26 @@ class BackendAiSessionList extends LitElement {
     });
   }
 
+  _openTerminateSelectedSessionsDialog(e) {
+    this.terminateSelectedSessionsDialog.show();
+  }
+
+  _terminateSelectedSessionsWithCheck() {
+    this.notification.text = 'Terminating sessions...';
+    this.notification.show();
+    let terminateSessionQueue = this._selected_items.map(item => {
+      return this._terminateKernel(item.sess_id, item.access_key);
+    });
+    return Promise.all(terminateSessionQueue).then(response => {
+      this.terminateSelectedSessionsDialog.hide();
+      this.notification.text = "Sessions terminated.";
+      this.notification.show();
+    }).catch((err) => {
+      this.terminateSelectedSessionsDialog.hide();
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
   _terminateSelectedSessions() {
     this.notification.text = 'Terminating sessions...';
     this.notification.show();
@@ -937,9 +961,9 @@ ${item.map(item => html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
-          <wl-button outlined class="multiple-action-button" @click="${() => this._terminateSelectedSessions()}">
+          <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
             <wl-icon style="--icon-size: 20px;">delete</wl-icon>
-            Stop sessions
+            terminate
           </wl-button>
         </div>
         <span class="flex"></span>
@@ -1101,6 +1125,17 @@ ${item.map(item => html`
             <wl-button @click="${(e) => this._terminateKernelWithCheck(e)}">Okay</wl-button>
          </div>
       </wl-dialog>
+      <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <wl-text>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</wl-text>
+         </div>
+         <div slot="footer">
+            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
+         </div>
+      </wl-dialog>
+
 `;
   }
 }
