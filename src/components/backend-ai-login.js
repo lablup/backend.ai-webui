@@ -13,10 +13,12 @@ import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
 import './lablup-notification.js';
+import { BackendAIPainKiller as PainKiller } from './backend-ai-painkiller';
 
 import '../lib/backend.ai-client-es6.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
+
 
 /**
  Backend.AI Login for GUI Console
@@ -62,7 +64,16 @@ class BackendAiLogin extends LitElement {
       notification: {
         type: Object
       },
-      errorMsg: {
+      loginPanel: {
+        type: Object
+      },
+      blockPanel: {
+        type: Object
+      },
+      blockMessage: {
+        type: String
+      },
+      blockType: {
         type: String
       }
     };
@@ -78,16 +89,39 @@ class BackendAiLogin extends LitElement {
     this.proxy_url = 'http://127.0.0.1:5050/';
     this.connection_mode = 'API';
     this.default_session_environment = '';
-    this.errorMsg = '';
+    this.blockMessage = '';
+    this.blockType = '';
     this.config = null;
   }
 
   firstUpdated() {
+    this.loginPanel = this.shadowRoot.querySelector('#login-panel');
+    this.blockPanel = this.shadowRoot.querySelector('#block-panel');
+
     this.shadowRoot.querySelector('#login-button').addEventListener('tap', this._login.bind(this));
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   refreshPanel(config) {
+    if (typeof config.plugin === "undefined" || typeof config.plugin.login === "undefined" || config.plugin.login === '') {
+    } else {
+      import('../plugins/' + config.plugin.login).then(()=>{
+        console.log("Plugin loaded.");
+      }).catch((err) => {   // Connection failed
+        if (this.loginPanel.open !== true) {
+          if (err.message !== undefined) {
+            this.notification.text = PainKiller.relieve(err.message);
+          } else {
+            this.notification.text = PainKiller.relieve('Plugin loading failed.');
+          }
+          this.notification.show();
+          this.open();
+        } else {
+          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+          this.notification.show();
+        }
+      });
+    }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
@@ -129,11 +163,18 @@ class BackendAiLogin extends LitElement {
   }
 
   open() {
-    this.shadowRoot.querySelector('#login-panel').show();
+    if (this.loginPanel.open !== true) {
+      this.loginPanel.show();
+    }
   }
 
   close() {
-    this.shadowRoot.querySelector('#login-panel').hide();
+    if (this.loginPanel.open === true) {
+      this.loginPanel.hide();
+    }
+    if (this.blockPanel.open === true) {
+      this.blockPanel.hide();
+    }
   }
 
   login() {
@@ -155,9 +196,14 @@ class BackendAiLogin extends LitElement {
     }
   }
 
-  block(message = '') {
-    this.errorMsg = message;
+  block(message = '', type = '') {
+    this.blockMessage = message;
+    this.blockType = type;
     this.shadowRoot.querySelector('#block-panel').show();
+  }
+
+  free() {
+    this.shadowRoot.querySelector('#block-panel').hide();
   }
 
   _validate_data(value) {
@@ -174,6 +220,7 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this.notification.text = 'Please wait to login...';
     this.notification.show();
+    this.block();
     if (this.connection_mode === 'SESSION') {
       this._connectUsingSession();
     } else {
@@ -186,7 +233,7 @@ class BackendAiLogin extends LitElement {
     const errorMsgSet = {
       "Cannot read property 'map' of null": "User has no group. Please contact administrator to fix it.",
       "Cannot read property 'split' of undefined": 'Wrong API server address.'
-    }
+    };
     console.log(err);
     if (err in errorMsgSet) {
       return errorMsgSet[err];
@@ -205,7 +252,6 @@ class BackendAiLogin extends LitElement {
       this.clientConfig,
       `Backend.AI Console.`,
     );
-
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
       this.client.login().then(response => {
@@ -215,16 +261,17 @@ class BackendAiLogin extends LitElement {
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
-        if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+        this.free();
+        if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
-            this.notification.text = this._politeErrorMessage(err.message);
+            this.notification.text = PainKiller.relieve(err.message);
           } else {
-            this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+            this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
           this.notification.show();
           this.open();
         } else {
-          this.notification.text = 'Login failed. Check login information.';
+          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
           this.notification.show();
         }
         this.open();
@@ -250,6 +297,7 @@ class BackendAiLogin extends LitElement {
 
   _connectGQL() {
     // Test connection
+    this.block();
     this.client.getManagerVersion().then(response => {
       return this.client.isAPIVersionCompatibleWith('v4.20190601');
     }).then(response => {
@@ -259,18 +307,19 @@ class BackendAiLogin extends LitElement {
         this._connectViaGQL();
       }
     }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+      if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = err.message;
+          this.notification.text = PainKiller.relieve(err.message);
         } else {
-          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
         this.notification.show();
         this.open();
       } else {
-        this.notification.text = 'Login failed. Check login information.';
+        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show();
       }
+      this.free();
       this.open();
     });
   }
@@ -322,19 +371,18 @@ class BackendAiLogin extends LitElement {
       this.notification.text = 'Connected.';
       this.notification.show();
     }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+      if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = err.message;
+          this.notification.text = PainKiller.relieve(err.message);
         } else {
-          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
         this.notification.show();
         this.open();
       } else {
-        this.notification.text = 'Login failed. Check login information.';
+        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show();
       }
-      this.open();
     });
   }
 
@@ -368,16 +416,16 @@ class BackendAiLogin extends LitElement {
       this.notification.text = 'Connected.';
       this.notification.show();
     }).catch((err) => {   // Connection failed
-      if (this.shadowRoot.querySelector('#login-panel').opened !== true) {
+      if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = err.message;
+          this.notification.text = PainKiller.relieve(err.message);
         } else {
-          this.notification.text = 'Login information mismatch. If the information is correct, logout and login again.';
+          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
         this.notification.show();
         this.open();
       } else {
-        this.notification.text = 'Login failed. Check login information.';
+        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show();
       }
       this.open();
@@ -436,7 +484,7 @@ class BackendAiLogin extends LitElement {
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center-justified flex layout">
-            <div>Login</div> 
+            <div>Login</div>
             <div class="flex"></div>
           </h3>
           <form id="login-form">
@@ -460,12 +508,16 @@ class BackendAiLogin extends LitElement {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="block-panel" fixed backdrop blockscrolling persistent>
+        ${this.blockMessage != '' ? html`
         <wl-card>
-          <h3>Error</h3>
+          ${this.blockType !== '' ? html`
+          <h3>${this.blockType}</h3>
+          ` : html``}
           <div style="text-align:center;">
-          ${this.errorMsg}
+          ${this.blockMessage}
           </div>
         </wl-card>
+        ` : html``}
       </wl-dialog>
       <lablup-notification id="notification"></lablup-notification>
     `;

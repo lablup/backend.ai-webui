@@ -2,11 +2,14 @@
 apiEndpoint =
 apiEndpointText =
 defaultSessionEnvironment =
-siteDescription = 
-#connectionMode = SESSION
-connectionMode = API
+siteDescription =
+connectionMode = SESSION
+#connectionMode = API
 
 [wsproxy]
 proxyURL = https://wsproxy.onprem.backend.ai:8443/
 proxyBaseURL =
 proxyListenIP = 0.0.0.0
+
+[plugin]
+login = test-plugin.js

@@ -15,8 +15,8 @@ import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
-import './lablup-loading-indicator.js';
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
@@ -25,12 +25,16 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
+import 'weightless/checkbox';
 
+import {BackendAIPainKiller as PainKiller} from "./backend-ai-painkiller";
+import './lablup-loading-indicator.js';
 import './lablup-notification.js';
+import './backend-ai-indicator.js';
+import '../plastics/lablup-shields/lablup-shields';
+
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import '../plastics/lablup-shields/lablup-shields';
-import './backend-ai-indicator.js';
 
 class BackendAiSessionList extends LitElement {
   constructor() {
@@ -42,8 +46,10 @@ class BackendAiSessionList extends LitElement {
     this.filterAccessKey = '';
     this.appSupportList = [];
     this.appTemplate = {};
+    this._selected_items = [];
     this._boundControlRenderer = this.controlRenderer.bind(this);
     this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
+    this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   }
 
   static get is() {
@@ -58,6 +64,12 @@ class BackendAiSessionList extends LitElement {
       },
       condition: {
         type: String
+      },
+      _grid: {
+        type: Object
+      },
+      _selected_items: {
+        type: Array
       },
       jobs: {
         type: Object
@@ -81,6 +93,12 @@ class BackendAiSessionList extends LitElement {
         type: Object
       },
       loadingIndicator: {
+        type: Object
+      },
+      terminateSessionDialog: {
+        type: Object
+      },
+      terminateSelectedSessionsDialog: {
         type: Object
       }
     };
@@ -207,6 +225,16 @@ class BackendAiSessionList extends LitElement {
           height: 25px;
         }
 
+        wl-button.multiple-action-button {
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-red-600);
+        }
+
         div.filters #access-key-filter {
           --paper-input-container-input: {
             font-size: small;
@@ -224,6 +252,7 @@ class BackendAiSessionList extends LitElement {
 
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
+    this._grid = this.shadowRoot.querySelector('#list-grid');
     this._initializeAppTemplate();
     this.refreshTimer = null;
     if (!window.backendaiclient ||
@@ -231,6 +260,8 @@ class BackendAiSessionList extends LitElement {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
     }
     this.notification = this.shadowRoot.querySelector('#notification');
+    this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
+    this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
   }
 
   connectedCallback() {
@@ -363,9 +394,13 @@ class BackendAiSessionList extends LitElement {
     ];
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
-
       var sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
+        let previous_sessions = this.compute_sessions;
+        let previous_session_keys = [];
+        Object.keys(previous_sessions).map((objectKey, index) => {
+          previous_session_keys.push(previous_sessions[objectKey].sess_id);
+        });
         Object.keys(sessions).map((objectKey, index) => {
           var session = sessions[objectKey];
           var occupied_slots = JSON.parse(session.occupied_slots);
@@ -394,10 +429,14 @@ class BackendAiSessionList extends LitElement {
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
+          if (this._selected_items.includes(sessions[objectKey].sess_id)) {
+            sessions[objectKey].checked = true;
+          } else {
+            sessions[objectKey].checked = false;
+          }
         });
       }
       this.compute_sessions = sessions;
-      //this.jobs = response;
       let refreshTime;
       if (this.active === true) {
         if (refresh === true) {
@@ -417,7 +456,7 @@ class BackendAiSessionList extends LitElement {
       this.loadingIndicator.hide();
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -473,20 +512,20 @@ class BackendAiSessionList extends LitElement {
         {'category': 'Env', 'tag': 'Python (Intel MKL)', 'color': 'yellow'}],
       'python-ff': [
         {'category': 'Env', 'tag': 'Lablup Research', 'color': 'yellow'},
-        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
         {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'}],
-      'python-pytorch':[
+      'python-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'}],
       'ngc-digits': [
         {'category': 'Env', 'tag': 'DIGITS', 'color': 'yellow'},
-        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
         {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'},
-        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
-      'ngc-pytorch':[
+        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+      'ngc-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
-        {'tag':'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'julia': [
         {'category': 'Env', 'tag': 'Julia', 'color': 'yellow'}],
       'r': [
@@ -537,38 +576,6 @@ class BackendAiSessionList extends LitElement {
     );
   }
 
-  _terminateKernel(e) {
-    const controls = e.target.closest('#controls');
-    const kernelId = controls['kernel-id'];
-    const accessKey = controls['access-key'];
-
-    if (this.terminationQueue.includes(kernelId)) {
-      this.notification.text = 'Already terminating the session.';
-      this.notification.show();
-      return false;
-    }
-    this.notification.text = 'Terminating session...';
-    this.notification.show();
-    this.terminationQueue.push(kernelId);
-    this._terminateApp(kernelId).then(() => {
-      window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
-        setTimeout(() => {
-          this.terminationQueue = [];
-          this.refreshList();
-        }, 1000);
-      }).catch((err) => {
-        this.notification.text = 'Problem occurred during termination.';
-        this.notification.show();
-      });
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = err.message;
-        this.notification.show();
-      }
-    });
-  }
-
   async sendRequest(rqst) {
     let resp, body;
     try {
@@ -613,7 +620,7 @@ class BackendAiSessionList extends LitElement {
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
-          this.notification.text = err.message;
+          this.notification.text = PainKiller.relieve(err.message);
           this.notification.show();
         }
       });
@@ -644,10 +651,10 @@ class BackendAiSessionList extends LitElement {
       }, 100);
     }).catch((err) => {
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       } else if (err && err.title) {
-        this.notification.text = err.title;
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.show();
       }
     });
@@ -764,6 +771,132 @@ class BackendAiSessionList extends LitElement {
     }
   }
 
+  // Single session closing
+  _openTerminateSessionDialog(e) {
+    const controller = e.target;
+    const controls = controller.closest('#controls');
+    const kernelId = controls['kernel-id'];
+    const accessKey = controls['access-key'];
+    this.terminateSessionDialog.kernelId = kernelId;
+    this.terminateSessionDialog.accessKey = accessKey;
+    this.terminateSessionDialog.show();
+  }
+
+  _terminateSession(e) {
+    const controls = e.target.closest('#controls');
+    const kernelId = controls['kernel-id'];
+    const accessKey = controls['access-key'];
+
+    if (this.terminationQueue.includes(kernelId)) {
+      this.notification.text = 'Already terminating the session.';
+      this.notification.show();
+      return false;
+    }
+    this.notification.text = 'Terminating session...';
+    this.notification.show();
+    return this._terminateKernel(kernelId, accessKey);
+  }
+
+  _terminateSessionWithCheck(e) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.kernelId)) {
+      this.notification.text = 'Already terminating the session.';
+      this.notification.show();
+      return false;
+    }
+    this.notification.text = 'Terminating session...';
+    this.notification.show();
+    return this._terminateKernel(this.terminateSessionDialog.kernelId, this.terminateSessionDialog.accessKey).then(response => {
+      this._selected_items = [];
+      this._clearCheckboxes();
+      this.terminateSessionDialog.hide();
+      this.notification.text = "Session terminated.";
+      this.notification.show();
+    }).catch((err) => {
+      this._selected_items = [];
+      this._clearCheckboxes();
+      this.terminateSessionDialog.hide();
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  // Multiple sessions closing
+  _openTerminateSelectedSessionsDialog(e) {
+    this.terminateSelectedSessionsDialog.show();
+  }
+
+  _clearCheckboxes() {
+    let elm = this.shadowRoot.querySelectorAll('wl-checkbox.list-check');
+    [...elm].forEach((checkbox) => {
+      checkbox.removeAttribute('checked');
+    });
+  }
+
+  _terminateSelectedSessionsWithCheck() {
+    this.notification.text = 'Terminating sessions...';
+    this.notification.show();
+
+    let terminateSessionQueue = this._selected_items.map(item => {
+      return this._terminateKernel(item.sess_id, item.access_key);
+    });
+    this._selected_items = [];
+    return Promise.all(terminateSessionQueue).then(response => {
+      this.terminateSelectedSessionsDialog.hide();
+      this._clearCheckboxes();
+      this.notification.text = "Sessions terminated.";
+      this.notification.show();
+
+    }).catch((err) => {
+      this.terminateSelectedSessionsDialog.hide();
+      this._clearCheckboxes();
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  _terminateSelectedSessions() {
+    this.notification.text = 'Terminating sessions...';
+    this.notification.show();
+
+    let terminateSessionQueue = this._selected_items.map(item => {
+      return this._terminateKernel(item.sess_id, item.access_key);
+    });
+    return Promise.all(terminateSessionQueue).then(response => {
+      this._selected_items = [];
+      this._clearCheckboxes();
+      this.notification.text = "Sessions terminated.";
+      this.notification.show();
+    }).catch((err) => {
+      this._selected_items = [];
+      this._clearCheckboxes();
+      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      this.notification.show();
+    });
+  }
+
+  // General closing
+
+  async _terminateKernel(kernelId, accessKey) {
+    this.terminationQueue.push(kernelId);
+    return this._terminateApp(kernelId).then(() => {
+      window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
+        setTimeout(() => {
+          this.terminationQueue = [];
+          this.refreshList();
+        }, 1000);
+      }).catch((err) => {
+        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+        this.notification.show();
+      });
+    }).catch((err) => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
+      }
+    });
+  }
+
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
@@ -791,6 +924,7 @@ ${item.map(item => html`
         </div>`, root
     );
   }
+
   controlRenderer(root, column, rowData) {
     render(
       html`
@@ -816,10 +950,33 @@ ${item.map(item => html`
                                ` : html``}
              ${this.condition === 'running' ? html`
             <paper-icon-button class="fg red controls-running"
-                               @click="${(e) => this._terminateKernel(e)}"
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"            
+                               @click2="${(e) => this._terminateSession(e)}"
                                icon="delete"></paper-icon-button>
                                ` : html``}
         </div>`, root
+    );
+  }
+
+  _toggleCheckbox(object) {
+    let exist = this._selected_items.findIndex(x => x.sess_id == object.sess_id);
+    if (exist === -1) {
+      this._selected_items.push(object)
+    } else {
+      this._selected_items.splice(exist, 1);
+    }
+    if (this._selected_items.length > 0) {
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'block';
+    } else {
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
+    }
+  }
+
+  checkboxRenderer(root, column, rowData) {
+    render(
+      html`
+        <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+      `, root
     );
   }
 
@@ -829,20 +986,29 @@ ${item.map(item => html`
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
+        <div id="multiple-action-buttons" style="display:none;">
+          <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
+            <wl-icon style="--icon-size: 20px;">delete</wl-icon>
+            terminate
+          </wl-button>
+        </div>
         <span class="flex"></span>
         <paper-input id="access-key-filter" type="search" size=30
                      label="access key" no-label-float .value="${this.filterAccessKey}"
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Session list"
+
+      <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
+        <vaadin-grid-column width="15px" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+        </vaadin-grid-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
           <vaadin-grid-sort-column resizable width="100px" header="API Key" flex-grow="0" path="access_key">
             <template>
               <div class="layout vertical">
-                <span class="indicator">{{item.access_key}}</span>
+                <span class="indicator">[[item.access_key]]</span>
               </div>
             </template>
           </vaadin-grid-sort-column>
@@ -850,16 +1016,16 @@ ${item.map(item => html`
         <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
         ${this.condition === 'others'
-          ? html`
+      ? html`
           <vaadin-grid-column width="150px" flex-grow="0" header="Status" resizable>
             <template>
               <span style="font-size: 12px;">[[item.status]]</span>
             </template>
           </vaadin-grid-column>
           `
-          : html``
-        }
-        <vaadin-grid-column width="190px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+      : html``
+      }
+        <vaadin-grid-column width="100px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
             <div class="layout horizontal center flex">
@@ -905,7 +1071,6 @@ ${item.map(item => html`
             </div>
           </template>
         </vaadin-grid-column>
-
         <vaadin-grid-column width="100px" flex-grow="0" resizable header="Usage">
           <template>
             <div class="layout horizontal center flex">
@@ -965,18 +1130,39 @@ ${item.map(item => html`
             </wl-button>
           </h4>
           <div style="padding:15px;" class="horizontal layout wrap center center-justified">
-              ${this.appSupportList.map(item => html`
-                <div class="vertical layout center center-justified app-icon">
-                  <paper-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                     .url-postfix="${item.redirect}"
-                                     @click="${(e) => this._runApp(e)}"
-                                     src="${item.src}"></paper-icon-button>
-                  <span class="label">${item.title}</span>
-                </div>
-                `)}
+          ${this.appSupportList.map(item => html`
+            <div class="vertical layout center center-justified app-icon">
+              <paper-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                 .url-postfix="${item.redirect}"
+                                 @click="${(e) => this._runApp(e)}"
+                                 src="${item.src}"></paper-icon-button>
+              <span class="label">${item.title}</span>
             </div>
-          </wl-card>
-        </wl-dialog>
+          `)}
+           </div>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <wl-text>This action cannot be undone. Do you want to proceed?</wl-text>
+         </div>
+         <div slot="footer">
+            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
+         </div>
+      </wl-dialog>
+      <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <wl-text>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</wl-text>
+         </div>
+         <div slot="footer">
+            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
+         </div>
+      </wl-dialog>
+
 `;
   }
 }

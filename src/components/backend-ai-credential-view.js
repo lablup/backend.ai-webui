@@ -20,6 +20,7 @@ import './lablup-notification.js';
 import './backend-ai-credential-list.js';
 import './backend-ai-resource-policy-list.js';
 import './backend-ai-user-list.js';
+import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
@@ -209,6 +210,7 @@ class BackendAICredentialView extends LitElement {
 
         wl-card h3 {
           padding-top: 0;
+          padding-right: 15px;
           padding-bottom: 0;
         }
 
@@ -239,6 +241,7 @@ class BackendAICredentialView extends LitElement {
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
+          --expansion-content-padding: 0;
           border-bottom: 1px solid #DDD;
         }
 
@@ -325,7 +328,7 @@ class BackendAICredentialView extends LitElement {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -385,7 +388,7 @@ class BackendAICredentialView extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-keypair-dialog').hide();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -396,12 +399,15 @@ class BackendAICredentialView extends LitElement {
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
-    let vfolder_hosts = this.shadowRoot.querySelector('#allowed_vfolder-hosts').value;
+    let vfolder_hosts = [];
+    vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
     }
     if (ram_resource === "Unlimited") {
       ram_resource = "Infinity";
+    } else {
+      ram_resource = ram_resource + 'g';
     }
     if (gpu_resource === "Unlimited") {
       gpu_resource = "Infinity";
@@ -415,7 +421,7 @@ class BackendAICredentialView extends LitElement {
     }
     let total_resource_slots = {
       "cpu": cpu_resource,
-      "mem": ram_resource + 'g',
+      "mem": ram_resource,
       "cuda.device": gpu_resource,
       "cuda.shares": vgpu_resource
     };
@@ -429,7 +435,7 @@ class BackendAICredentialView extends LitElement {
       'total_resource_slots': JSON.stringify(total_resource_slots),
       'max_concurrent_sessions': concurrency_limit,
       'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': idle_timeout,
+      'idle_timeout': parseInt(idle_timeout),
       'max_vfolder_count': vfolder_count_limit,
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
@@ -461,7 +467,7 @@ class BackendAICredentialView extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -560,7 +566,7 @@ class BackendAICredentialView extends LitElement {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
-        this.notification.text = err.message;
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
       }
     });
@@ -595,7 +601,7 @@ class BackendAICredentialView extends LitElement {
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>  
+            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
             ${this._status === 'active' && this.use_user_list === true ? html`
             <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>` :

@@ -135,16 +135,53 @@ server {
 }
 ```
 
-### Building docker image
+### Building docker image using docker-compose
 
+Make sure that you compile the console.
+
+```
+$ make compile
+```
+
+#### HTTP server
+Good for develop phase. Not recommended for production environment.
+
+```
+$ docker-compose build console // build only
+$ docker-compose up console    // for testing
+$ docker-compose up -d console // as a daemon
+```
+
+#### HTTPS with SSL
+Recommended for production.
+
+Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
+
+```
+$ docker-compose build console-ssl  // build only
+$ docker-compose up console-ssl     // for testing
+$ docker-compose up -d console-ssl  // as a daemon
+```
+
+#### Removing
+
+```
+$ docker-compose down
+```
+
+#### Manual image build
 ```
 $ make compile
 $ docker build -t backendai-console .
 ```
-Testing (e.g. with 8090 port)
+
+Testing / Running example
+
+Check your image name is `backendai-console_console` or `backendai-console_console-ssl`. Otherwise, change the image name in the script below.
 
 ```
-$  docker run --name test_backendai_console -p 8090:80 -d backendai-console
+$ docker run --name backendai-console -v $(pwd)/config.ini:/usr/share/nginx/html/config.ini -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+$ docker run --name backendai-console-ssl -v $(pwd)/config.ini:/usr/share/nginx/html/config.ini -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
 
 ### Running websocket proxy with node.js
