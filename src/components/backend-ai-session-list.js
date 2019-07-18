@@ -788,10 +788,12 @@ class BackendAiSessionList extends LitElement {
     this.notification.text = 'Terminating session...';
     this.notification.show();
     return this._terminateKernel(this.terminateSessionDialog.kernelId, this.terminateSessionDialog.accessKey).then(response => {
+      this._selected_items = [];
       this.terminateSessionDialog.hide();
       this.notification.text = "Session terminated.";
       this.notification.show();
     }).catch((err) => {
+      this._selected_items = [];
       this.terminateSessionDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
       this.notification.show();
@@ -809,15 +811,18 @@ class BackendAiSessionList extends LitElement {
       return this._terminateKernel(item.sess_id, item.access_key);
     });
     return Promise.all(terminateSessionQueue).then(response => {
+      this._selected_items = [];
       this.terminateSelectedSessionsDialog.hide();
       this.notification.text = "Sessions terminated.";
       this.notification.show();
     }).catch((err) => {
+      this._selected_items = [];
       this.terminateSelectedSessionsDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
       this.notification.show();
     });
   }
+
   _terminateSelectedSessions() {
     this.notification.text = 'Terminating sessions...';
     this.notification.show();
@@ -825,7 +830,11 @@ class BackendAiSessionList extends LitElement {
       return this._terminateKernel(item.sess_id, item.access_key);
     });
     return Promise.all(terminateSessionQueue).then(response => {
+      this._selected_items = [];
+      this.notification.text = "Sessions terminated.";
+      this.notification.show();
     }).catch((err) => {
+      this._selected_items = [];
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
       this.notification.show();
     });
