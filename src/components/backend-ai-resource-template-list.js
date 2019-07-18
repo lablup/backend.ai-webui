@@ -22,7 +22,7 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
 
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";

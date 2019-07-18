@@ -18,7 +18,7 @@ import 'weightless/button';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
 import './lablup-notification.js';
-import { BackendAIPainKiller as PainKiller } from './backend-ai-painkiller';
+import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,

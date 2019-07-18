@@ -29,7 +29,7 @@ import '@vaadin/vaadin-icons/vaadin-icons.js';
 import 'weightless/select';
 import 'weightless/progress-spinner';
 
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller.js";
 import '../lib/backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -520,7 +520,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.07.1.190716</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.07.1.190718</small>
               </address>
             </div>
           </app-header-layout>

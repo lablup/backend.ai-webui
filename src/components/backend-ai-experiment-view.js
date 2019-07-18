@@ -31,7 +31,7 @@ import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
 import './lablup-notification.js';
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
