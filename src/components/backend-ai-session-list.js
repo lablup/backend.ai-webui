@@ -25,6 +25,7 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
+import 'weightless/checkbox';
 
 import {BackendAIPainKiller as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
@@ -47,6 +48,7 @@ class BackendAiSessionList extends LitElement {
     this._selected_items = [];
     this._boundControlRenderer = this.controlRenderer.bind(this);
     this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
+    this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   }
 
   static get is() {
@@ -66,7 +68,7 @@ class BackendAiSessionList extends LitElement {
         type: Object
       },
       _selected_items: {
-        type: Object
+        type: Array
       },
       jobs: {
         type: Object
@@ -413,16 +415,12 @@ class BackendAiSessionList extends LitElement {
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
-          Object.keys(this.compute_sessions).map((key, index) => {
-            if (previous_session_keys.includes(sessions[objectKey].sess_id)) {
-              this.compute_sessions[key] = sessions[objectKey];
-            }
-          });
+          if (this._selected_items.includes(sessions[objectKey].sess_id)) {
+            sessions[objectKey].checked = true;
+          }
         });
       }
-      if (this.compute_sessions.length === 0 && sessions.length !== 0) {
-        this.compute_sessions = sessions;
-      }
+      this.compute_sessions = sessions;
       let refreshTime;
       if (this.active === true) {
         if (refresh === true) {
@@ -849,12 +847,35 @@ ${item.map(item => html`
     );
   }
 
+  _toggleCheckbox(object) {
+    let exist = this._selected_items.findIndex(x => x.sess_id == object.sess_id);
+    if (exist === -1) {
+      this._selected_items.push(object)
+    } else {
+      this._selected_items.splice(exist, 1);
+    }
+    console.log(this._selected_items);
+  }
+
+  checkboxRenderer(root, column, rowData) {
+    render(
+      html`
+        <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
+        ${rowData.item.checked ? html`
+            <wl-checkbox style="--checkbox-size:12px;" checked @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+            ` : html`
+            <wl-checkbox style="--checkbox-size:12px;" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>`}
+        </div>`, root
+    );
+  }
+
   render() {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
+        <div>${this._selected_items ? html`EMPTY` : html`EXIST`}</div>
         <span class="flex"></span>
         <paper-input id="access-key-filter" type="search" size=30
                      label="access key" no-label-float .value="${this.filterAccessKey}"
@@ -862,8 +883,9 @@ ${item.map(item => html`
         </paper-input>
       </div>
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
-         .items="${this.compute_sessions}" .selected-items="${this._selected_items}">
-        <vaadin-grid-selection-column></vaadin-grid-selection-column>
+         .items="${this.compute_sessions}">
+        <vaadin-grid-column width="25px" .renderer="${this._boundCheckboxRenderer}">
+        </vaadin-grid-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
           <vaadin-grid-sort-column resizable width="100px" header="API Key" flex-grow="0" path="access_key">
