@@ -378,10 +378,11 @@ class BackendAICredentialList extends LitElement {
       this.notification.text = "No changes were made"
       this.notification.show();
     } else {
-      window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, { resource_policy })
+      window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
       .then(res => {
         if (res.modify_keypair.ok) {
           this.notification.text = "Successfully modified";
+          this.refresh();
         } else {
           this.notification.text = "Error";
         }
