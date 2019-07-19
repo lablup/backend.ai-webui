@@ -90,7 +90,7 @@ $ npm run wsproxy # To run websocket proxy
 
 Terminal 1:
 ```
-$ npm run test_web # To run test server
+$ npm run server:d # To run test server
 ```
 Terminal 2:
 ```
