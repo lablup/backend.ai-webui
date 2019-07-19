@@ -324,7 +324,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance'].includes(view) !== true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
         view = view.split(/[\/]+/).pop();
         this._page = view;
       }
@@ -373,6 +373,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.menuTitle = 'Maintenance';
           this.shadowRoot.getElementById('sidebar-menu').selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
+          break;
+        case 'statistics':
+          this.menuTitle = 'Statistics';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 11;
+          this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
@@ -458,10 +463,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Storage
                 </paper-item>
               </a>
-              <paper-item disabled>
-                <iron-icon icon="icons:assessment"></iron-icon>
-                Statistics
-              </paper-item>
               ${this.is_admin ?
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
@@ -470,6 +471,15 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
                   Resources
+                </paper-item>
+              </a>` :
+      html``}
+              ${this.is_admin ?
+      html`
+              <a ?selected="${this._page === 'data'}" href="/statistics" tabindex="-1" role="menuItem">
+                <paper-item link>
+                  <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
+                  Statistics
                 </paper-item>
               </a>` :
       html``}
@@ -555,6 +565,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
                 <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
+                <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
               </div>
             </section>
           </div>
