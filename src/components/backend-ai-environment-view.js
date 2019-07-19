@@ -17,6 +17,7 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
+import {default as PainKiller} from "./backend-ai-painkiller";
 import './backend-ai-environment-list';
 import './backend-ai-resource-template-list';
 import './lablup-notification.js';
@@ -136,8 +137,8 @@ class BackendAiEnvironmentView extends LitElement {
 
   _createPreset() {
     const preset_name   = this.shadowRoot.querySelector('#id_preset_name').value,
-          cpu  = this.shadowRoot.querySelector('#cpu-resource').value,
-          mem  = this.shadowRoot.querySelector('#ram-resource').value + 'g',
+          cpu           = this.shadowRoot.querySelector('#cpu-resource').value,
+          mem           = this.shadowRoot.querySelector('#ram-resource').value + 'g',
           gpu_resource  = this.shadowRoot.querySelector('#gpu-resource').value,
           fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
 
@@ -155,13 +156,20 @@ class BackendAiEnvironmentView extends LitElement {
 
     window.backendaiclient.resourcePreset.add(preset_name, input)
     .then(res => {
-      if (res.create_resource_preset) {
+      this.shadowRoot.querySelector('#create-preset-dialog').hide();
+      if (res.create_resource_preset.ok) {
         this.shadowRoot.querySelector('#notification').text = "Resource preset successfully created";
         this.shadowRoot.querySelector('#resource-template-list').refresh();
+
+        // reset values
+        this.shadowRoot.querySelector('#id_preset_name').value = "";
+        this.shadowRoot.querySelector('#cpu-resource').value   = 1;
+        this.shadowRoot.querySelector('#ram-resource').value   = 1;
+        this.shadowRoot.querySelector('#gpu-resource').value   = 0;
+        this.shadowRoot.querySelector('#fgpu-resource').value  = 0;
       } else {
-        this.shadowRoot.querySelector('#notification').text = "Error occurred";
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(res.create_resource_preset.msg);
       }
-      this.shadowRoot.querySelector('#create-preset-dialog').hide();
       this.shadowRoot.querySelector('#notification').show();
     })
   }
