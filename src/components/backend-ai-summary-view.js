@@ -503,7 +503,7 @@ class BackendAISummary extends LitElement {
             <lablup-activity-panel title="Invitation">
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
-                <span class="invitation_folder_name">${invitation.vfolder_id}</span>
+                <span class="invitation_folder_name">Folder name: ${invitation.vfolder_name}</span>
                 <div class="horizontal center layout">
                 Permission:
                 ${[...invitation.perm].map(c => {
