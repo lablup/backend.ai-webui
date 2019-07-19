@@ -86,7 +86,7 @@ class BackendAiEnvironmentList extends LitElement {
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-        <vaadin-grid-column width="20px">
+        <vaadin-grid-column width="40px" flex-grow="0" text-align="center">
           <template class="header">
             <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
           </template>

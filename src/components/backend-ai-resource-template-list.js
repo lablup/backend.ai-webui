@@ -409,7 +409,7 @@ class BackendAIResourceTemplateList extends LitElement {
   _readResourcePresetInput() {
     let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
-    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
+    let gpu_resource = this.shadowRoot.querySelector('#gpu-resonodurce').value;
     let fgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
 
     let resource_slots = {

@@ -31,6 +31,8 @@ dep:
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/rollup build/electron-app/app
+	cp -Rp build/rollup/resources build/electron-app
+	cp -Rp build/rollup/manifest build/electron-app
 	sed -i -E 's/\.\/src\/components\/backend-ai-console.js/es6:\/\/src\/components\/backend-ai-console.js/g' build/electron-app/app/index.html
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
