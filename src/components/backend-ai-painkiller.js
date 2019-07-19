@@ -7,9 +7,9 @@ var BackendAIPainKiller = (()=>{
       if (this.errorMessageTable.hasOwnProperty(msg)) {
         return this.errorMessageTable[msg];
       } else {
-        for (const regex of Object.keys(this.regexTable)) {
-          if (RegExp(regex).test(msg)) return this.regexTable[regex];
-        }
+        // for (const regex of Object.keys(this.regexTable)) {
+        //   if (RegExp(regex).test(msg)) return this.regexTable[regex];
+        // }
         return msg;
       }
     }
