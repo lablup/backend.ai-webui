@@ -531,7 +531,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <span condensed-title>${this.menuTitle}</span>
               <span class="flex"></span>
-              <div style="vertical end-justified flex layout">
+              <div class="vertical end-justified flex layout">
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 8px;text-align:right">${this.domain}</div>
               </div>
