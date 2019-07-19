@@ -305,8 +305,8 @@ class BackendAIResourceTemplateList extends LitElement {
               <br/><br/>
               <wl-button class="fg orange create-button" id="create-policy-button" outlined type="button"
                 @click="${() => this._modifyResourceTemplate()}">
-                <wl-icon>add</wl-icon>
-                Add
+                <wl-icon>check</wl-icon>
+                Save Changes
               </wl-button>
             </fieldset>
           </form>
@@ -409,17 +409,17 @@ class BackendAIResourceTemplateList extends LitElement {
   _readResourcePresetInput() {
     let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
-    let gpu_resource = this.shadowRoot.querySelector('#gpu-resonodurce').value;
+    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let fgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
 
     let resource_slots = {
       "cpu": cpu_resource,
       "mem": ram_resource + 'g'
     };
-    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "") {
+    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
       resource_slots["cuda.device"] = parseInt(gpu_resource);
     }
-    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== "") {
+    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== "" && fgpu_resource !== '0') {
       resource_slots["cuda.shares"] = parseFloat(fgpu_resource);
     }
     let input = {

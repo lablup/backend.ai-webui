@@ -19,6 +19,7 @@ import 'weightless/tab-group';
 
 import './backend-ai-environment-list';
 import './backend-ai-resource-template-list';
+import './lablup-notification.js';
 
 class BackendAiEnvironmentView extends LitElement {
   constructor() {
@@ -135,33 +136,40 @@ class BackendAiEnvironmentView extends LitElement {
 
   _createPreset() {
     const preset_name   = this.shadowRoot.querySelector('#id_preset_name').value,
-          cpu_resource  = this.shadowRoot.querySelector('#cpu-resource').value,
-          ram_resource  = this.shadowRoot.querySelector('#ram-resource').value,
+          cpu  = this.shadowRoot.querySelector('#cpu-resource').value,
+          mem  = this.shadowRoot.querySelector('#ram-resource').value + 'g',
           gpu_resource  = this.shadowRoot.querySelector('#gpu-resource').value,
           fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
-    console.log(typeof cpu_resource);
-    console.log(typeof ram_resource);
-    console.log(typeof gpu_resource);
-    console.log(typeof fgpu_resource);
+
+    let resource_slots = { cpu, mem }
+    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
+      resource_slots["cuda.device"] = parseInt(gpu_resource);
+    }
+    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== "" && fgpu_resource !== '0') {
+      resource_slots["cuda.shares"] = parseFloat(fgpu_resource);
+    }
 
     const input = {
-      'resource_slots': JSON.stringify({
-                          'cpu': cpu_resource,
-                          'mem': `${ram_resource}g`,
-                          'cuda.device': parseInt(gpu_resource),
-                          'cuda.shares': parseFloat(fgpu_resource)
-                        })
+      'resource_slots': JSON.stringify(resource_slots)
     }
 
     window.backendaiclient.resourcePreset.add(preset_name, input)
     .then(res => {
-      console.log(res);
+      if (res.create_resource_preset) {
+        this.shadowRoot.querySelector('#notification').text = "Resource preset successfully created";
+        this.shadowRoot.querySelector('#resource-template-list').refresh();
+      } else {
+        this.shadowRoot.querySelector('#notification').text = "Error occurred";
+      }
+      this.shadowRoot.querySelector('#create-preset-dialog').hide();
+      this.shadowRoot.querySelector('#notification').show();
     })
   }
 
   render() {
     // language=HTML
     return html`
+      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
@@ -184,7 +192,7 @@ class BackendAiEnvironmentView extends LitElement {
             </wl-button>
           </h4>
           <div>
-            <backend-ai-resource-template-list ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-template-list>
+            <backend-ai-resource-template-list id="resource-template-list" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-template-list>
           </div>
         </wl-card>
       </wl-card>
@@ -247,7 +255,7 @@ class BackendAiEnvironmentView extends LitElement {
                 id="create-policy-button"
                 outlined
                 type="button"
-                @click="${() => this._createPreset()}"
+                @click="${this._createPreset}"
               >
                 <wl-icon>add</wl-icon>
                 Add
