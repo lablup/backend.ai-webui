@@ -355,12 +355,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'credential':
-          this.menuTitle = 'Credentials & Policies';
+          this.menuTitle = 'User Credentials & Policies';
           this.shadowRoot.getElementById('sidebar-menu').selected = 7;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
-          this.menuTitle = 'Environments';
+          this.menuTitle = 'Environments & Presets';
           this.shadowRoot.getElementById('sidebar-menu').selected = 8;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
@@ -479,7 +479,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
-                  Credentials
+                  Users
                 </paper-item>
               </a>` :
       html``}

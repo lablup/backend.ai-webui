@@ -1001,11 +1001,11 @@ ${item.map(item => html`
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
-        <vaadin-grid-column width="15px" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+        <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="100px" header="API Key" flex-grow="0" path="access_key">
+          <vaadin-grid-sort-column resizable width="130px" header="API Key" flex-grow="0" path="access_key">
             <template>
               <div class="layout vertical">
                 <span class="indicator">[[item.access_key]]</span>
@@ -1025,7 +1025,7 @@ ${item.map(item => html`
           `
       : html``
       }
-        <vaadin-grid-column width="100px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
             <div class="layout horizontal center flex">
@@ -1071,7 +1071,7 @@ ${item.map(item => html`
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable header="Usage">
+        <vaadin-grid-column width="130px" flex-grow="0" resizable header="Usage">
           <template>
             <div class="layout horizontal center flex">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
