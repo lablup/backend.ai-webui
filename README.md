@@ -92,6 +92,10 @@ Terminal 1:
 ```
 $ npm run server:d # To run test server
 ```
+OR
+```
+$ npm run server:p # To run compiled source
+```
 Terminal 2:
 ```
 $ npm run electron:d # Run Electron as dev mode.
