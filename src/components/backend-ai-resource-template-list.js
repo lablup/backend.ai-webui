@@ -317,14 +317,14 @@ class BackendAIResourceTemplateList extends LitElement {
                     </paper-dropdown-menu>
                   </div>
                   <div class="horizontal center layout">
-                    <paper-dropdown-menu id="gpu-resource" label="GPU">
+                    <paper-dropdown-menu id="gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable}>
                       <paper-listbox slot="dropdown-content" selected="0">
                       ${this.gpu_metric.map(item => html`
                         <paper-item value="${item}">${item}</paper-item>
                       `)}
                       </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu id="fgpu-resource" label="fGPU">
+                    <paper-dropdown-menu id="fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable}>
                       <paper-listbox slot="dropdown-content" selected="0">
                       ${this.fgpu_metric.map(item => html`
                         <paper-item value="${item}">${item}</paper-item>
@@ -383,14 +383,14 @@ class BackendAIResourceTemplateList extends LitElement {
                 </paper-dropdown-menu>
               </div>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="create-gpu-resource" label="GPU">
+                <paper-dropdown-menu id="create-gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable}>
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.gpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="create-fgpu-resource" label="fGPU">
+                <paper-dropdown-menu id="create-fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable}>
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.fgpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
@@ -447,6 +447,10 @@ class BackendAIResourceTemplateList extends LitElement {
     } else { // already connected
       this._refreshTemplateData();
       this.is_admin = window.backendaiclient.is_admin;
+      window.backendaiclient.getResourceSlots()
+      .then(res => {
+        this.gpu_allocatable = (Object.keys(res).length !== 2);
+      })
     }
   }
 
