@@ -136,13 +136,15 @@ class BackendAiEnvironmentView extends LitElement {
   }
 
   _createPreset() {
-    const preset_name   = this.shadowRoot.querySelector('#id_preset_name').value,
+    let preset_name = this.shadowRoot.querySelector('#id_preset_name').value,
           cpu           = this.shadowRoot.querySelector('#cpu-resource').value,
           mem           = this.shadowRoot.querySelector('#ram-resource').value + 'g',
           gpu_resource  = this.shadowRoot.querySelector('#gpu-resource').value,
           fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
+    if (cpu === 'Unlimited') cpu = 'Infinity';
+    if (mem === 'Unlimited') mem = 'Infinity';
 
-    let resource_slots = { cpu, mem }
+    let resource_slots = {cpu, mem};
     if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
       resource_slots["cuda.device"] = parseInt(gpu_resource);
     }
@@ -152,7 +154,7 @@ class BackendAiEnvironmentView extends LitElement {
 
     const input = {
       'resource_slots': JSON.stringify(resource_slots)
-    }
+    };
 
     window.backendaiclient.resourcePreset.add(preset_name, input)
     .then(res => {
