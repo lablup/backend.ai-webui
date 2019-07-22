@@ -79,6 +79,8 @@ app
 
 # console config
 config.ini
+config.toml
+
 # webpack
 dist
 

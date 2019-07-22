@@ -46,7 +46,7 @@ web:
 	mkdir -p ./deploy/$(site)
 	cd deploy/$(site); rm -rf ./*; mkdir console
 	cp -Rp build/rollup/* deploy/$(site)/console
-	cp ./configs/$(site).ini deploy/$(site)/console/config.ini
+	cp ./configs/$(site).toml deploy/$(site)/console/config.toml
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip

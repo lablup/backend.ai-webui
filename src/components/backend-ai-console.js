@@ -25,6 +25,7 @@ import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
 import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
 import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
 import '@vaadin/vaadin-icons/vaadin-icons.js';
+import toml from 'markty-toml';
 
 import 'weightless/select';
 import 'weightless/progress-spinner';
@@ -192,9 +193,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     let configPath;
     if (window.isElectron) {
-      configPath = './config.ini';
+      configPath = './config.toml';
     } else {
-      configPath = '../../config.ini';
+      configPath = '../../config.toml';
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
@@ -269,34 +270,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
         }
       })
       .then(res => {
-        var data = res;
-        var regex = {
-          section: /^\s*\[\s*([^\]]*)\s*\]\s*$/,
-          param: /^\s*([^=]+?)\s*=\s*(.*?)\s*$/,
-          comment: /^\s*;.*$/
-        };
-        var value = {};
-        var lines = data.split(/[\r\n]+/);
-        var section = null;
-        lines.forEach(function (line) {
-          if (regex.comment.test(line)) {
-
-          } else if (regex.param.test(line)) {
-            var match = line.match(regex.param);
-            if (section) {
-              value[section][match[1]] = match[2];
-            } else {
-              value[match[1]] = match[2];
-            }
-          } else if (regex.section.test(line)) {
-            var match = line.match(regex.section);
-            value[match[1]] = {};
-            section = match[1];
-          } else if (line.length === 0 && section) {
-            section = null;
-          }
-        });
-        this.config = value;
+        this.config = toml(res);
+        console.log(this.config);
       }).catch(err => {
         console.log("Configuration file missing.");
       });
