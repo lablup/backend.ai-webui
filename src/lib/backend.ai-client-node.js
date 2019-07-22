@@ -30,21 +30,26 @@ class ClientConfig {
     this._apiVersionMajor = 'v4';
     this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
     this._hashType = 'sha256';
-    // dynamic configs
-    if (accessKey === undefined || accessKey === null)
-      throw 'You must set accessKey! (either as argument or environment variable)';
-    if (secretKey === undefined || secretKey === null)
-      throw 'You must set secretKey! (either as argument or environment variable)';
     if (endpoint === undefined || endpoint === null)
       endpoint = 'https://api.backend.ai';
     this._endpoint = endpoint;
     this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
     if (connectionMode === 'API') { // API mode
+      // dynamic configs
+      if (accessKey === undefined || accessKey === null)
+        throw 'You must set accessKey! (either as argument or environment variable)';
+      if (secretKey === undefined || secretKey === null)
+        throw 'You must set secretKey! (either as argument or environment variable)';
       this._accessKey = accessKey;
       this._secretKey = secretKey;
       this._userId = '';
       this._password = '';
     } else { // Session mode
+      // dynamic configs
+      if (accessKey === undefined || accessKey === null)
+        throw 'You must set user id! (either as argument or environment variable)';
+      if (secretKey === undefined || secretKey === null)
+        throw 'You must set password! (either as argument or environment variable)';
       this._accessKey = '';
       this._secretKey = '';
       this._userId = accessKey;

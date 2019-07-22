@@ -22,6 +22,8 @@ import 'weightless/expansion';
 import 'weightless/card';
 import 'weightless/slider';
 
+import {default as PainKiller} from "./backend-ai-painkiller";
+
 import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-console-styles';
