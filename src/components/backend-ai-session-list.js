@@ -509,7 +509,8 @@ class BackendAiSessionList extends LitElement {
       'python': [
         {'category': 'Env', 'tag': 'Python', 'color': 'yellow'}],
       'python-intel': [
-        {'category': 'Env', 'tag': 'Python (Intel MKL)', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Python', 'color': 'yellow'},
+        {'tag': 'Intel MKL', 'color': 'green'}],
       'python-ff': [
         {'category': 'Env', 'tag': 'Lablup Research', 'color': 'yellow'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
@@ -532,6 +533,16 @@ class BackendAiSessionList extends LitElement {
         {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
       'r-base': [
         {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
+      'c': [
+        {'category': 'Env', 'tag': 'C', 'color': 'yellow'}],
+      'cpp': [
+        {'category': 'Env', 'tag': 'C++', 'color': 'yellow'}],
+      'rust': [
+        {'category': 'Env', 'tag': 'Rust', 'color': 'yellow'}],
+      'octave': [
+        {'category': 'Env', 'tag': 'Octave', 'color': 'yellow'}],
+      'swift': [
+        {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
     };
     let tags = [];
     if (lang === undefined) return [];
@@ -540,7 +551,7 @@ class BackendAiSessionList extends LitElement {
       tags.push(kernel_alias[name]);
     } else {
       tags = [
-        {'tag': lang, 'color': 'green'}
+        {'category': 'Env', 'tag': lang, 'color': 'green'}
       ]
     }
     return tags;
@@ -916,11 +927,11 @@ class BackendAiSessionList extends LitElement {
       html`
         <div class="layout vertical start">
             <div>${rowData.item.sess_id}</div>
-              ${rowData.item.sessionTags.map(item => html`
+              ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
 ${item.map(item => html`
             <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
             `)}
-                `)}
+                `) : html``}
         </div>`, root
     );
   }
