@@ -519,7 +519,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.07.1.190718</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.07.1.190722</small>
               </address>
             </div>
           </app-header-layout>
@@ -531,7 +531,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <span condensed-title>${this.menuTitle}</span>
               <span class="flex"></span>
-              <div style="vertical end-justified flex layout">
+              <div class="vertical end-justified flex layout">
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 8px;text-align:right">${this.domain}</div>
               </div>
