@@ -449,6 +449,12 @@ class BackendAiResourceMonitor extends LitElement {
     }
   }
 
+  _refreshConcurrency() {
+    return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
+      this.concurrency_used = response.keypair.concurrency_used;
+    });
+  }
+
   _refreshResourcePolicy() {
     window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
@@ -579,6 +585,7 @@ class BackendAiResourceMonitor extends LitElement {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      this._refreshConcurrency();
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
@@ -1037,8 +1044,8 @@ class BackendAiResourceMonitor extends LitElement {
       this._updateEnvironment();
     }).catch((err) => {
       if (err && err.message) {
-        this.$.notification.text = PainKiller.relieve(err.message);
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }

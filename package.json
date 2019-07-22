@@ -65,7 +65,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "buffer": "^5.2.1",
     "cors": "^2.8.5",
-    "electron": "^5.0.6",
+    "electron": "^5.0.7",
     "electron-packager": "^12.2.0",
     "electron-tabs": "^0.9.5",
     "es-dev-server": "^1.6.4",
