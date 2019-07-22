@@ -1037,8 +1037,8 @@ class BackendAiResourceMonitor extends LitElement {
       this._updateEnvironment();
     }).catch((err) => {
       if (err && err.message) {
-        this.$.notification.text = PainKiller.relieve(err.message);
-        this.$.notification.show();
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
+        this.shadowRoot.querySelector('#notification').show();
       }
     });
   }
