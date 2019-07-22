@@ -10,7 +10,7 @@ module.exports = (proxy = class Proxy {
     let hdrs = {
       "Content-Type": "application/json",
       "User-Agent": `Backend.AI Client for Javascript `,
-      "Cookie": `AIOHTTP_SESSION=${this._env.session_id}`
+      "Cookie": `AIOHTTP_SESSION=${this._env.session}`
     };
     return hdrs;
   }
