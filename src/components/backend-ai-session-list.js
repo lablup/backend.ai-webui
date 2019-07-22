@@ -916,11 +916,11 @@ class BackendAiSessionList extends LitElement {
       html`
         <div class="layout vertical start">
             <div>${rowData.item.sess_id}</div>
-              ${rowData.item.sessionTags.map(item => html`
+              ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
 ${item.map(item => html`
             <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
             `)}
-                `)}
+                `) : html``}
         </div>`, root
     );
   }
