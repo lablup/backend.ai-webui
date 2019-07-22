@@ -587,7 +587,7 @@ class BackendAIResourceTemplateList extends LitElement {
   }
 
   _markIfUnlimited(value) {
-    if (['-', 0, 'Infinity'].includes(value)) {
+    if (['-', 0, Infinity, 'Infinity'].includes(value)) {
       return '∞';
     } else {
       return value;
@@ -595,11 +595,7 @@ class BackendAIResourceTemplateList extends LitElement {
   }
 
   _createPreset() {
-    // const wrapper = v => v.includes('Unlimited') ? 'Infinity' : v;
-    const wrapper = v => v + 3;
-
-    console.log(this.shadowRoot.querySelector('#create-fgpu-resource').value);
-
+    const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
     const preset_name   = wrapper(this.shadowRoot.querySelector('#create-preset-name').value),
           cpu           = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value),
           mem           = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g'),
@@ -623,7 +619,7 @@ class BackendAIResourceTemplateList extends LitElement {
       this.shadowRoot.querySelector('#create-preset-dialog').hide();
       if (res.create_resource_preset.ok) {
         this.shadowRoot.querySelector('#notification').text = "Resource preset successfully created";
-        this.shadowRoot.querySelector('#resource-template-list').refresh();
+        this.refresh();
 
         // reset values
         this.shadowRoot.querySelector('#create-preset-name').value = "";
