@@ -39,8 +39,17 @@ class ClientConfig {
       endpoint = 'https://api.backend.ai';
     this._endpoint = endpoint;
     this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
-    this._accessKey = accessKey;
-    this._secretKey = secretKey;
+    if (connectionMode === 'API') { // API mode
+      this._accessKey = accessKey;
+      this._secretKey = secretKey;
+      this._userId = '';
+      this._password = '';
+    } else { // Session mode
+      this._accessKey = '';
+      this._secretKey = '';
+      this._userId = accessKey;
+      this._password = secretKey;
+    }
     this._proxyURL = null;
     this._connectionMode = connectionMode;
   }
@@ -51,6 +60,14 @@ class ClientConfig {
 
   get secretKey() {
     return this._secretKey;
+  }
+
+  get userId() {
+    return this._userId;
+  }
+
+  get password() {
+    return this._password;
   }
 
   get endpoint() {
@@ -268,8 +285,8 @@ class Client {
    */
   login() {
     let body = {
-      'username': this._config.accessKey,
-      'password': this._config.secretKey
+      'username': this._config.userId,
+      'password': this._config.password
     };
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     return this._wrapWithPromise(rqst);
