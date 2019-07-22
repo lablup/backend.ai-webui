@@ -351,8 +351,13 @@ class BackendAiConsole extends connect(store)(LitElement) {
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 5;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+          break;
+        case 'statistics':
+          this.menuTitle = 'Statistics';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
@@ -373,11 +378,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.menuTitle = 'Maintenance';
           this.shadowRoot.getElementById('sidebar-menu').selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
-          break;
-        case 'statistics':
-          this.menuTitle = 'Statistics';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 11;
-          this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
@@ -476,7 +476,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       html``}
               ${this.is_admin ?
       html`
-              <a ?selected="${this._page === 'data'}" href="/statistics" tabindex="-1" role="menuItem">
+              <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
                 <paper-item link>
                   <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
                   Statistics
