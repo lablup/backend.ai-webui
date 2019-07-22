@@ -11,14 +11,16 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
+import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
-import 'weightless/button';
+import 'weightless/label';
+import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
 import './lablup-notification.js';
-import { BackendAIPainKiller as PainKiller } from './backend-ai-painkiller';
+import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
@@ -207,6 +209,24 @@ class BackendAICredentialList extends LitElement {
     }
   }
 
+  async _modifyResourcePolicy(e) {
+    const controls = e.target.closest('#controls');
+    const access_key = controls['access-key'];
+    try {
+      const data = await this._getKeyData(access_key);
+      this.keypairInfo = data.keypair;
+
+      this.shadowRoot.querySelector('#policy-list').value = this.keypairInfo.resource_policy;
+
+      this.shadowRoot.querySelector('#keypair-modify-dialog').show();
+    } catch (err) {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
+      }
+    }
+  }
+
   async _getKeyData(accessKey) {
     let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
@@ -317,6 +337,9 @@ class BackendAICredentialList extends LitElement {
               <wl-button class="fg green" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
                  <wl-icon>assignment</wl-icon>
               </wl-button>
+              <wl-button class="fg blue" fab flat inverted @click="${e => this._modifyResourcePolicy(e)}">
+                <wl-icon>settings</wl-icon>
+              </wl-button>
               ${this.isAdmin && this._isActive() ? html`
                 <wl-button class="fg blue" fab flat inverted @click="${(e) => this._revokeKey(e)}">
                    <wl-icon>delete</wl-icon>
@@ -336,10 +359,40 @@ class BackendAICredentialList extends LitElement {
   }
 
   _hideDialog(e) {
-    this.notification.show();
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _saveKeypairModification(e) {
+    const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
+    const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+
+    let input = {}
+    if (resource_policy !== this.keypairInfo.resource_policy) {
+      input = {...input, resource_policy};
+    }
+    if (rate_limit !== this.keypairInfo.rate_limit) {
+      input = {...input, rate_limit};
+    }
+
+    if (Object.entries(input).length === 0) {
+      this.notification.text = "No changes were made"
+      this.notification.show();
+    } else {
+      window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
+      .then(res => {
+        if (res.modify_keypair.ok) {
+          this.notification.text = "Successfully modified";
+          this.refresh();
+        } else {
+          this.notification.text = "Error";
+        }
+        this.notification.show();
+      })
+    }
+
+    this._hideDialog(e);
   }
 
   static get styles() {
@@ -405,6 +458,27 @@ class BackendAICredentialList extends LitElement {
           --button-bg-active: var(--paper-green-900);
           color: var(--paper-green-900);
         }
+
+        .gutterBottom {
+          margin-bottom: 20px;
+        }
+
+        #keypair-modify-save {
+          width: 100%;
+          box-sizing: border-box;
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
+
+        #policy-list {
+          width: 100%;
+        }
+
+        wl-label {
+          --label-color: black;
+        }
+
       `];
   }
 
@@ -528,7 +602,7 @@ class BackendAICredentialList extends LitElement {
         <vaadin-grid-column width="150px" resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling>
+      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
             <span style="margin-right:15px;">Keypair Detail</span>
@@ -590,6 +664,53 @@ class BackendAICredentialList extends LitElement {
                 </vaadin-item>
               </div>
             </div>
+          </div>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="keypair-modify-dialog" fixed backdrop blockscrolling>
+        <wl-card elevation="0" class="intro" style="margin: 0;">
+          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
+            <span>Modify Keypair Resource Policy</span>
+            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <div class="vertical layout" style="padding: 20px">
+            <div class="vertical layout center-justified gutterBottom">
+              <wl-label>
+                Resource Policy
+                <wl-select id="policy-list" label="Select Policy">
+                  ${Object.keys(this.resourcePolicy).map(rp =>
+                    html`
+                      <option value=${this.resourcePolicy[rp].name}>
+                        ${this.resourcePolicy[rp].name}
+                      </option>
+                    `
+                  )}
+                </wl-select>
+              </wl-label>
+            </div>
+            <div class="vertical layout center-justified gutterBottom">
+              <wl-label>
+                Rate Limit
+                <wl-textfield
+                  type="number"
+                  id="rate-limit"
+                  min="1"
+                  label="Rate Limit"
+                  value="${this.keypairInfo.rate_limit}"
+                ></wl-textfield>
+              </wl-label>
+            </div>
+            <wl-button
+              id="keypair-modify-save"
+              class="fg green"
+              outlined
+              @click=${e => this._saveKeypairModification(e)}
+            >
+              <wl-icon>check</wl-icon>
+              Save Changes
+            </wl-button>
           </div>
         </wl-card>
       </wl-dialog>

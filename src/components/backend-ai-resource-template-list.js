@@ -22,7 +22,7 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
 
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-notification.js';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -408,7 +408,7 @@ class BackendAIResourceTemplateList extends LitElement {
   _readResourcePresetInput() {
     let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
-    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
+    let gpu_resource = this.shadowRoot.querySelector('#gpu-resonodurce').value;
     let fgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
 
     let resource_slots = {

@@ -29,7 +29,6 @@ import '@vaadin/vaadin-icons/vaadin-icons.js';
 import 'weightless/select';
 import 'weightless/progress-spinner';
 
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
 import '../lib/backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -356,12 +355,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'credential':
-          this.menuTitle = 'Credentials & Policies';
+          this.menuTitle = 'User Credentials & Policies';
           this.shadowRoot.getElementById('sidebar-menu').selected = 7;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
-          this.menuTitle = 'Environments';
+          this.menuTitle = 'Environments & Presets';
           this.shadowRoot.getElementById('sidebar-menu').selected = 8;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
@@ -480,7 +479,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
-                  Credentials
+                  Users
                 </paper-item>
               </a>` :
       html``}
@@ -520,7 +519,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.07.1.190716</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.07.1.190722</small>
               </address>
             </div>
           </app-header-layout>
@@ -532,7 +531,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <span condensed-title>${this.menuTitle}</span>
               <span class="flex"></span>
-              <div style="vertical end-justified flex layout">
+              <div class="vertical end-justified flex layout">
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 8px;text-align:right">${this.domain}</div>
               </div>

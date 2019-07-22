@@ -20,7 +20,7 @@ import './lablup-notification.js';
 import './backend-ai-credential-list.js';
 import './backend-ai-resource-policy-list.js';
 import './backend-ai-user-list.js';
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
@@ -266,6 +266,12 @@ class BackendAICredentialView extends LitElement {
       this.shadowRoot.querySelector('#active-credential-list').refresh();
       this.shadowRoot.querySelector('#inactive-credential-list').refresh();
     }, true);
+
+    this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
+      element.addEventListener("keydown", event => {
+        event.stopPropagation();
+      }, true);
+    })
 
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -614,7 +620,7 @@ class BackendAICredentialView extends LitElement {
           </wl-button>
         </h3>
         <wl-card id="credential-lists" class="tab-content">
-          <wl-expansion name="credential-group" open>
+          <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>
             <span slot="description">
             </span>
@@ -622,7 +628,7 @@ class BackendAICredentialView extends LitElement {
               <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
             </div>
           </wl-expansion>
-          <wl-expansion name="credential-group">
+          <wl-expansion name="credential-group" role="list">
             <h4 slot="title">Inactive</h4>
             <div>
               <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
@@ -689,13 +695,13 @@ class BackendAICredentialView extends LitElement {
               <wl-expansion name="advanced-keypair-info">
                 <span slot="title">Advanced</span>
                 <span slot="description"></span>
-                  <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
-                               auto-validate .value="${this.new_access_key}">
-                  </wl-textfield>
-                  <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="Secret Key (optional)"
-                               auto-validate .value="${this.new_secret_key}">
-                  </wl-textfield>
-                </wl-expansion>
+                <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
+                              auto-validate .value="${this.new_access_key}">
+                </wl-textfield>
+                <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="Secret Key (optional)"
+                              auto-validate .value="${this.new_secret_key}">
+                </wl-textfield>
+              </wl-expansion>
               <br/><br/>
               <wl-button class="fg blue create-button" id="create-keypair-button" outlined type="button"
               @click="${this._addKeyPair}">

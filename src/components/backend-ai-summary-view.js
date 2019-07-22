@@ -16,7 +16,7 @@ import './lablup-activity-panel.js';
 import './backend-ai-resource-monitor.js';
 import '../plastics/lablup-shields/lablup-shields';
 
-import { BackendAIPainKiller as PainKiller } from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -415,74 +415,69 @@ class BackendAISummary extends LitElement {
               </div>
             </div>
           </lablup-activity-panel>
-
+          ${this.is_superadmin ? html`
           <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
-                ${this.is_superadmin ? html`
-                <div class="layout vertical center flex" style="margin-bottom:5px;">
-                  <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+              <div class="layout vertical center flex" style="margin-bottom:5px;">
+                <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+              </div>
+              <div class="layout horizontal center flex" style="margin-bottom:5px;">
+                <div class="layout vertical start center-justified">
+                  <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                  <span>CPU</span>
                 </div>
+                <div class="layout vertical start" style="padding-left:15px;">
+                  <paper-progress id="cpu-usage-bar" value="${this.cpu_current_usage_ratio}"
+                                  secondary-progress="${this.cpu_total_usage_ratio}"></paper-progress>
+                  <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
+                    Cores reserved.
+                  </div>
+                  <div>Using <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
+                  </div>
+                </div>
+              </div>
+              <div class="layout horizontal center flex" style="margin-bottom:5px;">
+                <div class="layout vertical start center-justified">
+                  <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                  <span>RAM</span>
+                </div>
+                <div class="layout vertical start" style="padding-left:15px;">
+                  <paper-progress id="mem-usage-bar" value="${this.mem_current_usage_ratio}"
+                                  secondary-progress="${this.mem_total_usage_ratio}"></paper-progress>
+                  <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
+                    reserved.
+                  </div>
+                  <div>Using <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
+                    (${this.mem_current_usage_percent} %)
+                  </div>
+                </div>
+              </div>
+              ${this.gpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
-                    <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                    <span>CPU</span>
+                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
-                    <paper-progress id="cpu-usage-bar" value="${this.cpu_current_usage_ratio}"
-                                    secondary-progress="${this.cpu_total_usage_ratio}"></paper-progress>
-                    <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
-                      Cores reserved.
-                    </div>
-                    <div>Using <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
-                    </div>
+                    <vaadin-progress-bar id="gpu-bar" .value="${this.gpu_used}" .max="${this.gpu_total}"></vaadin-progress-bar>
+                    <div><span class="progress-value"> ${this.gpu_used}</span>/${this.gpu_total} GPUs</div>
                   </div>
-                </div>
+                </div>` : html``}
+              ${this.fgpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
-                    <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                    <span>RAM</span>
+                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
-                    <paper-progress id="mem-usage-bar" value="${this.mem_current_usage_ratio}"
-                                    secondary-progress="${this.mem_total_usage_ratio}"></paper-progress>
-                    <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
-                      reserved.
-                    </div>
-                    <div>Using <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
-                      (${this.mem_current_usage_percent} %)
-                    </div>
+                    <vaadin-progress-bar id="vgpu-bar" value="${this.fgpu_used}"
+                                         max="${this.fgpu_total}"></vaadin-progress-bar>
+                    <div><span class="progress-value"> ${this.fgpu_used}</span>/${this.fgpu_total} GPUs</div>
+                    <div><span class="progress-value">Fractional GPU scaling enabled</div>
                   </div>
-                </div>
-                ${this.gpu_total ? html`
-                  <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                    <div class="layout vertical start center-justified">
-                      <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                      <span>GPU</span>
-                    </div>
-                    <div class="layout vertical start" style="padding-left:15px;">
-                      <vaadin-progress-bar id="gpu-bar" .value="${this.gpu_used}" .max="${this.gpu_total}"></vaadin-progress-bar>
-                      <div><span class="progress-value"> ${this.gpu_used}</span>/${this.gpu_total} GPUs</div>
-                    </div>
-                  </div>` : html``}
-                ${this.fgpu_total ? html`
-                  <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                    <div class="layout vertical start center-justified">
-                      <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                      <span>GPU</span>
-                    </div>
-                    <div class="layout vertical start" style="padding-left:15px;">
-                      <vaadin-progress-bar id="vgpu-bar" value="${this.fgpu_used}"
-                                           max="${this.fgpu_total}"></vaadin-progress-bar>
-                      <div><span class="progress-value"> ${this.fgpu_used}</span>/${this.fgpu_total} GPUs</div>
-                      <div><span class="progress-value">Fractional GPU scaling enabled</div>
-                    </div>
-                  </div>` : html``}
-                ` : html`
-                <ul>
-                  <li>Login with administrator privileges required.</li>
-                </ul>`}
+                </div>` : html``}
             </div>
-          </lablup-activity-panel>
+          </lablup-activity-panel>` : html``}
         </div>
         <h3 class="plastic-material-title">Actions</h3>
         <div class="horizontal wrap layout">
@@ -508,7 +503,7 @@ class BackendAISummary extends LitElement {
             <lablup-activity-panel title="Invitation">
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
-                <span class="invitation_folder_name">${invitation.vfolder_id}</span>
+                <span class="invitation_folder_name">Folder name: ${invitation.vfolder_name}</span>
                 <div class="horizontal center layout">
                 Permission:
                 ${[...invitation.perm].map(c => {

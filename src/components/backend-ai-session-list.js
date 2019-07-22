@@ -27,7 +27,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/checkbox';
 
-import {BackendAIPainKiller as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
 import './lablup-notification.js';
 import './backend-ai-indicator.js';
@@ -509,7 +509,8 @@ class BackendAiSessionList extends LitElement {
       'python': [
         {'category': 'Env', 'tag': 'Python', 'color': 'yellow'}],
       'python-intel': [
-        {'category': 'Env', 'tag': 'Python (Intel MKL)', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Python', 'color': 'yellow'},
+        {'tag': 'Intel MKL', 'color': 'green'}],
       'python-ff': [
         {'category': 'Env', 'tag': 'Lablup Research', 'color': 'yellow'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
@@ -532,6 +533,16 @@ class BackendAiSessionList extends LitElement {
         {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
       'r-base': [
         {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
+      'c': [
+        {'category': 'Env', 'tag': 'C', 'color': 'yellow'}],
+      'cpp': [
+        {'category': 'Env', 'tag': 'C++', 'color': 'yellow'}],
+      'rust': [
+        {'category': 'Env', 'tag': 'Rust', 'color': 'yellow'}],
+      'octave': [
+        {'category': 'Env', 'tag': 'Octave', 'color': 'yellow'}],
+      'swift': [
+        {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
     };
     let tags = [];
     if (lang === undefined) return [];
@@ -540,7 +551,7 @@ class BackendAiSessionList extends LitElement {
       tags.push(kernel_alias[name]);
     } else {
       tags = [
-        {'tag': lang, 'color': 'green'}
+        {'category': 'Env', 'tag': lang, 'color': 'green'}
       ]
     }
     return tags;
@@ -916,11 +927,11 @@ class BackendAiSessionList extends LitElement {
       html`
         <div class="layout vertical start">
             <div>${rowData.item.sess_id}</div>
-              ${rowData.item.sessionTags.map(item => html`
+              ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
 ${item.map(item => html`
             <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
             `)}
-                `)}
+                `) : html``}
         </div>`, root
     );
   }
@@ -998,13 +1009,14 @@ ${item.map(item => html`
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>
+
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
-        <vaadin-grid-column width="15px" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+        <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="100px" header="API Key" flex-grow="0" path="access_key">
+          <vaadin-grid-sort-column resizable width="130px" header="API Key" flex-grow="0" path="access_key">
             <template>
               <div class="layout vertical">
                 <span class="indicator">[[item.access_key]]</span>
@@ -1024,7 +1036,7 @@ ${item.map(item => html`
           `
       : html``
       }
-        <vaadin-grid-column width="100px" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
             <div class="layout horizontal center flex">
@@ -1070,7 +1082,7 @@ ${item.map(item => html`
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable header="Usage">
+        <vaadin-grid-column width="130px" flex-grow="0" resizable header="Usage">
           <template>
             <div class="layout horizontal center flex">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>

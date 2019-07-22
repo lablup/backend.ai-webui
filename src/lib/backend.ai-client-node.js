@@ -932,6 +932,31 @@ class VFolder {
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/invitations/delete`, body);
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * List invitees(users who accepted an invitation)
+   *
+   * @param {string} vfolder_id - vfolder id. If no id is given, all users who accepted the client's invitation will be returned
+   */
+  list_invitees(vfolder_id = null) {
+    let queryString = '/folders/_/shared';
+    if (vfolder_id !== null) queryString = `${queryString}?vfolder_id=${vfolder_id}`;
+    let rqst = this.client.newSignedRequest('GET', queryString, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Modify an invitee's permission to a shared vfolder
+   *
+   * @param {json} input - parameters for permission modification
+   * @param {string} input.perm - invitee's new permission. permission should one of the following: 'ro', 'rw', 'wd'
+   * @param {string} input.user - invitee's uuid
+   * @param {string} input.vfolder - id of the vfolder that has been shared to the invitee
+   */
+  modify_invitee_permission(input) {
+    let rqst = this.client.newSignedRequest('POST', '/folders/_/shared', input);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Agent {
