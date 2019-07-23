@@ -30,17 +30,31 @@ class ClientConfig {
     this._apiVersionMajor = 'v4';
     this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
     this._hashType = 'sha256';
-    // dynamic configs
-    if (accessKey === undefined || accessKey === null)
-      throw 'You must set accessKey! (either as argument or environment variable)';
-    if (secretKey === undefined || secretKey === null)
-      throw 'You must set secretKey! (either as argument or environment variable)';
     if (endpoint === undefined || endpoint === null)
       endpoint = 'https://api.backend.ai';
     this._endpoint = endpoint;
     this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
-    this._accessKey = accessKey;
-    this._secretKey = secretKey;
+    if (connectionMode === 'API') { // API mode
+      // dynamic configs
+      if (accessKey === undefined || accessKey === null)
+        throw 'You must set accessKey! (either as argument or environment variable)';
+      if (secretKey === undefined || secretKey === null)
+        throw 'You must set secretKey! (either as argument or environment variable)';
+      this._accessKey = accessKey;
+      this._secretKey = secretKey;
+      this._userId = '';
+      this._password = '';
+    } else { // Session mode
+      // dynamic configs
+      if (accessKey === undefined || accessKey === null)
+        throw 'You must set user id! (either as argument or environment variable)';
+      if (secretKey === undefined || secretKey === null)
+        throw 'You must set password! (either as argument or environment variable)';
+      this._accessKey = '';
+      this._secretKey = '';
+      this._userId = accessKey;
+      this._password = secretKey;
+    }
     this._proxyURL = null;
     this._connectionMode = connectionMode;
   }
@@ -51,6 +65,14 @@ class ClientConfig {
 
   get secretKey() {
     return this._secretKey;
+  }
+
+  get userId() {
+    return this._userId;
+  }
+
+  get password() {
+    return this._password;
   }
 
   get endpoint() {
@@ -255,6 +277,7 @@ class Client {
       if (result.authenticated === true) {
         let data = result.data;
         this._config._accessKey = result.data.access_key;
+        this._config._session_id = result.session_id;
       }
     } catch (err) {
       return false;
@@ -268,8 +291,8 @@ class Client {
    */
   login() {
     let body = {
-      'username': this._config.accessKey,
-      'password': this._config.secretKey
+      'username': this._config.userId,
+      'password': this._config.password
     };
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     return this._wrapWithPromise(rqst);

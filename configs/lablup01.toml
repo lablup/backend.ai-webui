@@ -1,0 +1,11 @@
+[general]
+apiEndpoint = "https://lablup.onprem.backend.ai:9080"
+apiEndpointText = "Lablup Inc. Research Team / Backend.AI Enterprise"
+defaultSessionEnvironment = "index.docker.io/lablup/ngc-tensorflow"
+siteDescription = "DGX-2"
+connectionMode = "API"
+
+[wsproxy]
+proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
+#proxyBaseURL =
+proxyListenIP = "0.0.0.0"

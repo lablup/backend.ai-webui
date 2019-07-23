@@ -700,11 +700,18 @@ class BackendAiSessionList extends LitElement {
       return false;
     }
 
+    ////
     let param = {
-      access_key: window.backendaiclient._config.accessKey,
-      secret_key: window.backendaiclient._config.secretKey,
       endpoint: window.backendaiclient._config.endpoint
     };
+    if (window.backendaiclient._config.connectionMode === 'SESSION') {
+      param['mode'] = "SESSION";
+      param['session'] = window.backendaiclient._config._session_id;
+    } else {
+      param['mode'] = "DEFAULT";
+      param['access_key'] = window.backendaiclient._config.accessKey;
+      param['secret_key'] = window.backendaiclient._config.secretKey;
+    }
     let rqst = {
       method: 'PUT',
       body: JSON.stringify(param),
