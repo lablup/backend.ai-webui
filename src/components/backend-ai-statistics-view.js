@@ -8,6 +8,7 @@ import { css, html, LitElement } from "lit-element";
 import 'weightless/card';
 
 import { BackendAiStyles } from './backend-ai-console-styles';
+import './backend-ai-chart.js'
 import {
   IronFlex,
   IronFlexAlignment,
@@ -53,15 +54,33 @@ class BackendAIStatisticsView extends LitElement {
       ]
     }
 
+    _showTab(tab) {
+      var els = this.shadowRoot.querySelectorAll(".tab-content");
+
+      for (const el of els) {
+        el.style.display = 'none';
+      }
+
+      console.log('#' + tab.value + '-stat');
+      this.shadowRoot.querySelector('#' + tab.value + '-stat').style.display = 'block';
+    }
+
     render() {
         // language=HTML
         return html`
           <wl-card class="item">
             <h3 class="tab horizontal center layout">
               <wl-tab-group>
-                <wl-tab value="statistics" checked>Statistics</wl-tab>
+                <wl-tab value="usage" checked @click="${e => this._showTab(e.target)}">Usage</wl-tab>
+                <wl-tab value="insight" checked @click="${e => this._showTab(e.target)}">Insight</wl-tab>
               </wl-tab-group>
             </h3>
+            <div id="usage-stat" class="tab-content">
+              <backend-ai-chart width="400" title="Hello" elevation="1" .data=${[80, 100, 56, 120, 180, 30, 40, 120, 160, 70]}>
+              </backend-ai-chart>
+            </div>
+            <div id="insight-stat" style="display: none;">
+            </div>
           </wl-card>
         `;
     }
