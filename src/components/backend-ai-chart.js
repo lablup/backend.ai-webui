@@ -37,8 +37,8 @@ class BackendAIChart extends LitElement {
         }
 
         wl-card > h4 {
-          border-left: 3px solid var(--paper-green-900);
-          background-color: var(--paper-green-500);
+          border-left: 3px solid var(--paper-cyan-900);
+          background-color: var(--paper-cyan-500);
           color: #eee;
           font-size: 14px;
           font-weight: 400;
@@ -114,6 +114,10 @@ class BackendAIChart extends LitElement {
   }
 
   firstUpdated() {
+    this.shadowRoot.querySelector('wl-card').style.width = this.width + "px";
+    this.shadowRoot.querySelector('wl-card').style.width = this.width + 20 + "px";
+
+
     const svg = d3.select(this.shadowRoot.querySelector('#d3'))
         .append('svg')
         .attr("width", this.width)

@@ -401,8 +401,6 @@ class BackendAISummary extends LitElement {
               </div>
             </div>
           </lablup-activity-panel>
-          <backend-ai-chart title="Hello" elevation="1" .data=${[80, 100, 56, 120, 180, 30, 40, 120, 160, 70]}>
-          </backend-ai-chart>
           <lablup-activity-panel title="System Health" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
