@@ -6,6 +6,8 @@
 import { css, html, LitElement } from "lit-element";
 
 import 'weightless/card';
+import 'weightless/tab-group';
+import 'weightless/tab';
 
 import { BackendAiStyles } from './backend-ai-console-styles';
 import './backend-ai-chart.js'
@@ -15,6 +17,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
 
 class BackendAIStatisticsView extends LitElement {
     static get is() {
