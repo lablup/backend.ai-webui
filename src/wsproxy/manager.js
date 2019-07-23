@@ -6,7 +6,8 @@ const {isFreePort} = require('node-port-check');
 
 const Client = require("./lib/WstClient"),
   ai = require('../lib/backend.ai-client-node'),
-  Proxy = require("./proxy");
+  Proxy = require("./proxy"),
+  CProxy = require("./cproxy");
 
 class Manager extends EventEmitter {
   constructor(listen_ip, proxyBaseURL, proxyBasePort) {
@@ -46,9 +47,6 @@ class Manager extends EventEmitter {
 
   getPort() {
     return new Promise((resolve, reject) => {
-      if (this.proxyBasePort) {
-        return this.proxyBasePort;
-      }
       if (this.ports.length == 0) {
         this.refreshPorts();
       }
@@ -70,12 +68,27 @@ class Manager extends EventEmitter {
     this.app.use(cors());
 
     this.app.put('/conf', (req, res) => {
-      let config = new ai.backend.ClientConfig(
-        req.body.access_key,
-        req.body.secret_key,
-        req.body.endpoint,
-      );
-      this.aiclient = new ai.backend.Client(config);
+      let cf = {
+        "created": Date.now(),
+        "endpoint": req.body.endpoint
+      };
+      if(req.body.mode && req.body.mode == "SESSION") {
+        cf['mode'] = "SESSION";
+        cf['session'] = req.body.session;
+        cf['endpoint'] = cf['endpoint'] + "/func";
+      } else {
+        cf['mode'] = "DEFAULT";
+        cf['access_key'] = req.body.access_key;
+        cf['secret_key'] = req.body.secret_key;
+        let config = new ai.backend.ClientConfig(
+          req.body.access_key,
+          req.body.secret_key,
+          req.body.endpoint,
+        );
+        this.aiclient = new ai.backend.Client(config);
+      }
+      this._config = cf;
+
       res.send({"token": "local"});
     });
 
@@ -89,7 +102,7 @@ class Manager extends EventEmitter {
 
     this.app.get('/proxy/local/:kernelId', (req, res) => {
       let kernelId = req.params["kernelId"];
-      if (!this.aiclient){
+      if (!this._config){
         res.send({"code": 401});
         return;
       }
@@ -102,15 +115,23 @@ class Manager extends EventEmitter {
 
     this.app.get('/proxy/local/:kernelId/add', (req, res) =>{
       let kernelId = req.params["kernelId"];
-      if (!this.aiclient){
+      if (!this._config){
         res.send({"code": 401});
         return;
       }
       let app = req.query.app || "jupyter";
       let p = kernelId + "|" + app;
       if (!(p in this.proxies)) {
-        let proxy = new Proxy(this.aiclient._config);
+        console.log("EEE");
+        let proxy;
+        if(this._config.mode == "SESSION") {
+          proxy = new CProxy(this._config);
+        } else {
+          proxy = new Proxy(this.aiclient._config);
+        }
+        console.log("EEE");
         this.getPort().then((port) => {
+          console.log("EEE");
           let proxy_url = this.proxyBaseURL + ":" + port;
           proxy.start_proxy(kernelId, app, this.listen_ip, port, proxy_url);
           this.proxies[p] = proxy;
@@ -125,7 +146,7 @@ class Manager extends EventEmitter {
 
     this.app.get('/proxy/local/:kernelId/delete', (req, res) => {
       let kernelId = req.params["kernelId"];
-      if (!this.aiclient){
+      if (!this._config){
         res.send({"code": 401});
         return;
       }

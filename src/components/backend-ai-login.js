@@ -46,6 +46,12 @@ class BackendAiLogin extends LitElement {
       secret_key: {
         type: String
       },
+      user_id: {
+        type: String
+      },
+      password: {
+        type: String
+      },
       proxy_url: {
         type: String
       },
@@ -84,6 +90,8 @@ class BackendAiLogin extends LitElement {
     setPassiveTouchGestures(true);
     this.api_key = '';
     this.secret_key = '';
+    this.user_id = '';
+    this.password = '';
     this.api_endpoint = '';
     this.domain_name = '';
     this.proxy_url = 'http://127.0.0.1:5050/';
@@ -214,16 +222,18 @@ class BackendAiLogin extends LitElement {
   }
 
   _login() {
-    this.api_key = this.shadowRoot.querySelector('#id_api_key').value;
-    this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this.notification.text = 'Please wait to login...';
     this.notification.show();
     this.block();
     if (this.connection_mode === 'SESSION') {
+      this.user_id = this.shadowRoot.querySelector('#id_api_key').value;
+      this.password = this.shadowRoot.querySelector('#id_secret_key').value;
       this._connectUsingSession();
     } else {
+      this.api_key = this.shadowRoot.querySelector('#id_api_key').value;
+      this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
       this._connectUsingAPI();
     }
   }
@@ -243,8 +253,8 @@ class BackendAiLogin extends LitElement {
 
   async _connectUsingSession() {
     this.clientConfig = new ai.backend.ClientConfig(
-      this.api_key,
-      this.secret_key,
+      this.user_id,
+      this.password,
       this.api_endpoint,
       'SESSION'
     );
