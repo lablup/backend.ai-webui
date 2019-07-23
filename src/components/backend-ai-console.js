@@ -478,7 +478,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
 
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
-                  <iron-icon class="fg lime" icon="icons:fingerprint"></iron-icon>
+                  <iron-icon class="fg lime" icon="icons:face"></iron-icon>
                   Users
                 </paper-item>
               </a>` :
