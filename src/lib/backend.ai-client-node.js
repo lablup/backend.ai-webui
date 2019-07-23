@@ -277,6 +277,7 @@ class Client {
       if (result.authenticated === true) {
         let data = result.data;
         this._config._accessKey = result.data.access_key;
+        this._config._session_id = result.session_id;
       }
     } catch (err) {
       return false;
