@@ -509,7 +509,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 8px;text-align:right">${this.domain}</div>
               </div>
-              <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
+              <paper-icon-button id="sign-button" icon="icons:launch" @click="${()=>this.logout()}"></paper-icon-button>
             </app-toolbar>
             <div class="horizontal flex wrap layout">
               <h2 main-title style="width:300px;">${this.menuTitle}</h2>
