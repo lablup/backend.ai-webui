@@ -2,6 +2,7 @@ import {css, html, LitElement} from "lit-element";
 import '@polymer/paper-icon-button/paper-icon-button';
 import 'weightless/card';
 
+import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 import '../lib/Chart.bundle.min.js';
@@ -33,6 +34,7 @@ class BackendAIChart extends LitElement {
 
   static get styles() {
     return [
+      BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
       // language=CSS
@@ -47,8 +49,24 @@ class BackendAIChart extends LitElement {
         }
 
         wl-card > div {
-          padding: 10px;
           font-size: 12px;
+        }
+
+        #chart-canvas {
+          margin: auto 10px;
+        }
+
+        @media screen and (max-width: 899px) {
+          #chart-canvas {
+            width: 90%;
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          #chart-canvas {
+            width: calc(100vw - 400px);
+            height: 450px;
+          }
         }
       `];
   }
@@ -83,12 +101,10 @@ class BackendAIChart extends LitElement {
     // language=HTML
     return html`
       <wl-card>
+        <h3>${this.title}</h3>
         <div class="layout vertical">
-          <div class="layout horizontal around-justified">
-            <h1>${this.title}</h1>
-          </div>
           <div>
-            <canvas id="chart-canvas" style="width: 800px; display: block; margin: auto"></canvas>
+            <canvas id="chart-canvas" style="display: block;"></canvas>
           </div>
         </div>
       </wl-card>
@@ -96,8 +112,8 @@ class BackendAIChart extends LitElement {
   }
 
   firstUpdated() {
-    this.shadowRoot.querySelector('wl-card').style.width = `${this.width}px`;
-    this.shadowRoot.querySelector('#chart-canvas').style.width = `${this.width * 0.8}px`
+    //this.shadowRoot.querySelector('wl-card').style.width = `${this.width}px`;
+    //this.shadowRoot.querySelector('wl-card').style.height = `${this.height}px`;
 
     const ctx = this.shadowRoot.querySelector('#chart-canvas');
     new Chart(ctx, {
@@ -112,7 +128,6 @@ class BackendAIChart extends LitElement {
       },
       options: {
         responsive: false,
-        aspectRatio: 4,
         scales: {
           xAxes: [{
             scaleLabel: {
