@@ -280,7 +280,7 @@ class Client {
         this._config._session_id = result.session_id;
       }
     } catch (err) {
-      return resolve(false);
+      return Promise.resolve(false);
     }
     return result.authenticated;
   }
@@ -301,7 +301,7 @@ class Client {
       if (result.authenticated === true) {
         return this.check_login();
       } else {
-        return resolve(false);
+        return Promise.resolve(false);
       }
     } catch (err) {
       return false;
@@ -711,7 +711,7 @@ class ResourcePreset {
       };
       return this.client.gql(q, v);
     } else {
-      return resolve(false);
+      return Promise.resolve(false);
     }
   }
 
@@ -739,7 +739,7 @@ class ResourcePreset {
       };
       return this.client.gql(q, v);
     } else {
-      return resolve(false);
+      return Promise.resolve(false);
     }
   }
 }
@@ -1010,7 +1010,7 @@ class Agent {
    */
   list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
     if (['ALIVE', 'TERMINATED'].includes(status) === false) {
-      return resolve(false);
+      return Promise.resolve(false);
     }
     let q = `query($status: String) {` +
       `  agents(status: $status) {` +
@@ -1282,7 +1282,7 @@ class ResourcePolicy {
       };
       return this.client.gql(q, v);
     } else {
-      return resolve(false);
+      return Promise.resolve(false);
     }
   }
 
@@ -1325,7 +1325,7 @@ class ResourcePolicy {
       };
       return this.client.gql(q, v);
     } else {
-      return resolve(false);
+      return Promise.resolve(false);
     }
   }
 }
@@ -1608,7 +1608,7 @@ class Maintenance {
       }
       return this.client.gql(q, v);
     } else {
-      return resolve(false);
+      return Promise.resolve(false);
     }
   }
   recalculate_usage() {
@@ -1728,7 +1728,7 @@ class User {
       };
       return this.client.gql(q, v);
     } else {
-      return resolve(false);
+      return Promise.resolve(false);
     }
   }
 
@@ -1763,7 +1763,7 @@ class User {
       };
       return this.client.gql(q, v);
     } else {
-      return resolve(false);
+      return Promise.resolve(false);
     }
   }
 
@@ -1784,7 +1784,7 @@ class User {
       };
       return this.client.gql(q, v);
     } else {
-      return resolve(false);
+      return Promise.resolve(false);
     }
   }
 }
