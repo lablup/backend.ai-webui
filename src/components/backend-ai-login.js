@@ -213,12 +213,12 @@ class BackendAiLogin extends LitElement {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
-      this.block('Please wait to login.', 'Connecting to Backend.AI...');
+      this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
       this.notification.text = 'Please wait to login...';
       this.notification.show();
       this._connectUsingSession();
     } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      this.block('Please wait to login.', 'Connecting to Backend.AI...');
+      this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
       this.notification.text = 'Please wait to login...';
       this.notification.show();
       this._connectUsingAPI();
@@ -239,7 +239,7 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this.notification.text = 'Please wait to login...';
     this.notification.show();
-    this.block('Please wait to login.', 'Connecting to Backend.AI...');
+    this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
     if (this.connection_mode === 'SESSION') {
       this.user_id = this.shadowRoot.querySelector('#id_user_id').value;
       this.password = this.shadowRoot.querySelector('#id_password').value;
