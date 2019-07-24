@@ -127,6 +127,11 @@ class BackendAISummary extends LitElement {
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
         }
+        
+        #cpu-usage-bar {
+          --paper-progress-active-color: #98BE5A;
+          --paper-progress-secondary-color: #3677EB;
+        }
 
         wl-button[class*="green"] {
           --button-bg: var(--paper-light-green-50);
@@ -286,12 +291,26 @@ class BackendAISummary extends LitElement {
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / parseFloat(this.cpu_total * 100)) * 100.0).toFixed(2);
-    this.mem_allocated = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
     this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
     this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
+
+    // mem.total: total memory
+    // mem.allocated: allocated by backend.ai
+    // mem.used: used by backend.ai
+    this.mem_allocated = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
+
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
-    this.mem_current_usage_percent = (this.mem_current_usage_ratio / this.mem_total_usage_ratio * 100.0).toFixed(2);
+
+    if (this.mem_total_usage_ratio === 0) { // Not allocated (no session presents)
+      this.mem_current_usage_percent = 0.0;
+    } else {
+      this.mem_current_usage_percent = (this.mem_current_usage_ratio / this.mem_total_usage_ratio * 100.0).toFixed(2);
+    }
+    console.log(this.resources.mem.allocated ,  this.resources.mem.total );
+    console.log(this.resources.mem.used ,  this.resources.mem.total );
+    console.log(this.cpu_total_usage_ratio , this.cpu_current_usage_ratio );
+    console.log(this.mem_total_usage_ratio , this.mem_current_usage_ratio );
     this.agents = this.resources.agents.total;
 
     if (isNaN(this.mem_current_usage_percent)) {
@@ -430,6 +449,14 @@ class BackendAISummary extends LitElement {
                 <div class="layout vertical start" style="padding-left:15px;">
                   <paper-progress id="cpu-usage-bar" value="${this.cpu_current_usage_ratio}"
                                   secondary-progress="${this.cpu_total_usage_ratio}"></paper-progress>
+                  <div class="horizontal center layout">
+                    <div style="width:10px;height:10px;margin-right:3px;background-color:#4775E3;"></div>
+                    <span style="margin-right:5px;">Reserved</span>
+                    <div style="width:10px;height:10px;margin-right:3px;background-color:#A0BD67"></div>
+                    <span style="margin-right:5px;">Used</span>
+                    <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
+                    <span>Total</span>
+                  </div>
                   <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
                     Cores reserved.
                   </div>
@@ -443,10 +470,18 @@ class BackendAISummary extends LitElement {
                   <span>RAM</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
-                  <paper-progress id="mem-usage-bar" value="${this.mem_current_usage_ratio}"
-                                  secondary-progress="${this.mem_total_usage_ratio}"></paper-progress>
+                  <paper-progress id="mem-usage-bar" value="${this.mem_total_usage_ratio}"
+                                  secondary-progress="${this.mem_current_usage_ratio}"></paper-progress>
                   <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
                     reserved.
+                  </div>
+                  <div class="horizontal center layout">
+                    <div style="width:10px;height:10px;margin-right:3px;background-color:#4775E3;"></div>
+                    <span style="margin-right:5px;">Reserved</span>
+                    <div style="width:10px;height:10px;margin-right:3px;background-color:#A0BD67"></div>
+                    <span style="margin-right:5px;">Used</span>
+                    <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
+                    <span>Total</span>
                   </div>
                   <div>Using <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
                     (${this.mem_current_usage_percent} %)
