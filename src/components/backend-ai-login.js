@@ -274,7 +274,7 @@ class BackendAiLogin extends LitElement {
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
       this.client.login().then(response => {
-        if (response.authenticated === false) {
+        if (response === false) {
           throw {"message": "Authentication failed. Check information and manager status."};
         } else {
           return this._connectGQL();
