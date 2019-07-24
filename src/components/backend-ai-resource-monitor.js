@@ -661,9 +661,9 @@ class BackendAiResourceMonitor extends LitElement {
         }
       }
       const alias = this.aliases[item];
-      const basename = alias.split(' (')[0];
-      const tags = this.tags[alias];
       if (alias !== undefined) {
+        const basename = alias.split(' (')[0];
+        const tags = this.tags[alias];
         this.languages.push({name: item, alias: alias, basename: basename, tags: tags});
       }
     });
