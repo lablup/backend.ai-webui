@@ -365,7 +365,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
       const key = keys[i];
       if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
     }
-    location.reload();
+    if (window.isElectron) {
+      this.shadowRoot.querySelector('#login-panel').login();
+    } else {
+      window.location.reload();
+    }
   }
 
   updateTitleColor(backgroundColorVal, colorVal) {

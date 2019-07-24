@@ -181,6 +181,9 @@ class BackendAiLogin extends LitElement {
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
     }
+    if (this.blockPanel.open === true) {
+      this.blockPanel.hide();
+    }
   }
 
   close() {
@@ -192,6 +195,15 @@ class BackendAiLogin extends LitElement {
     }
   }
 
+  block(message = '', type = '') {
+    this.blockMessage = message;
+    this.blockType = type;
+    this.shadowRoot.querySelector('#block-panel').show();
+  }
+
+  free() {
+    this.shadowRoot.querySelector('#block-panel').hide();
+  }
   login() {
     this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
     this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
@@ -201,26 +213,18 @@ class BackendAiLogin extends LitElement {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
+      this.block('Please wait to login.', 'Connecting to Backend.AI...');
       this.notification.text = 'Please wait to login...';
       this.notification.show();
       this._connectUsingSession();
     } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+      this.block('Please wait to login.', 'Connecting to Backend.AI...');
       this.notification.text = 'Please wait to login...';
       this.notification.show();
       this._connectUsingAPI();
     } else {
       this.open();
     }
-  }
-
-  block(message = '', type = '') {
-    this.blockMessage = message;
-    this.blockType = type;
-    this.shadowRoot.querySelector('#block-panel').show();
-  }
-
-  free() {
-    this.shadowRoot.querySelector('#block-panel').hide();
   }
 
   _validate_data(value) {
@@ -235,7 +239,7 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this.notification.text = 'Please wait to login...';
     this.notification.show();
-    this.block();
+    this.block('Please wait to login.', 'Connecting to Backend.AI...');
     if (this.connection_mode === 'SESSION') {
       this.user_id = this.shadowRoot.querySelector('#id_user_id').value;
       this.password = this.shadowRoot.querySelector('#id_password').value;
@@ -539,7 +543,7 @@ class BackendAiLogin extends LitElement {
           ${this.blockType !== '' ? html`
           <h3>${this.blockType}</h3>
           ` : html``}
-          <div style="text-align:center;">
+          <div style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
           </div>
         </wl-card>
