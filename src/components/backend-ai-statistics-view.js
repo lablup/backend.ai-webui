@@ -75,11 +75,13 @@ class BackendAIStatisticsView extends LitElement {
                 <wl-tab value="insight" checked @click="${e => this._showTab(e.target)}">Insight</wl-tab>
               </wl-tab-group>
             </h3>
-            <div id="usage-stat" class="tab-content">
-              <backend-ai-chart width="400" title="Hello" elevation="1" .data=${[80, 100, 56, 120, 180, 30, 40, 120, 160, 70]}>
-              </backend-ai-chart>
-            </div>
-            <div id="insight-stat" style="display: none;">
+            <div class="horizontal wrap layout">
+              <div id="usage-stat" class="tab-content">
+                <backend-ai-chart width="400" title="Hello" elevation="1" .data=${[80, 100, 56, 120, 180, 30, 40, 120, 160, 70]}>
+                </backend-ai-chart>
+              </div>
+              <div id="insight-stat" style="display: none;">
+              </div>
             </div>
           </wl-card>
         `;
