@@ -262,19 +262,6 @@ class BackendAiLogin extends LitElement {
     }
   }
 
-  // TODO: global error message patcher
-  _politeErrorMessage(err) {
-    const errorMsgSet = {
-      "Cannot read property 'map' of null": "User has no group. Please contact administrator to fix it.",
-      "Cannot read property 'split' of undefined": 'Wrong API server address.'
-    };
-    console.log(err);
-    if (err in errorMsgSet) {
-      return errorMsgSet[err];
-    }
-    return err;
-  }
-
   async _connectUsingSession() {
     this.clientConfig = new ai.backend.ClientConfig(
       this.user_id,
