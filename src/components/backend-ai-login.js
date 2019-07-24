@@ -168,12 +168,19 @@ class BackendAiLogin extends LitElement {
     if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
       this.connection_mode = 'API';
     } else {
+      // TODO : use lit-element dynamic assignment
       if (config.general.connectionMode.toUpperCase() === 'SESSION') {
         this.connection_mode = 'SESSION';
-        this.shadowRoot.querySelector('#id_api_key').label = 'ID';
-        this.shadowRoot.querySelector('#id_secret_key').label = 'Password';
+        this.shadowRoot.querySelector('#id_api_key').style.display = 'none';
+        this.shadowRoot.querySelector('#id_secret_key').style.display = 'none';
+        this.shadowRoot.querySelector('#id_user_id').style.display = 'block';
+        this.shadowRoot.querySelector('#id_password').style.display = 'block';
       } else {
         this.connection_mode = 'API';
+        this.shadowRoot.querySelector('#id_api_key').style.display = 'block';
+        this.shadowRoot.querySelector('#id_secret_key').style.display = 'block';
+        this.shadowRoot.querySelector('#id_user_id').style.display = 'none';
+        this.shadowRoot.querySelector('#id_password').style.display = 'none';
       }
     }
   }
@@ -194,21 +201,17 @@ class BackendAiLogin extends LitElement {
   }
 
   login() {
+    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
+    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
+    this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.user_id'));
+    this.password = JSON.parse(localStorage.getItem('backendaiconsole.password'));
     if (this.api_endpoint === '') {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
-    if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      this.notification.text = 'Please wait to login...';
-      this.notification.show();
-      if (this.connection_mode === 'SESSION') {
-        this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
-        this.password = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
-        this._connectUsingSession();
-      } else {
-        this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
-        this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
-        this._connectUsingAPI();
-      }
+    if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
+      this._connectUsingSession();
+    } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+      this._connectUsingAPI();
     } else {
       this.open();
     }
@@ -248,8 +251,8 @@ class BackendAiLogin extends LitElement {
     this.notification.show();
     this.block();
     if (this.connection_mode === 'SESSION') {
-      this.user_id = this.shadowRoot.querySelector('#id_api_key').value;
-      this.password = this.shadowRoot.querySelector('#id_secret_key').value;
+      this.user_id = this.shadowRoot.querySelector('#id_user_id').value;
+      this.password = this.shadowRoot.querySelector('#id_password').value;
       this._connectUsingSession();
     } else {
       this.api_key = this.shadowRoot.querySelector('#id_api_key').value;
@@ -529,6 +532,9 @@ class BackendAiLogin extends LitElement {
       <app-localstorage-document id="storage" key="backendaiconsole.api_key"
                                  data="${this.api_key}"></app-localstorage-document>
       <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
+      <app-localstorage-document id="storage" key="backendaiconsole.user_id"
+                                 data="${this.user_id}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.password" data="${this.password}"></app-localstorage-document>
       <app-localstorage-document key="backendaiconsole.api_endpoint"
                                  data="${this.api_endpoint}"></app-localstorage-document>
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
@@ -541,10 +547,14 @@ class BackendAiLogin extends LitElement {
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
+              <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
                            label="API Key" value="${this.api_key}"></paper-input>
-              <paper-input type="password" name="secret_key" id="id_secret_key"
+              <paper-input type="password" name="secret_key" id="id_secret_key" style="display:none;"
                            label="Secret Key" value="${this.secret_key}"></paper-input>
+              <paper-input type="text" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
+                           label="ID" value="${this.user_id}"></paper-input>
+              <paper-input type="password" name="password" id="id_password" style="display:none;"
+                           label="Password" value="${this.password}"></paper-input>
               <paper-input type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
                            label="API Endpoint" value="${this.api_endpoint}"></paper-input>
               <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
