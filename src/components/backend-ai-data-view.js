@@ -151,6 +151,14 @@ class BackendAIData extends LitElement {
           font-size: 10px;
         }
 
+        wl-button {
+          height: 22px;
+        }
+
+        .folder-action-buttons wl-button {
+          margin-right: 10px;
+        }
+
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
@@ -336,10 +344,15 @@ class BackendAIData extends LitElement {
   }
 
   _toggleCheckbox() {
+    let buttons = this.shadowRoot.querySelectorAll(".multiple-action-buttons");
     if (this.fileListGrid.selectedItems.length > 0) {
-      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'block';
+      [].forEach.call(buttons, (e) => {
+        e.style.display = 'block';
+      });
     } else {
-      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
+      [].forEach.call(buttons, (e) => {
+        e.style.display = 'none';
+      });
     }
   }
 
@@ -495,48 +508,51 @@ class BackendAIData extends LitElement {
               `)}
               ` : html``}
           </div>
-          <div>
-            <wl-button outlined raised id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">Upload Files...</wl-button>
-            <wl-button outlined id="mkdir" @click="${(e) => this._mkdirDialog(e)}">New Directory</wl-button>
-          </div>
-
-            <div id="dropzone"><p>drag</p></div>
-            <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
-            ${this.uploadFilesExist ? html`
-              <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
-                           height-by-rows>
-                <vaadin-grid-column width="100px" flex-grow="0">
-                  <template>
-                    <vaadin-item class="progress-item">
-                      <div>
-                        <template is="dom-if" if="[[item.complete]]">
-                          <wl-icon>check</wl-icon>
-                        </template>
-                      </div>
-                    </vaadin-item>
-                  </template>
-                </vaadin-grid-column>
-
-                <vaadin-grid-column>
-                  <template>
-                    <vaadin-item>
-                      <span>[[item.name]]</span>
-                      <template is="dom-if" if="[[!item.complete]]">
-                        <div>
-                          <vaadin-progress-bar indeterminate value="0"></vaadin-progress-bar>
-                        </div>
-                      </template>
-                    </vaadin-item>
-                  </template>
-                </vaadin-grid-column>
-              </vaadin-grid>
-            ` : html``}
-          </div>
-          <div id="multiple-action-buttons" style="display:none;">
-            <wl-button outlined class="multiple-action-button" @click="${() => this._openDeleteMultipleFileDialog()}">
-              <wl-icon style="--icon-size: 20px;">delete</wl-icon>
+          <div class="horizontal layout folder-action-buttons">
+            <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
+              <div class="horizontal center layout">
+              <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>Delete...</span></div>
+            </wl-button>
+            <wl-button outlined id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">
+              <wl-icon style="--icon-size: 20px;margin-right:5px;">cloud_upload</wl-icon>
+              Upload Files...
+            </wl-button>
+            <wl-button outlined id="mkdir" @click="${(e) => this._mkdirDialog(e)}">
+              <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
+              New Folder
             </wl-button>
           </div>
+
+          <div id="dropzone"><p>drag</p></div>
+          <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
+          ${this.uploadFilesExist ? html`
+          <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
+                       height-by-rows>
+            <vaadin-grid-column width="100px" flex-grow="0">
+              <template>
+                <vaadin-item class="progress-item">
+                  <div>
+                    <template is="dom-if" if="[[item.complete]]">
+                      <wl-icon>check</wl-icon>
+                    </template>
+                  </div>
+                </vaadin-item>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column>
+              <template>
+                <vaadin-item>
+                  <span>[[item.name]]</span>
+                  <template is="dom-if" if="[[!item.complete]]">
+                    <div>
+                      <vaadin-progress-bar indeterminate value="0"></vaadin-progress-bar>
+                    </div>
+                  </template>
+                </vaadin-item>
+              </template>
+            </vaadin-grid-column>
+          </vaadin-grid>` : html``}
           <vaadin-grid id="fileList-grid" lass="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
@@ -1238,7 +1254,7 @@ class BackendAIData extends LitElement {
         let filename = this.explorer.breadcrumb.concat(file.filename).join("/");
         filenames.push(filename);
       });
-      let job = window.backendaiclient.vfolder.delete_files(filenames, null, this.explorer.id);
+      let job = window.backendaiclient.vfolder.delete_files(filenames, true, this.explorer.id);
       job.then(res => {
         this.shadowRoot.querySelector('#notification').text = 'Files deleted.';
         this.shadowRoot.querySelector('#notification').show();
@@ -1247,7 +1263,7 @@ class BackendAIData extends LitElement {
       });
     } else {
       let path = this.explorer.breadcrumb.concat(fn).join("/");
-      let job = window.backendaiclient.vfolder.delete_files([path], null, this.explorer.id);
+      let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
       job.then(res => {
         this.shadowRoot.querySelector('#notification').text = 'File deleted.';
         this.shadowRoot.querySelector('#notification').show();
@@ -1260,7 +1276,7 @@ class BackendAIData extends LitElement {
   _deleteFile(e) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.delete_files([path], null, this.explorer.id);
+    let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
     job.then(res => {
       this.shadowRoot.querySelector('#notification').text = 'File deleted.';
       this.shadowRoot.querySelector('#notification').show();
