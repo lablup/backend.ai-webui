@@ -42,8 +42,9 @@ class BackendAIUsageList extends LitElement {
         return html`
           <div class="layout vertical center">
             <backend-ai-chart
-              width="1600"
               title="CPU"
+              width="250"
+              height="300"
               elevation="1"
               type="line"
               .data=${
@@ -59,7 +60,6 @@ class BackendAIUsageList extends LitElement {
               }
             ></backend-ai-chart>
             <backend-ai-chart
-              width="1600"
               title="Network Byte"
               elevation="1"
               type="line"
