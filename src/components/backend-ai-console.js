@@ -365,7 +365,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
       const key = keys[i];
       if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
     }
-    location.reload();
+    if (window.isElectron) {
+      this.shadowRoot.querySelector('#login-panel').login();
+    } else {
+      window.location.reload();
+    }
   }
 
   updateTitleColor(backgroundColorVal, colorVal) {
@@ -509,7 +513,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 8px;text-align:right">${this.domain}</div>
               </div>
-              <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
+              <paper-icon-button id="sign-button" icon="icons:launch" @click="${()=>this.logout()}"></paper-icon-button>
             </app-toolbar>
             <div class="horizontal flex wrap layout">
               <h2 main-title style="width:300px;">${this.menuTitle}</h2>
