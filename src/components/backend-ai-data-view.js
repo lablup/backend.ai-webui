@@ -58,6 +58,7 @@ class BackendAIData extends LitElement {
     this.uploadFiles = [];
     this.vhost = '';
     this.vhosts = [];
+    this._selected_items = [];
     this.uploadFilesExist = false;
     this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
@@ -66,6 +67,7 @@ class BackendAIData extends LitElement {
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
+    this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   }
 
   static get properties() {
@@ -107,6 +109,9 @@ class BackendAIData extends LitElement {
         type: Array
       },
       invitees: {
+        type: Array
+      },
+      _selected_items: {
         type: Array
       },
       deleteFileDialog: {
@@ -198,6 +203,7 @@ class BackendAIData extends LitElement {
         div.breadcrumb {
           color: #637282;
           font-size: 1em;
+          margin-bottom: 10px;
         }
 
         div.breadcrumb span:first-child {
@@ -323,6 +329,29 @@ class BackendAIData extends LitElement {
       this._menuChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  checkboxRenderer(root, column, rowData) {
+    render(
+      html`
+        <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+      `, root
+    );
+  }
+
+  _toggleCheckbox(object) {
+    let exist = this._selected_items.findIndex(x => x.filename == object.filename);
+    if (exist === -1) {
+      this._selected_items.push(object)
+    } else {
+      this._selected_items.splice(exist, 1);
+    }
+    console.log(this._selected_items);
+    if (this._selected_items.length > 0) {
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'block';
+    } else {
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
+    }
   }
 
   render() {
@@ -515,8 +544,14 @@ class BackendAIData extends LitElement {
               </vaadin-grid>
             ` : html``}
           </div>
-
+          <div id="multiple-action-buttons" style="display:none;">
+            <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
+              <wl-icon style="--icon-size: 20px;">delete</wl-icon>
+            </wl-button>
+          </div>
           <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
+            <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+            </vaadin-grid-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
 
@@ -677,11 +712,11 @@ class BackendAIData extends LitElement {
   _modifySharedFolderPermissions() {
     const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== this.invitees[idx].perm)
-                                     .map((pulldown, idx) => ({
-                                       'perm': pulldown.value,
-                                       'user': this.invitees[idx].shared_to.uuid,
-                                       'vfolder': this.invitees[idx].vfolder_id
-                                     }));
+      .map((pulldown, idx) => ({
+        'perm': pulldown.value,
+        'user': this.invitees[idx].shared_to.uuid,
+        'vfolder': this.invitees[idx].vfolder_id
+      }));
     const promiseArray = inputList.map(input => window.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then(res => {
       if (res.length === 0) {
@@ -745,50 +780,50 @@ class BackendAIData extends LitElement {
           ></paper-icon-button>
 
           ${this._hasPermission(rowData.item, 'r')
-            ? html`
+        ? html`
               <paper-icon-button
                 class="fg blue controls-running"
                 icon="folder-open"
                 @click="${(e) => this._folderExplorer(e)}" .folder-id="${rowData.item.name}"
               ></paper-icon-button>
             `
-            : html``
-          }
+        : html``
+        }
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
 
           ${rowData.item.is_owner
-            ? html`
+        ? html`
               <paper-icon-button
                 class="fg blue controls-running"
                 icon="social:share"
                 @click="${(e) => this._shareFolderDialog(e)}"
               ></paper-icon-button>
             `
-            : html``
-          }
+        : html``
+        }
 
           ${rowData.item.is_owner
-            ? html`
+        ? html`
               <paper-icon-button
                 class="fg cyan controls-running"
                 icon="perm-identity"
                 @click=${e => this._modifyPermissionDialog(rowData.item.id)}
               ></paper-icon-button>
             `
-            : html``
-          }
+        : html``
+        }
 
           ${this._hasPermission(rowData.item, 'd')
-            ? html`
+        ? html`
               <paper-icon-button
                 class="fg red controls-running"
                 icon="delete"
                 @click="${(e) => this._deleteFolderDialog(e)}"
               ></paper-icon-button>
             `
-            : html``
-          }
+        : html``
+        }
         </div>
        `, root
     );
@@ -1246,10 +1281,10 @@ class BackendAIData extends LitElement {
 
   _modifyPermissionDialog(vfolder_id) {
     window.backendaiclient.vfolder.list_invitees(vfolder_id)
-    .then(res => {
-      this.invitees = res.shared;
-      this.openDialog('modify-permission-dialog');
-    })
+      .then(res => {
+        this.invitees = res.shared;
+        this.openDialog('modify-permission-dialog');
+      })
   }
 
   _shareFolder(e) {
@@ -1271,20 +1306,20 @@ class BackendAIData extends LitElement {
     }
 
     window.backendaiclient.vfolder.invite(permission, emailArray, this.selectedFolder)
-    .then(res => {
-      let msg;
-      if (res.invited_ids && res.invited_ids.length > 0) {
-        msg = res.invited_ids.reduce((cur, val) => cur + val + " ", "") + (emailArray.length === 1 ? 'was' : 'were') + " successfully invited";
-      } else {
-        msg = "No one was invited";
-      }
-      this.shadowRoot.querySelector('#notification').text = msg;
-      this.shadowRoot.querySelector('#notification').show();
-      this.shadowRoot.querySelector('#share-folder-dialog').hide();
-      for (let element of emailHtmlCollection) {
-        element.value = '';
-      }
-    })
+      .then(res => {
+        let msg;
+        if (res.invited_ids && res.invited_ids.length > 0) {
+          msg = res.invited_ids.reduce((cur, val) => cur + val + " ", "") + (emailArray.length === 1 ? 'was' : 'were') + " successfully invited";
+        } else {
+          msg = "No one was invited";
+        }
+        this.shadowRoot.querySelector('#notification').text = msg;
+        this.shadowRoot.querySelector('#notification').show();
+        this.shadowRoot.querySelector('#share-folder-dialog').hide();
+        for (let element of emailHtmlCollection) {
+          element.value = '';
+        }
+      })
   }
 }
 
