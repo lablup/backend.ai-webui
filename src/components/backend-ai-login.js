@@ -194,17 +194,19 @@ class BackendAiLogin extends LitElement {
   }
 
   login() {
-    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
-    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
     if (this.api_endpoint === '') {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
-    this.notification.text = 'Please wait to login...';
-    this.notification.show();
     if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+      this.notification.text = 'Please wait to login...';
+      this.notification.show();
       if (this.connection_mode === 'SESSION') {
+        this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
+        this.password = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
         this._connectUsingSession();
       } else {
+        this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
+        this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
         this._connectUsingAPI();
       }
     } else {
@@ -529,7 +531,7 @@ class BackendAiLogin extends LitElement {
       <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
       <app-localstorage-document key="backendaiconsole.api_endpoint"
                                  data="${this.api_endpoint}"></app-localstorage-document>
-      <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent>
+      <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <div>Login</div> 
