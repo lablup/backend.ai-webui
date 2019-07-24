@@ -499,13 +499,13 @@ class BackendAiResourceMonitor extends LitElement {
     this.updateMetric();
   }
 
-  _launchSessionDialog() {
+  async _launchSessionDialog() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       this.shadowRoot.querySelector('#notification').text = 'Please wait while initializing...';
       this.shadowRoot.querySelector('#notification').show();
     } else {
       this.selectDefaultLanguage();
-      this.updateMetric();
+      await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
@@ -984,6 +984,7 @@ class BackendAiResourceMonitor extends LitElement {
           let resource = this.resource_templates[0];
           this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
           let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('wl-button')[0];
+          this.shadowRoot.querySelector('#resource-templates').selected = "0";
           default_template.setAttribute('active', true);
           //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
         }
