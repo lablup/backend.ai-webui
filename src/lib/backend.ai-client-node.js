@@ -280,7 +280,7 @@ class Client {
         this._config._session_id = result.session_id;
       }
     } catch (err) {
-      return false;
+      return resolve(false);
     }
     return result.authenticated;
   }
@@ -289,13 +289,23 @@ class Client {
    * Login into console-server with given ID/Password. This requires additional console-server package.
    *
    */
-  login() {
+  async login() {
     let body = {
       'username': this._config.userId,
       'password': this._config.password
     };
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
-    return this._wrapWithPromise(rqst);
+    let result;
+    try {
+      result = await this._wrapWithPromise(rqst);
+      if (result.authenticated === true) {
+        return this.check_login();
+      } else {
+        return resolve(false);
+      }
+    } catch (err) {
+      return false;
+    }
   }
 
   /**

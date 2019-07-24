@@ -271,7 +271,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
       })
       .then(res => {
         this.config = toml(res);
-        console.log(this.config);
       }).catch(err => {
         console.log("Configuration file missing.");
       });
