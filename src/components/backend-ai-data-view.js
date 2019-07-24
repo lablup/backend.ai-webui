@@ -60,7 +60,6 @@ class BackendAIData extends LitElement {
     this.uploadFiles = [];
     this.vhost = '';
     this.vhosts = [];
-    this._selected_items = [];
     this.uploadFilesExist = false;
     this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
@@ -113,9 +112,6 @@ class BackendAIData extends LitElement {
         type: Array
       },
       invitees: {
-        type: Array
-      },
-      _selected_items: {
         type: Array
       },
       deleteFileDialog: {
