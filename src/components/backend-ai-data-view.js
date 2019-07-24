@@ -16,6 +16,8 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column.js';
+
 import '@vaadin/vaadin-item/vaadin-item.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js';
 
@@ -67,7 +69,6 @@ class BackendAIData extends LitElement {
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
-    this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   }
 
   static get properties() {
@@ -76,6 +77,9 @@ class BackendAIData extends LitElement {
         type: Object
       },
       folderInfo: {
+        type: Object
+      },
+      fileListGrid: {
         type: Object
       },
       is_admin: {
@@ -331,23 +335,8 @@ class BackendAIData extends LitElement {
     super.attributeChangedCallback(name, oldval, newval);
   }
 
-  checkboxRenderer(root, column, rowData) {
-    render(
-      html`
-        <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
-      `, root
-    );
-  }
-
-  _toggleCheckbox(object) {
-    let exist = this._selected_items.findIndex(x => x.filename == object.filename);
-    if (exist === -1) {
-      this._selected_items.push(object)
-    } else {
-      this._selected_items.splice(exist, 1);
-    }
-    console.log(this._selected_items);
-    if (this._selected_items.length > 0) {
+  _toggleCheckbox() {
+    if (this.fileListGrid.selectedItems.length > 0) {
       this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'block';
     } else {
       this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
@@ -376,7 +365,6 @@ class BackendAIData extends LitElement {
         <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
           </vaadin-grid-column>
-
           <vaadin-grid-column resizable header="Name">
             <template>
               <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="[[item.name]]">[[item.name]]</div>
@@ -545,13 +533,12 @@ class BackendAIData extends LitElement {
             ` : html``}
           </div>
           <div id="multiple-action-buttons" style="display:none;">
-            <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
+            <wl-button outlined class="multiple-action-button" @click="${() => this._openDeleteMultipleFileDialog()}">
               <wl-icon style="--icon-size: 20px;">delete</wl-icon>
             </wl-button>
           </div>
-          <vaadin-grid class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
-            <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
-            </vaadin-grid-column>
+          <vaadin-grid id="fileList-grid" lass="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
+            <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
 
@@ -896,6 +883,10 @@ class BackendAIData extends LitElement {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
     this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
+    this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
+    this.fileListGrid.addEventListener('selected-items-changed', () => {
+      this._toggleCheckbox();
+    });
   }
 
   connectedCallback() {
@@ -1058,6 +1049,7 @@ class BackendAIData extends LitElement {
                  dialog = false) {
     let job = window.backendaiclient.vfolder.list_files(path, id);
     job.then(value => {
+      this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
       this.explorer.files = JSON.parse(value.files);
       this.explorerFiles = this.explorer.files;
       if (dialog) {
@@ -1228,20 +1220,41 @@ class BackendAIData extends LitElement {
   _openDeleteFileDialog(e) {
     let fn = e.target.getAttribute("filename");
     this.deleteFileDialog.filename = fn;
-    console.log(this.deleteFileDialog.filename);
+    this.deleteFileDialog.files = [];
+    this.deleteFileDialog.show();
+  }
+
+  _openDeleteMultipleFileDialog(e) {
+    this.deleteFileDialog.files = this.fileListGrid.selectedItems;
+    this.deleteFileDialog.filename = '';
     this.deleteFileDialog.show();
   }
 
   _deleteFileWithCheck(e) {
-    let fn = this.deleteFileDialog.filename;
-    let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.delete_files([path], null, this.explorer.id);
-    job.then(res => {
-      this.shadowRoot.querySelector('#notification').text = 'File deleted.';
-      this.shadowRoot.querySelector('#notification').show();
-      this._clearExplorer();
-      this.deleteFileDialog.hide();
-    });
+    let files = this.deleteFileDialog.files;
+    if (files.length > 0) {
+      let filenames = [];
+      files.forEach((file) => {
+        let filename = this.explorer.breadcrumb.concat(file.filename).join("/");
+        filenames.push(filename);
+      });
+      let job = window.backendaiclient.vfolder.delete_files(filenames, null, this.explorer.id);
+      job.then(res => {
+        this.shadowRoot.querySelector('#notification').text = 'Files deleted.';
+        this.shadowRoot.querySelector('#notification').show();
+        this._clearExplorer();
+        this.deleteFileDialog.hide();
+      });
+    } else {
+      let path = this.explorer.breadcrumb.concat(fn).join("/");
+      let job = window.backendaiclient.vfolder.delete_files([path], null, this.explorer.id);
+      job.then(res => {
+        this.shadowRoot.querySelector('#notification').text = 'File deleted.';
+        this.shadowRoot.querySelector('#notification').show();
+        this._clearExplorer();
+        this.deleteFileDialog.hide();
+      });
+    }
   }
 
   _deleteFile(e) {
