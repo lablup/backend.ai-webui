@@ -58,24 +58,6 @@ class BackendAIChart extends LitElement {
           font-size: 12px;
         }
 
-        wl-card > h4 > paper-icon-button {
-          display: flex;
-        }
-
-        wl-card > h4 > paper-icon-button,
-        wl-card > h4 > paper-icon-button #icon {
-          width: 15px;
-          height: 15px;
-          padding: 0;
-        }
-
-        ul {
-          padding-inline-start: 0;
-        }
-
-        #button {
-          display: none;
-        }
       `];
   }
 
@@ -105,7 +87,7 @@ class BackendAIChart extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-card id="activity" elevation="${this.elevation}">
+      <wl-card id="activity" elevation="${this.elevation}" >
         <h4 class="layout flex justified center">${this.title}</h4>
         <div id="d3">
         </div>
@@ -114,22 +96,19 @@ class BackendAIChart extends LitElement {
   }
 
   firstUpdated() {
-    this.shadowRoot.querySelector('wl-card').style.width = this.width + "px";
-    this.shadowRoot.querySelector('wl-card').style.width = this.width + 20 + "px";
-
-
+    this.shadowRoot.querySelector('wl-card').style.width = `${this.width}px`;
     const svg = d3.select(this.shadowRoot.querySelector('#d3'))
         .append('svg')
-        .attr("width", this.width)
-        .attr("height", this.height);
+        .attr("width", this.width - 20)
+        .attr("height", this.height - 20);
 
-    const barWidth = (this.width / this.data.length);
+    const barWidth = (this.width - 20) / this.data.length;
 
     const barChart = svg.selectAll('rect')
         .data(this.data)
         .enter()
         .append('rect')
-        .attr('y', d => this.height - d)
+        .attr('y', d => this.height - 20 - d)
         .attr('height', d => d)
         .attr('width', barWidth - 5)
         .attr('transform', (d, i) => `translate(${[barWidth * i, 0]})`);
