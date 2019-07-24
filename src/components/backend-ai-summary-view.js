@@ -121,6 +121,7 @@ class BackendAISummary extends LitElement {
           width: 190px;
           border-radius: 0;
           --paper-progress-height: 5px;
+          --paper-progress-active-color: #3677EB;
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
