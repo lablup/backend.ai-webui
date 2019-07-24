@@ -209,6 +209,18 @@ class BackendAiLogin extends LitElement {
     this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
     this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.user_id'));
     this.password = JSON.parse(localStorage.getItem('backendaiconsole.password'));
+    if (this.api_key === null) {
+      this.api_key = '';
+    }
+    if (this.secret_key === null) {
+      this.secret_key = '';
+    }
+    if (this.user_id === null) {
+      this.user_id = '';
+    }
+    if (this.password === null) {
+      this.password = '';
+    }
     if (this.api_endpoint === '') {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
