@@ -209,8 +209,12 @@ class BackendAiLogin extends LitElement {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
+      this.notification.text = 'Please wait to login...';
+      this.notification.show();
       this._connectUsingSession();
     } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+      this.notification.text = 'Please wait to login...';
+      this.notification.show();
       this._connectUsingAPI();
     } else {
       this.open();
