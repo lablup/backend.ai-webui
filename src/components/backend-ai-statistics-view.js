@@ -10,7 +10,7 @@ import 'weightless/tab-group';
 import 'weightless/tab';
 
 import { BackendAiStyles } from './backend-ai-console-styles';
-import './backend-ai-chart.js'
+import './backend-ai-usage-list.js';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -53,6 +53,10 @@ class BackendAIStatisticsView extends LitElement {
             --tab-bg-filled: var(--paper-cyan-50);
             --tab-bg-active-hover: var(--paper-cyan-100);
           }
+
+          .tab-content {
+            width: 100%;
+          }
         `
       ]
     }
@@ -80,8 +84,7 @@ class BackendAIStatisticsView extends LitElement {
             </h3>
             <div class="horizontal wrap layout">
               <div id="usage-stat" class="tab-content">
-                <backend-ai-chart width="400" title="Hello" elevation="1" .data=${[80, 100, 56, 120, 180, 30, 40, 120, 160, 70]}>
-                </backend-ai-chart>
+                <backend-ai-usage-list></backend-ai-usage-list>
               </div>
               <div id="insight-stat" style="display: none;">
               </div>

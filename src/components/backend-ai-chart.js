@@ -4,17 +4,27 @@ import 'weightless/card';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
-import * as d3 from 'd3';
+import '../lib/Chart.bundle.min.js';
 
 class BackendAIChart extends LitElement {
+  /**
+   * @param data              {json}   Object containing the fields listed below
+   * @param data.labels       {array}  Array containing x axis labels
+   * @param data.axisTitles   {json}   object containing x axis title at key "x" and y axis title at key "y"
+   * @param data.axisTitles.x {string} X axis title
+   * @param data.axisTitles.y {string} Y axis title
+   * @param data.title        {string} Title of graph
+   * @param data.values       {array}  The actual data
+   */
   constructor() {
     super();
     this.title = '';
     this.elevation = 1;
     this.message = '';
-    this.data = [];
+    this.data = {};
     this.width = 300;
     this.height = 300;
+    this.type = 'line';
   }
 
   static get is() {
@@ -31,33 +41,15 @@ class BackendAIChart extends LitElement {
           display: block;
           background: white;
           box-sizing: border-box;
-          margin: 16px;
+          margin: 15px 0px;
           padding: 0;
           border-radius: 5px;
-        }
-
-        wl-card > h4 {
-          border-left: 3px solid var(--paper-cyan-900);
-          background-color: var(--paper-cyan-500);
-          color: #eee;
-          font-size: 14px;
-          font-weight: 400;
-          height: 32px;
-          padding: 5px 15px 5px 20px;
-          margin: 0 0 10px 0;
-          border-bottom: 1px solid #DDD;
-          @apply --layout-justified;
-          display: flex;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
         }
 
         wl-card > div {
           padding: 10px;
           font-size: 12px;
         }
-
       `];
   }
 
@@ -73,13 +65,16 @@ class BackendAIChart extends LitElement {
         type: String
       },
       data: {
-        type: Array
+        type: Object
       },
       width: {
         type: Array
       },
       height: {
         type: Array
+      },
+      type: {
+        type: String
       }
     }
   }
@@ -87,9 +82,14 @@ class BackendAIChart extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-card id="activity" elevation="${this.elevation}" >
-        <h4 class="layout flex justified center">${this.title}</h4>
-        <div id="d3">
+      <wl-card>
+        <div class="layout vertical">
+          <div class="layout horizontal around-justified">
+            <h1>${this.title}</h1>
+          </div>
+          <div>
+            <canvas id="chart-canvas" style="width: 800px; display: block; margin: auto"></canvas>
+          </div>
         </div>
       </wl-card>
     `;
@@ -97,21 +97,38 @@ class BackendAIChart extends LitElement {
 
   firstUpdated() {
     this.shadowRoot.querySelector('wl-card').style.width = `${this.width}px`;
-    const svg = d3.select(this.shadowRoot.querySelector('#d3'))
-        .append('svg')
-        .attr("width", this.width - 20)
-        .attr("height", this.height - 20);
+    this.shadowRoot.querySelector('#chart-canvas').style.width = `${this.width * 0.8}px`
 
-    const barWidth = (this.width - 20) / this.data.length;
-
-    const barChart = svg.selectAll('rect')
-        .data(this.data)
-        .enter()
-        .append('rect')
-        .attr('y', d => this.height - 20 - d)
-        .attr('height', d => d)
-        .attr('width', barWidth - 5)
-        .attr('transform', (d, i) => `translate(${[barWidth * i, 0]})`);
+    const ctx = this.shadowRoot.querySelector('#chart-canvas');
+    new Chart(ctx, {
+      type: this.type,
+      data: {
+        labels: this.data.labels,
+        datasets: [{
+          label: this.data.title,
+          data: this.data.values,
+          backgroundColor:'rgba(75,192,192,0.7)'
+        }]
+      },
+      options: {
+        responsive: false,
+        aspectRatio: 4,
+        scales: {
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: this.data.axisTitles.x
+            }
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: this.data.axisTitles.y
+            }
+          }],
+        }
+      }
+    });
   }
 
   connectedCallback() {
@@ -119,6 +136,7 @@ class BackendAIChart extends LitElement {
   }
 
   _removePanel() {
+
   }
 }
 
