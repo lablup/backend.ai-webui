@@ -784,8 +784,10 @@ class BackendAIData extends LitElement {
       html`
         ${!this._isDir(rowData.item) && this._isDownloadable(rowData.item) ?
         html`
-            <paper-icon-button id="download-btn" class="tiny fg red" icon="vaadin:download"
+            <paper-icon-button id="download-btn" class="tiny fg blue" icon="vaadin:download"
                                filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
+            <paper-icon-button id="delete-btn" class="tiny fg red" icon="vaadin:trash"
+                               filename="${rowData.item.filename}" @click="${(e) => this._deleteFile(e)}"></paper-icon-button>
                                ` : html``}
        `, root
     );
@@ -1168,6 +1170,21 @@ class BackendAIData extends LitElement {
       a.click();
       a.remove();  //afterwards we remove the element again
       URL.revokeObjectURL(url);
+    });
+  }
+
+  _deleteFileWithDialog(e) {
+
+
+  }
+  _deleteFile(e) {
+    let fn = e.target.getAttribute("filename");
+    let path = this.explorer.breadcrumb.concat(fn).join("/");
+    let job = window.backendaiclient.vfolder.delete_files([path], null, this.explorer.id);
+    job.then(res => {
+      this.shadowRoot.querySelector('#notification').text = 'File deleted.';
+      this.shadowRoot.querySelector('#notification').show();
+      this._clearExplorer();
     });
   }
 
