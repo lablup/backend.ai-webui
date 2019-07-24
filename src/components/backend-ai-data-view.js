@@ -28,6 +28,8 @@ import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/select';
 import 'weightless/tab';
+import 'weightless/title';
+import 'weightless/text';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 
@@ -106,6 +108,9 @@ class BackendAIData extends LitElement {
       },
       invitees: {
         type: Array
+      },
+      deleteFileDialog: {
+        type: Object
       }
     };
   }
@@ -655,6 +660,17 @@ class BackendAIData extends LitElement {
           </wl-button>
         </div>
       </wl-dialog>
+      <wl-dialog id="delete-file-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <wl-text>This action cannot be undone. Do you want to proceed?</wl-text>
+         </div>
+         <div slot="footer">
+            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button @click="${(e) => this._deleteFileWithCheck(e)}">Okay</wl-button>
+         </div>
+      </wl-dialog>
+
     `;
   }
 
@@ -787,7 +803,7 @@ class BackendAIData extends LitElement {
             <paper-icon-button id="download-btn" class="tiny fg blue" icon="vaadin:download"
                                filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
             <paper-icon-button id="delete-btn" class="tiny fg red" icon="vaadin:trash"
-                               filename="${rowData.item.filename}" @click="${(e) => this._deleteFile(e)}"></paper-icon-button>
+                               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></paper-icon-button>
                                ` : html``}
        `, root
     );
@@ -844,6 +860,7 @@ class BackendAIData extends LitElement {
   firstUpdated() {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
+    this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
   }
 
   connectedCallback() {
@@ -1173,10 +1190,25 @@ class BackendAIData extends LitElement {
     });
   }
 
-  _deleteFileWithDialog(e) {
-
-
+  _openDeleteFileDialog(e) {
+    let fn = e.target.getAttribute("filename");
+    this.deleteFileDialog.filename = fn;
+    console.log(this.deleteFileDialog.filename);
+    this.deleteFileDialog.show();
   }
+
+  _deleteFileWithCheck(e) {
+    let fn = this.deleteFileDialog.filename;
+    let path = this.explorer.breadcrumb.concat(fn).join("/");
+    let job = window.backendaiclient.vfolder.delete_files([path], null, this.explorer.id);
+    job.then(res => {
+      this.shadowRoot.querySelector('#notification').text = 'File deleted.';
+      this.shadowRoot.querySelector('#notification').show();
+      this._clearExplorer();
+      this.deleteFileDialog.hide();
+    });
+  }
+
   _deleteFile(e) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");

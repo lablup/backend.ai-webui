@@ -26,6 +26,8 @@ import {default as AnsiUp} from '../lib/ansiup.js';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/checkbox';
+import 'weightless/title';
+import 'weightless/text';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
