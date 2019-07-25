@@ -673,7 +673,8 @@ class BackendAiResourceMonitor extends LitElement {
   _updateVersions(lang) {
     if (this.aliases[lang] in this.supports) {
       this.versions = this.supports[this.aliases[lang]];
-      this.versions = this.versions.sort();
+      this.versions.sort();
+      this.versions.reverse(); // New version comes first.
     }
     if (this.versions !== undefined) {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
