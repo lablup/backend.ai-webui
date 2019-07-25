@@ -8,6 +8,7 @@ import { css, html, LitElement } from "lit-element";
 import 'weightless/card';
 import 'weightless/tab-group';
 import 'weightless/tab';
+import 'weightless/select';
 
 import { BackendAiStyles } from './backend-ai-console-styles';
 import './backend-ai-chart.js'
@@ -34,6 +35,13 @@ class BackendAIUsageList extends LitElement {
         IronPositioning,
         // language=CSS
         css`
+          wl-select {
+            --input-font-family: Roboto, Noto, sans-serif;
+            --input-color-disabled: #222;
+            --input-label-color-disabled: #222;
+            --input-label-font-size: 12px;
+            --input-border-style-disabled: 1px solid #ccc;
+          }
         `
       ]
     }
@@ -41,6 +49,15 @@ class BackendAIUsageList extends LitElement {
     render() {
         // language=HTML
         return html`
+          <div class="layout horizontal end-justified" style="padding: 20px 0px; margin: 0px 20px;">
+            <wl-select label="Select Something">
+              <option value disabled selected>Select something</option>
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+              <option value="3">Option 3</option>
+              <option value="4">Option 4</option>
+            </wl-select>
+          </div>
           <div class="layout vertical center">
             <backend-ai-chart-alt
               title="CPU"
@@ -77,8 +94,8 @@ class BackendAIUsageList extends LitElement {
                   title: 'CPU Usage (%)'
                 }
               }
-            ></backend-ai-chart>
-            <backend-ai-chart
+            ></backend-ai-chart> -->
+            <!-- <backend-ai-chart
               title="Network Byte"
               elevation="1"
               type="line"
