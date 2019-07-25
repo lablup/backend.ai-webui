@@ -17,8 +17,10 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
+import {default as PainKiller} from "./backend-ai-painkiller";
 import './backend-ai-environment-list';
 import './backend-ai-resource-template-list';
+import './lablup-notification.js';
 
 class BackendAiEnvironmentView extends LitElement {
   constructor() {
@@ -54,6 +56,22 @@ class BackendAiEnvironmentView extends LitElement {
           --tab-bg-filled: var(--paper-yellow-200);
           --tab-bg-active-hover: var(--paper-yellow-200);
         }
+
+        div h4 {
+          margin: 0;
+          font-weight: 100;
+          font-size: 16px;
+          padding-left: 20px;
+          border-bottom: 1px solid #ccc;
+          width: 100%;
+        }
+
+        wl-card wl-card {
+          margin: 0;
+          padding: 0;
+          --card-elevation: 0;
+        }
+
       `
     ];
   }
@@ -96,25 +114,29 @@ class BackendAiEnvironmentView extends LitElement {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
+
   render() {
     // language=HTML
     return html`
+      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">Images</wl-tab>  
+            <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">Images</wl-tab>
             <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">Resource Presets</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
         </h3>
-
         <div id="image-lists" class="tab-content">
           <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
         </div>
-        <div id="resource-template-lists" class="tab-content" style="display:none;">
-          <backend-ai-resource-template-list ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-template-list>
-      </div>
+        <backend-ai-resource-template-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-template-list>
       </wl-card>
     `;
   }
