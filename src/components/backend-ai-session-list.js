@@ -1091,7 +1091,7 @@ ${item.map(item => html`
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="Usage">
+        <vaadin-grid-column width="150px" flex-grow="0" resizable header="Usage">
           <template>
             <div class="layout horizontal center flex">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
