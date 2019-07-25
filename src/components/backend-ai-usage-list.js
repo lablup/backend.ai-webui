@@ -11,6 +11,7 @@ import 'weightless/tab';
 
 import { BackendAiStyles } from './backend-ai-console-styles';
 import './backend-ai-chart.js'
+import './backend-ai-chart-alt.js'
 import {
   IronFlex,
   IronFlexAlignment,
@@ -41,7 +42,17 @@ class BackendAIUsageList extends LitElement {
         // language=HTML
         return html`
           <div class="layout vertical center">
-            <backend-ai-chart
+            <backend-ai-chart-alt
+              title="CPU"
+              width="400"
+              height="300"
+              elevation="1"
+              type="line"
+              .data=${
+                [1, 2, 3, 1, 5, 3]
+              }
+            ></backend-ai-chart-alt>
+            <!-- <backend-ai-chart
               title="CPU"
               width="250"
               height="300"
@@ -74,7 +85,7 @@ class BackendAIUsageList extends LitElement {
                   title: 'MegaBytes per Second'
                 }
               }
-            ></backend-ai-chart>
+            ></backend-ai-chart> -->
           </div>
         `;
     }
