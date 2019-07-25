@@ -499,13 +499,13 @@ class BackendAiResourceMonitor extends LitElement {
     this.updateMetric();
   }
 
-  _launchSessionDialog() {
+  async _launchSessionDialog() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       this.shadowRoot.querySelector('#notification').text = 'Please wait while initializing...';
       this.shadowRoot.querySelector('#notification').show();
     } else {
       this.selectDefaultLanguage();
-      this.updateMetric();
+      await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
@@ -661,9 +661,9 @@ class BackendAiResourceMonitor extends LitElement {
         }
       }
       const alias = this.aliases[item];
-      const basename = alias.split(' (')[0];
-      const tags = this.tags[alias];
       if (alias !== undefined) {
+        const basename = alias.split(' (')[0];
+        const tags = this.tags[alias];
         this.languages.push({name: item, alias: alias, basename: basename, tags: tags});
       }
     });
@@ -673,7 +673,8 @@ class BackendAiResourceMonitor extends LitElement {
   _updateVersions(lang) {
     if (this.aliases[lang] in this.supports) {
       this.versions = this.supports[this.aliases[lang]];
-      this.versions = this.versions.sort();
+      this.versions.sort();
+      this.versions.reverse(); // New version comes first.
     }
     if (this.versions !== undefined) {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
@@ -984,6 +985,7 @@ class BackendAiResourceMonitor extends LitElement {
           let resource = this.resource_templates[0];
           this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
           let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('wl-button')[0];
+          this.shadowRoot.querySelector('#resource-templates').selected = "0";
           default_template.setAttribute('active', true);
           //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
         }

@@ -271,7 +271,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
       })
       .then(res => {
         this.config = toml(res);
-        console.log(this.config);
       }).catch(err => {
         console.log("Configuration file missing.");
       });
@@ -371,7 +370,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
       const key = keys[i];
       if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
     }
-    location.reload();
+    if (window.isElectron) {
+      this.shadowRoot.querySelector('#login-panel').login();
+    } else {
+      window.location.reload();
+    }
   }
 
   updateTitleColor(backgroundColorVal, colorVal) {
@@ -504,7 +507,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.07.2.190724</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.07.2.190725</small>
               </address>
             </div>
           </app-header-layout>
@@ -520,7 +523,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 8px;text-align:right">${this.domain}</div>
               </div>
-              <paper-icon-button id="sign-button" icon="icons:launch" @click="${this.logout}"></paper-icon-button>
+              <paper-icon-button id="sign-button" icon="icons:launch" @click="${()=>this.logout()}"></paper-icon-button>
             </app-toolbar>
             <div class="horizontal flex wrap layout">
               <h2 main-title style="width:300px;">${this.menuTitle}</h2>
