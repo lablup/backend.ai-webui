@@ -72,7 +72,12 @@ class BackendAIChartAlt extends LitElement {
         .line {
           fill: none;
           stroke: rgb(75,192,192);
-          stroke-width: 3;
+          stroke-width: 2;
+        }
+
+        .dot {
+          fill: rgb(75,192,192);
+          stroke: #fff;
         }
       `];
   }
@@ -199,6 +204,13 @@ class BackendAIChartAlt extends LitElement {
        .attr('class', 'line')
        .attr('d', line);
 
+    svg.selectAll(".dot")
+       .data(this.data.values)
+       .enter().append("circle")
+       .attr("class", "dot")
+       .attr("cx", function(d, i) { return xScale(i) })
+       .attr("cy", function(d) { return yScale(d) })
+       .attr("r", 3);
   }
 
   connectedCallback() {
