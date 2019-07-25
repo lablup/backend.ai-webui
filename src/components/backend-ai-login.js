@@ -160,12 +160,19 @@ class BackendAiLogin extends LitElement {
     if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
       this.connection_mode = 'API';
     } else {
+      // TODO : use lit-element dynamic assignment
       if (config.general.connectionMode.toUpperCase() === 'SESSION') {
         this.connection_mode = 'SESSION';
-        this.shadowRoot.querySelector('#id_api_key').label = 'ID';
-        this.shadowRoot.querySelector('#id_secret_key').label = 'Password';
+        this.shadowRoot.querySelector('#id_api_key').style.display = 'none';
+        this.shadowRoot.querySelector('#id_secret_key').style.display = 'none';
+        this.shadowRoot.querySelector('#id_user_id').style.display = 'block';
+        this.shadowRoot.querySelector('#id_password').style.display = 'block';
       } else {
         this.connection_mode = 'API';
+        this.shadowRoot.querySelector('#id_api_key').style.display = 'block';
+        this.shadowRoot.querySelector('#id_secret_key').style.display = 'block';
+        this.shadowRoot.querySelector('#id_user_id').style.display = 'none';
+        this.shadowRoot.querySelector('#id_password').style.display = 'none';
       }
     }
   }
@@ -173,6 +180,9 @@ class BackendAiLogin extends LitElement {
   open() {
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
+    }
+    if (this.blockPanel.open === true) {
+      this.blockPanel.hide();
     }
   }
 
@@ -185,25 +195,6 @@ class BackendAiLogin extends LitElement {
     }
   }
 
-  login() {
-    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
-    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
-    if (this.api_endpoint === '') {
-      this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
-    }
-    this.notification.text = 'Please wait to login...';
-    this.notification.show();
-    if (this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      if (this.connection_mode === 'SESSION') {
-        this._connectUsingSession();
-      } else {
-        this._connectUsingAPI();
-      }
-    } else {
-      this.open();
-    }
-  }
-
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
@@ -212,6 +203,40 @@ class BackendAiLogin extends LitElement {
 
   free() {
     this.shadowRoot.querySelector('#block-panel').hide();
+  }
+  login() {
+    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
+    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
+    this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.user_id'));
+    this.password = JSON.parse(localStorage.getItem('backendaiconsole.password'));
+    if (this.api_key === null) {
+      this.api_key = '';
+    }
+    if (this.secret_key === null) {
+      this.secret_key = '';
+    }
+    if (this.user_id === null) {
+      this.user_id = '';
+    }
+    if (this.password === null) {
+      this.password = '';
+    }
+    if (this.api_endpoint === '') {
+      this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
+    }
+    if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
+      this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
+      this.notification.text = 'Please wait to login...';
+      this.notification.show();
+      this._connectUsingSession();
+    } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+      this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
+      this.notification.text = 'Please wait to login...';
+      this.notification.show();
+      this._connectUsingAPI();
+    } else {
+      this.open();
+    }
   }
 
   _validate_data(value) {
@@ -226,29 +251,15 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this.notification.text = 'Please wait to login...';
     this.notification.show();
-    this.block();
     if (this.connection_mode === 'SESSION') {
-      this.user_id = this.shadowRoot.querySelector('#id_api_key').value;
-      this.password = this.shadowRoot.querySelector('#id_secret_key').value;
+      this.user_id = this.shadowRoot.querySelector('#id_user_id').value;
+      this.password = this.shadowRoot.querySelector('#id_password').value;
       this._connectUsingSession();
     } else {
       this.api_key = this.shadowRoot.querySelector('#id_api_key').value;
       this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
       this._connectUsingAPI();
     }
-  }
-
-  // TODO: global error message patcher
-  _politeErrorMessage(err) {
-    const errorMsgSet = {
-      "Cannot read property 'map' of null": "User has no group. Please contact administrator to fix it.",
-      "Cannot read property 'split' of undefined": 'Wrong API server address.'
-    };
-    console.log(err);
-    if (err in errorMsgSet) {
-      return errorMsgSet[err];
-    }
-    return err;
   }
 
   async _connectUsingSession() {
@@ -265,7 +276,7 @@ class BackendAiLogin extends LitElement {
     let isLogon = await this.client.check_login();
     if (isLogon === false) {
       this.client.login().then(response => {
-        if (response.authenticated === false) {
+        if (response === false) {
           throw {"message": "Authentication failed. Check information and manager status."};
         } else {
           return this._connectGQL();
@@ -489,6 +500,9 @@ class BackendAiLogin extends LitElement {
       <app-localstorage-document id="storage" key="backendaiconsole.api_key"
                                  data="${this.api_key}"></app-localstorage-document>
       <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
+      <app-localstorage-document id="storage" key="backendaiconsole.user_id"
+                                 data="${this.user_id}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.password" data="${this.password}"></app-localstorage-document>
       <app-localstorage-document key="backendaiconsole.api_endpoint"
                                  data="${this.api_endpoint}"></app-localstorage-document>
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent>
@@ -499,10 +513,14 @@ class BackendAiLogin extends LitElement {
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" autofocus
+              <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
                            label="API Key" value="${this.api_key}"></paper-input>
-              <paper-input type="password" name="secret_key" id="id_secret_key"
+              <paper-input type="password" name="secret_key" id="id_secret_key" style="display:none;"
                            label="Secret Key" value="${this.secret_key}"></paper-input>
+              <paper-input type="text" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
+                           label="ID" value="${this.user_id}"></paper-input>
+              <paper-input type="password" name="password" id="id_password" style="display:none;"
+                           label="Password" value="${this.password}"></paper-input>
               <paper-input type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
                            label="API Endpoint" value="${this.api_endpoint}"></paper-input>
               <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
@@ -523,7 +541,7 @@ class BackendAiLogin extends LitElement {
           ${this.blockType !== '' ? html`
           <h3>${this.blockType}</h3>
           ` : html``}
-          <div style="text-align:center;">
+          <div style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
           </div>
         </wl-card>

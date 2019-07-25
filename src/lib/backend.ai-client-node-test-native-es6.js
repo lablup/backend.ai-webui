@@ -7,14 +7,12 @@ Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v19.07.2)
 Licensed under MIT
 */
 /*jshint esnext: true */
-const fetch = require('node-fetch'); /* Exclude for ES6 */
-const Headers = fetch.Headers; /* Exclude for ES6 */
 
-const crypto = require('crypto');
 const FormData = require('form-data');
-
 const querystring = require('querystring');
 
+import hmac from 'js-crypto-hmac';
+import hash from 'js-crypto-hash';
 
 class ClientConfig {
   /**
@@ -621,8 +619,9 @@ class Client {
   }
 
   getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
-    let bodyHash = crypto.createHash(this._config.hashType)
-      .update(bodyValue).digest('hex');
+    //let bodyHash = crypto.createHash(this._config.hashType)
+    //  .update(bodyValue).digest('hex');
+    let bodyHash = hash.compute(bodyValue, this._config.hashType);
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
       + 'host:' + this._config.endpointHost + '\n'
       + 'content-type:' + content_type + '\n'
@@ -640,9 +639,10 @@ class Client {
 
   sign(key, key_encoding, msg, digest_type) {
     let kbuf = new Buffer(key, key_encoding);
-    let hmac = crypto.createHmac(this._config.hashType, kbuf);
-    hmac.update(msg, 'utf8');
-    return hmac.digest(digest_type);
+    return hmac.compute(kbuf, msg, this._config.hashType);
+    //let hmac = crypto.createHmac(this._config.hashType, kbuf);
+    //hmac.update(msg, 'utf8');
+    //return hmac.digest(digest_type);
   }
 
   getSignKey(secret_key, now) {
