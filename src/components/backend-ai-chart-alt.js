@@ -79,6 +79,23 @@ class BackendAIChartAlt extends LitElement {
           fill: rgb(75,192,192);
           stroke: #fff;
         }
+
+        .axisGray line {
+          stroke: #646464;
+        }
+
+        .axisGray path {
+          stroke: #646464;
+        }
+
+        .textGray text {
+          fill: #8C8C8C;
+        }
+
+        text.normalize {
+          font-size: 13px;
+        }
+
       `];
   }
 
@@ -175,28 +192,30 @@ class BackendAIChartAlt extends LitElement {
           .append('g')
           .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-    // x axis
+    // add x axis
     svg.append('g')
-       .attr('class', 'x axis')
+       .attr('class', 'x axis axisGray')
        .attr('transform', `translate(0, ${graphHeight})`)
        .call(d3.axisBottom(xScale));
 
     // text label for the x axis
     svg.append("text")
-       .attr("transform",`translate(${graphWidth / 2}, ${graphHeight + margin.bottom - 10})`)
+       .attr("transform",`translate(${graphWidth / 2}, ${graphHeight + margin.bottom - 15})`)
        .style("text-anchor", "middle")
+       .attr('class', 'normalize')
        .text(this.data.axisTitle.x);
 
-    // y axis
+    // add y axis
     svg.append('g')
-       .attr('class', 'y axis')
+       .attr('class', 'y axis axisGray')
        .attr('transform', `translate(0, 0)`)
        .call(d3.axisLeft(yScale));
 
     // text label for the x axis
     svg.append("text")
-       .attr("transform", `translate(${15 - margin.left}, ${graphHeight / 2}) rotate(-90)`)
+       .attr("transform", `translate(${20 - margin.left}, ${graphHeight / 2}) rotate(-90)`)
        .style("text-anchor", "middle")
+       .attr('class', 'normalize')
        .text(this.data.axisTitle.y);
 
     svg.append('path')
