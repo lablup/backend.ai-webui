@@ -11,9 +11,9 @@ class BackendAIChartAlt extends LitElement {
   /**
    * @param data              {json}   Object containing the fields listed below
    * @param data.labels       {array}  Array containing x axis labels
-   * @param data.axisTitles   {json}   object containing x axis title at key "x" and y axis title at key "y"
-   * @param data.axisTitles.x {string} X axis title
-   * @param data.axisTitles.y {string} Y axis title
+   * @param data.axisTitle   {json}   object containing x axis title at key "x" and y axis title at key "y"
+   * @param data.axisTitle.x {string} X axis title
+   * @param data.axisTitle.y {string} Y axis title
    * @param data.title        {string} Title of graph
    * @param data.values       {array}  The actual data
    */
@@ -71,7 +71,7 @@ class BackendAIChartAlt extends LitElement {
 
         .line {
           fill: none;
-          stroke: #ffab00;
+          stroke: rgb(75,192,192);
           stroke-width: 3;
         }
       `];
@@ -92,10 +92,10 @@ class BackendAIChartAlt extends LitElement {
         type: Object
       },
       width: {
-        type: Array
+        type: Number
       },
       height: {
-        type: Array
+        type: Number
       },
       type: {
         type: String
@@ -106,13 +106,22 @@ class BackendAIChartAlt extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div>
+      <div class="layout vertical center">
         <h3>${this.title}</h3>
         <div class="layout vertical">
           <div id="d3"></div>
         </div>
       </div>
     `;
+  }
+
+  _scaledSVGWidth(offsetWidth) {
+    return offsetWidth > 1700 ? 1600:
+           offsetWidth > 1400 ? 1300:
+           offsetWidth > 1200 ? 1000:
+           offsetWidth >  900 ?  800:
+           offsetWidth >  700 ?  600:
+                                 400;
   }
 
   responsiveHelper(svg) {
@@ -123,8 +132,7 @@ class BackendAIChartAlt extends LitElement {
 
     const resize = () => {
       const { offsetWidth } = this.shadowRoot.host.parentNode;
-      const targetWidth = offsetWidth > 2800 ? 0.2 * offsetWidth :
-                          offsetWidth > 2000 ? 0.4 * offsetWdith : 500;
+      const targetWidth = this._scaledSVGWidth(offsetWidth);
       svg.attr("width", targetWidth);
       svg.attr("height", Math.round(targetWidth / aspect));
     }
@@ -137,13 +145,18 @@ class BackendAIChartAlt extends LitElement {
   }
 
   firstUpdated() {
-    const xScale = d3.scaleLinear()
-          .domain([0, this.data.length - 1])
-          .range([0, this.width]);
+    // https://bl.ocks.org/gordlea/27370d1eea8464b04538e6d8ced39e89
+    const margin      = {top: 50, right: 10, bottom: 50, left: 50},
+          graphWidth  = this.width - margin.left - margin.right,
+          graphHeight = this.height - margin.top - margin.bottom;
+
+    const xScale = d3.scaleOrdinal()
+          .range([...Array(12)].map((val, idx) => graphWidth * idx / 12))
+          .domain(this.data.labels);
 
     const yScale = d3.scaleLinear()
-          .domain([0, d3.max(this.data)])
-          .range([this.height, 0]);
+          .domain([0, d3.max(this.data.values)])
+          .range([graphHeight, 0]);
 
     const line = d3.line()
           .x((d, i) => xScale(i))
@@ -153,22 +166,39 @@ class BackendAIChartAlt extends LitElement {
     const svg = d3.select(this.shadowRoot.querySelector('#d3')).append('svg')
           .attr('width', this.width)
           .attr('height', this.height)
-          .call(svg => this.responsiveHelper(svg));
+          .call(svg => this.responsiveHelper(svg))
+          .append('g')
+          .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
+    // x axis
     svg.append('g')
        .attr('class', 'x axis')
-       .attr('transform', `translate(0, ${this.height - 20})`)
+       .attr('transform', `translate(0, ${graphHeight})`)
        .call(d3.axisBottom(xScale));
 
+    // text label for the x axis
+    svg.append("text")
+       .attr("transform",`translate(${graphWidth / 2}, ${graphHeight + margin.bottom - 10})`)
+       .style("text-anchor", "middle")
+       .text(this.data.axisTitle.x);
+
+    // y axis
     svg.append('g')
        .attr('class', 'y axis')
-       .attr('transform', `translate(30, 0)`)
+       .attr('transform', `translate(0, 0)`)
        .call(d3.axisLeft(yScale));
 
+    // text label for the x axis
+    svg.append("text")
+       .attr("transform", `translate(${15 - margin.left}, ${graphHeight / 2}) rotate(-90)`)
+       .style("text-anchor", "middle")
+       .text(this.data.axisTitle.y);
+
     svg.append('path')
-       .datum(this.data)
+       .datum(this.data.values)
        .attr('class', 'line')
        .attr('d', line);
+
   }
 
   connectedCallback() {

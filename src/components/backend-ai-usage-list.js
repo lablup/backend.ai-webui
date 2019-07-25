@@ -44,12 +44,20 @@ class BackendAIUsageList extends LitElement {
           <div class="layout vertical center">
             <backend-ai-chart-alt
               title="CPU"
-              width="400"
+              width="800"
               height="300"
               elevation="1"
               type="line"
               .data=${
-                [1, 2, 3, 1, 5, 3]
+                {
+                  values: [...Array(12)].map(e => Math.floor(Math.random() * 101)),
+                  axisTitle: {
+                    x: 'Month',
+                    y: 'Percentage'
+                  },
+                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                  title: 'CPU Usage (%)'
+                }
               }
             ></backend-ai-chart-alt>
             <!-- <backend-ai-chart
