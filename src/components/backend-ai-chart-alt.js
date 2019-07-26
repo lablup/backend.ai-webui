@@ -19,17 +19,17 @@ class BackendAIChartAlt extends LitElement {
    */
   constructor() {
     super();
-    this.title = '';
+    this.title = "";
     this.elevation = 1;
-    this.message = '';
+    this.message = "";
     this.data = {};
     this.width = 300;
     this.height = 300;
-    this.type = 'line';
+    this.type = "line";
   }
 
   static get is() {
-    return 'backend-ai-chart-alt';
+    return "backend-ai-chart-alt";
   }
 
   static get styles() {
@@ -71,12 +71,12 @@ class BackendAIChartAlt extends LitElement {
 
         .line {
           fill: none;
-          stroke: rgb(75,192,192);
+          stroke: rgb(75, 192, 192);
           stroke-width: 2;
         }
 
         .dot {
-          fill: rgb(75,192,192);
+          fill: rgb(75, 192, 192);
           stroke: #fff;
         }
 
@@ -89,14 +89,14 @@ class BackendAIChartAlt extends LitElement {
         }
 
         .textGray text {
-          fill: #8C8C8C;
+          fill: #8c8c8c;
         }
 
         text.normalize {
           font-size: 13px;
         }
-
-      `];
+      `
+    ];
   }
 
   static get properties() {
@@ -122,16 +122,24 @@ class BackendAIChartAlt extends LitElement {
       type: {
         type: String
       }
-    }
+    };
   }
 
+  updated(changedProps) {
+    if (changedProps.has('data') && changedProps.get('data') !== undefined) {
+      this.draw();
+    }
+  }
+  
   render() {
     // language=HTML
     return html`
       <div class="layout vertical center">
         <h3>${this.title}</h3>
         <div class="layout vertical">
-          <div id="d3"></div>
+          <div>
+            <svg id="d3"></svg>
+          </div>
         </div>
       </div>
     `;
@@ -148,8 +156,8 @@ class BackendAIChartAlt extends LitElement {
 
   responsiveHelper(svg) {
     const container = d3.select(svg.node().parentNode),
-          width     = parseInt(svg.node().getAttribute('width')),
-          height    = parseInt(svg.node().getAttribute('height')),
+          width     = parseInt(svg.node().getAttribute("width")),
+          height    = parseInt(svg.node().getAttribute("height")),
           aspect    = width / height;
 
     const resize = () => {
@@ -157,88 +165,156 @@ class BackendAIChartAlt extends LitElement {
       const targetWidth = this._scaledSVGWidth(offsetWidth);
       svg.attr("width", targetWidth);
       svg.attr("height", Math.round(targetWidth / aspect));
-    }
+    };
 
-    svg.attr("viewBox", `0 0 ${width} ${height}`)
-        .attr("perserveAspectRatio", "xMinYMid")
-        .call(resize);
+    svg
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("perserveAspectRatio", "xMinYMid")
+      .call(resize);
 
-    d3.select(window).on(`resize.${container.attr('id')}`, resize);
+    d3.select(window).on(`resize.${container.attr("id")}`, resize);
+  }
+
+  draw() {
+    const margin      = { top: 50, right: 10, bottom: 50, left: 50 },
+          graphWidth  = this.width - margin.left - margin.right,
+          graphHeight = this.height - margin.top - margin.bottom;
+
+    const g = d3.select(this.shadowRoot.querySelector('#d3-container'));
+
+    const xScale = d3
+      .scalePoint()
+      .domain(this.data.labels)
+      .range([0, graphWidth]);
+    
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, d3.max(this.data.values)])
+      .range([graphHeight, 0]);
+
+    const line = d3
+      .line()
+      .x((d, i) => xScale(this.data.labels[i]))
+      .y(d => yScale(d))
+      .curve(d3.curveMonotoneX);
+
+    g
+      .select('.line')
+      .attr('d', line(this.data.values));
+
+    g
+      .select('.x.axis')
+      .call(d3.axisBottom(xScale));
+
+    g
+      .select('.y.axis')
+      .call(d3.axisLeft(yScale));
+
+    const dots = g.selectAll('.dot').data(this.data.values);
+
+    
+    dots
+    .attr('cx', (d, i) => xScale(this.data.labels[i]))
+    .attr('cy', d => yScale(d))
+    
+    dots.exit().remove()
+    dots
+      .enter().append('circle')
+      .attr('class', 'dot')
+      .attr('cx', (d, i) => xScale(this.data.labels[i]))
+      .attr('cy', d => yScale(d))
+      .attr('r', 3)
   }
 
   firstUpdated() {
     // https://bl.ocks.org/gordlea/27370d1eea8464b04538e6d8ced39e89
-    const margin      = {top: 50, right: 10, bottom: 50, left: 50},
+    const margin      = { top: 50, right: 10, bottom: 50, left: 50 },
           graphWidth  = this.width - margin.left - margin.right,
           graphHeight = this.height - margin.top - margin.bottom;
 
-    const xScale = d3.scaleOrdinal()
-          .range([...Array(12)].map((val, idx) => graphWidth * idx / 12))
-          .domain(this.data.labels);
+    const xScale = d3
+      .scalePoint()
+      .domain(this.data.labels)
+      .range([0, graphWidth]);
 
-    const yScale = d3.scaleLinear()
-          .domain([0, d3.max(this.data.values)])
-          .range([graphHeight, 0]);
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, d3.max(this.data.values)])
+      .range([graphHeight, 0]);
 
-    const line = d3.line()
-          .x((d, i) => xScale(i))
-          .y(d => yScale(d))
-          .curve(d3.curveMonotoneX);
-
-    const svg = d3.select(this.shadowRoot.querySelector('#d3')).append('svg')
-          .attr('width', this.width)
-          .attr('height', this.height)
-          .call(svg => this.responsiveHelper(svg))
-          .append('g')
-          .attr('transform', `translate(${margin.left}, ${margin.top})`);
+    const line = d3
+      .line()
+      .x((d, i) => xScale(this.data.labels[i]))
+      .y(d => yScale(d))
+      .curve(d3.curveMonotoneX);
+    
+    const svg = d3
+      .select(this.shadowRoot.querySelector("#d3"))
+      .attr("width", this.width)
+      .attr("height", this.height)
+      .call(svg => this.responsiveHelper(svg))
+      .append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`)
+      .attr('id', 'd3-container');
 
     // add x axis
-    svg.append('g')
-       .attr('class', 'x axis axisGray')
-       .attr('transform', `translate(0, ${graphHeight})`)
-       .call(d3.axisBottom(xScale));
+    svg
+      .append("g")
+      .attr("class", "x axis axisGray")
+      .attr("transform", `translate(0, ${graphHeight})`)
+      .call(d3.axisBottom(xScale));
 
     // text label for the x axis
-    svg.append("text")
-       .attr("transform",`translate(${graphWidth / 2}, ${graphHeight + margin.bottom - 15})`)
-       .style("text-anchor", "middle")
-       .attr('class', 'normalize')
-       .text(this.data.axisTitle.x);
+    svg
+      .append("text")
+      .attr(
+        "transform",
+        `translate(${graphWidth / 2}, ${graphHeight + margin.bottom - 15})`
+      )
+      .style("text-anchor", "middle")
+      .attr("class", "normalize")
+      .text(this.data.axisTitle.x);
 
     // add y axis
-    svg.append('g')
-       .attr('class', 'y axis axisGray')
-       .attr('transform', `translate(0, 0)`)
-       .call(d3.axisLeft(yScale));
+    svg
+      .append("g")
+      .attr("class", "y axis axisGray")
+      .attr("transform", `translate(0, 0)`)
+      .call(d3.axisLeft(yScale));
 
     // text label for the x axis
-    svg.append("text")
-       .attr("transform", `translate(${20 - margin.left}, ${graphHeight / 2}) rotate(-90)`)
-       .style("text-anchor", "middle")
-       .attr('class', 'normalize')
-       .text(this.data.axisTitle.y);
+    svg
+      .append("text")
+      .attr(
+        "transform",
+        `translate(${20 - margin.left}, ${graphHeight / 2}) rotate(-90)`
+      )
+      .style("text-anchor", "middle")
+      .attr("class", "normalize")
+      .text(this.data.axisTitle.y);
 
-    svg.append('path')
-       .datum(this.data.values)
-       .attr('class', 'line')
-       .attr('d', line);
+    svg
+      .append("path")
+      .datum(this.data.values)
+      .attr("class", "line")
+      .attr("d", line);
 
-    svg.selectAll(".dot")
-       .data(this.data.values)
-       .enter().append("circle")
-       .attr("class", "dot")
-       .attr("cx", function(d, i) { return xScale(i) })
-       .attr("cy", function(d) { return yScale(d) })
-       .attr("r", 3);
+    svg
+      .selectAll(".dot")
+      .data(this.data.values)
+      .enter()
+      .append("circle")
+      .attr("class", "dot")
+      .attr("cx", (d, i) => xScale(this.data.labels[i]))
+      .attr("cy", d => yScale(d))
+      .attr("r", 3);
   }
 
   connectedCallback() {
     super.connectedCallback();
   }
 
-  _removePanel() {
-
-  }
+  _removePanel() {}
 }
 
 customElements.define(BackendAIChartAlt.is, BackendAIChartAlt);

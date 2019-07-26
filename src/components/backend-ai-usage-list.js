@@ -22,98 +22,103 @@ import {
 
 
 class BackendAIUsageList extends LitElement {
-    static get is() {
-        return 'backend-ai-usage-list';
-    }
+  constructor() {
+    super();
+    this.collection = {
+      "1H": {
+        values: [...Array(7)].map(e => Math.floor(Math.random() * 101)),
+        axisTitle: {
+          x: "Minutes",
+          y: "Percentage"
+        },
+        labels: ["0", "10", "20", "30", "40", "50", "60"],
+        title: "CPU Usage (%)"
+      },
+      "6H": {
+        values: [...Array(24)].map(e => Math.floor(Math.random() * 101)),
+        axisTitle: {
+          x: "Minutes",
+          y: "Percentage"
+        },
+        labels: [...Array(24)].map((e, i) => `${i * 15}`),
+        title: "CPU Usage (%)"
+      },
+      "12H": {
+        values: [...Array(48)].map(e => Math.floor(Math.random() * 101)),
+        axisTitle: {
+          x: "Minutes",
+          y: "Percentage"
+        },
+        labels: [...Array(48)].map((e, i) => `${i * 15}`),
+        title: "CPU Usage (%)"
+      }
+    };
+    this.period = '1H';
+  }
 
-    static get styles() {
-      return [
-        BackendAiStyles,
-        IronFlex,
-        IronFlexAlignment,
-        IronFlexFactors,
-        IronPositioning,
-        // language=CSS
-        css`
-          wl-select {
-            --input-font-family: Roboto, Noto, sans-serif;
-            --input-color-disabled: #222;
-            --input-label-color-disabled: #222;
-            --input-label-font-size: 12px;
-            --input-border-style-disabled: 1px solid #ccc;
-          }
-        `
-      ]
+  static get properties() {
+    return {
+      collection: {
+        type: Object
+      },
+      period: {
+        type: String
+      }
     }
+  }
 
-    render() {
-        // language=HTML
-        return html`
-          <div class="layout horizontal end-justified" style="padding: 20px 0px; margin: 0px 20px;">
-            <wl-select label="Select Something">
-              <option value disabled selected>Select something</option>
-              <option value="1">Option 1</option>
-              <option value="2">Option 2</option>
-              <option value="3">Option 3</option>
-              <option value="4">Option 4</option>
-            </wl-select>
-          </div>
-          <div class="layout vertical center">
-            <backend-ai-chart-alt
-              title="CPU"
-              width="800"
-              height="300"
-              elevation="1"
-              type="line"
-              .data=${
-                {
-                  values: [...Array(12)].map(e => Math.floor(Math.random() * 101)),
-                  axisTitle: {
-                    x: 'Month',
-                    y: 'Percentage'
-                  },
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                  title: 'CPU Usage (%)'
-                }
-              }
-            ></backend-ai-chart-alt>
-            <!-- <backend-ai-chart
-              title="CPU"
-              width="250"
-              height="300"
-              elevation="1"
-              type="line"
-              .data=${
-                {
-                  values: [...Array(12)].map(e => Math.floor(Math.random() * 101)),
-                  axisTitles: {
-                    x: 'Month',
-                    y: 'Percentage'
-                  },
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                  title: 'CPU Usage (%)'
-                }
-              }
-            ></backend-ai-chart> -->
-            <!-- <backend-ai-chart
-              title="Network Byte"
-              elevation="1"
-              type="line"
-              .data=${
-                {
-                  values: [...Array(12)].map(e => Math.floor(Math.random() * 101)),
-                  axisTitles: {
-                    x: 'Month',
-                    y: 'MB/s'
-                  },
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                  title: 'MegaBytes per Second'
-                }
-              }
-            ></backend-ai-chart> -->
-          </div>
-        `;
-    }
+  static get is() {
+      return 'backend-ai-usage-list';
+  }
+
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
+        wl-select {
+          --input-font-family: Roboto, Noto, sans-serif;
+          --input-color-disabled: #222;
+          --input-label-color-disabled: #222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #ccc;
+        }
+      `
+    ]
+  }
+
+  render() {
+    // language=HTML
+    return html`
+      <div
+        class="layout horizontal end-justified"
+        style="width: 80%;"
+      >
+        <wl-select label="Select Period" style="width: 130px" @input=${e => {this.period = e.target.value}}>
+          <option value disabled selected>Select Period</option>
+          <option value="1H">1 Hour</option>
+          <option value="6H">6 Hours</option>
+          <option value="12H">12 Hours</option>
+          <!-- <option value="1D">1 Day</option>
+          <option value="2D">2 Days</option> -->
+        </wl-select>
+      </div>
+      <div class="layout vertical center">
+        <backend-ai-chart-alt
+          title="CPU"
+          width="800"
+          height="300"
+          elevation="1"
+          type="line"
+          .data=${this.collection[this.period]}
+        ></backend-ai-chart-alt>
+      </div>
+    `;
+  }
 }
 
 customElements.define(BackendAIUsageList.is, BackendAIUsageList);
