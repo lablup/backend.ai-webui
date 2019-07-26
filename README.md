@@ -242,7 +242,10 @@ $ make linux
 ```
 
 ### Packaging as zip files
+
 Note: this command only works on macOS, because packaging uses `ditto`, that supports both PKZIP and compressed CPIO format.
+
+Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
 
 ```
 $ make pack
