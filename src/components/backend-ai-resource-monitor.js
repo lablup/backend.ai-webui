@@ -212,6 +212,9 @@ class BackendAiResourceMonitor extends LitElement {
       },
       direction: {
         type: String
+      },
+      num_sessions: {
+        type: Number
       }
     }
   }
@@ -546,6 +549,7 @@ class BackendAiResourceMonitor extends LitElement {
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
+    this.num_sessions = 1; // TODO: read the value from UI
 
     let config = {};
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
@@ -583,7 +587,17 @@ class BackendAiResourceMonitor extends LitElement {
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
     this.shadowRoot.querySelector('#notification').text = 'Preparing session...';
     this.shadowRoot.querySelector('#notification').show();
-    window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
+
+    let sessions = [];
+    for (var i = 0; i < this.num_sessions; i++) {
+      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
+    }
+
+    let createSessionQueue = this.sessions.map(item => {
+      return this._createKernel(item.kernelName, item.sessionName, item.config);
+    });
+
+    Promise.all(createSessionQueue).then((res) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
@@ -599,9 +613,15 @@ class BackendAiResourceMonitor extends LitElement {
         this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
+      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
     });
+  }
+
+  _createKernel(kernelName, sessionName, config) {
+    return window.backendaiclient.createKernel(kernelName, sessionName, config);
   }
 
   _hideSessionDialog() {
