@@ -1,11 +1,11 @@
-import * as d3  from 'd3';
+import * as d3 from "d3";
 
 import {css, html, LitElement} from "lit-element";
-import '@polymer/paper-icon-button/paper-icon-button';
-import 'weightless/card';
+import "@polymer/paper-icon-button/paper-icon-button";
+import "weightless/card";
 
-import {BackendAiStyles} from './backend-ai-console-styles';
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import {BackendAiStyles} from "./backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIChartAlt extends LitElement {
   /**
@@ -58,12 +58,12 @@ class BackendAIChartAlt extends LitElement {
 
         .line {
           fill: none;
-          stroke: rgb(75, 192, 192);
+          stroke: #4bc0c0;
           stroke-width: 2;
         }
 
         .dot {
-          fill: rgb(75, 192, 192);
+          fill: #4bc0c0;
           stroke: #fff;
         }
 
@@ -222,6 +222,16 @@ class BackendAIChartAlt extends LitElement {
         focus
           .select("line.y")
           .attr("transform", `translate(${xScale(d.x)}, 0)`);
+
+        focus
+          .select("text.tooltip-y")
+          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`)
+          .text(d.y);
+
+        focus
+          .select("text.tooltip-x")
+          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`)
+          .text(d.x);
       })
   }
 
@@ -283,12 +293,6 @@ class BackendAIChartAlt extends LitElement {
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .attr('id', 'd3-container');
 
-    // "g" element to render vertical tooltip
-    const focus = g
-      .append("g")
-      .attr("id", "focus")
-      .style("display", "none");
-
     // add x axis
     g
       .append("g")
@@ -342,9 +346,43 @@ class BackendAIChartAlt extends LitElement {
       .attr("cy", d => yScale(d.y))
       .attr("r", 3);
 
+    // "g" element to render vertical tooltip
+    const focus = g
+      .append("g")
+      .attr("id", "focus")
+      .style("display", "none");
+
+    focus
+      .append("circle")
+      .attr("class", "y")
+      .style("fill", "none")
+      .style("stroke", "#4bc0c0")
+      .attr("r", 4);
+
+    focus
+      .append("line")
+      .attr("class", "y")
+      .style("stroke", "#4bc0c0")
+      .attr("y1", 0)
+      .attr("y2", graphHeight);
+
+    focus
+      .append("text")
+      .attr("class", "tooltip-x")
+      .style("stroke-width", "3px")
+      .attr("dx", 8)
+      .attr("dy", "-.3em");
+
+    focus
+      .append("text")
+      .attr("class", "tooltip-y")
+      .style("stroke-width", "3px")
+      .attr("dx", 8)
+      .attr("dy", "1em");
+
     g
       .append("rect")
-      .attr('id', 'mouse-rect')
+      .attr("id", "mouse-rect")
       .attr("width", graphWidth)
       .attr("height", graphHeight)
       .style("fill", "none")
@@ -365,21 +403,17 @@ class BackendAIChartAlt extends LitElement {
         focus
           .select("line.y")
           .attr("transform", `translate(${xScale(d.x)}, 0)`);
+
+        focus
+          .select("text.tooltip-y")
+          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`)
+          .text(d.y);
+
+        focus
+          .select("text.tooltip-x")
+          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`)
+          .text(d.x);
       })
-
-    focus
-      .append("circle")
-      .attr("class", "y")
-      .style("fill", "none")
-      .style("stroke", "#4bc0c0")
-      .attr("r", 4);
-
-    focus
-      .append("line")
-      .attr("class", "y")
-      .style("stroke", "#4bc0c0")
-      .attr("y1", 0)
-      .attr("y2", graphHeight);
   }
 
   connectedCallback() {
