@@ -161,6 +161,22 @@ class BackendAIResourceTemplateList extends LitElement {
           --button-bg-hover: var(--paper-yellow-100);
           --button-bg-active: var(--paper-yellow-600);
         }
+
+        wl-button {
+          --button-bg: var(--paper-yellow-50);
+          --button-bg-hover: var(--paper-yellow-100);
+          --button-bg-active: var(--paper-yellow-600);
+        }
+
+        wl-button#create-policy-button {
+          width: 100%;
+          box-sizing: border-box;
+          margin-top: 15px;
+        }
+
+        wl-card {
+          margin: 0;
+        }
       `];
   }
 
@@ -227,58 +243,138 @@ class BackendAIResourceTemplateList extends LitElement {
     );
   }
 
+  _launchPresetAddDialog(e) {
+    this.shadowRoot.querySelector('#create-preset-dialog').show();
+  }
+
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <wl-card>
+        <h4 class="horizontal flex center center-justified layout">
+          <span>Resource Presets</span>
+          <span class="flex"></span>
+          <wl-button class="fg orange" id="add-resource-preset" outlined @click="${e => this._launchPresetAddDialog(e)}">
+            <wl-icon>add</wl-icon>
+            Create Preset
+          </wl-button>
+        </h4>
+        <div>
+          <lablup-notification id="notification"></lablup-notification>
+          <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
-                   .items="${this.resourcePresets}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
+                      .items="${this.resourcePresets}">
+            <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div>[[item.name]]</div>
-            </div>
-          </template>
-        </vaadin-grid-column>
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
+              </template>
+              <template>
+                <div class="layout horizontal center flex">
+                  <div>[[item.name]]</div>
+                </div>
+              </template>
+            </vaadin-grid-column>
 
-        <vaadin-grid-column width="150px" resizable header="Resources" .renderer="${this._boundResourceRenderer}">
-        </vaadin-grid-column>
+            <vaadin-grid-column width="150px" resizable header="Resources" .renderer="${this._boundResourceRenderer}">
+            </vaadin-grid-column>
 
-        <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
-        </vaadin-grid-column>
-      </vaadin-grid>
-      <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
+            <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
+            </vaadin-grid-column>
+          </vaadin-grid>
+          <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
+            <wl-card elevation="1" class="login-panel intro centered">
+              <h3 class="horizontal center layout">
+                <span>Modify resource preset</span>
+                <div class="flex"></div>
+                <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+                  <wl-icon>close</wl-icon>
+                </wl-button>
+              </h3>
+              <form id="login-form">
+                <fieldset>
+                  <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
+                              auto-validate required
+                              pattern="[a-zA-Z0-9]*"
+                              error-message="Policy name only accepts letters and numbers"></paper-input>
+                  <h4>Resource Preset</h4>
+                  <div class="horizontal center layout">
+                    <paper-dropdown-menu id="cpu-resource" label="CPU">
+                      <paper-listbox slot="dropdown-content" selected="0">
+                      ${this.cpu_metric.map(item => html`
+                        <paper-item value="${item}">${item}</paper-item>
+                      `)}
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
+                      <paper-listbox slot="dropdown-content" selected="0">
+                      ${this.ram_metric.map(item => html`
+                        <paper-item value="${item}">${item}</paper-item>
+                      `)}
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </div>
+                  <div class="horizontal center layout">
+                    <paper-dropdown-menu id="gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable}>
+                      <paper-listbox slot="dropdown-content" selected="0">
+                      ${this.gpu_metric.map(item => html`
+                        <paper-item value="${item}">${item}</paper-item>
+                      `)}
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable}>
+                      <paper-listbox slot="dropdown-content" selected="0">
+                      ${this.fgpu_metric.map(item => html`
+                        <paper-item value="${item}">${item}</paper-item>
+                      `)}
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </div>
+                  <br/><br/>
+                  <wl-button class="fg orange create-button" outlined type="button"
+                    @click="${() => this._modifyResourceTemplate()}">
+                    <wl-icon>check</wl-icon>
+                    Save Changes
+                  </wl-button>
+                </fieldset>
+              </form>
+            </wl-card>
+          </wl-dialog>
+        </div>
+      </wl-card>
+      <wl-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Modify resource preset</span>
+            <span>Create resource preset</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <form id="login-form">
+          <form id="preset-creation-form">
             <fieldset>
-              <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
-                           auto-validate required
-                           pattern="[a-zA-Z0-9]*"
-                           error-message="Policy name only accepts letters and numbers"></paper-input>
+              <paper-input
+                type="text"
+                name="preset_name"
+                id="create-preset-name"
+                label="Preset Name"
+                auto-validate
+                required
+                pattern="[a-zA-Z0-9]*"
+                error-message="Policy name only accepts letters and numbers"
+              ></paper-input>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="cpu-resource" label="CPU">
+                <paper-dropdown-menu id="create-cpu-resource" label="CPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.cpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
+                <paper-dropdown-menu id="create-ram-resource" label="RAM (GB)">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.ram_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
@@ -287,14 +383,14 @@ class BackendAIResourceTemplateList extends LitElement {
                 </paper-dropdown-menu>
               </div>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="gpu-resource" label="GPU">
+                <paper-dropdown-menu id="create-gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable}>
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.gpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vgpu-resource" label="fGPU">
+                <paper-dropdown-menu id="create-fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable}>
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.fgpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
@@ -302,9 +398,13 @@ class BackendAIResourceTemplateList extends LitElement {
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
-              <br/><br/>
-              <wl-button class="fg orange create-button" id="create-policy-button" outlined type="button"
-                @click="${() => this._modifyResourceTemplate()}">
+              <wl-button
+                class="fg orange create-button"
+                id="create-policy-button"
+                outlined
+                type="button"
+                @click="${this._createPreset}"
+              >
                 <wl-icon>add</wl-icon>
                 Add
               </wl-button>
@@ -347,6 +447,10 @@ class BackendAIResourceTemplateList extends LitElement {
     } else { // already connected
       this._refreshTemplateData();
       this.is_admin = window.backendaiclient.is_admin;
+      window.backendaiclient.getResourceSlots()
+      .then(res => {
+        this.gpu_allocatable = (Object.keys(res).length !== 2);
+      })
     }
   }
 
@@ -370,11 +474,12 @@ class BackendAIResourceTemplateList extends LitElement {
     let resourcePresets = window.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
     console.log(resourcePreset);
+    console.log(resourcePreset.resource_slots['cuda.device']);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
     this.shadowRoot.querySelector('#id_preset_name').value = preset_name;
     this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
     this.shadowRoot.querySelector('#gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
-    this.shadowRoot.querySelector('#vgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
+    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
     this.shadowRoot.querySelector('#ram-resource').value = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
   }
 
@@ -406,31 +511,30 @@ class BackendAIResourceTemplateList extends LitElement {
   }
 
   _readResourcePresetInput() {
-    let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
-    let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
-    let gpu_resource = this.shadowRoot.querySelector('#gpu-resonodurce').value;
-    let fgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
+    const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+    const cpu           = wrapper(this.shadowRoot.querySelector('#cpu-resource').value),
+          mem           = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g'),
+          gpu_resource  = wrapper(this.shadowRoot.querySelector('#gpu-resource').value),
+          fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
 
-    let resource_slots = {
-      "cpu": cpu_resource,
-      "mem": ram_resource + 'g'
-    };
-    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "") {
+    let resource_slots = {cpu, mem};
+    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
       resource_slots["cuda.device"] = parseInt(gpu_resource);
     }
-    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== "") {
+    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== "" && fgpu_resource !== '0') {
       resource_slots["cuda.shares"] = parseFloat(fgpu_resource);
     }
-    let input = {
+
+    const input = {
       'resource_slots': JSON.stringify(resource_slots)
     };
+
     return input;
   }
 
   _modifyResourceTemplate() {
     let name = this.shadowRoot.querySelector('#id_preset_name').value;
     let input = this._readResourcePresetInput();
-    console.log(input);
     window.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#modify-template-dialog').hide();
       this.notification.text = "Resource policy successfully updated.";
@@ -487,11 +591,51 @@ class BackendAIResourceTemplateList extends LitElement {
   }
 
   _markIfUnlimited(value) {
-    if (['-', 0].includes(value)) {
+    if (['-', 0, Infinity, 'Infinity'].includes(value)) {
       return '∞';
     } else {
       return value;
     }
+  }
+
+  _createPreset() {
+    const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+    const preset_name   = wrapper(this.shadowRoot.querySelector('#create-preset-name').value),
+          cpu           = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value),
+          mem           = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g'),
+          gpu_resource  = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value),
+          fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
+
+    let resource_slots = {cpu, mem};
+    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
+      resource_slots["cuda.device"] = parseInt(gpu_resource);
+    }
+    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== "" && fgpu_resource !== '0') {
+      resource_slots["cuda.shares"] = parseFloat(fgpu_resource);
+    }
+
+    const input = {
+      'resource_slots': JSON.stringify(resource_slots)
+    };
+
+    window.backendaiclient.resourcePreset.add(preset_name, input)
+    .then(res => {
+      this.shadowRoot.querySelector('#create-preset-dialog').hide();
+      if (res.create_resource_preset.ok) {
+        this.shadowRoot.querySelector('#notification').text = "Resource preset successfully created";
+        this.refresh();
+
+        // reset values
+        this.shadowRoot.querySelector('#create-preset-name').value = "";
+        this.shadowRoot.querySelector('#create-cpu-resource').value   = 1;
+        this.shadowRoot.querySelector('#create-ram-resource').value   = 1;
+        this.shadowRoot.querySelector('#create-gpu-resource').value   = 0;
+        this.shadowRoot.querySelector('#create-fgpu-resource').value  = 0;
+      } else {
+        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(res.create_resource_preset.msg);
+      }
+      this.shadowRoot.querySelector('#notification').show();
+    })
   }
 }
 
