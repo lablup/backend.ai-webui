@@ -236,7 +236,7 @@ class BackendAIChartAlt extends LitElement {
   }
 
   toolbox() {
-    const margin      = { top: 50, right: 10, bottom: 50, left: 50 },
+    const margin      = { top: 50, right: 50, bottom: 50, left: 50 },
           graphWidth  = this.width - margin.left - margin.right,
           graphHeight = this.height - margin.top - margin.bottom;
 
@@ -268,7 +268,9 @@ class BackendAIChartAlt extends LitElement {
       .y(d => yScale(d.y))
       .curve(d3.curveMonotoneX);
 
-    return { margin, graphWidth, graphHeight, data, xScale, xAxis, yScale, line };
+    const rectWidth = 40, rectHeight = 40;
+
+    return { margin, graphWidth, graphHeight, data, xScale, xAxis, yScale, line, rectWidth, rectHeight };
   }
 
   firstUpdated() {
@@ -280,7 +282,9 @@ class BackendAIChartAlt extends LitElement {
       xScale,
       xAxis,
       yScale,
-      line
+      line,
+      rectWidth,
+      rectHeight
     } = this.toolbox();
 
     // outermost "g" element in <svg>
@@ -366,18 +370,35 @@ class BackendAIChartAlt extends LitElement {
       .attr("y1", 0)
       .attr("y2", graphHeight);
 
-    focus
+    const tooltip = focus
+      .append("g")
+      .attr("id", "tooltip");
+
+    tooltip
+      .append("rect")
+      .attr("width", rectWidth)
+      .attr("height", rectHeight)
+      .attr("rx", 10)
+      .attr("ry", 10)
+      .style("fill", "rgba(255, 255, 255, 0.49)")
+      .style("stroke", "rgba(74, 191, 191)")
+
+    tooltip
       .append("text")
       .attr("class", "tooltip-x")
-      .style("stroke-width", "3px")
-      .attr("dx", 8)
+      .style("font-size", "11px")
+      .style("fill", "#37474f")
+      .attr("transform", `translate(0, ${rectHeight / 2})`)
+      .attr("dx", rectWidth / 2 - 10)
       .attr("dy", "-.3em");
 
-    focus
+    tooltip
       .append("text")
       .attr("class", "tooltip-y")
-      .style("stroke-width", "3px")
-      .attr("dx", 8)
+      .style("font-size", "11px")
+      .style("fill", "#37474f")
+      .attr("transform", `translate(0, ${rectHeight / 2})`)
+      .attr("dx", rectWidth / 2 - 10)
       .attr("dy", "1em");
 
     g
@@ -404,14 +425,15 @@ class BackendAIChartAlt extends LitElement {
           .select("line.y")
           .attr("transform", `translate(${xScale(d.x)}, 0)`);
 
-        focus
+        tooltip
+          .attr("transform", `translate(${xScale(d.x) + 5}, ${yScale(d.y)})`)
+
+        tooltip
           .select("text.tooltip-y")
-          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`)
           .text(d.y);
 
-        focus
+        tooltip
           .select("text.tooltip-x")
-          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`)
           .text(d.x);
       })
   }
