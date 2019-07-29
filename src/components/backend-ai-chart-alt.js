@@ -185,6 +185,14 @@ class BackendAIChartAlt extends LitElement {
       .domain(data.map(e => e.x))
       .range([0, graphWidth]);
 
+    let xAxis = d3
+      .axisBottom(xScale);
+
+    if (data.length > 24) {
+      const step = Math.ceil(data.length / 24);
+      xAxis = xAxis.tickValues(data.map(e => e.x).filter((val, idx) => idx % step === 0));
+    }
+
     const yScale = d3
       .scaleLinear()
       .domain([0, d3.max(data, d => d.y)])
@@ -202,7 +210,7 @@ class BackendAIChartAlt extends LitElement {
 
     g
       .select(".x.axis")
-      .call(d3.axisBottom(xScale));
+      .call(xAxis);
 
     g
       .select(".y.axis")
@@ -250,7 +258,7 @@ class BackendAIChartAlt extends LitElement {
     const data = d3
       .zip(this.collection.data.x, this.collection.data.y)
       .map(e => ({
-        x: e[0],
+        x: +e[0],
         y: e[1]
       }))
 
@@ -258,6 +266,14 @@ class BackendAIChartAlt extends LitElement {
       .scalePoint()
       .domain(data.map(e => e.x))
       .range([0, graphWidth]);
+
+    let xAxis = d3
+      .axisBottom(xScale);
+
+    if (data.length > 24) {
+      const step = Math.ceil(data.length / 24);
+      xAxis = xAxis.tickValues(data.filter((val, idx) => idx % step === 0));
+    }
 
     const yScale = d3
       .scaleLinear()
@@ -291,7 +307,7 @@ class BackendAIChartAlt extends LitElement {
       .append("g")
       .attr("class", "x axis axisGray")
       .attr("transform", `translate(0, ${graphHeight})`)
-      .call(d3.axisBottom(xScale));
+      .call(xAxis);
 
     // text label for the x axis
     g
