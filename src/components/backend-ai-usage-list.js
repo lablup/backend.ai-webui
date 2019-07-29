@@ -114,7 +114,7 @@ class BackendAIUsageList extends LitElement {
           height="300"
           elevation="1"
           type="line"
-          .data=${this.collection[this.period]}
+          .collection=${this.collection[this.period]}
         ></backend-ai-chart-alt>
       </div>
     `;

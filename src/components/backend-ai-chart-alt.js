@@ -9,20 +9,20 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 class BackendAIChartAlt extends LitElement {
   /**
-   * @param data              {json}   Object containing the fields listed below
-   * @param data.labels       {array}  Array containing x axis labels
-   * @param data.axisTitle   {json}   object containing x axis title at key "x" and y axis title at key "y"
-   * @param data.axisTitle.x {string} X axis title
-   * @param data.axisTitle.y {string} Y axis title
-   * @param data.title        {string} Title of graph
-   * @param data.values       {array}  The actual data
+   * @param collection              {json}   Object containing the fields listed below
+   * @param collection.labels       {array}  Array containing x axis labels
+   * @param collection.axisTitle   {json}   object containing x axis title at key "x" and y axis title at key "y"
+   * @param collection.axisTitle.x {string} X axis title
+   * @param collection.axisTitle.y {string} Y axis title
+   * @param collection.title        {string} Title of graph
+   * @param collection.values       {array}  The actual data
    */
   constructor() {
     super();
     this.title = "";
     this.elevation = 1;
     this.message = "";
-    this.data = {};
+    this.collection = {};
     this.width = 300;
     this.height = 300;
     this.type = "line";
@@ -110,7 +110,7 @@ class BackendAIChartAlt extends LitElement {
       message: {
         type: String
       },
-      data: {
+      collection: {
         type: Object
       },
       width: {
@@ -126,11 +126,11 @@ class BackendAIChartAlt extends LitElement {
   }
 
   updated(changedProps) {
-    if (changedProps.has('data') && changedProps.get('data') !== undefined) {
+    if (changedProps.has('collection') && changedProps.get('collection') !== undefined) {
       this.draw();
     }
   }
-  
+
   render() {
     // language=HTML
     return html`
@@ -184,23 +184,23 @@ class BackendAIChartAlt extends LitElement {
 
     const xScale = d3
       .scalePoint()
-      .domain(this.data.labels)
+      .domain(this.collection.labels)
       .range([0, graphWidth]);
-    
+
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(this.data.values)])
+      .domain([0, d3.max(this.collection.values)])
       .range([graphHeight, 0]);
 
     const line = d3
       .line()
-      .x((d, i) => xScale(this.data.labels[i]))
+      .x((d, i) => xScale(this.collection.labels[i]))
       .y(d => yScale(d))
       .curve(d3.curveMonotoneX);
 
     g
       .select('.line')
-      .attr('d', line(this.data.values));
+      .attr('d', line(this.collection.values));
 
     g
       .select('.x.axis')
@@ -210,18 +210,18 @@ class BackendAIChartAlt extends LitElement {
       .select('.y.axis')
       .call(d3.axisLeft(yScale));
 
-    const dots = g.selectAll('.dot').data(this.data.values);
+    const dots = g.selectAll('.dot').data(this.collection.values);
 
-    
+
     dots
-    .attr('cx', (d, i) => xScale(this.data.labels[i]))
+    .attr('cx', (d, i) => xScale(this.collection.labels[i]))
     .attr('cy', d => yScale(d))
-    
+
     dots.exit().remove()
     dots
       .enter().append('circle')
       .attr('class', 'dot')
-      .attr('cx', (d, i) => xScale(this.data.labels[i]))
+      .attr('cx', (d, i) => xScale(this.collection.labels[i]))
       .attr('cy', d => yScale(d))
       .attr('r', 3)
   }
@@ -234,20 +234,20 @@ class BackendAIChartAlt extends LitElement {
 
     const xScale = d3
       .scalePoint()
-      .domain(this.data.labels)
+      .domain(this.collection.labels)
       .range([0, graphWidth]);
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(this.data.values)])
+      .domain([0, d3.max(this.collection.values)])
       .range([graphHeight, 0]);
 
     const line = d3
       .line()
-      .x((d, i) => xScale(this.data.labels[i]))
+      .x((d, i) => xScale(this.collection.labels[i]))
       .y(d => yScale(d))
       .curve(d3.curveMonotoneX);
-    
+
     const svg = d3
       .select(this.shadowRoot.querySelector("#d3"))
       .attr("width", this.width)
@@ -273,7 +273,7 @@ class BackendAIChartAlt extends LitElement {
       )
       .style("text-anchor", "middle")
       .attr("class", "normalize")
-      .text(this.data.axisTitle.x);
+      .text(this.collection.axisTitle.x);
 
     // add y axis
     svg
@@ -291,21 +291,21 @@ class BackendAIChartAlt extends LitElement {
       )
       .style("text-anchor", "middle")
       .attr("class", "normalize")
-      .text(this.data.axisTitle.y);
+      .text(this.collection.axisTitle.y);
 
     svg
       .append("path")
-      .datum(this.data.values)
+      .datum(this.collection.values)
       .attr("class", "line")
       .attr("d", line);
 
     svg
       .selectAll(".dot")
-      .data(this.data.values)
+      .data(this.collection.values)
       .enter()
       .append("circle")
       .attr("class", "dot")
-      .attr("cx", (d, i) => xScale(this.data.labels[i]))
+      .attr("cx", (d, i) => xScale(this.collection.labels[i]))
       .attr("cy", d => yScale(d))
       .attr("r", 3);
   }
