@@ -163,46 +163,22 @@ class BackendAIChartAlt extends LitElement {
   }
 
   draw() {
-    const margin      = { top: 50, right: 10, bottom: 50, left: 50 },
-          graphWidth  = this.width - margin.left - margin.right,
-          graphHeight = this.height - margin.top - margin.bottom;
-
-    const data = d3
-      .zip(this.collection.data.x, this.collection.data.y)
-      .map(e => ({
-        x: e[0],
-        y: e[1]
-      }))
+    const {
+      margin,
+      graphWidth,
+      graphHeight,
+      data,
+      xScale,
+      xAxis,
+      yScale,
+      line
+    } = this.toolbox();
 
     // queryselector() was used for rect and focus because using d3's select function somehow doesn't work
     const g = d3.select(this.shadowRoot.querySelector("#d3-container")),
           dots = g.selectAll(".dot").data(data),
           rect = d3.select(this.shadowRoot.querySelector("#mouse-rect")),
           focus = d3.select(this.shadowRoot.querySelector("#focus"));
-
-    const xScale = d3
-      .scalePoint()
-      .domain(data.map(e => e.x))
-      .range([0, graphWidth]);
-
-    let xAxis = d3
-      .axisBottom(xScale);
-
-    if (data.length > 24) {
-      const step = Math.ceil(data.length / 24);
-      xAxis = xAxis.tickValues(data.map(e => e.x).filter((val, idx) => idx % step === 0));
-    }
-
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, d3.max(data, d => d.y)])
-      .range([graphHeight, 0]);
-
-    const line = d3
-      .line()
-      .x(d => xScale(d.x))
-      .y(d => yScale(d.y))
-      .curve(d3.curveMonotoneX);
 
     g
       .select(".line")
@@ -249,18 +225,14 @@ class BackendAIChartAlt extends LitElement {
       })
   }
 
-  firstUpdated() {
-    // https://bl.ocks.org/gordlea/27370d1eea8464b04538e6d8ced39e89
+  toolbox() {
     const margin      = { top: 50, right: 10, bottom: 50, left: 50 },
           graphWidth  = this.width - margin.left - margin.right,
           graphHeight = this.height - margin.top - margin.bottom;
 
     const data = d3
       .zip(this.collection.data.x, this.collection.data.y)
-      .map(e => ({
-        x: +e[0],
-        y: e[1]
-      }))
+      .map(e => ({x: +e[0], y: e[1]}));
 
     const xScale = d3
       .scalePoint()
@@ -272,7 +244,7 @@ class BackendAIChartAlt extends LitElement {
 
     if (data.length > 24) {
       const step = Math.ceil(data.length / 24);
-      xAxis = xAxis.tickValues(data.filter((val, idx) => idx % step === 0));
+      xAxis = xAxis.tickValues(data.map(e => e.x).filter((val, idx) => idx % step === 0));
     }
 
     const yScale = d3
@@ -285,6 +257,21 @@ class BackendAIChartAlt extends LitElement {
       .x(d => xScale(d.x))
       .y(d => yScale(d.y))
       .curve(d3.curveMonotoneX);
+
+    return { margin, graphWidth, graphHeight, data, xScale, xAxis, yScale, line };
+  }
+
+  firstUpdated() {
+    const {
+      margin,
+      graphWidth,
+      graphHeight,
+      data,
+      xScale,
+      xAxis,
+      yScale,
+      line
+    } = this.toolbox();
 
     // outermost "g" element in <svg>
     const g = d3
