@@ -171,7 +171,9 @@ class BackendAIChartAlt extends LitElement {
       xScale,
       xAxis,
       yScale,
-      line
+      line,
+      rectWidth,
+      rectHeight
     } = this.toolbox();
 
     // queryselector() was used for rect and focus because using d3's select function somehow doesn't work
@@ -223,14 +225,17 @@ class BackendAIChartAlt extends LitElement {
           .select("line.y")
           .attr("transform", `translate(${xScale(d.x)}, 0)`);
 
-        focus
+        const tooltip = focus.select("#tooltip");
+
+        tooltip
+          .attr("transform", `translate(${xScale(d.x) + 5}, ${yScale(d.y) - rectHeight / 2})`)
+
+        tooltip
           .select("text.tooltip-y")
-          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`)
           .text(d.y);
 
-        focus
+        tooltip
           .select("text.tooltip-x")
-          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`)
           .text(d.x);
       })
   }
