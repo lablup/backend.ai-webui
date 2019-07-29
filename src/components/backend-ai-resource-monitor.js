@@ -598,10 +598,9 @@ class BackendAiResourceMonitor extends LitElement {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
     }
 
-    let createSessionQueue = sessions.map(item => {
+    const createSessionQueue = sessions.map(item => {
       return this._createKernel(item.kernelName, item.sessionName, item.config);
     });
-
     Promise.all(createSessionQueue).then((res) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
