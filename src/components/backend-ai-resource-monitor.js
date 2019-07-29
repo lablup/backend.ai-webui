@@ -108,6 +108,7 @@ class BackendAiResourceMonitor extends LitElement {
     this.cpu_request = 1;
     this.mem_request = 1;
     this.gpu_request = 0;
+    this.session_request = 1;
     this.direction = "horizontal";
   }
 
@@ -205,6 +206,9 @@ class BackendAiResourceMonitor extends LitElement {
         type: Number
       },
       gpu_request: {
+        type: Number
+      },
+      session_request: {
         type: Number
       },
       _status: {
@@ -549,7 +553,8 @@ class BackendAiResourceMonitor extends LitElement {
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
-    this.num_sessions = 1; // TODO: read the value from UI
+    this.session_request = this.shadowRoot.querySelector('#session-resource').value;
+    this.num_sessions = this.session_request; // TODO: read the value from UI
 
     let config = {};
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
@@ -593,7 +598,7 @@ class BackendAiResourceMonitor extends LitElement {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
     }
 
-    let createSessionQueue = this.sessions.map(item => {
+    let createSessionQueue = sessions.map(item => {
       return this._createKernel(item.kernelName, item.sessionName, item.config);
     });
 
@@ -1316,6 +1321,13 @@ ${this.resource_templates.map(item => html`
                               pin snaps editable .step="${this.gpu_step}"
                               .min="0.0" .max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
                 <span class="caption">GPU</span>
+              </div>
+              <div class="horizontal center layout">
+                <span class="resource-type" style="width:50px;">Sessions</span>
+                <paper-slider id="session-resource" class="session"
+                              pin snaps editable step=1
+                              min=1 max=5 value="${this.session_request}"></paper-slider>
+                <span class="caption">#</span>
               </div>
             </wl-expansion>
 
