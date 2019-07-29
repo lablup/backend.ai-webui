@@ -26,30 +26,36 @@ class BackendAIUsageList extends LitElement {
     super();
     this.collection = {
       "1H": {
-        values: [...Array(7)].map(e => Math.floor(Math.random() * 101)),
+        data: {
+          x: ["0", "10", "20", "30", "40", "50", "60"],
+          y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
+        },
         axisTitle: {
           x: "Minutes",
           y: "Percentage"
         },
-        labels: ["0", "10", "20", "30", "40", "50", "60"],
         title: "CPU Usage (%)"
       },
       "6H": {
-        values: [...Array(24)].map(e => Math.floor(Math.random() * 101)),
+        data: {
+          x: [...Array(24)].map((e, i) => `${i * 15}`),
+          y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
+        },
         axisTitle: {
           x: "Minutes",
           y: "Percentage"
         },
-        labels: [...Array(24)].map((e, i) => `${i * 15}`),
         title: "CPU Usage (%)"
       },
       "12H": {
-        values: [...Array(48)].map(e => Math.floor(Math.random() * 101)),
+        data: {
+          x: [...Array(48)].map((e, i) => `${i * 15}`),
+          y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
+        },
         axisTitle: {
           x: "Minutes",
           y: "Percentage"
         },
-        labels: [...Array(48)].map((e, i) => `${i * 15}`),
         title: "CPU Usage (%)"
       }
     };
