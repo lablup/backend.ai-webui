@@ -56,19 +56,6 @@ class BackendAIChartAlt extends LitElement {
           margin: auto 10px;
         }
 
-        @media screen and (max-width: 899px) {
-          #chart-canvas {
-            width: 90%;
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          #chart-canvas {
-            width: calc(100vw - 400px);
-            height: 450px;
-          }
-        }
-
         .line {
           fill: none;
           stroke: rgb(75, 192, 192);
@@ -180,27 +167,34 @@ class BackendAIChartAlt extends LitElement {
           graphWidth  = this.width - margin.left - margin.right,
           graphHeight = this.height - margin.top - margin.bottom;
 
+    const data = d3
+      .zip(this.collection.data.x, this.collection.data.y)
+      .map(e => ({
+        x: e[0],
+        y: e[1]
+      }))
+
     const g = d3.select(this.shadowRoot.querySelector('#d3-container'));
 
     const xScale = d3
       .scalePoint()
-      .domain(this.collection.labels)
+      .domain(data.map(e => e.x))
       .range([0, graphWidth]);
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(this.collection.values)])
+      .domain([0, d3.max(data, d => d.y)])
       .range([graphHeight, 0]);
 
     const line = d3
       .line()
-      .x((d, i) => xScale(this.collection.labels[i]))
-      .y(d => yScale(d))
+      .x(d => xScale(d.x))
+      .y(d => yScale(d.y))
       .curve(d3.curveMonotoneX);
 
     g
       .select('.line')
-      .attr('d', line(this.collection.values));
+      .attr('d', line(data));
 
     g
       .select('.x.axis')
@@ -210,19 +204,21 @@ class BackendAIChartAlt extends LitElement {
       .select('.y.axis')
       .call(d3.axisLeft(yScale));
 
-    const dots = g.selectAll('.dot').data(this.collection.values);
-
+    const dots = g.selectAll('.dot').data(data);
 
     dots
-    .attr('cx', (d, i) => xScale(this.collection.labels[i]))
-    .attr('cy', d => yScale(d))
+      .attr('cx', d => xScale(d.x))
+      .attr('cy', d => yScale(d.y))
 
-    dots.exit().remove()
+    dots
+      .exit()
+      .remove()
+
     dots
       .enter().append('circle')
       .attr('class', 'dot')
-      .attr('cx', (d, i) => xScale(this.collection.labels[i]))
-      .attr('cy', d => yScale(d))
+      .attr('cx', d => xScale(d.x))
+      .attr('cy', d => yScale(d.y))
       .attr('r', 3)
   }
 
@@ -232,20 +228,27 @@ class BackendAIChartAlt extends LitElement {
           graphWidth  = this.width - margin.left - margin.right,
           graphHeight = this.height - margin.top - margin.bottom;
 
+    const data = d3
+      .zip(this.collection.data.x, this.collection.data.y)
+      .map(e => ({
+        x: e[0],
+        y: e[1]
+      }))
+
     const xScale = d3
       .scalePoint()
-      .domain(this.collection.labels)
+      .domain(data.map(e => e.x))
       .range([0, graphWidth]);
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(this.collection.values)])
+      .domain([0, d3.max(data, d => d.y)])
       .range([graphHeight, 0]);
 
     const line = d3
       .line()
-      .x((d, i) => xScale(this.collection.labels[i]))
-      .y(d => yScale(d))
+      .x(d => xScale(d.x))
+      .y(d => yScale(d.y))
       .curve(d3.curveMonotoneX);
 
     const svg = d3
@@ -279,7 +282,6 @@ class BackendAIChartAlt extends LitElement {
     svg
       .append("g")
       .attr("class", "y axis axisGray")
-      .attr("transform", `translate(0, 0)`)
       .call(d3.axisLeft(yScale));
 
     // text label for the x axis
@@ -295,18 +297,18 @@ class BackendAIChartAlt extends LitElement {
 
     svg
       .append("path")
-      .datum(this.collection.values)
+      .datum(data)
       .attr("class", "line")
       .attr("d", line);
 
     svg
       .selectAll(".dot")
-      .data(this.collection.values)
+      .data(data)
       .enter()
       .append("circle")
       .attr("class", "dot")
-      .attr("cx", (d, i) => xScale(this.collection.labels[i]))
-      .attr("cy", d => yScale(d))
+      .attr("cx", d => xScale(d.x))
+      .attr("cy", d => yScale(d.y))
       .attr("r", 3);
   }
 
