@@ -80,7 +80,7 @@ class BackendAIChartAlt extends LitElement {
         }
 
         text.normalize {
-          font-size: 13px;
+          font-size: 11px;
         }
       `
     ];
@@ -251,7 +251,8 @@ class BackendAIChartAlt extends LitElement {
       .y(d => yScale(d.y))
       .curve(d3.curveMonotoneX);
 
-    const svg = d3
+    // outermost "g" element in <svg>
+    const g = d3
       .select(this.shadowRoot.querySelector("#d3"))
       .attr("width", this.width)
       .attr("height", this.height)
@@ -260,15 +261,21 @@ class BackendAIChartAlt extends LitElement {
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .attr('id', 'd3-container');
 
+    // "g" element to render vertical tooltip
+    const focus = g
+      .append("g")
+      .attr("id", "focus")
+      .style("display", "none");
+
     // add x axis
-    svg
+    g
       .append("g")
       .attr("class", "x axis axisGray")
       .attr("transform", `translate(0, ${graphHeight})`)
       .call(d3.axisBottom(xScale));
 
     // text label for the x axis
-    svg
+    g
       .append("text")
       .attr(
         "transform",
@@ -279,13 +286,13 @@ class BackendAIChartAlt extends LitElement {
       .text(this.collection.axisTitle.x);
 
     // add y axis
-    svg
+    g
       .append("g")
       .attr("class", "y axis axisGray")
       .call(d3.axisLeft(yScale));
 
     // text label for the x axis
-    svg
+    g
       .append("text")
       .attr(
         "transform",
@@ -295,13 +302,15 @@ class BackendAIChartAlt extends LitElement {
       .attr("class", "normalize")
       .text(this.collection.axisTitle.y);
 
-    svg
+    // actual line graph
+    g
       .append("path")
       .datum(data)
       .attr("class", "line")
       .attr("d", line);
 
-    svg
+    // dots in data points
+    g
       .selectAll(".dot")
       .data(data)
       .enter()
@@ -310,6 +319,44 @@ class BackendAIChartAlt extends LitElement {
       .attr("cx", d => xScale(d.x))
       .attr("cy", d => yScale(d.y))
       .attr("r", 3);
+
+    g
+      .append("rect")
+      .attr("width", graphWidth)
+      .attr("height", graphHeight)
+      .style("fill", "none")
+      .style("pointer-events", "all")
+      .on("mouseover", () => {focus.style("display", "inline")})
+      .on("mouseout", () => {focus.style("display", "none")})
+      .on("mousemove", function() {
+        // due to the use of "this", this must be a function, and not an arrow function!
+        const x0 = d3.mouse(this)[0] * d3.max(data, d => +d.x) / graphWidth,
+              range = xScale.range(),
+              bsct = d3.bisect(d3.range(range[0], range[1], xScale.step()), d3.mouse(this)[0]),
+              d = x0 - data[bsct - 1].x < data[bsct].x - x0 ? data[bsct - 1] : data[bsct];
+
+        focus
+          .select("circle.y")
+          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`);
+
+        focus
+          .select("line.y")
+          .attr("transform", `translate(${xScale(d.x)}, 0)`);
+      })
+
+    focus
+      .append("circle")
+      .attr("class", "y")
+      .style("fill", "none")
+      .style("stroke", "#4bc0c0")
+      .attr("r", 4);
+
+    focus
+      .append("line")
+      .attr("class", "y")
+      .style("stroke", "#4bc0c0")
+      .attr("y1", 0)
+      .attr("y2", graphHeight);
   }
 
   connectedCallback() {
