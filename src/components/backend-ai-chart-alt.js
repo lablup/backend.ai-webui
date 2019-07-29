@@ -174,7 +174,11 @@ class BackendAIChartAlt extends LitElement {
         y: e[1]
       }))
 
-    const g = d3.select(this.shadowRoot.querySelector('#d3-container'));
+    // queryselector() was used for rect and focus because using d3's select function somehow doesn't work
+    const g = d3.select(this.shadowRoot.querySelector("#d3-container")),
+          dots = g.selectAll(".dot").data(data),
+          rect = d3.select(this.shadowRoot.querySelector("#mouse-rect")),
+          focus = d3.select(this.shadowRoot.querySelector("#focus"));
 
     const xScale = d3
       .scalePoint()
@@ -193,33 +197,48 @@ class BackendAIChartAlt extends LitElement {
       .curve(d3.curveMonotoneX);
 
     g
-      .select('.line')
-      .attr('d', line(data));
+      .select(".line")
+      .attr("d", line(data));
 
     g
-      .select('.x.axis')
+      .select(".x.axis")
       .call(d3.axisBottom(xScale));
 
     g
-      .select('.y.axis')
+      .select(".y.axis")
       .call(d3.axisLeft(yScale));
 
-    const dots = g.selectAll('.dot').data(data);
-
     dots
-      .attr('cx', d => xScale(d.x))
-      .attr('cy', d => yScale(d.y))
+      .attr("cx", d => xScale(d.x))
+      .attr("cy", d => yScale(d.y))
 
     dots
       .exit()
       .remove()
 
     dots
-      .enter().append('circle')
-      .attr('class', 'dot')
-      .attr('cx', d => xScale(d.x))
-      .attr('cy', d => yScale(d.y))
-      .attr('r', 3)
+      .enter().append("circle")
+      .attr("class", "dot")
+      .attr("cx", d => xScale(d.x))
+      .attr("cy", d => yScale(d.y))
+      .attr("r", 3)
+
+    rect
+      .on("mousemove", function() {
+        // due to the use of "this", this must be a function, and not an arrow function!
+        const x0 = d3.mouse(this)[0] * d3.max(data, d => +d.x) / graphWidth,
+              range = xScale.range(),
+              bsct = d3.bisect(d3.range(range[0], range[1], xScale.step()), d3.mouse(this)[0]),
+              d = x0 - data[bsct - 1].x < data[bsct].x - x0 ? data[bsct - 1] : data[bsct];
+
+        focus
+          .select("circle.y")
+          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`);
+
+        focus
+          .select("line.y")
+          .attr("transform", `translate(${xScale(d.x)}, 0)`);
+      })
   }
 
   firstUpdated() {
@@ -322,6 +341,7 @@ class BackendAIChartAlt extends LitElement {
 
     g
       .append("rect")
+      .attr('id', 'mouse-rect')
       .attr("width", graphWidth)
       .attr("height", graphHeight)
       .style("fill", "none")
