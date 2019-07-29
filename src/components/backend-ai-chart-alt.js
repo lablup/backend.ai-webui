@@ -426,7 +426,7 @@ class BackendAIChartAlt extends LitElement {
           .attr("transform", `translate(${xScale(d.x)}, 0)`);
 
         tooltip
-          .attr("transform", `translate(${xScale(d.x) + 5}, ${yScale(d.y)})`)
+          .attr("transform", `translate(${xScale(d.x) + 5}, ${yScale(d.y) - rectHeight / 2})`)
 
         tooltip
           .select("text.tooltip-y")
