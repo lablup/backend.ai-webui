@@ -108,6 +108,7 @@ class BackendAiResourceMonitor extends LitElement {
     this.cpu_request = 1;
     this.mem_request = 1;
     this.gpu_request = 0;
+    this.session_request = 1;
     this.direction = "horizontal";
   }
 
@@ -207,11 +208,17 @@ class BackendAiResourceMonitor extends LitElement {
       gpu_request: {
         type: Number
       },
+      session_request: {
+        type: Number
+      },
       _status: {
         type: Boolean
       },
       direction: {
         type: String
+      },
+      num_sessions: {
+        type: Number
       }
     }
   }
@@ -546,6 +553,8 @@ class BackendAiResourceMonitor extends LitElement {
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
+    this.session_request = this.shadowRoot.querySelector('#session-resource').value;
+    this.num_sessions = this.session_request; // TODO: read the value from UI
 
     let config = {};
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
@@ -583,7 +592,16 @@ class BackendAiResourceMonitor extends LitElement {
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
     this.shadowRoot.querySelector('#notification').text = 'Preparing session...';
     this.shadowRoot.querySelector('#notification').show();
-    window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
+
+    let sessions = [];
+    for (var i = 0; i < this.num_sessions; i++) {
+      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
+    }
+
+    const createSessionQueue = sessions.map(item => {
+      return this._createKernel(item.kernelName, item.sessionName, item.config);
+    });
+    Promise.all(createSessionQueue).then((res) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
@@ -599,9 +617,15 @@ class BackendAiResourceMonitor extends LitElement {
         this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
+      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
     });
+  }
+
+  _createKernel(kernelName, sessionName, config) {
+    return window.backendaiclient.createKernel(kernelName, sessionName, config);
   }
 
   _hideSessionDialog() {
@@ -1296,6 +1320,13 @@ ${this.resource_templates.map(item => html`
                               pin snaps editable .step="${this.gpu_step}"
                               .min="0.0" .max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
                 <span class="caption">GPU</span>
+              </div>
+              <div class="horizontal center layout">
+                <span class="resource-type" style="width:50px;">Sessions</span>
+                <paper-slider id="session-resource" class="session"
+                              pin snaps editable step=1
+                              min=1 max=5 value="${this.session_request}"></paper-slider>
+                <span class="caption">#</span>
               </div>
             </wl-expansion>
 

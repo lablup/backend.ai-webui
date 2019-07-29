@@ -714,6 +714,12 @@ class BackendAiSessionList extends LitElement {
       param['access_key'] = window.backendaiclient._config.accessKey;
       param['secret_key'] = window.backendaiclient._config.secretKey;
     }
+    if (window.isElectron && window.__local_proxy === undefined) {
+      this.shadowRoot.querySelector('#indicator').end();
+      this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
+      this.notification.show();
+      return Promise.resolve(false);
+    }
     let rqst = {
       method: 'PUT',
       body: JSON.stringify(param),
@@ -723,8 +729,15 @@ class BackendAiSessionList extends LitElement {
       },
       uri: this._getProxyURL() + 'conf'
     };
+    this.shadowRoot.querySelector('#indicator').set(20, 'Setting up proxy fot the app...');
     try {
       let response = await this.sendRequest(rqst);
+      if (response === undefined) {
+        this.shadowRoot.querySelector('#indicator').end();
+        this.notification.text = 'Proxy configurator is not responding.';
+        this.notification.show();
+        return Promise.resolve(false);
+      }
       let token = response.token;
       this.shadowRoot.querySelector('#indicator').set(50, 'Adding kernel to socket queue...');
       rqst = {
