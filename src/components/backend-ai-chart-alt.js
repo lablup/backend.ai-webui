@@ -214,10 +214,6 @@ class BackendAIChartAlt extends LitElement {
     rect
       .on("mousemove", function() {
         // due to the use of "this", this must be a function, and not an arrow function!
-        // const x0 = d3.mouse(this)[0] * d3.max(data, d => +d.x) / graphWidth,
-        //       range = xScale.range(),
-        //       bsct = d3.bisect(d3.range(range[0], range[1], xScale.step()), d3.mouse(this)[0]),
-        //       d = x0 - data[bsct - 1].x < data[bsct].x - x0 ? data[bsct - 1] : data[bsct];
         const bisectDate = d3.bisector(d => d.x).left
         const x0 = xScale.invert(d3.mouse(this)[0]),
               i = bisectDate(data, x0, 1),
@@ -263,11 +259,6 @@ class BackendAIChartAlt extends LitElement {
     const data = d3
       .zip(this.collection.data.x, this.collection.data.y)
       .map(e => ({x: +e[0], y: e[1]}));
-
-    // const xScale = d3
-    //   .scalePoint()
-    //   .domain(data.map(e => e.x))
-    //   .range([0, graphWidth]);
 
     const xScale = d3
       .scaleTime()
@@ -450,10 +441,6 @@ class BackendAIChartAlt extends LitElement {
       .on("mouseout", () => {focus.style("display", "none")})
       .on("mousemove", function() {
         // due to the use of "this", this must be a function, and not an arrow function!
-        // const x0 = d3.mouse(this)[0] * d3.max(data, d => +d.x) / graphWidth,
-        //       range = xScale.range(),
-        //       bsct = d3.bisect(d3.range(range[0], range[1], xScale.step()), d3.mouse(this)[0]),
-        //       d = x0 - data[bsct - 1].x < data[bsct].x - x0 ? data[bsct - 1] : data[bsct];
         const bisectDate = d3.bisector(d => d.x).left
         const x0 = xScale.invert(d3.mouse(this)[0]),
               i = bisectDate(data, x0, 1),
