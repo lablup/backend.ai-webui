@@ -169,7 +169,6 @@ class BackendAIChartAlt extends LitElement {
 
   draw() {
     const {
-      graphWidth,
       data,
       xScale,
       xAxis,
@@ -258,20 +257,15 @@ class BackendAIChartAlt extends LitElement {
 
     const data = d3
       .zip(this.collection.data.x, this.collection.data.y)
-      .map(e => ({x: +e[0], y: e[1]}));
+      .map(e => ({x: e[0], y: e[1]}));
 
     const xScale = d3
       .scaleTime()
       .domain(d3.extent(data, d => d.x))
       .range([0, graphWidth]);
 
-    let xAxis = d3
+    const xAxis = d3
       .axisBottom(xScale);
-
-    if (data.length > 24) {
-      const step = Math.ceil(data.length / 24);
-      xAxis = xAxis.tickValues(data.map(e => e.x).filter((val, idx) => idx % step === 0));
-    }
 
     const yScale = d3
       .scaleLinear()
@@ -373,6 +367,14 @@ class BackendAIChartAlt extends LitElement {
       .selectAll(".dot")
       .data(data);
 
+    dots
+      .enter()
+      .append("circle")
+      .attr("class", "dot")
+      .attr("cx", d => xScale(d.x))
+      .attr("cy", d => yScale(d.y))
+      .attr("r", 3);
+
     // "g" element to render vertical tooltip
     const focus = g
       .append("g")
@@ -469,31 +471,32 @@ class BackendAIChartAlt extends LitElement {
           .attr("width", w)
       })
     
-    g
-      .append("rect")
-      .attr("x", -graphWidth)
-      .attr("y", -graphHeight)
-      .attr("width", graphWidth)
-      .attr("height", graphHeight)
-      .attr("id", "curtain")
-      .attr('transform', 'rotate(180)')
-      .style("fill", "#ffffff");
+    // tmp transition code
+    // g
+    //   .append("rect")
+    //   .attr("x", -graphWidth)
+    //   .attr("y", -graphHeight)
+    //   .attr("width", graphWidth)
+    //   .attr("height", graphHeight)
+    //   .attr("id", "curtain")
+    //   .attr('transform', 'rotate(180)')
+    //   .style("fill", "#ffffff");
 
-    g
-      .transition()
-      .delay(750)
-      .duration(3000)
-      .on("end", () => {
-        dots
-          .enter()
-          .append("circle")
-          .attr("class", "dot")
-          .attr("cx", d => xScale(d.x))
-          .attr("cy", d => yScale(d.y))
-          .attr("r", 3);
-      })
-      .select("#curtain")
-      .attr("width", 0);
+    // g
+    //   .transition()
+    //   .delay(750)
+    //   .duration(3000)
+    //   .on("end", () => {
+    //     dots
+    //       .enter()
+    //       .append("circle")
+    //       .attr("class", "dot")
+    //       .attr("cx", d => xScale(d.x))
+    //       .attr("cy", d => yScale(d.y))
+    //       .attr("r", 3);
+    //   })
+    //   .select("#curtain")
+    //   .attr("width", 0);
   }
 
   connectedCallback() {

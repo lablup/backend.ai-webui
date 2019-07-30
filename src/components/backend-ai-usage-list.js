@@ -27,36 +27,33 @@ class BackendAIUsageList extends LitElement {
     this.collection = {
       "1H": {
         data: {
-          // x: ["0", "10", "20", "30", "40", "50", "60"],
           x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
           y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
         },
         axisTitle: {
-          x: "Minutes",
+          x: "Time",
           y: "Percentage"
         },
         title: "CPU Usage (%)"
       },
       "6H": {
         data: {
-          // x: [...Array(24)].map((e, i) => `${i * 15}`),
           x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
           y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
         },
         axisTitle: {
-          x: "Minutes",
+          x: "Time",
           y: "Percentage"
         },
         title: "CPU Usage (%)"
       },
       "12H": {
         data: {
-          // x: [...Array(48)].map((e, i) => `${i * 15}`),
           x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
           y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
         },
         axisTitle: {
-          x: "Minutes",
+          x: "Time",
           y: "Percentage"
         },
         title: "CPU Usage (%)"
