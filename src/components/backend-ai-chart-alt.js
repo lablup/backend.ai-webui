@@ -248,7 +248,7 @@ class BackendAIChartAlt extends LitElement {
           .attr("transform", `translate(${xScale(d.x) - w / 2}, ${yScale(d.y) - rectHeight - 5})`)
           .select("rect")
           .attr("width", w)
-      })
+      });
   }
 
   toolbox() {
@@ -367,17 +367,11 @@ class BackendAIChartAlt extends LitElement {
       .attr("d", line);
 
       // dots in data points
-    g
+    const dots = g
       .append("g")
       .attr("id", "dots")
       .selectAll(".dot")
-      .data(data)
-      .enter()
-      .append("circle")
-      .attr("class", "dot")
-      .attr("cx", d => xScale(d.x))
-      .attr("cy", d => yScale(d.y))
-      .attr("r", 3);
+      .data(data);
 
     // "g" element to render vertical tooltip
     const focus = g
@@ -474,6 +468,32 @@ class BackendAIChartAlt extends LitElement {
           .select("rect")
           .attr("width", w)
       })
+    
+    g
+      .append("rect")
+      .attr("x", -graphWidth)
+      .attr("y", -graphHeight)
+      .attr("width", graphWidth)
+      .attr("height", graphHeight)
+      .attr("id", "curtain")
+      .attr('transform', 'rotate(180)')
+      .style("fill", "#ffffff");
+
+    g
+      .transition()
+      .delay(750)
+      .duration(3000)
+      .on("end", () => {
+        dots
+          .enter()
+          .append("circle")
+          .attr("class", "dot")
+          .attr("cx", d => xScale(d.x))
+          .attr("cy", d => yScale(d.y))
+          .attr("r", 3);
+      })
+      .select("#curtain")
+      .attr("width", 0);
   }
 
   connectedCallback() {
