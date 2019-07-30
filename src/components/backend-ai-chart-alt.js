@@ -164,15 +164,12 @@ class BackendAIChartAlt extends LitElement {
 
   draw() {
     const {
-      margin,
       graphWidth,
-      graphHeight,
       data,
       xScale,
       xAxis,
       yScale,
       line,
-      rectWidth,
       rectHeight
     } = this.toolbox();
 
@@ -212,10 +209,17 @@ class BackendAIChartAlt extends LitElement {
     rect
       .on("mousemove", function() {
         // due to the use of "this", this must be a function, and not an arrow function!
-        const x0 = d3.mouse(this)[0] * d3.max(data, d => +d.x) / graphWidth,
-              range = xScale.range(),
-              bsct = d3.bisect(d3.range(range[0], range[1], xScale.step()), d3.mouse(this)[0]),
-              d = x0 - data[bsct - 1].x < data[bsct].x - x0 ? data[bsct - 1] : data[bsct];
+        // const x0 = d3.mouse(this)[0] * d3.max(data, d => +d.x) / graphWidth,
+        //       range = xScale.range(),
+        //       bsct = d3.bisect(d3.range(range[0], range[1], xScale.step()), d3.mouse(this)[0]),
+        //       d = x0 - data[bsct - 1].x < data[bsct].x - x0 ? data[bsct - 1] : data[bsct];
+        const bisectDate = d3.bisector(d => d.x).left
+        const x0 = xScale.invert(d3.mouse(this)[0]),
+              i = bisectDate(data, x0, 1),
+              d0 = data[i - 1],
+              d1 = data[i],
+              d = x0 - d0.x > d1.x - x0 ? d1 : d0;
+        const formatTime = d3.timeFormat("%b %d, %Y");
 
         focus
           .select("circle.y")
@@ -228,15 +232,21 @@ class BackendAIChartAlt extends LitElement {
         const tooltip = focus.select("#tooltip");
 
         tooltip
-          .attr("transform", `translate(${xScale(d.x) + 5}, ${yScale(d.y) - rectHeight / 2})`)
-
-        tooltip
           .select("text.tooltip-y")
           .text(d.y);
 
         tooltip
           .select("text.tooltip-x")
-          .text(d.x);
+          .text(formatTime(d.x));
+
+        const w1 = tooltip.select("text.tooltip-x").node().getComputedTextLength(),
+              w2 = tooltip.select("text.tooltip-y").node().getComputedTextLength();
+        const w = (w1 > w2 ? w1 : w2) + 10
+
+        tooltip
+          .attr("transform", `translate(${xScale(d.x) - w / 2}, ${yScale(d.y) - rectHeight - 5})`)
+          .select("rect")
+          .attr("width", w)
       })
   }
 
@@ -249,9 +259,14 @@ class BackendAIChartAlt extends LitElement {
       .zip(this.collection.data.x, this.collection.data.y)
       .map(e => ({x: +e[0], y: e[1]}));
 
+    // const xScale = d3
+    //   .scalePoint()
+    //   .domain(data.map(e => e.x))
+    //   .range([0, graphWidth]);
+
     const xScale = d3
-      .scalePoint()
-      .domain(data.map(e => e.x))
+      .scaleTime()
+      .domain(d3.extent(data, d => d.x))
       .range([0, graphWidth]);
 
     let xAxis = d3
@@ -385,7 +400,7 @@ class BackendAIChartAlt extends LitElement {
       .attr("height", rectHeight)
       .attr("rx", 10)
       .attr("ry", 10)
-      .style("fill", "rgba(255, 255, 255, 0.49)")
+      .style("fill", "rgba(255, 255, 255, 0.6)")
       .style("stroke", "rgba(74, 191, 191)")
 
     tooltip
@@ -394,7 +409,7 @@ class BackendAIChartAlt extends LitElement {
       .style("font-size", "11px")
       .style("fill", "#37474f")
       .attr("transform", `translate(0, ${rectHeight / 2})`)
-      .attr("dx", rectWidth / 2 - 10)
+      .attr("dx", 5)
       .attr("dy", "-.3em");
 
     tooltip
@@ -403,7 +418,7 @@ class BackendAIChartAlt extends LitElement {
       .style("font-size", "11px")
       .style("fill", "#37474f")
       .attr("transform", `translate(0, ${rectHeight / 2})`)
-      .attr("dx", rectWidth / 2 - 10)
+      .attr("dx", 5)
       .attr("dy", "1em");
 
     g
@@ -417,10 +432,17 @@ class BackendAIChartAlt extends LitElement {
       .on("mouseout", () => {focus.style("display", "none")})
       .on("mousemove", function() {
         // due to the use of "this", this must be a function, and not an arrow function!
-        const x0 = d3.mouse(this)[0] * d3.max(data, d => +d.x) / graphWidth,
-              range = xScale.range(),
-              bsct = d3.bisect(d3.range(range[0], range[1], xScale.step()), d3.mouse(this)[0]),
-              d = x0 - data[bsct - 1].x < data[bsct].x - x0 ? data[bsct - 1] : data[bsct];
+        // const x0 = d3.mouse(this)[0] * d3.max(data, d => +d.x) / graphWidth,
+        //       range = xScale.range(),
+        //       bsct = d3.bisect(d3.range(range[0], range[1], xScale.step()), d3.mouse(this)[0]),
+        //       d = x0 - data[bsct - 1].x < data[bsct].x - x0 ? data[bsct - 1] : data[bsct];
+        const bisectDate = d3.bisector(d => d.x).left
+        const x0 = xScale.invert(d3.mouse(this)[0]),
+              i = bisectDate(data, x0, 1),
+              d0 = data[i - 1],
+              d1 = data[i],
+              d = x0 - d0.x > d1.x - x0 ? d1 : d0;
+        const formatTime = d3.timeFormat("%b %d, %Y");
 
         focus
           .select("circle.y")
@@ -431,15 +453,21 @@ class BackendAIChartAlt extends LitElement {
           .attr("transform", `translate(${xScale(d.x)}, 0)`);
 
         tooltip
-          .attr("transform", `translate(${xScale(d.x) + 5}, ${yScale(d.y) - rectHeight / 2})`)
-
-        tooltip
           .select("text.tooltip-y")
           .text(d.y);
 
         tooltip
           .select("text.tooltip-x")
-          .text(d.x);
+          .text(formatTime(d.x));
+
+        const w1 = tooltip.select("text.tooltip-x").node().getComputedTextLength(),
+              w2 = tooltip.select("text.tooltip-y").node().getComputedTextLength();
+        const w = (w1 > w2 ? w1 : w2) + 10
+
+        tooltip
+          .attr("transform", `translate(${xScale(d.x) - w / 2}, ${yScale(d.y) - rectHeight - 5})`)
+          .select("rect")
+          .attr("width", w)
       })
   }
 
