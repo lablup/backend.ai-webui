@@ -180,7 +180,7 @@ class BackendAIChartAlt extends LitElement {
 
     // queryselector() was used for rect and focus because using d3's select function somehow doesn't work
     const g = d3.select(this.shadowRoot.querySelector("#d3-container")),
-          dots = g.selectAll(".dot").data(data),
+          dots = g.select("#dots").selectAll(".dot").data(data),
           rect = d3.select(this.shadowRoot.querySelector("#mouse-rect")),
           focus = d3.select(this.shadowRoot.querySelector("#focus"));
 
@@ -311,6 +311,17 @@ class BackendAIChartAlt extends LitElement {
       rectWidth,
       rectHeight
     } = this.toolbox();
+    /*
+    <svg>
+      <g>
+        <g></g> for x axis
+        <g></g> for y axis
+        <g></g> for dots
+        <path></path> for line graph
+        <g></g> for vertical tooltip
+      </g>
+    </svg>
+    */
 
     // outermost "g" element in <svg>
     const g = d3
@@ -364,8 +375,10 @@ class BackendAIChartAlt extends LitElement {
       .attr("class", "line")
       .attr("d", line);
 
-    // dots in data points
+      // dots in data points
     g
+      .append("g")
+      .attr("id", "dots")
       .selectAll(".dot")
       .data(data)
       .enter()
