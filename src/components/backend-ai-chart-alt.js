@@ -10,12 +10,13 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 class BackendAIChartAlt extends LitElement {
   /**
    * @param collection              {json}   Object containing the fields listed below
-   * @param collection.labels       {array}  Array containing x axis labels
-   * @param collection.axisTitle   {json}   object containing x axis title at key "x" and y axis title at key "y"
-   * @param collection.axisTitle.x {string} X axis title
-   * @param collection.axisTitle.y {string} Y axis title
+   * @param collection.data         {json}   Object containing two arrays
+   * @param collection.data.x       {array}  Array containing values of x
+   * @param collection.data.y       {array}  Array containing values of y
+   * @param collection.axisTitle    {json}   Object containing x axis title at key "x" and y axis title at key "y"
+   * @param collection.axisTitle.x  {string} X axis title
+   * @param collection.axisTitle.y  {string} Y axis title
    * @param collection.title        {string} Title of graph
-   * @param collection.values       {array}  The actual data
    */
   constructor() {
     super();
@@ -59,7 +60,7 @@ class BackendAIChartAlt extends LitElement {
         .line {
           fill: none;
           stroke: #4bc0c0;
-          stroke-width: 2;
+          stroke-width: 1;
         }
 
         .dot {
@@ -81,6 +82,10 @@ class BackendAIChartAlt extends LitElement {
 
         text.normalize {
           font-size: 11px;
+        }
+
+        .axis {
+          font-size: 6px;
         }
       `
     ];
@@ -400,13 +405,13 @@ class BackendAIChartAlt extends LitElement {
       .attr("height", rectHeight)
       .attr("rx", 10)
       .attr("ry", 10)
-      .style("fill", "rgba(255, 255, 255, 0.6)")
+      .style("fill", "rgba(255, 255, 255, 0.8)")
       .style("stroke", "rgba(74, 191, 191)")
 
     tooltip
       .append("text")
       .attr("class", "tooltip-x")
-      .style("font-size", "11px")
+      .style("font-size", "8px")
       .style("fill", "#37474f")
       .attr("transform", `translate(0, ${rectHeight / 2})`)
       .attr("dx", 5)
@@ -415,7 +420,7 @@ class BackendAIChartAlt extends LitElement {
     tooltip
       .append("text")
       .attr("class", "tooltip-y")
-      .style("font-size", "11px")
+      .style("font-size", "8px")
       .style("fill", "#37474f")
       .attr("transform", `translate(0, ${rectHeight / 2})`)
       .attr("dx", 5)
