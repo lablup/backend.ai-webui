@@ -41,6 +41,7 @@ class _ByteConverter {
 }
 
 const ByteConverter = {
+  toB: bytes => bytes,
   toKB: bytes => bytes / 1024,
   toMB: bytes => bytes / (1024 * 1024),
   toGB: bytes => bytes / (1024 * 1024 * 1024),
