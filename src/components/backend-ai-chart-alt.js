@@ -7,39 +7,6 @@ import "weightless/card";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
-class _ByteConverter {
-  static toKB(bytes) {
-    return bytes / 1024;
-  }
-
-  static toMB(bytes) {
-    return bytes / (1024 * 1024);
-  }
-
-  static toGB(bytes) {
-    return bytes / (1024 * 1024 * 1024);
-  }
-
-  static log1024(n) {
-    return Math.log(n) / Math.log(1024);
-  }
-
-  static readableUnit(bytes) {
-    switch (Math.floor(_ByteConverter.log1024(bytes))) {
-      case 0:
-        return "B";
-      case 1:
-        return "KB";
-      case 2:
-        return "MB";
-      case 3:
-        return "GB";
-      case 4:
-        return "TB";
-    }
-  }
-}
-
 const ByteConverter = {
   toB: bytes => bytes,
   toKB: bytes => bytes / 1024,
@@ -459,7 +426,7 @@ class BackendAIChartAlt extends LitElement {
 
     tooltip
       .append("rect")
-      .attr("width", rectWidth)
+      .attr("width", 0)
       .attr("height", rectHeight)
       .attr("rx", 10)
       .attr("ry", 10)
