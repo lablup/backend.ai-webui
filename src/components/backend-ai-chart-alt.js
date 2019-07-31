@@ -285,9 +285,7 @@ class BackendAIChartAlt extends LitElement {
           graphHeight = this.height - margin.top - margin.bottom;
 
     const data = this.collection.data.map(datum =>
-        d3
-          .zip(datum.x, datum.y)
-          .map(e => ({ x: e[0], y: e[1] }))
+        d3.zip(datum.x, datum.y).map(e => ({ x: e[0], y: e[1] }))
     )
 
     const xScale = d3
@@ -334,7 +332,15 @@ class BackendAIChartAlt extends LitElement {
         <g></g> for y axis
         <g></g> for dots
         <path></path> for line graph
-        <g></g> for vertical tooltip
+        <g> for focus
+          <circle></circle>   for dot highlight
+          ...
+          <circle></circle>
+          <path></path>       for vertical line
+          <g>
+          </g>
+
+        </g>
       </g>
     </svg>
     */
@@ -435,32 +441,39 @@ class BackendAIChartAlt extends LitElement {
       .append("g")
       .attr("id", "tooltip");
 
-    tooltip
-      .append("rect")
-      .attr("width", 0)
-      .attr("height", rectHeight)
-      .attr("rx", 10)
-      .attr("ry", 10)
-      .style("fill", "rgba(255, 255, 255, 0.8)")
-      .style("stroke", "rgba(74, 191, 191)")
+    data.forEach((datum, idx) => {
+      const tooltip = focus
+        .append("g")
+        .attr("class", `tooltip id${idx}`);
 
-    tooltip
-      .append("text")
-      .attr("class", "tooltip-x")
-      .style("font-size", "8px")
-      .style("fill", "#37474f")
-      .attr("transform", `translate(0, ${rectHeight / 2})`)
-      .attr("dx", 5)
-      .attr("dy", "-.3em");
+      tooltip
+        .append("rect")
+        .attr("width", 0)
+        .attr("height", rectHeight)
+        .attr("rx", 10)
+        .attr("ry", 10)
+        .style("fill", "rgba(255, 255, 255, 0.8)")
+        .style("stroke", "rgba(74, 191, 191)")
+  
+      tooltip
+        .append("text")
+        .attr("class", "tooltip-x")
+        .style("font-size", "8px")
+        .style("fill", "#37474f")
+        .attr("transform", `translate(0, ${rectHeight / 2})`)
+        .attr("dx", 5)
+        .attr("dy", "-.3em");
 
-    tooltip
-      .append("text")
-      .attr("class", "tooltip-y")
-      .style("font-size", "8px")
-      .style("fill", "#37474f")
-      .attr("transform", `translate(0, ${rectHeight / 2})`)
-      .attr("dx", 5)
-      .attr("dy", "1em");
+      tooltip
+        .append("text")
+        .attr("class", "tooltip-y")
+        .style("font-size", "8px")
+        .style("fill", "#37474f")
+        .attr("transform", `translate(0, ${rectHeight / 2})`)
+        .attr("dx", 5)
+        .attr("dy", "1em");
+    })
+
 
     g
       .append("rect")
@@ -481,8 +494,6 @@ class BackendAIChartAlt extends LitElement {
               closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
         const formatTime = d3.timeFormat("%b %d, %Y");
 
-        console.log(closer);
-
         data.forEach((datum, idx) => {
           focus
             .select(`circle.y.id${idx}`)
@@ -493,22 +504,28 @@ class BackendAIChartAlt extends LitElement {
           .select("line.y")
           .attr("transform", `translate(${xScale(data[0][closer].x)}, 0)`);
 
-        // tooltip
-        //   .select("text.tooltip-y")
-        //   .text(d.y);
 
-        // tooltip
-        //   .select("text.tooltip-x")
-        //   .text(formatTime(d.x));
+        data.forEach((datum, idx) => {
+          const tooltip = focus.select(`.tooltip.id${idx}`)
 
-        // const w1 = tooltip.select("text.tooltip-x").node().getComputedTextLength(),
-        //       w2 = tooltip.select("text.tooltip-y").node().getComputedTextLength();
-        // const w = (w1 > w2 ? w1 : w2) + 10
+          tooltip
+            .select("text.tooltip-y")
+            .text(datum[closer].y);
+  
+          tooltip
+            .select("text.tooltip-x")
+            .text(formatTime(datum[closer].x));
+  
+          const w1 = tooltip.select("text.tooltip-x").node().getComputedTextLength(),
+                w2 = tooltip.select("text.tooltip-y").node().getComputedTextLength();
+          const w = (w1 > w2 ? w1 : w2) + 10
+  
+          tooltip
+            .attr("transform", `translate(${xScale(datum[closer].x) - w / 2}, ${yScale(datum[closer].y) - rectHeight - 5})`)
+            .select("rect")
+            .attr("width", w)
+        })
 
-        // tooltip
-        //   .attr("transform", `translate(${xScale(d.x) - w / 2}, ${yScale(d.y) - rectHeight - 5})`)
-        //   .select("rect")
-        //   .attr("width", w)
       })
     
     // tmp transition code
