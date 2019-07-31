@@ -47,21 +47,22 @@ const ByteConverter = {
   toTB: bytes => bytes / (1024 * 1024 * 1024 * 1024),
   log1024: n => Math.log(n) / Math.log(1024),
 
-  readableUnit: function (bytes) {
-    return ["B", "KB", "MB", "GB", "TB"][Math.floor(this.log1024(bytes))]
+  readableUnit: function(bytes) {
+    return ["B", "KB", "MB", "GB", "TB"][Math.floor(this.log1024(bytes))];
   },
 
-  scale: function (data) {
+  scale: function(data) {
     const minUnit = this.readableUnit(d3.min(data, d => d.y));
 
-    if (minUnit === "B") return data;
-
-    return data.map(e => ({
-      ...e,
-      y: this[`to${minUnit}`](e.y)
-    }));
+    return {
+      data: data.map(e => ({
+        ...e,
+        y: this[`to${minUnit}`](e.y)
+      })),
+      unit: minUnit
+    };
   }
-}
+};
 
 class BackendAIChartAlt extends LitElement {
   /**
