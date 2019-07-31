@@ -190,7 +190,7 @@ $ docker run --name backendai-console-ssl -v $(pwd)/config.ini:/usr/share/nginx/
 
 ### Running websocket proxy with node.js
 
-This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
+This is only needed with pure ES6 dev. environment / browser. Websocket proxy is embedded in Electron and automatically starts.
 
 ```
 $ npm run wsproxy
