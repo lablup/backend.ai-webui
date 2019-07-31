@@ -7,13 +7,69 @@ import "weightless/card";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
+class _ByteConverter {
+  static toKB(bytes) {
+    return bytes / 1024;
+  }
+
+  static toMB(bytes) {
+    return bytes / (1024 * 1024);
+  }
+
+  static toGB(bytes) {
+    return bytes / (1024 * 1024 * 1024);
+  }
+
+  static log1024(n) {
+    return Math.log(n) / Math.log(1024);
+  }
+
+  static readableUnit(bytes) {
+    switch (Math.floor(_ByteConverter.log1024(bytes))) {
+      case 0:
+        return "B";
+      case 1:
+        return "KB";
+      case 2:
+        return "MB";
+      case 3:
+        return "GB";
+      case 4:
+        return "TB";
+    }
+  }
+}
+
+const ByteConverter = {
+  toKB: bytes => bytes / 1024,
+  toMB: bytes => bytes / (1024 * 1024),
+  toGB: bytes => bytes / (1024 * 1024 * 1024),
+  toTB: bytes => bytes / (1024 * 1024 * 1024 * 1024),
+  log1024: n => Math.log(n) / Math.log(1024),
+
+  readableUnit: function (bytes) {
+    return ["B", "KB", "MB", "GB", "TB"][Math.floor(this.log1024(bytes))]
+  },
+
+  scale: function (data) {
+    const minUnit = this.readableUnit(d3.min(data, d => d.y));
+
+    if (minUnit === "B") return data;
+
+    return data.map(e => ({
+      ...e,
+      y: this[`to${minUnit}`](e.y)
+    }));
+  }
+}
+
 class BackendAIChartAlt extends LitElement {
   /**
-   * @param collection              {json}   Object containing the fields listed below
-   * @param collection.data         {json}   Object containing two arrays
+   * @param collection              {object}   Object containing the fields listed below
+   * @param collection.data         {object}   Object containing two arrays
    * @param collection.data.x       {array}  Array containing values of x
    * @param collection.data.y       {array}  Array containing values of y
-   * @param collection.axisTitle    {json}   Object containing x axis title at key "x" and y axis title at key "y"
+   * @param collection.axisTitle    {object}   Object containing x axis title at key "x" and y axis title at key "y"
    * @param collection.axisTitle.x  {string} X axis title
    * @param collection.axisTitle.y  {string} Y axis title
    * @param collection.title        {string} Title of graph
