@@ -26,10 +26,16 @@ class BackendAIUsageList extends LitElement {
     super();
     this.collection = {
       "1H": {
-        data: {
-          x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
-          y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
-        },
+        data: [
+          {
+            x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
+            y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
+          },
+          {
+            x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
+            y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
+          }
+        ],
         axisTitle: {
           x: "Time",
           y: "Percentage"
