@@ -43,10 +43,16 @@ class BackendAIUsageList extends LitElement {
         title: "CPU Usage (%)"
       },
       "6H": {
-        data: {
-          x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
-          y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
-        },
+        data: [
+          {
+            x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
+            y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
+          },
+          {
+            x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
+            y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
+          }
+        ],
         axisTitle: {
           x: "Time",
           y: "Percentage"
@@ -54,10 +60,16 @@ class BackendAIUsageList extends LitElement {
         title: "CPU Usage (%)"
       },
       "12H": {
-        data: {
-          x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
-          y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
-        },
+        data: [
+          {
+            x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
+            y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
+          },
+          {
+            x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
+            y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
+          }
+        ],
         axisTitle: {
           x: "Time",
           y: "Percentage"
