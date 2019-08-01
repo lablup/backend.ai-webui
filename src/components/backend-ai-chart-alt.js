@@ -116,6 +116,12 @@ class BackendAIChartAlt extends LitElement {
         .axis {
           font-size: 6px;
         }
+
+        text.tooltip-x,
+        text.tooltip-y {
+          font-size: 8px;
+          fill: #37474f;
+        }
       `
     ];
   }
@@ -205,6 +211,7 @@ class BackendAIChartAlt extends LitElement {
       line,
       rectHeight
     } = this.toolbox();
+    const { colors } = this;
 
     // queryselector() was used for rect and focus because using d3's select function somehow doesn't work
     const g = d3.select(this.shadowRoot.querySelector("#d3-container")),
@@ -244,8 +251,6 @@ class BackendAIChartAlt extends LitElement {
     const dotGroup = g
       .selectAll(".dot-group")
       .data(data);
-
-    const { colors } = this;
 
     // update existing dot groups.
     dotGroup
@@ -451,6 +456,7 @@ class BackendAIChartAlt extends LitElement {
       rectWidth,
       rectHeight
     } = this.toolbox();
+    const { colors } = this;
     /*
     <svg>
       <g transform="translate(n, n)">
@@ -524,30 +530,41 @@ class BackendAIChartAlt extends LitElement {
       .text(this.collection.axisTitle.y);
 
     // actual line graph
-    data.forEach((datum, idx) => {
-      g
-        .append("path")
-        .datum(datum)
-        .attr("class", `line id${idx}`)
-        .style("stroke", this.colors[idx])
-        .attr("d", line);
-    })
+    g
+      .selectAll(".line")
+      .data(data)
+      .enter()
+      .append("path")
+      .each(function (pd, pidx) {
+        d3
+          .select(this)
+          .datum(pd)
+          .attr("class", "line")
+          .style("stroke", colors[pidx])
+          .attr("d", line);
+      })
 
     // dots in data points
-    data.forEach((datum, idx) => {
-      g
-        .append("g")
-        .attr("class", `dot-group id${idx}`)
-        .selectAll(".dot")
-        .data(datum)
-        .enter()
-        .append("circle")
-        .attr("class", `dot id${idx}`)
-        .style("fill", this.colors[idx])
-        .attr("cx", d => xScale(d.x))
-        .attr("cy", d => yScale(d.y))
-        .attr("r", 3);
-    })
+    g
+      .selectAll(".dot-group")
+      .data(data)
+      .enter()
+      .append("g")
+      .each(function (pd, pidx) {
+        console.log(pd, pidx);
+        d3
+          .select(this)
+          .attr("class", "dot-group")
+          .selectAll(".dot")
+          .data(pd)
+          .enter()
+          .append("circle")
+          .attr("class", "dot")
+          .style("fill", colors[pidx])
+          .attr("cx", d => xScale(d.x))
+          .attr("cy", d => yScale(d.y))
+          .attr("r", 3);
+      })
 
     // "g" element to render vertical tooltip
     const focus = g
@@ -555,14 +572,19 @@ class BackendAIChartAlt extends LitElement {
       .attr("id", "focus")
       .style("display", "none");
 
-    data.forEach((datum, idx) => {
-      focus
-        .append("circle")
-        .attr("class", `y id${idx}`)
-        .style("fill", "none")
-        .style("stroke", this.colors[idx])
-        .attr("r", 4);
-    })
+    // circles that hightlight dots
+    focus
+      .selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .each(function (pd, pidx) {
+        d3
+          .select(this)
+          .style("fill", "none")
+          .style("stroke", colors[pidx])
+          .attr("r", 4);
+      })
 
     focus
       .append("line")
@@ -571,39 +593,39 @@ class BackendAIChartAlt extends LitElement {
       .attr("y1", 0)
       .attr("y2", graphHeight);
 
-    data.forEach((datum, idx) => {
-      const tooltip = focus
-        .append("g")
-        .attr("class", `tooltip id${idx}`);
+    focus
+      .selectAll(".tooltip")
+      .data(data)
+      .enter()
+      .append("g")
+      .each(function (pd, pidx) {
+        const tooltip = d3
+          .select(this)
+          .attr("class", "tooltip");
 
-      tooltip
-        .append("rect")
-        .attr("width", 0)
-        .attr("height", rectHeight)
-        .attr("rx", 10)
-        .attr("ry", 10)
-        .style("fill", "rgba(255, 255, 255, 0.8)")
-        .style("stroke", this.colors[idx])
+        tooltip
+          .append("rect")
+          .attr("width", 0)
+          .attr("height", rectHeight)
+          .attr("rx", 10)
+          .attr("ry", 10)
+          .style("fill", "rgba(255, 255, 255, 0.8)")
+          .style("stroke", colors[pidx]);
 
-      tooltip
-        .append("text")
-        .attr("class", "tooltip-x")
-        .style("font-size", "8px")
-        .style("fill", "#37474f")
-        .attr("transform", `translate(0, ${rectHeight / 2})`)
-        .attr("dx", 5)
-        .attr("dy", "-.3em");
+        tooltip
+          .append("text")
+          .attr("class", "tooltip-x")
+          .attr("transform", `translate(0, ${rectHeight / 2})`)
+          .attr("dx", 5)
+          .attr("dy", "-.3em");
 
-      tooltip
-        .append("text")
-        .attr("class", "tooltip-y")
-        .style("font-size", "8px")
-        .style("fill", "#37474f")
-        .attr("transform", `translate(0, ${rectHeight / 2})`)
-        .attr("dx", 5)
-        .attr("dy", "1em");
-    })
-
+        tooltip
+          .append("text")
+          .attr("class", "tooltip-y")
+          .attr("transform", `translate(0, ${rectHeight / 2})`)
+          .attr("dx", 5)
+          .attr("dy", "1em");
+      })
 
     g
       .append("rect")
@@ -624,37 +646,42 @@ class BackendAIChartAlt extends LitElement {
               closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
         const formatTime = d3.timeFormat("%b %d, %Y");
 
-        data.forEach((datum, idx) => {
-          focus
-            .select(`circle.y.id${idx}`)
-            .attr("transform", `translate(${xScale(datum[closer].x)}, ${yScale(datum[closer].y)})`);
-        })
+        // relocate the circles that highlight spots
+        focus
+          .selectAll("circle")
+          .data(data)
+          .attr("transform", datum => `translate(${xScale(datum[closer].x)}, ${yScale(datum[closer].y)})`);
 
+        // relocate vertical tooltip line
         focus
           .select("line.y")
           .attr("transform", `translate(${xScale(data[0][closer].x)}, 0)`);
 
+        focus
+          .selectAll("g.tooltip")
+          .data(data)
+          .each(function (pd) {
+            const tooltip = d3
+              .select(this);
 
-        data.forEach((datum, idx) => {
-          const tooltip = focus.select(`.tooltip.id${idx}`)
+            tooltip
+              .select("text.tooltip-x")
+              .text(formatTime(pd[closer].x));
 
-          tooltip
-            .select("text.tooltip-y")
-            .text(datum[closer].y);
+            tooltip
+              .select("text.tooltip-y")
+              .text(pd[closer].y);
 
-          tooltip
-            .select("text.tooltip-x")
-            .text(formatTime(datum[closer].x));
+            const w = Math.max(
+              tooltip.select("text.tooltip-x").node().getComputedTextLength(),
+              tooltip.select("text.tooltip-y").node().getComputedTextLength()
+            ) + 10;
 
-          const w1 = tooltip.select("text.tooltip-x").node().getComputedTextLength(),
-                w2 = tooltip.select("text.tooltip-y").node().getComputedTextLength();
-          const w = (w1 > w2 ? w1 : w2) + 10
-
-          tooltip
-            .attr("transform", `translate(${xScale(datum[closer].x) - w / 2}, ${yScale(datum[closer].y) - rectHeight - 5})`)
-            .select("rect")
-            .attr("width", w)
-        })
+            tooltip
+              .attr("transform", `translate(${xScale(pd[closer].x) - w / 2}, ${yScale(pd[closer].y) - rectHeight - 5})`)
+              .select("rect")
+              .attr("width", w);
+          })
 
       })
 
