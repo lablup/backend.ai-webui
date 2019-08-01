@@ -208,13 +208,14 @@ class BackendAIChartAlt extends LitElement {
 
     // queryselector() was used for rect and focus because using d3's select function somehow doesn't work
     const g = d3.select(this.shadowRoot.querySelector("#d3-container")),
-          dots = g.select("#dots").selectAll(".dot").data(data),
           rect = d3.select(this.shadowRoot.querySelector("#mouse-rect")),
           focus = d3.select(this.shadowRoot.querySelector("#focus"));
 
-    g
-      .select(".line")
-      .attr("d", line(data));
+    data.forEach((datum, idx) => {
+      g
+        .select(`.line.id${idx}`)
+        .attr("d", line(datum));
+    })
 
     g
       .select(".x.axis")
@@ -224,58 +225,73 @@ class BackendAIChartAlt extends LitElement {
       .select(".y.axis")
       .call(d3.axisLeft(yScale));
 
-    dots
-      .attr("cx", d => xScale(d.x))
-      .attr("cy", d => yScale(d.y))
+    data.forEach((datum, idx) => {
+      const dots = g
+        .select(`#dots-id${idx}`)
+        .selectAll(".dot")
+        .data(datum);
 
-    dots
-      .exit()
-      .remove()
+      console.log(dots);
 
-    dots
-      .enter().append("circle")
-      .attr("class", "dot")
-      .attr("cx", d => xScale(d.x))
-      .attr("cy", d => yScale(d.y))
-      .attr("r", 3)
+      dots
+        .attr("cx", d => xScale(d.x))
+        .attr("cy", d => yScale(d.y))
+
+      dots
+        .exit()
+        .remove()
+
+      dots
+        .enter().append("circle")
+        .attr("class", `dot id${idx}`)
+        .style("fill", this.colors[idx])
+        .attr("cx", d => xScale(d.x))
+        .attr("cy", d => yScale(d.y))
+        .attr("r", 3)
+    })
 
     rect
       .on("mousemove", function() {
         // due to the use of "this", this must be a function, and not an arrow function!
         const bisectDate = d3.bisector(d => d.x).left
         const x0 = xScale.invert(d3.mouse(this)[0]),
-              i = bisectDate(data, x0, 1),
-              d0 = data[i - 1],
-              d1 = data[i],
-              d = x0 - d0.x > d1.x - x0 ? d1 : d0;
+              i = bisectDate(data[0], x0, 1),
+              d0 = data[0][i - 1],
+              d1 = data[0][i],
+              closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
         const formatTime = d3.timeFormat("%b %d, %Y");
 
-        focus
-          .select("circle.y")
-          .attr("transform", `translate(${xScale(d.x)}, ${yScale(d.y)})`);
+        data.forEach((datum, idx) => {
+          focus
+            .select(`circle.y.id${idx}`)
+            .attr("transform", `translate(${xScale(datum[closer].x)}, ${yScale(datum[closer].y)})`);
+        })
 
         focus
           .select("line.y")
-          .attr("transform", `translate(${xScale(d.x)}, 0)`);
+          .attr("transform", `translate(${xScale(data[0][closer].x)}, 0)`);
 
-        const tooltip = focus.select("#tooltip");
+        data.forEach((datum, idx) => {
+          const tooltip = focus.select(`.tooltip.id${idx}`)
 
-        tooltip
-          .select("text.tooltip-y")
-          .text(d.y);
+          tooltip
+            .select("text.tooltip-y")
+            .text(datum[closer].y);
 
-        tooltip
-          .select("text.tooltip-x")
-          .text(formatTime(d.x));
+          tooltip
+            .select("text.tooltip-x")
+            .text(formatTime(datum[closer].x));
 
-        const w1 = tooltip.select("text.tooltip-x").node().getComputedTextLength(),
-              w2 = tooltip.select("text.tooltip-y").node().getComputedTextLength();
-        const w = (w1 > w2 ? w1 : w2) + 10
+          const w1 = tooltip.select("text.tooltip-x").node().getComputedTextLength(),
+                w2 = tooltip.select("text.tooltip-y").node().getComputedTextLength();
+          const w = (w1 > w2 ? w1 : w2) + 10
 
-        tooltip
-          .attr("transform", `translate(${xScale(d.x) - w / 2}, ${yScale(d.y) - rectHeight - 5})`)
-          .select("rect")
-          .attr("width", w)
+          tooltip
+            .attr("transform", `translate(${xScale(datum[closer].x) - w / 2}, ${yScale(datum[closer].y) - rectHeight - 5})`)
+            .select("rect")
+            .attr("width", w)
+        })
+
       });
   }
 
@@ -327,19 +343,26 @@ class BackendAIChartAlt extends LitElement {
     } = this.toolbox();
     /*
     <svg>
-      <g>
-        <g></g> for x axis
-        <g></g> for y axis
-        <g></g> for dots
+      <g transform="translate(n, n)">
+        <g class="x axis" ...></g> for x axis
+        <g class="y axis" ...></g> for y axis
+
+        <g id="dots-idN"></g> for dots. each <g> contains a collection of dots
+        ...
+        <g id="dots-idM"></g>
+
         <path></path> for line graph
+        ...
+        <path></path>
+
         <g> for focus
           <circle></circle>   for dot highlight
           ...
           <circle></circle>
-          <path></path>       for vertical line
-          <g>
-          </g>
-
+          <line></line>       for vertical line
+          <g class="tooltip idN"></g> for rectangle tooltips
+          ...
+          <g class="tooltip idM"></g>
         </g>
       </g>
     </svg>
@@ -395,7 +418,7 @@ class BackendAIChartAlt extends LitElement {
       g
         .append("path")
         .datum(datum)
-        .attr("class", "line")
+        .attr("class", `line id${idx}`)
         .style("stroke", this.colors[idx])
         .attr("d", line);
     })
@@ -404,6 +427,7 @@ class BackendAIChartAlt extends LitElement {
     data.forEach((datum, idx) => {
       g
         .append("g")
+        .attr("id", `dots-id${idx}`)
         .selectAll(".dot")
         .data(datum)
         .enter()
@@ -437,10 +461,6 @@ class BackendAIChartAlt extends LitElement {
       .attr("y1", 0)
       .attr("y2", graphHeight);
 
-    const tooltip = focus
-      .append("g")
-      .attr("id", "tooltip");
-
     data.forEach((datum, idx) => {
       const tooltip = focus
         .append("g")
@@ -454,7 +474,7 @@ class BackendAIChartAlt extends LitElement {
         .attr("ry", 10)
         .style("fill", "rgba(255, 255, 255, 0.8)")
         .style("stroke", "rgba(74, 191, 191)")
-  
+
       tooltip
         .append("text")
         .attr("class", "tooltip-x")
@@ -511,15 +531,15 @@ class BackendAIChartAlt extends LitElement {
           tooltip
             .select("text.tooltip-y")
             .text(datum[closer].y);
-  
+
           tooltip
             .select("text.tooltip-x")
             .text(formatTime(datum[closer].x));
-  
+
           const w1 = tooltip.select("text.tooltip-x").node().getComputedTextLength(),
                 w2 = tooltip.select("text.tooltip-y").node().getComputedTextLength();
           const w = (w1 > w2 ? w1 : w2) + 10
-  
+
           tooltip
             .attr("transform", `translate(${xScale(datum[closer].x) - w / 2}, ${yScale(datum[closer].y) - rectHeight - 5})`)
             .select("rect")
@@ -527,7 +547,7 @@ class BackendAIChartAlt extends LitElement {
         })
 
       })
-    
+
     // tmp transition code
     // g
     //   .append("rect")
