@@ -51,6 +51,10 @@ class BackendAIUsageList extends LitElement {
           {
             x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
             y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
+          },
+          {
+            x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
+            y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
           }
         ],
         axisTitle: {
