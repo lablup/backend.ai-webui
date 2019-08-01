@@ -282,7 +282,6 @@ class BackendAIChartAlt extends LitElement {
     dotGroup
       .enter()
       .each(function (pd, pidx) {
-        console.log(this, pd, pidx);
         d3
           .select(this)
           .append("g")
@@ -551,7 +550,6 @@ class BackendAIChartAlt extends LitElement {
       .enter()
       .append("g")
       .each(function (pd, pidx) {
-        console.log(pd, pidx);
         d3
           .select(this)
           .attr("class", "dot-group")
