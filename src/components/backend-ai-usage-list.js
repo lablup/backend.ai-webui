@@ -119,6 +119,10 @@ class BackendAIUsageList extends LitElement {
     ]
   }
 
+  pulldownChange(e) {
+    this.period = e.target.value;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -126,7 +130,7 @@ class BackendAIUsageList extends LitElement {
         class="layout horizontal end-justified"
         style="width: 80%;"
       >
-        <wl-select label="Select Period" style="width: 130px" @input=${e => {this.period = e.target.value}}>
+        <wl-select label="Select Period" style="width: 130px" @input=${this.pulldownChange}>
           <option value disabled selected>Select Period</option>
           <option value="1H">1 Hour</option>
           <option value="6H">6 Hours</option>
