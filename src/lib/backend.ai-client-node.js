@@ -1523,6 +1523,11 @@ class Resources {
       return Promise.resolve(false);
     }
   }
+
+  user_stats() {
+    const rqst = this.client.newSignedRequest("GET", "/resource/stats/user/month", null);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Group {
