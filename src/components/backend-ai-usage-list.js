@@ -24,70 +24,86 @@ import {
 class BackendAIUsageList extends LitElement {
   constructor() {
     super();
-    this.collection = {
-      "1H": {
-        data: [
-          {
-            x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
-            y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
-          },
-          {
-            x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
-            y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
-          }
-        ],
-        axisTitle: {
-          x: "Time",
-          y: "Percentage"
-        },
-        title: "CPU Usage (%)"
-      },
-      "6H": {
-        data: [
-          {
-            x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
-            y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
-          },
-          {
-            x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
-            y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
-          },
-          {
-            x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
-            y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
-          }
-        ],
-        axisTitle: {
-          x: "Time",
-          y: "Percentage"
-        },
-        title: "CPU Usage (%)"
-      },
-      "12H": {
-        data: [
-          {
-            x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
-            y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
-          },
-          {
-            x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
-            y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
-          }
-        ],
-        axisTitle: {
-          x: "Time",
-          y: "Percentage"
-        },
-        title: "CPU Usage (%)"
+    // this.collection = {
+    //   "1H": {
+    //     data: [
+    //       {
+    //         x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
+    //         y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
+    //       },
+    //       {
+    //         x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
+    //         y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
+    //       }
+    //     ],
+    //     axisTitle: {
+    //       x: "Time",
+    //       y: "Percentage"
+    //     },
+    //     title: "CPU Usage (%)"
+    //   },
+    //   "6H": {
+    //     data: [
+    //       {
+    //         x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
+    //         y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
+    //       },
+    //       {
+    //         x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
+    //         y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
+    //       },
+    //       {
+    //         x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
+    //         y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
+    //       }
+    //     ],
+    //     axisTitle: {
+    //       x: "Time",
+    //       y: "Percentage"
+    //     },
+    //     title: "CPU Usage (%)"
+    //   },
+    //   "12H": {
+    //     data: [
+    //       {
+    //         x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
+    //         y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
+    //       },
+    //       {
+    //         x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
+    //         y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
+    //       }
+    //     ],
+    //     axisTitle: {
+    //       x: "Time",
+    //       y: "Percentage"
+    //     },
+    //     title: "CPU Usage (%)"
+    //   }
+    // };
+    this.collection = {};
+    this.data = [];
+    this.period = '1D';
+    this.active = false;
+    this.template = {
+      "1D": {
+        "interval": 15 / 15,
+        "length": 4 * 24
       }
-    };
-    this.period = '1H';
+    }
   }
 
   static get properties() {
     return {
+      active: {
+        type: Boolean,
+        reflect: true
+      },
       collection: {
         type: Object
+      },
+      data: {
+        type: Array
       },
       period: {
         type: String
@@ -117,6 +133,58 @@ class BackendAIUsageList extends LitElement {
         }
       `
     ]
+  }
+
+  firstUpdated() {
+
+  }
+
+  shouldUpdate() {
+    return this.active;
+  }
+
+  attributeChangedCallback(name, oldval, newval) {
+    if (name === "active" && newval !== null) {
+      this.active = true;
+      this._menuChanged(true);
+    } else {
+      this.active = false;
+      this._menuChanged(false);
+    }
+
+    super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  async _menuChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener("backend-ai-connected", () => {
+        this.init();
+      }, true);
+    } else {
+      this.init();
+    }
+  }
+
+  init() {
+    window.backendaiclient.resources.user_stats()
+    .then(res => {
+      const { period, template } = this;
+      this.data = res;
+
+      this.collection[this.period] = {
+        data: [ res.filter((e, i) => res.length - template[period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[2]})) ],
+        axisTitle: {
+          x: "Date",
+          y: "Percentage"
+        },
+        title: "CPU Usage (%)"
+      }
+    })
   }
 
   pulldownChange(e) {
