@@ -93,10 +93,6 @@ class BackendAIChartAlt extends LitElement {
           stroke-width: 1;
         }
 
-        .dot {
-          stroke: #fff;
-        }
-
         .axisGray line {
           stroke: #646464;
         }
@@ -270,7 +266,7 @@ class BackendAIChartAlt extends LitElement {
           .style("fill", colors[pi])
           .attr("cx", d => xScale(d.x))
           .attr("cy", d => yScale(d.y))
-          .attr("r", 3)
+          .attr("r", 1)
 
         // remove excess dots if necessary
         dots
@@ -294,7 +290,7 @@ class BackendAIChartAlt extends LitElement {
           .style("fill", colors[pidx])
           .attr("cx", d => xScale(d.x))
           .attr("cy", d => yScale(d.y))
-          .attr("r", 3)
+          .attr("r", 1)
       })
 
     // remove unnecessary dot groups
@@ -414,9 +410,11 @@ class BackendAIChartAlt extends LitElement {
           graphWidth  = this.width - margin.left - margin.right,
           graphHeight = this.height - margin.top - margin.bottom;
 
-    const data = this.collection.data.map(datum =>
-        d3.zip(datum.x, datum.y).map(e => ({ x: e[0], y: e[1] }))
-    )
+    // const data = this.collection.data.map(datum =>
+    //     d3.zip(datum.x, datum.y).map(e => ({ x: e[0], y: e[1] }))
+    // )
+
+    const { data } = this.collection;
 
     const xScale = d3
       .scaleTime()
@@ -561,7 +559,7 @@ class BackendAIChartAlt extends LitElement {
           .style("fill", colors[pidx])
           .attr("cx", d => xScale(d.x))
           .attr("cy", d => yScale(d.y))
-          .attr("r", 3);
+          .attr("r", 1);
       })
 
     // "g" element to render vertical tooltip
