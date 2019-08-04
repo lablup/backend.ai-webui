@@ -1,5 +1,5 @@
 import resolve from 'rollup-plugin-node-resolve';
-//import babel from 'rollup-plugin-babel';
+//import babel from 'rollup-plugin-babel'; // To support legacy browsers
 import { terser } from "rollup-plugin-terser";
 
 export default {
@@ -13,7 +13,7 @@ export default {
   },
   plugins: [
     terser(),
+    //babel(),
     resolve()
-    //babel()
   ]
 };
