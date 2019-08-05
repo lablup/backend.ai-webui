@@ -536,15 +536,6 @@ class BackendAiLogin extends LitElement {
   render() {
     // language=HTML
     return html`
-      <app-localstorage-document key="backendaiconsole.email" data="${this.email}"></app-localstorage-document>
-      <app-localstorage-document id="storage" key="backendaiconsole.api_key"
-                                 data="${this.api_key}"></app-localstorage-document>
-      <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
-      <app-localstorage-document id="storage" key="backendaiconsole.user_id"
-                                 data="${this.user_id}"></app-localstorage-document>
-      <app-localstorage-document key="backendaiconsole.password" data="${this.password}"></app-localstorage-document>
-      <app-localstorage-document key="backendaiconsole.api_endpoint"
-                                 data="${this.api_endpoint}"></app-localstorage-document>
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
