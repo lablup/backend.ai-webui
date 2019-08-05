@@ -52,6 +52,7 @@ class BackendAiSessionList extends LitElement {
     this._boundControlRenderer = this.controlRenderer.bind(this);
     this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
     this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
+    this.refreshing = false;
   }
 
   static get is() {
@@ -102,6 +103,9 @@ class BackendAiSessionList extends LitElement {
       },
       terminateSelectedSessionsDialog: {
         type: Object
+      },
+      refreshing: {
+        type: Boolean
       }
     };
   }
@@ -365,15 +369,19 @@ class BackendAiSessionList extends LitElement {
     };
   }
 
-  refreshList() {
-    return this._refreshJobData(true);
+  refreshList(refresh = true, repeat = true) {
+    return this._refreshJobData(refresh, repeat);
   }
 
-  async _refreshJobData(refresh = false) {
+  async _refreshJobData(refresh = false, repeat = true) {
     await this.updateComplete;
     if (this.active !== true) {
       return;
     }
+    if (this.refreshing === true) {
+      return;
+    }
+    this.refreshing = true;
     this.loadingIndicator.show();
     let status = 'RUNNING';
     switch (this.condition) {
@@ -440,19 +448,22 @@ class BackendAiSessionList extends LitElement {
       }
       this.compute_sessions = sessions;
       let refreshTime;
+      this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
           var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
           document.dispatchEvent(event);
         }
-        if (this.condition === 'running') {
-          refreshTime = 5000;
-        } else {
-          refreshTime = 30000;
+        if (repeat === true) {
+          if (this.condition === 'running') {
+            refreshTime = 5000;
+          } else {
+            refreshTime = 30000;
+          }
+          this.refreshTimer = setTimeout(() => {
+            this._refreshJobData()
+          }, refreshTime);
         }
-        this.refreshTimer = setTimeout(() => {
-          this._refreshJobData()
-        }, refreshTime);
       }
     }).catch(err => {
       this.loadingIndicator.hide();
