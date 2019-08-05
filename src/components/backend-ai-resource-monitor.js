@@ -16,10 +16,12 @@ import '@polymer/paper-item/paper-item';
 
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
-import 'weightless/icon';
+import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/expansion';
-import 'weightless/card';
+import 'weightless/icon';
+import 'weightless/label';
+import 'weightless/radio';
 import 'weightless/slider';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -386,6 +388,11 @@ class BackendAiResourceMonitor extends LitElement {
         wl-button[fab] {
           --button-fab-size: 70px;
           border-radius: 6px;
+        }
+
+        wl-label {
+          margin-right: 10px;
+          outline: none;
         }
       `];
   }
@@ -1261,6 +1268,24 @@ class BackendAiResourceMonitor extends LitElement {
             <wl-expansion name="resource-group" open>
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
+              <paper-listbox
+                id="scaling-groups" selected="0"
+                class="horizontal center layout"
+                style="width:350px; overflow: auto; white-space: nowrap;"
+              >
+${
+  ["hello", "world", "foo", "bar", "baz", "helloooo", "wooorld"].map(item =>
+      html`
+        <wl-label>
+          ${item}
+          <wl-radio name="scaling-group"></wl-radio>
+        </wl-label>
+      `
+    )
+}
+
+              </paper-listbox>
+
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
