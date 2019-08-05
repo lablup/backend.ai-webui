@@ -567,7 +567,6 @@ class BackendAiSessionList extends LitElement {
         {'category': 'Env', 'tag': lang, 'color': 'green'}
       ]);
     }
-    console.log(tags);
     return tags;
   }
 
