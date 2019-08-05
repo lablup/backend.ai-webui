@@ -381,6 +381,9 @@ class Client {
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
+      if (resources['scaling_group']) {
+        params['config'].scaling_group = resources['scaling_group'];
+      }
     }
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
     return this._wrapWithPromise(rqst);

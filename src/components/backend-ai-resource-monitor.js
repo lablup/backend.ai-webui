@@ -113,6 +113,7 @@ class BackendAiResourceMonitor extends LitElement {
     this.session_request = 1;
     this.direction = "horizontal";
     this.scaling_groups = [];
+    this.scaling_group = '';
   }
 
   static get is() {
@@ -223,8 +224,11 @@ class BackendAiResourceMonitor extends LitElement {
       num_sessions: {
         type: Number
       },
-      scaling_groups: {
+      scaling_group: {
         type: String
+      },
+      scaling_groups: {
+        type: Array
       }
     }
   }
@@ -405,11 +409,10 @@ class BackendAiResourceMonitor extends LitElement {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this._initAliases();
-    this.updateResourceIndicator();
+    this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
-      this.updateResourceIndicator();
-      this._refreshResourceTemplate();
+      this.aggregateResource();
     });
     gpu_resource.addEventListener('value-change', () => {
       if (gpu_resource.value > 0) {
@@ -524,7 +527,6 @@ class BackendAiResourceMonitor extends LitElement {
       this.selectDefaultLanguage();
       let sgs = await window.backendaiclient.scalingGroup.list();
       this.scaling_groups = sgs.scaling_groups;
-      console.log(this.scaling_groups);
       await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -567,12 +569,14 @@ class BackendAiResourceMonitor extends LitElement {
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
-    this.num_sessions = this.session_request; // TODO: read the value from UI
+    this.num_sessions = this.session_request;
+    this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
 
     let config = {};
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       config['group_name'] = window.backendaiclient.current_group;
       config['domain'] = window.backendaiclient._config.domainName;
+      config['scaling_group'] = this.scaling_group;
     }
     config['cpu'] = this.cpu_request;
     if (this.gpu_mode == 'vgpu') {
@@ -738,6 +742,26 @@ class BackendAiResourceMonitor extends LitElement {
   async _aggregateResourceUse() {
     let total_slot = {};
     return window.backendaiclient.resourcePreset.check().then((response) => {
+      if (response.presets) { // Same as refreshResourceTemplate.
+        let presets = response.presets;
+        let available_presets = [];
+        presets.forEach((item) => {
+          if (item.allocatable === true) {
+            if ('cuda.shares' in item.resource_slots) {
+              item.gpu = item.resource_slots['cuda.shares'];
+            } else if ('cuda.device' in item) {
+              item.gpu = item.resource_slots['cuda.device'];
+            } else {
+              item.gpu = 0;
+            }
+            item.cpu = item.resource_slots.cpu;
+            item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+            available_presets.push(item);
+          }
+        });
+        this.resource_templates = available_presets;
+      }
+
       let group_resource = response.scaling_group_remaining;
       ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
         if (slot in response.keypair_using && slot in group_resource) {
@@ -851,7 +875,7 @@ class BackendAiResourceMonitor extends LitElement {
     });
   }
 
-  updateResourceIndicator() {
+  aggregateResource() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse();
@@ -1274,23 +1298,16 @@ class BackendAiResourceMonitor extends LitElement {
             <wl-expansion name="resource-group" open>
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
-              <paper-listbox
-                id="scaling-groups" selected="0"
-                class="horizontal center layout"
-                style="width:350px; overflow: auto; white-space: nowrap;"
-              >
+              <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
+                <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
       html`
-        <wl-label>
-          ${item.name}
-          <wl-radio name="scaling-group"></wl-radio>
-        </wl-label>
+                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
       `
     )
 }
-
-              </paper-listbox>
-
+                </paper-listbox>
+              </paper-dropdown-menu>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
