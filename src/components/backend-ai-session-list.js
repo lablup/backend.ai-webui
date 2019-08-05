@@ -563,9 +563,9 @@ class BackendAiSessionList extends LitElement {
     if (name in kernel_alias) {
       tags.push(kernel_alias[name]);
     } else {
-      tags = [
+      tags.push([
         {'category': 'Env', 'tag': lang, 'color': 'green'}
-      ]
+      ]);
     }
     return tags;
   }

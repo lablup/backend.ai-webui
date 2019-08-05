@@ -386,8 +386,6 @@ class BackendAiLogin extends LitElement {
       let groups = response['user'].groups;
       if (groups !== null) {
         window.backendaiclient.groups = groups.map((item) => {
-          //item = item.replace(/\'/g, '"');
-          //const parsedItem = JSON.parse(item);
           return item.name;
         });
       } else {
