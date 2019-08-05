@@ -214,10 +214,10 @@ class BackendAiLogin extends LitElement {
   }
 
   login() {
-    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
-    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
-    this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.user_id'));
-    this.password = JSON.parse(localStorage.getItem('backendaiconsole.password'));
+    this.api_key = null;
+    this.secret_key = null;
+    this.user_id = null;
+    this.password = null;
     if (this.api_key === null) {
       this.api_key = '';
     }
@@ -231,7 +231,7 @@ class BackendAiLogin extends LitElement {
       this.password = '';
     }
     if (this.api_endpoint === '') {
-      this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
+      this.api_endpoint = '';
     }
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
