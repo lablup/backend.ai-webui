@@ -522,7 +522,9 @@ class BackendAiResourceMonitor extends LitElement {
       this.shadowRoot.querySelector('#notification').show();
     } else {
       this.selectDefaultLanguage();
-      this.scaling_groups = await window.backendaiclient.scalingGroup.list();
+      let sgs = await window.backendaiclient.scalingGroup.list();
+      this.scaling_groups = sgs.scaling_groups;
+      console.log(this.scaling_groups);
       await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -1277,11 +1279,10 @@ class BackendAiResourceMonitor extends LitElement {
                 class="horizontal center layout"
                 style="width:350px; overflow: auto; white-space: nowrap;"
               >
-${
-  ["hello", "world", "foo", "bar", "baz", "helloooo", "wooorld"].map(item =>
+${this.scaling_groups.map(item =>
       html`
         <wl-label>
-          ${item}
+          ${item.name}
           <wl-radio name="scaling-group"></wl-radio>
         </wl-label>
       `
