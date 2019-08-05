@@ -191,6 +191,9 @@ class BackendAiSignup extends LitElement {
       this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
       this.notification.text = 'Signup succeed.';
       this.notification.show();
+      setTimeout(() => {
+        this.shadowRoot.querySelector('#signup-panel').hide();
+      }, 1000);
     }).catch((e) => {
       if (e.message) {
         this.notification.text = e.message;
