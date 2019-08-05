@@ -408,7 +408,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             </app-header>
             <wl-select id="group-select" name="group-select" label="Project"
               @input="${this.changeGroup}" .value="${this.current_group}">
-               <option value disabled>Select group</option>
+               <option value disabled>Select Project</option>
                 ${this.groups.map(group => html`
                 <option value="${group}" ?selected="${this.current_group === group}">${group}</option>
                 `)}
