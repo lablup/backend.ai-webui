@@ -48,7 +48,7 @@ class BackendAIChartAlt extends LitElement {
     this.title = "";
     this.elevation = 1;
     this.message = "";
-    this.collection = {};
+    // this.collection = {};
     this.width = 300;
     this.height = 300;
     this.type = "line";
@@ -134,7 +134,14 @@ class BackendAIChartAlt extends LitElement {
         type: String
       },
       collection: {
-        type: Object
+        type: Object,
+        hasChanged(newval, oldval) {
+          if (oldval === undefined) return true;
+
+          if (newval.period !== oldval.period) return true;
+
+          return false;
+        }
       },
       width: {
         type: Number
@@ -148,11 +155,10 @@ class BackendAIChartAlt extends LitElement {
     };
   }
 
-  updated(changedProps) {
-    if (changedProps.has('collection') && changedProps.get('collection') !== undefined) {
-      this.draw();
-    }
-  }
+  // updated(changedProps) {
+  //   if (changedProps.has('collection') && changedProps.get("collection") !== undefined) {
+  //   }
+  // }
 
   render() {
     // language=HTML
@@ -410,10 +416,7 @@ class BackendAIChartAlt extends LitElement {
           graphWidth  = this.width - margin.left - margin.right,
           graphHeight = this.height - margin.top - margin.bottom;
 
-    // const data = this.collection.data.map(datum =>
-    //     d3.zip(datum.x, datum.y).map(e => ({ x: e[0], y: e[1] }))
-    // )
-
+    // assumption: data is already zipped
     const { data } = this.collection;
 
     const xScale = d3
@@ -440,7 +443,7 @@ class BackendAIChartAlt extends LitElement {
     return { margin, graphWidth, graphHeight, data, xScale, xAxis, yScale, line, rectWidth, rectHeight };
   }
 
-  firstUpdated () {
+  init() {
     const {
       margin,
       graphWidth,
@@ -712,8 +715,6 @@ class BackendAIChartAlt extends LitElement {
   connectedCallback() {
     super.connectedCallback();
   }
-
-  _removePanel() {}
 }
 
 customElements.define(BackendAIChartAlt.is, BackendAIChartAlt);

@@ -24,63 +24,6 @@ import {
 class BackendAIUsageList extends LitElement {
   constructor() {
     super();
-    // this.collection = {
-    //   "1H": {
-    //     data: [
-    //       {
-    //         x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
-    //         y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
-    //       },
-    //       {
-    //         x: [...Array(7)].map((e, i) => new Date(i * 1e12)),
-    //         y: [...Array(7)].map(e => Math.floor(Math.random() * 101))
-    //       }
-    //     ],
-    //     axisTitle: {
-    //       x: "Time",
-    //       y: "Percentage"
-    //     },
-    //     title: "CPU Usage (%)"
-    //   },
-    //   "6H": {
-    //     data: [
-    //       {
-    //         x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
-    //         y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
-    //       },
-    //       {
-    //         x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
-    //         y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
-    //       },
-    //       {
-    //         x: [...Array(24)].map((e, i) => new Date(i * 1e12)),
-    //         y: [...Array(24)].map(e => Math.floor(Math.random() * 101))
-    //       }
-    //     ],
-    //     axisTitle: {
-    //       x: "Time",
-    //       y: "Percentage"
-    //     },
-    //     title: "CPU Usage (%)"
-    //   },
-    //   "12H": {
-    //     data: [
-    //       {
-    //         x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
-    //         y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
-    //       },
-    //       {
-    //         x: [...Array(48)].map((e, i) => new Date(i * 1e12)),
-    //         y: [...Array(48)].map(e => Math.floor(Math.random() * 101))
-    //       }
-    //     ],
-    //     axisTitle: {
-    //       x: "Time",
-    //       y: "Percentage"
-    //     },
-    //     title: "CPU Usage (%)"
-    //   }
-    // };
     this.collection = {};
     this.data = [];
     this.period = '1D';
@@ -89,6 +32,10 @@ class BackendAIUsageList extends LitElement {
       "1D": {
         "interval": 15 / 15,
         "length": 4 * 24
+      },
+      "1W": {
+        "interval": 15 / 15,
+        "length": 4 * 24 * 7
       }
     }
   }
@@ -100,14 +47,21 @@ class BackendAIUsageList extends LitElement {
         reflect: true
       },
       collection: {
-        type: Object
+        type: Object,
+
+        hasChanged(newval, oldval) {
+          if (newval === undefined || oldval === undefined) return false;
+
+          return false;
+        }
       },
       data: {
         type: Array
       },
       period: {
         type: String
-      }
+      },
+      template: Object
     }
   }
 
@@ -157,6 +111,7 @@ class BackendAIUsageList extends LitElement {
 
   async _menuChanged(active) {
     await this.updateComplete;
+
     if (active === false) {
       return;
     }
@@ -166,29 +121,49 @@ class BackendAIUsageList extends LitElement {
         this.init();
       }, true);
     } else {
-      this.init();
+      this.init()
+      .then(res => {
+        this.shadowRoot.querySelector('backend-ai-chart-alt').init();
+      })
     }
   }
 
   init() {
-    window.backendaiclient.resources.user_stats()
+    return window.backendaiclient.resources.user_stats()
     .then(res => {
       const { period, template } = this;
       this.data = res;
 
-      this.collection[this.period] = {
+      this.collection[period] = {
         data: [ res.filter((e, i) => res.length - template[period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[2]})) ],
         axisTitle: {
           x: "Date",
           y: "Percentage"
         },
-        title: "CPU Usage (%)"
+        title: "CPU Usage (%)",
+        period
       }
+
+      return this.updateComplete;
     })
   }
 
   pulldownChange(e) {
     this.period = e.target.value;
+
+    if (!(this.period in this.collection)) {
+      this.collection[this.period] = {
+        data: [ this.data.filter((e, i) => this.data.length - this.template[this.period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[2]})) ],
+        axisTitle: {
+          x: "Date",
+          y: "Percentage"
+        },
+        title: "CPU Usage (%)",
+        period: this.period
+      }
+
+      this.requestUpdate();
+    }
   }
 
   render() {
@@ -200,11 +175,8 @@ class BackendAIUsageList extends LitElement {
       >
         <wl-select label="Select Period" style="width: 130px" @input=${this.pulldownChange}>
           <option value disabled selected>Select Period</option>
-          <option value="1H">1 Hour</option>
-          <option value="6H">6 Hours</option>
-          <option value="12H">12 Hours</option>
-          <!-- <option value="1D">1 Day</option>
-          <option value="2D">2 Days</option> -->
+          <option value="1D">1 Day</option>
+          <option value="1W">1 Week</option>
         </wl-select>
       </div>
       <div class="layout vertical center">
