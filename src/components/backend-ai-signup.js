@@ -272,7 +272,7 @@ class BackendAiSignup extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="signup-panel" fixed blockscrolling persistent>
+      <wl-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <div>Signup</div> 
