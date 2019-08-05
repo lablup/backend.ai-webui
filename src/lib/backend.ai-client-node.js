@@ -1793,7 +1793,7 @@ class User {
 
 class ScalingGroup {
   /**
-   * The user API wrapper.
+   * The Scaling Group API wrapper.
    *
    * @param {Client} client - the Client API wrapper object to bind
    */
@@ -1801,8 +1801,8 @@ class ScalingGroup {
     this.client = client;
   }
 
-  list() {
-    const queryString = `/scaling-groups?group=${this.client.current_group}`
+  list(group = 'default') {
+    const queryString = `/scaling-groups?group=${this.client.current_group}`;
     const rqst = this.client.newSignedRequest("GET", queryString, null);
     return this.client._wrapWithPromise(rqst);
   }
