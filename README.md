@@ -7,7 +7,7 @@ Backend.AI console focuses to
  * Provide both administration and user mode
  * Serve as app and web service
  * Versatile devices ready such as mobile, tablet and desktop.
- * Built-in proxy app
+ * Built-in websocket proxy app for apps
 
 ## User Features
  * Session management
@@ -190,7 +190,7 @@ $ docker run --name backendai-console-ssl -v $(pwd)/config.ini:/usr/share/nginx/
 
 ### Running websocket proxy with node.js
 
-This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
+This is only needed with pure ES6 dev. environment / browser. Websocket proxy is embedded in Electron and automatically starts.
 
 ```
 $ npm run wsproxy
@@ -242,7 +242,10 @@ $ make linux
 ```
 
 ### Packaging as zip files
+
 Note: this command only works on macOS, because packaging uses `ditto`, that supports both PKZIP and compressed CPIO format.
+
+Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
 
 ```
 $ make pack

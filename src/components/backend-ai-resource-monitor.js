@@ -16,10 +16,12 @@ import '@polymer/paper-item/paper-item';
 
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
-import 'weightless/icon';
+import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/expansion';
-import 'weightless/card';
+import 'weightless/icon';
+import 'weightless/label';
+import 'weightless/radio';
 import 'weightless/slider';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -108,7 +110,10 @@ class BackendAiResourceMonitor extends LitElement {
     this.cpu_request = 1;
     this.mem_request = 1;
     this.gpu_request = 0;
+    this.session_request = 1;
     this.direction = "horizontal";
+    this.scaling_groups = [];
+    this.scaling_group = '';
   }
 
   static get is() {
@@ -207,11 +212,23 @@ class BackendAiResourceMonitor extends LitElement {
       gpu_request: {
         type: Number
       },
+      session_request: {
+        type: Number
+      },
       _status: {
         type: Boolean
       },
       direction: {
         type: String
+      },
+      num_sessions: {
+        type: Number
+      },
+      scaling_group: {
+        type: String
+      },
+      scaling_groups: {
+        type: Array
       }
     }
   }
@@ -380,6 +397,11 @@ class BackendAiResourceMonitor extends LitElement {
           --button-fab-size: 70px;
           border-radius: 6px;
         }
+
+        wl-label {
+          margin-right: 10px;
+          outline: none;
+        }
       `];
   }
 
@@ -387,11 +409,10 @@ class BackendAiResourceMonitor extends LitElement {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this._initAliases();
-    this.updateResourceIndicator();
+    this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
-      this.updateResourceIndicator();
-      this._refreshResourceTemplate();
+      this.aggregateResource();
     });
     gpu_resource.addEventListener('value-change', () => {
       if (gpu_resource.value > 0) {
@@ -411,7 +432,6 @@ class BackendAiResourceMonitor extends LitElement {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
-    //this._initTabBar();
   }
 
   _initAliases() {
@@ -505,6 +525,8 @@ class BackendAiResourceMonitor extends LitElement {
       this.shadowRoot.querySelector('#notification').show();
     } else {
       this.selectDefaultLanguage();
+      let sgs = await window.backendaiclient.scalingGroup.list();
+      this.scaling_groups = sgs.scaling_groups;
       await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -546,11 +568,15 @@ class BackendAiResourceMonitor extends LitElement {
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
+    this.session_request = this.shadowRoot.querySelector('#session-resource').value;
+    this.num_sessions = this.session_request;
+    this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
 
     let config = {};
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       config['group_name'] = window.backendaiclient.current_group;
       config['domain'] = window.backendaiclient._config.domainName;
+      config['scaling_group'] = this.scaling_group;
     }
     config['cpu'] = this.cpu_request;
     if (this.gpu_mode == 'vgpu') {
@@ -583,7 +609,16 @@ class BackendAiResourceMonitor extends LitElement {
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
     this.shadowRoot.querySelector('#notification').text = 'Preparing session...';
     this.shadowRoot.querySelector('#notification').show();
-    window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
+
+    let sessions = [];
+    for (var i = 0; i < this.num_sessions; i++) {
+      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
+    }
+
+    const createSessionQueue = sessions.map(item => {
+      return this._createKernel(item.kernelName, item.sessionName, item.config);
+    });
+    Promise.all(createSessionQueue).then((res) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
@@ -599,9 +634,15 @@ class BackendAiResourceMonitor extends LitElement {
         this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
         this.shadowRoot.querySelector('#notification').show();
       }
+      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
     });
+  }
+
+  _createKernel(kernelName, sessionName, config) {
+    return window.backendaiclient.createKernel(kernelName, sessionName, config);
   }
 
   _hideSessionDialog() {
@@ -701,6 +742,26 @@ class BackendAiResourceMonitor extends LitElement {
   async _aggregateResourceUse() {
     let total_slot = {};
     return window.backendaiclient.resourcePreset.check().then((response) => {
+      if (response.presets) { // Same as refreshResourceTemplate.
+        let presets = response.presets;
+        let available_presets = [];
+        presets.forEach((item) => {
+          if (item.allocatable === true) {
+            if ('cuda.shares' in item.resource_slots) {
+              item.gpu = item.resource_slots['cuda.shares'];
+            } else if ('cuda.device' in item) {
+              item.gpu = item.resource_slots['cuda.device'];
+            } else {
+              item.gpu = 0;
+            }
+            item.cpu = item.resource_slots.cpu;
+            item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+            available_presets.push(item);
+          }
+        });
+        this.resource_templates = available_presets;
+      }
+
       let group_resource = response.scaling_group_remaining;
       ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
         if (slot in response.keypair_using && slot in group_resource) {
@@ -814,7 +875,7 @@ class BackendAiResourceMonitor extends LitElement {
     });
   }
 
-  updateResourceIndicator() {
+  aggregateResource() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse();
@@ -1237,6 +1298,16 @@ class BackendAiResourceMonitor extends LitElement {
             <wl-expansion name="resource-group" open>
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
+              <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
+                <paper-listbox selected="0" slot="dropdown-content">
+${this.scaling_groups.map(item =>
+      html`
+                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+      `
+    )
+}
+                </paper-listbox>
+              </paper-dropdown-menu>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
@@ -1296,6 +1367,13 @@ ${this.resource_templates.map(item => html`
                               pin snaps editable .step="${this.gpu_step}"
                               .min="0.0" .max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
                 <span class="caption">GPU</span>
+              </div>
+              <div class="horizontal center layout">
+                <span class="resource-type" style="width:50px;">Sessions</span>
+                <paper-slider id="session-resource" class="session"
+                              pin snaps editable step=1
+                              min=1 max=5 value="${this.session_request}"></paper-slider>
+                <span class="caption">#</span>
               </div>
             </wl-expansion>
 
