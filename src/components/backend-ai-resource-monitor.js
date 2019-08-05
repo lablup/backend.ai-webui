@@ -112,6 +112,7 @@ class BackendAiResourceMonitor extends LitElement {
     this.gpu_request = 0;
     this.session_request = 1;
     this.direction = "horizontal";
+    this.scaling_groups = [];
   }
 
   static get is() {
@@ -221,6 +222,9 @@ class BackendAiResourceMonitor extends LitElement {
       },
       num_sessions: {
         type: Number
+      },
+      scaling_groups: {
+        type: String
       }
     }
   }
@@ -425,7 +429,6 @@ class BackendAiResourceMonitor extends LitElement {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
-    //this._initTabBar();
   }
 
   _initAliases() {
@@ -519,6 +522,7 @@ class BackendAiResourceMonitor extends LitElement {
       this.shadowRoot.querySelector('#notification').show();
     } else {
       this.selectDefaultLanguage();
+      this.scaling_groups = await window.backendaiclient.scalingGroup.list();
       await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
