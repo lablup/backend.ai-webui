@@ -381,6 +381,7 @@ app.on('ready', () => {
   }, (err) => {
     if (err) console.error('Failed to register protocol')
   });
+  // Force mime-type to javascript
   protocol.registerBufferProtocol('es6', (req, cb) => {
     nfs.readFile(
       npjoin(es6Path, req.url.replace('es6://', '')),
