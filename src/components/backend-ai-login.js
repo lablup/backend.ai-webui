@@ -365,8 +365,6 @@ class BackendAiLogin extends LitElement {
       }
       let groups = response['user'].groups;
       window.backendaiclient.groups = groups.map((item) => {
-        //item = item.replace(/\'/g, '"');
-        //const parsedItem = JSON.parse(item);
         return item.name;
       });
       let role = response['user'].role;
@@ -496,7 +494,7 @@ class BackendAiLogin extends LitElement {
   render() {
     // language=HTML
     return html`
-      <app-localstorage-document key="backendaiconsole.email" data="{{email}}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.email" data="${this.email}"></app-localstorage-document>
       <app-localstorage-document id="storage" key="backendaiconsole.api_key"
                                  data="${this.api_key}"></app-localstorage-document>
       <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
