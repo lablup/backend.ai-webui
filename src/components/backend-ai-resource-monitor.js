@@ -1250,7 +1250,7 @@ class BackendAiResourceMonitor extends LitElement {
                     style="padding:0;">
         <wl-card class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Start a new session</span>
+            <span>Start new session</span>
             <div class="flex"></div>
             <paper-icon-button icon="close" class="blue close-button"
               @click="${() => this._hideSessionDialog()}">
@@ -1288,27 +1288,29 @@ class BackendAiResourceMonitor extends LitElement {
                              value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
                              error-message="4 or more characters / no whitespace">
                 </paper-input>
-                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
-                ${this.vfolders.map(item => html`
-                  <paper-item value="${item.name}">${item.name}</paper-item>
-                `)}
-                </backend-ai-dropdown-menu>
               </div>
             </fieldset>
             <wl-expansion name="resource-group" open>
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
-              <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
-                <paper-listbox selected="0" slot="dropdown-content">
+              <div class="horizontal center layout">
+                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders">
+                ${this.vfolders.map(item => html`
+                  <paper-item value="${item.name}">${item.name}</paper-item>
+                `)}
+                </backend-ai-dropdown-menu>
+                <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
+                  <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
       html`
-                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+                      <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
       `
     )
 }
-                </paper-listbox>
-              </paper-dropdown-menu>
-              <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <paper-listbox id="resource-templates" selected="0" class="horizontal center center-justified layout"
                              style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
                 <wl-button class="resource-button vertical center start layout" role="option"
@@ -1344,7 +1346,7 @@ ${this.resource_templates.map(item => html`
             </wl-expansion>
             <wl-expansion name="resource-group">
               <span slot="title">Advanced</span>
-              <span slot="description">Free resource allocation</span>
+              <span slot="description">Custom allocation</span>
               <div class="horizontal center layout">
                 <span class="resource-type" style="width:30px;">CPU</span>
                 <paper-slider id="cpu-resource" class="cpu"
