@@ -48,7 +48,6 @@ class BackendAIChartAlt extends LitElement {
     this.title = "";
     this.elevation = 1;
     this.message = "";
-    // this.collection = {};
     this.width = 300;
     this.height = 300;
     this.type = "line";
@@ -211,6 +210,7 @@ class BackendAIChartAlt extends LitElement {
       data,
       xScale,
       xAxis,
+      yAxis,
       yScale,
       line,
       rectHeight
@@ -250,7 +250,7 @@ class BackendAIChartAlt extends LitElement {
     // update y axis
     g
       .select(".y.axis")
-      .call(d3.axisLeft(yScale));
+      .call(yAxis);
 
     // update dot groups. this part does not assign classes or colors to inidividual dots
     const dotGroup = g
@@ -436,6 +436,10 @@ class BackendAIChartAlt extends LitElement {
       .domain([0, d3.max(data.map(datum => d3.max(datum, d => d.y)))])
       .range([graphHeight, 0]);
 
+    const yAxis = d3
+      .axisLeft(yScale)
+      .ticks(5);
+
     const line = d3
       .line()
       .x(d => xScale(d.x))
@@ -444,7 +448,7 @@ class BackendAIChartAlt extends LitElement {
 
     const rectWidth = 40, rectHeight = 40;
 
-    return { margin, graphWidth, graphHeight, data, xScale, xAxis, yScale, line, rectWidth, rectHeight };
+    return { margin, graphWidth, graphHeight, data, xScale, xAxis, yScale, yAxis, line, rectWidth, rectHeight };
   }
 
   init() {
@@ -455,9 +459,9 @@ class BackendAIChartAlt extends LitElement {
       data,
       xScale,
       xAxis,
+      yAxis,
       yScale,
       line,
-      rectWidth,
       rectHeight
     } = this.toolbox();
     const { colors } = this;
@@ -521,7 +525,7 @@ class BackendAIChartAlt extends LitElement {
     g
       .append("g")
       .attr("class", "y axis axisGray")
-      .call(d3.axisLeft(yScale));
+      .call(yAxis);
 
     // text label for the x axis
     g
