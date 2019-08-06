@@ -12,7 +12,6 @@ import 'weightless/select';
 
 import { BackendAiStyles } from './backend-ai-console-styles';
 import './backend-ai-chart.js'
-import './backend-ai-chart-alt.js'
 import {
   IronFlex,
   IronFlexAlignment,
@@ -132,7 +131,7 @@ class BackendAIUsageList extends LitElement {
     } else {
       this.init()
       .then(res => {
-        this.shadowRoot.querySelectorAll('backend-ai-chart-alt').forEach(chart => {chart.init()});
+        this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {chart.init()});
       })
     }
   }
@@ -199,13 +198,13 @@ class BackendAIUsageList extends LitElement {
         Object.keys(this._map).map(key =>
           html`
             <h3>${key}</h3>
-            <backend-ai-chart-alt
+            <backend-ai-chart
               width="1000"
               height="150"
               elevation="1"
               type="line"
               .collection=${this.collection[this.period][key]}
-            ></backend-ai-chart-alt>
+            ></backend-ai-chart>
           `)
       }
       </wl-card>
