@@ -35,13 +35,10 @@ const ByteConverter = {
 class BackendAIChartAlt extends LitElement {
   /**
    * @param collection              {object}   Object containing the fields listed below
-   * @param collection.data         {object}   Object containing two arrays
-   * @param collection.data.x       {array}  Array containing values of x
-   * @param collection.data.y       {array}  Array containing values of y
+   * @param collection.data         {Array}    Array containing objects of x y values
    * @param collection.axisTitle    {object}   Object containing x axis title at key "x" and y axis title at key "y"
    * @param collection.axisTitle.x  {string} X axis title
    * @param collection.axisTitle.y  {string} Y axis title
-   * @param collection.title        {string} Title of graph
    */
   constructor() {
     super();
