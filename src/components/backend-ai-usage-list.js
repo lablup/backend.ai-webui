@@ -37,6 +37,14 @@ class BackendAIUsageList extends LitElement {
         "interval": 15 / 15,
         "length": 4 * 24 * 7
       }
+    };
+    this._map = {
+      "Sessions": 1,
+      "CPU": 2,
+      "Memory": 3,
+      "GPU": 4,
+      "IO-Read": 5,
+      "IO-Write": 6
     }
   }
 
@@ -61,7 +69,8 @@ class BackendAIUsageList extends LitElement {
       period: {
         type: String
       },
-      template: Object
+      template: Object,
+      _map: Object
     }
   }
 
@@ -123,7 +132,7 @@ class BackendAIUsageList extends LitElement {
     } else {
       this.init()
       .then(res => {
-        this.shadowRoot.querySelector('backend-ai-chart-alt').init();
+        this.shadowRoot.querySelectorAll('backend-ai-chart-alt').forEach(chart => {chart.init()});
       })
     }
   }
@@ -134,15 +143,19 @@ class BackendAIUsageList extends LitElement {
       const { period, template } = this;
       this.data = res;
 
-      this.collection[period] = {
-        data: [ res.filter((e, i) => res.length - template[period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[2]})) ],
-        axisTitle: {
-          x: "Date",
-          y: "Percentage"
-        },
-        title: "CPU Usage (%)",
-        period
-      }
+      this.collection[period] = {}
+      // cpu, mem_allocated, gpu, io_read_bytes, io_write_bytes
+      Object.keys(this._map).forEach(key => {
+        this.collection[period][key] = {
+          data: [ res.filter((e, i) => res.length - template[period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[this._map[key]]})) ],
+          axisTitle: {
+            x: "Date",
+            y: "Percentage"
+          },
+          title: key,
+          period
+        }
+      })
 
       return this.updateComplete;
     })
@@ -152,15 +165,18 @@ class BackendAIUsageList extends LitElement {
     this.period = e.target.value;
 
     if (!(this.period in this.collection)) {
-      this.collection[this.period] = {
-        data: [ this.data.filter((e, i) => this.data.length - this.template[this.period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[2]})) ],
-        axisTitle: {
-          x: "Date",
-          y: "Percentage"
-        },
-        title: "CPU Usage (%)",
-        period: this.period
-      }
+      this.collection[this.period] = {}
+      Object.keys(this._map).forEach(key => {
+        this.collection[this.period][key] = {
+          data: [ res.filter((e, i) => res.length - template[this.period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[this._map[key]]})) ],
+          axisTitle: {
+            x: "Date",
+            y: "Percentage"
+          },
+          title: "CPU Usage (%)",
+          period: this.period
+        }
+      })
     }
   }
 
@@ -178,14 +194,18 @@ class BackendAIUsageList extends LitElement {
         </wl-select>
       </div>
       <div class="layout vertical center">
-        <backend-ai-chart-alt
-          title="CPU"
-          width="800"
-          height="300"
-          elevation="1"
-          type="line"
-          .collection=${this.collection[this.period]}
-        ></backend-ai-chart-alt>
+      ${
+        Object.keys(this._map).map(e =>
+          html`
+            <backend-ai-chart-alt
+              width="1000"
+              height="300"
+              elevation="1"
+              type="line"
+              .collection=${this.collection[this.period][e]}
+            ></backend-ai-chart-alt>
+          `)
+      }
       </div>
     `;
   }

@@ -107,10 +107,8 @@ class BackendAIStatisticsView extends LitElement {
     if (active === false) {
       this._status = "inactive";
 
-      this.shadowRoot.querySelectorAll(".tab-content")
-        .forEach(e => {
-          e.children[0].removeAttribute("active");
-        })
+      const activeElement = this.shadowRoot.querySelector("[active]");
+      activeElemtn.removeAttribute("active");
 
       return;
     }

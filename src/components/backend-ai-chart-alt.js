@@ -109,6 +109,10 @@ class BackendAIChartAlt extends LitElement {
           font-size: 11px;
         }
 
+        text.title {
+          font-size: 15px;
+        }
+
         .axis {
           font-size: 6px;
         }
@@ -165,11 +169,8 @@ class BackendAIChartAlt extends LitElement {
     // language=HTML
     return html`
       <div class="layout vertical center">
-        <h3>${this.title}</h3>
-        <div class="layout vertical">
-          <div>
-            <svg id="d3"></svg>
-          </div>
+        <div>
+          <svg id="d3"></svg>
         </div>
       </div>
     `;
@@ -498,6 +499,16 @@ class BackendAIChartAlt extends LitElement {
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .attr('id', 'd3-container');
 
+    g
+      .append("text")
+      .attr(
+        "transform",
+        `translate(${graphWidth / 2}, -20)`
+      )
+      .style("text-anchor", "middle")
+      .attr("class", "title")
+      .text(this.collection.title);
+
     // add x axis
     g
       .append("g")
@@ -716,9 +727,6 @@ class BackendAIChartAlt extends LitElement {
     //   .attr("width", 0);
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
 }
 
 customElements.define(BackendAIChartAlt.is, BackendAIChartAlt);
