@@ -383,10 +383,17 @@ class BackendAiResourceMonitor extends LitElement {
         }
 
         wl-expansion {
+            --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
+        }
+
+        wl-expansion span {
+            font-size: 20px;
+            font-weight: 200;
+            display: block;
         }
 
         .resources.vertical .monitor {
@@ -465,6 +472,9 @@ class BackendAiResourceMonitor extends LitElement {
 
   async _menuChanged(active) {
     await this.updateComplete;
+    if (this.active === false) {
+      return;
+    }
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
