@@ -155,10 +155,11 @@ class BackendAIChartAlt extends LitElement {
     };
   }
 
-  // updated(changedProps) {
-  //   if (changedProps.has('collection') && changedProps.get("collection") !== undefined) {
-  //   }
-  // }
+  updated(changedProps) {
+    if (changedProps.has('collection') && changedProps.get("collection") !== undefined) {
+      this.draw();
+    }
+  }
 
   render() {
     // language=HTML
