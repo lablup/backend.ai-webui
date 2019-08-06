@@ -7,7 +7,7 @@ Backend.AI console focuses to
  * Provide both administration and user mode
  * Serve as app and web service
  * Versatile devices ready such as mobile, tablet and desktop.
- * Built-in proxy app
+ * Built-in websocket proxy app for apps
 
 ## User Features
  * Session management

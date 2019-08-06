@@ -83,7 +83,7 @@ class BackendAiSessionView extends LitElement {
     this._lists = this.shadowRoot.querySelectorAll("backend-ai-session-list");
 
     document.addEventListener('backend-ai-session-list-refreshed', () => {
-      this.shadowRoot.querySelector('#running-jobs').refreshList();
+      this.shadowRoot.querySelector('#running-jobs').refreshList(true, false);
     });
   }
 

@@ -150,6 +150,7 @@ class Client {
     this.group = new Group(this);
     this.resources = new Resources(this);
     this.maintenance = new Maintenance(this);
+    this.scalingGroup = new ScalingGroup(this);
 
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
@@ -379,6 +380,9 @@ class Client {
       params['config'] = {resources: config};
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
+      }
+      if (resources['scaling_group']) {
+        params['config'].scaling_group = resources['scaling_group'];
       }
     }
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
@@ -1791,6 +1795,24 @@ class User {
     } else {
       return Promise.resolve(false);
     }
+  }
+}
+
+
+class ScalingGroup {
+  /**
+   * The Scaling Group API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(group = 'default') {
+    const queryString = `/scaling-groups?group=${this.client.current_group}`;
+    const rqst = this.client.newSignedRequest("GET", queryString, null);
+    return this.client._wrapWithPromise(rqst);
   }
 }
 
