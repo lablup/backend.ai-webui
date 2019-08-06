@@ -598,7 +598,7 @@ class BackendAIUserList extends LitElement {
                         type="button"
                         outlined
                         @click=${(e) => this._saveChanges(e)}
-                        style="width: 100%; box-sizing: border-box;"
+                        style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;"
                       >
                         <wl-icon>check</wl-icon>
                         Save Changes
