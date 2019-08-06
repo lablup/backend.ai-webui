@@ -507,6 +507,12 @@ class BackendAICredentialView extends LitElement {
       return;
     }
 
+    if (this.shadowRoot.querySelector("#id_user_password").getAttribute("invalid") !== null) {
+      this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
+      this.notification.show();
+      return;
+    }
+
     // password - confirm verification
     if (password === '') {
       this.notification.text = "Password Is Empty!";
@@ -852,6 +858,7 @@ class BackendAICredentialView extends LitElement {
                 name="user_password"
                 id="id_user_password"
                 label="Password"
+                pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
               >
               </wl-textfield>
               <wl-textfield
