@@ -164,17 +164,19 @@ class BackendAIUsageList extends LitElement {
   pulldownChange(e) {
     this.period = e.target.value;
 
-    if (!(this.period in this.collection)) {
-      this.collection[this.period] = {}
-      Object.keys(this._map).forEach(key => {
-        this.collection[this.period][key] = {
-          data: [ res.filter((e, i) => res.length - template[this.period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[this._map[key]]})) ],
+    const { data, period, collection, _map, template } = this;
+
+    if (!(period in collection)) {
+      collection[period] = {}
+      Object.keys(_map).forEach(key => {
+        collection[period][key] = {
+          data: [ data.filter((e, i) => data.length - template[period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[_map[key]]})) ],
           axisTitle: {
             x: "Date",
             y: "Percentage"
           },
-          title: "CPU Usage (%)",
-          period: this.period
+          title: key,
+          period
         }
       })
     }
