@@ -499,16 +499,6 @@ class BackendAIChartAlt extends LitElement {
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .attr('id', 'd3-container');
 
-    g
-      .append("text")
-      .attr(
-        "transform",
-        `translate(${graphWidth / 2}, -20)`
-      )
-      .style("text-anchor", "middle")
-      .attr("class", "title")
-      .text(this.collection.title);
-
     // add x axis
     g
       .append("g")
