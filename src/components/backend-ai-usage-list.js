@@ -175,7 +175,6 @@ class BackendAIUsageList extends LitElement {
             x: "Date",
             y: "Percentage"
           },
-          title: key,
           period
         }
       })
@@ -195,20 +194,21 @@ class BackendAIUsageList extends LitElement {
           <option value="1W">1 Week</option>
         </wl-select>
       </div>
-      <div class="layout vertical center">
+      <wl-card class="layout vertical center">
       ${
-        Object.keys(this._map).map(e =>
+        Object.keys(this._map).map(key =>
           html`
+            <h3>${key}</h3>
             <backend-ai-chart-alt
               width="1000"
-              height="300"
+              height="150"
               elevation="1"
               type="line"
-              .collection=${this.collection[this.period][e]}
+              .collection=${this.collection[this.period][key]}
             ></backend-ai-chart-alt>
           `)
       }
-      </div>
+      </wl-card>
     `;
   }
 }
