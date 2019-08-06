@@ -215,6 +215,7 @@ class BackendAIChartAlt extends LitElement {
       rectHeight
     } = this.toolbox();
     const { colors } = this;
+    const { axisTitle } = this.collection;
 
     // queryselector() was used for rect and focus because using d3's select function somehow doesn't work
     const g = d3.select(this.shadowRoot.querySelector("#d3-container")),
@@ -370,7 +371,7 @@ class BackendAIChartAlt extends LitElement {
               d0 = data[0][i - 1],
               d1 = data[0][i],
               closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
-        const formatTime = d3.timeFormat("%b %d, %Y");
+        const formatTime = d3.timeFormat("%b %d %H:%M");
 
         // adjust position of highlight circles
         focus
@@ -393,11 +394,11 @@ class BackendAIChartAlt extends LitElement {
 
             tooltip
               .select("text.tooltip-y")
-              .text(pd[closer].y)
+              .text(`${axisTitle.y}: ${pd[closer].y}`);
 
             tooltip
               .select("text.tooltip-x")
-              .text(formatTime(pd[closer].x));
+              .text(`${axisTitle.x}: ${formatTime(pd[closer].x)}`);
 
             const w = Math.max(
               tooltip.select("text.tooltip-x").node().getComputedTextLength(),
@@ -426,7 +427,8 @@ class BackendAIChartAlt extends LitElement {
       .range([0, graphWidth]);
 
     const xAxis = d3
-      .axisBottom(xScale);
+      .axisBottom(xScale)
+      .tickFormat(d3.timeFormat("%b %d %H:%M"));
 
     const yScale = d3
       .scaleLinear()
@@ -458,6 +460,7 @@ class BackendAIChartAlt extends LitElement {
       rectHeight
     } = this.toolbox();
     const { colors } = this;
+    const { axisTitle } = this.collection;
     /*
     <svg>
       <g transform="translate(n, n)">
@@ -644,7 +647,7 @@ class BackendAIChartAlt extends LitElement {
               d0 = data[0][i - 1],
               d1 = data[0][i],
               closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
-        const formatTime = d3.timeFormat("%b %d, %Y");
+        const formatTime = d3.timeFormat("%b %d %H:%M");
 
         // relocate the circles that highlight spots
         focus
@@ -665,12 +668,12 @@ class BackendAIChartAlt extends LitElement {
               .select(this);
 
             tooltip
-              .select("text.tooltip-x")
-              .text(formatTime(pd[closer].x));
+              .select("text.tooltip-y")
+              .text(`${axisTitle.y}: ${pd[closer].y}`);
 
             tooltip
-              .select("text.tooltip-y")
-              .text(pd[closer].y);
+              .select("text.tooltip-x")
+              .text(`${axisTitle.x}: ${formatTime(pd[closer].x)}`);
 
             const w = Math.max(
               tooltip.select("text.tooltip-x").node().getComputedTextLength(),
