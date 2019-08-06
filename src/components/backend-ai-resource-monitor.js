@@ -327,6 +327,10 @@ class BackendAiResourceMonitor extends LitElement {
           font-size: 14px;
         }
 
+        #new-session-dialog {
+            z-index: 100;
+        }
+
         wl-button.resource-button.iron-selected {
           --button-color: var(--paper-red-600);
           --button-bg: var(--paper-red-600);
