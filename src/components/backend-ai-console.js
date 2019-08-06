@@ -285,6 +285,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       this.shadowRoot.getElementById('group-select').disabled = true;
       this.shadowRoot.getElementById('group-select').label = 'No Project';
     }
+    //this.shadowRoot.getElementById('group-select')._requestRender();
   }
 
   _loadPageElement() {
@@ -407,7 +408,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
               </div>
             </app-header>
             <wl-select id="group-select" name="group-select" label="Project"
-              @input="${this.changeGroup}" .value="${this.current_group}">
+              @input="${this.changeGroup}" value="${this.current_group}">
                <option value disabled>Select Project</option>
                 ${this.groups.map(group => html`
                 <option value="${group}" ?selected="${this.current_group === group}">${group}</option>
