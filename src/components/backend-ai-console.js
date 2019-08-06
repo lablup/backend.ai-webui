@@ -408,7 +408,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             </app-header>
             <wl-select id="group-select" name="group-select" label="Project"
               @input="${this.changeGroup}" .value="${this.current_group}">
-               <option value disabled>Select group</option>
+               <option value disabled>Select Project</option>
                 ${this.groups.map(group => html`
                 <option value="${group}" ?selected="${this.current_group === group}">${group}</option>
                 `)}
@@ -497,7 +497,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.07.2.190725</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.08.1.190806</small>
               </address>
             </div>
           </app-header-layout>
