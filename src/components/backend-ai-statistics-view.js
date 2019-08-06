@@ -106,9 +106,15 @@ class BackendAIStatisticsView extends LitElement {
     await this.updateComplete;
     if (active === false) {
       this._status = "inactive";
+
+      this.shadowRoot.querySelectorAll(".tab-content")
+        .forEach(e => {
+          e.children[0].removeAttribute("active");
+        })
+
       return;
     }
-
+    this.shadowRoot.querySelector("#usage-list").setAttribute("active", true);
     this._status = "active";
   }
 
@@ -120,6 +126,11 @@ class BackendAIStatisticsView extends LitElement {
     }
 
     this.shadowRoot.querySelector('#' + tab.value + '-stat').style.display = 'block';
+
+    els.forEach(e => {
+      e.children[0].removeAttribute("active");
+    })
+    this.shadowRoot.querySelector(`#${tab.value}-list`).setAttribute("active", true);
   }
 
   render() {
@@ -134,9 +145,10 @@ class BackendAIStatisticsView extends LitElement {
           </h3>
           <div class="horizontal wrap layout">
             <div id="usage-stat" class="tab-content">
-              <backend-ai-usage-list active></backend-ai-usage-list>
+              <backend-ai-usage-list id="usage-list"></backend-ai-usage-list>
             </div>
-            <div id="insight-stat" style="display: none;">
+            <div id="insight-stat" class="tab-content" style="display: none;">
+              <div></div>
             </div>
           </div>
         </wl-card>
