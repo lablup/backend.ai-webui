@@ -181,6 +181,13 @@ class BackendAiMaintenanceView extends BackendAIPage {
     }
   }
 
+  async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+
+    }
+  }
+
   async rescan_images() {
     this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Scanning...';
     this.scanning = true;

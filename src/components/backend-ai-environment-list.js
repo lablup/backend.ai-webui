@@ -224,10 +224,12 @@ class BackendAiEnvironmentList extends BackendAIPage {
     }
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
+  async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
 
+    }
+  }
   _getImages() {
     this.shadowRoot.querySelector('#loading-indicator').show();
     window.backendaiclient.image.list().then((response) => {
