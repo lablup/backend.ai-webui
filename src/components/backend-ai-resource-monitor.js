@@ -1313,6 +1313,7 @@ class BackendAiResourceMonitor extends LitElement {
                   <paper-item value="${item.name}">${item.name}</paper-item>
                 `)}
                 </backend-ai-dropdown-menu>
+                ${window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') ? html`
                 <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
@@ -1323,6 +1324,7 @@ ${this.scaling_groups.map(item =>
 }
                   </paper-listbox>
                 </paper-dropdown-menu>
+                ` : html``}
               </div>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center center-justified layout"
                              style="width:350px; overflow:scroll;">
