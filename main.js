@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window / Local tester file
-const {app, Menu, shell, BrowserWindow, protocol } = require('electron');
+const {app, Menu, shell, BrowserWindow, protocol} = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
@@ -325,7 +325,7 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1280, 
     height: 970,
-    title: "Backend.AI Console",
+    title: "Backend.AI",
     frame: true,
     titleBarStyle: 'hiddenInset',
     webPreferences: {

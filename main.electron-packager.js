@@ -6,6 +6,7 @@ const path = require('path');
 const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron')
+process.env.liveDebugMode = false;
 
 // ES6 module loader with custom protocol
 const nfs = require('fs');
@@ -308,11 +309,15 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
+  let mainWindow = null;
+  let devtools = null;
+
   mainWindow = new BrowserWindow({
     width: 1280, 
     height: 970,
-    title: "Backend.AI Console",
+    title: "Backend.AI",
     frame: true,
+    titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,
