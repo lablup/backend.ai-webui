@@ -116,6 +116,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.direction = "horizontal";
     this.scaling_groups = [];
     this.scaling_group = '';
+    this.enable_scaling_group = false;
   }
 
   static get is() {
@@ -234,6 +235,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       notification: {
         type: Object
+      },
+      enable_scaling_group: {
+        type: Boolean
       }
     }
   }
@@ -466,9 +470,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
         this._refreshResourcePolicy();
       }, true);
     } else { // already connected
+      this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
       this._refreshResourcePolicy();
     }
   }
@@ -1301,7 +1307,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
                   <paper-item value="${item.name}">${item.name}</paper-item>
                 `)}
                 </backend-ai-dropdown-menu>
-                ${window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') ? html`
+                ${this.enable_scaling_group ? html`
                 <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
