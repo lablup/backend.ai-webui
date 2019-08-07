@@ -3,7 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from 'lit-element';
+import {css, html} from 'lit-element';
+import {BackendAIPage} from './backend-ai-page.js';
+
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -20,7 +22,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import 'weightless/card';
 import 'weightless/switch';
 
-class BackendAiSettingsView extends LitElement {
+class BackendAiSettingsView extends BackendAIPage {
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -232,24 +234,12 @@ class BackendAiSettingsView extends LitElement {
     `;
   }
 
-  shouldUpdate() {
-    return this.active;
-  }
-
   firstUpdated() {
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
     } else { // already connected
     }
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
   }
 
   _indexFrom1(index) {

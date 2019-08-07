@@ -2,7 +2,9 @@
  * Backend.AI-credential-view
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
+
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
@@ -41,7 +43,7 @@ import {
 
  @group Backend.AI Console
  */
-class BackendAICredentialView extends LitElement {
+class BackendAICredentialView extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
@@ -256,10 +258,6 @@ class BackendAICredentialView extends LitElement {
       `];
   }
 
-  shouldUpdate() {
-    return this.active;
-  }
-
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
     document.addEventListener('backend-ai-credential-refresh', () => {
@@ -292,21 +290,6 @@ class BackendAICredentialView extends LitElement {
         this.use_user_list = false;
       }
     }
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else {
-      this.active = false;
-      this._viewStateChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   async _viewStateChanged(active) {

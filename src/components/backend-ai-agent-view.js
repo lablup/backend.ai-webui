@@ -3,7 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html, LitElement} from "lit-element";
+import {html} from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
+
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
@@ -22,7 +24,7 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 
  @group Backend.AI Console
  */
-class BackendAIAgentView extends LitElement {
+class BackendAIAgentView extends BackendAIPage {
   static get properties() {
     return {
       active: {
