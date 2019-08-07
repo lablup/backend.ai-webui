@@ -3,7 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html, css, LitElement} from "lit-element";
+import {html, css} from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -22,7 +23,7 @@ import './backend-ai-environment-list';
 import './backend-ai-resource-template-list';
 import './lablup-notification.js';
 
-class BackendAiEnvironmentView extends LitElement {
+class BackendAiEnvironmentView extends BackendAIPage {
   constructor() {
     super();
     this.images = {};
@@ -87,17 +88,6 @@ class BackendAiEnvironmentView extends LitElement {
     }
   }
 
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else {
-      this.active = false;
-      this._viewStateChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -141,15 +131,14 @@ class BackendAiEnvironmentView extends LitElement {
     `;
   }
 
-  shouldUpdate() {
-    return this.active;
-  }
-
   firstUpdated() {
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+
+    }
   }
 
   disconnectedCallback() {

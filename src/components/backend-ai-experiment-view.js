@@ -3,7 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
+
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -41,7 +43,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAiExperimentView extends LitElement {
+class BackendAiExperimentView extends BackendAIPage {
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -376,25 +378,6 @@ class BackendAiExperimentView extends LitElement {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
     }
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else {
-      this.active = false;
-      this._viewStateChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   async _viewStateChanged(active) {

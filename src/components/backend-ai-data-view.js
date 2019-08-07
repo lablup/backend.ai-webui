@@ -3,8 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
 import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page.js';
 
 import '@polymer/iron-icons/social-icons';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -42,7 +43,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIData extends LitElement {
+class BackendAIData extends BackendAIPage {
   constructor() {
     super();
     // Resolve warning about scroll performance
@@ -326,17 +327,6 @@ class BackendAIData extends LitElement {
         }
 
       `];
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else {
-      this.active = false;
-      this._viewStateChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   _toggleCheckbox() {
@@ -899,14 +889,6 @@ class BackendAIData extends LitElement {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
   }
 
   _refreshFolderList() {
