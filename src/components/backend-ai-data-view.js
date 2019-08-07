@@ -3,8 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
 import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page.js';
 
 import '@polymer/iron-icons/social-icons';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -42,7 +43,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIData extends LitElement {
+class BackendAIData extends BackendAIPage {
   constructor() {
     super();
     // Resolve warning about scroll performance
@@ -327,17 +328,6 @@ class BackendAIData extends LitElement {
         }
 
       `];
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._menuChanged(true);
-    } else {
-      this.active = false;
-      this._menuChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   _toggleCheckbox() {
@@ -902,14 +892,6 @@ class BackendAIData extends LitElement {
     });
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
   _refreshFolderList() {
     this.shadowRoot.querySelector('#loading-indicator').show();
     let l = window.backendaiclient.vfolder.list();
@@ -922,7 +904,7 @@ class BackendAIData extends LitElement {
     });
   }
 
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;

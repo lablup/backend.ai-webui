@@ -3,7 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
+
 import {render} from 'lit-html';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -29,7 +31,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIResourcePolicyList extends LitElement {
+class BackendAIResourcePolicyList extends BackendAIPage {
 
   static get is() {
     return 'backend-ai-resource-policy-list';
@@ -455,18 +457,7 @@ class BackendAIResourcePolicyList extends LitElement {
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._menuChanged(true);
-    } else {
-      this.active = false;
-      this._menuChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;

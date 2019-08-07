@@ -4,13 +4,16 @@
 var BackendAIPainKiller = (()=>{
   return class {
     static relieve(msg) {
+      if (window.backendaiconsole.debug === true) {
+        return msg;
+      }
       if (this.errorMessageTable.hasOwnProperty(msg)) {
         return this.errorMessageTable[msg];
       } else {
-        // for (const regex of Object.keys(this.regexTable)) {
-        //   if (RegExp(regex).test(msg)) return this.regexTable[regex];
-        // }
-        return msg;
+        for (const regex of Object.keys(this.regexTable)) {
+          if (RegExp(regex).test(msg)) return this.regexTable[regex];
+        }
+        return 'Problem found during process.';
       }
     }
   };

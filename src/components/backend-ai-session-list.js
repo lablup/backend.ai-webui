@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
 import {render} from 'lit-html';
 
 
@@ -36,9 +36,10 @@ import './backend-ai-indicator.js';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAIPage} from './backend-ai-page.js';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAiSessionList extends LitElement {
+class BackendAiSessionList extends BackendAIPage {
   constructor() {
     super();
     this.condition = 'running';
@@ -270,30 +271,11 @@ class BackendAiSessionList extends LitElement {
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
   is_admin() {
     return window.backendaiclient.is_admin;
   }
 
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._menuChanged(true);
-    } else {
-      this.active = false;
-      this._menuChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;
