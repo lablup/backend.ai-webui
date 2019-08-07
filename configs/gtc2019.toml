@@ -7,5 +7,4 @@ connectionMode = "API"
 
 [wsproxy]
 proxyBaseURL = "http://192.168.1.101"
-proxyListenIP = "0.0.0.0"
 proxyURL = "http://192.168.1.101:5050/"
