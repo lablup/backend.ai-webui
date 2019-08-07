@@ -44,21 +44,6 @@ class BackendAIAgentView extends BackendAIPage {
   firstUpdated() {
   }
 
-  shouldUpdate() {
-    return this.active;
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else {
-      this.active = false;
-      this._viewStateChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
