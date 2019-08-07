@@ -100,6 +100,7 @@ class BackendAiLogin extends LitElement {
     this.blockMessage = '';
     this.blockType = '';
     this.config = null;
+    window.backendaiconsole = {};
   }
 
   firstUpdated() {
@@ -131,7 +132,10 @@ class BackendAiLogin extends LitElement {
       });
     }
     if (typeof config.general === "undefined" || typeof config.general.debug === "undefined" || config.general.debug === '') {
-    } else {
+      window.backendaiconsole.debug = false;
+    } else if (config.general.debug === true) {
+      window.backendaiconsole.debug = true;
+      console.log('debug flag is set to true');
     }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
