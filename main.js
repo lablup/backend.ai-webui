@@ -352,7 +352,7 @@ function createWindow () {
   }  
   devtools = new BrowserWindow();
   mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-  mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools({ mode: 'detach' });
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     mainWindow = null
