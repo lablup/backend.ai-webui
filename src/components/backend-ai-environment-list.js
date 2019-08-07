@@ -3,7 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
+
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -24,7 +26,7 @@ import 'weightless/checkbox';
 
 import './backend-ai-resource-template-list';
 
-class BackendAiEnvironmentList extends LitElement {
+class BackendAiEnvironmentList extends BackendAIPage {
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -212,10 +214,6 @@ class BackendAiEnvironmentList extends LitElement {
     `;
   }
 
-  shouldUpdate() {
-    return this.active;
-  }
-
   firstUpdated() {
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
@@ -226,15 +224,12 @@ class BackendAiEnvironmentList extends LitElement {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
 
+    }
   }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
-
   _getImages() {
     this.shadowRoot.querySelector('#loading-indicator').show();
     window.backendaiclient.image.list().then((response) => {

@@ -4,6 +4,7 @@
  */
 
 import {css, html, LitElement} from "lit-element";
+
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-input/paper-input';
@@ -100,6 +101,7 @@ class BackendAiLogin extends LitElement {
     this.blockMessage = '';
     this.blockType = '';
     this.config = null;
+    window.backendaiconsole = {};
   }
 
   firstUpdated() {
@@ -129,6 +131,12 @@ class BackendAiLogin extends LitElement {
           this.notification.show();
         }
       });
+    }
+    if (typeof config.general === "undefined" || typeof config.general.debug === "undefined" || config.general.debug === '') {
+      window.backendaiconsole.debug = false;
+    } else if (config.general.debug === true) {
+      window.backendaiconsole.debug = true;
+      console.log('debug flag is set to true');
     }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
