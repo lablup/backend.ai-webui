@@ -3,7 +3,9 @@
 
  @group Backend.AI Console
  */
-export class backendAIPage extends baseElement {
+import { LitElement } from 'lit-element';
+
+export class backendAIPage extends LitElement {
   constructor() {
     super();
   }
