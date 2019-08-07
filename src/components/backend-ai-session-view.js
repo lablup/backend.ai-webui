@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
 
 import './backend-ai-resource-monitor.js';
 import './backend-ai-session-list.js';
@@ -13,6 +13,7 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 
 import './lablup-notification.js';
+import {BackendAIPage} from './backend-ai-page.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -21,7 +22,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAiSessionView extends LitElement {
+class BackendAiSessionView extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
@@ -87,26 +88,7 @@ class BackendAiSessionView extends LitElement {
     });
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._menuChanged(true);
-    } else {
-      this.active = false;
-      this._menuChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       this._status = 'inactive';
@@ -116,9 +98,6 @@ class BackendAiSessionView extends LitElement {
       return;
     }
     this.shadowRoot.querySelector('#running-jobs').setAttribute('active', true);
-    //for (var x = 0; x < this._lists.length; x++) {
-    //  this._lists[x].setAttribute('active', true);
-    //}
     this._status = 'active';
   }
 

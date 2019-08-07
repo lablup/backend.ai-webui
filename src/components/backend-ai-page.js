@@ -3,28 +3,33 @@
 
  @group Backend.AI Console
  */
-export const backendAIPage = (state = false) => (baseElement) => class extends baseElement {
+import { LitElement } from 'lit-element';
+
+export class BackendAIPage extends LitElement {
   constructor() {
     super();
-    if (state === false) {
-      this.active = false;
-    } else {
-      this.active = true;
-    }
   }
 
   shouldUpdate() {
     return this.active;
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+  }
+
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this.active = true;
-      this._menuChanged(true);
+      this._viewStateChanged(true);
     } else {
       this.active = false;
-      this._menuChanged(false);
+      this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
-};
+}

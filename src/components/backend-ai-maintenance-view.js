@@ -3,7 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
+
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -22,7 +24,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
 import './backend-ai-indicator.js';
 
-class BackendAiMaintenanceView extends LitElement {
+class BackendAiMaintenanceView extends BackendAIPage {
   constructor() {
     super();
     setPassiveTouchGestures(true);
@@ -168,10 +170,6 @@ class BackendAiMaintenanceView extends LitElement {
     `;
   }
 
-  shouldUpdate() {
-    return this.active;
-  }
-
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
     this.indicator = this.shadowRoot.querySelector('#indicator');
@@ -183,12 +181,11 @@ class BackendAiMaintenanceView extends LitElement {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
+  async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
+    }
   }
 
   async rescan_images() {
