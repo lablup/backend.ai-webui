@@ -3,7 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import { css, html, LitElement } from "lit-element";
+import { css, html } from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
 
 import 'weightless/card';
 import 'weightless/tab-group';
@@ -19,7 +20,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 
-class BackendAIStatisticsView extends LitElement {
+class BackendAIStatisticsView extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
@@ -82,27 +83,7 @@ class BackendAIStatisticsView extends LitElement {
     ]
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name === "active" && newval !== null) {
-      this.active = true;
-      this._menuChanged(true);
-    } else {
-      this.active = false;
-      this._menuChanged(false);
-    }
-
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       this._status = "inactive";
