@@ -62,6 +62,9 @@ class BackendAICredentialList extends BackendAIPage {
       },
       notification: {
         type: Object
+      },
+      indicator: {
+        type: Object
       }
     };
   }
@@ -85,6 +88,7 @@ class BackendAICredentialList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
@@ -116,7 +120,7 @@ class BackendAICredentialList extends BackendAIPage {
         is_active = false;
     }
     return window.backendaiclient.resourcePolicy.get().then((response) => {
-      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.indicator.hide();
       let rp = response.keypair_resource_policies;
       this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
     }).then(() => {

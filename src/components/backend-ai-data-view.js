@@ -120,6 +120,9 @@ class BackendAIData extends BackendAIPage {
       },
       notification: {
         type: Object
+      },
+      indicator: {
+        type: Object
       }
     };
   }
@@ -892,14 +895,15 @@ class BackendAIData extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   _refreshFolderList() {
-    this.shadowRoot.querySelector('#loading-indicator').show();
+    this.indicator.show();
     let l = window.backendaiclient.vfolder.list();
     l.then((value) => {
-      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.indicator.hide();
       this.folders = value;
     });
     let vhosts = window.backendaiclient.vfolder.list_hosts();
