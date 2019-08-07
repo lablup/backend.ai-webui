@@ -14,6 +14,14 @@ export class BackendAIPage extends LitElement {
     return this.active;
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+  }
+
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this.active = true;

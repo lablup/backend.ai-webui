@@ -3,8 +3,9 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
 import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page.js';
 
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -22,8 +23,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
-
-class BackendAIAgentList extends LitElement {
+class BackendAIAgentList extends BackendAIPage {
   constructor() {
     super();
     this.condition = 'running';

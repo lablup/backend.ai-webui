@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
 
 import './backend-ai-resource-monitor.js';
 import './backend-ai-session-list.js';
@@ -14,7 +14,6 @@ import 'weightless/tab-group';
 
 import './lablup-notification.js';
 import {BackendAIPage} from './backend-ai-page.js';
-
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -99,9 +98,6 @@ class BackendAiSessionView extends BackendAIPage {
       return;
     }
     this.shadowRoot.querySelector('#running-jobs').setAttribute('active', true);
-    //for (var x = 0; x < this._lists.length; x++) {
-    //  this._lists[x].setAttribute('active', true);
-    //}
     this._status = 'active';
   }
 

@@ -3,8 +3,10 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
 import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page.js';
+
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -29,7 +31,7 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAICredentialList extends LitElement {
+class BackendAICredentialList extends BackendAIPage {
 
   static get is() {
     return 'backend-ai-credential-list';
@@ -84,25 +86,6 @@ class BackendAICredentialList extends LitElement {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else {
-      this.active = false;
-      this._viewStateChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   async _viewStateChanged(active) {
