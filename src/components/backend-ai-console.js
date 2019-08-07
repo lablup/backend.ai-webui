@@ -505,7 +505,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
         </app-drawer>
         <app-header-layout main id="main-panel" style="z-index:0;">
           <app-header slot="header" id="main-toolbar" fixed shadow class="draggable" effects="waterfall resize-title" 
-            condenses style="height: 96px; z-index:0;" effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
+            condenses style="height: 96px; z-index:1;" effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
             <app-toolbar sticky style="height:48px;" class="draggable bar">
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <span condensed-title>${this.menuTitle}</span>
