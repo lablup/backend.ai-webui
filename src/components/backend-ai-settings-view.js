@@ -242,6 +242,13 @@ class BackendAiSettingsView extends BackendAIPage {
     }
   }
 
+  async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+
+    }
+  }
+
   _indexFrom1(index) {
     return index + 1;
   }
