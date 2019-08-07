@@ -329,17 +329,6 @@ class BackendAIData extends BackendAIPage {
       `];
   }
 
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else {
-      this.active = false;
-      this._viewStateChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
   _toggleCheckbox() {
     let buttons = this.shadowRoot.querySelectorAll(".multiple-action-buttons");
     if (this.fileListGrid.selectedItems.length > 0) {
@@ -900,14 +889,6 @@ class BackendAIData extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
   }
 
   _refreshFolderList() {
