@@ -106,6 +106,9 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       },
       vfolder_count_metric: {
         type: Array
+      },
+      notification: {
+        type: Object
       }
     };
   }
@@ -609,7 +612,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
     .then(res => {
       this.shadowRoot.querySelector('#create-preset-dialog').hide();
       if (res.create_resource_preset.ok) {
-        this.shadowRoot.querySelector('#notification').text = "Resource preset successfully created";
+        this.notification.text = "Resource preset successfully created";
         this.refresh();
 
         // reset values
@@ -619,9 +622,9 @@ class BackendAIResourceTemplateList extends BackendAIPage {
         this.shadowRoot.querySelector('#create-gpu-resource').value   = 0;
         this.shadowRoot.querySelector('#create-fgpu-resource').value  = 0;
       } else {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(res.create_resource_preset.msg);
+        this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
       }
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.show();
     })
   }
 }

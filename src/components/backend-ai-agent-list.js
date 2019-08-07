@@ -48,6 +48,9 @@ class BackendAIAgentList extends BackendAIPage {
       },
       agents: {
         type: Array
+      },
+      notification: {
+        type: Object
       }
     };
   }
@@ -124,6 +127,7 @@ class BackendAIAgentList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   connectedCallback() {
@@ -217,8 +221,8 @@ class BackendAIAgentList extends BackendAIPage {
       }
     }).catch(err => {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
   }

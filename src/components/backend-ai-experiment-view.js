@@ -183,6 +183,9 @@ class BackendAiExperimentView extends BackendAIPage {
       },
       _status: {
         type: Boolean
+      },
+      notification: {
+        type: Object
       }
     }
   }
@@ -333,6 +336,7 @@ class BackendAiExperimentView extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
     this.shadowRoot.querySelector('#launch-session').addEventListener('tap', this._launchSessionDialog.bind(this));
     this.shadowRoot.querySelector('#launch-button').addEventListener('tap', this._newSession.bind(this));
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
@@ -427,11 +431,11 @@ class BackendAiExperimentView extends BackendAIPage {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show();
       }
     });
   }
@@ -445,8 +449,8 @@ class BackendAiExperimentView extends BackendAIPage {
 
   _launchSessionDialog() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      this.shadowRoot.querySelector('#notification').text = 'Please wait while initlaizating...';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = 'Please wait while initlaizating...';
+      this.notification.show();
     } else {
       this.selectDefaultLanguage();
       this.updateMetric();
@@ -522,8 +526,8 @@ class BackendAiExperimentView extends BackendAIPage {
     const kernelName = this._generateKernelIndex(kernel, version);
     this.shadowRoot.querySelector('#launch-button').disabled = true;
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
-    this.shadowRoot.querySelector('#notification').text = 'Preparing session...';
-    this.shadowRoot.querySelector('#notification').show();
+    this.notification.text = 'Preparing session...';
+    this.notification.show();
     window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
       this.shadowRoot.querySelector('#running-jobs').refreshList();
       this.shadowRoot.querySelector('#new-session-dialog').hide();
@@ -532,11 +536,11 @@ class BackendAiExperimentView extends BackendAIPage {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show();
       }
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
