@@ -172,6 +172,11 @@ class BackendAiSignup extends LitElement {
   _signup() {
     let password1 = this.shadowRoot.querySelector('#id_password1').value;
     let password2 = this.shadowRoot.querySelector('#id_password2').value;
+    if (this.shadowRoot.querySelector("#id_password1").getAttribute("invalid") !== null) {
+      this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
+      this.notification.show();
+      return;
+    }
     if (password1 !== password2) {
       this.notification.text = 'Password mismatch. Please check your password.';
       this.notification.show();
@@ -300,9 +305,13 @@ class BackendAiSignup extends LitElement {
               <paper-input type="text" name="company_name" id="id_company_name" maxlength="30" disabled
                            label="Company" .value="${this.company_name}"></paper-input>
               <paper-input type="password" name="password1" id="id_password1"
-                           label="Password" value=""></paper-input>
+                           label="Password" 
+                           pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                           value=""></paper-input>
               <paper-input type="password" name="password2" id="id_password2"
-                           label="Password (again)" value=""></paper-input>
+                           label="Password (again)" 
+                           pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                           value=""></paper-input>
               <br/><br/>
               <wl-button class="full" id="signup-button" disabled outlined type="button"
                           @click="${(e) => this._signup(e)}">
