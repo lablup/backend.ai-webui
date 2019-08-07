@@ -218,6 +218,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
@@ -225,7 +226,6 @@ class BackendAiEnvironmentList extends BackendAIPage {
     } else { // already connected
       this._getImages();
     }
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
   }
 
   async _viewStateChanged(active) {
