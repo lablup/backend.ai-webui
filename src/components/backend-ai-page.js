@@ -3,14 +3,9 @@
 
  @group Backend.AI Console
  */
-export const backendAIPage = (state = false) => (baseElement) => class extends baseElement {
+export class backendAIPage extends baseElement {
   constructor() {
     super();
-    if (state === false) {
-      this.active = false;
-    } else {
-      this.active = true;
-    }
   }
 
   shouldUpdate() {
@@ -20,11 +15,11 @@ export const backendAIPage = (state = false) => (baseElement) => class extends b
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this.active = true;
-      this._menuChanged(true);
+      this._viewStateChanged(true);
     } else {
       this.active = false;
-      this._menuChanged(false);
+      this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
-};
+}

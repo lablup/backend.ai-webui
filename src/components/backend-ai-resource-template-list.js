@@ -426,15 +426,15 @@ class BackendAIResourceTemplateList extends LitElement {
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this.active = true;
-      this._menuChanged(true);
+      this._viewStateChanged(true);
     } else {
       this.active = false;
-      this._menuChanged(false);
+      this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
 
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;

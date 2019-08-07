@@ -271,7 +271,7 @@ class BackendAICredentialView extends LitElement {
       element.addEventListener("keydown", event => {
         event.stopPropagation();
       }, true);
-    })
+    });
 
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -301,15 +301,15 @@ class BackendAICredentialView extends LitElement {
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this.active = true;
-      this._menuChanged(true);
+      this._viewStateChanged(true);
     } else {
       this.active = false;
-      this._menuChanged(false);
+      this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
 
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       this.shadowRoot.querySelector('#resource-policy-list').active = false;
