@@ -4,6 +4,7 @@
  */
 
 import {css, html, LitElement} from "lit-element";
+
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-input/paper-input';
