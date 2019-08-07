@@ -591,6 +591,7 @@ class BackendAIChartAlt extends LitElement {
           .attr("r", 4);
       })
 
+    // vertical line for tooltip
     focus
       .append("line")
       .attr("class", "y")
@@ -690,32 +691,6 @@ class BackendAIChartAlt extends LitElement {
 
       })
 
-    // tmp transition code
-    // g
-    //   .append("rect")
-    //   .attr("x", -graphWidth)
-    //   .attr("y", -graphHeight)
-    //   .attr("width", graphWidth)
-    //   .attr("height", graphHeight)
-    //   .attr("id", "curtain")
-    //   .attr('transform', 'rotate(180)')
-    //   .style("fill", "#ffffff");
-
-    // g
-    //   .transition()
-    //   .delay(750)
-    //   .duration(3000)
-    //   .on("end", () => {
-    //     dots
-    //       .enter()
-    //       .append("circle")
-    //       .attr("class", "dot")
-    //       .attr("cx", d => xScale(d.x))
-    //       .attr("cy", d => yScale(d.y))
-    //       .attr("r", 3);
-    //   })
-    //   .select("#curtain")
-    //   .attr("width", 0);
   }
 
 }
