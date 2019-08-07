@@ -97,15 +97,15 @@ class BackendAICredentialList extends LitElement {
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this.active = true;
-      this._menuChanged(true);
+      this._viewStateChanged(true);
     } else {
       this.active = false;
-      this._menuChanged(false);
+      this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
 
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -368,7 +368,7 @@ class BackendAICredentialList extends LitElement {
     const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
     const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
 
-    let input = {}
+    let input = {};
     if (resource_policy !== this.keypairInfo.resource_policy) {
       input = {...input, resource_policy};
     }
@@ -377,7 +377,7 @@ class BackendAICredentialList extends LitElement {
     }
 
     if (Object.entries(input).length === 0) {
-      this.notification.text = "No changes were made"
+      this.notification.text = "No changes were made";
       this.notification.show();
     } else {
       window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
