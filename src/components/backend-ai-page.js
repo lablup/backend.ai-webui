@@ -5,13 +5,21 @@
  */
 import { LitElement } from 'lit-element';
 
-export class backendAIPage extends LitElement {
+export class BackendAIPage extends LitElement {
   constructor() {
     super();
   }
 
   shouldUpdate() {
     return this.active;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
   }
 
   attributeChangedCallback(name, oldval, newval) {
