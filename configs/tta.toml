@@ -3,8 +3,7 @@ apiEndpoint = "https://tta-test.onprem.backend.ai:8081"
 apiEndpointText = "TTA Test site / Backend.AI Enterprise"
 defaultSessionEnvironment = "index.docker.io/lablup/ngc-tensorflow"
 siteDescription = "on TTA"
-connectionMode = "API"
+connectionMode = "SESSION"
 
 [wsproxy]
-proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
-#proxyBaseURL =
+proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
