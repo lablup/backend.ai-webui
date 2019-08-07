@@ -91,6 +91,12 @@ class BackendAIUserList extends BackendAIPage {
       },
       editMode: {
         type: Boolean
+      },
+      notification: {
+        type: Object
+      },
+      indicator: {
+        type: Object
       }
     };
   }
@@ -200,6 +206,7 @@ class BackendAIUserList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
@@ -230,7 +237,7 @@ class BackendAIUserList extends BackendAIPage {
       default:
         is_active = false;
     }
-    this.shadowRoot.querySelector('#loading-indicator').hide();
+    this.indicator.hide();
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return window.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
@@ -243,8 +250,8 @@ class BackendAIUserList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
   }
@@ -277,8 +284,8 @@ class BackendAIUserList extends BackendAIPage {
       this.shadowRoot.querySelector('#user-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     }
   }
@@ -307,8 +314,8 @@ class BackendAIUserList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
   }
@@ -339,8 +346,8 @@ class BackendAIUserList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
   }
