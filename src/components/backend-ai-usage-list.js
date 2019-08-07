@@ -37,13 +37,14 @@ class BackendAIUsageList extends LitElement {
         "length": 4 * 24 * 7
       }
     };
+
     this._map = {
-      "Sessions": 1,
-      "CPU": 2,
-      "Memory": 3,
-      "GPU": 4,
-      "IO-Read": 5,
-      "IO-Write": 6
+      "num_sessions": "Sessions",
+      "cpu_allocated": "CPU",
+      "mem_allocated": "Memory",
+      "gpu_allocated": "GPU",
+      "io_read_bytes": "IO-Read",
+      "io_write_bytes": "IO-Write"
     }
   }
 
@@ -142,19 +143,23 @@ class BackendAIUsageList extends LitElement {
       const { period, template } = this;
       this.data = res;
 
-      this.collection[period] = {}
-      // cpu, mem_allocated, gpu, io_read_bytes, io_write_bytes
+      console.log(this._map["num_sessions"]);
+      this.collection[period] = {};
       Object.keys(this._map).forEach(key => {
+        console.log(this._map[key]);
         this.collection[period][key] = {
-          data: [ res.filter((e, i) => res.length - template[period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[this._map[key]]})) ],
+          data: [
+            res
+              .filter((e, i) => res.length - template[period].length <= i)
+              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]}))
+          ],
           axisTitle: {
             x: "Date",
-            y: "Percentage"
+            y: this._map[key]
           },
-          title: key,
           period
         }
-      })
+      });
 
       return this.updateComplete;
     })
@@ -169,10 +174,14 @@ class BackendAIUsageList extends LitElement {
       collection[period] = {}
       Object.keys(_map).forEach(key => {
         collection[period][key] = {
-          data: [ data.filter((e, i) => data.length - template[period].length <= i).map(e => ({x: new Date(1000 * e[0]), y: e[_map[key]]})) ],
+          data: [
+            data
+              .filter((e, i) => data.length - template[period].length <= i)
+              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]}))
+          ],
           axisTitle: {
             x: "Date",
-            y: "Percentage"
+            y: _map[key]
           },
           period
         }
@@ -197,7 +206,7 @@ class BackendAIUsageList extends LitElement {
       ${
         Object.keys(this._map).map(key =>
           html`
-            <h3>${key}</h3>
+            <h3>${this._map[key]}</h3>
             <backend-ai-chart
               width="1000"
               height="150"
