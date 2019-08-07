@@ -231,6 +231,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       scaling_groups: {
         type: Array
+      },
+      notification: {
+        type: Object
       }
     }
   }
@@ -421,6 +424,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
+    this.notification = this.shadowRoot.querySelector('#notification');
+
     this._initAliases();
     this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -500,11 +505,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show();
       }
     });
   }
@@ -518,8 +523,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   async _launchSessionDialog() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      this.shadowRoot.querySelector('#notification').text = 'Please wait while initializing...';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = 'Please wait while initializing...';
+      this.notification.show();
     } else {
       this.selectDefaultLanguage();
       let sgs = await window.backendaiclient.scalingGroup.list();
@@ -604,8 +609,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
     const kernelName = this._generateKernelIndex(kernel, version);
     this.shadowRoot.querySelector('#launch-button').disabled = true;
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
-    this.shadowRoot.querySelector('#notification').text = 'Preparing session...';
-    this.shadowRoot.querySelector('#notification').show();
+    this.notification.text = 'Preparing session...';
+    this.notification.show();
 
     let sessions = [];
     for (var i = 0; i < this.num_sessions; i++) {
@@ -625,11 +630,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       } else if (err && err.title) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.title);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show();
       }
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
@@ -1106,8 +1111,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this._updateEnvironment();
     }).catch((err) => {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
   }
