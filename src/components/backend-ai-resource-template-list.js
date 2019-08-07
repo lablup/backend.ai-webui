@@ -3,7 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, html} from "lit-element";
+import {BackendAIPage} from './backend-ai-page.js';
+
 import {render} from 'lit-html';
 
 import '@polymer/iron-icon/iron-icon';
@@ -28,7 +30,7 @@ import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIResourceTemplateList extends LitElement {
+class BackendAIResourceTemplateList extends BackendAIPage {
 
   constructor() {
     super();
@@ -419,22 +421,7 @@ class BackendAIResourceTemplateList extends LitElement {
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._menuChanged(true);
-    } else {
-      this.active = false;
-      this._menuChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
-  async _menuChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;
