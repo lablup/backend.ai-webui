@@ -13,6 +13,8 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 
 import './lablup-notification.js';
+import {BackendAIPage} from './backend-ai-page.js';
+
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -21,7 +23,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAiSessionView extends LitElement {
+class BackendAiSessionView extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
@@ -85,25 +87,6 @@ class BackendAiSessionView extends LitElement {
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.shadowRoot.querySelector('#running-jobs').refreshList(true, false);
     });
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name == 'active' && newval !== null) {
-      this.active = true;
-      this._viewStateChanged(true);
-    } else {
-      this.active = false;
-      this._viewStateChanged(false);
-    }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   async _viewStateChanged(active) {
