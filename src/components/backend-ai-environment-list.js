@@ -79,6 +79,9 @@ class BackendAiEnvironmentList extends BackendAIPage {
       images: {
         type: Object,
         hasChanged: () => true
+      },
+      indicator: {
+        type: Object
       }
     }
   }
@@ -215,6 +218,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
@@ -231,7 +235,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
     }
   }
   _getImages() {
-    this.shadowRoot.querySelector('#loading-indicator').show();
+    this.indicator.show();
     window.backendaiclient.image.list().then((response) => {
       let images = response.images;
       images.forEach((image) => {
@@ -282,7 +286,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
       //let sorted_images = {};
       //image_keys.sort();
       this.images = images;
-      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.indicator.hide();
 
     });
   }

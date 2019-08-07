@@ -118,6 +118,12 @@ class BackendAIData extends BackendAIPage {
       },
       deleteFileDialog: {
         type: Object
+      },
+      notification: {
+        type: Object
+      },
+      indicator: {
+        type: Object
       }
     };
   }
@@ -710,11 +716,11 @@ class BackendAIData extends BackendAIPage {
     const promiseArray = inputList.map(input => window.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then(res => {
       if (res.length === 0) {
-        this.shadowRoot.querySelector('#notification').text = 'No changes made.';
+        this.notification.text = 'No changes made.';
       } else {
-        this.shadowRoot.querySelector('#notification').text = 'Permission successfully modified.';
+        this.notification.text = 'Permission successfully modified.';
       }
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.show();
       this.shadowRoot.querySelector('#modify-permission-dialog').hide();
     })
   }
@@ -890,13 +896,15 @@ class BackendAIData extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   _refreshFolderList() {
-    this.shadowRoot.querySelector('#loading-indicator').show();
+    this.indicator.show();
     let l = window.backendaiclient.vfolder.list();
     l.then((value) => {
-      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.indicator.hide();
       this.folders = value;
     });
     let vhosts = window.backendaiclient.vfolder.list_hosts();
@@ -971,14 +979,14 @@ class BackendAIData extends BackendAIPage {
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
     let job = window.backendaiclient.vfolder.create(name, host);
     job.then((value) => {
-      this.shadowRoot.querySelector('#notification').text = 'Folder is successfully created.';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = 'Folder is successfully created.';
+      this.notification.show();
       this._refreshFolderList();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
     this.closeDialog('add-folder-dialog');
@@ -1000,8 +1008,8 @@ class BackendAIData extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
   }
@@ -1015,8 +1023,8 @@ class BackendAIData extends BackendAIPage {
   _deleteFolderWithCheck() {
     let typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
     if (typedDeleteFolderName != this.deleteFolderId) {
-      this.shadowRoot.querySelector('#notification').text = 'Folder name mismatched. Check your typing.';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = 'Folder name mismatched. Check your typing.';
+      this.notification.show();
       return;
     }
     this.closeDialog('delete-folder-dialog');
@@ -1026,14 +1034,14 @@ class BackendAIData extends BackendAIPage {
   _deleteFolder(folderId) {
     let job = window.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
-      this.shadowRoot.querySelector('#notification').text = 'Folder is successfully deleted.';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = 'Folder is successfully deleted.';
+      this.notification.show();
       this._refreshFolderList();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
   }
@@ -1235,8 +1243,8 @@ class BackendAIData extends BackendAIPage {
       });
       let job = window.backendaiclient.vfolder.delete_files(filenames, true, this.explorer.id);
       job.then(res => {
-        this.shadowRoot.querySelector('#notification').text = 'Files deleted.';
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = 'Files deleted.';
+        this.notification.show();
         this._clearExplorer();
         this.deleteFileDialog.hide();
       });
@@ -1244,8 +1252,8 @@ class BackendAIData extends BackendAIPage {
       let path = this.explorer.breadcrumb.concat(fn).join("/");
       let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
       job.then(res => {
-        this.shadowRoot.querySelector('#notification').text = 'File deleted.';
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = 'File deleted.';
+        this.notification.show();
         this._clearExplorer();
         this.deleteFileDialog.hide();
       });
@@ -1257,8 +1265,8 @@ class BackendAIData extends BackendAIPage {
     let path = this.explorer.breadcrumb.concat(fn).join("/");
     let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
     job.then(res => {
-      this.shadowRoot.querySelector('#notification').text = 'File deleted.';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = 'File deleted.';
+      this.notification.show();
       this._clearExplorer();
     });
   }
@@ -1304,8 +1312,8 @@ class BackendAIData extends BackendAIPage {
     const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
 
     if (emailArray.length === 0) {
-      this.shadowRoot.querySelector('#notification').text = 'No valid emails were entered';
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = 'No valid emails were entered';
+      this.notification.show();
       this.shadowRoot.querySelector('#share-folder-dialog').hide();
       for (let element of emailHtmlCollection) {
         element.value = '';
@@ -1321,8 +1329,8 @@ class BackendAIData extends BackendAIPage {
         } else {
           msg = "No one was invited";
         }
-        this.shadowRoot.querySelector('#notification').text = msg;
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = msg;
+        this.notification.show();
         this.shadowRoot.querySelector('#share-folder-dialog').hide();
         for (let element of emailHtmlCollection) {
           element.value = '';

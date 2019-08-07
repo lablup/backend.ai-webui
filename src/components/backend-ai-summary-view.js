@@ -85,6 +85,12 @@ class BackendAISummary extends BackendAIPage {
       fgpu_used: {type: Number},
       invitations: {
         type: Array
+      },
+      indicator: {
+        type: Object
+      },
+      notification: {
+        type: Object
       }
     };
   }
@@ -161,6 +167,8 @@ class BackendAISummary extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.notification = this.shadowRoot.querySelector('#notification');
   }
 
   _refreshHealthPanel() {
@@ -171,7 +179,7 @@ class BackendAISummary extends BackendAIPage {
   }
 
   _refreshSessionInformation() {
-    this.shadowRoot.querySelector('#loading-indicator').show();
+    this.indicator.show();
     let status = 'RUNNING';
     switch (this.condition) {
       case 'running':
@@ -186,7 +194,7 @@ class BackendAISummary extends BackendAIPage {
     }
     let fields = ["sess_id"];
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
-      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.indicator.hide();
 
       this.jobs = response;
       this.sessions = response.compute_sessions;
@@ -198,8 +206,8 @@ class BackendAISummary extends BackendAIPage {
     }).catch(err => {
       this.jobs = [];
       this.sessions = [];
-      this.shadowRoot.querySelector('#notification').text = PainKiller.relieve('Couldn\'t connect to manager.');
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
+      this.notification.show();
     });
   }
 
@@ -231,10 +239,10 @@ class BackendAISummary extends BackendAIPage {
       'mem_cur_bytes',
       'occupied_slots',
       'available_slots'];
-    this.shadowRoot.querySelector('#loading-indicator').show();
+    this.indicator.show();
 
     window.backendaiclient.resources.totalResourceInformation().then((response) => {
-      this.shadowRoot.querySelector('#loading-indicator').hide();
+      this.indicator.hide();
       this.resources = response;
       this._sync_resource_values();
       if (this.active == true) {
@@ -244,8 +252,8 @@ class BackendAISummary extends BackendAIPage {
       }
     }).catch(err => {
       if (err && err.message) {
-        this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-        this.shadowRoot.querySelector('#notification').show();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
       }
     });
   }
@@ -370,21 +378,21 @@ class BackendAISummary extends BackendAIPage {
   _acceptInvitation(invitation) {
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
     .then(response => {
-      this.shadowRoot.querySelector('#notification').text = response.msg;
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = response.msg;
+      this.notification.show();
       this._refreshInvitations();
     })
     .catch(err => {
-      this.shadowRoot.querySelector('#notification').text = PainKiller.relieve(err.message);
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = PainKiller.relieve(err.message);
+      this.notification.show();
     })
   }
 
   _deleteInvitation(invitation) {
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
     .then(res => {
-      this.shadowRoot.querySelector('#notification').text = res.msg;
-      this.shadowRoot.querySelector('#notification').show();
+      this.notification.text = res.msg;
+      this.notification.show();
       this._refreshInvitations();
     })
   }
