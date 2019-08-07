@@ -130,6 +130,9 @@ class BackendAiLogin extends LitElement {
         }
       });
     }
+    if (typeof config.general === "undefined" || typeof config.general.debug === "undefined" || config.general.debug === '') {
+    } else {
+    }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
