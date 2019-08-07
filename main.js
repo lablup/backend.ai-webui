@@ -319,6 +319,9 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
+  let mainWindow = null;
+  let devtools = null;
+
   mainWindow = new BrowserWindow({
     width: 1280, 
     height: 970,
@@ -347,12 +350,13 @@ function createWindow () {
       slashes: true
     }));
   }  
-
+  devtools = new BrowserWindow();
+  mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   mainWindow.webContents.openDevTools();
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     mainWindow = null
-  })
+  });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     if (frameName === '_blank') {
@@ -369,7 +373,7 @@ function createWindow () {
       })
       event.newGuest = new BrowserWindow(options)
     }
-  })
+  });
 }
 
 app.on('ready', () => {
