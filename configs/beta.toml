@@ -6,5 +6,4 @@ connectionMode = "API"
 
 [wsproxy]
 #proxyBaseURL =
-proxyListenIP = "0.0.0.0"
 proxyURL = "https://beta-web.backend.ai/proxy/"

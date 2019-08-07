@@ -32,7 +32,6 @@ import 'weightless/label';
 import 'weightless/select';
 import 'weightless/tab';
 import 'weightless/title';
-import 'weightless/text';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 
@@ -693,7 +692,7 @@ class BackendAIData extends BackendAIPage {
       <wl-dialog id="delete-file-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
-            <wl-text>This action cannot be undone. Do you want to proceed?</wl-text>
+            <p>This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
             <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
