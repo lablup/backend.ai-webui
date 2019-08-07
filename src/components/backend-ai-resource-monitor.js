@@ -1320,7 +1320,7 @@ ${this.scaling_groups.map(item =>
                 </paper-dropdown-menu>
                 ` : html``}
               </div>
-              <paper-listbox id="resource-templates" selected="0" class="horizontal center center-justified layout"
+              <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
                 <wl-button class="resource-button vertical center start layout" role="option"
