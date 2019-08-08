@@ -153,10 +153,6 @@ class BackendAIData extends BackendAIPage {
           font-size: 10px;
         }
 
-        wl-button {
-          height: 22px;
-        }
-
         .folder-action-buttons wl-button {
           margin-right: 10px;
         }
