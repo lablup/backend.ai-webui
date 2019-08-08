@@ -392,7 +392,7 @@ class BackendAIChartAlt extends LitElement {
 
             tooltip
               .select("text.tooltip-y")
-              .text(`${axisTitle.y}: ${pd[closer].y}`);
+              .text(`${axisTitle.y}: ${Math.floor(100 * pd[closer].y) / 100}`);
 
             tooltip
               .select("text.tooltip-x")
@@ -672,7 +672,7 @@ class BackendAIChartAlt extends LitElement {
 
             tooltip
               .select("text.tooltip-y")
-              .text(`${axisTitle.y}: ${pd[closer].y}`);
+              .text(`${axisTitle.y}: ${Math.floor(100 * pd[closer].y) / 100}`);
 
             tooltip
               .select("text.tooltip-x")
