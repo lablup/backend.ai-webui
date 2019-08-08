@@ -11,3 +11,4 @@ proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
 
 [plugin]
 #login = "signup-cloud.js"
+#sidebar = "report-cloud.js"
