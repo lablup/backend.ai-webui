@@ -454,7 +454,7 @@ class BackendAIUserList extends BackendAIPage {
       return;
     }
 
-    let input = {};
+    let input: any;
 
     if (password !== '')
       input.password = password;

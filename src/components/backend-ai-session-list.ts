@@ -493,8 +493,8 @@ class BackendAiSessionList extends BackendAIPage {
     this.shadowRoot.querySelector('#app-progress-dialog').close();
   }
 
-  _humanReadableTime(d) {
-    var d = new Date(d);
+  _humanReadableTime(d: any) {
+    d = new Date(d);
     return d.toLocaleString();
   }
 
