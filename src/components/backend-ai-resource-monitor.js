@@ -533,8 +533,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
-      let sgs = await window.backendaiclient.scalingGroup.list();
-      this.scaling_groups = sgs.scaling_groups;
+      if (this.enable_scaling_group === true) {
+        let sgs = await window.backendaiclient.scalingGroup.list();
+        this.scaling_groups = sgs.scaling_groups;
+      }
       await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -578,8 +580,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
-    this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
-
+    if (this.enable_scaling_group) {
+      this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
+    }
     let config = {};
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       config['group_name'] = window.backendaiclient.current_group;
