@@ -113,6 +113,7 @@ class BackendAIUsageList extends LitElement {
     } else {
       this.active = false;
       this._menuChanged(false);
+      this.shadowRoot.querySelectorAll("backend-ai-chart").forEach(e => { e.wipe(); });
     }
 
     super.attributeChangedCallback(name, oldval, newval);
@@ -143,15 +144,13 @@ class BackendAIUsageList extends LitElement {
       const { period, template } = this;
       this.data = res;
 
-      console.log(this._map["num_sessions"]);
       this.collection[period] = {};
       Object.keys(this._map).forEach(key => {
-        console.log(this._map[key]);
         this.collection[period][key] = {
           data: [
             res
               .filter((e, i) => res.length - template[period].length <= i)
-              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]}))
+              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]})),
           ],
           axisTitle: {
             x: "Date",
@@ -177,7 +176,7 @@ class BackendAIUsageList extends LitElement {
           data: [
             data
               .filter((e, i) => data.length - template[period].length <= i)
-              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]}))
+              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]})),
           ],
           axisTitle: {
             x: "Date",
