@@ -1364,7 +1364,7 @@ ${this.resource_templates.map(item => html`
                 <span class="resource-type" style="width:30px;">CPU</span>
                 <paper-slider id="cpu-resource" class="cpu"
                               pin snaps expand editable
-                              .min="${this.cpu_metric.min}" .max="${this.cpu_metric.max}"
+                              min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                               value="${this.cpu_request}"></paper-slider>
                 <span class="caption">Core</span>
               </div>
@@ -1372,15 +1372,15 @@ ${this.resource_templates.map(item => html`
                 <span class="resource-type" style="width:30px;">RAM</span>
                 <paper-slider id="mem-resource" class="mem"
                               pin snaps step=0.1 editable
-                              .min="${this.mem_metric.min}" .max="${this.mem_metric.max}"
+                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                               value="${this.mem_request}"></paper-slider>
                 <span class="caption">GB</span>
               </div>
               <div class="horizontal center layout">
                 <span class="resource-type" style="width:30px;">GPU</span>
                 <paper-slider id="gpu-resource" class="gpu"
-                              pin snaps editable .step="${this.gpu_step}"
-                              .min="0.0" .max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
+                              pin snaps editable step="${this.gpu_step}"
+                              min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
                 <span class="caption">GPU</span>
               </div>
               <div class="horizontal center layout">
