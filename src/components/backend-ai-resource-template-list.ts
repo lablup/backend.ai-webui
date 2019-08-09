@@ -128,9 +128,6 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       },
       vfolder_count_metric: {
         type: Array
-      },
-      notification: {
-        type: Object
       }
     };
   }
@@ -588,13 +585,13 @@ class BackendAIResourceTemplateList extends BackendAIPage {
     } else {
       var endDate = new Date();
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     var days = Math.floor(seconds / 86400);
     return days;
   }
 
   _humanReadableTime(d) {
-    var d = new Date(d);
+    let d = new Date(d);
     return d.toUTCString();
   }
 

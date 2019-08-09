@@ -385,7 +385,8 @@ class BackendAiSessionList extends BackendAIPage {
     }
     this.refreshing = true;
     this.loadingIndicator.show();
-    let status = 'RUNNING';
+    let status: any;
+    status = 'RUNNING';
     switch (this.condition) {
       case "running":
         status = "RUNNING";

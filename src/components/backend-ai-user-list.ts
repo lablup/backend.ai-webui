@@ -369,7 +369,7 @@ class BackendAIUserList extends BackendAIPage {
     } else {
       var endDate = new Date();
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     var days = Math.floor(seconds / 86400);
     return days;
   }
