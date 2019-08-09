@@ -8,7 +8,7 @@ export default {
   // preserveSymlinks: true,
   input: ['src/components/backend-ai-console.ts'],
   output: {
-    dir: 'build/rollup/src/components',
+    dir: 'build/rollup/dist/components',
     format: 'es',
     sourcemap: false
   },
