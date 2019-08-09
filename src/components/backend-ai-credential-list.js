@@ -394,7 +394,7 @@ class BackendAICredentialList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 325px);
+            height: calc(100vh - 300px);
         }
 
         paper-item {
