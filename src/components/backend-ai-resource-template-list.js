@@ -123,7 +123,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 250px);
+            height: calc(100vh - 265px);
         }
 
         paper-item {
@@ -289,70 +289,70 @@ class BackendAIResourceTemplateList extends BackendAIPage {
             <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
-          <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
-            <wl-card elevation="1" class="login-panel intro centered">
-              <h3 class="horizontal center layout">
-                <span>Modify resource preset</span>
-                <div class="flex"></div>
-                <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-                  <wl-icon>close</wl-icon>
-                </wl-button>
-              </h3>
-              <form id="login-form">
-                <fieldset>
-                  <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
-                              auto-validate required
-                              pattern="[a-zA-Z0-9]*"
-                              error-message="Policy name only accepts letters and numbers"></paper-input>
-                  <h4>Resource Preset</h4>
-                  <div class="horizontal center layout">
-                    <paper-dropdown-menu id="cpu-resource" label="CPU">
-                      <paper-listbox slot="dropdown-content" selected="0">
-                      ${this.cpu_metric.map(item => html`
-                        <paper-item value="${item}">${item}</paper-item>
-                      `)}
-                      </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
-                      <paper-listbox slot="dropdown-content" selected="0">
-                      ${this.ram_metric.map(item => html`
-                        <paper-item value="${item}">${item}</paper-item>
-                      `)}
-                      </paper-listbox>
-                    </paper-dropdown-menu>
-                  </div>
-                  <div class="horizontal center layout">
-                    <paper-dropdown-menu id="gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable}>
-                      <paper-listbox slot="dropdown-content" selected="0">
-                      ${this.gpu_metric.map(item => html`
-                        <paper-item value="${item}">${item}</paper-item>
-                      `)}
-                      </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu id="fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable}>
-                      <paper-listbox slot="dropdown-content" selected="0">
-                      ${this.fgpu_metric.map(item => html`
-                        <paper-item value="${item}">${item}</paper-item>
-                      `)}
-                      </paper-listbox>
-                    </paper-dropdown-menu>
-                  </div>
-                  <br/><br/>
-                  <wl-button class="fg orange create-button" outlined type="button"
-                    @click="${() => this._modifyResourceTemplate()}">
-                    <wl-icon>check</wl-icon>
-                    Save Changes
-                  </wl-button>
-                </fieldset>
-              </form>
-            </wl-card>
-          </wl-dialog>
         </div>
       </wl-card>
+      <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
+        <wl-card elevation="1" class="login-panel intro centered">
+          <h3 class="horizontal center layout">
+            <span>Modify resource preset</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <form id="login-form">
+            <fieldset>
+              <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
+                          auto-validate required
+                          pattern="[a-zA-Z0-9]*"
+                          error-message="Policy name only accepts letters and numbers"></paper-input>
+              <h4>Resource Preset</h4>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="cpu-resource" label="CPU">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                  ${this.cpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                  ${this.ram_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <div class="horizontal center layout">
+                <paper-dropdown-menu id="gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable}>
+                  <paper-listbox slot="dropdown-content" selected="0">
+                  ${this.gpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable}>
+                  <paper-listbox slot="dropdown-content" selected="0">
+                  ${this.fgpu_metric.map(item => html`
+                    <paper-item value="${item}">${item}</paper-item>
+                  `)}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+              <br/><br/>
+              <wl-button class="fg orange create-button" outlined type="button"
+                @click="${() => this._modifyResourceTemplate()}">
+                <wl-icon>check</wl-icon>
+                Save Changes
+              </wl-button>
+            </fieldset>
+          </form>
+        </wl-card>
+      </wl-dialog>
       <wl-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create resource preset</span>
+            <span>Create resource preset</span> 
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>

@@ -1243,14 +1243,16 @@ class BackendAIData extends BackendAIPage {
         this.deleteFileDialog.hide();
       });
     } else {
-      let path = this.explorer.breadcrumb.concat(fn).join("/");
-      let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
-      job.then(res => {
-        this.notification.text = 'File deleted.';
-        this.notification.show();
-        this._clearExplorer();
-        this.deleteFileDialog.hide();
-      });
+      if (this.deleteFileDialog.filename != '') {
+        let path = this.explorer.breadcrumb.concat(this.deleteFileDialog.filename).join("/");
+        let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
+        job.then(res => {
+          this.notification.text = 'File deleted.';
+          this.notification.show();
+          this._clearExplorer();
+          this.deleteFileDialog.hide();
+        });
+      }
     }
   }
 
