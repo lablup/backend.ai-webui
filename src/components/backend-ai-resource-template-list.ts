@@ -590,8 +590,8 @@ class BackendAIResourceTemplateList extends BackendAIPage {
     return days;
   }
 
-  _humanReadableTime(d) {
-    let d = new Date(d);
+  _humanReadableTime(d: any) {
+    d = new Date(d);
     return d.toUTCString();
   }
 
