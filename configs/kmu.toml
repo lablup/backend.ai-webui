@@ -9,4 +9,3 @@ connectionMode = "API"
 #proxyURL = "https://web.kmu-bigdata.onpremise.backend.ai:8443/"
 proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
 #proxyBaseURL =
-proxyListenIP = "0.0.0.0"
