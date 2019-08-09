@@ -1,8 +1,17 @@
-
 'use strict';
+declare global {
+  interface Window {
+    backendaiclient: any;
+    backendaiwsproxy: any;
+    isElectron: boolean;
+    __local_proxy: string;
+  }
+}
 
 var BackendAIPainKiller = (()=>{
   return class {
+    public errorMessageTable: any;
+    public regexTable: any;
     static relieve(msg) {
       if (window.backendaiconsole.debug === true) {
         return msg;
