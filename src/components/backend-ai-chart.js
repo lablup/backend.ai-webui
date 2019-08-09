@@ -202,6 +202,11 @@ class BackendAIChartAlt extends LitElement {
     d3.select(window).on(`resize.${container.attr("id")}`, resize);
   }
 
+  wipe() {
+    const svg = this.shadowRoot.querySelector("#d3");
+    svg.removeChild(svg.lastElementChild);
+  }
+
   draw() {
     const {
       data,
