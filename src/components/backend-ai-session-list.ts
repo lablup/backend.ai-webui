@@ -438,7 +438,7 @@ class BackendAiSessionList extends BackendAIPage {
           }
           if ('cuda.shares' in occupied_slots) {
             //sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
-            sessions[objectKey].fgpu_slot = parseFloat(parseFloat(occupied_slots['cuda.shares']) * (1.0 / 1.0)).toFixed(2);
+            sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
@@ -754,12 +754,12 @@ class BackendAiSessionList extends BackendAIPage {
       }
       let token = response.token;
       this.shadowRoot.querySelector('#indicator').set(50, 'Adding kernel to socket queue...');
-      rqst = {
+      let rqst_proxy = {
         method: 'GET',
         app: app,
         uri: this._getProxyURL() + 'proxy/' + token + "/" + kernelId + "/add?app=" + app
       };
-      return await this.sendRequest(rqst);
+      return await this.sendRequest(rqst_proxy);
     } catch (err) {
       throw err;
     }
