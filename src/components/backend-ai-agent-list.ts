@@ -5,7 +5,7 @@
 
 import {css, html} from "lit-element";
 import {render} from 'lit-html';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -13,11 +13,11 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '../plastics/lablup-shields/lablup-shields.js';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
+import '../plastics/lablup-shields/lablup-shields';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
-import './lablup-notification.js';
+import './lablup-notification';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -255,7 +255,7 @@ class BackendAIAgentList extends BackendAIPage {
     } else {
       var endDate = new Date(end);
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     if (this.condition === 'running') {
       return 'Running ' + seconds + 'sec.';
     } else {

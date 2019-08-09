@@ -5,22 +5,22 @@
 
 import {css, html} from "lit-element";
 import {render} from 'lit-html';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/iron-icons/social-icons';
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-item/paper-item';
 import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column.js';
+import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 
-import '@vaadin/vaadin-item/vaadin-item.js';
-import '@vaadin/vaadin-upload/vaadin-upload.js';
+import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/vaadin-upload/vaadin-upload';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -35,7 +35,7 @@ import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 
-import './lablup-notification.js';
+import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 

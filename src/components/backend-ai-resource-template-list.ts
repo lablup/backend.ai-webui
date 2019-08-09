@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
@@ -25,7 +25,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-notification.js';
+import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";

@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
@@ -329,7 +329,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
       'java': 'Java',
       'php': 'PHP',
       'octave': 'Octave',
-      'nodejs': 'Node.js',
+      'nodejs': 'Node',
       'caffe': 'Caffe',
       'scheme': 'Scheme',
       'scala': 'Scala',

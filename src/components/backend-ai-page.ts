@@ -6,8 +6,7 @@
 import { LitElement } from 'lit-element';
 
 export class BackendAIPage extends LitElement {
-	public active: any;
-	public _viewStateChanged: any;
+  public active: any;
 
   constructor() {
     super();

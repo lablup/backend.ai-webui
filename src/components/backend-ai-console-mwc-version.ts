@@ -6,14 +6,14 @@
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 // PWA components
-import {connect} from 'pwa-helpers/connect-mixin.js';
-import {installOfflineWatcher} from 'pwa-helpers/network.js';
-import {installRouter} from 'pwa-helpers/router.js';
-import {store} from '../store.js';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {installOfflineWatcher} from 'pwa-helpers/network';
+import {installRouter} from 'pwa-helpers/router';
+import {store} from '../store';
 
-import {navigate, updateOffline} from '../backend-ai-app.js';
+import {navigate, updateOffline} from '../backend-ai-app';
 
-import '@polymer/polymer/lib/elements/dom-if.js';
+import '@polymer/polymer/lib/elements/dom-if';
 import '@polymer/app-layout/app-layout';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-styles/typography';
@@ -37,14 +37,14 @@ import '@material/drawer';
 import '@material/top-app-bar';
 
 import '@polymer/iron-pages/iron-pages';
-import '@polymer/app-route/app-location.js';
-import '@polymer/app-route/app-route.js';
-import '@vaadin/vaadin-icons/vaadin-icons.js';
-import '../backend.ai-client-es6.js';
+import '@polymer/app-route/app-location';
+import '@polymer/app-route/app-route';
+import '@vaadin/vaadin-icons/vaadin-icons';
+import '../backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
-import '../backend-ai-offline-indicator.js';
-import '../backend-ai-login.js';
+import '../backend-ai-offline-indicator';
+import '../backend-ai-login';
 
 
 /**

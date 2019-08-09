@@ -4,18 +4,18 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-indicator';
 
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
 
-import './lablup-notification.js';
-import './lablup-activity-panel.js';
-import './backend-ai-resource-monitor.js';
+import './lablup-notification';
+import './lablup-activity-panel';
+import './backend-ai-resource-monitor';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
