@@ -57,6 +57,7 @@ import './backend-ai-login';
 declare global {
   interface Window {
     backendaiclient: any;
+    backendaiwsproxy: any;
     isElectron: boolean;
     __local_proxy: string;
   }
