@@ -116,6 +116,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.direction = "horizontal";
     this.scaling_groups = [];
     this.scaling_group = '';
+    this.enable_scaling_group = false;
   }
 
   static get is() {
@@ -234,6 +235,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       notification: {
         type: Object
+      },
+      enable_scaling_group: {
+        type: Boolean
       }
     }
   }
@@ -466,9 +470,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
         this._refreshResourcePolicy();
       }, true);
     } else { // already connected
+      this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
       this._refreshResourcePolicy();
     }
   }
@@ -527,8 +533,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
-      let sgs = await window.backendaiclient.scalingGroup.list();
-      this.scaling_groups = sgs.scaling_groups;
+      if (this.enable_scaling_group === true) {
+        let sgs = await window.backendaiclient.scalingGroup.list();
+        this.scaling_groups = sgs.scaling_groups;
+      }
       await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -572,8 +580,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
-    this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
-
+    if (this.enable_scaling_group) {
+      this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
+    }
     let config = {};
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       config['group_name'] = window.backendaiclient.current_group;
@@ -1301,7 +1310,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
                   <paper-item value="${item.name}">${item.name}</paper-item>
                 `)}
                 </backend-ai-dropdown-menu>
-                ${window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') ? html`
+                ${this.enable_scaling_group ? html`
                 <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
@@ -1314,7 +1323,7 @@ ${this.scaling_groups.map(item =>
                 </paper-dropdown-menu>
                 ` : html``}
               </div>
-              <paper-listbox id="resource-templates" selected="0" class="horizontal center center-justified layout"
+              <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
                 <wl-button class="resource-button vertical center start layout" role="option"
@@ -1355,7 +1364,7 @@ ${this.resource_templates.map(item => html`
                 <span class="resource-type" style="width:30px;">CPU</span>
                 <paper-slider id="cpu-resource" class="cpu"
                               pin snaps expand editable
-                              .min="${this.cpu_metric.min}" .max="${this.cpu_metric.max}"
+                              min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                               value="${this.cpu_request}"></paper-slider>
                 <span class="caption">Core</span>
               </div>
@@ -1363,15 +1372,15 @@ ${this.resource_templates.map(item => html`
                 <span class="resource-type" style="width:30px;">RAM</span>
                 <paper-slider id="mem-resource" class="mem"
                               pin snaps step=0.1 editable
-                              .min="${this.mem_metric.min}" .max="${this.mem_metric.max}"
+                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                               value="${this.mem_request}"></paper-slider>
                 <span class="caption">GB</span>
               </div>
               <div class="horizontal center layout">
                 <span class="resource-type" style="width:30px;">GPU</span>
                 <paper-slider id="gpu-resource" class="gpu"
-                              pin snaps editable .step="${this.gpu_step}"
-                              .min="0.0" .max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
+                              pin snaps editable step="${this.gpu_step}"
+                              min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
                 <span class="caption">GPU</span>
               </div>
               <div class="horizontal center layout">

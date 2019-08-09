@@ -32,7 +32,6 @@ import 'weightless/label';
 import 'weightless/select';
 import 'weightless/tab';
 import 'weightless/title';
-import 'weightless/text';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 
@@ -153,10 +152,6 @@ class BackendAIData extends BackendAIPage {
         span.indicator {
           width: 100px;
           font-size: 10px;
-        }
-
-        wl-button {
-          height: 22px;
         }
 
         .folder-action-buttons wl-button {
@@ -694,7 +689,7 @@ class BackendAIData extends BackendAIPage {
       <wl-dialog id="delete-file-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
-            <wl-text>This action cannot be undone. Do you want to proceed?</wl-text>
+            <p>This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
             <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
@@ -1249,14 +1244,16 @@ class BackendAIData extends BackendAIPage {
         this.deleteFileDialog.hide();
       });
     } else {
-      let path = this.explorer.breadcrumb.concat(fn).join("/");
-      let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
-      job.then(res => {
-        this.notification.text = 'File deleted.';
-        this.notification.show();
-        this._clearExplorer();
-        this.deleteFileDialog.hide();
-      });
+      if (this.deleteFileDialog.filename != '') {
+        let path = this.explorer.breadcrumb.concat(this.deleteFileDialog.filename).join("/");
+        let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
+        job.then(res => {
+          this.notification.text = 'File deleted.';
+          this.notification.show();
+          this._clearExplorer();
+          this.deleteFileDialog.hide();
+        });
+      }
     }
   }
 

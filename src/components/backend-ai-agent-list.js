@@ -65,7 +65,7 @@ class BackendAIAgentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 210px);
+            height: calc(100vh - 200px);
         }
 
         paper-item {

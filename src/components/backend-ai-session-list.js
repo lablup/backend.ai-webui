@@ -27,7 +27,6 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/checkbox';
 import 'weightless/title';
-import 'weightless/text';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator.js';
@@ -121,7 +120,7 @@ class BackendAiSessionList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 260px);
+            height: calc(100vh - 240px);
         }
 
         paper-item {
@@ -1171,7 +1170,7 @@ ${item.map(item => html`
       <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
-            <wl-text>This action cannot be undone. Do you want to proceed?</wl-text>
+            <p>This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
             <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
@@ -1181,7 +1180,7 @@ ${item.map(item => html`
       <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
-            <wl-text>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</wl-text>
+            <p>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
             <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
