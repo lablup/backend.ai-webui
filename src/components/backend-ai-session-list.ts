@@ -612,7 +612,7 @@ class BackendAiSessionList extends BackendAIPage {
       let contentType = resp.headers.get('Content-Type');
       if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
-        body = await respon();
+        body = await resp();
       } else if (contentType.startsWith('text/')) {
         body = await resp.text();
       } else {
