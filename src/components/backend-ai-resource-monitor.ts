@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -28,7 +28,7 @@ import 'weightless/slider';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 
-import './lablup-notification.js';
+import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {

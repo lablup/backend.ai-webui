@@ -4,7 +4,7 @@
  */
 
 import {css, html} from 'lit-element';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 

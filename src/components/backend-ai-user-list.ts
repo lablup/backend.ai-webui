@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
@@ -24,7 +24,7 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-import './lablup-notification.js';
+import './lablup-notification';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
@@ -104,9 +104,6 @@ class BackendAIUserList extends BackendAIPage {
       },
       editMode: {
         type: Boolean
-      },
-      notification: {
-        type: Object
       },
       indicator: {
         type: Object

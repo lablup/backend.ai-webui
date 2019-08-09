@@ -4,13 +4,13 @@
  */
 
 import {html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
-import './backend-ai-agent-list.js';
+import './backend-ai-agent-list';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 
 /**

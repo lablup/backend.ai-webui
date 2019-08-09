@@ -3,7 +3,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
@@ -17,11 +17,11 @@ import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
-import './lablup-notification.js';
+import './lablup-notification';
 
-import './backend-ai-credential-list.js';
-import './backend-ai-resource-policy-list.js';
-import './backend-ai-user-list.js';
+import './backend-ai-credential-list';
+import './backend-ai-resource-policy-list';
+import './backend-ai-user-list';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from "./backend-ai-console-styles";

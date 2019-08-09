@@ -18,24 +18,24 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
-import '@vaadin/vaadin-icons/vaadin-icons.js';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
-import {default as AnsiUp} from '../lib/ansiup.js';
+import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/checkbox';
 import 'weightless/title';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator.js';
-import './lablup-notification.js';
-import './backend-ai-indicator.js';
+import './lablup-loading-indicator';
+import './lablup-notification';
+import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiSessionList extends BackendAIPage {
@@ -612,7 +612,7 @@ class BackendAiSessionList extends BackendAIPage {
       let contentType = resp.headers.get('Content-Type');
       if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
-        body = await resp.json();
+        body = await respon();
       } else if (contentType.startsWith('text/')) {
         body = await resp.text();
       } else {

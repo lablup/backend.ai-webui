@@ -5,7 +5,7 @@
 
 import {css, html} from "lit-element";
 import {render} from 'lit-html';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
@@ -21,7 +21,7 @@ import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
-import './lablup-notification.js';
+import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
@@ -298,7 +298,7 @@ class BackendAICredentialList extends BackendAIPage {
     } else {
       var endDate = new Date();
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     var days = Math.floor(seconds / 86400);
     return days;
   }

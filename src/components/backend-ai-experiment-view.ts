@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -20,8 +20,8 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
-import '@vaadin/vaadin-dialog/vaadin-dialog.js';
-import './backend-ai-session-list.js';
+import '@vaadin/vaadin-dialog/vaadin-dialog';
+import './backend-ai-session-list';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/icon';
@@ -32,7 +32,7 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
-import './lablup-notification.js';
+import './lablup-notification';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from './backend-ai-console-styles';

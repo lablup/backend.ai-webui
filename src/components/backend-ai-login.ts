@@ -13,10 +13,10 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
-import './lablup-notification.js';
+import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import '../lib/backend.ai-client-es6.js';
+import '../lib/backend.ai-client-es6';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 
@@ -34,6 +34,7 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 
  @group Backend.AI Console
  */
+
 class BackendAiLogin extends LitElement {
 	public api_key: any;
 	public secret_key: any;
