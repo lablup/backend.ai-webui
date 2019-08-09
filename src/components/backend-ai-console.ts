@@ -205,7 +205,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
-    console.log("loading");
     if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
       this.shadowRoot.querySelector('.portrait-canvas').style.visibility = 'hidden';
     }
