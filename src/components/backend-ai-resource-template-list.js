@@ -352,7 +352,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       <wl-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create resource preset</span>
+            <span>Create resource preset</span> 
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
