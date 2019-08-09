@@ -139,13 +139,6 @@ class BackendAiEnvironmentView extends BackendAIPage {
   firstUpdated() {
   }
 
-  async _viewStateChanged(active) {
-    await this.updateComplete;
-    if (active === false) {
-
-    }
-  }
-
   disconnectedCallback() {
     super.disconnectedCallback();
   }
