@@ -13,7 +13,7 @@ const ByteConverter = {
   toMB: bytes => bytes / (1024 * 1024),
   toGB: bytes => bytes / (1024 * 1024 * 1024),
   toTB: bytes => bytes / (1024 * 1024 * 1024 * 1024),
-  log1024: n => Math.log(n) / Math.log(1024),
+  log1024: n => n <= 0 ? 0 : Math.log(n) / Math.log(1024),
 
   readableUnit: function(bytes) {
     return ["B", "KB", "MB", "GB", "TB"][Math.floor(this.log1024(bytes))];
@@ -158,6 +158,27 @@ class BackendAIChartAlt extends LitElement {
   updated(changedProps) {
     if (changedProps.has('collection') && changedProps.get("collection") !== undefined) {
       this.draw();
+    }
+  }
+
+
+  firstUpdated() {
+    /*
+     * There's a flaw in this code that could potentially lead to problems
+     *
+     * This chart component allows multiple line graphs to be displayed in a single chart,
+     * that is, this.collection.data is an array of arrays.
+     *
+     * This file also has a ByteConverter that scales the data based on their size.
+     * This converter adjusts the scale for each array in this.collection.data, meaning that
+     * if their scales are different, the chart will be messed up
+     *
+     * To resolve this issue, the code must follow the lowest unit among the arrays.
+    */
+    if (this.collection.unit_hint === "bytes") {
+      const converted = this.collection.data.map(e => ByteConverter.scale(e));
+      this.collection.data = converted.map(e => e.data);
+      this.collection.unit_hint = converted[0].unit;
     }
   }
 
@@ -539,6 +560,16 @@ class BackendAIChartAlt extends LitElement {
       .style("text-anchor", "middle")
       .attr("class", "normalize")
       .text(this.collection.axisTitle.y);
+
+    g
+      .append("text")
+      .attr(
+        "transform",
+        "translate(0, -5)"
+      )
+      .style("text-anchor", "middle")
+      .style("font-size", 5)
+      .text(this.collection.unit_hint);
 
     // actual line graph
     g
