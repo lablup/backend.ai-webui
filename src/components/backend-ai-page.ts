@@ -8,9 +8,9 @@ import { LitElement } from 'lit-element';
 export class BackendAIPage extends LitElement {
   public active: any;
 
-    public _viewStateChanged(param: Boolean): void;
-    _viewStateChanged(param) {
-    }
+  public _viewStateChanged(param: Boolean): void;
+  _viewStateChanged(param) {
+  }
 
   constructor() {
     super();
