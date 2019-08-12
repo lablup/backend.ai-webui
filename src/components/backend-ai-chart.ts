@@ -38,7 +38,6 @@ class BackendAIChartAlt extends LitElement {
 	public message: any;
 	public width: any;
 	public height: any;
-	public type: any;
 	public colors: any;
 	public collection: any;
 	public shadowRoot: any;
@@ -69,7 +68,6 @@ class BackendAIChartAlt extends LitElement {
     this.message = "";
     this.width = 300;
     this.height = 300;
-    this.type = "line";
     this.colors = [
         "#4bc0c0",
         "#003f5c",
@@ -171,36 +169,40 @@ class BackendAIChartAlt extends LitElement {
       height: {
         type: Number
       },
-      type: {
-        type: String
-      }
     };
   }
 
   updated(changedProps) {
     if (changedProps.has('collection') && changedProps.get("collection") !== undefined) {
+      if (this.collection.unit_hint === "bytes") {
+        this.scaleData();
+      }
       this.draw();
     }
   }
 
-
-  firstUpdated() {
-    /*
-     * There's a flaw in this code that could potentially lead to problems
-     *
-     * This chart component allows multiple line graphs to be displayed in a single chart,
-     * that is, this.collection.data is an array of arrays.
-     *
-     * This file also has a ByteConverter that scales the data based on their size.
-     * This converter adjusts the scale for each array in this.collection.data, meaning that
-     * if their scales are different, the chart will be messed up
-     *
-     * To resolve this issue, the code must follow the lowest unit among the arrays.
-    */
-    if (this.collection.unit_hint === "bytes") {
+  /*
+   * There's a flaw in this code that could potentially lead to problems
+   *
+   * This chart component allows multiple line graphs to be displayed in a single chart,
+   * that is, this.collection.data is an array of arrays.
+   *
+   * This file also has a ByteConverter that scales the data based on their size.
+   * This converter adjusts the scale for each array in this.collection.data, meaning that
+   * if their scales are different, the chart will be messed up
+   *
+   * To resolve this issue, the code must follow the lowest unit among the arrays.
+   */
+  scaleData() {
       const converted = this.collection.data.map(e => ByteConverter.scale(e));
       this.collection.data = converted.map(e => e.data);
       this.collection.unit_hint = converted[0].unit;
+  }
+
+
+  firstUpdated() {
+    if (this.collection.unit_hint === "bytes") {
+      this.scaleData();
     }
   }
 
