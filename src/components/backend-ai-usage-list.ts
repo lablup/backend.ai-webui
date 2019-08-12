@@ -3,7 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import { css, html, LitElement } from "lit-element";
+import {css, html} from "lit-element";
+import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
 import 'weightless/tab-group';
@@ -19,16 +20,15 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-
-class BackendAIUsageList extends LitElement {
-	public collection: any;
-	public data: any;
-	public period: any;
-	public active: any;
-	public template: any;
-	public _map: any;
-	public shadowRoot: any;
-	public updateComplete: any;
+class BackendAIUsageList extends BackendAIPage {
+  public collection: any;
+  public data: any;
+  public period: any;
+  public active: any;
+  public templates: any;
+  public _map: any;
+  public shadowRoot: any;
+  public updateComplete: any;
 
   constructor() {
     super();
@@ -36,7 +36,7 @@ class BackendAIUsageList extends LitElement {
     this.data = [];
     this.period = '1D';
     this.active = false;
-    this.template = {
+    this.templates = {
       "1D": {
         "interval": 15 / 15,
         "length": 4 * 24
@@ -64,13 +64,7 @@ class BackendAIUsageList extends LitElement {
         reflect: true
       },
       collection: {
-        type: Object,
-
-        hasChanged(newval, oldval) {
-          if (newval === undefined || oldval === undefined) return false;
-
-          return false;
-        }
+        type: Object
       },
       data: {
         type: Array
@@ -78,7 +72,7 @@ class BackendAIUsageList extends LitElement {
       period: {
         type: String
       },
-      template: Object,
+      templates: Object,
       _map: Object
     }
   }
@@ -107,31 +101,13 @@ class BackendAIUsageList extends LitElement {
     ]
   }
 
-  firstUpdated() {
-
-  }
-
-  shouldUpdate() {
-    return this.active;
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    if (name === "active" && newval !== null) {
-      if (!this.active) this._menuChanged(true);
-      this.active = true;
-    } else {
-      this.active = false;
-      this._menuChanged(false);
-      this.shadowRoot.querySelectorAll("backend-ai-chart").forEach(e => { e.wipe(); });
-    }
-
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
   async _menuChanged(active) {
     await this.updateComplete;
 
     if (active === false) {
+      this.shadowRoot.querySelectorAll("backend-ai-chart").forEach(e => {
+        e.wipe();
+      });
       return;
     }
 
@@ -150,7 +126,7 @@ class BackendAIUsageList extends LitElement {
   init() {
     return window.backendaiclient.resources.user_stats()
     .then(res => {
-      const { period, template } = this;
+      const {period, templates} = this;
       this.data = res;
 
       this.collection[period] = {};
@@ -158,7 +134,7 @@ class BackendAIUsageList extends LitElement {
         this.collection[period][key] = {
           data: [
             res
-              .filter((e, i) => res.length - template[period].length <= i)
+                .filter((e, i) => res.length - templates[period].length <= i)
               .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
           ],
           axisTitle: {
@@ -178,7 +154,7 @@ class BackendAIUsageList extends LitElement {
   pulldownChange(e) {
     this.period = e.target.value;
 
-    const { data, period, collection, _map, template } = this;
+    const {data, period, collection, _map, templates} = this;
 
     if (!(period in collection)) {
       collection[period] = {}
@@ -186,7 +162,7 @@ class BackendAIUsageList extends LitElement {
         collection[period][key] = {
           data: [
             data
-              .filter((e, i) => data.length - template[period].length <= i)
+                .filter((e, i) => data.length - templates[period].length <= i)
               .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
           ],
           axisTitle: {
