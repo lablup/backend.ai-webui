@@ -17,7 +17,8 @@
     "copywa": "mkdir -p build/rollup/src/lib/web-animations-js && mkdir -p src/lib/web-animations-js && cp node_modules/web-animations-js/web-animations-next-lite.min.js src/lib/web-animations-js && cp src/lib/web-animations-js/web-animations-next-lite.min.js build/rollup/src/lib/web-animations-js",
     "copyresource": "cp -Rp resources build/rollup && cp -Rp manifest build/rollup",
     "copyconfig": "cp config.toml build/rollup && cp manifest.json build/rollup",
-    "copyindex": "cp index.html build/rollup"
+    "copyindex": "cp index.html build/rollup",
+    "update": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
     "@polymer/app-layout": "^3.1.0",
