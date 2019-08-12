@@ -892,14 +892,13 @@ class BackendAiResourceMonitor extends BackendAIPage {
       if ('cuda.shares' in resource_remaining) {
         remaining_slot['vgpu_slot'] = resource_remaining['cuda.shares'];
         if ('cuda.shares' in resource_using) {
-          used_slot['vgpu_slot'] = resource_using['cuda.shares'];
+            used_slot['vgpu_slot'] = parseFloat(resource_using['cuda.shares']).toFixed(2);
         } else {
           used_slot['vgpu_slot'] = 0;
         }
       }
 
       if ('vgpu_slot' in used_slot) {
-        used_slot['vgpu_slot'] = parseFloat(used_slot['vgpu_slot']).toFixed(2);
         total_slot['vgpu_slot'] = parseFloat(total_slot['vgpu_slot']).toFixed(2);
       }
       this.total_slot = total_slot;
