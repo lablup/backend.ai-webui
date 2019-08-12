@@ -16,7 +16,11 @@ import 'weightless/card';
 import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import '../lib/backend.ai-client-es6';
+import * as aiSDK from '../lib/backend.ai-client-es6';
+
+declare global {
+    const ai: typeof aiSDK;
+}
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 
