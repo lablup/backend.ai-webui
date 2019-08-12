@@ -706,8 +706,8 @@ class BackendAiExperimentView extends BackendAIPage {
           total_slot['vgpu_slot'] = resource_limit['cuda.shares'];
         }
       }
-      let remaining_slot = {};
-      let used_slot = {};
+        let remaining_slot = Object();
+        let used_slot = Object();
       let resource_remaining = response.keypair_remaining;
       let resource_using = response.keypair_using;
       if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
