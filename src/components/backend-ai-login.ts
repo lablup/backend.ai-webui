@@ -13,10 +13,14 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
-import './lablup-notification.js';
+import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import '../lib/backend.ai-client-es6.js';
+import * as aiSDK from '../lib/backend.ai-client-es6';
+
+declare global {
+    const ai: typeof aiSDK;
+}
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 
@@ -34,7 +38,29 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 
  @group Backend.AI Console
  */
+
 class BackendAiLogin extends LitElement {
+	public api_key: any;
+	public secret_key: any;
+	public user_id: any;
+	public password: any;
+	public api_endpoint: any;
+	public domain_name: any;
+	public proxy_url: any;
+	public connection_mode: any;
+	public default_session_environment: any;
+	public blockMessage: any;
+	public blockType: any;
+	public config: any;
+	public loginPanel: any;
+	public shadowRoot: any;
+	public blockPanel: any;
+	public notification: any;
+	public clientConfig: any;
+	public client: any;
+	public user: any;
+	public email: any;
+
   static get is() {
     return 'backend-ai-login';
   }
@@ -534,7 +560,7 @@ class BackendAiLogin extends LitElement {
                            label="API Endpoint" value=""></paper-input>
               <br/><br/>
               <wl-button class="fg red" id="login-button" outlined type="button"
-                          @click="${(e) => this._login(e)}">
+                          @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
                           Login</wl-button>
             </fieldset>

@@ -4,7 +4,7 @@
  */
 
 import {css, html} from 'lit-element';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
@@ -23,6 +23,9 @@ import 'weightless/card';
 import 'weightless/switch';
 
 class BackendAiSettingsView extends BackendAIPage {
+	public images: any;
+	public updateComplete: any;
+
   constructor() {
     super();
     setPassiveTouchGestures(true);

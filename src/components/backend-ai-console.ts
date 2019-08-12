@@ -5,12 +5,12 @@
 import {css, html, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 // PWA components
-import {connect} from 'pwa-helpers/connect-mixin.js';
-import {installOfflineWatcher} from 'pwa-helpers/network.js';
-import {installRouter} from 'pwa-helpers/router.js';
-import {store} from '../store.js';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {installOfflineWatcher} from 'pwa-helpers/network';
+import {installRouter} from 'pwa-helpers/router';
+import {store} from '../store';
 
-import {navigate, updateOffline} from '../backend-ai-app.js';
+import {navigate, updateOffline} from '../backend-ai-app';
 
 import '@polymer/app-layout/app-layout';
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -24,13 +24,13 @@ import '@polymer/iron-image/iron-image';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
 import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
 import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
-import '@vaadin/vaadin-icons/vaadin-icons.js';
+import '@vaadin/vaadin-icons/vaadin-icons';
 import toml from 'markty-toml';
 
 import 'weightless/select';
 import 'weightless/progress-spinner';
 
-import '../lib/backend.ai-client-es6.js';
+import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -38,8 +38,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import './backend-ai-offline-indicator.js';
-import './backend-ai-login.js';
+import './backend-ai-offline-indicator';
+import './backend-ai-login';
 /**
  Backend.AI GUI Console
 
@@ -53,7 +53,40 @@ import './backend-ai-login.js';
 
  @group Backend.AI Console
  */
+
+declare global {
+  interface Window {
+    backendaiclient: any;
+    backendaiconsole: any;
+    backendaiwsproxy: any;
+    isElectron: boolean;
+    __local_proxy: string;
+  }
+  interface ai {
+    backend: any;
+  }
+}
+
 class BackendAiConsole extends connect(store)(LitElement) {
+	public menuTitle: any;
+	public user_id: any;
+	public domain: any;
+	public is_connected: any;
+	public is_admin: any;
+	public _page: any;
+	public groups: any;
+	public connection_mode: any;
+	public plugins: any;
+	public shadowRoot: any;
+	public config: any;
+	public siteDescription: any;
+	public connection_server: any;
+	public proxy_url: any;
+	public current_group: any;
+	public _offlineIndicatorOpened: any;
+	public _offline: any;
+	public _drawerOpened: any;
+
   constructor() {
     super();
     setPassiveTouchGestures(true);

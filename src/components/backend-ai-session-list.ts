@@ -18,27 +18,48 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
-import '@vaadin/vaadin-icons/vaadin-icons.js';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
-import {default as AnsiUp} from '../lib/ansiup.js';
+import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/checkbox';
 import 'weightless/title';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator.js';
-import './lablup-notification.js';
-import './backend-ai-indicator.js';
+import './lablup-loading-indicator';
+import './lablup-notification';
+import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiSessionList extends BackendAIPage {
+	public condition: any;
+	public jobs: any;
+	public compute_sessions: any;
+	public terminationQueue: any;
+	public filterAccessKey: any;
+	public appSupportList: any;
+	public appTemplate: any;
+	public _selected_items: any;
+	public _boundControlRenderer: any;
+	public _boundSessionInfoRenderer: any;
+	public _boundCheckboxRenderer: any;
+	public refreshing: any;
+	public loadingIndicator: any;
+	public shadowRoot: any;
+	public _grid: any;
+	public refreshTimer: any;
+	public notification: any;
+	public terminateSessionDialog: any;
+	public terminateSelectedSessionsDialog: any;
+	public updateComplete: any;
+
   constructor() {
     super();
     this.condition = 'running';
@@ -364,7 +385,8 @@ class BackendAiSessionList extends BackendAIPage {
     }
     this.refreshing = true;
     this.loadingIndicator.show();
-    let status = 'RUNNING';
+    let status: any;
+    status = 'RUNNING';
     switch (this.condition) {
       case "running":
         status = "RUNNING";
@@ -416,7 +438,7 @@ class BackendAiSessionList extends BackendAIPage {
           }
           if ('cuda.shares' in occupied_slots) {
             //sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
-            sessions[objectKey].fgpu_slot = parseFloat(parseFloat(occupied_slots['cuda.shares']) * (1.0 / 1.0)).toFixed(2);
+            sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
@@ -471,8 +493,8 @@ class BackendAiSessionList extends BackendAIPage {
     this.shadowRoot.querySelector('#app-progress-dialog').close();
   }
 
-  _humanReadableTime(d) {
-    var d = new Date(d);
+  _humanReadableTime(d: any) {
+    d = new Date(d);
     return d.toLocaleString();
   }
 
@@ -591,7 +613,7 @@ class BackendAiSessionList extends BackendAIPage {
       let contentType = resp.headers.get('Content-Type');
       if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
-        body = await resp.json();
+          body = await resp.json();
       } else if (contentType.startsWith('text/')) {
         body = await resp.text();
       } else {
@@ -732,12 +754,12 @@ class BackendAiSessionList extends BackendAIPage {
       }
       let token = response.token;
       this.shadowRoot.querySelector('#indicator').set(50, 'Adding kernel to socket queue...');
-      rqst = {
+      let rqst_proxy = {
         method: 'GET',
         app: app,
         uri: this._getProxyURL() + 'proxy/' + token + "/" + kernelId + "/add?app=" + app
       };
-      return await this.sendRequest(rqst);
+      return await this.sendRequest(rqst_proxy);
     } catch (err) {
       throw err;
     }
@@ -846,7 +868,7 @@ class BackendAiSessionList extends BackendAIPage {
   }
 
   // Multiple sessions closing
-  _openTerminateSelectedSessionsDialog(e) {
+  _openTerminateSelectedSessionsDialog(e?) {
     this.terminateSelectedSessionsDialog.show();
   }
 
@@ -936,7 +958,7 @@ class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  sessionIDRenderer(root, column, rowData) {
+  sessionIDRenderer(root, column?, rowData?) {
     render(
       html`
         <div class="layout vertical start">
@@ -950,7 +972,7 @@ ${item.map(item => html`
     );
   }
 
-  controlRenderer(root, column, rowData) {
+  controlRenderer(root, column?, rowData?) {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
@@ -997,7 +1019,7 @@ ${item.map(item => html`
     }
   }
 
-  checkboxRenderer(root, column, rowData) {
+  checkboxRenderer(root, column?, rowData?) {
     render(
       html`
         <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>

@@ -5,22 +5,22 @@
 
 import {css, html} from "lit-element";
 import {render} from 'lit-html';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/iron-icons/social-icons';
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-item/paper-item';
 import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter.js';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column.js';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column.js';
+import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 
-import '@vaadin/vaadin-item/vaadin-item.js';
-import '@vaadin/vaadin-upload/vaadin-upload.js';
+import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/vaadin-upload/vaadin-upload';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -35,7 +35,7 @@ import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 
-import './lablup-notification.js';
+import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -43,6 +43,33 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIData extends BackendAIPage {
+	public folders: any;
+	public folderInfo: any;
+	public is_admin: any;
+	public authenticated: any;
+	public deleteFolderId: any;
+	public explorer: any;
+	public explorerFiles: any;
+	public invitees: any;
+	public selectedFolder: any;
+	public uploadFiles: any;
+	public vhost: any;
+	public vhosts: any;
+	public uploadFilesExist: any;
+	public _boundIndexRenderer: any;
+	public _boundControlFolderListRenderer: any;
+	public _boundControlFileListRenderer: any;
+	public _boundPermissionViewRenderer: any;
+	public _boundFileNameRenderer: any;
+	public _boundCreatedTimeRenderer: any;
+	public _boundPermissionRenderer: any;
+	public shadowRoot: any;
+	public fileListGrid: any;
+	public notification: any;
+	public deleteFileDialog: any;
+	public indicator: any;
+	public updateComplete: any;
+
   constructor() {
     super();
     // Resolve warning about scroll performance
@@ -357,7 +384,7 @@ class BackendAIData extends BackendAIPage {
             <wl-tab value="model-lists" disabled>Models</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
-          <wl-button class="fg red" id="add-folder" outlined @click="${(e) => this._addFolderDialog(e)}">
+          <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
             <wl-icon>add</wl-icon>
             New folder
           </wl-button>
@@ -412,7 +439,7 @@ class BackendAIData extends BackendAIPage {
               </paper-listbox>
             </paper-dropdown-menu>
             <br/>
-            <wl-button class="blue button" type="button" id="add-button" outlined @click="${(e) => this._addFolder(e)}">
+            <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
               <wl-icon>rowing</wl-icon>
               Create
             </wl-button>
@@ -435,7 +462,7 @@ class BackendAIData extends BackendAIPage {
                            pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
               <br/>
-              <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${(e) => this._deleteFolderWithCheck(e)}">
+              <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
                 <wl-icon>close</wl-icon>
                 Delete
               </wl-button>
@@ -505,7 +532,7 @@ class BackendAIData extends BackendAIPage {
               <wl-icon style="--icon-size: 20px;margin-right:5px;">cloud_upload</wl-icon>
               Upload Files...
             </wl-button>
-            <wl-button outlined id="mkdir" @click="${(e) => this._mkdirDialog(e)}">
+            <wl-button outlined id="mkdir" @click="${() => this._mkdirDialog()}">
               <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
               New Folder
             </wl-button>
@@ -709,8 +736,8 @@ class BackendAIData extends BackendAIPage {
         'vfolder': this.invitees[idx].vfolder_id
       }));
     const promiseArray = inputList.map(input => window.backendaiclient.vfolder.modify_invitee_permission(input));
-    Promise.all(promiseArray).then(res => {
-      if (res.length === 0) {
+    Promise.all(promiseArray).then( (response: any) => {
+      if (response.length === 0) {
         this.notification.text = 'No changes made.';
       } else {
         this.notification.text = 'Permission successfully modified.';
@@ -720,7 +747,7 @@ class BackendAIData extends BackendAIPage {
     })
   }
 
-  permissionRenderer(root, column, rowData) {
+  permissionRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
@@ -748,14 +775,14 @@ class BackendAIData extends BackendAIPage {
     textfields.removeChild(textfields.lastChild);
   }
 
-  indexRenderer(root, column, rowData) {
+  indexRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`${this._indexFrom1(rowData.index)}`, root
     );
   }
 
-  controlFolderListRenderer(root, column, rowData) {
+  controlFolderListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
@@ -820,7 +847,7 @@ class BackendAIData extends BackendAIPage {
     );
   }
 
-  controlFileListRenderer(root, column, rowData) {
+  controlFileListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
@@ -835,7 +862,7 @@ class BackendAIData extends BackendAIPage {
     );
   }
 
-  fileNameRenderer(root, column, rowData) {
+  fileNameRenderer(root, column?, rowData?) {
     render(
       html`
         ${this._isDir(rowData.item) ?
@@ -855,7 +882,7 @@ class BackendAIData extends BackendAIPage {
     );
   }
 
-  permissionViewRenderer(root, column, rowData) {
+  permissionViewRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
@@ -873,7 +900,7 @@ class BackendAIData extends BackendAIPage {
     )
   }
 
-  createdTimeRenderer(root, column, rowData) {
+  createdTimeRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
@@ -1222,7 +1249,7 @@ class BackendAIData extends BackendAIPage {
     this.deleteFileDialog.show();
   }
 
-  _openDeleteMultipleFileDialog(e) {
+  _openDeleteMultipleFileDialog(e?) {
     this.deleteFileDialog.files = this.fileListGrid.selectedItems;
     this.deleteFileDialog.filename = '';
     this.deleteFileDialog.show();

@@ -21,6 +21,10 @@ import {
 
 
 class BackendAIStatisticsView extends BackendAIPage {
+	public _status: any;
+	public updateComplete: any;
+	public shadowRoot: any;
+
   constructor() {
     super();
     this.active = false;

@@ -4,19 +4,19 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-indicator';
 
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
 
-import './lablup-notification.js';
-import './lablup-activity-panel.js';
-import './backend-ai-chart.js';
-import './backend-ai-resource-monitor.js';
+import './lablup-notification';
+import './lablup-activity-panel';
+import './backend-ai-chart';
+import './backend-ai-resource-monitor';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -24,6 +24,38 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAISummary extends BackendAIPage {
+	public condition: any;
+	public jobs: any;
+	public sessions: any;
+	public agents: any;
+	public is_superadmin: any;
+	public resources: any;
+	public authenticated: any;
+	public manager_version: any;
+	public invitations: any;
+	public indicator: any;
+	public shadowRoot: any;
+	public notification: any;
+	public resourcePolicy: any;
+	public cpu_total: any;
+	public mem_total: any;
+	public gpu_total: any;
+	public fgpu_total: any;
+	public cpu_used: any;
+	public gpu_used: any;
+	public fgpu_used: any;
+	public cpu_percent: any;
+	public cpu_total_percent: any;
+	public cpu_total_usage_ratio: any;
+	public cpu_current_usage_ratio: any;
+	public mem_used: any;
+	public mem_allocated: any;
+	public mem_total_usage_ratio: any;
+	public mem_current_usage_ratio: any;
+	public mem_current_usage_percent: any;
+	public updateComplete: any;
+	public is_admin: any;
+
   constructor() {
     super();
     this.condition = 'running';
@@ -297,7 +329,7 @@ class BackendAISummary extends BackendAIPage {
     this.fgpu_used = this.resources.vgpu.used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
-    this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / parseFloat(this.cpu_total * 100)) * 100.0).toFixed(2);
+    this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
     this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
     this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
 

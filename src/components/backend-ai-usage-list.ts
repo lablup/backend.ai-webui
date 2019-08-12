@@ -21,6 +21,15 @@ import {
 
 
 class BackendAIUsageList extends LitElement {
+	public collection: any;
+	public data: any;
+	public period: any;
+	public active: any;
+	public template: any;
+	public _map: any;
+	public shadowRoot: any;
+	public updateComplete: any;
+
   constructor() {
     super();
     this.collection = {};
