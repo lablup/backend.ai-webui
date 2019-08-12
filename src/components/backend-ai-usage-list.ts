@@ -187,7 +187,7 @@ class BackendAIUsageList extends BackendAIPage {
             y: _map[key]
           },
           period,
-          unit_hint: data[0][period].unit_hint
+          unit_hint: data[data.length - 1][key].unit_hint
         }
       })
     }
