@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 import '@polymer/paper-dialog/paper-dialog';
@@ -26,12 +26,35 @@ import 'weightless/dialog';
 import 'weightless/card';
 
 import '../plastics/lablup-shields/lablup-shields';
-import './lablup-notification.js';
+import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIResourcePolicyList extends BackendAIPage {
+	public visible: any;
+	public keypairs: any;
+	public resourcePolicy: any;
+	public keypairInfo: any;
+	public is_admin: any;
+	public cpu_metric: any;
+	public ram_metric: any;
+	public gpu_metric: any;
+	public vgpu_metric: any;
+	public rate_metric: any;
+	public concurrency_metric: any;
+	public container_per_session_metric: any;
+	public idle_timeout_metric: any;
+	public vfolder_capacity_metric: any;
+	public vfolder_count_metric: any;
+	public allowed_vfolder_hosts: any;
+	public default_vfolder_host: any;
+	public _boundResourceRenderer: any;
+	public _boundControlRenderer: any;
+	public notification: any;
+	public shadowRoot: any;
+	public updateComplete: any;
+	public condition: any;
 
   static get is() {
     return 'backend-ai-resource-policy-list';
@@ -390,7 +413,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
     dialog.hide();
   }
 
-  resourceRenderer(root, column, rowData) {
+  resourceRenderer(root, column?, rowData?) {
     render(
       html`
         <div class="layout horizontal wrap center">
@@ -439,7 +462,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
-  controlRenderer(root, column, rowData) {
+  controlRenderer(root, column?, rowData?) {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"

@@ -37,7 +37,7 @@
 
     window.process = {env: {NODE_ENV: 'production'}};
     window.packageVersion = "19.08.1";
-    window.buildVersion = "190809.110857";
+    window.buildVersion = "190809.160814";
   </script>
   <style>
     body {
@@ -225,7 +225,7 @@
 </noscript>
 <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
 <script src="./src/lib/webcomponents-loader.js"></script>
-<script src="./src/components/backend-ai-console.js" type="module"></script>
+<script src="./dist/components/backend-ai-console.js" type="module"></script>
 <script>
   document.getElementById('version-detail').innerText = window.packageVersion;
   document.getElementById('build-detail').innerText = ' Build ' + window.buildVersion;

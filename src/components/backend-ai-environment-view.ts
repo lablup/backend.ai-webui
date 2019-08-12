@@ -4,7 +4,7 @@
  */
 
 import {html, css} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -21,9 +21,14 @@ import 'weightless/tab-group';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './backend-ai-environment-list';
 import './backend-ai-resource-template-list';
-import './lablup-notification.js';
+import './lablup-notification';
 
 class BackendAiEnvironmentView extends BackendAIPage {
+	public images: any;
+	public _activeTab: any;
+	public updateComplete: any;
+	public shadowRoot: any;
+
   constructor() {
     super();
     this.images = {};
@@ -132,13 +137,6 @@ class BackendAiEnvironmentView extends BackendAIPage {
   }
 
   firstUpdated() {
-  }
-
-  async _viewStateChanged(active) {
-    await this.updateComplete;
-    if (active === false) {
-
-    }
   }
 
   disconnectedCallback() {

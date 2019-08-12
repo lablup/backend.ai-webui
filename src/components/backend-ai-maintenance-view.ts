@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
@@ -21,10 +21,18 @@ import 'weightless/icon';
 import 'weightless/card';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator.js';
-import './backend-ai-indicator.js';
+import './lablup-loading-indicator';
+import './backend-ai-indicator';
 
 class BackendAiMaintenanceView extends BackendAIPage {
+	public images: any;
+	public scanning: any;
+	public recalculating: any;
+	public notification: any;
+	public shadowRoot: any;
+	public indicator: any;
+	public updateComplete: any;
+
   constructor() {
     super();
     setPassiveTouchGestures(true);

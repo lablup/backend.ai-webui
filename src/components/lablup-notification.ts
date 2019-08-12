@@ -7,6 +7,14 @@ import {css, html, LitElement} from 'lit-element';
 import 'weightless/snackbar';
 
 class LablupNotification extends LitElement {
+	public active: any;
+	public message: any;
+	public notification: any;
+	public shadowRoot: any;
+	public updateComplete: any;
+	public text: any;
+	public indicator: any;
+
   constructor() {
     super();
     this.active = true;

@@ -3,7 +3,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
@@ -17,11 +17,11 @@ import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
-import './lablup-notification.js';
+import './lablup-notification';
 
-import './backend-ai-credential-list.js';
-import './backend-ai-resource-policy-list.js';
-import './backend-ai-user-list.js';
+import './backend-ai-credential-list';
+import './backend-ai-resource-policy-list';
+import './backend-ai-user-list';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -44,6 +44,30 @@ import {
  @group Backend.AI Console
  */
 class BackendAICredentialView extends BackendAIPage {
+	public cpu_metric: any;
+	public ram_metric: any;
+	public gpu_metric: any;
+	public vgpu_metric: any;
+	public rate_metric: any;
+	public concurrency_metric: any;
+	public container_per_session_metric: any;
+	public idle_timeout_metric: any;
+	public vfolder_capacity_metric: any;
+	public vfolder_count_metric: any;
+	public resource_policies: any;
+	public resource_policy_names: any;
+	public is_admin: any;
+	public allowed_vfolder_hosts: any;
+	public default_vfolder_host: any;
+	public _status: any;
+	public use_user_list: any;
+	public _activeTab: any;
+	public new_access_key: any;
+	public new_secret_key: any;
+	public notification: any;
+	public shadowRoot: any;
+	public updateComplete: any;
+
   constructor() {
     super();
     this.active = false;

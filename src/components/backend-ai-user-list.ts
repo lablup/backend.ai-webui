@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
@@ -24,7 +24,7 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-import './lablup-notification.js';
+import './lablup-notification';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
@@ -41,6 +41,19 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIUserList extends BackendAIPage {
+	public condition: any;
+	public users: any;
+	public isAdmin: any;
+	public userInfo: any;
+	public userInfoGroups: any;
+	public _boundControlRenderer: any;
+	public editMode: any;
+	public indicator: any;
+	public shadowRoot: any;
+	public notification: any;
+	public updateComplete: any;
+	public keypairs: any;
+
   constructor() {
     super();
     this.active = false;
@@ -91,9 +104,6 @@ class BackendAIUserList extends BackendAIPage {
       },
       editMode: {
         type: Boolean
-      },
-      notification: {
-        type: Object
       },
       indicator: {
         type: Object
@@ -359,7 +369,7 @@ class BackendAIUserList extends BackendAIPage {
     } else {
       var endDate = new Date();
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     var days = Math.floor(seconds / 86400);
     return days;
   }
@@ -386,7 +396,7 @@ class BackendAIUserList extends BackendAIPage {
     }
   }
 
-  controlRenderer(root, column, rowData) {
+  controlRenderer(root, column?, rowData?) {
     render(
       html`
             <div
@@ -444,7 +454,7 @@ class BackendAIUserList extends BackendAIPage {
       return;
     }
 
-    let input = {};
+    let input: any;
 
     if (password !== '')
       input.password = password;

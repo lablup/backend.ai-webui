@@ -5,7 +5,7 @@
 
 import {css, html} from "lit-element";
 import {render} from 'lit-html';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -13,17 +13,26 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '../plastics/lablup-shields/lablup-shields.js';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar.js';
+import '../plastics/lablup-shields/lablup-shields';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
-import './lablup-notification.js';
+import './lablup-notification';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIAgentList extends BackendAIPage {
+	public condition: any;
+	public agents: any;
+	public _boundContactDateRenderer: any;
+	public _boundStatusRenderer: any;
+	public _boundControlRenderer: any;
+	public notification: any;
+	public shadowRoot: any;
+	public updateComplete: any;
+
   constructor() {
     super();
     this.condition = 'running';
@@ -176,8 +185,8 @@ class BackendAIAgentList extends BackendAIPage {
           var occupied_slots = JSON.parse(agent.occupied_slots);
           var available_slots = JSON.parse(agent.available_slots);
 
-          agents[objectKey].cpu_slots = parseInt(Number(available_slots.cpu));
-          agents[objectKey].used_cpu_slots = parseInt(Number(occupied_slots.cpu));
+            agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
+            agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
           if (agent.cpu_cur_pct !== null) {
             agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
             agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots * 100.0;
@@ -200,13 +209,13 @@ class BackendAIAgentList extends BackendAIPage {
           agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots * 100.0;
           agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
           if ('cuda.device' in available_slots) {
-            agents[objectKey].gpu_slots = parseInt(Number(available_slots['cuda.device']));
+              agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
           }
           if ('cuda.shares' in available_slots) {
             agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
           }
           if ('cuda.device' in occupied_slots) {
-            agents[objectKey].used_gpu_slots = parseInt(Number(occupied_slots['cuda.device']));
+              agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
           }
           if ('cuda.shares' in occupied_slots) {
             agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
@@ -246,7 +255,7 @@ class BackendAIAgentList extends BackendAIPage {
     } else {
       var endDate = new Date(end);
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     if (this.condition === 'running') {
       return 'Running ' + seconds + 'sec.';
     } else {
@@ -289,7 +298,7 @@ class BackendAIAgentList extends BackendAIPage {
     );
   }
 
-  contactDateRenderer(root, column, rowData) {
+  contactDateRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
@@ -299,7 +308,7 @@ class BackendAIAgentList extends BackendAIPage {
     );
   }
 
-  statusRenderer(root, column, rowData) {
+  statusRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
@@ -310,7 +319,7 @@ class BackendAIAgentList extends BackendAIPage {
     );
   }
 
-  controlRenderer(root, column, rowData) {
+  controlRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
