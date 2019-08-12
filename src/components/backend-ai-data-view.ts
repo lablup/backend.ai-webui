@@ -63,6 +63,7 @@ class BackendAIData extends BackendAIPage {
 	public _boundFileNameRenderer: any;
 	public _boundCreatedTimeRenderer: any;
 	public _boundPermissionRenderer: any;
+    public _selected_items: any;
 	public shadowRoot: any;
 	public fileListGrid: any;
 	public notification: any;
