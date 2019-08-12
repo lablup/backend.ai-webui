@@ -24,80 +24,41 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-summary-view")
 export default class BackendAISummary extends BackendAIPage {
-	public invitations: any;
-	public indicator: any;
-	public shadowRoot: any;
-	public notification: any;
-	public resourcePolicy: any;
-	public cpu_total: any;
-	public mem_total: any;
-	public gpu_total: any;
-	public fgpu_total: any;
-	public cpu_used: any;
-	public gpu_used: any;
-	public fgpu_used: any;
-	public cpu_percent: any;
-	public cpu_total_percent: any;
-	public cpu_total_usage_ratio: any;
-	public cpu_current_usage_ratio: any;
-	public mem_used: any;
-	public mem_allocated: any;
-	public mem_total_usage_ratio: any;
-	public mem_current_usage_ratio: any;
-	public mem_current_usage_percent: any;
-	public updateComplete: any;
-	public is_admin: any;
-
   constructor() {
     super();
-    this.jobs = {};
-    this.sessions = {};
-    this.is_superadmin = false;
-    this.resources = {};
-    this.authenticated = false;
-    this.active = false;
     this.invitations = [];
   }
 
+  @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'running';
   @property({type: Object}) sessions = Object();
   @property({type: Object}) jobs = Object();
   @property({type: Number}) agents = 0;
+  @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: Object}) resources = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
-
-
-  static get properties() {
-    return {
-      cpu_total: {type: Number},
-      cpu_used: {type: Number},
-      cpu_percent: {type: Number},
-      cpu_total_percent: {type: Number},
-      cpu_total_usage_ratio: {type: Number},
-      cpu_current_usage_ratio: {type: Number},
-      mem_total: {type: Number},
-      mem_used: {type: Number},
-      mem_allocated: {type: Number},
-      mem_total_usage_ratio: {type: Number},
-      mem_current_usage_ratio: {type: Number},
-      mem_current_usage_percent: {type: Number},
-      gpu_total: {type: Number},
-      gpu_used: {type: Number},
-      fgpu_total: {type: Number},
-      fgpu_used: {type: Number},
-      invitations: {
-        type: Array
-      },
-      indicator: {
-        type: Object
-      },
-      notification: {
-        type: Object
-      }
-    };
-  }
+  @property({type: Number}) cpu_total = 0;
+  @property({type: Number}) cpu_used = 0;
+  @property({type: String}) cpu_percent = '0';
+  @property({type: String}) cpu_total_percent = '0';
+  @property({type: Number}) cpu_total_usage_ratio = 0;
+  @property({type: Number}) cpu_current_usage_ratio = 0;
+  @property({type: String}) mem_total = '0';
+  @property({type: String}) mem_used = '0';
+  @property({type: String}) mem_allocated = '0';
+  @property({type: Number}) mem_total_usage_ratio = 0;
+  @property({type: Number}) mem_current_usage_ratio = 0;
+  @property({type: String}) mem_current_usage_percent = '0';
+  @property({type: Number}) gpu_total = 0;
+  @property({type: Number}) gpu_used = 0;
+  @property({type: Number}) fgpu_total = 0;
+  @property({type: Number}) fgpu_used = 0;
+  @property({type: Array}) invitations = [];
+  @property({type: Object}) indicator = Object();
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) resourcePolicy;
 
   static get styles() {
     return [
@@ -314,14 +275,14 @@ export default class BackendAISummary extends BackendAIPage {
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
 
     if (this.mem_total_usage_ratio === 0) { // Not allocated (no session presents)
-      this.mem_current_usage_percent = 0.0;
+      this.mem_current_usage_percent = '0.0';
     } else {
       this.mem_current_usage_percent = this.mem_total_usage_ratio.toFixed(2);//(this.mem_allocated / this.mem_total_usage_ratio * 100.0).toFixed(2);
     }
     this.agents = this.resources.agents.total;
 
-    if (isNaN(this.mem_current_usage_percent)) {
-      this.mem_current_usage_percent = 0;
+    if (isNaN(parseFloat(this.mem_current_usage_percent))) {
+      this.mem_current_usage_percent = '0';
     }
   }
 
