@@ -150,14 +150,16 @@ class BackendAIUsageList extends LitElement {
           data: [
             res
               .filter((e, i) => res.length - template[period].length <= i)
-              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]})),
+              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
           ],
           axisTitle: {
             x: "Date",
             y: this._map[key]
           },
-          period
+          period,
+          unit_hint: res[0][key].unit_hint
         }
+
       });
 
       return this.updateComplete;
@@ -176,13 +178,14 @@ class BackendAIUsageList extends LitElement {
           data: [
             data
               .filter((e, i) => data.length - template[period].length <= i)
-              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]})),
+              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
           ],
           axisTitle: {
             x: "Date",
             y: _map[key]
           },
-          period
+          period,
+          unit_hint: data[0][period].unit_hint
         }
       })
     }
