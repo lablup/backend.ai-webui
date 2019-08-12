@@ -1,22 +1,17 @@
-import {customElement, property, css, html} from "lit-element";
+/**
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ */
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-input/paper-input';
-import '@polymer/paper-item/paper-item';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/title';
-import 'weightless/textfield';
-import 'weightless/expansion';
 import 'weightless/checkbox';
 import './lablup-notification';
-
-import './backend-ai-credential-list';
-import './backend-ai-resource-policy-list';
-import './backend-ai-user-list';
-
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
@@ -25,7 +20,6 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 import {default as PainKiller} from "./backend-ai-painkiller";
-import BackendAISummary from "./backend-ai-summary-view";
 
 @customElement("lablup-terms-of-service")
 class LablupTermsOfService extends BackendAIPage {
