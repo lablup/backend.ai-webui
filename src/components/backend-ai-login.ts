@@ -556,7 +556,7 @@ class BackendAiLogin extends LitElement {
                            label="API Endpoint" value=""></paper-input>
               <br/><br/>
               <wl-button class="fg red" id="login-button" outlined type="button"
-                          @click="${(e) => this._login(e)}">
+                          @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
                           Login</wl-button>
             </fieldset>
