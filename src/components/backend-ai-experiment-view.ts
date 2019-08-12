@@ -4,32 +4,37 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 
+import '@polymer/paper-dialog/paper-dialog';
+import '@polymer/paper-button/paper-button';
+import '@polymer/paper-toggle-button/paper-toggle-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
+import '@vaadin/vaadin-dialog/vaadin-dialog';
+import './backend-ai-session-list';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
-import 'weightless/card';
+import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/expansion';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/radio';
-import 'weightless/slider';
-
+import 'weightless/card';
+import 'weightless/tab';
+import 'weightless/tab-group';
+import 'weightless/list-item';
+import 'weightless/divider';
+import './lablup-notification';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
-import './lablup-notification.js';
-import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -38,9 +43,42 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAiResourceMonitor extends BackendAIPage {
+class BackendAiExperimentView extends BackendAIPage {
+	public supports: any;
+	public resourceLimits: any;
+	public userResourceLimit: any;
+	public aliases: any;
+	public versions: any;
+	public languages: any;
+	public gpu_mode: any;
+	public gpu_step: any;
+	public cpu_metric: any;
+	public mem_metric: any;
+	public gpu_metric: any;
+	public tpu_metric: any;
+	public images: any;
+	public defaultResourcePolicy: any;
+	public total_slot: any;
+	public used_slot: any;
+	public available_slot: any;
+	public resource_info: any;
+	public used_slot_percent: any;
+	public resource_templates: any;
+	public vfolders: any;
+	public default_language: any;
+	public launch_ready: any;
+	public concurrency_used: any;
+	public concurrency_max: any;
+	public _status: any;
+	public notification: any;
+	public shadowRoot: any;
+	public updateComplete: any;
+	public vgpu_metric: any;
+	public $: any;
+
   constructor() {
     super();
+    setPassiveTouchGestures(true);
     this.active = false;
     this.supports = {};
     this.resourceLimits = {};
@@ -49,31 +87,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'TensorFlow': 'python-tensorflow',
       'Lablup ResearchEnv.': 'python-ff',
       'Python': 'python',
-      'Python (Intel)': 'python-intel',
       'PyTorch': 'python-pytorch',
       'Chainer': 'chainer',
-      'R': 'r-base',
+      'R': 'r',
       'Julia': 'julia',
       'Lua': 'lua',
-      'RAPID (NGC)': 'ngc-rapid',
-      'DIGITS (NGC)': 'ngc-digits',
-      'PyTorch (NGC)': 'ngc-pytorch',
-      'TensorFlow (NGC)': 'ngc-tensorflow'
-    };
-    this.tags = {
-      'TensorFlow': [],
-      'Lablup ResearchEnv.': [],
-      'Python': [],
-      'Python (MKL)': ['Intel MKL'],
-      'PyTorch': [],
-      'Chainer': [],
-      'R': [],
-      'Julia': [],
-      'Lua': [],
-      'RAPID (NGC)': ['NVidia GPU Cloud'],
-      'DIGITS (NGC)': ['NVidia GPU Cloud'],
-      'PyTorch (NGC)': ['NVidia GPU Cloud'],
-      'TensorFlow (NGC)': ['NVidia GPU Cloud']
     };
     this.versions = ['3.6'];
     this.languages = [];
@@ -109,18 +127,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.concurrency_used = 0;
     this.concurrency_max = 0;
     this._status = 'inactive';
-    this.cpu_request = 1;
-    this.mem_request = 1;
-    this.gpu_request = 0;
-    this.session_request = 1;
-    this.direction = "horizontal";
-    this.scaling_groups = [];
-    this.scaling_group = '';
-    this.enable_scaling_group = false;
   }
 
   static get is() {
-    return 'backend-ai-resource-monitor';
+    return 'backend-ai-experiment-view';
   }
 
   static get properties() {
@@ -138,9 +148,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
         type: Object
       },
       aliases: {
-        type: Object
-      },
-      tags: {
         type: Object
       },
       versions: {
@@ -206,38 +213,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
       launch_ready: {
         type: Boolean
       },
-      cpu_request: {
-        type: Number
-      },
-      mem_request: {
-        type: Number
-      },
-      gpu_request: {
-        type: Number
-      },
-      session_request: {
-        type: Number
-      },
       _status: {
         type: Boolean
       },
-      direction: {
-        type: String
-      },
-      num_sessions: {
-        type: Number
-      },
-      scaling_group: {
-        type: String
-      },
-      scaling_groups: {
-        type: Array
-      },
       notification: {
         type: Object
-      },
-      enable_scaling_group: {
-        type: Boolean
       }
     }
   }
@@ -291,27 +271,25 @@ class BackendAiResourceMonitor extends BackendAIPage {
           --paper-progress-transition-delay: 0s;
         }
 
-        .resources.horizontal .short-indicator paper-progress {
+        .short-indicator paper-progress {
           width: 50px;
         }
 
-        .resources.horizontal .short-indicator .gauge-label {
+        .short-indicator .gauge-label {
           width: 80px;
+        }
+
+        .custom {
+          color: var(--paper-red-800);
         }
 
         span.caption {
           width: 30px;
-          font-size: 12px;
           padding-left: 10px;
         }
 
         div.caption {
-          font-size: 12px;
           width: 100px;
-        }
-
-        span.resource-type {
-          font-size: 14px;
         }
 
         .gauge-name {
@@ -336,19 +314,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
           font-size: 14px;
         }
 
-        #new-session-dialog {
-            z-index: 100;
-        }
-
-        wl-button.resource-button.iron-selected {
-          --button-color: var(--paper-red-600);
-          --button-bg: var(--paper-red-600);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-bg-flat: var(--paper-orange-50);
-        }
-
         .resource-button h4 {
           padding: 5px 0;
           margin: 0;
@@ -364,77 +329,57 @@ class BackendAiResourceMonitor extends BackendAIPage {
           width: 100%;
         }
 
-        #launch-session {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
+        wl-button.button {
+          --button-bg: var(--paper-blue-50);
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
         }
 
         wl-button.launch-button {
           width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-active: var(--paper-red-300);
-          --button-bg-hover: var(--paper-red-300);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
+          --button-bg: var(--paper-blue-50);
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
         }
 
         wl-button.resource-button {
           --button-bg: white;
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
+          --button-bg-active: var(--paper-blue-600);
+          --button-bg-hover: var(--paper-blue-600);
+          --button-bg-active-flat: var(--paper-blue-50);
           --button-color: #89A;
-          --button-color-active: red;
-          --button-color-hover: red;
+          --button-color-active: blue;
+          --button-color-hover: blue;
+        }
+
+        wl-card h3.tab {
+          padding-top: 0;
+          padding-bottom: 0;
+          padding-left: 0;
         }
 
         wl-expansion {
-            --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
         }
-
-        wl-expansion span {
-            font-size: 20px;
-            font-weight: 200;
-            display: block;
-        }
-
-        .resources.vertical .monitor {
-          margin-bottom: 10px;
-        }
-
-        .resources.vertical .monitor div:first-child {
-          width: 40px;
-        }
-
-        wl-button[fab] {
-          --button-fab-size: 70px;
-          border-radius: 6px;
-        }
-
-        wl-label {
-          margin-right: 10px;
-          outline: none;
-        }
       `];
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
+    this.shadowRoot.querySelector('#launch-session').addEventListener('tap', this._launchSessionDialog.bind(this));
+    this.shadowRoot.querySelector('#launch-button').addEventListener('tap', this._newSession.bind(this));
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-    this.notification = this.shadowRoot.querySelector('#notification');
-
+    //this.shadowRoot.querySelector('#advanced-resource-settings-button').addEventListener('tap', this._toggleAdvancedSettings.bind(this));
     this._initAliases();
-    this.aggregateResource();
-    const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+    this.updateResourceIndicator();
+    var gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
-      this.aggregateResource();
+      this.updateResourceIndicator();
+      this._refreshResourceTemplate();
     });
     gpu_resource.addEventListener('value-change', () => {
       if (gpu_resource.value > 0) {
@@ -445,7 +390,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     });
     this.shadowRoot.querySelector('#use-gpu-checkbox').addEventListener('change', () => {
       if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked === true) {
-        if (this.gpu_metric.min === this.gpu_metric.max) {
+        if (this.gpu_metric.min == this.gpu_metric.max) {
           this.shadowRoot.querySelector('#gpu-resource').disabled = true
         } else {
           this.shadowRoot.querySelector('#gpu-resource').disabled = false;
@@ -454,6 +399,15 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
+    //this._initTabBar();
+  }
+
+  _initTabBar() {
+    /* Test code */
+    let b = document.body.querySelector('#console-shell');
+    let c = b.shadowRoot.querySelector('#top-tab-menu');
+    let d = this.shadowRoot.querySelector('#topbar-tabs');
+    c.appendChild(d);
   }
 
   _initAliases() {
@@ -464,32 +418,30 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   async _viewStateChanged(active) {
     await this.updateComplete;
-    if (this.active === false) {
+    if (active === false) {
+      this.shadowRoot.querySelector('#running-jobs').active = false;
+      this.shadowRoot.querySelector('#finished-jobs').active = false;
+      this._status = 'inactive';
       return;
     }
+    this.shadowRoot.querySelector('#running-jobs').active = true;
+    this.shadowRoot.querySelector('#finished-jobs').active = true;
+    this._status = 'active';
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
         this._refreshResourcePolicy();
       }, true);
     } else { // already connected
-      this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
       this._refreshResourcePolicy();
     }
-  }
-
-  _refreshConcurrency() {
-    return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
-      this.concurrency_used = response.keypair.concurrency_used;
-    });
   }
 
   _refreshResourcePolicy() {
     window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
       this.concurrency_used = response.keypair.concurrency_used;
-      // Workaround: We need a new API for user mode resource policy access, and current resource usage.
+      // Workaround: We need a new API for user mode resourcepolicy access, and current resource usage.
       // TODO: Fix it to use API-based resource max.
       return window.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
         'total_resource_slots',
@@ -527,18 +479,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.updateMetric();
   }
 
-  async _launchSessionDialog() {
+  _launchSessionDialog() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      this.notification.text = 'Please wait while initializing...';
+      this.notification.text = 'Please wait while initlaizating...';
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
-      if (this.enable_scaling_group === true) {
-        let sgs = await window.backendaiclient.scalingGroup.list();
-        this.scaling_groups = sgs.scaling_groups;
-      }
-      await this.updateMetric();
-      const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+      this.updateMetric();
+      var gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
@@ -575,31 +523,23 @@ class BackendAiResourceMonitor extends BackendAIPage {
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
-    this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
-    this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
-    this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
-    this.session_request = this.shadowRoot.querySelector('#session-resource').value;
-    this.num_sessions = this.session_request;
-    if (this.enable_scaling_group) {
-      this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
-    }
+
     let config = {};
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       config['group_name'] = window.backendaiclient.current_group;
       config['domain'] = window.backendaiclient._config.domainName;
-      config['scaling_group'] = this.scaling_group;
     }
-    config['cpu'] = this.cpu_request;
+    config['cpu'] = this.shadowRoot.querySelector('#cpu-resource').value;
     if (this.gpu_mode == 'vgpu') {
-      config['vgpu'] = this.gpu_request;
+      config['vgpu'] = this.shadowRoot.querySelector('#gpu-resource').value;
     } else {
-      config['gpu'] = this.gpu_request;
+      config['gpu'] = this.shadowRoot.querySelector('#gpu-resource').value;
     }
 
-    if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
-      config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
+    if (String(this.shadowRoot.querySelector('#ram-resource').value) === "Infinity") {
+      config['mem'] = String(this.shadowRoot.querySelector('#ram-resource').value);
     } else {
-      config['mem'] = String(this.mem_request) + 'g';
+      config['mem'] = String(this.shadowRoot.querySelector('#ram-resource').value) + 'g';
     }
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
@@ -620,22 +560,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
     this.notification.text = 'Preparing session...';
     this.notification.show();
-
-    let sessions = [];
-    for (var i = 0; i < this.num_sessions; i++) {
-      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
-    }
-
-    const createSessionQueue = sessions.map(item => {
-      return this._createKernel(item.kernelName, item.sessionName, item.config);
-    });
-    Promise.all(createSessionQueue).then((res) => {
+    window.backendaiclient.createKernel(kernelName, sessionName, config).then((req) => {
+      this.shadowRoot.querySelector('#running-jobs').refreshList();
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
-      this._refreshConcurrency();
-      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
-      document.dispatchEvent(event);
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -645,19 +574,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.show();
       }
-      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
-      document.dispatchEvent(event);
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
     });
-  }
-
-  _createKernel(kernelName, sessionName, config) {
-    return window.backendaiclient.createKernel(kernelName, sessionName, config);
-  }
-
-  _hideSessionDialog() {
-    this.shadowRoot.querySelector('#new-session-dialog').hide();
   }
 
   _guessHumanizedNames(kernelName) {
@@ -677,7 +596,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'octave': 'Octave',
       'php': 'PHP',
       'python': 'Python',
-      'python-intel': 'Python (Intel)',
       'python-ff': 'Lablup ResearchEnv.',
       'python-cntk': 'CNTK',
       'python-pytorch': 'PyTorch',
@@ -714,9 +632,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       }
       const alias = this.aliases[item];
       if (alias !== undefined) {
-        const basename = alias.split(' (')[0];
-        const tags = this.tags[alias];
-        this.languages.push({name: item, alias: alias, basename: basename, tags: tags});
+        this.languages.push({name: item, alias: alias});
       }
     });
     this._initAliases();
@@ -725,8 +641,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   _updateVersions(lang) {
     if (this.aliases[lang] in this.supports) {
       this.versions = this.supports[this.aliases[lang]];
-      this.versions.sort();
-      this.versions.reverse(); // New version comes first.
+      this.versions = this.versions.sort();
     }
     if (this.versions !== undefined) {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
@@ -753,26 +668,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
   async _aggregateResourceUse() {
     let total_slot = {};
     return window.backendaiclient.resourcePreset.check().then((response) => {
-      if (response.presets) { // Same as refreshResourceTemplate.
-        let presets = response.presets;
-        let available_presets = [];
-        presets.forEach((item) => {
-          if (item.allocatable === true) {
-            if ('cuda.shares' in item.resource_slots) {
-              item.gpu = item.resource_slots['cuda.shares'];
-            } else if ('cuda.device' in item) {
-              item.gpu = item.resource_slots['cuda.device'];
-            } else {
-              item.gpu = 0;
-            }
-            item.cpu = item.resource_slots.cpu;
-            item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
-            available_presets.push(item);
-          }
-        });
-        this.resource_templates = available_presets;
-      }
-
       let group_resource = response.scaling_group_remaining;
       ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
         if (slot in response.keypair_using && slot in group_resource) {
@@ -811,8 +706,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
           total_slot['vgpu_slot'] = resource_limit['cuda.shares'];
         }
       }
-      let remaining_slot = {};
-      let used_slot = {};
+        let remaining_slot = Object();
+        let used_slot = Object();
       let resource_remaining = response.keypair_remaining;
       let resource_using = response.keypair_using;
       if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
@@ -871,22 +766,19 @@ class BackendAiResourceMonitor extends BackendAIPage {
         }
         if (slot in remaining_slot) {
           if (remaining_slot[slot] === 'Infinity') {
+            console.log(slot);
             remaining_slot[slot] = total_slot[slot];
           }
         }
       });
-      if (this.concurrency_max === 0) {
-        used_slot_percent['concurrency'] = 0;
-      } else {
-        used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
-      }
+      used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
       return this.available_slot;
     });
   }
 
-  aggregateResource() {
+  updateResourceIndicator() {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse();
@@ -1051,14 +943,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
           this.shadowRoot.querySelector('#gpu-resource').disabled = false;
           this.shadowRoot.querySelector('#gpu-resource').value = this.gpu_metric.max;
         }
-
         // Refresh with resource template
         if (this.resource_templates !== [] && this.resource_templates.length > 0) {
           let resource = this.resource_templates[0];
           this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
-          let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('wl-button')[0];
-          this.shadowRoot.querySelector('#resource-templates').selected = "0";
-          default_template.setAttribute('active', true);
           //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
         }
 
@@ -1070,10 +958,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
           this.shadowRoot.querySelector('#cpu-resource').disabled = false;
         }
         if (this.mem_metric.min == this.mem_metric.max) {
-          this.shadowRoot.querySelector('#mem-resource').max = this.mem_metric.max + 1;
-          this.shadowRoot.querySelector('#mem-resource').disabled = true
+          this.shadowRoot.querySelector('#ram-resource').max = this.mem_metric.max + 1;
+          this.shadowRoot.querySelector('#ram-resource').disabled = true
         } else {
-          this.shadowRoot.querySelector('#mem-resource').disabled = false;
+          this.shadowRoot.querySelector('#ram-resource').disabled = false;
         }
         if (this.gpu_metric.min == this.gpu_metric.max) {
           this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
@@ -1120,8 +1008,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this._updateEnvironment();
     }).catch((err) => {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.$.notification.text = PainKiller.relieve(err.message);
+        this.$.notification.show();
       }
     });
   }
@@ -1152,10 +1040,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateResourceIndicator(cpu, mem, gpu) {
+    this.shadowRoot.querySelector('#cpu-resource').value = cpu;
+    this.shadowRoot.querySelector('#ram-resource').value = mem;
     this.shadowRoot.querySelector('#gpu-resource').value = gpu;
-    this.cpu_request = cpu;
-    this.mem_request = mem;
-    this.gpu_request = gpu;
   }
 
   selectDefaultLanguage() {
@@ -1185,225 +1072,359 @@ class BackendAiResourceMonitor extends BackendAIPage {
     return false;
   }
 
+  _showTab(tab) {
+    var els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (var x = 0; x < els.length; x++) {
+      els[x].style.display = 'none';
+    }
+    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+  }
+
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification" open></lablup-notification>
-      <div class="layout horizontal">
-        <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
-              <div class="gauge-name">CPU</div>
-            </div>
-            <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
-              <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
-            </div>
-          </div>
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
-              <span class="gauge-name">RAM</span>
-            </div>
-            <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
-              <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
-            </div>
-          </div>
-          ${this.total_slot.gpu_slot ?
-      html`
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-              <span class="gauge-name">GPU</span>
-            </div>
-            <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
-              <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
-            </div>
-          </div>` :
-      html``}
-          ${this.total_slot.vgpu_slot ?
-      html`
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-              <span class="gauge-name">GPU</span>
-            </div>
-            <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_slot.vgpu_slot}/${this.total_slot.vgpu_slot}</span>
-              <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
-            </div>
-          </div>` :
-      html``}
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
-              <span class="gauge-name">Session</span>
-            </div>
-            <div class="layout vertical start-justified wrap short-indicator" style="margin-left: 0; margin-right: auto">
-              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-              <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
-            </div>
-          </div>
-          <div class="flex"></div>
-        </div>
-        <div class="layout vertical" style="align-self: center;">
-          <wl-button class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
-            <wl-icon>add</wl-icon>
-            Start
+      <lablup-notification id="notification"></lablup-notification>
+      <wl-card class="item" elevation="1">
+        <h3 class="tab horizontal center layout">
+          <wl-tab-group>
+            <wl-tab value="exp-lists" checked @click="${(e) => this._showTab(e.target)}">List</wl-tab>
+            <wl-tab value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
+            <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
+          </wl-tab-group>
+          <span class="flex"></span>
+          <wl-button class="fg blue button" id="add-experiment" outlined>
+           <wl-icon>add</wl-icon>
+            Add experiment
           </wl-button>
-        </div>
-      </div>
-      <wl-dialog id="new-session-dialog"
-                    fixed backdrop blockscrolling persistent
-                    style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>Start new session</span>
-            <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button"
-              @click="${() => this._hideSessionDialog()}">
-              Close
-            </paper-icon-button>
-          </h3>
-          <form id="launch-session-form">
-            <fieldset>
-              <div class="horizontal center layout">
-                <paper-dropdown-menu id="environment" label="Environments" horizontal-align="left">
-                  <paper-listbox slot="dropdown-content" attr-for-selected="id"
-                                 selected="${this.default_language}">
-                ${this.languages.map(item => html`
-                    <paper-item id="${item.name}" label="${item.alias}">${item.basename}
-                    ${item.tags ? item.tags.map(item => html`
-                      <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                    `) : ''}
-                    </paper-item>
-                `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="version" label="Version">
-                  <paper-listbox slot="dropdown-content" selected="0">
-              ${this.versions.map(item => html`
-                    <paper-item id="${item}" label="${item}">${item}</paper-item>
-              `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-              <div style="display:none;">
-                <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
+        </h3>
+        <div id="exp-lists" class="tab-content" style="margin:0;padding:0;height:calc(100vh - 235px);">
+            <div class="horizontal wrap layout" style="margin:0;padding:0;">
+              <div style="weight: 300px;border-right:1px solid #ccc;height:calc(100vh - 235px);">
+                <wl-list-item active style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <span slot="after">5<br/><span style="font-size:9px">components</span></span>
+                  <wl-title level="4" style="margin: 0">Test experiment</wl-title>
+                  <span style="font-size: 11px;">Test experiment</span>
+                </wl-list-item>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="3" style="margin: 0">Fashion MNIST</wl-title>
+                   <span style="font-size: 11px;">Fashion MNIST serving test</span>
+                </wl-list-item>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="4" style="margin: 0">Test experiment2</wl-title>
+                   <span style="font-size: 11px;">Test experiment2</span>
+                </wl-list-item>
+                <h4>Templates</h4>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">5<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="2" style="margin: 0">Example Experiment (TensorFlow)</wl-title>
+                   <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
+                </wl-list-item>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="2" style="margin: 0">Example Experiment (PyTorch)</wl-title>
+                   <span style="font-size: 11px;">Basic experiment example using Pytorch</span>
+                </wl-list-item>
+                <wl-list-item style="width:300px;">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                   <wl-title level="2" style="margin: 0">Facet data cleaner</wl-title>
+                   <span style="font-size: 11px;">Data preprocessing using Facet</span>
+                </wl-list-item>
               </div>
               <div class="layout vertical">
-                <paper-input id="session-name" label="Session name (optional)"
-                             value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
-                             error-message="4 or more characters / no whitespace">
-                </paper-input>
-              </div>
-            </fieldset>
-            <wl-expansion name="resource-group" open>
-              <span slot="title">Resource allocation</span>
-              <span slot="description"></span>
-              <div class="horizontal center layout">
-                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders">
-                ${this.vfolders.map(item => html`
-                  <paper-item value="${item.name}">${item.name}</paper-item>
-                `)}
-                </backend-ai-dropdown-menu>
-                ${this.enable_scaling_group ? html`
-                <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
-                  <paper-listbox selected="0" slot="dropdown-content">
-${this.scaling_groups.map(item =>
-      html`
-                      <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-      `
-    )
-}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                ` : html``}
-              </div>
-              <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
-                             style="width:350px; overflow:scroll;">
-${this.resource_templates.map(item => html`
-                <wl-button class="resource-button vertical center start layout" role="option"
-                            style="height:140px;min-width:120px;" type="button"
-                            flat outlined
-                            @click="${this._chooseResourceTemplate}"
-                            id="${item.name}-button"
-                            .cpu="${item.cpu}"
-                            .mem="${item.mem}"
-                            .gpu="${item.gpu}">
-                  <div>
-                    <h4>${item.name}</h4>
-                    <ul>
-                      <li>${item.cpu} CPU</li>
-                      <li>${item.mem}GB RAM</li>
-                      ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} vGPU</li>`}
-                      </ul>
+                <wl-list-item active style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                    <div class="horizontal layout">
+                      <div class="layout vertical center center-justified flex" style="width:50px;">
+                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                      </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>-</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </wl-button>
-              `)}
-              ${this.isEmpty(this.resource_templates) ?
-      html`
-                <wl-button class="resource-button vertical center start layout" role="option"
-                            style="height:140px;width:350px;" type="button"
-                            flat inverted outlined disabled>
-                  <div>
-                    <h4>No suitable preset</h4>
-                    <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
+                  <wl-title level="4" style="margin: 0">Backend.AI Data Uploader</wl-title>
+                  <div style="font-size:11px;max-width:450px;">Backend.AI data uploader helps users uploading the data to experiment store.</div>
+                </wl-list-item>
+                <wl-list-item style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                    <div class="horizontal layout">
+                      <div class="layout vertical center center-justified flex" style="width:50px;">
+                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                      </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>2</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>-</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                  <wl-title level="4" style="margin: 0">Facet</wl-title>
+                  <div style="font-size:11px;max-width:450px;">Facets contains two robust visualizations to aid in understanding and analyzing machine learning datasets.</div>
+                </wl-list-item>
+                <wl-list-item style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                  <div class="horizontal layout">
+                    <div class="layout vertical center center-justified flex" style="width:50px;">
+                        <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                    </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>4</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>16</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>1.5</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <wl-title level="4" style="margin: 0">TensorFlow</wl-title>
+                  <div style="font-size:11px;max-width:450px;">TensorFlow is an end-to-end open source platform for machine learning.</div>
+                </wl-list-item>
+                <wl-list-item style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                  <div class="horizontal layout">
+                    <div class="layout vertical center center-justified flex" style="width:50px;">
+                        <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                    </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>4</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>16</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>1.5</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <wl-title level="4" style="margin: 0">TensorFlow Validate</wl-title>
+                  <div style="font-size:11px;max-width:450px;">TensorFlow is an end-to-end open source platform for machine learning.</div>
+                </wl-list-item>
+                <wl-list-item style="width:calc(100% - 55px);height:80px;">
+                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <div slot="after">
+                    <div class="horizontal layout">
+                      <div class="layout vertical center center-justified flex" style="width:50px;">
+                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                      </div>
+                      <div class="layout vertical start flex" style="width:80px!important;">
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">core</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <span>1</span>
+                          <span class="indicator">GB</span>
+                        </div>
+                        <div class="layout horizontal configuration">
+                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <span>-</span>
+                          <span class="indicator">GPU</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <wl-title level="4" style="margin: 0">TensorFlow Serving</wl-title>
+                  <div style="font-size: 11px;max-width:450px;">TensorFlow Serving is a flexible, high-performance serving system for machine learning models, designed for production environments.</div>
+                </wl-list-item>
+                <wl-button class="fg blue button" id="launch-session" outlined>
+                  <wl-icon>add</wl-icon>
+                  Add component
                 </wl-button>
-` : html``}
-              </paper-listbox>
-            </wl-expansion>
-            <wl-expansion name="resource-group">
-              <span slot="title">Advanced</span>
-              <span slot="description">Custom allocation</span>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">CPU</span>
-                <paper-slider id="cpu-resource" class="cpu"
-                              pin snaps expand editable
-                              min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                              value="${this.cpu_request}"></paper-slider>
-                <span class="caption">Core</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">RAM</span>
-                <paper-slider id="mem-resource" class="mem"
-                              pin snaps step=0.1 editable
-                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                              value="${this.mem_request}"></paper-slider>
-                <span class="caption">GB</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">GPU</span>
-                <paper-slider id="gpu-resource" class="gpu"
-                              pin snaps editable step="${this.gpu_step}"
-                              min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
-                <span class="caption">GPU</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:50px;">Sessions</span>
-                <paper-slider id="session-resource" class="session"
-                              pin snaps editable step=1
-                              min=1 max=5 value="${this.session_request}"></paper-slider>
-                <span class="caption">#</span>
-              </div>
-            </wl-expansion>
-
-            <fieldset style="padding-top:0;">
-              <wl-button class="launch-button" type="button" id="launch-button"
-                                           outlined @click="${() => this._newSession()}">
-                                          <wl-icon>rowing</wl-icon>
-                <span id="launch-button-msg">Launch</span>
+            </div>
+          </div>
+        </div>
+        <div id="running-lists" class="tab-content" style="display:none;">
+          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
+        </div>
+        <div id="finished-lists" class="tab-content" style="display:none;">
+          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
+        </div>
+      </wl-card>
+        <wl-dialog id="new-session-dialog"
+                      fixed backdrop blockscrolling persistent
+                      style="padding:0;">
+          <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+            <h3 class="horizontal center layout">
+              <span>Add a new component</span>
+              <div class="flex"></div>
+              <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+                <wl-icon>close</wl-icon>
               </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
+            </h3>
+            <form id="launch-session-form" onSubmit="this._launchSession()">
+              <fieldset>
+                <div class="horizontal center layout">
+                  <paper-dropdown-menu id="environment" label="Environments">
+                    <paper-listbox slot="dropdown-content" attr-for-selected="id"
+                                   selected="${this.default_language}">
+                  ${this.languages.map(item => html`
+                          <paper-item id="${item.name}" label="${item.alias}">${item.alias}</paper-item>
+                  `)}
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="version" label="Version">
+                      <paper-listbox slot="dropdown-content" selected="0">
+                  ${this.versions.map(item => html`
+                        <paper-item id="${item}" label="${item}">${item}</paper-item>
+                  `)}
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                    </div>
+                    <div style="display:none;">
+                      <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
+                    </div>
+                    <div class="layout vertical">
+                      <paper-input id="session-name" label="Session name (optional)"
+                                   value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
+                                   error-message="4 or more characters">
+                      </paper-input>
+                      <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
+                      ${this.vfolders.map(item => html`
+                        <paper-item value="${item.name}">${item.name}</paper-item>
+                      `)}
+                      </backend-ai-dropdown-menu>
+                  </div>
+                </fieldset>
+                <wl-expansion name="resource-group" open>
+                  <span slot="title">Resource allocation</span>
+                  <span slot="description"></span>
+                  <paper-listbox selected="0" class="horizontal center layout"
+                                 style="width:350px; overflow:scroll;">
+${this.resource_templates.map(item => html`
+                    <wl-button class="resource-button vertical center start layout" role="option"
+                                style="height:140px;min-width:120px;" type="button"
+                                flat outlined
+                                @click="${this._chooseResourceTemplate}"
+                                id="${item.name}-button"
+                                .cpu="${item.cpu}"
+                                .mem="${item.mem}"
+                                .gpu="${item.gpu}">
+                      <div>
+                        <h4>${item.name}</h4>
+                        <ul>
+                          <li>${item.cpu} CPU</li>
+                          <li>${item.mem}GB RAM</li>
+                          ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} vGPU</li>`}
+                          </ul>
+                      </div>
+                    </wl-button>
+                  `)}
+                  ${this.isEmpty(this.resource_templates) ?
+      html`
+                    <wl-button class="resource-button vertical center start layout" role="option"
+                                style="height:140px;width:350px;" type="button"
+                                flat inverted outlined disabled>
+                      <div>
+                        <h4>No suitable preset</h4>
+                        <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
+                      </div>
+                    </wl-button>
+` : html``}
+                  </paper-listbox>
+                </wl-expansion>
+                <wl-expansion name="resource-group">
+                  <span slot="title">Advanced</span>
+                  <span slot="description">Free resource allocation</span>
+                  <div class="horizontal center layout">
+                    <span style="width:30px;">CPU</span>
+                    <paper-slider id="cpu-resource" class="cpu"
+                                  pin snaps expand editable
+                                  min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
+                                  value="${this.cpu_metric.max}"></paper-slider>
+                    <span class="caption">Core</span>
+                  </div>
+                  <div class="horizontal center layout">
+                    <span style="width:30px;">RAM</span>
+                    <paper-slider id="ram-resource" class="mem"
+                                  pin snaps step=0.1 editable
+                                  min="${this.mem_metric.min}" max="${this.mem_metric.max}"
+                                  value="${this.mem_metric.max}"></paper-slider>
+                    <span class="caption">GB</span>
+                  </div>
+                  <div class="horizontal center layout">
+                    <span style="width:30px;">GPU</span>
+                    <paper-slider id="gpu-resource" class="gpu"
+                                  pin snaps editable step="${this.gpu_step}"
+                                  min="0.0" max="${this.gpu_metric.max}" value="1.0"></paper-slider>
+                    <span class="caption">GPU</span>
+                  </div>
+                </wl-expansion>
+
+                <fieldset style="padding-top:0;">
+                  <wl-button class="launch-button fg blue" type="button" id="launch-button"
+                                               outlined>
+                                              <wl-icon>rowing</wl-icon>
+                    <span id="launch-button-msg">Register</span>
+                  </wl-button>
+                </fieldset>
+            </form>
+          </wl-card>
+        </wl-dialog>
 `;
   }
 }
 
-customElements.define(BackendAiResourceMonitor.is, BackendAiResourceMonitor);
+customElements.define(BackendAiExperimentView.is, BackendAiExperimentView);

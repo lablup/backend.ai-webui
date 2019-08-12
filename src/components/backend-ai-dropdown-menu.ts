@@ -12,6 +12,10 @@ import '@polymer/iron-dropdown/iron-dropdown'
 import {setPassiveTouchGestures} from "@polymer/polymer/lib/utils/settings";
 
 class BackendAIDropdownMenu extends PolymerElement {
+	public $: any;
+	public readonly: any;
+	public closeOnActivate: any;
+
   constructor() {
     super();
     setPassiveTouchGestures(true);

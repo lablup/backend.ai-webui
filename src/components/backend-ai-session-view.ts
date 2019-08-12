@@ -5,15 +5,15 @@
 
 import {css, html} from "lit-element";
 
-import './backend-ai-resource-monitor.js';
-import './backend-ai-session-list.js';
+import './backend-ai-resource-monitor';
+import './backend-ai-session-list';
 import './backend-ai-dropdown-menu';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
-import './lablup-notification.js';
-import {BackendAIPage} from './backend-ai-page.js';
+import './lablup-notification';
+import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -23,6 +23,11 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiSessionView extends BackendAIPage {
+	public _status: any;
+	public _lists: any;
+	public shadowRoot: any;
+	public updateComplete: any;
+
   constructor() {
     super();
     this.active = false;

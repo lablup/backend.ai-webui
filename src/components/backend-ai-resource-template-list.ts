@@ -4,7 +4,7 @@
  */
 
 import {css, html} from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
@@ -25,12 +25,34 @@ import 'weightless/card';
 import 'weightless/dialog';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-notification.js';
+import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIResourceTemplateList extends BackendAIPage {
+	public keypairs: any;
+	public resourcePolicy: any;
+	public keypairInfo: any;
+	public is_admin: any;
+	public cpu_metric: any;
+	public ram_metric: any;
+	public gpu_metric: any;
+	public fgpu_metric: any;
+	public rate_metric: any;
+	public concurrency_metric: any;
+	public container_per_session_metric: any;
+	public idle_timeout_metric: any;
+	public vfolder_capacity_metric: any;
+	public vfolder_count_metric: any;
+	public _boundResourceRenderer: any;
+	public _boundControlRenderer: any;
+	public shadowRoot: any;
+	public resourcePresets: any;
+	public gpu_allocatable: any;
+	public notification: any;
+	public updateComplete: any;
+	public condition: any;
 
   constructor() {
     super();
@@ -106,9 +128,6 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       },
       vfolder_count_metric: {
         type: Array
-      },
-      notification: {
-        type: Object
       }
     };
   }
@@ -185,7 +204,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       `];
   }
 
-  resourceRenderer(root, column, rowData) {
+  resourceRenderer(root, column?, rowData?) {
     render(
       html`
         <div class="layout horizontal wrap center">
@@ -222,7 +241,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
     );
   }
 
-  controlRenderer(root, column, rowData) {
+  controlRenderer(root, column?, rowData?) {
     render(
       html`
             <div id="controls" class="layout horizontal flex center"
@@ -566,13 +585,13 @@ class BackendAIResourceTemplateList extends BackendAIPage {
     } else {
       var endDate = new Date();
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     var days = Math.floor(seconds / 86400);
     return days;
   }
 
-  _humanReadableTime(d) {
-    var d = new Date(d);
+  _humanReadableTime(d: any) {
+    d = new Date(d);
     return d.toUTCString();
   }
 
