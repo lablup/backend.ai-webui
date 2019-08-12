@@ -485,7 +485,7 @@ class BackendAIChartAlt extends LitElement {
 
     const yAxis = d3
       .axisLeft(yScale)
-      .ticks(5);
+      .ticks(5, ".2f");
 
     const line = d3
       .line()
