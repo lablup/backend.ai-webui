@@ -480,7 +480,7 @@ class BackendAIChartAlt extends LitElement {
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(data.map(datum => d3.max(datum, d => d.y)))])
+      .domain([d3.min(data.map(datum => d3.min(datum, d => d.y))), d3.max(data.map(datum => d3.max(datum, d => d.y)))])
       .range([graphHeight, 0]);
 
     const yAxis = d3
