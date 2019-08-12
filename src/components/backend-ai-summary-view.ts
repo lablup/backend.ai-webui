@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {customElement, property, css, html} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-indicator';
@@ -24,10 +24,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-summary-view")
 export default class BackendAISummary extends BackendAIPage {
-  constructor() {
-    super();
-  }
-
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'running';
   @property({type: Object}) sessions = Object();
@@ -58,6 +54,10 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
+
+  constructor() {
+    super();
+  }
 
   static get styles() {
     return [

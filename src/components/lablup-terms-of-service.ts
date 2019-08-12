@@ -90,10 +90,6 @@ class LablupTermsOfService extends BackendAIPage {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
   open() {
     this._showTOSdialog();
   }
