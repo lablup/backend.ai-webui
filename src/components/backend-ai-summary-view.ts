@@ -328,7 +328,7 @@ class BackendAISummary extends BackendAIPage {
     this.fgpu_used = this.resources.vgpu.used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
-    this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / parseFloat(this.cpu_total * 100)) * 100.0).toFixed(2);
+    this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
     this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
     this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
 
