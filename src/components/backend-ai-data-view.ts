@@ -383,7 +383,7 @@ class BackendAIData extends BackendAIPage {
             <wl-tab value="model-lists" disabled>Models</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
-          <wl-button class="fg red" id="add-folder" outlined @click="${(e) => this._addFolderDialog(e)}">
+          <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
             <wl-icon>add</wl-icon>
             New folder
           </wl-button>
@@ -438,7 +438,7 @@ class BackendAIData extends BackendAIPage {
               </paper-listbox>
             </paper-dropdown-menu>
             <br/>
-            <wl-button class="blue button" type="button" id="add-button" outlined @click="${(e) => this._addFolder(e)}">
+            <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
               <wl-icon>rowing</wl-icon>
               Create
             </wl-button>
@@ -461,7 +461,7 @@ class BackendAIData extends BackendAIPage {
                            pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></paper-input>
               <br/>
-              <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${(e) => this._deleteFolderWithCheck(e)}">
+              <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
                 <wl-icon>close</wl-icon>
                 Delete
               </wl-button>

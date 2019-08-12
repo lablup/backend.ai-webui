@@ -9,6 +9,8 @@ export class BackendAIPage extends LitElement {
   public active: any;
 
     public _viewStateChanged(param: Boolean): void;
+    _viewStateChanged(param) {
+    }
 
   constructor() {
     super();
@@ -25,7 +27,6 @@ export class BackendAIPage extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
   }
-
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this.active = true;
