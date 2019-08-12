@@ -5,7 +5,7 @@
 
 import {css, html} from "lit-element";
 import {render} from 'lit-html';
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
@@ -21,7 +21,7 @@ import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
-import './lablup-notification.js';
+import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
@@ -32,6 +32,16 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAICredentialList extends BackendAIPage {
+	public condition: any;
+	public keypairs: any;
+	public resourcePolicy: any;
+	public keypairInfo: any;
+	public isAdmin: any;
+	public _boundControlRenderer: any;
+	public indicator: any;
+	public shadowRoot: any;
+	public notification: any;
+	public updateComplete: any;
 
   static get is() {
     return 'backend-ai-credential-list';
@@ -109,7 +119,7 @@ class BackendAICredentialList extends BackendAIPage {
     }
   }
 
-  _refreshKeyData(user_id) {
+  _refreshKeyData(user_id?) {
     let status = 'active';
     let is_active = true;
     switch (this.condition) {
@@ -281,14 +291,14 @@ class BackendAICredentialList extends BackendAIPage {
     return element.access_key = this;
   }
 
-  _elapsed(start, end) {
+  _elapsed(start, end?) {
     var startDate = new Date(start);
     if (this.condition == 'active') {
       var endDate = new Date();
     } else {
       var endDate = new Date();
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000, -1);
+    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     var days = Math.floor(seconds / 86400);
     return days;
   }
@@ -316,7 +326,7 @@ class BackendAICredentialList extends BackendAIPage {
     }
   }
 
-  controlRenderer(root, column, rowData) {
+  controlRenderer(root, column?, rowData?) {
     render(
       html`
             <div id="controls" class="layout horizontal flex center"

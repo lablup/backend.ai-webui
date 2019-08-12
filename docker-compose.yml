@@ -8,7 +8,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./config.ini:/usr/share/nginx/html/config.ini
+      - ./config.toml:/usr/share/nginx/html/config.toml
       - ./certificates:/etc/certificates
     environment:
       - NGINX_HOST=localhost
@@ -22,7 +22,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ./config.ini:/usr/share/nginx/html/config.ini
+      - ./config.toml:/usr/share/nginx/html/config.toml
       - ./certificates:/etc/certificates
     environment:
       - NGINX_HOST=localhost
