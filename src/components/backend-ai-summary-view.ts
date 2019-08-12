@@ -26,7 +26,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 export default class BackendAISummary extends BackendAIPage {
   constructor() {
     super();
-    this.invitations = [];
   }
 
   @property({type: Boolean}) active = false;
@@ -184,7 +183,7 @@ export default class BackendAISummary extends BackendAIPage {
     });
   }
 
-  _refreshAgentInformation(status = 'running') {
+  _refreshAgentInformation(status: string = 'running') {
     switch (this.condition) {
       case 'running':
         status = 'ALIVE';
@@ -286,7 +285,7 @@ export default class BackendAISummary extends BackendAIPage {
     }
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       //this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
@@ -313,15 +312,15 @@ export default class BackendAISummary extends BackendAIPage {
     }
   }
 
-  _toInt(value) {
+  _toInt(value: number) {
     return Math.ceil(value);
   }
 
-  _countObject(obj) {
+  _countObject(obj: object) {
     return Object.keys(obj).length;
   }
 
-  _addComma(num) {
+  _addComma(num: any) {
     if (num === undefined) {
       return '';
     }
@@ -340,7 +339,7 @@ export default class BackendAISummary extends BackendAIPage {
     });
   }
 
-  _acceptInvitation(invitation) {
+  _acceptInvitation(invitation: any) {
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
     .then(response => {
       this.notification.text = response.msg;
@@ -353,7 +352,7 @@ export default class BackendAISummary extends BackendAIPage {
     })
   }
 
-  _deleteInvitation(invitation) {
+  _deleteInvitation(invitation: any) {
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
     .then(res => {
       this.notification.text = res.msg;
