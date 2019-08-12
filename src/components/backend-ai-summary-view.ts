@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {customElement, property, css, html} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-indicator';
@@ -22,15 +22,8 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAISummary extends BackendAIPage {
-	public condition: any;
-	public jobs: any;
-	public sessions: any;
-	public agents: any;
-	public is_superadmin: any;
-	public resources: any;
-	public authenticated: any;
-	public manager_version: any;
+@customElement("backend-ai-summary-view")
+export default class BackendAISummary extends BackendAIPage {
 	public invitations: any;
 	public indicator: any;
 	public shadowRoot: any;
@@ -57,47 +50,27 @@ class BackendAISummary extends BackendAIPage {
 
   constructor() {
     super();
-    this.condition = 'running';
     this.jobs = {};
     this.sessions = {};
-    this.agents = 0;
     this.is_superadmin = false;
     this.resources = {};
     this.authenticated = false;
     this.active = false;
-    this.manager_version = '';
     this.invitations = [];
   }
 
+  @property({type: String}) condition = 'running';
+  @property({type: Object}) sessions = Object();
+  @property({type: Object}) jobs = Object();
+  @property({type: Number}) agents = 0;
+  @property({type: Boolean}) is_superadmin = false;
+  @property({type: Object}) resources = Object();
+  @property({type: Boolean}) authenticated = false;
+  @property({type: String}) manager_version = '';
+
+
   static get properties() {
     return {
-      condition: {
-        type: String
-      },
-      jobs: {
-        type: Object
-      },
-      sessions: {
-        type: Object
-      },
-      agents: {
-        type: Number
-      },
-      is_superadmin: {
-        type: Boolean
-      },
-      resources: {
-        type: Object
-      },
-      authenticated: {
-        type: Boolean
-      },
-      active: {
-        type: Boolean
-      },
-      manager_version: {
-        type: String
-      },
       cpu_total: {type: Number},
       cpu_used: {type: Number},
       cpu_percent: {type: Number},
@@ -590,4 +563,8 @@ class BackendAISummary extends BackendAIPage {
   }
 }
 
-customElements.define('backend-ai-summary-view', BackendAISummary);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-summary-view": BackendAISummary;
+  }
+}
