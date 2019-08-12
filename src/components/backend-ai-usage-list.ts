@@ -25,7 +25,7 @@ class BackendAIUsageList extends BackendAIPage {
   public data: any;
   public period: any;
   public active: any;
-  public templates: any;
+  public templates: { [key: string] : any};
   public _map: any;
   public shadowRoot: any;
   public updateComplete: any;
@@ -72,8 +72,12 @@ class BackendAIUsageList extends BackendAIPage {
       period: {
         type: String
       },
-      templates: Object,
-      _map: Object
+      templates: {
+        type: Object
+      },
+      _map: {
+        type: Object
+      }
     }
   }
 
@@ -99,6 +103,19 @@ class BackendAIUsageList extends BackendAIPage {
         }
       `
     ]
+  }
+
+  attributeChangedCallback(name, oldval, newval) {
+    if (name === "active" && newval !== null) {
+      if (!this.active) this._menuChanged(true);
+      this.active = true;
+    } else {
+      this.active = false;
+      this._menuChanged(false);
+      this.shadowRoot.querySelectorAll("backend-ai-chart").forEach(e => { e.wipe(); });
+    }
+
+    super.attributeChangedCallback(name, oldval, newval);
   }
 
   async _menuChanged(active) {
