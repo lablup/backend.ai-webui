@@ -531,7 +531,7 @@ class BackendAIData extends BackendAIPage {
               <wl-icon style="--icon-size: 20px;margin-right:5px;">cloud_upload</wl-icon>
               Upload Files...
             </wl-button>
-            <wl-button outlined id="mkdir" @click="${(e) => this._mkdirDialog(e)}">
+            <wl-button outlined id="mkdir" @click="${() => this._mkdirDialog()}">
               <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
               New Folder
             </wl-button>
@@ -735,8 +735,8 @@ class BackendAIData extends BackendAIPage {
         'vfolder': this.invitees[idx].vfolder_id
       }));
     const promiseArray = inputList.map(input => window.backendaiclient.vfolder.modify_invitee_permission(input));
-    Promise.all(promiseArray).then(res => {
-      if (res.length === 0) {
+    Promise.all(promiseArray).then( (response: any) => {
+      if (response.length === 0) {
         this.notification.text = 'No changes made.';
       } else {
         this.notification.text = 'Permission successfully modified.';

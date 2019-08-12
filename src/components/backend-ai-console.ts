@@ -62,6 +62,9 @@ declare global {
     isElectron: boolean;
     __local_proxy: string;
   }
+  interface ai {
+    backend: any;
+  }
 }
 
 class BackendAiConsole extends connect(store)(LitElement) {
