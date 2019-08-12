@@ -4,7 +4,7 @@ process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
 const BASE_DIR = __dirname;
-const ProxyManager = require('./dist/wsproxy/dist/wsproxy.js');
+const ProxyManager = require('build/electron-app/app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron');
 process.env.liveDebugMode = false;
 
