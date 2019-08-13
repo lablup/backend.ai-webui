@@ -23,10 +23,10 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiSessionView extends BackendAIPage {
-	public _status: any;
-	public _lists: any;
-	public shadowRoot: any;
-	public updateComplete: any;
+  public _status: any;
+  public _lists: any;
+  public shadowRoot: any;
+  public updateComplete: any;
 
   constructor() {
     super();

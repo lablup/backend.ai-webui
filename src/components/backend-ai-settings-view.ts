@@ -23,8 +23,8 @@ import 'weightless/card';
 import 'weightless/switch';
 
 class BackendAiSettingsView extends BackendAIPage {
-	public images: any;
-	public updateComplete: any;
+  public images: any;
+  public updateComplete: any;
 
   constructor() {
     super();

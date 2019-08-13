@@ -144,12 +144,12 @@ class LablupTermsOfService extends BackendAIPage {
             }
           }
         }).catch((err) => {
-          console.log(err);
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.message);
-            this.notification.show();
-          }
-        });
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.show();
+        }
+      });
     } else {
       this.dialog.show();
     }

@@ -39,26 +39,26 @@ import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiSessionList extends BackendAIPage {
-	public condition: any;
-	public jobs: any;
-	public compute_sessions: any;
-	public terminationQueue: any;
-	public filterAccessKey: any;
-	public appSupportList: any;
-	public appTemplate: any;
-	public _selected_items: any;
-	public _boundControlRenderer: any;
-	public _boundSessionInfoRenderer: any;
-	public _boundCheckboxRenderer: any;
-	public refreshing: any;
-	public loadingIndicator: any;
-	public shadowRoot: any;
-	public _grid: any;
-	public refreshTimer: any;
-	public notification: any;
-	public terminateSessionDialog: any;
-	public terminateSelectedSessionsDialog: any;
-	public updateComplete: any;
+  public condition: any;
+  public jobs: any;
+  public compute_sessions: any;
+  public terminationQueue: any;
+  public filterAccessKey: any;
+  public appSupportList: any;
+  public appTemplate: any;
+  public _selected_items: any;
+  public _boundControlRenderer: any;
+  public _boundSessionInfoRenderer: any;
+  public _boundCheckboxRenderer: any;
+  public refreshing: any;
+  public loadingIndicator: any;
+  public shadowRoot: any;
+  public _grid: any;
+  public refreshTimer: any;
+  public notification: any;
+  public terminateSessionDialog: any;
+  public terminateSelectedSessionsDialog: any;
+  public updateComplete: any;
 
   constructor() {
     super();
@@ -613,7 +613,7 @@ class BackendAiSessionList extends BackendAIPage {
       let contentType = resp.headers.get('Content-Type');
       if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
-          body = await resp.json();
+        body = await resp.json();
       } else if (contentType.startsWith('text/')) {
         body = await resp.text();
       } else {
@@ -1071,7 +1071,7 @@ ${item.map(item => html`
           </vaadin-grid-column>
           `
       : html``
-      }
+    }
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
