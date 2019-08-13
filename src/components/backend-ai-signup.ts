@@ -166,17 +166,20 @@ export default class BackendAiSignup extends LitElement {
       this.notification.show();
       return;
     }
+    const token = (this.shadowRoot.querySelector('#id_token') as HTMLInputElement).value;
     this.notification.text = 'Processing...';
     this.notification.show();
     let body = {
       'email': this.user_email,
-      'password': password1
+      'password': password1,
+      'token': token
     };
     console.log(body);
     this.init_client();
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
       this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', 'true');
+      this.shadowRoot.querySelector('#id_token').setAttribute('disabled', 'true');
       this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
       this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
       this.notification.text = 'Signup succeed.';
@@ -270,7 +273,7 @@ export default class BackendAiSignup extends LitElement {
       <wl-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Signup</div> 
+            <div>Signup</div>
             <div class="flex"></div>
             <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -287,14 +290,16 @@ export default class BackendAiSignup extends LitElement {
                             <wl-icon>check</wl-icon>
                             Check</wl-button>
               </div>
-              <paper-input type="text" name="user_name" id="id_user_name" maxlength="30" 
+              <paper-input type="text" name="user_name" id="id_user_name" maxlength="30"
                            label="User Name" .value="${this.user_name}"></paper-input>
+              <paper-input type="text" name="token" id="id_token" maxlength="50"
+                           label="Invitation Token"></paper-input>
               <paper-input type="password" name="password1" id="id_password1"
-                           label="Password" 
+                           label="Password"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                            value=""></paper-input>
               <paper-input type="password" name="password2" id="id_password2"
-                           label="Password (again)" 
+                           label="Password (again)"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                            value=""></paper-input>
               <div>
