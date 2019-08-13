@@ -32,7 +32,7 @@ const ByteConverter = {
   }
 };
 
-class BackendAIChartAlt extends LitElement {
+class BackendAIChart extends LitElement {
 	public title: any;
 	public elevation: any;
 	public message: any;
@@ -174,9 +174,6 @@ class BackendAIChartAlt extends LitElement {
 
   updated(changedProps) {
     if (changedProps.has('collection') && changedProps.get("collection") !== undefined) {
-      if (this.collection.unit_hint === "bytes") {
-        this.scaleData();
-      }
       this.draw();
     }
   }
@@ -194,16 +191,9 @@ class BackendAIChartAlt extends LitElement {
    * To resolve this issue, the code must follow the lowest unit among the arrays.
    */
   scaleData() {
-      const converted = this.collection.data.map(e => ByteConverter.scale(e));
-      this.collection.data = converted.map(e => e.data);
-      this.collection.unit_hint = converted[0].unit;
-  }
-
-
-  firstUpdated() {
-    if (this.collection.unit_hint === "bytes") {
-      this.scaleData();
-    }
+    const converted = this.collection.data.map(e => ByteConverter.scale(e));
+    this.collection.data = converted.map(e => e.data);
+    this.collection.unit_hint = converted[0].unit;
   }
 
   render() {
@@ -249,7 +239,7 @@ class BackendAIChartAlt extends LitElement {
 
   wipe() {
     const svg = this.shadowRoot.querySelector("#d3");
-    svg.removeChild(svg.lastElementChild);
+    if (svg.lastElementChild) svg.removeChild(svg.lastElementChild);
   }
 
   draw() {
@@ -465,6 +455,8 @@ class BackendAIChartAlt extends LitElement {
     const margin      = { top: 50, right: 50, bottom: 50, left: 50 },
           graphWidth  = this.width - margin.left - margin.right,
           graphHeight = this.height - margin.top - margin.bottom;
+
+    if (this.collection.unit_hint === "bytes") this.scaleData();
 
     // assumption: data is already zipped
     const { data } = this.collection;
@@ -755,4 +747,4 @@ class BackendAIChartAlt extends LitElement {
 
 }
 
-customElements.define(BackendAIChartAlt.is, BackendAIChartAlt);
+customElements.define(BackendAIChart.is, BackendAIChart);

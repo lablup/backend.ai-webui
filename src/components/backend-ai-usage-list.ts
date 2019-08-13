@@ -151,7 +151,7 @@ class BackendAIUsageList extends BackendAIPage {
         this.collection[period][key] = {
           data: [
             res
-                .filter((e, i) => res.length - templates[period].length <= i)
+              .filter((e, i) => res.length - templates[period].length <= i)
               .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
           ],
           axisTitle: {
