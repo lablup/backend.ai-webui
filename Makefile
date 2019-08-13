@@ -15,7 +15,7 @@ proxy:
 versiontag:
 	sed -i -E 's/window.packageVersion = "\(.*\)"/window.packageVersion = "${BUILD_VERSION}"/g' index.html
 	sed -i -E 's/window.buildVersion = "\(.*\)"/window.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
-	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.js
+	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.ts
 compile: versiontag
 	npm run build
 compile_wsproxy:
@@ -33,7 +33,7 @@ dep:
 	cp -Rp build/rollup build/electron-app/app
 	cp -Rp build/rollup/resources build/electron-app
 	cp -Rp build/rollup/manifest build/electron-app
-	sed -i -E 's/\.\/src\/components\/backend-ai-console.js/es6:\/\/src\/components\/backend-ai-console.js/g' build/electron-app/app/index.html
+	sed -i -E 's/\.\/dist\/components\/backend-ai-console.js/es6:\/\dist\/components\/backend-ai-console.js/g' build/electron-app/app/index.html
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	cp ./preload.js ./build/electron-app/preload.js
@@ -48,7 +48,7 @@ web:
 	cp -Rp build/rollup/* deploy/$(site)/console
 	cp ./configs/$(site).toml deploy/$(site)/console/config.toml
 mac: dep
-	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
+	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
 win: dep
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
