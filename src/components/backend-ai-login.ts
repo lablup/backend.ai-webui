@@ -68,6 +68,7 @@ class BackendAiLogin extends LitElement {
   public client: any;
   public user: any;
   public email: any;
+  public signup_support: any;
 
   constructor() {
     super();
@@ -84,6 +85,7 @@ class BackendAiLogin extends LitElement {
     this.blockMessage = '';
     this.blockType = '';
     this.config = null;
+    this.signup_support = false;
     window.backendaiconsole = {};
   }
 
@@ -134,6 +136,9 @@ class BackendAiLogin extends LitElement {
       },
       blockType: {
         type: String
+      },
+      signup_support: {
+        type: Boolean
       }
     };
   }
@@ -221,6 +226,12 @@ class BackendAiLogin extends LitElement {
       window.backendaiconsole.debug = true;
       console.log('debug flag is set to true');
     }
+    if (typeof config.general === "undefined" || typeof config.general.signupSupport === "undefined" || config.general.signupSupport === '') {
+      this.signup_support = false;
+    } else {
+      this.signup_support = true;
+    }
+
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
@@ -576,8 +587,10 @@ class BackendAiLogin extends LitElement {
           <h3 class="horizontal center layout">
             <div>Login</div>
             <div class="flex"></div>
+            ${this.signup_support ? html`
             <span style="font-size:14px;margin-right:10px;">Not a user? </span>
             <wl-button style="width:80px;" class="signup-button fg green signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            ` : html``}
           </h3>
           <form id="login-form">
             <fieldset>
