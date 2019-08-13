@@ -287,10 +287,8 @@ export default class BackendAiSignup extends LitElement {
                             <wl-icon>check</wl-icon>
                             Check</wl-button>
               </div>
-              <paper-input type="text" name="user_name" id="id_user_name" maxlength="30" disabled
+              <paper-input type="text" name="user_name" id="id_user_name" maxlength="30" 
                            label="User Name" .value="${this.user_name}"></paper-input>
-              <paper-input type="text" name="company_name" id="id_company_name" maxlength="30" disabled
-                           label="Company" .value="${this.company_name}"></paper-input>
               <paper-input type="password" name="password1" id="id_password1"
                            label="Password" 
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
