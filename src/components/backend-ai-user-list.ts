@@ -438,7 +438,7 @@ class BackendAIUserList extends BackendAIPage {
     dialog.hide();
   }
 
-  _saveChanges(e) {
+  _saveChanges(event) {
     const username = this.shadowRoot.querySelector('#username').value,
       full_name = this.shadowRoot.querySelector('#full_name').value,
       password = this.shadowRoot.querySelector('#password').value,
@@ -453,8 +453,7 @@ class BackendAIUserList extends BackendAIPage {
 
       return;
     }
-
-    let input: any;
+    let input: any = {};
 
     if (password !== '')
       input.password = password;
@@ -475,7 +474,7 @@ class BackendAIUserList extends BackendAIPage {
       input.is_active = is_active;
 
     if (Object.entries(input).length === 0) {
-      this._hideDialog(e);
+      this._hideDialog(event);
 
       this.shadowRoot.querySelector("#notification").text = "No Changes Made";
       this.shadowRoot.querySelector("#notification").show();
@@ -486,11 +485,13 @@ class BackendAIUserList extends BackendAIPage {
     window.backendaiclient.user.modify(this.userInfo.email, input)
       .then(res => {
         if (res.modify_user.ok) {
-          this._hideDialog(e);
+          this.shadowRoot.querySelector("#user-info-dialog").hide();
 
           this.shadowRoot.querySelector("#notification").text = "Successfully Modified";
           this.userInfo = {...this.userInfo, ...input, password: null};
           this._refreshUserData();
+          this.shadowRoot.querySelector("#password").value = "";
+          this.shadowRoot.querySelector("#confirm").value = "";
         } else {
           this.shadowRoot.querySelector("#notification").text = `Error: ${res.modify_user.msg}`;
 
@@ -596,7 +597,7 @@ class BackendAIUserList extends BackendAIPage {
                         class="fg green"
                         type="button"
                         outlined
-                        @click=${(e) => this._saveChanges(e)}
+                        @click=${e => this._saveChanges(e)}
                         style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;"
                       >
                         <wl-icon>check</wl-icon>

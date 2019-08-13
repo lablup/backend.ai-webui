@@ -514,11 +514,11 @@ class BackendAICredentialView extends BackendAIPage {
       return;
     }
 
-    if (this.shadowRoot.querySelector("#id_user_password").getAttribute("invalid") !== null) {
-      this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
-      this.notification.show();
-      return;
-    }
+    // if (this.shadowRoot.querySelector("#id_user_password").getAttribute("invalid") !== null) {
+    //   this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
+    //   this.notification.show();
+    //   return;
+    // }
 
     // password - confirm verification
     if (password === '') {
