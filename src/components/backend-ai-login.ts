@@ -333,6 +333,7 @@ class BackendAiLogin extends LitElement {
 
   _showSignupDialog() {
     this.shadowRoot.querySelector('#signup-dialog').endpoint = this.api_endpoint;
+    //this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
     this.shadowRoot.querySelector('#signup-dialog').open();
   }
 

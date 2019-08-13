@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, property} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/button';
@@ -22,8 +22,8 @@ import {
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("lablup-terms-of-service")
-export default class LablupTermsOfService extends BackendAIPage {
-  @property({type: String}) tosEntryURL = '/@lablupinc/terms-of-service-payment';
+export default class LablupTermsOfService extends LitElement {
+  @property({type: String}) tosEntryURL = 'terms-of-service-payment';
   @property({type: String}) tosContent = '';
   @property({type: Boolean}) show = false;
   @property({type: Boolean}) approved = false;
@@ -46,14 +46,22 @@ export default class LablupTermsOfService extends BackendAIPage {
       css`
         @media screen and (max-width: 669px) {
           wl-dialog.terms-of-service-dialog {
-            width: 80% !important;
+            --dialog-width: 80% !important;
+            --dialog-height: 80vh;
           }
         }
 
         @media screen and (min-width: 670px) {
           wl-dialog.terms-of-service-dialog {
-            width: 650px !important;
+            --dialog-width: 650px !important;
+            --dialog-height: 80vh;
           }
+        }
+
+        wl-button {
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-green-300);
+          --button-bg-active: var(--paper-green-300);
         }
       `];
   }
@@ -65,15 +73,14 @@ export default class LablupTermsOfService extends BackendAIPage {
       <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling scrollable>
         <wl-title level="3" slot="header">Terms of Service</wl-title>
         <div slot="content">
-            <div id="terms-of-service-dialog-content">${this.tosContent}</div>
+          <div id="terms-of-service-dialog-content">${this.tosContent}</div>
         </div>
         <div slot="footer">
-            <wl-button id="dismiss-button" invert flat>
-                Dismiss
-            </wl-button>
-            <wl-checkbox id="approve-terms-of-service" autofocus>
-                Read
-            </wl-checkbox>
+          <wl-button class="fg green" id="dismiss-button" outlined type="button" @click="${() => {
+      this.close();
+    }}">
+              Dismiss
+          </wl-button>
         </div>
       </wl-dialog>
     `;
@@ -82,8 +89,8 @@ export default class LablupTermsOfService extends BackendAIPage {
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
     this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
-    this.approveCheckbox = this.shadowRoot.querySelector('#approve-terms-of-service');
-    this.approveCheckbox.addEventListener('iron-change', this._changeApproved.bind(this));
+    //this.approveCheckbox = this.shadowRoot.querySelector('#approve-terms-of-service');
+    //this.approveCheckbox.addEventListener('iron-change', this._changeApproved.bind(this));
     if (this.show) {
       this._showTOSdialog();
     }
@@ -91,9 +98,12 @@ export default class LablupTermsOfService extends BackendAIPage {
 
   async open() {
     await this.updateComplete;
-    console.log(this.notification);
-    console.log('openedsss');
     this._showTOSdialog();
+  }
+
+  close() {
+    this.show = false;
+    this._hideTOSdialog();
   }
 
   async sendRequest(rqst) {
@@ -133,17 +143,21 @@ export default class LablupTermsOfService extends BackendAIPage {
         if (typeof response !== 'undefined') {
           if (response.success === 1) {
             this.tosContent = response.content;
-            this.approveCheckbox.style.display = 'block';
+            //this.approveCheckbox.style.display = 'block';
           } else {
             if (typeof response.error_msg !== 'undefined') {
               this.tosContent = response.error_msg;
-              this.approveCheckbox.style.display = 'none';
+              //this.approveCheckbox.style.display = 'none';
             } else {
-              this.tosContent = "Load failed.";
-              this.approveCheckbox.style.display = 'none';
+              //this.tosContent = "Load failed.";
+              //this.approveCheckbox.style.display = 'none';
+              this.tosContent = "Beta Terms of Service";
+              //this.approveCheckbox.style.display = 'block';
             }
           }
         }
+        this.show = true;
+        this.dialog.show();
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
@@ -153,13 +167,24 @@ export default class LablupTermsOfService extends BackendAIPage {
         }
       });
     } else {
-      console.log(this.dialog);
+      this.show = true;
       this.dialog.show();
     }
   }
 
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
+
+  _hideTOSdialog() {
+    this.show = false;
+    this.dialog.hide();
+  }
   _changeApproved() {
     if (this.approveCheckbox.checked == true) {
+      this.show = false;
       this.dialog.hide();
       this.approved = true;
       return;
