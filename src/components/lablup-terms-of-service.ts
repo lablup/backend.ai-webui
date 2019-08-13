@@ -23,7 +23,6 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("lablup-terms-of-service")
 class LablupTermsOfService extends BackendAIPage {
-
   @property({type: String}) tosEntryURL = '/@lablupinc/terms-of-service-payment';
   @property({type: String}) tosContent = '';
   @property({type: Boolean}) show = false;
@@ -90,7 +89,9 @@ class LablupTermsOfService extends BackendAIPage {
     }
   }
 
-  open() {
+  async open() {
+    await this.updateComplete;
+    console.log('openedsss');
     this._showTOSdialog();
   }
 
@@ -127,30 +128,31 @@ class LablupTermsOfService extends BackendAIPage {
         uri: this.tosEntryURL,
         body: JSON.stringify({'mode': 'dialog'})
       };
-      this.sendRequest(rqst)
-        .then((response) => {
-          if (typeof response !== 'undefined') {
-            if (response.success === 1) {
-              this.tosContent = response.content;
-              this.approveCheckbox.style.display = 'block';
+      this.sendRequest(rqst).then((response) => {
+        if (typeof response !== 'undefined') {
+          if (response.success === 1) {
+            this.tosContent = response.content;
+            this.approveCheckbox.style.display = 'block';
+          } else {
+            if (typeof response.error_msg !== 'undefined') {
+              this.tosContent = response.error_msg;
+              this.approveCheckbox.style.display = 'none';
             } else {
-              if (typeof response.error_msg !== 'undefined') {
-                this.tosContent = response.error_msg;
-                this.approveCheckbox.style.display = 'none';
-              } else {
-                this.tosContent = "Load failed.";
-                this.approveCheckbox.style.display = 'none';
-              }
+              this.tosContent = "Load failed.";
+              this.approveCheckbox.style.display = 'none';
             }
           }
-        }).catch((err) => {
+        }
+      }).catch((err) => {
         console.log(err);
         if (err && err.message) {
+          console.log(this.notification);
           this.notification.text = PainKiller.relieve(err.message);
           this.notification.show();
         }
       });
     } else {
+      console.log(this.dialog);
       this.dialog.show();
     }
   }
