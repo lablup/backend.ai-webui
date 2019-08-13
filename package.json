@@ -12,6 +12,7 @@
     "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copywa && npm run copyresource && npm run copyconfig && rollup -c rollup.config.ts",
     "server:p": "./node_modules/serve/bin/serve.js build/rollup",
     "server:d": "./node_modules/es-dev-server/dist/cli.js --file-extensions .ts --app-index index.html --watch --node-resolve --port 9081 --compatibility esm",
+    "build:d": "./node_modules/typescript/bin/tsc --watch",
     "electron:d": "./node_modules/electron/cli.js .",
     "copywc": "mkdir -p build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles src/lib && cp node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js src/lib",
     "copywa": "mkdir -p build/rollup/src/lib/web-animations-js && mkdir -p src/lib/web-animations-js && cp node_modules/web-animations-js/web-animations-next-lite.min.js src/lib/web-animations-js && cp src/lib/web-animations-js/web-animations-next-lite.min.js build/rollup/src/lib/web-animations-js",
