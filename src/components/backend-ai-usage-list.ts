@@ -207,17 +207,15 @@ class BackendAIUsageList extends BackendAIPage {
       ${
         Object.keys(this._map).map((key, idx) =>
           html`
-           <div class="horizontal layout center">
-            <h3 style="width:80px;" class="horizontal center-justified layout">${this._map[key]}</h3>
-            <backend-ai-chart
-              width="1000"
-              height="150"
-              elevation="1"
-              type="line"
-              idx=${idx}
-              .collection=${this.collection[this.period][key]}
-            ></backend-ai-chart>
-           </div>
+          <h3 style="width:80px;" class="horizontal center-justified layout">${this._map[key]}</h3>
+          <backend-ai-chart
+            width="1000"
+            height="150"
+            elevation="1"
+            type="line"
+            idx=${idx}
+            .collection=${this.collection[this.period][key]}
+          ></backend-ai-chart>
           `)
       }
       </div>
