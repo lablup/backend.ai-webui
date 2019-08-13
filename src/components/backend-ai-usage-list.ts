@@ -174,7 +174,7 @@ class BackendAIUsageList extends BackendAIPage {
     const {data, period, collection, _map, templates} = this;
 
     if (!(period in collection)) {
-      collection[period] = {}
+      collection[period] = {};
       Object.keys(_map).forEach(key => {
         collection[period][key] = {
           data: [
@@ -196,21 +196,19 @@ class BackendAIUsageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div
-        class="layout horizontal end-justified"
-        style="width: 80%;"
-      >
+      <div class="layout horizontal end-justified">
         <wl-select label="Select Period" style="width: 130px" @input=${this.pulldownChange}>
-          <option value disabled selected>Select Period</option>
-          <option value="1D">1 Day</option>
+          <option value disabled>Select Period</option>
+          <option value="1D" selected>1 Day</option>
           <option value="1W">1 Week</option>
         </wl-select>
       </div>
-      <wl-card class="layout vertical center">
+      <div class="layout vertical center">
       ${
         Object.keys(this._map).map(key =>
           html`
-            <h3>${this._map[key]}</h3>
+           <div class="horizontal layout center">
+            <h3 style="width:80px;" class="horizontal center-justified layout">${this._map[key]}</h3>
             <backend-ai-chart
               width="1000"
               height="150"
@@ -218,9 +216,10 @@ class BackendAIUsageList extends BackendAIPage {
               type="line"
               .collection=${this.collection[this.period][key]}
             ></backend-ai-chart>
+           </div>
           `)
       }
-      </wl-card>
+      </div>
     `;
   }
 }
