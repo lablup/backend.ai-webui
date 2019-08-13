@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, html, LitElement} from "lit-element";
+import {LitElement} from "lit-element";
 
 /**
  Backend.AI Message handler

@@ -7,13 +7,13 @@ import {css, html, LitElement} from 'lit-element';
 import 'weightless/snackbar';
 
 class LablupNotification extends LitElement {
-	public active: any;
-	public message: any;
-	public notification: any;
-	public shadowRoot: any;
-	public updateComplete: any;
-	public text: any;
-	public indicator: any;
+  public active: any;
+  public message: any;
+  public notification: any;
+  public shadowRoot: any;
+  public updateComplete: any;
+  public text: any;
+  public indicator: any;
 
   constructor() {
     super();
@@ -35,7 +35,7 @@ class LablupNotification extends LitElement {
           right: 20px;
           font-size: 16px;
           font-weight: 400;
-          font-family: "Montserrat", Roboto, sans-serif;
+          font-family: 'Quicksand', Roboto, sans-serif;
           z-index: 10000;
         }
       `];

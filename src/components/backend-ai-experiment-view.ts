@@ -44,37 +44,37 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiExperimentView extends BackendAIPage {
-	public supports: any;
-	public resourceLimits: any;
-	public userResourceLimit: any;
-	public aliases: any;
-	public versions: any;
-	public languages: any;
-	public gpu_mode: any;
-	public gpu_step: any;
-	public cpu_metric: any;
-	public mem_metric: any;
-	public gpu_metric: any;
-	public tpu_metric: any;
-	public images: any;
-	public defaultResourcePolicy: any;
-	public total_slot: any;
-	public used_slot: any;
-	public available_slot: any;
-	public resource_info: any;
-	public used_slot_percent: any;
-	public resource_templates: any;
-	public vfolders: any;
-	public default_language: any;
-	public launch_ready: any;
-	public concurrency_used: any;
-	public concurrency_max: any;
-	public _status: any;
-	public notification: any;
-	public shadowRoot: any;
-	public updateComplete: any;
-	public vgpu_metric: any;
-	public $: any;
+  public supports: any;
+  public resourceLimits: any;
+  public userResourceLimit: any;
+  public aliases: any;
+  public versions: any;
+  public languages: any;
+  public gpu_mode: any;
+  public gpu_step: any;
+  public cpu_metric: any;
+  public mem_metric: any;
+  public gpu_metric: any;
+  public tpu_metric: any;
+  public images: any;
+  public defaultResourcePolicy: any;
+  public total_slot: any;
+  public used_slot: any;
+  public available_slot: any;
+  public resource_info: any;
+  public used_slot_percent: any;
+  public resource_templates: any;
+  public vfolders: any;
+  public default_language: any;
+  public launch_ready: any;
+  public concurrency_used: any;
+  public concurrency_max: any;
+  public _status: any;
+  public notification: any;
+  public shadowRoot: any;
+  public updateComplete: any;
+  public vgpu_metric: any;
+  public $: any;
 
   constructor() {
     super();
@@ -706,8 +706,8 @@ class BackendAiExperimentView extends BackendAIPage {
           total_slot['vgpu_slot'] = resource_limit['cuda.shares'];
         }
       }
-        let remaining_slot = Object();
-        let used_slot = Object();
+      let remaining_slot = Object();
+      let used_slot = Object();
       let resource_remaining = response.keypair_remaining;
       let resource_using = response.keypair_using;
       if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
@@ -1085,6 +1085,7 @@ class BackendAiExperimentView extends BackendAIPage {
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
   }
+
   render() {
     // language=HTML
     return html`
@@ -1367,7 +1368,7 @@ ${this.resource_templates.map(item => html`
                         <ul>
                           <li>${item.cpu} CPU</li>
                           <li>${item.mem}GB RAM</li>
-                          ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} vGPU</li>`}
+                          ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} fGPU</li>`}
                           </ul>
                       </div>
                     </wl-button>

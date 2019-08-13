@@ -25,13 +25,13 @@ import './lablup-loading-indicator';
 import './backend-ai-indicator';
 
 class BackendAiMaintenanceView extends BackendAIPage {
-	public images: any;
-	public scanning: any;
-	public recalculating: any;
-	public notification: any;
-	public shadowRoot: any;
-	public indicator: any;
-	public updateComplete: any;
+  public images: any;
+  public scanning: any;
+  public recalculating: any;
+  public notification: any;
+  public shadowRoot: any;
+  public indicator: any;
+  public updateComplete: any;
 
   constructor() {
     super();

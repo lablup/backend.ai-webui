@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-indicator';
@@ -23,108 +23,41 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAISummary extends BackendAIPage {
-	public condition: any;
-	public jobs: any;
-	public sessions: any;
-	public agents: any;
-	public is_superadmin: any;
-	public resources: any;
-	public authenticated: any;
-	public manager_version: any;
-	public invitations: any;
-	public indicator: any;
-	public shadowRoot: any;
-	public notification: any;
-	public resourcePolicy: any;
-	public cpu_total: any;
-	public mem_total: any;
-	public gpu_total: any;
-	public fgpu_total: any;
-	public cpu_used: any;
-	public gpu_used: any;
-	public fgpu_used: any;
-	public cpu_percent: any;
-	public cpu_total_percent: any;
-	public cpu_total_usage_ratio: any;
-	public cpu_current_usage_ratio: any;
-	public mem_used: any;
-	public mem_allocated: any;
-	public mem_total_usage_ratio: any;
-	public mem_current_usage_ratio: any;
-	public mem_current_usage_percent: any;
-	public updateComplete: any;
-	public is_admin: any;
+@customElement("backend-ai-summary-view")
+export default class BackendAISummary extends BackendAIPage {
+  @property({type: Boolean}) active = false;
+  @property({type: String}) condition = 'running';
+  @property({type: Object}) sessions = Object();
+  @property({type: Object}) jobs = Object();
+  @property({type: Number}) agents = 0;
+  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) is_superadmin = false;
+  @property({type: Object}) resources = Object();
+  @property({type: Boolean}) authenticated = false;
+  @property({type: String}) manager_version = '';
+  @property({type: Number}) cpu_total = 0;
+  @property({type: Number}) cpu_used = 0;
+  @property({type: String}) cpu_percent = '0';
+  @property({type: String}) cpu_total_percent = '0';
+  @property({type: Number}) cpu_total_usage_ratio = 0;
+  @property({type: Number}) cpu_current_usage_ratio = 0;
+  @property({type: String}) mem_total = '0';
+  @property({type: String}) mem_used = '0';
+  @property({type: String}) mem_allocated = '0';
+  @property({type: Number}) mem_total_usage_ratio = 0;
+  @property({type: Number}) mem_current_usage_ratio = 0;
+  @property({type: String}) mem_current_usage_percent = '0';
+  @property({type: Number}) gpu_total = 0;
+  @property({type: Number}) gpu_used = 0;
+  @property({type: Number}) fgpu_total = 0;
+  @property({type: Number}) fgpu_used = 0;
+  @property({type: Array}) invitations = [];
+  @property({type: Object}) indicator = Object();
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) resourcePolicy;
 
   constructor() {
     super();
-    this.condition = 'running';
-    this.jobs = {};
-    this.sessions = {};
-    this.agents = 0;
-    this.is_superadmin = false;
-    this.resources = {};
-    this.authenticated = false;
-    this.active = false;
-    this.manager_version = '';
-    this.invitations = [];
-  }
-
-  static get properties() {
-    return {
-      condition: {
-        type: String
-      },
-      jobs: {
-        type: Object
-      },
-      sessions: {
-        type: Object
-      },
-      agents: {
-        type: Number
-      },
-      is_superadmin: {
-        type: Boolean
-      },
-      resources: {
-        type: Object
-      },
-      authenticated: {
-        type: Boolean
-      },
-      active: {
-        type: Boolean
-      },
-      manager_version: {
-        type: String
-      },
-      cpu_total: {type: Number},
-      cpu_used: {type: Number},
-      cpu_percent: {type: Number},
-      cpu_total_percent: {type: Number},
-      cpu_total_usage_ratio: {type: Number},
-      cpu_current_usage_ratio: {type: Number},
-      mem_total: {type: Number},
-      mem_used: {type: Number},
-      mem_allocated: {type: Number},
-      mem_total_usage_ratio: {type: Number},
-      mem_current_usage_ratio: {type: Number},
-      mem_current_usage_percent: {type: Number},
-      gpu_total: {type: Number},
-      gpu_used: {type: Number},
-      fgpu_total: {type: Number},
-      fgpu_used: {type: Number},
-      invitations: {
-        type: Array
-      },
-      indicator: {
-        type: Object
-      },
-      notification: {
-        type: Object
-      }
-    };
   }
 
   static get styles() {
@@ -251,7 +184,7 @@ class BackendAISummary extends BackendAIPage {
     });
   }
 
-  _refreshAgentInformation(status = 'running') {
+  _refreshAgentInformation(status: string = 'running') {
     switch (this.condition) {
       case 'running':
         status = 'ALIVE';
@@ -342,18 +275,18 @@ class BackendAISummary extends BackendAIPage {
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
 
     if (this.mem_total_usage_ratio === 0) { // Not allocated (no session presents)
-      this.mem_current_usage_percent = 0.0;
+      this.mem_current_usage_percent = '0.0';
     } else {
       this.mem_current_usage_percent = this.mem_total_usage_ratio.toFixed(2);//(this.mem_allocated / this.mem_total_usage_ratio * 100.0).toFixed(2);
     }
     this.agents = this.resources.agents.total;
 
-    if (isNaN(this.mem_current_usage_percent)) {
-      this.mem_current_usage_percent = 0;
+    if (isNaN(parseFloat(this.mem_current_usage_percent))) {
+      this.mem_current_usage_percent = '0';
     }
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       //this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
@@ -380,15 +313,15 @@ class BackendAISummary extends BackendAIPage {
     }
   }
 
-  _toInt(value) {
+  _toInt(value: number) {
     return Math.ceil(value);
   }
 
-  _countObject(obj) {
+  _countObject(obj: object) {
     return Object.keys(obj).length;
   }
 
-  _addComma(num) {
+  _addComma(num: any) {
     if (num === undefined) {
       return '';
     }
@@ -407,26 +340,26 @@ class BackendAISummary extends BackendAIPage {
     });
   }
 
-  _acceptInvitation(invitation) {
+  _acceptInvitation(invitation: any) {
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
-    .then(response => {
-      this.notification.text = response.msg;
-      this.notification.show();
-      this._refreshInvitations();
-    })
-    .catch(err => {
-      this.notification.text = PainKiller.relieve(err.message);
-      this.notification.show();
-    })
+      .then(response => {
+        this.notification.text = response.msg;
+        this.notification.show();
+        this._refreshInvitations();
+      })
+      .catch(err => {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
+      })
   }
 
-  _deleteInvitation(invitation) {
+  _deleteInvitation(invitation: any) {
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
-    .then(res => {
-      this.notification.text = res.msg;
-      this.notification.show();
-      this._refreshInvitations();
-    })
+      .then(res => {
+        this.notification.text = res.msg;
+        this.notification.show();
+        this._refreshInvitations();
+      })
   }
 
   render() {
@@ -542,16 +475,16 @@ class BackendAISummary extends BackendAIPage {
                 <li><a href="/job">Start a session</a></li>
               </ul>
               ${this.is_admin
-              ? html`
+      ? html`
                 <ul>
                   <li><a href="/credential">Create a new key pair</a></li>
                   <li><a href="/credential">Maintain keypairs</a></li>
                 </ul>`
-              : html``}
+      : html``}
             </div>
           </lablup-activity-panel>
           ${this.invitations.map(invitation =>
-            html`
+      html`
             <lablup-activity-panel title="Invitation">
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
@@ -559,9 +492,10 @@ class BackendAISummary extends BackendAIPage {
                 <div class="horizontal center layout">
                 Permission:
                 ${[...invitation.perm].map(c => {
-                  return html`
-                  <lablup-shields app="" color="${['green','blue','red'][['r','w','d'].indexOf(c)]}"
-                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
+        return html`
+                  <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
+                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;
+      })}
                 </div>
                 <div style="margin-top:25px;" class="horizontal layout justified">
                   <wl-button
@@ -584,11 +518,15 @@ class BackendAISummary extends BackendAIPage {
               </div>
             </lablup-activity-panel>
             `
-          )}
+    )}
         </div>
       </wl-card>
 `;
   }
 }
 
-customElements.define('backend-ai-summary-view', BackendAISummary);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-summary-view": BackendAISummary;
+  }
+}

@@ -39,46 +39,46 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 class BackendAiResourceMonitor extends BackendAIPage {
-	public supports: any;
-	public resourceLimits: any;
-	public userResourceLimit: any;
-	public aliases: any;
-	public tags: any;
-	public versions: any;
-	public languages: any;
-	public gpu_mode: any;
-	public gpu_step: any;
-	public cpu_metric: any;
-	public mem_metric: any;
-	public gpu_metric: any;
-	public tpu_metric: any;
-	public images: any;
-	public defaultResourcePolicy: any;
-	public total_slot: any;
-	public used_slot: any;
-	public available_slot: any;
-	public resource_info: any;
-	public used_slot_percent: any;
-	public resource_templates: any;
-	public vfolders: any;
-	public default_language: any;
-	public launch_ready: any;
-	public concurrency_used: any;
-	public concurrency_max: any;
-	public _status: any;
-	public cpu_request: any;
-	public mem_request: any;
-	public gpu_request: any;
-	public session_request: any;
-	public direction: any;
-	public scaling_groups: any;
-	public scaling_group: any;
-	public enable_scaling_group: any;
-	public shadowRoot: any;
-	public notification: any;
-	public updateComplete: any;
-	public num_sessions: any;
-	public vgpu_metric: any;
+  public supports: any;
+  public resourceLimits: any;
+  public userResourceLimit: any;
+  public aliases: any;
+  public tags: any;
+  public versions: any;
+  public languages: any;
+  public gpu_mode: any;
+  public gpu_step: any;
+  public cpu_metric: any;
+  public mem_metric: any;
+  public gpu_metric: any;
+  public tpu_metric: any;
+  public images: any;
+  public defaultResourcePolicy: any;
+  public total_slot: any;
+  public used_slot: any;
+  public available_slot: any;
+  public resource_info: any;
+  public used_slot_percent: any;
+  public resource_templates: any;
+  public vfolders: any;
+  public default_language: any;
+  public launch_ready: any;
+  public concurrency_used: any;
+  public concurrency_max: any;
+  public _status: any;
+  public cpu_request: any;
+  public mem_request: any;
+  public gpu_request: any;
+  public session_request: any;
+  public direction: any;
+  public scaling_groups: any;
+  public scaling_group: any;
+  public enable_scaling_group: any;
+  public shadowRoot: any;
+  public notification: any;
+  public updateComplete: any;
+  public num_sessions: any;
+  public vgpu_metric: any;
 
   constructor() {
     super();
@@ -292,177 +292,177 @@ class BackendAiResourceMonitor extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-card h4 {
-          padding: 5px 20px;
-          border-bottom: 1px solid #ddd;
-          font-weight: 100;
-        }
+          wl-card h4 {
+              padding: 5px 20px;
+              border-bottom: 1px solid #ddd;
+              font-weight: 100;
+          }
 
-        paper-slider {
-          width: 285px;
-          --paper-slider-input: {
-            width: 70px;
-          };
-          --paper-slider-height: 3px;
-        }
+          paper-slider {
+              width: 285px;
+              --paper-slider-input: {
+                  width: 70px;
+              };
+              --paper-slider-height: 3px;
+          }
 
-        paper-slider.mem {
-          --paper-slider-knob-color: var(--paper-orange-400);
-          --paper-slider-active-color: var(--paper-orange-400);
-        }
+          paper-slider.mem {
+              --paper-slider-knob-color: var(--paper-orange-400);
+              --paper-slider-active-color: var(--paper-orange-400);
+          }
 
-        paper-slider.cpu {
-          --paper-slider-knob-color: var(--paper-light-green-400);
-          --paper-slider-active-color: var(--paper-light-green-400);
-        }
+          paper-slider.cpu {
+              --paper-slider-knob-color: var(--paper-light-green-400);
+              --paper-slider-active-color: var(--paper-light-green-400);
+          }
 
-        paper-slider.gpu {
-          --paper-slider-knob-color: var(--paper-cyan-400);
-          --paper-slider-active-color: var(--paper-cyan-400);
-        }
+          paper-slider.gpu {
+              --paper-slider-knob-color: var(--paper-cyan-400);
+              --paper-slider-active-color: var(--paper-cyan-400);
+          }
 
-        paper-progress {
-          width: 100px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677EB;
-          --paper-progress-secondary-color: #98BE5A;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
+          paper-progress {
+              width: 100px;
+              border-radius: 3px;
+              --paper-progress-height: 10px;
+              --paper-progress-active-color: #3677EB;
+              --paper-progress-secondary-color: #98BE5A;
+              --paper-progress-transition-duration: 0.08s;
+              --paper-progress-transition-timing-function: ease;
+              --paper-progress-transition-delay: 0s;
+          }
 
-        .resources.horizontal .short-indicator paper-progress {
-          width: 50px;
-        }
+          .resources.horizontal .short-indicator paper-progress {
+              width: 50px;
+          }
 
-        .resources.horizontal .short-indicator .gauge-label {
-          width: 80px;
-        }
+          .resources.horizontal .short-indicator .gauge-label {
+              width: 80px;
+          }
 
-        span.caption {
-          width: 30px;
-          font-size: 12px;
-          padding-left: 10px;
-        }
+          span.caption {
+              width: 30px;
+              font-size: 12px;
+              padding-left: 10px;
+          }
 
-        div.caption {
-          font-size: 12px;
-          width: 100px;
-        }
+          div.caption {
+              font-size: 12px;
+              width: 100px;
+          }
 
-        span.resource-type {
-          font-size: 14px;
-        }
+          span.resource-type {
+              font-size: 14px;
+          }
 
-        .gauge-name {
-          font-size: 10px;
-        }
+          .gauge-name {
+              font-size: 10px;
+          }
 
-        .gauge-label {
-          width: 120px;
-          font-weight: 300;
-          font-size: 12px;
-        }
+          .gauge-label {
+              width: 120px;
+              font-weight: 300;
+              font-size: 12px;
+          }
 
-        .indicator {
-          font-family: monospace;
-        }
+          .indicator {
+              font-family: monospace;
+          }
 
-        .resource-button {
-          height: 140px;
-          width: 120px;
-          margin: 5px;
-          padding: 0;
-          font-size: 14px;
-        }
+          .resource-button {
+              height: 140px;
+              width: 120px;
+              margin: 5px;
+              padding: 0;
+              font-size: 14px;
+          }
 
-        #new-session-dialog {
-            z-index: 100;
-        }
+          #new-session-dialog {
+              z-index: 100;
+          }
 
-        wl-button.resource-button.iron-selected {
-          --button-color: var(--paper-red-600);
-          --button-bg: var(--paper-red-600);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-bg-flat: var(--paper-orange-50);
-        }
+          wl-button.resource-button.iron-selected {
+              --button-color: var(--paper-red-600);
+              --button-bg: var(--paper-red-600);
+              --button-bg-active: var(--paper-red-600);
+              --button-bg-hover: var(--paper-red-600);
+              --button-bg-active-flat: var(--paper-orange-50);
+              --button-bg-flat: var(--paper-orange-50);
+          }
 
-        .resource-button h4 {
-          padding: 5px 0;
-          margin: 0;
-          font-weight: 400;
-        }
+          .resource-button h4 {
+              padding: 5px 0;
+              margin: 0;
+              font-weight: 400;
+          }
 
-        .resource-button ul {
-          padding: 0;
-          list-style-type: none;
-        }
+          .resource-button ul {
+              padding: 0;
+              list-style-type: none;
+          }
 
-        backend-ai-dropdown-menu {
-          width: 100%;
-        }
+          backend-ai-dropdown-menu {
+              width: 50%;
+          }
 
-        #launch-session {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
+          #launch-session {
+              --button-bg: var(--paper-red-50);
+              --button-bg-hover: var(--paper-red-100);
+              --button-bg-active: var(--paper-red-600);
+          }
 
-        wl-button.launch-button {
-          width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-active: var(--paper-red-300);
-          --button-bg-hover: var(--paper-red-300);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
+          wl-button.launch-button {
+              width: 335px;
+              --button-bg: var(--paper-red-50);
+              --button-bg-active: var(--paper-red-300);
+              --button-bg-hover: var(--paper-red-300);
+              --button-bg-active-flat: var(--paper-orange-50);
+              --button-color: var(--paper-red-600);
+              --button-color-active: red;
+              --button-color-hover: red;
+          }
 
-        wl-button.resource-button {
-          --button-bg: white;
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: #89A;
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
+          wl-button.resource-button {
+              --button-bg: white;
+              --button-bg-active: var(--paper-red-600);
+              --button-bg-hover: var(--paper-red-600);
+              --button-bg-active-flat: var(--paper-orange-50);
+              --button-color: #89A;
+              --button-color-active: red;
+              --button-color-hover: red;
+          }
 
-        wl-expansion {
-            --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-margin-open: 0;
-        }
+          wl-expansion {
+              --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+              --expansion-elevation: 0;
+              --expansion-elevation-open: 0;
+              --expansion-elevation-hover: 0;
+              --expansion-margin-open: 0;
+          }
 
-        wl-expansion span {
-            font-size: 20px;
-            font-weight: 200;
-            display: block;
-        }
+          wl-expansion span {
+              font-size: 20px;
+              font-weight: 200;
+              display: block;
+          }
 
-        .resources.vertical .monitor {
-          margin-bottom: 10px;
-        }
+          .resources.vertical .monitor {
+              margin-bottom: 10px;
+          }
 
-        .resources.vertical .monitor div:first-child {
-          width: 40px;
-        }
+          .resources.vertical .monitor div:first-child {
+              width: 40px;
+          }
 
-        wl-button[fab] {
-          --button-fab-size: 70px;
-          border-radius: 6px;
-        }
+          wl-button[fab] {
+              --button-fab-size: 70px;
+              border-radius: 6px;
+          }
 
-        wl-label {
-          margin-right: 10px;
-          outline: none;
-        }
+          wl-label {
+              margin-right: 10px;
+              outline: none;
+          }
       `];
   }
 
@@ -892,7 +892,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       if ('cuda.shares' in resource_remaining) {
         remaining_slot['vgpu_slot'] = resource_remaining['cuda.shares'];
         if ('cuda.shares' in resource_using) {
-            used_slot['vgpu_slot'] = parseFloat(resource_using['cuda.shares']).toFixed(2);
+          used_slot['vgpu_slot'] = parseFloat(resource_using['cuda.shares']).toFixed(2);
         } else {
           used_slot['vgpu_slot'] = 0;
         }
@@ -1334,7 +1334,12 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <div style="display:none;">
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
-              <div class="layout vertical">
+              <div class="horizontal center layout">
+                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders">
+                ${this.vfolders.map(item => html`
+                  <paper-item value="${item.name}">${item.name}</paper-item>
+                `)}
+                </backend-ai-dropdown-menu>
                 <paper-input id="session-name" label="Session name (optional)"
                              value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
                              error-message="4 or more characters / no whitespace">
@@ -1345,11 +1350,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
               <div class="horizontal center layout">
-                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders">
-                ${this.vfolders.map(item => html`
-                  <paper-item value="${item.name}">${item.name}</paper-item>
-                `)}
-                </backend-ai-dropdown-menu>
                 ${this.enable_scaling_group ? html`
                 <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
@@ -1358,7 +1358,7 @@ ${this.scaling_groups.map(item =>
                       <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
       `
     )
-}
+    }
                   </paper-listbox>
                 </paper-dropdown-menu>
                 ` : html``}
@@ -1379,7 +1379,7 @@ ${this.resource_templates.map(item => html`
                     <ul>
                       <li>${item.cpu} CPU</li>
                       <li>${item.mem}GB RAM</li>
-                      ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} vGPU</li>`}
+                      ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} fGPU</li>`}
                       </ul>
                   </div>
                 </wl-button>

@@ -32,16 +32,34 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAICredentialList extends BackendAIPage {
-	public condition: any;
-	public keypairs: any;
-	public resourcePolicy: any;
-	public keypairInfo: any;
-	public isAdmin: any;
-	public _boundControlRenderer: any;
-	public indicator: any;
-	public shadowRoot: any;
-	public notification: any;
-	public updateComplete: any;
+  public condition: any;
+  public keypairs: any;
+  public resourcePolicy: any;
+  public keypairInfo: any;
+  public isAdmin: any;
+  public _boundControlRenderer: any;
+  public indicator: any;
+  public shadowRoot: any;
+  public notification: any;
+  public updateComplete: any;
+
+  constructor() {
+    super();
+    this.active = false;
+    this.condition = 'active';
+    this.keypairs = {};
+    this.resourcePolicy = {};
+    this.keypairInfo = {
+      user_id: '1',
+      access_key: 'ABC',
+      secret_key: 'ABC',
+      last_used: '',
+      is_admin: false
+    };
+
+    this.isAdmin = false;
+    this._boundControlRenderer = this.controlRenderer.bind(this);
+  }
 
   static get is() {
     return 'backend-ai-credential-list';
@@ -79,22 +97,91 @@ class BackendAICredentialList extends BackendAIPage {
     };
   }
 
-  constructor() {
-    super();
-    this.active = false;
-    this.condition = 'active';
-    this.keypairs = {};
-    this.resourcePolicy = {};
-    this.keypairInfo = {
-      user_id: '1',
-      access_key: 'ABC',
-      secret_key: 'ABC',
-      last_used: '',
-      is_admin: false
-    };
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
+          vaadin-grid {
+              border: 0;
+              font-size: 14px;
+              height: calc(100vh - 300px);
+          }
 
-    this.isAdmin = false;
-    this._boundControlRenderer = this.controlRenderer.bind(this);
+          paper-item {
+              height: 30px;
+              --paper-item-min-height: 30px;
+          }
+
+          wl-button > wl-icon {
+              --icon-size: 24px;
+              padding: 0;
+          }
+
+          wl-icon {
+              --icon-size: 16px;
+              padding: 0;
+          }
+
+          wl-card h4 {
+              font-size: 14px;
+              padding: 5px 15px 5px 12px;
+              margin: 0 0 10px 0;
+              display: block;
+              border-bottom: 1px solid #DDD;
+          }
+
+          vaadin-item {
+              font-size: 13px;
+              font-weight: 100;
+          }
+
+          div.indicator,
+          span.indicator {
+              font-size: 9px;
+              margin-right: 5px;
+          }
+
+          div.configuration {
+              width: 70px !important;
+          }
+
+          div.configuration wl-icon {
+              padding-right: 5px;
+          }
+
+          wl-button.fab {
+              --button-bg: var(--paper-light-green-600);
+              --button-bg-hover: var(--paper-green-600);
+              --button-bg-active: var(--paper-green-900);
+              color: var(--paper-green-900);
+          }
+
+          .gutterBottom {
+              margin-bottom: 20px;
+          }
+
+          #keypair-modify-save {
+              width: 100%;
+              box-sizing: border-box;
+              --button-bg: var(--paper-light-green-50);
+              --button-bg-hover: var(--paper-green-100);
+              --button-bg-active: var(--paper-green-600);
+          }
+
+          #policy-list {
+              width: 100%;
+          }
+
+          wl-label {
+              --label-color: black;
+          }
+
+      `];
   }
 
   firstUpdated() {
@@ -317,7 +404,6 @@ class BackendAICredentialList extends BackendAIPage {
     );
   }
 
-
   _markIfUnlimited(value) {
     if (['-', 0].includes(value)) {
       return '∞';
@@ -378,105 +464,18 @@ class BackendAICredentialList extends BackendAIPage {
       this.notification.show();
     } else {
       window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
-      .then(res => {
-        if (res.modify_keypair.ok) {
-          this.notification.text = "Successfully modified";
-          this.refresh();
-        } else {
-          this.notification.text = "Error";
-        }
-        this.notification.show();
-      })
+        .then(res => {
+          if (res.modify_keypair.ok) {
+            this.notification.text = "Successfully modified";
+            this.refresh();
+          } else {
+            this.notification.text = "Error";
+          }
+          this.notification.show();
+        })
     }
 
     this._hideDialog(e);
-  }
-
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-            height: calc(100vh - 300px);
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        wl-card h4 {
-          font-size: 14px;
-          padding: 5px 15px 5px 12px;
-          margin: 0 0 10px 0;
-          display: block;
-          border-bottom: 1px solid #DDD;
-        }
-
-        vaadin-item {
-          font-size: 13px;
-          font-weight: 100;
-        }
-
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
-
-        div.configuration {
-          width: 70px !important;
-        }
-
-        div.configuration wl-icon {
-          padding-right: 5px;
-        }
-
-        wl-button.fab {
-          --button-bg: var(--paper-light-green-600);
-          --button-bg-hover: var(--paper-green-600);
-          --button-bg-active: var(--paper-green-900);
-          color: var(--paper-green-900);
-        }
-
-        .gutterBottom {
-          margin-bottom: 20px;
-        }
-
-        #keypair-modify-save {
-          width: 100%;
-          box-sizing: border-box;
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
-        #policy-list {
-          width: 100%;
-        }
-
-        wl-label {
-          --label-color: black;
-        }
-
-      `];
   }
 
   render() {
@@ -678,12 +677,12 @@ class BackendAICredentialList extends BackendAIPage {
                 Resource Policy
                 <wl-select id="policy-list" label="Select Policy">
                   ${Object.keys(this.resourcePolicy).map(rp =>
-                    html`
+      html`
                       <option value=${this.resourcePolicy[rp].name}>
                         ${this.resourcePolicy[rp].name}
                       </option>
                     `
-                  )}
+    )}
                 </wl-select>
               </wl-label>
             </div>

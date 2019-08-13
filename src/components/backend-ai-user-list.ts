@@ -41,18 +41,18 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIUserList extends BackendAIPage {
-	public condition: any;
-	public users: any;
-	public isAdmin: any;
-	public userInfo: any;
-	public userInfoGroups: any;
-	public _boundControlRenderer: any;
-	public editMode: any;
-	public indicator: any;
-	public shadowRoot: any;
-	public notification: any;
-	public updateComplete: any;
-	public keypairs: any;
+  public condition: any;
+  public users: any;
+  public isAdmin: any;
+  public userInfo: any;
+  public userInfoGroups: any;
+  public _boundControlRenderer: any;
+  public editMode: any;
+  public indicator: any;
+  public shadowRoot: any;
+  public notification: any;
+  public updateComplete: any;
+  public keypairs: any;
 
   constructor() {
     super();
@@ -439,13 +439,13 @@ class BackendAIUserList extends BackendAIPage {
   }
 
   _saveChanges(e) {
-    const username             = this.shadowRoot.querySelector('#username').value,
-          full_name            = this.shadowRoot.querySelector('#full_name').value,
-          password             = this.shadowRoot.querySelector('#password').value,
-          confirm              = this.shadowRoot.querySelector('#confirm').value,
-          description          = this.shadowRoot.querySelector('#description').value,
-          is_active            = this.shadowRoot.querySelector('#is_active').checked,
-          need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
+    const username = this.shadowRoot.querySelector('#username').value,
+      full_name = this.shadowRoot.querySelector('#full_name').value,
+      password = this.shadowRoot.querySelector('#password').value,
+      confirm = this.shadowRoot.querySelector('#confirm').value,
+      description = this.shadowRoot.querySelector('#description').value,
+      is_active = this.shadowRoot.querySelector('#is_active').checked,
+      need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
 
     if (password !== confirm) {
       this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match.";
@@ -484,22 +484,22 @@ class BackendAIUserList extends BackendAIPage {
     }
 
     window.backendaiclient.user.modify(this.userInfo.email, input)
-    .then(res => {
-      if (res.modify_user.ok) {
-        this._hideDialog(e);
+      .then(res => {
+        if (res.modify_user.ok) {
+          this._hideDialog(e);
 
-        this.shadowRoot.querySelector("#notification").text = "Successfully Modified";
-        this.userInfo = {...this.userInfo, ...input, password: null};
-        this._refreshUserData();
-      } else {
-        this.shadowRoot.querySelector("#notification").text = `Error: ${res.modify_user.msg}`;
+          this.shadowRoot.querySelector("#notification").text = "Successfully Modified";
+          this.userInfo = {...this.userInfo, ...input, password: null};
+          this._refreshUserData();
+        } else {
+          this.shadowRoot.querySelector("#notification").text = `Error: ${res.modify_user.msg}`;
 
-        this.shadowRoot.querySelector("#username").value = this.userInfo.username;
-        this.shadowRoot.querySelector("#description").value = this.userInfo.description;
-      }
+          this.shadowRoot.querySelector("#username").value = this.userInfo.username;
+          this.shadowRoot.querySelector("#description").value = this.userInfo.description;
+        }
 
-      this.shadowRoot.querySelector("#notification").show();
-    })
+        this.shadowRoot.querySelector("#notification").show();
+      })
 
   }
 
@@ -560,13 +560,13 @@ class BackendAIUserList extends BackendAIPage {
                   value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
                 ></wl-textfield>
                 ${
-                  this.editMode
-                  ? html`
+      this.editMode
+        ? html`
                       <wl-textfield type="password" label="New Password" id="password"></wl-textfield>
                       <wl-textfield type="password" label="Confirm" id="confirm"></wl-textfield>
                     `
-                  : html``
-                }
+        : html``
+    }
                 <wl-textarea
                   label="Description"
                   id="description"
@@ -576,7 +576,7 @@ class BackendAIUserList extends BackendAIPage {
                 </wl-textarea>
 
                 ${this.editMode
-                  ? html`
+      ? html`
                       <wl-label label for="is_active_label" style="margin-bottom: auto">
                         Active user?
                       </wl-label>
@@ -603,7 +603,7 @@ class BackendAIUserList extends BackendAIPage {
                         Save Changes
                       </wl-button>
                     `
-                  : html`
+      : html`
                       <wl-textfield
                         label="Active user?"
                         disabled
@@ -615,12 +615,12 @@ class BackendAIUserList extends BackendAIPage {
                         value="${this.userInfo.need_password_change ? `Yes` : `No`}"
                       ></wl-textfield>
                     `
-                }
+    }
               </div>
             </div>
             ${this.editMode
-              ? html``
-              : html`
+      ? html``
+      : html`
                 <div style="width:270px;">
                   <h4>Association</h4>
                   <div role="listbox" style="margin: 0;">
@@ -645,7 +645,7 @@ class BackendAIUserList extends BackendAIPage {
                   </div>
                 </div>
                 `
-            }
+    }
           </div>
         </wl-card>
       </wl-dialog>
