@@ -32,33 +32,29 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIResourcePolicyList extends BackendAIPage {
-	public visible: any;
-	public keypairs: any;
-	public resourcePolicy: any;
-	public keypairInfo: any;
-	public is_admin: any;
-	public cpu_metric: any;
-	public ram_metric: any;
-	public gpu_metric: any;
-	public vgpu_metric: any;
-	public rate_metric: any;
-	public concurrency_metric: any;
-	public container_per_session_metric: any;
-	public idle_timeout_metric: any;
-	public vfolder_capacity_metric: any;
-	public vfolder_count_metric: any;
-	public allowed_vfolder_hosts: any;
-	public default_vfolder_host: any;
-	public _boundResourceRenderer: any;
-	public _boundControlRenderer: any;
-	public notification: any;
-	public shadowRoot: any;
-	public updateComplete: any;
-	public condition: any;
-
-  static get is() {
-    return 'backend-ai-resource-policy-list';
-  }
+  public visible: any;
+  public keypairs: any;
+  public resourcePolicy: any;
+  public keypairInfo: any;
+  public is_admin: any;
+  public cpu_metric: any;
+  public ram_metric: any;
+  public gpu_metric: any;
+  public vgpu_metric: any;
+  public rate_metric: any;
+  public concurrency_metric: any;
+  public container_per_session_metric: any;
+  public idle_timeout_metric: any;
+  public vfolder_capacity_metric: any;
+  public vfolder_count_metric: any;
+  public allowed_vfolder_hosts: any;
+  public default_vfolder_host: any;
+  public _boundResourceRenderer: any;
+  public _boundControlRenderer: any;
+  public notification: any;
+  public shadowRoot: any;
+  public updateComplete: any;
+  public condition: any;
 
   constructor() {
     super();
@@ -83,6 +79,10 @@ class BackendAIResourcePolicyList extends BackendAIPage {
     this.default_vfolder_host = '';
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
     this._boundControlRenderer = this.controlRenderer.bind(this);
+  }
+
+  static get is() {
+    return 'backend-ai-resource-policy-list';
   }
 
   static get properties() {
@@ -442,7 +442,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
           <div class="layout horizontal configuration">
             <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
-            <span class="indicator">vGPU</span>
+            <span class="indicator">fGPU</span>
           </div>
 ` : html``}
         </div>

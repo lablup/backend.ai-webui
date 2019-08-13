@@ -31,28 +31,28 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIResourceTemplateList extends BackendAIPage {
-	public keypairs: any;
-	public resourcePolicy: any;
-	public keypairInfo: any;
-	public is_admin: any;
-	public cpu_metric: any;
-	public ram_metric: any;
-	public gpu_metric: any;
-	public fgpu_metric: any;
-	public rate_metric: any;
-	public concurrency_metric: any;
-	public container_per_session_metric: any;
-	public idle_timeout_metric: any;
-	public vfolder_capacity_metric: any;
-	public vfolder_count_metric: any;
-	public _boundResourceRenderer: any;
-	public _boundControlRenderer: any;
-	public shadowRoot: any;
-	public resourcePresets: any;
-	public gpu_allocatable: any;
-	public notification: any;
-	public updateComplete: any;
-	public condition: any;
+  public keypairs: any;
+  public resourcePolicy: any;
+  public keypairInfo: any;
+  public is_admin: any;
+  public cpu_metric: any;
+  public ram_metric: any;
+  public gpu_metric: any;
+  public fgpu_metric: any;
+  public rate_metric: any;
+  public concurrency_metric: any;
+  public container_per_session_metric: any;
+  public idle_timeout_metric: any;
+  public vfolder_capacity_metric: any;
+  public vfolder_count_metric: any;
+  public _boundResourceRenderer: any;
+  public _boundControlRenderer: any;
+  public shadowRoot: any;
+  public resourcePresets: any;
+  public gpu_allocatable: any;
+  public notification: any;
+  public updateComplete: any;
+  public condition: any;
 
   constructor() {
     super();
@@ -457,9 +457,9 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       this._refreshTemplateData();
       this.is_admin = window.backendaiclient.is_admin;
       window.backendaiclient.getResourceSlots()
-      .then(res => {
-        this.gpu_allocatable = (Object.keys(res).length !== 2);
-      })
+        .then(res => {
+          this.gpu_allocatable = (Object.keys(res).length !== 2);
+        })
     }
   }
 
@@ -521,10 +521,10 @@ class BackendAIResourceTemplateList extends BackendAIPage {
 
   _readResourcePresetInput() {
     const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const cpu           = wrapper(this.shadowRoot.querySelector('#cpu-resource').value),
-          mem           = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g'),
-          gpu_resource  = wrapper(this.shadowRoot.querySelector('#gpu-resource').value),
-          fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
+    const cpu = wrapper(this.shadowRoot.querySelector('#cpu-resource').value),
+      mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g'),
+      gpu_resource = wrapper(this.shadowRoot.querySelector('#gpu-resource').value),
+      fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
 
     let resource_slots = {cpu, mem};
     if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
@@ -609,11 +609,11 @@ class BackendAIResourceTemplateList extends BackendAIPage {
 
   _createPreset() {
     const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const preset_name   = wrapper(this.shadowRoot.querySelector('#create-preset-name').value),
-          cpu           = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value),
-          mem           = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g'),
-          gpu_resource  = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value),
-          fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
+    const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value),
+      cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value),
+      mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g'),
+      gpu_resource = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value),
+      fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
 
     let resource_slots = {cpu, mem};
     if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
@@ -628,23 +628,23 @@ class BackendAIResourceTemplateList extends BackendAIPage {
     };
 
     window.backendaiclient.resourcePreset.add(preset_name, input)
-    .then(res => {
-      this.shadowRoot.querySelector('#create-preset-dialog').hide();
-      if (res.create_resource_preset.ok) {
-        this.notification.text = "Resource preset successfully created";
-        this.refresh();
+      .then(res => {
+        this.shadowRoot.querySelector('#create-preset-dialog').hide();
+        if (res.create_resource_preset.ok) {
+          this.notification.text = "Resource preset successfully created";
+          this.refresh();
 
-        // reset values
-        this.shadowRoot.querySelector('#create-preset-name').value = "";
-        this.shadowRoot.querySelector('#create-cpu-resource').value   = 1;
-        this.shadowRoot.querySelector('#create-ram-resource').value   = 1;
-        this.shadowRoot.querySelector('#create-gpu-resource').value   = 0;
-        this.shadowRoot.querySelector('#create-fgpu-resource').value  = 0;
-      } else {
-        this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
-      }
-      this.notification.show();
-    })
+          // reset values
+          this.shadowRoot.querySelector('#create-preset-name').value = "";
+          this.shadowRoot.querySelector('#create-cpu-resource').value = 1;
+          this.shadowRoot.querySelector('#create-ram-resource').value = 1;
+          this.shadowRoot.querySelector('#create-gpu-resource').value = 0;
+          this.shadowRoot.querySelector('#create-fgpu-resource').value = 0;
+        } else {
+          this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
+        }
+        this.notification.show();
+      })
   }
 }
 

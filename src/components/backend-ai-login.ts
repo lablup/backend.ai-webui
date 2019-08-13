@@ -17,12 +17,11 @@ import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import * as aiSDK from '../lib/backend.ai-client-es6';
+import {BackendAiStyles} from "./backend-ai-console-styles";
 
 declare global {
-    const ai: typeof aiSDK;
+  const ai: typeof aiSDK;
 }
-
-import {BackendAiStyles} from "./backend-ai-console-styles";
 
 
 /**
@@ -40,26 +39,44 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
  */
 
 class BackendAiLogin extends LitElement {
-	public api_key: any;
-	public secret_key: any;
-	public user_id: any;
-	public password: any;
-	public api_endpoint: any;
-	public domain_name: any;
-	public proxy_url: any;
-	public connection_mode: any;
-	public default_session_environment: any;
-	public blockMessage: any;
-	public blockType: any;
-	public config: any;
-	public loginPanel: any;
-	public shadowRoot: any;
-	public blockPanel: any;
-	public notification: any;
-	public clientConfig: any;
-	public client: any;
-	public user: any;
-	public email: any;
+  public api_key: any;
+  public secret_key: any;
+  public user_id: any;
+  public password: any;
+  public api_endpoint: any;
+  public domain_name: any;
+  public proxy_url: any;
+  public connection_mode: any;
+  public default_session_environment: any;
+  public blockMessage: any;
+  public blockType: any;
+  public config: any;
+  public loginPanel: any;
+  public shadowRoot: any;
+  public blockPanel: any;
+  public notification: any;
+  public clientConfig: any;
+  public client: any;
+  public user: any;
+  public email: any;
+
+  constructor() {
+    super();
+    setPassiveTouchGestures(true);
+    this.api_key = '';
+    this.secret_key = '';
+    this.user_id = '';
+    this.password = '';
+    this.api_endpoint = '';
+    this.domain_name = '';
+    this.proxy_url = 'http://127.0.0.1:5050/';
+    this.connection_mode = 'API';
+    this.default_session_environment = '';
+    this.blockMessage = '';
+    this.blockType = '';
+    this.config = null;
+    window.backendaiconsole = {};
+  }
 
   static get is() {
     return 'backend-ai-login';
@@ -112,22 +129,44 @@ class BackendAiLogin extends LitElement {
     };
   }
 
-  constructor() {
-    super();
-    setPassiveTouchGestures(true);
-    this.api_key = '';
-    this.secret_key = '';
-    this.user_id = '';
-    this.password = '';
-    this.api_endpoint = '';
-    this.domain_name = '';
-    this.proxy_url = 'http://127.0.0.1:5050/';
-    this.connection_mode = 'API';
-    this.default_session_environment = '';
-    this.blockMessage = '';
-    this.blockType = '';
-    this.config = null;
-    window.backendaiconsole = {};
+  static get styles() {
+    return [
+      BackendAiStyles,
+      // language=CSS
+      css`
+          paper-icon-button {
+              --paper-icon-button-ink-color: white;
+          }
+
+          app-drawer-layout:not([narrow]) [drawer-toggle] {
+              display: none;
+          }
+
+          fieldset input {
+              width: 100%;
+              border: 0;
+              border-bottom: 1px solid #aaa;
+              margin: 15px 0;
+              font: inherit;
+              font-size: 16px;
+              outline: none;
+          }
+
+          fieldset input:focus {
+              border-bottom: 1.5px solid #0d47a1;
+          }
+
+          #login-panel {
+              --dialog-width: 400px;
+          }
+
+          wl-button {
+              width: 335px;
+              --button-bg: transparent;
+              --button-bg-hover: var(--paper-red-100);
+              --button-bg-active: var(--paper-red-600);
+          }
+      `];
   }
 
   firstUpdated() {
@@ -141,7 +180,7 @@ class BackendAiLogin extends LitElement {
   refreshPanel(config) {
     if (typeof config.plugin === "undefined" || typeof config.plugin.login === "undefined" || config.plugin.login === '') {
     } else {
-      import('../plugins/' + config.plugin.login).then(()=>{
+      import('../plugins/' + config.plugin.login).then(() => {
         console.log("Plugin loaded.");
       }).catch((err) => {   // Connection failed
         if (this.loginPanel.open !== true) {
@@ -238,6 +277,7 @@ class BackendAiLogin extends LitElement {
   free() {
     this.shadowRoot.querySelector('#block-panel').hide();
   }
+
   login() {
     this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
     this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
@@ -483,46 +523,6 @@ class BackendAiLogin extends LitElement {
       }
       this.open();
     });
-  }
-
-  static get styles() {
-    return [
-      BackendAiStyles,
-      // language=CSS
-      css`
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
-
-        fieldset input {
-          width: 100%;
-          border: 0;
-          border-bottom: 1px solid #aaa;
-          margin: 15px 0;
-          font: inherit;
-          font-size: 16px;
-          outline: none;
-        }
-
-        fieldset input:focus {
-          border-bottom: 1.5px solid #0d47a1;
-        }
-
-        #login-panel {
-          --dialog-width: 400px;
-        }
-
-        wl-button {
-          width: 335px;
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
-      `];
   }
 
   render() {
