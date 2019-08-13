@@ -589,7 +589,7 @@ class BackendAiLogin extends LitElement {
             <div class="flex"></div>
             ${this.signup_support ? html`
             <span style="font-size:14px;margin-right:10px;">Not a user? </span>
-            <wl-button style="width:80px;" class="signup-button fg green signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
             ` : html``}
           </h3>
           <form id="login-form">
