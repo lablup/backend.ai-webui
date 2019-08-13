@@ -341,24 +341,24 @@ export default class BackendAISummary extends BackendAIPage {
 
   _acceptInvitation(invitation: any) {
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
-    .then(response => {
-      this.notification.text = response.msg;
-      this.notification.show();
-      this._refreshInvitations();
-    })
-    .catch(err => {
-      this.notification.text = PainKiller.relieve(err.message);
-      this.notification.show();
-    })
+      .then(response => {
+        this.notification.text = response.msg;
+        this.notification.show();
+        this._refreshInvitations();
+      })
+      .catch(err => {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
+      })
   }
 
   _deleteInvitation(invitation: any) {
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
-    .then(res => {
-      this.notification.text = res.msg;
-      this.notification.show();
-      this._refreshInvitations();
-    })
+      .then(res => {
+        this.notification.text = res.msg;
+        this.notification.show();
+        this._refreshInvitations();
+      })
   }
 
   render() {
@@ -474,16 +474,16 @@ export default class BackendAISummary extends BackendAIPage {
                 <li><a href="/job">Start a session</a></li>
               </ul>
               ${this.is_admin
-              ? html`
+      ? html`
                 <ul>
                   <li><a href="/credential">Create a new key pair</a></li>
                   <li><a href="/credential">Maintain keypairs</a></li>
                 </ul>`
-              : html``}
+      : html``}
             </div>
           </lablup-activity-panel>
           ${this.invitations.map(invitation =>
-            html`
+      html`
             <lablup-activity-panel title="Invitation">
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
@@ -491,9 +491,10 @@ export default class BackendAISummary extends BackendAIPage {
                 <div class="horizontal center layout">
                 Permission:
                 ${[...invitation.perm].map(c => {
-                  return html`
-                  <lablup-shields app="" color="${['green','blue','red'][['r','w','d'].indexOf(c)]}"
-                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
+        return html`
+                  <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
+                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;
+      })}
                 </div>
                 <div style="margin-top:25px;" class="horizontal layout justified">
                   <wl-button
@@ -516,7 +517,7 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             </lablup-activity-panel>
             `
-          )}
+    )}
         </div>
       </wl-card>
 `;

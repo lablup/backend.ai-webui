@@ -44,29 +44,29 @@ import {
  @group Backend.AI Console
  */
 class BackendAICredentialView extends BackendAIPage {
-	public cpu_metric: any;
-	public ram_metric: any;
-	public gpu_metric: any;
-	public vgpu_metric: any;
-	public rate_metric: any;
-	public concurrency_metric: any;
-	public container_per_session_metric: any;
-	public idle_timeout_metric: any;
-	public vfolder_capacity_metric: any;
-	public vfolder_count_metric: any;
-	public resource_policies: any;
-	public resource_policy_names: any;
-	public is_admin: any;
-	public allowed_vfolder_hosts: any;
-	public default_vfolder_host: any;
-	public _status: any;
-	public use_user_list: any;
-	public _activeTab: any;
-	public new_access_key: any;
-	public new_secret_key: any;
-	public notification: any;
-	public shadowRoot: any;
-	public updateComplete: any;
+  public cpu_metric: any;
+  public ram_metric: any;
+  public gpu_metric: any;
+  public vgpu_metric: any;
+  public rate_metric: any;
+  public concurrency_metric: any;
+  public container_per_session_metric: any;
+  public idle_timeout_metric: any;
+  public vfolder_capacity_metric: any;
+  public vfolder_count_metric: any;
+  public resource_policies: any;
+  public resource_policy_names: any;
+  public is_admin: any;
+  public allowed_vfolder_hosts: any;
+  public default_vfolder_host: any;
+  public _status: any;
+  public use_user_list: any;
+  public _activeTab: any;
+  public new_access_key: any;
+  public new_secret_key: any;
+  public notification: any;
+  public shadowRoot: any;
+  public updateComplete: any;
 
   constructor() {
     super();
@@ -487,10 +487,10 @@ class BackendAICredentialView extends BackendAIPage {
   }
 
   _addUser() {
-    const email    = this.shadowRoot.querySelector('#id_user_email').value,
-          name     = this.shadowRoot.querySelector('#id_user_name').value,
-          password = this.shadowRoot.querySelector('#id_user_password').value,
-          confirm  = this.shadowRoot.querySelector('#id_user_confirm').value;
+    const email = this.shadowRoot.querySelector('#id_user_email').value,
+      name = this.shadowRoot.querySelector('#id_user_name').value,
+      password = this.shadowRoot.querySelector('#id_user_password').value,
+      confirm = this.shadowRoot.querySelector('#id_user_confirm').value;
 
     // email verification
     if (email !== '') {
@@ -546,28 +546,28 @@ class BackendAICredentialView extends BackendAIPage {
     };
 
     window.backendaiclient.group.list()
-    .then(res => {
-      const default_id = res.groups.find(x => x.name === 'default').id;
+      .then(res => {
+        const default_id = res.groups.find(x => x.name === 'default').id;
 
-      return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
-    })
-    .then(res => {
-      this.shadowRoot.querySelector('#new-user-dialog').hide();
-      if (res['create_user'].ok) {
-        this.notification.text = "User successfully created";
+        return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
+      })
+      .then(res => {
+        this.shadowRoot.querySelector('#new-user-dialog').hide();
+        if (res['create_user'].ok) {
+          this.notification.text = "User successfully created";
 
-        this.shadowRoot.querySelector('#user-list').refresh();
-      } else {
-        console.error(res['create_user'].msg);
-        this.notification.text = "Error on user creation";
-      }
-      this.notification.show();
+          this.shadowRoot.querySelector('#user-list').refresh();
+        } else {
+          console.error(res['create_user'].msg);
+          this.notification.text = "Error on user creation";
+        }
+        this.notification.show();
 
-      this.shadowRoot.querySelector('#id_user_email').value = '';
-      this.shadowRoot.querySelector('#id_user_name').value = '';
-      this.shadowRoot.querySelector('#id_user_password').value = '';
-      this.shadowRoot.querySelector('#id_user_confirm').value = '';
-    })
+        this.shadowRoot.querySelector('#id_user_email').value = '';
+        this.shadowRoot.querySelector('#id_user_name').value = '';
+        this.shadowRoot.querySelector('#id_user_password').value = '';
+        this.shadowRoot.querySelector('#id_user_confirm').value = '';
+      })
   }
 
   _modifyResourcePolicy() {
@@ -765,7 +765,7 @@ class BackendAICredentialView extends BackendAIPage {
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
+                <paper-dropdown-menu id="vgpu-resource" label="fGPU">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.vgpu_metric.map(item => html`
                     <paper-item label="${item}">${item}</paper-item>

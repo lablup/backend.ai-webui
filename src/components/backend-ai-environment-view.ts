@@ -3,31 +3,26 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html, css} from "lit-element";
+import {css, html} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
-import {
-  IronFlex,
-  IronFlexAlignment
-} from '../plastics/layout/iron-flex-layout-classes';
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import './lablup-loading-indicator';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
-
-import {default as PainKiller} from "./backend-ai-painkiller";
 import './backend-ai-environment-list';
 import './backend-ai-resource-template-list';
 import './lablup-notification';
 
 class BackendAiEnvironmentView extends BackendAIPage {
-	public images: any;
-	public _activeTab: any;
-	public updateComplete: any;
-	public shadowRoot: any;
+  public images: any;
+  public _activeTab: any;
+  public updateComplete: any;
+  public shadowRoot: any;
 
   constructor() {
     super();

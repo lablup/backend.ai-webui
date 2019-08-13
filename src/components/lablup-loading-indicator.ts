@@ -7,10 +7,10 @@ import {css, html, LitElement} from 'lit-element';
 import 'weightless/progress-spinner';
 
 class LablupLoadingIndicator extends LitElement {
-	public active: any;
-	public indicator: any;
-	public shadowRoot: any;
-	public updateComplete: any;
+  public active: any;
+  public indicator: any;
+  public shadowRoot: any;
+  public updateComplete: any;
 
   constructor() {
     super();

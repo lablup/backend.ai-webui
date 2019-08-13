@@ -24,14 +24,14 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIAgentList extends BackendAIPage {
-	public condition: any;
-	public agents: any;
-	public _boundContactDateRenderer: any;
-	public _boundStatusRenderer: any;
-	public _boundControlRenderer: any;
-	public notification: any;
-	public shadowRoot: any;
-	public updateComplete: any;
+  public condition: any;
+  public agents: any;
+  public _boundContactDateRenderer: any;
+  public _boundStatusRenderer: any;
+  public _boundControlRenderer: any;
+  public notification: any;
+  public shadowRoot: any;
+  public updateComplete: any;
 
   constructor() {
     super();
@@ -185,8 +185,8 @@ class BackendAIAgentList extends BackendAIPage {
           var occupied_slots = JSON.parse(agent.occupied_slots);
           var available_slots = JSON.parse(agent.available_slots);
 
-            agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
-            agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
+          agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
+          agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
           if (agent.cpu_cur_pct !== null) {
             agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
             agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots * 100.0;
@@ -209,13 +209,13 @@ class BackendAIAgentList extends BackendAIPage {
           agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots * 100.0;
           agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
           if ('cuda.device' in available_slots) {
-              agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+            agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
           }
           if ('cuda.shares' in available_slots) {
             agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
           }
           if ('cuda.device' in occupied_slots) {
-              agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
+            agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
           }
           if ('cuda.shares' in occupied_slots) {
             agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
@@ -404,7 +404,7 @@ class BackendAIAgentList extends BackendAIPage {
                 <div class="layout horizontal center flex">
                   <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
                   <span style="padding-left:5px;">[[item.vgpu_slots]]</span>
-                  <span class="indicator">vGPU</span>
+                  <span class="indicator">fGPU</span>
                   <span class="flex"></span>
                   <vaadin-progress-bar id="vgpu-bar" value="[[item.used_vgpu_slots]]"
                                        max="[[item.vgpu_slots]]"></vaadin-progress-bar>

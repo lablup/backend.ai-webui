@@ -40,6 +40,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+
 /**
  Backend.AI GUI Console
 
@@ -62,30 +63,31 @@ declare global {
     isElectron: boolean;
     __local_proxy: string;
   }
+
   interface ai {
     backend: any;
   }
 }
 
 class BackendAiConsole extends connect(store)(LitElement) {
-	public menuTitle: any;
-	public user_id: any;
-	public domain: any;
-	public is_connected: any;
-	public is_admin: any;
-	public _page: any;
-	public groups: any;
-	public connection_mode: any;
-	public plugins: any;
-	public shadowRoot: any;
-	public config: any;
-	public siteDescription: any;
-	public connection_server: any;
-	public proxy_url: any;
-	public current_group: any;
-	public _offlineIndicatorOpened: any;
-	public _offline: any;
-	public _drawerOpened: any;
+  public menuTitle: any;
+  public user_id: any;
+  public domain: any;
+  public is_connected: any;
+  public is_admin: any;
+  public _page: any;
+  public groups: any;
+  public connection_mode: any;
+  public plugins: any;
+  public shadowRoot: any;
+  public config: any;
+  public siteDescription: any;
+  public connection_server: any;
+  public proxy_url: any;
+  public current_group: any;
+  public _offlineIndicatorOpened: any;
+  public _offline: any;
+  public _drawerOpened: any;
 
   constructor() {
     super();
@@ -435,7 +437,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   ${this.siteDescription ?
       html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
       html``
-      }
+    }
                 </div>
                 <span class="flex"></span>
               </div>
@@ -547,7 +549,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <div style="font-size: 10px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 8px;text-align:right">${this.domain}</div>
               </div>
-              <paper-icon-button id="sign-button" icon="icons:launch" @click="${()=>this.logout()}"></paper-icon-button>
+              <paper-icon-button id="sign-button" icon="icons:launch" @click="${() => this.logout()}"></paper-icon-button>
             </app-toolbar>
             <div class="horizontal flex wrap layout">
               <h2 main-title style="width:300px;">${this.menuTitle}</h2>

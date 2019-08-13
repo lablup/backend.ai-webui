@@ -27,11 +27,11 @@ import 'weightless/checkbox';
 import './backend-ai-resource-template-list';
 
 class BackendAiEnvironmentList extends BackendAIPage {
-	public images: any;
-	public indicator: any;
-	public shadowRoot: any;
-	public updateComplete: any;
-	public alias: any;
+  public images: any;
+  public indicator: any;
+  public shadowRoot: any;
+  public updateComplete: any;
+  public alias: any;
 
   constructor() {
     super();
@@ -203,7 +203,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
                   <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
                   <span>[[item.cuda_shares_limit_min]]</span> ~
                   <span>[[item.cuda_shares_limit_max]]</span>
-                  <span class="indicator">vGPU</span>
+                  <span class="indicator">fGPU</span>
                 </div>
               </div>
             </template>
@@ -240,6 +240,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
     }
   }
+
   _getImages() {
     this.indicator.show();
     window.backendaiclient.image.list().then((response) => {

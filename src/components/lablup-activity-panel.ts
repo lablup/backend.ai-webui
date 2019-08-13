@@ -5,17 +5,17 @@ import 'weightless/card';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 class LablupActivityPanel extends LitElement {
-	public title: any;
-	public elevation: any;
-	public message: any;
-	public panelId: any;
-	public width: any;
-	public horizontalsize: any;
-	public marginWidth: any;
-	public pinned: any;
-	public shadowRoot: any;
-	public minwidth: any;
-	public maxwidth: any;
+  public title: any;
+  public elevation: any;
+  public message: any;
+  public panelId: any;
+  public width: any;
+  public horizontalsize: any;
+  public marginWidth: any;
+  public pinned: any;
+  public shadowRoot: any;
+  public minwidth: any;
+  public maxwidth: any;
 
   constructor() {
     super();

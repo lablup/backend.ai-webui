@@ -10,11 +10,11 @@ import 'weightless/progress-bar';
 import 'weightless/title';
 
 class BackendAIIndicator extends LitElement {
-	public value: any;
-	public text: any;
-	public mode: any;
-	public dialog: any;
-	public shadowRoot: any;
+  public value: any;
+  public text: any;
+  public mode: any;
+  public dialog: any;
+  public shadowRoot: any;
 
   constructor() {
     super();

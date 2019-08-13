@@ -43,32 +43,32 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIData extends BackendAIPage {
-	public folders: any;
-	public folderInfo: any;
-	public is_admin: any;
-	public authenticated: any;
-	public deleteFolderId: any;
-	public explorer: any;
-	public explorerFiles: any;
-	public invitees: any;
-	public selectedFolder: any;
-	public uploadFiles: any;
-	public vhost: any;
-	public vhosts: any;
-	public uploadFilesExist: any;
-	public _boundIndexRenderer: any;
-	public _boundControlFolderListRenderer: any;
-	public _boundControlFileListRenderer: any;
-	public _boundPermissionViewRenderer: any;
-	public _boundFileNameRenderer: any;
-	public _boundCreatedTimeRenderer: any;
-	public _boundPermissionRenderer: any;
-	public shadowRoot: any;
-	public fileListGrid: any;
-	public notification: any;
-	public deleteFileDialog: any;
-	public indicator: any;
-	public updateComplete: any;
+  public folders: any;
+  public folderInfo: any;
+  public is_admin: any;
+  public authenticated: any;
+  public deleteFolderId: any;
+  public explorer: any;
+  public explorerFiles: any;
+  public invitees: any;
+  public selectedFolder: any;
+  public uploadFiles: any;
+  public vhost: any;
+  public vhosts: any;
+  public uploadFilesExist: any;
+  public _boundIndexRenderer: any;
+  public _boundControlFolderListRenderer: any;
+  public _boundControlFileListRenderer: any;
+  public _boundPermissionViewRenderer: any;
+  public _boundFileNameRenderer: any;
+  public _boundCreatedTimeRenderer: any;
+  public _boundPermissionRenderer: any;
+  public shadowRoot: any;
+  public fileListGrid: any;
+  public notification: any;
+  public deleteFileDialog: any;
+  public indicator: any;
+  public updateComplete: any;
 
   constructor() {
     super();
@@ -735,7 +735,7 @@ class BackendAIData extends BackendAIPage {
         'vfolder': this.invitees[idx].vfolder_id
       }));
     const promiseArray = inputList.map(input => window.backendaiclient.vfolder.modify_invitee_permission(input));
-    Promise.all(promiseArray).then( (response: any) => {
+    Promise.all(promiseArray).then((response: any) => {
       if (response.length === 0) {
         this.notification.text = 'No changes made.';
       } else {
@@ -805,7 +805,7 @@ class BackendAIData extends BackendAIPage {
               ></paper-icon-button>
             `
         : html``
-        }
+      }
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
 
@@ -818,7 +818,7 @@ class BackendAIData extends BackendAIPage {
               ></paper-icon-button>
             `
         : html``
-        }
+      }
 
           ${rowData.item.is_owner
         ? html`
@@ -829,7 +829,7 @@ class BackendAIData extends BackendAIPage {
               ></paper-icon-button>
             `
         : html``
-        }
+      }
 
           ${this._hasPermission(rowData.item, 'd')
         ? html`
@@ -840,7 +840,7 @@ class BackendAIData extends BackendAIPage {
               ></paper-icon-button>
             `
         : html``
-        }
+      }
         </div>
        `, root
     );

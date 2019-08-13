@@ -25,9 +25,14 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
  @group Backend.AI Console
  */
 class BackendAIAgentView extends BackendAIPage {
-	public updateComplete: any;
-	public shadowRoot: any;
-	public _status: any;
+  public updateComplete: any;
+  public shadowRoot: any;
+  public _status: any;
+
+  constructor() {
+    super();
+    this.active = false;
+  }
 
   static get properties() {
     return {
@@ -40,9 +45,9 @@ class BackendAIAgentView extends BackendAIPage {
     };
   }
 
-  constructor() {
-    super();
-    this.active = false;
+  static get styles() {
+    return [
+      BackendAiStyles];
   }
 
   firstUpdated() {
@@ -59,11 +64,6 @@ class BackendAIAgentView extends BackendAIPage {
     this.shadowRoot.querySelector('#running-agents').active = true;
     this.shadowRoot.querySelector('#finished-agents').active = true;
     this._status = 'active';
-  }
-
-  static get styles() {
-    return [
-      BackendAiStyles];
   }
 
   _showTab(tab) {
