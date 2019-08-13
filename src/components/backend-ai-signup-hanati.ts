@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-input/paper-input';
@@ -37,70 +37,27 @@ import {
 
  @group Backend.AI Console
  */
-class BackendAiSignup extends LitElement {
-	public company_name: any;
-	public company_id: any;
-	public user_name: any;
-	public user_email: any;
-	public errorMsg: any;
-	public config: any;
-	public endpoint: any;
-	public client: any;
-	public signupPanel: any;
-	public shadowRoot: any;
-	public notification: any;
-
-  static get is() {
-    return 'backend-ai-signup';
-  }
-
-  static get properties() {
-    return {
-      company_name: {
-        type: String
-      },
-      company_id: {
-        type: String
-      },
-      user_name: {
-        type: String
-      },
-      user_email: {
-        type: String
-      },
-      notification: {
-        type: Object
-      },
-      errorMsg: {
-        type: String
-      },
-      signupPanel: {
-        type: Object
-      },
-      client: {
-        type: Object
-      },
-      endpoint: {
-        type: String
-      }
-    };
-  }
+@customElement("backend-ai-signup")
+export default class BackendAiSignup extends LitElement {
+  @property({type: String}) company_name = '';
+  @property({type: String}) company_id = '';
+  @property({type: String}) user_name = '';
+  @property({type: String}) user_email = '';
+  @property({type: String}) errorMsg = '';
+  @property({type: String}) endpoint = '';
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) signupPanel = Object();
+  @property({type: Object}) blockPanel = Object();
+  @property({type: Object}) client = Object();
 
   constructor() {
     super();
     setPassiveTouchGestures(true);
-    this.company_name = '';
-    this.company_id = '';
-    this.user_name= '';
-    this.user_email = '';
-    this.errorMsg = '';
-    this.config = null;
-    this.endpoint = '';
-    this.client = {};
   }
 
   firstUpdated() {
     this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
+    this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
@@ -140,7 +97,7 @@ class BackendAiSignup extends LitElement {
 
   block(message = '') {
     this.errorMsg = message;
-    this.shadowRoot.querySelector('#block-panel').show();
+    this.blockPanel.show();
   }
 
   _validate_data(value) {
@@ -151,7 +108,7 @@ class BackendAiSignup extends LitElement {
   }
 
   _check_info() {
-    this.user_email = this.shadowRoot.querySelector('#id_user_email').value;
+    this.user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
     let rqst = this.client.newPublicRequest('GET', `/hanati/user?email=${this.user_email}`, null, '');
     this.client._wrapWithPromise(rqst).then((response)=>{
       console.log(response);
@@ -178,12 +135,12 @@ class BackendAiSignup extends LitElement {
   _clear_info() {
     this.company_name = '';
     this.user_name = '';
-    this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', true);
+    this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
   }
 
   _signup() {
-    let password1 = this.shadowRoot.querySelector('#id_password1').value;
-    let password2 = this.shadowRoot.querySelector('#id_password2').value;
+    let password1 = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
+    let password2 = (this.shadowRoot.querySelector('#id_password2') as HTMLInputElement).value;
     if (this.shadowRoot.querySelector("#id_password1").getAttribute("invalid") !== null) {
       this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
       this.notification.show();
@@ -203,13 +160,13 @@ class BackendAiSignup extends LitElement {
     console.log(body);
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
-      this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', true);
-      this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', true);
+      this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', 'true');
+      this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
       this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
       this.notification.text = 'Signup succeed.';
       this.notification.show();
       setTimeout(() => {
-        this.shadowRoot.querySelector('#signup-panel').hide();
+        this.signupPanel.hide();
       }, 1000);
     }).catch((e) => {
       if (e.message) {
@@ -346,4 +303,8 @@ class BackendAiSignup extends LitElement {
   }
 }
 
-customElements.define(BackendAiSignup.is, BackendAiSignup);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-signup": BackendAiSignup;
+  }
+}
