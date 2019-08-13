@@ -33,6 +33,7 @@ const ByteConverter = {
 };
 
 class BackendAIChart extends LitElement {
+  public idx: any;
 	public title: any;
 	public elevation: any;
 	public message: any;
@@ -129,14 +130,14 @@ class BackendAIChart extends LitElement {
           font-size: 15px;
         }
 
-        text.tooltip-x,
-        text.tooltip-y {
-          font-size: 8px;
-          fill: #37474f;
+        .x.axis {
+          font-size: 14px;
         }
 
-        .axis {
-            font: 14px sans-serif;
+        text.tooltip-x,
+        text.tooltip-y {
+          font-size: 10px;
+          fill: #37474f;
         }
       `
     ];
@@ -169,6 +170,9 @@ class BackendAIChart extends LitElement {
       height: {
         type: Number
       },
+      idx: {
+        type: Number
+      }
     };
   }
 
@@ -200,7 +204,7 @@ class BackendAIChart extends LitElement {
     // language=HTML
     return html`
       <div class="layout vertical center">
-        <div>
+        <div id="ctn${this.idx}">
           <svg id="d3"></svg>
         </div>
       </div>
@@ -566,16 +570,16 @@ class BackendAIChart extends LitElement {
       .attr("class", "y axis axisGray")
       .call(yAxis);
 
-    // text label for the x axis
-    g
-      .append("text")
-      .attr(
-        "transform",
-        `translate(${20 - margin.left}, ${graphHeight / 2}) rotate(-90)`
-      )
-      .style("text-anchor", "middle")
-      .attr("class", "normalize")
-      .text(this.collection.axisTitle.y);
+    // text label for the y axis
+    // g
+    //   .append("text")
+    //   .attr(
+    //     "transform",
+    //     `translate(${10 - margin.left}, ${graphHeight / 2}) rotate(-90)`
+    //   )
+    //   .style("text-anchor", "middle")
+    //   .style("font-size": "15px")
+    //   .text(this.collection.axisTitle.y);
 
     g
       .append("text")

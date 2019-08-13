@@ -196,7 +196,7 @@ class BackendAIUsageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="layout horizontal end-justified">
+      <div class="layout horizontal end-justified" style="width: 80%;">
         <wl-select label="Select Period" style="width: 130px" @input=${this.pulldownChange}>
           <option value disabled>Select Period</option>
           <option value="1D" selected>1 Day</option>
@@ -205,7 +205,7 @@ class BackendAIUsageList extends BackendAIPage {
       </div>
       <div class="layout vertical center">
       ${
-        Object.keys(this._map).map(key =>
+        Object.keys(this._map).map((key, idx) =>
           html`
            <div class="horizontal layout center">
             <h3 style="width:80px;" class="horizontal center-justified layout">${this._map[key]}</h3>
@@ -214,6 +214,7 @@ class BackendAIUsageList extends BackendAIPage {
               height="150"
               elevation="1"
               type="line"
+              idx=${idx}
               .collection=${this.collection[this.period][key]}
             ></backend-ai-chart>
            </div>
