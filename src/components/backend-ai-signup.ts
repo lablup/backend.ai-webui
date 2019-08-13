@@ -10,7 +10,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
-import './lablup-notification.js';
+import './lablup-notification';
 import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6.js';
@@ -22,7 +22,6 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
-
 /**
  Backend.AI Signup feature for GUI Console
 
@@ -61,11 +60,7 @@ export default class BackendAiSignup extends LitElement {
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
   }
 
-  refreshPanel(config) {
-  }
-
   open() {
-    console.log(this.endpoint);
     this.TOSdialog.open();
     if (this.endpoint !== '' && this.client !== {}) {
       let clientConfig = {

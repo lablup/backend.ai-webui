@@ -22,12 +22,12 @@ import {
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("lablup-terms-of-service")
-class LablupTermsOfService extends BackendAIPage {
+export default class LablupTermsOfService extends BackendAIPage {
   @property({type: String}) tosEntryURL = '/@lablupinc/terms-of-service-payment';
   @property({type: String}) tosContent = '';
   @property({type: Boolean}) show = false;
   @property({type: Boolean}) approved = false;
-  @property({type: Object}) notification = Object();
+  @property({type: Object}) notification;
   @property({type: Object}) approveCheckbox = Object();
   @property({type: Object}) dialog = Object();
 
@@ -91,6 +91,7 @@ class LablupTermsOfService extends BackendAIPage {
 
   async open() {
     await this.updateComplete;
+    console.log(this.notification);
     console.log('openedsss');
     this._showTOSdialog();
   }
