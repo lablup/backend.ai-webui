@@ -147,43 +147,43 @@ class BackendAiLogin extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-          paper-icon-button {
-            --paper-icon-button-ink-color: white;
-          }
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
 
-          app-drawer-layout:not([narrow]) [drawer-toggle] {
-            display: none;
-          }
+        app-drawer-layout:not([narrow]) [drawer-toggle] {
+          display: none;
+        }
 
-          fieldset input {
-            width: 100%;
-            border: 0;
-            border-bottom: 1px solid #aaa;
-            margin: 15px 0;
-            font: inherit;
-            font-size: 16px;
-            outline: none;
-          }
+        fieldset input {
+          width: 100%;
+          border: 0;
+          border-bottom: 1px solid #aaa;
+          margin: 15px 0;
+          font: inherit;
+          font-size: 16px;
+          outline: none;
+        }
 
-          fieldset input:focus {
-            border-bottom: 1.5px solid #0d47a1;
-          }
+        fieldset input:focus {
+          border-bottom: 1.5px solid #0d47a1;
+        }
 
-          #login-panel {
-            --dialog-width: 400px;
-          }
+        #login-panel {
+          --dialog-width: 400px;
+        }
 
-          wl-button {
-            width: 335px;
-            --button-bg: transparent;
-            --button-bg-hover: var(--paper-red-100);
-            --button-bg-active: var(--paper-red-600);
-          }
+        wl-button {
+          width: 335px;
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
 
-          wl-button.signup-button {
-            --button-bg-hover: var(--paper-green-100);
-            --button-bg-active: var(--paper-green-600);
-          }
+        wl-button.signup-button {
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
       `];
   }
 
