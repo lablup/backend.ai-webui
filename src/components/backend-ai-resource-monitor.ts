@@ -402,7 +402,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         backend-ai-dropdown-menu {
-          width: 100%;
+            width: 50%;
         }
 
         #launch-session {
@@ -1334,7 +1334,12 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <div style="display:none;">
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
-              <div class="layout vertical">
+              <div class="horizontal center layout">
+                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders">
+                ${this.vfolders.map(item => html`
+                  <paper-item value="${item.name}">${item.name}</paper-item>
+                `)}
+                </backend-ai-dropdown-menu>
                 <paper-input id="session-name" label="Session name (optional)"
                              value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
                              error-message="4 or more characters / no whitespace">
@@ -1345,11 +1350,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
               <div class="horizontal center layout">
-                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders">
-                ${this.vfolders.map(item => html`
-                  <paper-item value="${item.name}">${item.name}</paper-item>
-                `)}
-                </backend-ai-dropdown-menu>
                 ${this.enable_scaling_group ? html`
                 <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
