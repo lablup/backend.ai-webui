@@ -308,7 +308,7 @@ class BackendAiSignup extends LitElement {
                              style="width:260px;" label="E-mail" value="${this.user_email}"
                              @change="${() => this._clear_info()}"></paper-input>
                 <wl-button class="fg red" id="check-info-button" outlined type="button"
-                            @click="${(e) => this._check_info(e)}">
+                            @click="${() => this._check_info()}">
                             <wl-icon>check</wl-icon>
                             Check</wl-button>
               </div>
@@ -326,7 +326,7 @@ class BackendAiSignup extends LitElement {
                            value=""></paper-input>
               <br/><br/>
               <wl-button class="full" id="signup-button" disabled outlined type="button"
-                          @click="${(e) => this._signup(e)}">
+                          @click="${() => this._signup()}">
                           <wl-icon>check</wl-icon>
                           <span id="signup-button-message">Signup</span></wl-button>
             </fieldset>
