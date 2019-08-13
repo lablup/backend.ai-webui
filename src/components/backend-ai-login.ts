@@ -15,22 +15,23 @@ import 'weightless/dialog';
 import 'weightless/card';
 import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
+
+import './backend-ai-signup-hanati';
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import * as aiSDK from '../lib/backend.ai-client-es6';
-import './backend-ai-signup';
-
-import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
+import {BackendAiStyles} from "./backend-ai-console-styles";
 
 declare global {
   const ai: typeof aiSDK;
 }
+
 
 /**
  Backend.AI Login for GUI Console
@@ -140,40 +141,49 @@ class BackendAiLogin extends LitElement {
   static get styles() {
     return [
       BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
       // language=CSS
       css`
-          paper-icon-button {
-              --paper-icon-button-ink-color: white;
-          }
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
 
-          app-drawer-layout:not([narrow]) [drawer-toggle] {
-              display: none;
-          }
+        app-drawer-layout:not([narrow]) [drawer-toggle] {
+          display: none;
+        }
 
-          fieldset input {
-              width: 100%;
-              border: 0;
-              border-bottom: 1px solid #aaa;
-              margin: 15px 0;
-              font: inherit;
-              font-size: 16px;
-              outline: none;
-          }
+        fieldset input {
+          width: 100%;
+          border: 0;
+          border-bottom: 1px solid #aaa;
+          margin: 15px 0;
+          font: inherit;
+          font-size: 16px;
+          outline: none;
+        }
 
-          fieldset input:focus {
-              border-bottom: 1.5px solid #0d47a1;
-          }
+        fieldset input:focus {
+          border-bottom: 1.5px solid #0d47a1;
+        }
 
-          #login-panel {
-              --dialog-width: 400px;
-          }
+        #login-panel {
+          --dialog-width: 400px;
+        }
 
-          wl-button {
-              width: 335px;
-              --button-bg: transparent;
-              --button-bg-hover: var(--paper-red-100);
-              --button-bg-active: var(--paper-red-600);
-          }
+        wl-button {
+          width: 335px;
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
+
+        wl-button.signup-button {
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
       `];
   }
 
@@ -287,10 +297,10 @@ class BackendAiLogin extends LitElement {
   }
 
   login() {
-    this.api_key = null;
-    this.secret_key = null;
-    this.user_id = null;
-    this.password = null;
+    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
+    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
+    this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.user_id'));
+    this.password = JSON.parse(localStorage.getItem('backendaiconsole.password'));
     if (this.api_key === null) {
       this.api_key = '';
     }
@@ -304,7 +314,7 @@ class BackendAiLogin extends LitElement {
       this.password = '';
     }
     if (this.api_endpoint === '') {
-      this.api_endpoint = '';
+      this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
@@ -470,6 +480,7 @@ class BackendAiLogin extends LitElement {
       window.backendaiclient.current_group = window.backendaiclient.groups[0];
       window.backendaiclient.is_admin = false;
       window.backendaiclient.is_superadmin = false;
+
       if (["superadmin", "admin"].includes(role)) {
         window.backendaiclient.is_admin = true;
       }
@@ -550,13 +561,22 @@ class BackendAiLogin extends LitElement {
   render() {
     // language=HTML
     return html`
+      <app-localstorage-document key="backendaiconsole.email" data="${this.email}"></app-localstorage-document>
+      <app-localstorage-document id="storage" key="backendaiconsole.api_key"
+                                 data="${this.api_key}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
+      <app-localstorage-document id="storage" key="backendaiconsole.user_id"
+                                 data="${this.user_id}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.password" data="${this.password}"></app-localstorage-document>
+      <app-localstorage-document key="backendaiconsole.api_endpoint"
+                                 data="${this.api_endpoint}"></app-localstorage-document>
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Login</div> 
+            <div>Login</div>
             <div class="flex"></div>
             <span style="font-size:14px;margin-right:10px;">Not a user? </span>
-            <wl-button style="width:80px;" class="fg green signup" outlined type="button" @click="${()=>this._showSignupDialog()}">Sign up</wl-button>
+            <wl-button style="width:80px;" class="signup-button fg green signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
           </h3>
           <form id="login-form">
             <fieldset>
@@ -594,8 +614,8 @@ class BackendAiLogin extends LitElement {
         </wl-card>
         ` : html``}
       </wl-dialog>
-      <backend-ai-signup id="signup-dialog"></backend-ai-signup>
       <lablup-notification id="notification"></lablup-notification>
+      <backend-ai-signup id="signup-dialog"></backend-ai-signup>
     `;
   }
 }
