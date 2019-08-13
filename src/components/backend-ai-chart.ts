@@ -129,14 +129,14 @@ class BackendAIChart extends LitElement {
           font-size: 15px;
         }
 
-        .axis {
-          font-size: 6px;
-        }
-
         text.tooltip-x,
         text.tooltip-y {
           font-size: 8px;
           fill: #37474f;
+        }
+
+        .axis {
+            font: 14px sans-serif;
         }
       `
     ];
@@ -302,7 +302,7 @@ class BackendAIChart extends LitElement {
           .selectAll(".dot")
           .data(datum => datum)
           .attr("cx", d => xScale(d.x))
-          .attr("cy", d => yScale(d.y))
+          .attr("cy", d => yScale(d.y));
 
         // add more dots if needed
         dots
@@ -312,13 +312,13 @@ class BackendAIChart extends LitElement {
           .style("fill", colors[pi])
           .attr("cx", d => xScale(d.x))
           .attr("cy", d => yScale(d.y))
-          .attr("r", 1)
+          .attr("r", 1);
 
         // remove excess dots if necessary
         dots
           .exit()
           .remove();
-      })
+      });
 
     // make new dot groups if necessary
     dotGroup
@@ -337,7 +337,7 @@ class BackendAIChart extends LitElement {
           .attr("cx", d => xScale(d.x))
           .attr("cy", d => yScale(d.y))
           .attr("r", 1)
-      })
+      });
 
     // remove unnecessary dot groups
     dotGroup
@@ -346,7 +346,7 @@ class BackendAIChart extends LitElement {
 
     const circles = focus
       .selectAll("circle")
-      .data(data)
+      .data(data);
 
     circles.enter()
       .append("circle")
@@ -366,7 +366,7 @@ class BackendAIChart extends LitElement {
       .each(function (pd, pidx) {
         const tooltip = d3
           .select(this)
-          .attr("class", "tooltip")
+          .attr("class", "tooltip");
 
         tooltip
           .append("rect")
@@ -383,7 +383,7 @@ class BackendAIChart extends LitElement {
           .style("fill", "#37474f")
           .attr("transform", `translate(0, ${rectHeight / 2})`)
           .attr("dx", 5)
-          .attr("dy", "-.3em")
+          .attr("dy", "-.3em");
 
         tooltip
           .append("text")
@@ -393,7 +393,7 @@ class BackendAIChart extends LitElement {
           .attr("transform",  `translate(0, ${rectHeight / 2})`)
           .attr("dx", 5)
           .attr("dy", "1em")
-      })
+      });
 
     focus
       .selectAll("g.tooltip")
@@ -403,7 +403,7 @@ class BackendAIChart extends LitElement {
     rect
       .on("mousemove", function() {
         // due to the use of "this", this must be a function, and not an arrow function!
-        const bisectDate = d3.bisector(d => d.x).left
+        const bisectDate = d3.bisector(d => d.x).left;
         const x0 = xScale.invert(d3.mouse(this)[0]),
               i = bisectDate(data[0], x0, 1),
               d0 = data[0][i - 1],
@@ -428,7 +428,7 @@ class BackendAIChart extends LitElement {
           .data(data)
           .each(function (pd) {
             const tooltip = d3
-              .select(this)
+              .select(this);
 
             tooltip
               .select("text.tooltip-y")
@@ -600,7 +600,7 @@ class BackendAIChart extends LitElement {
           .attr("class", "line")
           .style("stroke", colors[pidx])
           .attr("d", line);
-      })
+      });
 
     // dots in data points
     g
@@ -621,7 +621,7 @@ class BackendAIChart extends LitElement {
           .attr("cx", d => xScale(d.x))
           .attr("cy", d => yScale(d.y))
           .attr("r", 1);
-      })
+      });
 
     // "g" element to render vertical tooltip
     const focus = g
@@ -641,7 +641,7 @@ class BackendAIChart extends LitElement {
           .style("fill", "none")
           .style("stroke", colors[pidx])
           .attr("r", 4);
-      })
+      });
 
     // vertical line for tooltip
     focus
@@ -683,7 +683,7 @@ class BackendAIChart extends LitElement {
           .attr("transform", `translate(0, ${rectHeight / 2})`)
           .attr("dx", 5)
           .attr("dy", "1em");
-      })
+      });
 
     g
       .append("rect")
@@ -696,7 +696,7 @@ class BackendAIChart extends LitElement {
       .on("mouseout", () => {focus.style("display", "none")})
       .on("mousemove", function() {
         // due to the use of "this", this must be a function, and not an arrow function!
-        const bisectDate = d3.bisector(d => d.x).left
+        const bisectDate = d3.bisector(d => d.x).left;
         const x0 = xScale.invert(d3.mouse(this)[0]),
               i = bisectDate(data[0], x0, 1),
               d0 = data[0][i - 1],
