@@ -1,10 +1,9 @@
-import {
-  UPDATE_PAGE,
-  UPDATE_OFFLINE,
-  OPEN_SNACKBAR,
-  CLOSE_SNACKBAR,
-  UPDATE_DRAWER_STATE
-} from '../backend-ai-app.js';
+/**
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ */
+
+import {CLOSE_SNACKBAR, OPEN_SNACKBAR, UPDATE_DRAWER_STATE, UPDATE_OFFLINE, UPDATE_PAGE} from '../backend-ai-app.js';
 
 const INITIAL_STATE = {
   page: '',
