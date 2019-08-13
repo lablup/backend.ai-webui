@@ -4,8 +4,6 @@
  */
 
 import {css, customElement, html, property, LitElement} from "lit-element";
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-
 import '@polymer/paper-input/paper-input';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
@@ -50,16 +48,17 @@ export default class BackendAiSignup extends LitElement {
   @property({type: Object}) signupPanel = Object();
   @property({type: Object}) blockPanel = Object();
   @property({type: Object}) client = Object();
+  @property({type: Object}) TOSdialog = Object();
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
   }
 
   firstUpdated() {
     this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = this.shadowRoot.querySelector('#notification');
+    this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
   }
 
   refreshPanel(config) {
@@ -67,6 +66,7 @@ export default class BackendAiSignup extends LitElement {
 
   open() {
     console.log(this.endpoint);
+    this.TOSdialog.open();
     if (this.endpoint !== '' && this.client !== {}) {
       let clientConfig = {
         connectionMode: 'SESSION',
