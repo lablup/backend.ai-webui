@@ -55,6 +55,7 @@
     "@vaadin/vaadin-progress-bar": "^1.1.2",
     "@vaadin/vaadin-upload": "^4.2.2",
     "@webcomponents/webcomponentsjs": "^2.2.10",
+    "d3": "^5.9.7",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.1",
     "log": "^6.0.0",
