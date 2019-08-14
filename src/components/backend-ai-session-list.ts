@@ -997,7 +997,7 @@ ${item.map(item => html`
                                ` : html``}
              ${this.condition === 'running' ? html`
             <paper-icon-button class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"            
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"
                                @click2="${(e) => this._terminateSession(e)}"
                                icon="delete"></paper-icon-button>
                                ` : html``}
