@@ -4,6 +4,7 @@ apiEndpointText = "Backend.AI Enterprise"
 defaultSessionEnvironment = "index.docker.io/lablup/python-tensorflow"
 siteDescription = "AI Hub"
 connectionMode = "API"
+signupSupport = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
