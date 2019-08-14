@@ -359,15 +359,15 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.shadowRoot.getElementById('sidebar-menu').selected = 3;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
-        case 'agent':
-          this.menuTitle = 'Computation Resources';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 5;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
         case 'statistics':
           this.menuTitle = 'Statistics';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 4;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
+          break;
+        case 'agent':
+          this.menuTitle = 'Computation Resources';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
@@ -477,6 +477,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Storage
                 </paper-item>
               </a>
+              <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
+                <paper-item link>
+                  <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
+                  Statistics
+                </paper-item>
+              </a>
               ${this.is_admin ?
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
@@ -485,15 +491,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
                   Resources
-                </paper-item>
-              </a>` :
-      html``}
-              ${this.is_admin ?
-      html`
-              <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
-                <paper-item link>
-                  <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
-                  Statistics
                 </paper-item>
               </a>` :
       html``}
