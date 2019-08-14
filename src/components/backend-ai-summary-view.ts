@@ -15,6 +15,7 @@ import 'weightless/card';
 
 import './lablup-notification';
 import './lablup-activity-panel';
+import './backend-ai-chart';
 import './backend-ai-resource-monitor';
 import '../plastics/lablup-shields/lablup-shields';
 
