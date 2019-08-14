@@ -50,6 +50,7 @@ class BackendAiSessionList extends BackendAIPage {
   public _boundControlRenderer: any;
   public _boundSessionInfoRenderer: any;
   public _boundCheckboxRenderer: any;
+  public _boundUserInfoRenderer: any;
   public refreshing: any;
   public loadingIndicator: any;
   public shadowRoot: any;
@@ -73,6 +74,7 @@ class BackendAiSessionList extends BackendAIPage {
     this._boundControlRenderer = this.controlRenderer.bind(this);
     this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
     this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
+    this._boundUserInfoRenderer = this.userInfoRenderer.bind(this);
     this.refreshing = false;
   }
 
@@ -403,7 +405,7 @@ class BackendAiSessionList extends BackendAIPage {
 
     let fields = [
       "sess_id", "lang", "created_at", "terminated_at", "status",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "user_email"
     ];
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
@@ -997,7 +999,7 @@ ${item.map(item => html`
                                ` : html``}
              ${this.condition === 'running' ? html`
             <paper-icon-button class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"            
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"
                                @click2="${(e) => this._terminateSession(e)}"
                                icon="delete"></paper-icon-button>
                                ` : html``}
@@ -1027,6 +1029,16 @@ ${item.map(item => html`
     );
   }
 
+  userInfoRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div class="layout vertical">
+          <span class="indicator">${window.backendaiclient._config._connectionMode === "API" ? rowData.item.access_key : rowData.item.user_email}</span>
+        </div>
+      `, root
+    );
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1052,12 +1064,7 @@ ${item.map(item => html`
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="130px" header="API Key" flex-grow="0" path="access_key">
-            <template>
-              <div class="layout vertical">
-                <span class="indicator">[[item.access_key]]</span>
-              </div>
-            </template>
+          <vaadin-grid-sort-column resizable width="130px" header="API Key" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
         <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
