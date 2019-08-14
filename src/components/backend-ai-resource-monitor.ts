@@ -503,17 +503,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _initSessions() {
-    let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
-    ];
-    Promise.all([
-      window.backendaiclient.computeSession.list(fields=fields, status="RUNNING"),
-      window.backendaiclient.computeSession.list(fields=fields, status="TERMINATED"),
-      window.backendaiclient.computeSession.list(fields=fields, status=["PREPARING", "RESTARTING", "TERMINATING"])
-    ])
+    let fields = ["sess_id"];
+    window.backendaiclient.computeSession.list(fields=fields, status="RUNNING")
     .then(res => {
-      this.sessions_list = [].concat.apply([], res.map(cs => cs.compute_sessions.map(e => e.sess_id)));
+      this.sessions_list = res.compute_sessions.map(e => e.sess_id);
     })
   }
 
