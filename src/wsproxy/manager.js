@@ -2,12 +2,9 @@ const express = require('express'),
  EventEmitter = require('events'),
          cors = require('cors');
 
-const {isFreePort} = require('node-port-check');
-
-const Client = require("./lib/WstClient"),
-  ai = require('../lib/backend.ai-client-node'),
-  Proxy = require("./proxy"),
-  CProxy = require("./cproxy");
+const ai = require('../lib/backend.ai-client-node'),
+  Gateway = require("./gateway/tcpwsproxy"),
+  SGateway = require("./gateway/consoleproxy");
 
 class Manager extends EventEmitter {
   constructor(listen_ip, proxyBaseURL, proxyBasePort) {
@@ -43,24 +40,6 @@ class Manager extends EventEmitter {
     for (let i = 0; i < 100; i++) {
       this.ports.push(Math.floor(Math.random() * 20000) + 10000)
     }
-  }
-
-  getPort() {
-    return new Promise((resolve, reject) => {
-      if (this.ports.length == 0) {
-        this.refreshPorts();
-      }
-      var port = this.ports.shift();
-      isFreePort(port).then((v) => {
-        if (v[2] == true) {
-          resolve(v[0]);
-        } else {
-          getPort().then((v) => {
-            resolve(v)
-          });
-        }
-      });
-    });
   }
 
   init() {
@@ -113,38 +92,68 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:kernelId/add', (req, res) =>{
-      let kernelId = req.params["kernelId"];
+    this.app.get('/proxy/local/:kernelId/add', async (req, res) =>{
       if (!this._config){
         res.send({"code": 401});
         return;
       }
+      let kernelId = req.params["kernelId"];
       let app = req.query.app || "jupyter";
       let p = kernelId + "|" + app;
-      if (!(p in this.proxies)) {
-        console.log("EEE");
-        let proxy;
-        if(this._config.mode == "SESSION") {
-          proxy = new CProxy(this._config);
-        } else {
-          proxy = new Proxy(this.aiclient._config);
-        }
-        console.log("EEE");
-        this.getPort().then((port) => {
-          console.log("EEE");
-          let proxy_url = this.proxyBaseURL + ":" + port;
-          proxy.start_proxy(kernelId, app, this.listen_ip, port, proxy_url);
-          this.proxies[p] = proxy;
-          res.send({"code": 200, "proxy": proxy.base_url, "url": this.baseURL + "/redirect?port=" + port});
-        });
-
+      //TODO: reset or remove duplicate
+      //
+      /////
+      /*
+      let proxy;
+      if(this._config.mode == "SESSION") {
+        proxy = new CProxy(this._config);
       } else {
-        let proxy = this.proxies[p];
-        res.send({"code": 200, "proxy": proxy.base_url, "url": this.baseURL + "/redirect?port=" + proxy.port});
+        proxy = new Proxy(this.aiclient._config);
       }
+      this.getPort().then((port) => {
+        let proxy_url = this.proxyBaseURL + ":" + port;
+        proxy.start_proxy(kernelId, app, this.listen_ip, port, proxy_url);
+        this.proxies[p] = proxy;
+        res.send({"code": 200, "proxy": proxy.base_url, "url": this.baseURL + "/redirect?port=" + port});
+      });
+      */
+      //////
+      //
+      let gateway;
+      if(this._config.mode == "SESSION") {
+        gateway = new SGateway(this._config);
+      } else {
+        gateway = new Gateway(this.aiclient._config);
+      }
+      this.proxies[p] = gateway;
+
+      let ip = "127.0.0.1"; //FIXME: Update needed
+      let port = undefined;
+      let assigned = false;
+      let maxtry = 5;
+      for(let i=0;i < maxtry; i++) {
+        try {
+          await gateway.start_proxy(kernelId, app, ip, port);
+          port = gateway.getPort();
+          assigned = true;
+          break;
+        } catch (err) {
+          //if port in use 
+          console.log(err);
+          console.log("Port in use");
+          //or just retry 
+        };
+      }
+      if(!assigned) {
+        res.send({"code": 500});
+      }
+      let proxy_target = "http://localhost:" + port;
+      res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
     });
 
     this.app.get('/proxy/local/:kernelId/delete', (req, res) => {
+      //find all and kill
+
       let kernelId = req.params["kernelId"];
       if (!this._config){
         res.send({"code": 401});
