@@ -107,3 +107,6 @@ src/lib/webcomponents-loader.js
 
 # vim netrw
 .netrwhist
+
+# ctags-generated file
+tags
