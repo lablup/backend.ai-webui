@@ -273,7 +273,7 @@ export default class BackendAiSignup extends LitElement {
       <wl-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Signup</div>
+            <div>Signup (Beta invitation only)</div>
             <div class="flex"></div>
             <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
