@@ -594,8 +594,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
+      // this.enable_scaling_group = false;
       if (this.enable_scaling_group === true) {
-        console.log("SSS");
         let sgs = await window.backendaiclient.scalingGroup.list();
         this.scaling_groups = sgs.scaling_groups;
       }
@@ -646,6 +646,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     if (this.sessions_list.includes(sessionName)) {
       this.notification.text = "Duplicate session name not allowed."
       this.notification.show();
+      return;
     }
     if (this.enable_scaling_group) {
       this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
