@@ -158,6 +158,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.scaling_groups = [];
     this.scaling_group = '';
     this.enable_scaling_group = false;
+    this.sessions_list = [];
   }
 
   static get is() {
@@ -279,6 +280,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       enable_scaling_group: {
         type: Boolean
+      },
+      sessions_list: {
+        type: Array
       }
     }
   }
@@ -471,6 +475,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this.notification = this.shadowRoot.querySelector('#notification');
 
+    this._initSessions();
     this._initAliases();
     this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -495,6 +500,21 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
+  }
+
+  _initSessions() {
+    let fields = [
+      "sess_id", "lang", "created_at", "terminated_at", "status",
+      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+    ];
+    Promise.all([
+      window.backendaiclient.computeSession.list(fields=fields, status="RUNNING"),
+      window.backendaiclient.computeSession.list(fields=fields, status="TERMINATED"),
+      window.backendaiclient.computeSession.list(fields=fields, status=["PREPARING", "RESTARTING", "TERMINATING"])
+    ])
+    .then(res => {
+      this.sessions_list = [].concat.apply([], res.map(cs => cs.compute_sessions.map(e => e.sess_id)));
+    })
   }
 
   _initAliases() {
@@ -575,6 +595,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this.selectDefaultLanguage();
       if (this.enable_scaling_group === true) {
+        console.log("SSS");
         let sgs = await window.backendaiclient.scalingGroup.list();
         this.scaling_groups = sgs.scaling_groups;
       }
@@ -621,6 +642,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
+
+    if (this.sessions_list.includes(sessionName)) {
+      this.notification.text = "Duplicate session name not allowed."
+      this.notification.show();
+    }
     if (this.enable_scaling_group) {
       this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
     }
