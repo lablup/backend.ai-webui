@@ -4,6 +4,7 @@
 #defaultSessionEnvironment = ""
 siteDescription = "TEST"
 connectionMode = "SESSION" #connectionMode = API
+signupSupport = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
