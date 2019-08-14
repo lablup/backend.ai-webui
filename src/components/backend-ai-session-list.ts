@@ -60,6 +60,7 @@ class BackendAiSessionList extends BackendAIPage {
   public terminateSessionDialog: any;
   public terminateSelectedSessionsDialog: any;
   public updateComplete: any;
+  public _connectionMode: string;
 
   constructor() {
     super();
@@ -76,6 +77,7 @@ class BackendAiSessionList extends BackendAIPage {
     this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
     this._boundUserInfoRenderer = this.userInfoRenderer.bind(this);
     this.refreshing = false;
+    this._connectionMode = 'API';
   }
 
   static get is() {
@@ -305,9 +307,11 @@ class BackendAiSessionList extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this._connectionMode = window.backendaiclient._config._connectionMode;
         this._refreshJobData();
       }, true);
     } else { // already connected
+      this._connectionMode = window.backendaiclient._config._connectionMode;
       this._refreshJobData();
     }
   }
@@ -1033,7 +1037,7 @@ ${item.map(item => html`
     render(
       html`
         <div class="layout vertical">
-          <span class="indicator">${window.backendaiclient._config._connectionMode === "API" ? rowData.item.access_key : rowData.item.user_email}</span>
+          <span class="indicator">${this._connectionMode === "API" ? rowData.item.access_key : rowData.item.user_email}</span>
         </div>
       `, root
     );
