@@ -605,14 +605,13 @@ class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _generateKernelIndex(kernel, version) {
-    if (kernel in this.aliases) {
-      return this.aliases[kernel] + ':' + version;
-    }
     return kernel + ':' + version;
   }
 
   _newSession() {
-    let kernel = this.shadowRoot.querySelector('#environment').value;
+    //let kernel = this.shadowRoot.querySelector('#environment').value;
+    let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
+    let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
@@ -753,19 +752,46 @@ class BackendAiResourceMonitor extends BackendAIPage {
           this.aliases[item] = humanizedName;
         }
       }
-      const alias = this.aliases[item];
-      if (alias !== undefined) {
-        const basename = alias.split(' (')[0];
-        const tags = this.tags[alias];
-        this.languages.push({name: item, alias: alias, basename: basename, tags: tags});
+      let specs = item.split('/');
+      let registry = specs[0];
+      let prefix, kernelName;
+      if (specs.length == 2) {
+        prefix = '';
+        kernelName = specs[1];
+      } else {
+        prefix = specs[1];
+        kernelName = specs[2];
       }
+      const alias = this.aliases[item];
+      let basename;
+      if (alias !== undefined) {
+        basename = alias.split(' (')[0];
+      } else {
+        basename = kernelName;
+      }
+      let tags = [];
+      if (alias in this.tags) {
+        tags = tags.concat(this.tags[alias]);
+      }
+      if (prefix != '') {
+        tags.push(prefix);
+      }
+      this.languages.push({
+        name: item,
+        registry: registry,
+        prefix: prefix,
+        kernelname: kernelName,
+        alias: alias,
+        basename: basename,
+        tags: tags
+      });
     });
     this._initAliases();
   }
 
-  _updateVersions(lang) {
-    if (this.aliases[lang] in this.supports) {
-      this.versions = this.supports[this.aliases[lang]];
+  _updateVersions(kernel) {
+    if (kernel in this.supports) {
+      this.versions = this.supports[kernel];
       this.versions.sort();
       this.versions.reverse(); // New version comes first.
     }
@@ -1126,7 +1152,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   updateLanguage() {
-    this._updateVersions(this.shadowRoot.querySelector('#environment').selectedItemLabel);
+    let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
+    if (selectedItem === null) return;
+    let kernel = selectedItem.id;
+    this._updateVersions(kernel);
   }
 
   // Manager requests
