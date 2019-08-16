@@ -257,7 +257,7 @@ export default class BackendAiSignup extends LitElement {
             <fieldset>
               <div class="horizontal center layout">
                 <paper-input type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                             style="width:260px;" label="E-mail" value="${this.user_email}"
+                             label="E-mail" value="${this.user_email}"
                              @change="${() => this._clear_info()}"></paper-input>
               </div>
               <paper-input type="text" name="user_name" id="id_user_name" maxlength="30"
