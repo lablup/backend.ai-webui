@@ -67,6 +67,9 @@ const loadPage = (page) => (dispatch) => {
     case 'maintenance':
       import('./components/backend-ai-maintenance-view.js');
       break;
+    case 'statistics':
+      import('./components/backend-ai-statistics-view.js');
+      break;
     default:
       import('./components/backend-ai-summary-view.js').then((module) => {
       });
