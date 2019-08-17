@@ -579,6 +579,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.scaling_groups = sgs.scaling_groups;
       }
       await this.updateMetric();
+      console.log(this.cpu_metric);
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
@@ -841,6 +842,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       }
 
       let group_resource = response.scaling_group_remaining;
+
       ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
         if (slot in response.keypair_using && slot in group_resource) {
           group_resource[slot] = parseFloat(group_resource[slot]) + parseFloat(response.keypair_using[slot]);
@@ -1019,6 +1021,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
             if (cpu_metric.min > cpu_metric.max) {
               // TODO: dynamic maximum per user policy
             }
+            console.log(cpu_metric);
             this.cpu_metric = cpu_metric;
           }
 
