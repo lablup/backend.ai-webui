@@ -564,7 +564,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
   _refreshResourceValues() {
     this._refreshImageList();
     this._updateGPUMode();
-    this._updateVirtualFolderList();
     this.updateMetric();
   }
 
@@ -801,7 +800,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  _updateVirtualFolderList() {
+  async _updateVirtualFolderList() {
     let l = window.backendaiclient.vfolder.list();
     l.then((value) => {
       this.vfolders = value;
@@ -990,6 +989,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       let currentVersion = this.shadowRoot.querySelector('#version').value;
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
+      await this._updateVirtualFolderList();
       let available_slot = await this._aggregateResourceUse();
       if (!currentResource) return;
       currentResource.forEach((item) => {
