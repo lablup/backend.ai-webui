@@ -226,12 +226,12 @@ class BackendAiLogin extends LitElement {
       window.backendaiconsole.debug = true;
       console.log('debug flag is set to true');
     }
-    if (typeof config.general === "undefined" || typeof config.general.signupSupport === "undefined" || config.general.signupSupport === '') {
+    if (typeof config.general === "undefined" || typeof config.general.signupSupport === "undefined" || config.general.signupSupport === '' || config.general.signupSupport == false) {
       this.signup_support = false;
     } else {
       this.signup_support = true;
     }
-
+    console.log(this.signup_support);
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
