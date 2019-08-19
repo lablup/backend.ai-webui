@@ -361,7 +361,6 @@ class BackendAiLogin extends LitElement {
   }
 
   _submitIfEnter(e) {
-    console.log('#_submitIfEnter')
     if (e.keyCode == 13) this._login();
   }
 
