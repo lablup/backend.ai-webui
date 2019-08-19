@@ -406,11 +406,18 @@ class BackendAiSessionList extends BackendAIPage {
       default:
         status = "RUNNING";
     }
-
-    let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "user_email"
-    ];
+    let fields;
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
+      fields = [
+        "sess_id", "lang", "created_at", "terminated_at", "status",
+        "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "user_email"
+      ];
+    } else {
+      fields = [
+        "sess_id", "lang", "created_at", "terminated_at", "status",
+        "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+      ];
+    }
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
       var sessions = response.compute_sessions;
