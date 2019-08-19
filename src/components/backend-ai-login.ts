@@ -360,6 +360,11 @@ class BackendAiLogin extends LitElement {
     return false;
   }
 
+  _submitIfEnter(e) {
+    console.log('#_submitIfEnter')
+    if (e.keyCode == 13) this._login();
+  }
+
   _login() {
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
@@ -594,15 +599,15 @@ class BackendAiLogin extends LitElement {
           <form id="login-form">
             <fieldset>
               <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
-                           label="API Key" value="${this.api_key}"></paper-input>
+                           label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="password" name="secret_key" id="id_secret_key" style="display:none;"
-                           label="Secret Key" value="${this.secret_key}"></paper-input>
+                           label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="text" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
-                           label="ID" value="${this.user_id}"></paper-input>
+                           label="ID" value="${this.user_id}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="password" name="password" id="id_password" style="display:none;"
-                           label="Password" value="${this.password}"></paper-input>
+                           label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="API Endpoint" value="${this.api_endpoint}"></paper-input>
+                           label="API Endpoint" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
                            label="API Endpoint" value=""></paper-input>
