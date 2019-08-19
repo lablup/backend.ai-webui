@@ -4,6 +4,7 @@ apiEndpointText = "Backend.AI Enterprise/On-premise (GTC2019)"
 defaultSessionEnvironment = "index.docker.io/lablup/ngc-tensorflow"
 #siteDescription =
 connectionMode = "API"
+signupSupport = false
 
 [wsproxy]
 proxyBaseURL = "http://192.168.1.101"

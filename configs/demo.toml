@@ -3,6 +3,7 @@ apiEndpoint = "http://172.16.1.19:8081"
 apiEndpointText = "Backend.AI Enterprise/On-premise (Demo-GTC2019)"
 #defaultSessionEnvironment =
 connectionMode = "API"
+signupSupport = false
 
 [wsproxy]
 proxyURL = "http://172.16.1.19:5050/"

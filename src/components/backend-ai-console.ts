@@ -359,15 +359,15 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.shadowRoot.getElementById('sidebar-menu').selected = 3;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
-        case 'agent':
-          this.menuTitle = 'Computation Resources';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 5;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
         case 'statistics':
           this.menuTitle = 'Statistics';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 4;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
+          break;
+        case 'agent':
+          this.menuTitle = 'Computation Resources';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
@@ -477,6 +477,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Storage
                 </paper-item>
               </a>
+              <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
+                <paper-item link>
+                  <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
+                  Statistics
+                </paper-item>
+              </a>
               ${this.is_admin ?
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
@@ -485,15 +491,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
                   Resources
-                </paper-item>
-              </a>` :
-      html``}
-              ${this.is_admin ?
-      html`
-              <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
-                <paper-item link>
-                  <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
-                  Statistics
                 </paper-item>
               </a>` :
       html``}
@@ -570,7 +567,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
             <section role="main" id="content" class="container layout vertical center">
               <div id="app-page">
-                <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
+                <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
                 <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
                 <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
                 <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-credential-view>
