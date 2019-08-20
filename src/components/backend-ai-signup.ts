@@ -141,10 +141,13 @@ export default class BackendAiSignup extends LitElement {
       return;
     }
     const token = (this.shadowRoot.querySelector('#id_token') as HTMLInputElement).value;
+    const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
+    const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
     this.notification.text = 'Processing...';
     this.notification.show();
     let body = {
-      'email': this.user_email,
+      'email': user_email,
+      'user_name': user_name,
       'password': password1,
       'token': token
     };
@@ -259,7 +262,7 @@ export default class BackendAiSignup extends LitElement {
                            label="E-mail" value="${this.user_email}"
                            @change="${() => this._clear_info()}"></paper-input>
               <paper-input type="text" name="user_name" id="id_user_name" maxlength="30"
-                           label="User Name" .value="${this.user_name}"></paper-input>
+                           label="User Name" value="${this.user_name}"></paper-input>
               <paper-input type="text" name="token" id="id_token" maxlength="50"
                            label="Invitation Token"></paper-input>
               <paper-input type="password" name="password1" id="id_password1"
