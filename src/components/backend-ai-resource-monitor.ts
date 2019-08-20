@@ -682,8 +682,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.notification.show();
 
     let sessions = [];
-    for (var i = 0; i < this.num_sessions; i++) {
-      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
+    const randStr = this._getRandomString();
+    for (let i = 1; i <= this.num_sessions; i++) {
+      sessions.push({kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config});
     }
 
     const createSessionQueue = sessions.map(item => {
@@ -710,6 +711,24 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
     });
+  }
+
+  _getRandomString() {
+    let randnum = Math.floor(Math.random() * 52 * 52 * 52);
+
+    const parseNum = (num) => {
+      if (num < 26) return String.fromCharCode(65 + num);
+      else return String.fromCharCode(97 + num - 26);
+    }
+
+    let randstr = "";
+
+    for (let i = 0; i < 3; i++) {
+      randstr += parseNum(randnum % 52);
+      randnum = Math.floor(randnum / 52);
+    }
+
+    return randstr;
   }
 
   _createKernel(kernelName, sessionName, config) {
