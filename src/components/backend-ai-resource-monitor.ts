@@ -79,6 +79,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public updateComplete: any;
   public num_sessions: any;
   public vgpu_metric: any;
+  public sessions_list: any;
 
   constructor() {
     super();
