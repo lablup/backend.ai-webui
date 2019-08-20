@@ -3,6 +3,7 @@ apiEndpoint = "https://api-beta.backend.ai"
 apiEndpointText = "Backend.AI Enterprise (Beta Branch)"
 defaultSessionEnvironment = "index.docker.io/lablup/ngc-tensorflow"
 connectionMode = "API"
+signupSupport = false
 
 [wsproxy]
 #proxyBaseURL =

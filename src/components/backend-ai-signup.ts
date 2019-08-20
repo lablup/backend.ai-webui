@@ -3,16 +3,14 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-
+import {css, customElement, html, LitElement, property} from "lit-element";
 import '@polymer/paper-input/paper-input';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
-import './lablup-notification.js';
+import './lablup-notification';
 import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6.js';
@@ -49,37 +47,27 @@ export default class BackendAiSignup extends LitElement {
   @property({type: Object}) notification = Object();
   @property({type: Object}) signupPanel = Object();
   @property({type: Object}) blockPanel = Object();
-  @property({type: Object}) client = Object();
+  @property({type: Object}) client;
+  @property({type: Object}) TOSdialog = Object();
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
   }
 
   firstUpdated() {
     this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = this.shadowRoot.querySelector('#notification');
+    this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
   }
 
-  refreshPanel(config) {
+  receiveAgreement() {
+    if (this.TOSdialog.show === false) {
+      this.TOSdialog.open();
+    }
   }
 
   open() {
-    console.log(this.endpoint);
-    if (this.endpoint !== '' && this.client !== {}) {
-      let clientConfig = {
-        connectionMode: 'SESSION',
-        apiVersionMajor: 'v4',
-        apiVersion:'v4.20190615',
-        _apiVersion:'v4.20190615',
-        endpoint: this.endpoint
-      };
-      this.client = new ai.backend.Client(
-        clientConfig,
-        `Backend.AI Console.`,
-      );
-    }
     if (this.signupPanel.open !== true) {
       this.signupPanel.show();
     }
@@ -90,6 +78,25 @@ export default class BackendAiSignup extends LitElement {
       this.signupPanel.hide();
     }
   }
+
+  init_client() {
+    if (typeof this.client === 'undefined') {
+      if (this.endpoint !== '' && this.client !== {}) {
+        let clientConfig = {
+          connectionMode: 'SESSION',
+          apiVersionMajor: 'v4',
+          apiVersion: 'v4.20190615',
+          _apiVersion: 'v4.20190615',
+          endpoint: this.endpoint
+        };
+        this.client = new ai.backend.Client(
+          clientConfig,
+          `Backend.AI Console.`,
+        );
+      }
+    }
+  }
+
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
@@ -108,38 +115,19 @@ export default class BackendAiSignup extends LitElement {
     return false;
   }
 
-  _check_info() {
-    this.user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
-    let rqst = this.client.newPublicRequest('GET', `/hanati/user?email=${this.user_email}`, null, '');
-    this.client._wrapWithPromise(rqst).then((response)=>{
-      console.log(response);
-      // If user exists:
-      let data = response;
-      if (data.id) {
-        let company = data.company;
-        this.company_name = company.name;
-        this.user_name = data.name;
-        this.shadowRoot.querySelector('#signup-button').removeAttribute('disabled');
-      } else {
-        this.notification.text = 'Found no user in the system. Make sure you entered a correct E-mail.';
-        this.notification.show();
-      }
-    }).catch((e)=>{
-      if (e.message) {
-        this.notification.text = 'Found no user in the system. Make sure you entered a correct E-mail.';//e.message;
-        this.notification.show();
-      }
-      console.log(e);
-    });
-  }
-
   _clear_info() {
     this.company_name = '';
     this.user_name = '';
-    this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
+    //this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
   }
 
   _signup() {
+    let approved = (this.shadowRoot.querySelector('#approve-terms-of-service') as HTMLInputElement).checked;
+    if (approved === false) {
+      this.notification.text = "Please read and agree with the terms of service to proceed.";
+      this.notification.show();
+      return;
+    }
     let password1 = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
     let password2 = (this.shadowRoot.querySelector('#id_password2') as HTMLInputElement).value;
     if (this.shadowRoot.querySelector("#id_password1").getAttribute("invalid") !== null) {
@@ -152,16 +140,20 @@ export default class BackendAiSignup extends LitElement {
       this.notification.show();
       return;
     }
+    const token = (this.shadowRoot.querySelector('#id_token') as HTMLInputElement).value;
     this.notification.text = 'Processing...';
     this.notification.show();
     let body = {
       'email': this.user_email,
-      'password': password1
+      'password': password1,
+      'token': token
     };
     console.log(body);
+    this.init_client();
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
       this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', 'true');
+      this.shadowRoot.querySelector('#id_token').setAttribute('disabled', 'true');
       this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
       this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
       this.notification.text = 'Signup succeed.';
@@ -234,11 +226,13 @@ export default class BackendAiSignup extends LitElement {
         wl-button.full {
           width: 335px;
         }
+
         wl-button.fab {
           --button-bg: var(--paper-light-green-600);
           --button-bg-hover: var(--paper-green-600);
           --button-bg-active: var(--paper-green-900);
         }
+
         wl-button.signup {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-green-300);
@@ -253,7 +247,7 @@ export default class BackendAiSignup extends LitElement {
       <wl-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Signup</div> 
+            <div>Signup (Beta invitation only)</div>
             <div class="flex"></div>
             <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -261,29 +255,28 @@ export default class BackendAiSignup extends LitElement {
           </h3>
           <form id="signup-form">
             <fieldset>
-              <div class="horizontal center layout">
-                <paper-input type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                             style="width:260px;" label="E-mail" value="${this.user_email}"
-                             @change="${() => this._clear_info()}"></paper-input>
-                <wl-button class="fg red" id="check-info-button" outlined type="button"
-                            @click="${() => this._check_info()}">
-                            <wl-icon>check</wl-icon>
-                            Check</wl-button>
-              </div>
-              <paper-input type="text" name="user_name" id="id_user_name" maxlength="30" disabled
+              <paper-input type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
+                           label="E-mail" value="${this.user_email}"
+                           @change="${() => this._clear_info()}"></paper-input>
+              <paper-input type="text" name="user_name" id="id_user_name" maxlength="30"
                            label="User Name" .value="${this.user_name}"></paper-input>
-              <paper-input type="text" name="company_name" id="id_company_name" maxlength="30" disabled
-                           label="Company" .value="${this.company_name}"></paper-input>
+              <paper-input type="text" name="token" id="id_token" maxlength="50"
+                           label="Invitation Token"></paper-input>
               <paper-input type="password" name="password1" id="id_password1"
-                           label="Password" 
+                           label="Password"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                            value=""></paper-input>
               <paper-input type="password" name="password2" id="id_password2"
-                           label="Password (again)" 
+                           label="Password (again)"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                            value=""></paper-input>
+              <div>
+                <wl-checkbox id="approve-terms-of-service">
+                </wl-checkbox>
+                 I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveAgreement()}">terms of service</a>
+              </div>
               <br/><br/>
-              <wl-button class="full" id="signup-button" disabled outlined type="button"
+              <wl-button class="full" id="signup-button" outlined type="button"
                           @click="${() => this._signup()}">
                           <wl-icon>check</wl-icon>
                           <span id="signup-button-message">Signup</span></wl-button>

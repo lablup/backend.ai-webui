@@ -334,7 +334,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance'].includes(view) !== true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
         view = view.split(/[\/]+/).pop();
         this._page = view;
       }
@@ -358,6 +358,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.menuTitle = 'Storage';
           this.shadowRoot.getElementById('sidebar-menu').selected = 3;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
+          break;
+        case 'statistics':
+          this.menuTitle = 'Statistics';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 4;
+          this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
@@ -472,10 +477,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Storage
                 </paper-item>
               </a>
-              <paper-item disabled>
-                <iron-icon icon="icons:assessment"></iron-icon>
-                Statistics
-              </paper-item>
+              <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
+                <paper-item link>
+                  <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
+                  Statistics
+                </paper-item>
+              </a>
               ${this.is_admin ?
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
@@ -539,7 +546,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
           </app-header-layout>
         </app-drawer>
         <app-header-layout main id="main-panel" style="z-index:0;">
-          <app-header slot="header" id="main-toolbar" fixed shadow class="draggable" effects="waterfall resize-title" 
+          <app-header slot="header" id="main-toolbar" fixed shadow class="draggable" effects="waterfall resize-title"
             condenses style="height: 96px; z-index:1;" effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
             <app-toolbar sticky style="height:48px;" class="draggable bar">
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
@@ -560,7 +567,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
             <section role="main" id="content" class="container layout vertical center">
               <div id="app-page">
-                <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"></backend-ai-summary-view>
+                <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
                 <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
                 <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
                 <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-credential-view>
@@ -569,6 +576,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                 <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
                 <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
+                <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
               </div>
             </section>
           </div>
