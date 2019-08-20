@@ -115,36 +115,10 @@ export default class BackendAiSignup extends LitElement {
     return false;
   }
 
-  _check_info() {
-    this.init_client();
-    this.user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
-    let rqst = this.client.newPublicRequest('GET', `/hanati/user?email=${this.user_email}`, null, '');
-    this.client._wrapWithPromise(rqst).then((response) => {
-      console.log(response);
-      // If user exists:
-      let data = response;
-      if (data.id) {
-        let company = data.company;
-        this.company_name = company.name;
-        this.user_name = data.name;
-        this.shadowRoot.querySelector('#signup-button').removeAttribute('disabled');
-      } else {
-        this.notification.text = 'Found no user in the system. Make sure you entered a correct E-mail.';
-        this.notification.show();
-      }
-    }).catch((e) => {
-      if (e.message) {
-        this.notification.text = 'Found no user in the system. Make sure you entered a correct E-mail.';//e.message;
-        this.notification.show();
-      }
-      console.log(e);
-    });
-  }
-
   _clear_info() {
     this.company_name = '';
     this.user_name = '';
-    this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
+    //this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
   }
 
   _signup() {
@@ -281,15 +255,9 @@ export default class BackendAiSignup extends LitElement {
           </h3>
           <form id="signup-form">
             <fieldset>
-              <div class="horizontal center layout">
-                <paper-input type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                             style="width:260px;" label="E-mail" value="${this.user_email}"
-                             @change="${() => this._clear_info()}"></paper-input>
-                <wl-button class="fg red" id="check-info-button" outlined type="button"
-                            @click="${() => this._check_info()}">
-                            <wl-icon>check</wl-icon>
-                            Check</wl-button>
-              </div>
+              <paper-input type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
+                           label="E-mail" value="${this.user_email}"
+                           @change="${() => this._clear_info()}"></paper-input>
               <paper-input type="text" name="user_name" id="id_user_name" maxlength="30"
                            label="User Name" .value="${this.user_name}"></paper-input>
               <paper-input type="text" name="token" id="id_token" maxlength="50"
@@ -308,7 +276,7 @@ export default class BackendAiSignup extends LitElement {
                  I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveAgreement()}">terms of service</a>
               </div>
               <br/><br/>
-              <wl-button class="full" id="signup-button" disabled outlined type="button"
+              <wl-button class="full" id="signup-button" outlined type="button"
                           @click="${() => this._signup()}">
                           <wl-icon>check</wl-icon>
                           <span id="signup-button-message">Signup</span></wl-button>
