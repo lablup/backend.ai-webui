@@ -27,7 +27,7 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIScalingGroupList extends BackendAIPage {
-  public agents: any;
+  public scaling_groups: any;
   public notification: any;
   public shadowRoot: any;
   public updateComplete: any;
@@ -35,7 +35,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
-    this.agents = ["hello", "world"];
+    this.scaling_groups = []
   }
 
   static get is() {
@@ -47,7 +47,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
       active: {
         type: Boolean
       },
-      agents: {
+      scaling_groups: {
         type: Array
       },
       notification: {
@@ -98,12 +98,21 @@ class BackendAIScalingGroupList extends BackendAIPage {
       }, true);
     } else { // already connected
       window.backendaiclient.scalingGroup.list(window.backendaiclient.current_group)
-        .then(res => {
-          console.log(res);
-        })
+      .then(res => {
+        this.scaling_groups = res.scaling_groups;
+      })
     }
   }
 
+  _indexRenderer(root, column, rowData) {
+    let idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
+  }
 
   render() {
     // language=HTML
@@ -112,15 +121,21 @@ class BackendAIScalingGroupList extends BackendAIPage {
       <h4 class="horizontal flex center center-justified layout">
         <span>Scaling Groups</span>
         <span class="flex"></span>
-        <wl-button class="fg blue" id="add-scaling-group" outlined>
+        <wl-button
+          class="fg blue"
+          id="add-scaling-group"
+          outlined
+        >
           <wl-icon>add</wl-icon>
           Create Scaling Group
         </wl-button>
       </h4>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#">
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scaling_groups}">
+        <vaadin-grid-column flex-grow="0" header="#" .renderer=${this._indexRenderer}>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" header="name">
           <template>
-            <div> [[item]] </div>
+            <div> [[item.name]] </div>
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
