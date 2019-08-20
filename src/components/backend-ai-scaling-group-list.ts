@@ -3,9 +3,9 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
-import {render} from 'lit-html';
-import {BackendAIPage} from './backend-ai-page';
+import { css, html } from "lit-element";
+import { render } from 'lit-html';
+import { BackendAIPage } from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -18,13 +18,16 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/button';
-import 'weightless/icon';
 import 'weightless/card';
+import 'weightless/dialog';
+import 'weightless/icon';
+import 'weightless/textarea';
+import 'weightless/textfield';
 import './lablup-notification';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-console-styles";
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import { default as PainKiller } from "./backend-ai-painkiller";
+import { BackendAiStyles } from "./backend-ai-console-styles";
+import { IronFlex, IronFlexAlignment } from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIScalingGroupList extends BackendAIPage {
   public scaling_groups: any;
@@ -75,6 +78,11 @@ class BackendAIScalingGroupList extends BackendAIPage {
           --button-bg-active: var(--paper-blue-600);
         }
 
+        wl-dialog wl-textfield,
+        wl-dialog wl-textarea {
+          margin-bottom: 20px;
+          --input-font-family: Roboto, Noto, sans-serif;
+        }
       `
     ];
   }
@@ -100,6 +108,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
       window.backendaiclient.scalingGroup.list(window.backendaiclient.current_group)
       .then(res => {
         this.scaling_groups = res.scaling_groups;
+        console.log(this.scaling_groups);
       })
     }
   }
@@ -114,6 +123,35 @@ class BackendAIScalingGroupList extends BackendAIPage {
     );
   }
 
+  _launchCreateDialog() {
+    this.shadowRoot.querySelector("#create-scaling-group-dialog").show();
+  }
+
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
+
+  _createScalingGroup() {
+    const name = this.shadowRoot.querySelector("#scaling-group-name").value;
+    const description = this.shadowRoot.querySelector("#scaling-group-description").value;
+
+    window.backendaiclient.scalingGroup.create(name, description)
+    .then(res => {
+      console.log(res);
+      if (res.ok) {
+        this.notification.text = "Scaling Group Successfully Created";
+      } else {
+        this.notification.text = PainKiller.relieve(res.msg);
+      }
+      this.notification.show();
+    })
+
+
+  }
+
+
   render() {
     // language=HTML
     return html`
@@ -125,9 +163,10 @@ class BackendAIScalingGroupList extends BackendAIPage {
           class="fg blue"
           id="add-scaling-group"
           outlined
+          @click=${this._launchCreateDialog}
         >
           <wl-icon>add</wl-icon>
-          Create Scaling Group
+          Create
         </wl-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scaling_groups}">
@@ -139,6 +178,39 @@ class BackendAIScalingGroupList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
+      <wl-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span>Create Scaling Group</span>
+            <div class="flex"></div>
+            <wl-button class="fab" fab flat inverted @click="${e => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <form>
+            <fieldset>
+              <wl-textfield
+                type="text"
+                name="name"
+                id="scaling-group-name"
+                label="Scaling Group Name"
+              > </wl-textfield>
+              <wl-textarea
+                name="description"
+                id="scaling-group-description"
+                label="Description"
+              > </wl-textarea>
+              <div class="horizontal layout center-justified">
+                <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
+                  @click="${this._createScalingGroup}">
+                  <wl-icon>add</wl-icon>
+                  Create Scaling Group
+                </wl-button>
+              </div>
+            </fieldset>
+          </form>
+        </wl-card>
+      </wl-dialog>
     `;
   }
 }

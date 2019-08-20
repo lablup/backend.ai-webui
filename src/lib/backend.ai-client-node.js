@@ -1814,6 +1814,29 @@ class ScalingGroup {
     const rqst = this.client.newSignedRequest("GET", queryString, null);
     return this.client._wrapWithPromise(rqst);
   }
+
+  create(name, description="") {
+    const input = {
+      description,
+      is_active: true,
+      driver: "static",
+      scheduler: "fifo"
+    };
+    // if (this.client.is_admin === true) {
+    let q = `mutation($name: String!, $input: ScalingGroupInput!) {` +
+    `  create_scaling_group(name: $name, props: $input) {` +
+    `    ok msg` +
+    `  }` +
+    `}`;
+    let v = {
+      name,
+      input
+    };
+    return this.client.gql(q, v);
+    // } else {
+    //   return Promise.resolve(false);
+    // }
+  }
 }
 
 class utils {
