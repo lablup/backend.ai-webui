@@ -683,8 +683,13 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
     let sessions = [];
     const randStr = this._getRandomString();
-    for (let i = 1; i <= this.num_sessions; i++) {
-      sessions.push({kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config});
+
+    if (this.num_sessions > 1) {
+      for (let i = 1; i <= this.num_sessions; i++) {
+        sessions.push({kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config});
+      }
+    } else {
+      sessions.push({kernelName, sessionName, config});
     }
 
     const createSessionQueue = sessions.map(item => {
