@@ -297,7 +297,6 @@ class BackendAiSessionList extends BackendAIPage {
     this.notification = this.shadowRoot.querySelector('#notification');
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
-    this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
   }
 
   is_admin() {
@@ -313,10 +312,12 @@ class BackendAiSessionList extends BackendAIPage {
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._connectionMode = window.backendaiclient._config._connectionMode;
+        this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
         this._refreshJobData();
       }, true);
     } else { // already connected
       this._connectionMode = window.backendaiclient._config._connectionMode;
+      this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
       this._refreshJobData();
     }
   }
