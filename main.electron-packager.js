@@ -5,7 +5,7 @@ const url = require('url');
 const path = require('path');
 const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
-const { ipcMain } = require('electron')
+const { ipcMain } = require('electron');
 process.env.liveDebugMode = false;
 
 // ES6 module loader with custom protocol
@@ -16,10 +16,11 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
 ]);
 
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let mainContent;
+
 var mainIndex = 'app/index.html';
 // TODO: randomize port to prevent conflict
 app.once('ready', function() {
@@ -59,6 +60,21 @@ app.once('ready', function() {
             }
           },
           {
+            label: 'Logout',
+            click: function () {
+              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
+                '    document.dispatchEvent(event);');
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Force Update Screen',
+            click: function () {
+              mainContent.reloadIgnoringCache();
+            }
+          },          {
             type: 'separator'
           },
           {
@@ -331,6 +347,7 @@ function createWindow () {
     slashes: true
   }));
 
+  mainContent = mainWindow.webContents;
   //devtools = new BrowserWindow();
   //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   //mainWindow.webContents.openDevTools({ mode: 'detach' });

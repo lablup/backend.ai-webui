@@ -60,6 +60,16 @@ app.once('ready', function() {
             }
           },
           {
+            label: 'Logout',
+            click: function () {
+              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
+                '    document.dispatchEvent(event);');
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
             label: 'Force Update Screen',
             click: function () {
               mainContent.reloadIgnoringCache();
@@ -358,7 +368,6 @@ function createWindow () {
     }));
   }
   mainContent = mainWindow.webContents;
-  console.log(mainContent);
   devtools = new BrowserWindow();
   mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   mainWindow.webContents.openDevTools({ mode: 'detach' });
