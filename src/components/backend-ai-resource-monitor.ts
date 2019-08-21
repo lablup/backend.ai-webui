@@ -809,7 +809,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   async _aggregateResourceUse() {
     let total_slot = {};
-    return window.backendaiclient.resourcePreset.check().then((response) => {
+    let param = null;
+    if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
+      param = {
+        'group': window.backendaiclient.current_group,
+        'scaling_group': this.scaling_groups[0]['name']
+      };
+    }
+    return window.backendaiclient.resourcePreset.check(param).then((response) => {
       if (response.presets) { // Same as refreshResourceTemplate.
         let presets = response.presets;
         let available_presets = [];
