@@ -32,7 +32,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public shadowRoot: any;
   public updateComplete: any;
   public alias: any;
-  public allowed_registries: array;
+  public allowed_registries: any;
 
   constructor() {
     super();
@@ -371,10 +371,6 @@ class BackendAiEnvironmentList extends BackendAIPage {
     } else {
       return value;
     }
-  }
-
-  _indexFrom1(index) {
-    return index + 1;
   }
 }
 
