@@ -29,6 +29,7 @@ import toml from 'markty-toml';
 
 import 'weightless/select';
 import 'weightless/progress-spinner';
+import './lablup-notification';
 
 import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -234,7 +235,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     let configPath;
     if (window.isElectron) {
       configPath = './config.toml';
-      document.addEventListener('backend-ai-logout', this.logout.bind(this)(true));
+      document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
     } else {
       configPath = '../../config.toml';
     }
@@ -403,6 +404,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   async logout(performClose = false) {
+    console.log('performclose:', performClose);
     if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
       this.notification.text = 'Clean up now...';
       this.notification.show();
@@ -553,7 +555,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.08.3.190821</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.08.4.190821</small>
               </address>
             </div>
           </app-header-layout>
