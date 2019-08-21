@@ -678,16 +678,16 @@ class ResourcePreset {
   /**
    * Return the GraphQL Promise object containing resource preset list.
    */
-  list() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, null);
+  list(param = null) {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, param);
     return this.client._wrapWithPromise(rqst);
   }
 
   /**
    * Return the GraphQL Promise object containing resource preset checking result.
    */
-  check() {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, null);
+  check(param = null) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, param);
     return this.client._wrapWithPromise(rqst);
   }
 

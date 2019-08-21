@@ -540,7 +540,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.08.2.190812</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.08.3.190821</small>
               </address>
             </div>
           </app-header-layout>
@@ -549,6 +549,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
           <app-header slot="header" id="main-toolbar" fixed shadow class="draggable" effects="waterfall resize-title"
             condenses style="height: 96px; z-index:1;" effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
             <app-toolbar sticky style="height:48px;" class="draggable bar">
+              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <span condensed-title>${this.menuTitle}</span>
               <span class="flex"></span>
