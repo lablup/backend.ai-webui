@@ -476,6 +476,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
+      this._refreshConcurrency();
       this.aggregateResource();
     });
     gpu_resource.addEventListener('value-change', () => {

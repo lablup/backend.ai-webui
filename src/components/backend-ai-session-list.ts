@@ -858,6 +858,8 @@ class BackendAiSessionList extends BackendAIPage {
       this.terminateSessionDialog.hide();
       this.notification.text = "Session terminated.";
       this.notification.show();
+      let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
     }).catch((err) => {
       this._selected_items = [];
       this._clearCheckboxes();
