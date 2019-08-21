@@ -26,7 +26,6 @@ export default class BackendAIPainKiller {
     if (window.backendaiconsole.debug === true) {
       return msg;
     }
-    console.log(msg);
     if (this.errorMessageTable.hasOwnProperty(msg)) {
       return this.errorMessageTable[msg];
     } else {
