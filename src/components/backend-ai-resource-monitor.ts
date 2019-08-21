@@ -511,12 +511,20 @@ class BackendAiResourceMonitor extends BackendAIPage {
     }
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
+      document.addEventListener('backend-ai-connected', async () => {
         this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
+        if (this.enable_scaling_group === true) {
+          let sgs = await window.backendaiclient.scalingGroup.list();
+          this.scaling_groups = sgs.scaling_groups;
+        }
         this._refreshResourcePolicy();
       }, true);
     } else { // already connected
       this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
+      if (this.enable_scaling_group === true) {
+        let sgs = await window.backendaiclient.scalingGroup.list();
+        this.scaling_groups = sgs.scaling_groups;
+      }
       this._refreshResourcePolicy();
     }
   }

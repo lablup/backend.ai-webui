@@ -29,6 +29,7 @@ import toml from 'markty-toml';
 
 import 'weightless/select';
 import 'weightless/progress-spinner';
+import './lablup-notification';
 
 import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -88,6 +89,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   public _offlineIndicatorOpened: any;
   public _offline: any;
   public _drawerOpened: any;
+  public notification: any;
 
   constructor() {
     super();
@@ -143,6 +145,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
         type: String
       },
       plugins: {
+        type: Object
+      },
+      notification: {
         type: Object
       },
       _page: {type: String},
@@ -221,6 +226,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
     if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
       this.shadowRoot.querySelector('.portrait-canvas').style.visibility = 'hidden';
     }
@@ -229,6 +235,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     let configPath;
     if (window.isElectron) {
       configPath = './config.toml';
+      document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
     } else {
       configPath = '../../config.toml';
     }
@@ -396,20 +403,28 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
   }
 
-  async logout() {
-    if (window.backendaiclient._config.connectionMode === 'SESSION') {
-      await window.backendaiclient.logout();
-    }
-    window.backendaiclient = null;
-    const keys = Object.keys(localStorage);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
-    }
-    if (window.isElectron) {
-      this.shadowRoot.querySelector('#login-panel').login();
-    } else {
-      window.location.reload();
+  async logout(performClose = false) {
+    console.log('performclose:', performClose);
+    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
+      this.notification.text = 'Clean up now...';
+      this.notification.show();
+      if (window.backendaiclient._config.connectionMode === 'SESSION') {
+        await window.backendaiclient.logout();
+      }
+      window.backendaiclient = null;
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
+      }
+      if (performClose === true) {
+        // Do nothing. this window will be closed.
+      } else if (window.isElectron) {
+        window.location.reload();
+        //this.shadowRoot.querySelector('#login-panel').login();
+      } else {
+        window.location.reload();
+      }
     }
   }
 
@@ -540,7 +555,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.08.3.190821</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.08.4.190821</small>
               </address>
             </div>
           </app-header-layout>
