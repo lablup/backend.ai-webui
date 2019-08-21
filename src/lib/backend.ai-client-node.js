@@ -148,6 +148,7 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
     this.group = new Group(this);
+    this.domain = new Domain(this);
     this.resources = new Resources(this);
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
@@ -1578,6 +1579,47 @@ class Group {
       v = {};
     }
     return this.client.gql(q, v);
+  }
+}
+
+class Domain {
+  /**
+   * The domain API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+   * Get domain information.
+   * @param {string} domain_name - domain name of group
+   * @param {array} fields - fields to query.  Default fields are: ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+         'allowed_docker_registries', 'integration_id', 'scaling_groups']
+   * {
+   *   'name': String,          // Group name.
+   *   'description': String,   // Description for group.
+   *   'is_active': Boolean,    // Whether the group is active or not.
+   *   'created_at': String,    // Created date of group.
+   *   'modified_at': String,   // Modified date of group.
+   *   'total_resource_slots': JSOONString,   // Total resource slots
+   *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
+   *   'allowed_docker_registries': [String],   // Allowed docker registry lists
+   *   'integration_id': [String],   // Integration ids
+   *   'scaling_groups': [String],   // Scaling groups
+   * };
+   */
+  get(domain_name = false,
+       fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+         'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
+    let q, v;
+    if (domain_name !== false) {
+      q = `query($name: String) {` +
+        `  domain(name: $name) { ${fields.join(" ")} }` +
+        '}';
+      v = {'name': domain_name};
+      return this.client.gql(q, v);
+    }
   }
 }
 
