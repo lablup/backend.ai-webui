@@ -586,7 +586,7 @@ class BackendAiSessionList extends BackendAIPage {
   }
 
   _msecToSec(value) {
-    return Number(value / 1000).toFixed(2);
+    return Number(value / 1000).toFixed(0);
   }
 
   _elapsed(start, end) {
