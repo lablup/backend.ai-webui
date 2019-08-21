@@ -352,8 +352,23 @@ function createWindow () {
   //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   //mainWindow.webContents.openDevTools({ mode: 'detach' });
   // Emitted when the window is closed.
+  mainWindow.on('close', (e) => {
+    if (mainWindow) {
+      e.preventDefault();
+      mainWindow.webContents.send('app-close-window');
+    }
+  });
+  ipcMain.on('app-closed', _ => {
+    mainWindow = null;
+    mainContent = null;
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  });
+
   mainWindow.on('closed', function () {
-    mainWindow = null
+    mainWindow = null;
+    mainContent = null;
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
@@ -395,6 +410,8 @@ app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
+    mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
+      '    document.dispatchEvent(event);');
     app.quit()
   }
 })

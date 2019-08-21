@@ -40,6 +40,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+import {default as PainKiller} from "./backend-ai-painkiller";
 
 /**
  Backend.AI GUI Console
@@ -88,6 +89,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   public _offlineIndicatorOpened: any;
   public _offline: any;
   public _drawerOpened: any;
+  public notification: any;
 
   constructor() {
     super();
@@ -143,6 +145,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
         type: String
       },
       plugins: {
+        type: Object
+      },
+      notification: {
         type: Object
       },
       _page: {type: String},
@@ -221,6 +226,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
     if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
       this.shadowRoot.querySelector('.portrait-canvas').style.visibility = 'hidden';
     }
@@ -229,7 +235,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     let configPath;
     if (window.isElectron) {
       configPath = './config.toml';
-      document.addEventListener('backend-ai-logout', this.logout.bind(this));
+      document.addEventListener('backend-ai-logout', this.logout.bind(this)(true));
     } else {
       configPath = '../../config.toml';
     }
@@ -249,7 +255,6 @@ class BackendAiConsole extends connect(store)(LitElement) {
   connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', this.refreshPage.bind(this));
-    document.addEventListener('backend-ai-logout', this.logout.bind(this));
   }
 
   disconnectedCallback() {
@@ -398,21 +403,27 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
   }
 
-  async logout() {
-    if (window.backendaiclient._config.connectionMode === 'SESSION') {
-      await window.backendaiclient.logout();
-    }
-    window.backendaiclient = null;
-    const keys = Object.keys(localStorage);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
-    }
-    if (window.isElectron) {
-      window.location.reload();
-      //this.shadowRoot.querySelector('#login-panel').login();
-    } else {
-      window.location.reload();
+  async logout(performClose = false) {
+    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
+      this.notification.text = 'Clean up now...';
+      this.notification.show();
+      if (window.backendaiclient._config.connectionMode === 'SESSION') {
+        await window.backendaiclient.logout();
+      }
+      window.backendaiclient = null;
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
+      }
+      if (performClose === true) {
+        // Do nothing. this window will be closed.
+      } else if (window.isElectron) {
+        window.location.reload();
+        //this.shadowRoot.querySelector('#login-panel').login();
+      } else {
+        window.location.reload();
+      }
     }
   }
 
