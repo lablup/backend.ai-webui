@@ -245,6 +245,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
     this.indicator.show();
     window.backendaiclient.image.list().then((response) => {
       let images = response.images;
+      let domainImages = [];
       images.forEach((image) => {
         let tags = image.tag.split('-');
         if (tags[1] !== undefined) {
