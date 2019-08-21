@@ -1098,6 +1098,15 @@ ${item.map(item => html`
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
+            <template is="dom-if" if="[[item.scaling_group]]">
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:work"></iron-icon>
+                <span>[[item.scaling_group]]</span>
+                <span class="indicator">SG</span>
+              </div>
+            </div>
+            </template>
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
