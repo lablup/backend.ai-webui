@@ -21,6 +21,7 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/icon';
+import 'weightless/select';
 import 'weightless/textarea';
 import 'weightless/textfield';
 import './lablup-notification';
@@ -31,6 +32,7 @@ import { IronFlex, IronFlexAlignment } from "../plastics/layout/iron-flex-layout
 
 class BackendAIScalingGroupList extends BackendAIPage {
   public scaling_groups: any;
+  public domains: any;
   public notification: any;
   public shadowRoot: any;
   public updateComplete: any;
@@ -38,7 +40,8 @@ class BackendAIScalingGroupList extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
-    this.scaling_groups = []
+    this.scaling_groups = [];
+    this.domains = [];
   }
 
   static get is() {
@@ -55,6 +58,9 @@ class BackendAIScalingGroupList extends BackendAIPage {
       },
       notification: {
         type: Object
+      },
+      domain: {
+        type: Array
       }
     };
   }
@@ -79,10 +85,19 @@ class BackendAIScalingGroupList extends BackendAIPage {
         }
 
         wl-dialog wl-textfield,
-        wl-dialog wl-textarea {
+        wl-dialog wl-textarea,
+        wl-dialog wl-select {
           margin-bottom: 20px;
           --input-font-family: Roboto, Noto, sans-serif;
         }
+
+        wl-select {
+          --input-color-disabled: #222;
+          --input-label-color-disabled: #222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #ccc;
+        }
+
       `
     ];
   }
@@ -108,7 +123,11 @@ class BackendAIScalingGroupList extends BackendAIPage {
       window.backendaiclient.scalingGroup.list(window.backendaiclient.current_group)
       .then(res => {
         this.scaling_groups = res.scaling_groups;
-        console.log(this.scaling_groups);
+      })
+
+      window.backendaiclient.domain.list()
+      .then(res => {
+        this.domains = res.domains;
       })
     }
   }
@@ -134,20 +153,39 @@ class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _createScalingGroup() {
-    const name = this.shadowRoot.querySelector("#scaling-group-name").value;
-    const description = this.shadowRoot.querySelector("#scaling-group-description").value;
+    const scalingGroup = this.shadowRoot.querySelector("#scaling-group-name").value,
+          description = this.shadowRoot.querySelector("#scaling-group-description").value,
+          domain = this.shadowRoot.querySelector("#scaling-group-domain").value;
 
-    window.backendaiclient.scalingGroup.create(name, description)
-    .then(res => {
-      console.log(res);
+    if (scalingGroup === "") {
+      this.notification.text = "Enter valid scaling group name";
+      this.notification.show();
+      return;
+    }
+
+    window.backendaiclient.scalingGroup.create(scalingGroup, description)
+    .then(({ create_scaling_group: res }) => {
       if (res.ok) {
-        this.notification.text = "Scaling Group Successfully Created";
+        return window.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
+      } else {
+        this.notification.text = PainKiller.relieve(res.msg);
+        this.notification.show();
+
+        return Promise.reject(res.msg);
+      }
+    })
+    .then(({ associate_scaling_group_with_domain: res }) => {
+      if (res.ok) {
+        this.notification.text = "Scaling group succesfully created";
       } else {
         this.notification.text = PainKiller.relieve(res.msg);
       }
       this.notification.show();
     })
-
+    .catch(err => {
+      this.notification.text = PainKiller.relieve(err);
+      this.notification.show();
+    })
 
   }
 
@@ -191,15 +229,26 @@ class BackendAIScalingGroupList extends BackendAIPage {
             <fieldset>
               <wl-textfield
                 type="text"
-                name="name"
                 id="scaling-group-name"
                 label="Scaling Group Name"
-              > </wl-textfield>
+              ></wl-textfield>
               <wl-textarea
                 name="description"
                 id="scaling-group-description"
                 label="Description"
-              > </wl-textarea>
+              ></wl-textarea>
+              <wl-select
+                id="scaling-group-domain"
+                label="Select Domain"
+              >
+              <option disabled>Select Domain</option>
+              ${this.domains.map(e => html`
+                  <option value="${e.name}">
+                    ${ e.name }
+                  </option>
+                `
+              )}
+              </wl-select>
               <div class="horizontal layout center-justified">
                 <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
                   @click="${this._createScalingGroup}">
