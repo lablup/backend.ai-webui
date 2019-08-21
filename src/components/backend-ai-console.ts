@@ -76,6 +76,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   public domain: any;
   public is_connected: any;
   public is_admin: any;
+  public is_superadmin: any;
   public _page: any;
   public groups: any;
   public connection_mode: any;
@@ -99,6 +100,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.domain = 'CLICK TO CONNECT';
     this.is_connected = false;
     this.is_admin = false;
+    this.is_superadmin = false;
     this._page = '';
     this.groups = [];
     this.connection_mode = 'API';
@@ -127,6 +129,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
         type: Boolean
       },
       is_admin: {
+        type: Boolean
+      },
+      is_superadmin: {
         type: Boolean
       },
       proxy_url: {
@@ -295,6 +300,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
     } else {
       this.is_admin = false;
     }
+    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
+      && typeof window.backendaiclient.is_superadmin !== "undefined" && window.backendaiclient.is_superadmin === true) {
+      this.is_superadmin = true;
+    } else {
+      this.is_superadmin = false;
+    }
     this._refreshUserInfoPanel();
   }
 
@@ -371,20 +382,20 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.shadowRoot.getElementById('sidebar-menu').selected = 4;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
-        case 'agent':
-          this.menuTitle = 'Computation Resources';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 7;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments & Presets';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 8;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 7;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
+          break;
+        case 'agent':
+          this.menuTitle = 'Computation Resources';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 8;
+          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
@@ -502,29 +513,25 @@ class BackendAiConsole extends connect(store)(LitElement) {
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
 
-              <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
-                <paper-item link ?disabled="${!this.is_admin}">
-                  <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                  Resources
-                </paper-item>
-              </a>` :
-      html``}
-              ${this.is_admin ?
-      html`
-
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg lime" icon="icons:face"></iron-icon>
                   Users
                 </paper-item>
-              </a>` :
-      html``}
-              ${this.is_admin ?
-      html`
+              </a>
               <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
                   Environments
+                </paper-item>
+              </a>
+      ` : html``}
+              ${this.is_superadmin ?
+      html`
+              <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
+                <paper-item link ?disabled="${!this.is_admin}">
+                  <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
+                  Resources
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
@@ -541,7 +548,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   <span class="flex"></span>
                 </paper-item>
               </a>
-              ` : html``}
+      ` : html``}
             </paper-listbox>
             <footer>
               <div class="terms-of-use" style="margin-bottom:50px;">

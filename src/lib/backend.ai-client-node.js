@@ -148,15 +148,17 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
     this.group = new Group(this);
+    this.domain = new Domain(this);
     this.resources = new Resources(this);
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
+
+    this._features= {}; // feature support list
 
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
   }
-
   /**
    * Return the server-side manager version.
    */
@@ -244,6 +246,27 @@ class Client {
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
     }
     return this._managerVersion;
+  }
+
+  /**
+   * Check compatibility of current manager
+   */
+  supports(feature) {
+    if (Object.keys(this._features).length === 0) {
+      this._updateSupportList();
+    }
+    if (feature in this._features) {
+      return this._features[feature];
+    } else {
+      return false;
+    }
+  }
+
+  _updateSupportList() {
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
+      this._features['scaling-group'] = true;
+      this._features['group'] = true;
+    }
   }
 
   /**
@@ -1578,6 +1601,47 @@ class Group {
       v = {};
     }
     return this.client.gql(q, v);
+  }
+}
+
+class Domain {
+  /**
+   * The domain API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+   * Get domain information.
+   * @param {string} domain_name - domain name of group
+   * @param {array} fields - fields to query.  Default fields are: ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+         'allowed_docker_registries', 'integration_id', 'scaling_groups']
+   * {
+   *   'name': String,          // Group name.
+   *   'description': String,   // Description for group.
+   *   'is_active': Boolean,    // Whether the group is active or not.
+   *   'created_at': String,    // Created date of group.
+   *   'modified_at': String,   // Modified date of group.
+   *   'total_resource_slots': JSOONString,   // Total resource slots
+   *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
+   *   'allowed_docker_registries': [String],   // Allowed docker registry lists
+   *   'integration_id': [String],   // Integration ids
+   *   'scaling_groups': [String],   // Scaling groups
+   * };
+   */
+  get(domain_name = false,
+       fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+         'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
+    let q, v;
+    if (domain_name !== false) {
+      q = `query($name: String) {` +
+        `  domain(name: $name) { ${fields.join(" ")} }` +
+        '}';
+      v = {'name': domain_name};
+      return this.client.gql(q, v);
+    }
   }
 }
 
