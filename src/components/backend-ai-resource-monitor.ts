@@ -513,7 +513,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
-        this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
+        this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
         if (this.enable_scaling_group === true) {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;

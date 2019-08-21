@@ -153,11 +153,12 @@ class Client {
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
 
+    this._features= {}; // feature support list
+
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
   }
-
   /**
    * Return the server-side manager version.
    */
@@ -245,6 +246,26 @@ class Client {
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
     }
     return this._managerVersion;
+  }
+
+  /**
+   * Check compatibility of current manager
+   */
+  supports(feature) {
+    if (Object.keys(this._features).length === 0) {
+      this._updateSupportList();
+    }
+    if (feature in this._features) {
+      return this._features[feature];
+    } else {
+      return false;
+    }
+  }
+
+  _updateSupportList() {
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
+      this._features['scaling-group'] = true;
+    }
   }
 
   /**
