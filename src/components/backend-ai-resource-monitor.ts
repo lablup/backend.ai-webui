@@ -469,6 +469,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
+
     this.notification = this.shadowRoot.querySelector('#notification');
 
     this._initAliases();
@@ -811,9 +812,15 @@ class BackendAiResourceMonitor extends BackendAIPage {
     let total_slot = {};
     let param = null;
     if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
+      let scaling_group = 'default';
+      if (this.scaling_group !== '') {
+        scaling_group = this.scaling_group;
+      } else {
+        scaling_group = this.scaling_groups[0]['name'];
+      }
       param = {
         'group': window.backendaiclient.current_group,
-        'scaling_group': this.scaling_groups[0]['name']
+        'scaling_group': scaling_group
       };
     }
     return window.backendaiclient.resourcePreset.check(param).then((response) => {
