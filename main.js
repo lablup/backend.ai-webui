@@ -19,6 +19,8 @@ protocol.registerSchemesAsPrivileged([
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let mainContent;
+
 var mainIndex = 'build/electron-app/app/index.html';
 // Modules to control application life and create native browser window
 app.once('ready', function() {
@@ -55,6 +57,12 @@ app.once('ready', function() {
                 protocol: 'file',
                 slashes: true
               }));
+            }
+          },
+          {
+            label: 'Force Update Screen',
+            click: function () {
+              mainContent.reloadIgnoringCache();
             }
           },
           {
@@ -325,7 +333,7 @@ function createWindow () {
     width: 1280, 
     height: 970,
     title: "Backend.AI",
-    frame: true,
+    frame: false,
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
@@ -348,7 +356,9 @@ function createWindow () {
       protocol: 'file',
       slashes: true
     }));
-  }  
+  }
+  mainContent = mainWindow.webContents;
+  console.log(mainContent);
   devtools = new BrowserWindow();
   mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   mainWindow.webContents.openDevTools({ mode: 'detach' });
