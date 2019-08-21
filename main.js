@@ -338,7 +338,7 @@ function createWindow () {
   if (process.env.liveDebugMode === true) {
     // Load HTML into new Window (dynamic serving for develop)
     mainWindow.loadURL(url.format({
-      pathname: '127.0.0.1:8081',
+      pathname: '127.0.0.1:9081',
       protocol: 'http',
       slashes: true
     }));
