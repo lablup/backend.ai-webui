@@ -51,7 +51,7 @@ app.once('ready', function() {
             label: 'Login',
             click: function() {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
-                pathname: path.join(BASE_DIR, mainIndex),
+                pathname: path.join(mainIndex),
                 protocol: 'file',
                 slashes: true
               }));
@@ -319,7 +319,6 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
-  let mainWindow = null;
   let devtools = null;
 
   mainWindow = new BrowserWindow({
