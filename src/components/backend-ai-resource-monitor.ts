@@ -521,7 +521,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this._refreshResourcePolicy();
       }, true);
     } else { // already connected
-      this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
+      this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
       if (this.enable_scaling_group === true) {
         let sgs = await window.backendaiclient.scalingGroup.list();
         this.scaling_groups = sgs.scaling_groups;
@@ -831,6 +831,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
         'group': window.backendaiclient.current_group,
         'scaling_group': scaling_group
       };
+    } else {
+      param = {
+        'group': window.backendaiclient.current_group
+      };
     }
     return window.backendaiclient.resourcePreset.check(param).then((response) => {
       if (response.presets) { // Same as refreshResourceTemplate.
@@ -988,6 +992,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
       param = {
         'group': window.backendaiclient.current_group,
         'scaling_group': scaling_group
+      };
+    } else {
+      param = {
+        'group': window.backendaiclient.current_group
       };
     }
     window.backendaiclient.resourcePreset.check(param).then((response) => {

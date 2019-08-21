@@ -265,6 +265,7 @@ class Client {
   _updateSupportList() {
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       this._features['scaling-group'] = true;
+      this._features['group'] = true;
     }
   }
 
