@@ -229,6 +229,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     let configPath;
     if (window.isElectron) {
       configPath = './config.toml';
+      document.addEventListener('backend-ai-logout', this.logout.bind(this));
     } else {
       configPath = '../../config.toml';
     }
@@ -248,6 +249,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', this.refreshPage.bind(this));
+    document.addEventListener('backend-ai-logout', this.logout.bind(this));
   }
 
   disconnectedCallback() {
@@ -407,7 +409,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
       if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
     }
     if (window.isElectron) {
-      this.shadowRoot.querySelector('#login-panel').login();
+      window.location.reload();
+      //this.shadowRoot.querySelector('#login-panel').login();
     } else {
       window.location.reload();
     }
