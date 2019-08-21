@@ -20,6 +20,7 @@ protocol.registerSchemesAsPrivileged([
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let mainContent;
+let devtools;
 
 var mainIndex = 'build/electron-app/app/index.html';
 // Modules to control application life and create native browser window
@@ -337,13 +338,13 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
-  let devtools = null;
+  devtools = null;
 
   mainWindow = new BrowserWindow({
     width: 1280, 
     height: 970,
     title: "Backend.AI",
-    frame: false,
+    frame: true,
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
@@ -372,8 +373,25 @@ function createWindow () {
   mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   mainWindow.webContents.openDevTools({ mode: 'detach' });
   // Emitted when the window is closed.
+  mainWindow.on('close', (e) => {
+    if (mainWindow) {
+      e.preventDefault();
+      mainWindow.webContents.send('app-close-window');
+    }
+  });
+  ipcMain.on('app-closed', _ => {
+    mainWindow = null;
+    mainContent = null;
+    devtools = null;
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  });
+
   mainWindow.on('closed', function () {
-    mainWindow = null
+    mainWindow = null;
+    mainContent = null;
+    devtools = null;
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
@@ -381,7 +399,8 @@ function createWindow () {
       // open window as modal
       event.preventDefault()
       Object.assign(options, {
-        modal: true,
+        //modal: true,
+        frame: true,
         parent: mainWindow,
         width: 1280,
         height: 970,
