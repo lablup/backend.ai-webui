@@ -151,7 +151,6 @@ export default class BackendAiSignup extends LitElement {
       'password': password1,
       'token': token
     };
-    console.log(body);
     this.init_client();
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
