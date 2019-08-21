@@ -18,13 +18,15 @@ export default class BackendAIPainKiller {
     "server responded failure: 400 Bad Request - Missing or invalid API parameters. (You cannot create more vfolders.)": "You cannot create more vfolders due to resource policy",
   };
   static regexTable = {
-    'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.'
+    'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.',
+    'integrity error: duplicate key value violates unique constraint "pk_scaling_groups"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A scaling group with the same name already exists.'
   };
 
   static relieve(msg) {
     if (window.backendaiconsole.debug === true) {
       return msg;
     }
+    console.log(msg);
     if (this.errorMessageTable.hasOwnProperty(msg)) {
       return this.errorMessageTable[msg];
     } else {
