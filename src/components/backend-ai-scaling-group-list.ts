@@ -12,10 +12,11 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
+
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
+import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -134,6 +135,20 @@ class BackendAIScalingGroupList extends BackendAIPage {
     }
   }
 
+  _activeStatusRenderer(root, column, rowData) {
+    render (
+      html`
+        <lablup-shields
+          app=""
+          color="green"
+          description=${rowData.item.is_active ? "Active" : "Inactive"}
+          ui="flat"
+        ></lablup-shields>
+    `,
+      root
+    )
+  }
+
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
@@ -212,10 +227,17 @@ class BackendAIScalingGroupList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scaling_groups}">
         <vaadin-grid-column flex-grow="0" header="#" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="name">
+        <vaadin-grid-column flex-grow="1" header="Name">
           <template>
             <div> [[item.name]] </div>
           </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow"1" header="Description">
+          <template>
+            <div> [[item.description]] </div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow"1" header="Active Status" .renderer=${this._activeStatusRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
@@ -243,13 +265,13 @@ class BackendAIScalingGroupList extends BackendAIPage {
                 id="scaling-group-domain"
                 label="Select Domain"
               >
-              <option disabled>Select Domain</option>
-              ${this.domains.map(e => html`
-                  <option value="${e.name}">
-                    ${ e.name }
-                  </option>
-                `
-              )}
+                <option disabled>Select Domain</option>
+                ${this.domains.map(e => html`
+                    <option value="${e.name}">
+                      ${ e.name }
+                    </option>
+                  `
+                )}
               </wl-select>
               <div class="horizontal layout center-justified">
                 <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
