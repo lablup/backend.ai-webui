@@ -61,6 +61,7 @@ class BackendAiSessionList extends BackendAIPage {
   public terminateSelectedSessionsDialog: any;
   public updateComplete: any;
   public _connectionMode: string;
+  public enableScalingGroup: any;
 
   constructor() {
     super();
@@ -130,6 +131,9 @@ class BackendAiSessionList extends BackendAIPage {
         type: Object
       },
       refreshing: {
+        type: Boolean
+      },
+      enableScalingGroup: {
         type: Boolean
       }
     };
@@ -293,6 +297,7 @@ class BackendAiSessionList extends BackendAIPage {
     this.notification = this.shadowRoot.querySelector('#notification');
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
+    this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
   }
 
   is_admin() {
@@ -406,17 +411,15 @@ class BackendAiSessionList extends BackendAIPage {
       default:
         status = "RUNNING";
     }
-    let fields;
-    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
-      fields = [
-        "sess_id", "lang", "created_at", "terminated_at", "status",
-        "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "user_email"
-      ];
-    } else {
-      fields = [
-        "sess_id", "lang", "created_at", "terminated_at", "status",
-        "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
-      ];
+    let fields = [
+      "sess_id", "lang", "created_at", "terminated_at", "status",
+      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+    ];
+    if (this.enableScalingGroup) {
+      fields.push("scaling_group");
+    }
+    if (this._connectionMode === "SESSION") {
+      fields.push("user_email");
     }
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
