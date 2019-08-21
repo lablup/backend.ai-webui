@@ -40,7 +40,6 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
-import {default as PainKiller} from "./backend-ai-painkiller";
 
 /**
  Backend.AI GUI Console
