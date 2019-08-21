@@ -1810,10 +1810,21 @@ class ScalingGroup {
     this.client = client;
   }
 
-  list(group = 'default') {
-    const queryString = `/scaling-groups?group=${this.client.current_group}`;
-    const rqst = this.client.newSignedRequest("GET", queryString, null);
-    return this.client._wrapWithPromise(rqst);
+  list(group='default') {
+    if (this.client.is_admin) {
+      const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+
+      const q = `query {` +
+                `  scaling_groups { ${fields.join(" ")} }` +
+                `}`;
+      const v = {};
+
+      return this.client.gql(q, v);
+    } else {
+      const queryString = `/scaling-groups?group=${this.client.current_group}`;
+      const rqst = this.client.newSignedRequest("GET", queryString, null);
+      return this.client._wrapWithPromise(rqst);
+    }
   }
 
   create(name, description="") {
