@@ -50,6 +50,7 @@ class BackendAiSessionList extends BackendAIPage {
   public _boundControlRenderer: any;
   public _boundSessionInfoRenderer: any;
   public _boundCheckboxRenderer: any;
+  public _boundUserInfoRenderer: any;
   public refreshing: any;
   public loadingIndicator: any;
   public shadowRoot: any;
@@ -59,6 +60,7 @@ class BackendAiSessionList extends BackendAIPage {
   public terminateSessionDialog: any;
   public terminateSelectedSessionsDialog: any;
   public updateComplete: any;
+  public _connectionMode: string;
 
   constructor() {
     super();
@@ -73,7 +75,9 @@ class BackendAiSessionList extends BackendAIPage {
     this._boundControlRenderer = this.controlRenderer.bind(this);
     this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
     this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
+    this._boundUserInfoRenderer = this.userInfoRenderer.bind(this);
     this.refreshing = false;
+    this._connectionMode = 'API';
   }
 
   static get is() {
@@ -303,9 +307,11 @@ class BackendAiSessionList extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this._connectionMode = window.backendaiclient._config._connectionMode;
         this._refreshJobData();
       }, true);
     } else { // already connected
+      this._connectionMode = window.backendaiclient._config._connectionMode;
       this._refreshJobData();
     }
   }
@@ -400,11 +406,18 @@ class BackendAiSessionList extends BackendAIPage {
       default:
         status = "RUNNING";
     }
-
-    let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
-    ];
+    let fields;
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
+      fields = [
+        "sess_id", "lang", "created_at", "terminated_at", "status",
+        "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "user_email"
+      ];
+    } else {
+      fields = [
+        "sess_id", "lang", "created_at", "terminated_at", "status",
+        "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+      ];
+    }
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
       var sessions = response.compute_sessions;
@@ -1029,6 +1042,16 @@ ${item.map(item => html`
     );
   }
 
+  userInfoRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div class="layout vertical">
+          <span class="indicator">${this._connectionMode === "API" ? rowData.item.access_key : rowData.item.user_email}</span>
+        </div>
+      `, root
+    );
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1054,12 +1077,7 @@ ${item.map(item => html`
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="130px" header="API Key" flex-grow="0" path="access_key">
-            <template>
-              <div class="layout vertical">
-                <span class="indicator">[[item.access_key]]</span>
-              </div>
-            </template>
+          <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === "API" ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
         <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
