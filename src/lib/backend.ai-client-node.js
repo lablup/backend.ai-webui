@@ -151,6 +151,7 @@ class Client {
     this.resources = new Resources(this);
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
+    this.domain = new Domain(this);
 
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
@@ -1836,6 +1837,35 @@ class ScalingGroup {
     // } else {
     //   return Promise.resolve(false);
     // }
+  }
+
+  associateWithDomain(domain, scaling_group) {
+    let q = `mutation($domain: String!, $scaling_group: String!) {` +
+            `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      domain,
+      scaling_group
+    };
+
+    return this.client.gql(q, v);
+  }
+}
+
+class Domain {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(fields = [ 'name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id' ]) {
+    let q = `query {` +
+            ` domains { ${fields.join(" ")} }` +
+            `}`;
+    let v = {};
+
+    return this.client.gql(q, v);
   }
 }
 
