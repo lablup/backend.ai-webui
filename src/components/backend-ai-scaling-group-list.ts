@@ -37,12 +37,14 @@ class BackendAIScalingGroupList extends BackendAIPage {
   public notification: any;
   public shadowRoot: any;
   public updateComplete: any;
+  public _boundControlRenderer: any;
 
   constructor() {
     super();
     this.active = false;
     this.scaling_groups = [];
     this.domains = [];
+    this._boundControlRenderer = this._controlRenderer.bind(this);
   }
 
   static get is() {
@@ -159,19 +161,11 @@ class BackendAIScalingGroupList extends BackendAIPage {
     );
   }
 
-  _launchDeleteDialog() {
-    this.shadowRoot.querySelector("#delete-scaling-group-dialog").show();
+  _launchDialogById(id) {
+    this.shadowRoot.querySelector(id).show();
   }
 
-  _launchModifyDialog() {
-    this.shadowRoot.querySelector("#modify-scaling-group-dialog").show();
-  }
-
-  _launchCreateDialog() {
-    this.shadowRoot.querySelector("#create-scaling-group-dialog").show();
-  }
-
-  _controlsRenderer(root, column, rowData) {
+  _controlRenderer(root, column, rowData) {
     render (
       html`
         <div
@@ -181,7 +175,12 @@ class BackendAIScalingGroupList extends BackendAIPage {
           <paper-icon-button
             icon="settings"
             class="fg blue"
-            @click=${this._launchModifyDialog}
+            @click=${() => this._launchDialogById("#modify-scaling-group-dialog")}
+          ></paper-icon-button>
+          <paper-icon-button
+            icon="delete"
+            class="fg red"
+            @click=${() => this._launchDialogById("#delete-scaling-group-dialog")}
           ></paper-icon-button>
         </div>
       `, root
@@ -242,7 +241,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
           class="fg blue"
           id="add-scaling-group"
           outlined
-          @click=${this._launchCreateDialog}
+          @click=${() => this._launchDialogById("#create-scaling-group-dialog")}
         >
           <wl-icon>add</wl-icon>
           Create
@@ -283,7 +282,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
             <div> [[item.scheduler_opts]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow"1" header="Controls" .renderer=${this._controlsRenderer}>
+        <vaadin-grid-column flex-grow"1" header="Controls" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
@@ -346,7 +345,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
           </form>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>>
+      <wl-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Delete Scaling Group</span>
