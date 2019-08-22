@@ -151,7 +151,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
 
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
-    render(
+    render (
       html`
         <div>${idx}</div>
       `,
@@ -159,8 +159,33 @@ class BackendAIScalingGroupList extends BackendAIPage {
     );
   }
 
+  _launchDeleteDialog() {
+    this.shadowRoot.querySelector("#delete-scaling-group-dialog").show();
+  }
+
+  _launchModifyDialog() {
+    this.shadowRoot.querySelector("#modify-scaling-group-dialog").show();
+  }
+
   _launchCreateDialog() {
     this.shadowRoot.querySelector("#create-scaling-group-dialog").show();
+  }
+
+  _controlsRenderer(root, column, rowData) {
+    render (
+      html`
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+        >
+          <paper-icon-button
+            icon="settings"
+            class="fg blue"
+            @click=${this._launchModifyDialog}
+          ></paper-icon-button>
+        </div>
+      `, root
+    )
   }
 
   _hideDialog(e) {
@@ -206,7 +231,6 @@ class BackendAIScalingGroupList extends BackendAIPage {
 
   }
 
-
   render() {
     // language=HTML
     return html`
@@ -239,13 +263,35 @@ class BackendAIScalingGroupList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow"1" header="Active Status" .renderer=${this._activeStatusRenderer}>
         </vaadin-grid-column>
+        <vaadin-grid-column flex-grow"1" header="Driver">
+          <template>
+            <div> [[item.driver]] </div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow"1" header="Driver Options">
+          <template>
+            <div> [[item.driver_opts]] </div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow"1" header="Scheduler">
+          <template>
+            <div> [[item.scheduler]] </div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow"1" header="Scheduler Options">
+          <template>
+            <div> [[item.scheduler_opts]] </div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow"1" header="Controls" .renderer=${this._controlsRenderer}>
+        </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Create Scaling Group</span>
             <div class="flex"></div>
-            <wl-button class="fab" fab flat inverted @click="${e => this._hideDialog(e)}">
+            <wl-button class="fab" fab flat inverted @click=${e => this._hideDialog(e)}>
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -282,6 +328,33 @@ class BackendAIScalingGroupList extends BackendAIPage {
               </div>
             </fieldset>
           </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span>Modify Scaling Group</span>
+            <div class="flex"></div>
+            <wl-button class="fab" fab flat inverted @click="${e => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <form>
+            <fieldset>
+
+            </fieldset>
+          </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>>
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span>Delete Scaling Group</span>
+            <div class="flex"></div>
+            <wl-button class="fab" fab flat inverted @click="${e => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
         </wl-card>
       </wl-dialog>
     `;
