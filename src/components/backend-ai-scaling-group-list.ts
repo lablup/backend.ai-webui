@@ -126,11 +126,11 @@ class BackendAIScalingGroupList extends BackendAIPage {
       window.backendaiclient.scalingGroup.list()
       .then(res => {
         this.scaling_groups = res.scaling_groups;
-        console.log(this.scaling_groups);
       })
 
       window.backendaiclient.domain.list()
       .then(({ domains }) => {
+        this.requestUpdate(); // without this render is called beforehands, so update is required
         this.domains = domains;
       })
 
