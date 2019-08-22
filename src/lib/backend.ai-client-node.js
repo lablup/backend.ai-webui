@@ -1832,7 +1832,9 @@ class ScalingGroup {
       description,
       is_active: true,
       driver: "static",
-      scheduler: "fifo"
+      scheduler: "fifo",
+      driver_opts: {},
+      scheduler_opts: {}
     };
     // if (this.client.is_admin === true) {
     let q = `mutation($name: String!, $input: ScalingGroupInput!) {` +
