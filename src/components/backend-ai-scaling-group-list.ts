@@ -123,15 +123,15 @@ class BackendAIScalingGroupList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
     } else { // already connected
-      window.backendaiclient.scalingGroup.list(window.backendaiclient.current_group)
+      window.backendaiclient.scalingGroup.list()
       .then(res => {
         this.scaling_groups = res.scaling_groups;
         console.log(this.scaling_groups);
       })
 
       window.backendaiclient.domain.list()
-      .then(res => {
-        this.domains = res.domains;
+      .then(({ domains }) => {
+        this.domains = domains;
       })
 
     }
@@ -163,6 +163,10 @@ class BackendAIScalingGroupList extends BackendAIPage {
 
   _launchDialogById(id) {
     this.shadowRoot.querySelector(id).show();
+  }
+
+  _hideDialogById(id) {
+    this.shadowRoot.querySelector(id).hide();
   }
 
   _controlRenderer(root, column, rowData) {
@@ -218,20 +222,29 @@ class BackendAIScalingGroupList extends BackendAIPage {
     .then(({ associate_scaling_group_with_domain: res }) => {
       if (res.ok) {
         this.notification.text = "Scaling group succesfully created";
+        this._refreshList();
       } else {
         this.notification.text = PainKiller.relieve(res.msg);
       }
+      this._hideDialogById("#create-scaling-group-dialog");
       this.notification.show();
     })
     .catch(err => {
       this.notification.text = PainKiller.relieve(err);
+      this._hideDialogById("#create-scaling-group-dialog");
       this.notification.show();
     })
+  }
 
+  _refreshList() {
+    window.backendaiclient.scalingGroup.list()
+    .then(({ scaling_groups  }) => {
+      this.scaling_groups = scaling_groups;
+    })
   }
 
   render() {
-    // language=HTML
+    // languate=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
       <h4 class="horizontal flex center center-justified layout">
@@ -248,7 +261,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
         </wl-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scaling_groups}">
-        <vaadin-grid-column flex-grow="0" header="#" .renderer=${this._indexRenderer}>
+        <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="Name">
           <template>
