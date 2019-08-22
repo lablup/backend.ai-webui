@@ -844,7 +844,7 @@ class BackendAICredentialView extends BackendAIPage {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <form onSubmit="this._addUser()">
+          <form>
             <fieldset>
               <wl-textfield
                 type="email"
@@ -865,7 +865,7 @@ class BackendAICredentialView extends BackendAIPage {
                 name="user_password"
                 id="id_user_password"
                 label="Password"
-                pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
               >
               </wl-textfield>
               <wl-textfield
