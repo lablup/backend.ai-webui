@@ -5,7 +5,7 @@ const url = require('url');
 const path = require('path');
 const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
-const { ipcMain } = require('electron')
+const { ipcMain } = require('electron');
 process.env.liveDebugMode = false;
 
 // ES6 module loader with custom protocol
@@ -16,10 +16,11 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
 ]);
 
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let mainContent;
+
 var mainIndex = 'app/index.html';
 // TODO: randomize port to prevent conflict
 app.once('ready', function() {
@@ -52,13 +53,28 @@ app.once('ready', function() {
             label: 'Login',
             click: function() {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
-                pathname: path.join(BASE_DIR, mainIndex),
+                pathname: path.join(mainIndex),
                 protocol: 'file',
                 slashes: true
               }));
             }
           },
           {
+            label: 'Logout',
+            click: function () {
+              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
+                '    document.dispatchEvent(event);');
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Force Update Screen',
+            click: function () {
+              mainContent.reloadIgnoringCache();
+            }
+          },          {
             type: 'separator'
           },
           {
@@ -309,7 +325,6 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
-  let mainWindow = null;
   let devtools = null;
 
   mainWindow = new BrowserWindow({
@@ -332,12 +347,28 @@ function createWindow () {
     slashes: true
   }));
 
+  mainContent = mainWindow.webContents;
   //devtools = new BrowserWindow();
   //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   //mainWindow.webContents.openDevTools({ mode: 'detach' });
   // Emitted when the window is closed.
+  mainWindow.on('close', (e) => {
+    if (mainWindow) {
+      e.preventDefault();
+      mainWindow.webContents.send('app-close-window');
+    }
+  });
+  ipcMain.on('app-closed', _ => {
+    mainWindow = null;
+    mainContent = null;
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  });
+
   mainWindow.on('closed', function () {
-    mainWindow = null
+    mainWindow = null;
+    mainContent = null;
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
@@ -379,6 +410,8 @@ app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
+    mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
+      '    document.dispatchEvent(event);');
     app.quit()
   }
 })

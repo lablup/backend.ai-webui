@@ -469,12 +469,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
+
     this.notification = this.shadowRoot.querySelector('#notification');
 
     this._initAliases();
     this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
+      this._refreshConcurrency();
       this.aggregateResource();
     });
     gpu_resource.addEventListener('value-change', () => {
@@ -510,12 +512,20 @@ class BackendAiResourceMonitor extends BackendAIPage {
     }
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
+      document.addEventListener('backend-ai-connected', async () => {
+        this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
+        if (this.enable_scaling_group === true) {
+          let sgs = await window.backendaiclient.scalingGroup.list();
+          this.scaling_groups = sgs.scaling_groups;
+        }
         this._refreshResourcePolicy();
       }, true);
     } else { // already connected
-      this.enable_scaling_group = window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601');
+      this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
+      if (this.enable_scaling_group === true) {
+        let sgs = await window.backendaiclient.scalingGroup.list();
+        this.scaling_groups = sgs.scaling_groups;
+      }
       this._refreshResourcePolicy();
     }
   }
@@ -809,7 +819,24 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   async _aggregateResourceUse() {
     let total_slot = {};
-    return window.backendaiclient.resourcePreset.check().then((response) => {
+    let param = null;
+    if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
+      let scaling_group = 'default';
+      if (this.scaling_group !== '') {
+        scaling_group = this.scaling_group;
+      } else {
+        scaling_group = this.scaling_groups[0]['name'];
+      }
+      param = {
+        'group': window.backendaiclient.current_group,
+        'scaling_group': scaling_group
+      };
+    } else {
+      param = {
+        'group': window.backendaiclient.current_group
+      };
+    }
+    return window.backendaiclient.resourcePreset.check(param).then((response) => {
       if (response.presets) { // Same as refreshResourceTemplate.
         let presets = response.presets;
         let available_presets = [];
@@ -954,7 +981,24 @@ class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _refreshResourceTemplate() {
-    window.backendaiclient.resourcePreset.check().then((response) => {
+    let param = null;
+    if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
+      let scaling_group = 'default';
+      if (this.scaling_group !== '') {
+        scaling_group = this.scaling_group;
+      } else {
+        scaling_group = this.scaling_groups[0]['name'];
+      }
+      param = {
+        'group': window.backendaiclient.current_group,
+        'scaling_group': scaling_group
+      };
+    } else {
+      param = {
+        'group': window.backendaiclient.current_group
+      };
+    }
+    window.backendaiclient.resourcePreset.check(param).then((response) => {
       if (response.presets) {
         let presets = response.presets;
         let available_presets = [];

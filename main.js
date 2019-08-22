@@ -4,7 +4,7 @@ process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
 const BASE_DIR = __dirname;
-const ProxyManager = require('build/electron-app/app/wsproxy/wsproxy.js');
+const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron');
 process.env.liveDebugMode = false;
 
@@ -19,6 +19,9 @@ protocol.registerSchemesAsPrivileged([
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let mainContent;
+let devtools;
+
 var mainIndex = 'build/electron-app/app/index.html';
 // Modules to control application life and create native browser window
 app.once('ready', function() {
@@ -51,10 +54,26 @@ app.once('ready', function() {
             label: 'Login',
             click: function() {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
-                pathname: path.join(BASE_DIR, mainIndex),
+                pathname: path.join(mainIndex),
                 protocol: 'file',
                 slashes: true
               }));
+            }
+          },
+          {
+            label: 'Logout',
+            click: function () {
+              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
+                '    document.dispatchEvent(event);');
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Force Update Screen',
+            click: function () {
+              mainContent.reloadIgnoringCache();
             }
           },
           {
@@ -319,8 +338,7 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
-  let mainWindow = null;
-  let devtools = null;
+  devtools = null;
 
   mainWindow = new BrowserWindow({
     width: 1280, 
@@ -338,7 +356,7 @@ function createWindow () {
   if (process.env.liveDebugMode === true) {
     // Load HTML into new Window (dynamic serving for develop)
     mainWindow.loadURL(url.format({
-      pathname: '127.0.0.1:8081',
+      pathname: '127.0.0.1:9081',
       protocol: 'http',
       slashes: true
     }));
@@ -349,13 +367,31 @@ function createWindow () {
       protocol: 'file',
       slashes: true
     }));
-  }  
+  }
+  mainContent = mainWindow.webContents;
   devtools = new BrowserWindow();
   mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   mainWindow.webContents.openDevTools({ mode: 'detach' });
   // Emitted when the window is closed.
+  mainWindow.on('close', (e) => {
+    if (mainWindow) {
+      e.preventDefault();
+      mainWindow.webContents.send('app-close-window');
+    }
+  });
+  ipcMain.on('app-closed', _ => {
+    mainWindow = null;
+    mainContent = null;
+    devtools = null;
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  });
+
   mainWindow.on('closed', function () {
-    mainWindow = null
+    mainWindow = null;
+    mainContent = null;
+    devtools = null;
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
@@ -363,7 +399,8 @@ function createWindow () {
       // open window as modal
       event.preventDefault()
       Object.assign(options, {
-        modal: true,
+        //modal: true,
+        frame: true,
         parent: mainWindow,
         width: 1280,
         height: 970,

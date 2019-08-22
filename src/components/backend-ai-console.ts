@@ -29,6 +29,7 @@ import toml from 'markty-toml';
 
 import 'weightless/select';
 import 'weightless/progress-spinner';
+import './lablup-notification';
 
 import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -75,6 +76,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   public domain: any;
   public is_connected: any;
   public is_admin: any;
+  public is_superadmin: any;
   public _page: any;
   public groups: any;
   public connection_mode: any;
@@ -88,6 +90,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   public _offlineIndicatorOpened: any;
   public _offline: any;
   public _drawerOpened: any;
+  public notification: any;
 
   constructor() {
     super();
@@ -97,6 +100,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.domain = 'CLICK TO CONNECT';
     this.is_connected = false;
     this.is_admin = false;
+    this.is_superadmin = false;
     this._page = '';
     this.groups = [];
     this.connection_mode = 'API';
@@ -127,6 +131,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       is_admin: {
         type: Boolean
       },
+      is_superadmin: {
+        type: Boolean
+      },
       proxy_url: {
         type: String
       },
@@ -143,6 +150,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
         type: String
       },
       plugins: {
+        type: Object
+      },
+      notification: {
         type: Object
       },
       _page: {type: String},
@@ -221,6 +231,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
+    this.notification = this.shadowRoot.querySelector('#notification');
     if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
       this.shadowRoot.querySelector('.portrait-canvas').style.visibility = 'hidden';
     }
@@ -229,6 +240,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     let configPath;
     if (window.isElectron) {
       configPath = './config.toml';
+      document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
     } else {
       configPath = '../../config.toml';
     }
@@ -287,6 +299,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
       this.is_admin = true;
     } else {
       this.is_admin = false;
+    }
+    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
+      && typeof window.backendaiclient.is_superadmin !== "undefined" && window.backendaiclient.is_superadmin === true) {
+      this.is_superadmin = true;
+    } else {
+      this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
   }
@@ -364,20 +382,20 @@ class BackendAiConsole extends connect(store)(LitElement) {
           this.shadowRoot.getElementById('sidebar-menu').selected = 4;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
-        case 'agent':
-          this.menuTitle = 'Computation Resources';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 7;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments & Presets';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 8;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 7;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
+          break;
+        case 'agent':
+          this.menuTitle = 'Computation Resources';
+          this.shadowRoot.getElementById('sidebar-menu').selected = 8;
+          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
@@ -396,20 +414,28 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
   }
 
-  async logout() {
-    if (window.backendaiclient._config.connectionMode === 'SESSION') {
-      await window.backendaiclient.logout();
-    }
-    window.backendaiclient = null;
-    const keys = Object.keys(localStorage);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
-    }
-    if (window.isElectron) {
-      this.shadowRoot.querySelector('#login-panel').login();
-    } else {
-      window.location.reload();
+  async logout(performClose = false) {
+    console.log('performclose:', performClose);
+    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
+      this.notification.text = 'Clean up now...';
+      this.notification.show();
+      if (window.backendaiclient._config.connectionMode === 'SESSION') {
+        await window.backendaiclient.logout();
+      }
+      window.backendaiclient = null;
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
+      }
+      if (performClose === true) {
+        // Do nothing. this window will be closed.
+      } else if (window.isElectron) {
+        window.location.reload();
+        //this.shadowRoot.querySelector('#login-panel').login();
+      } else {
+        window.location.reload();
+      }
     }
   }
 
@@ -487,29 +513,25 @@ class BackendAiConsole extends connect(store)(LitElement) {
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
 
-              <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
-                <paper-item link ?disabled="${!this.is_admin}">
-                  <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                  Resources
-                </paper-item>
-              </a>` :
-      html``}
-              ${this.is_admin ?
-      html`
-
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg lime" icon="icons:face"></iron-icon>
                   Users
                 </paper-item>
-              </a>` :
-      html``}
-              ${this.is_admin ?
-      html`
+              </a>
               <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
                   Environments
+                </paper-item>
+              </a>
+      ` : html``}
+              ${this.is_superadmin ?
+      html`
+              <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
+                <paper-item link ?disabled="${!this.is_admin}">
+                  <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
+                  Resources
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
@@ -526,7 +548,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   <span class="flex"></span>
                 </paper-item>
               </a>
-              ` : html``}
+      ` : html``}
             </paper-listbox>
             <footer>
               <div class="terms-of-use" style="margin-bottom:50px;">
@@ -540,7 +562,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.08.2.190812</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.08.4.190821</small>
               </address>
             </div>
           </app-header-layout>
@@ -549,6 +571,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
           <app-header slot="header" id="main-toolbar" fixed shadow class="draggable" effects="waterfall resize-title"
             condenses style="height: 96px; z-index:1;" effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
             <app-toolbar sticky style="height:48px;" class="draggable bar">
+              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
               <span condensed-title>${this.menuTitle}</span>
               <span class="flex"></span>
