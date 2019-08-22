@@ -22,7 +22,9 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/icon';
+import 'weightless/label';
 import 'weightless/select';
+import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
 import './lablup-notification';
@@ -38,13 +40,15 @@ class BackendAIScalingGroupList extends BackendAIPage {
   public shadowRoot: any;
   public updateComplete: any;
   public _boundControlRenderer: any;
+  public selectedIndex: any;
 
   constructor() {
     super();
     this.active = false;
-    this.scaling_groups = [];
+    this.scalingGroups = [];
     this.domains = [];
     this._boundControlRenderer = this._controlRenderer.bind(this);
+    this.selectedIndex = 0;
   }
 
   static get is() {
@@ -64,6 +68,9 @@ class BackendAIScalingGroupList extends BackendAIPage {
       },
       domain: {
         type: Array
+      },
+      selectedIndex: {
+        type: Number
       }
     };
   }
@@ -125,7 +132,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
     } else { // already connected
       window.backendaiclient.scalingGroup.list()
       .then(res => {
-        this.scaling_groups = res.scaling_groups;
+        this.scalingGroups = res.scaling_groups;
       })
 
       window.backendaiclient.domain.list()
@@ -179,12 +186,18 @@ class BackendAIScalingGroupList extends BackendAIPage {
           <paper-icon-button
             icon="settings"
             class="fg blue"
-            @click=${() => this._launchDialogById("#modify-scaling-group-dialog")}
+            @click=${() => {
+              this.selectedIndex = rowData.index;
+              this._launchDialogById("#modify-scaling-group-dialog")
+            }}
           ></paper-icon-button>
           <paper-icon-button
             icon="delete"
             class="fg red"
-            @click=${() => this._launchDialogById("#delete-scaling-group-dialog")}
+            @click=${() => {
+              this.selectedIndex = rowData.index;
+              this._launchDialogById("#delete-scaling-group-dialog")
+            }}
           ></paper-icon-button>
         </div>
       `, root
@@ -239,7 +252,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
   _refreshList() {
     window.backendaiclient.scalingGroup.list()
     .then(({ scaling_groups  }) => {
-      this.scaling_groups = scaling_groups;
+      this.scalingGroups = scaling_groups;
     })
   }
 
@@ -260,7 +273,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
           Create
         </wl-button>
       </h4>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scaling_groups}">
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
         <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="Name">
@@ -353,7 +366,28 @@ class BackendAIScalingGroupList extends BackendAIPage {
           </h3>
           <form>
             <fieldset>
-
+              <wl-textfield
+                type="text"
+                label="Scaling Group Name"
+                value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].name}
+              ></wl-textfield>
+              <wl-label for="switch">
+                Hello world
+              </wl-label>
+              <div id="switch">
+                <wl-switch
+                  ?checked=${true}
+                ></wl-switch>
+              </div>
+              <wl-button
+                class="fg blue"
+                type="button"
+                outlined
+                style="width: 100%; box-sizing: border-box;"
+              >
+                <wl-icon>check</wl-icon>
+                Save Changes
+              </wl-button>
             </fieldset>
           </form>
         </wl-card>
