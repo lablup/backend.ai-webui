@@ -31,7 +31,9 @@ app.once('ready', function() {
     manager.once("ready", () => {
       let url = 'http://localhost:' + manager.port + "/";
       console.log("Proxy is ready:" + url);
-      event.reply('proxy-ready', url);
+      setTimeout(() => {
+        event.reply('proxy-ready', url);
+      }, 1000);
     });
     manager.start();
   })
