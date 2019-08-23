@@ -255,6 +255,8 @@ class BackendAIScalingGroupList extends BackendAIPage {
       if (res.ok) {
         this.notification.text = "Scaling group succesfully created";
         this._refreshList();
+        this.shadowRoot.querySelector("#scaling-group-name").value = "";
+        this.shadowRoot.querySelector("#scaling-group-description").value = "";
       } else {
         this.notification.text = PainKiller.relieve(res.msg);
       }
@@ -300,11 +302,19 @@ class BackendAIScalingGroupList extends BackendAIPage {
   _deleteScalingGroup() {
     const name = this.scalingGroups[this.selectedIndex].name;
 
+    if (this.shadowRoot.querySelector("#delete-scaling-group").value !== name) {
+      this.notification.text = "Scaling group name does not match!";
+      this._hideDialogById("#delete-scaling-group-dialog");
+      this.notification.show();
+      return;
+    }
+
     window.backendaiclient.scalingGroup.delete(name)
     .then(({ delete_scaling_group }) => {
       if (delete_scaling_group.ok) {
         this.notification.text = "Scaling group successfully deleted";
         this._refreshList();
+        this.shadowRoot.querySelector("#delete-scaling-group").value = "";
       } else {
         this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
       }
@@ -462,12 +472,13 @@ class BackendAIScalingGroupList extends BackendAIPage {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
-        <h2 slot="header">
-          Warning
-        </h2>
+        <h3 slot="header" style="color: #EF1320">Warning: this cannot be undone!</h3>
         <div slot="content">
-          <span style="font-size: 20px;">You are about to delete this scaling group!</span>
-
+          <wl-textfield
+            id="delete-scaling-group"
+            type="text"
+            label="Type Scaling Group Name to Delete"
+          ></wl-textfield>
           <wl-button
             class="fg red delete"
             type="button"
