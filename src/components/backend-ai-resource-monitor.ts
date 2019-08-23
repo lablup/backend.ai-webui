@@ -1185,19 +1185,22 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#mem-resource').disabled = false;
       this.shadowRoot.querySelector('#gpu-resource').disabled = false;
       this.shadowRoot.querySelector('#session-resource').disabled = false;
+      this.shadowRoot.querySelector('#launch-button').disabled = false;
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+
       if (this.cpu_metric.min == this.cpu_metric.max) {
         this.shadowRoot.querySelector('#cpu-resource').max = this.cpu_metric.max + 1;
+      }
+      if (this.mem_metric.min == this.mem_metric.max) {
+        this.shadowRoot.querySelector('#mem-resource').max = this.mem_metric.max + 1;
+      }
+      if (this.cpu_metric.min == this.cpu_metric.max || this.mem_metric.min == this.mem_metric.max) {
         this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
         this.shadowRoot.querySelector('#mem-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#session-resource').disabled = true;
-      }
-      if (this.mem_metric.min == this.mem_metric.max) {
-        this.shadowRoot.querySelector('#mem-resource').max = this.mem_metric.max + 1;
-        this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough RAM. so no session.
-        this.shadowRoot.querySelector('#mem-resource').disabled = true;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
-        this.shadowRoot.querySelector('#session-resource').disabled = true;
+        this.shadowRoot.querySelector('#launch-button').disabled = true;
+        this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Not enough resource';
       }
       if (this.gpu_metric.min == this.gpu_metric.max) {
         this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
