@@ -20,7 +20,8 @@ export default class BackendAIPainKiller {
     "server responded failure: 401 Unauthorized - Credential/signature mismatch.": "Login information mismatch. Check your information",
   };
   static regexTable = {
-    'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.'
+    'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.',
+    'server responded failure: 400 Bad Request - Missing or invalid API parameters. (Your resource quota is exceeded. (cpu=24 mem=512g cuda.shares=80))': 'Resource limit exceed. Check your free resources.'
   };
 
   static relieve(msg) {
@@ -32,7 +33,9 @@ export default class BackendAIPainKiller {
       return this.errorMessageTable[msg];
     } else {
       for (const regex of Object.keys(this.regexTable)) {
-        if (RegExp(regex).test(msg)) return this.regexTable[regex];
+        if (RegExp(regex).test(msg)) {
+          return this.regexTable[regex];
+        }
       }
       return 'Problem found during process.';
     }
