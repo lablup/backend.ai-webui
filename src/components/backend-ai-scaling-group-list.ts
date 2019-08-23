@@ -94,6 +94,13 @@ class BackendAIScalingGroupList extends BackendAIPage {
           --button-bg-active: var(--paper-blue-600);
         }
 
+        wl-button.delete {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+          margin-top: 20px;
+        }
+
         wl-dialog wl-textfield,
         wl-dialog wl-textarea,
         wl-dialog wl-select {
@@ -162,7 +169,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
         <lablup-shields
           app=""
           color=${rowData.item.is_active ? "green" : "red"}
-          description=${rowData.item.is_active ? "Active" : "Inactive"}
+          description=${rowData.item.is_active ? "active" : "inactive"}
           ui="flat"
         ></lablup-shields>
     `,
@@ -281,14 +288,30 @@ class BackendAIScalingGroupList extends BackendAIPage {
     .then(({ modify_scaling_group }) => {
       if (modify_scaling_group.ok) {
         this.notification.text = "Scaling group successfully modified";
-        this._refreshList()
+        this._refreshList();
       } else {
         this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
       }
       this._hideDialogById("#modify-scaling-group-dialog");
       this.notification.show();
     })
+  }
 
+  _deleteScalingGroup() {
+    const name = this.scalingGroups[this.selectedIndex].name;
+
+    window.backendaiclient.scalingGroup.delete(name)
+    .then(({ delete_scaling_group }) => {
+      if (delete_scaling_group.ok) {
+        this.notification.text = "Scaling group successfully deleted";
+        this._refreshList();
+      } else {
+        this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
+      }
+
+      this._hideDialogById("#delete-scaling-group-dialog");
+      this.notification.show();
+    })
   }
 
   _refreshList() {
@@ -439,15 +462,23 @@ class BackendAIScalingGroupList extends BackendAIPage {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>Delete Scaling Group</span>
-            <div class="flex"></div>
-            <wl-button class="fab" fab flat inverted @click="${e => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-        </wl-card>
+        <h2 slot="header">
+          Warning
+        </h2>
+        <div slot="content">
+          <span style="font-size: 20px;">You are about to delete this scaling group!</span>
+
+          <wl-button
+            class="fg red delete"
+            type="button"
+            outlined
+            style="width: 100%; box-sizing: border-box;"
+            @click=${this._deleteScalingGroup}
+          >
+            <wl-icon>delete</wl-icon>
+            Delete
+          </wl-button>
+        </div>
       </wl-dialog>
     `;
   }

@@ -1978,6 +1978,24 @@ class ScalingGroup {
 
     return this.client.gql(q, v);
   }
+
+  /**
+   * Delete a scaling group
+   *
+   * @param {string} name - name of scaling group to be deleted
+   */
+  delete(name) {
+    let q = `mutation($name: String!) {` +
+            `  delete_scaling_group(name: $name) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      name
+    };
+
+    return this.client.gql(q, v);
+  }
 }
 
 class utils {
