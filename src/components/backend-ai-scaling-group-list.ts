@@ -60,7 +60,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
       active: {
         type: Boolean
       },
-      scaling_groups: {
+      scalingGroups: {
         type: Array
       },
       notification: {
