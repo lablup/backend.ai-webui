@@ -171,6 +171,17 @@ class BackendAiConsole extends connect(store)(LitElement) {
       IronPositioning,
       // language=CSS
       css`
+        .drawer-menu app-header-layout,
+        paper-listbox.sidebar,
+        .drawer-menu footer,
+        #sidebar-navbar-footer {
+          background-color: var(--sidebar-background-color, var(--general-sidebar-background-color,#fafafa));
+        }
+
+        #portrait-bar .bar {
+          background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
+        }
+
         paper-icon-button {
           --paper-icon-button-ink-color: white;
         }
