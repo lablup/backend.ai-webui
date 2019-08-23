@@ -34,7 +34,7 @@ import { BackendAiStyles } from "./backend-ai-console-styles";
 import { IronFlex, IronFlexAlignment } from "../plastics/layout/iron-flex-layout-classes";
 
 class BackendAIScalingGroupList extends BackendAIPage {
-  public scaling_groups: any;
+  public scalingGroups: any;
   public domains: any;
   public notification: any;
   public shadowRoot: any;
