@@ -47,6 +47,9 @@ web:
 	cd deploy/$(site); rm -rf ./*; mkdir console
 	cp -Rp build/rollup/* deploy/$(site)/console
 	cp ./configs/$(site).toml deploy/$(site)/console/config.toml
+	if [ -f "./configs/$(site).custom.css" ];then \
+		cp ./configs/$(site).custom.css deploy/$(site)/console/resources/custom.css
+	fi
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
