@@ -7,12 +7,13 @@ import {css, html, LitElement} from "lit-element";
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
-import '@polymer/paper-input/paper-input';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
+import 'weightless/textfield';
+
 import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -163,17 +164,14 @@ class BackendAiLogin extends LitElement {
         fieldset input {
           width: 100%;
           border: 0;
-          border-bottom: 1px solid #aaa;
-          margin: 15px 0;
+          margin: 15px 0 0 0;
           font: inherit;
           font-size: 16px;
           outline: none;
         }
-
-        fieldset input:focus {
-          border-bottom: 1.5px solid #0d47a1;
+        wl-textfield {
+            --input-font-family: 'Quicksand', sans-serif;
         }
-
         #login-panel {
           --dialog-width: 400px;
         }
@@ -598,19 +596,19 @@ class BackendAiLogin extends LitElement {
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
-                           label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="password" name="secret_key" id="id_secret_key" style="display:none;"
-                           label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="text" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
-                           label="ID" value="${this.user_id}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="password" name="password" id="id_password" style="display:none;"
-                           label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="API Endpoint" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
+              <wl-textfield type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
+                           label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"
+                           label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="email" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
+                           label="ID" value="${this.user_id}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="password" name="password" id="id_password" style="display:none;"
+                           label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
+                           label="API Endpoint" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
-                           label="API Endpoint" value=""></paper-input>
+                           label="API Endpoint" value=""></wl-textfield>
               <br/><br/>
               <wl-button class="fg red full" id="login-button" outlined type="button"
                           @click="${() => this._login()}">
