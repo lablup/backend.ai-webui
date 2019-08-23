@@ -79,6 +79,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public updateComplete: any;
   public num_sessions: any;
   public vgpu_metric: any;
+  public metric_updating: any;
 
   constructor() {
     super();
@@ -158,6 +159,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.scaling_groups = [];
     this.scaling_group = '';
     this.enable_scaling_group = false;
+    this.metric_updating = false;
   }
 
   static get is() {
@@ -1022,20 +1024,28 @@ class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateMetric() {
+    if (this.metric_updating == true) return;
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateMetric();
       }, true);
     } else {
+      this.metric_updating = true;
       let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
-      if (typeof selectedItem === 'undefined' || selectedItem === null) return;
+      if (typeof selectedItem === 'undefined' || selectedItem === null) {
+        this.metric_updating = false;
+        return;
+      }
       let kernel = selectedItem.id;
       let currentVersion = this.shadowRoot.querySelector('#version').value;
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       await this._updateVirtualFolderList();
       let available_slot = await this._aggregateResourceUse();
-      if (!currentResource) return;
+      if (!currentResource) {
+        this.metric_updating = false;
+        return;
+      }
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
           let cpu_metric = item;
@@ -1054,7 +1064,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
             }
           }
           if (cpu_metric.min > cpu_metric.max) {
-            // TODO: dynamic maximum per user policy
+            cpu_metric.min = cpu_metric.max;
+            this.shadowRoot.querySelector('#cpu-resource').disabled = true
           }
           this.cpu_metric = cpu_metric;
         }
@@ -1076,7 +1087,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
             }
           }
           if (gpu_metric.min > gpu_metric.max) {
-            // TODO: dynamic maximum per user policy
+            gpu_metric.min = gpu_metric.max;
+            this.shadowRoot.querySelector('#gpu-resource').disabled = true
           }
           this.gpu_metric = gpu_metric;
         }
@@ -1098,7 +1110,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
             }
           }
           if (vgpu_metric.min > vgpu_metric.max) {
-            // TODO: dynamic maximum per user policy
+            vgpu_metric.min = vgpu_metric.max;
+            this.shadowRoot.querySelector('#gpu-resource').disabled = true
           }
           this.vgpu_metric = vgpu_metric;
           if (vgpu_metric.max > 0) {
@@ -1136,7 +1149,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
             }
           }
           if (mem_metric.min > mem_metric.max) {
-            // TODO: dynamic maximum per user policy
+            mem_metric.min = mem_metric.max;
+            this.shadowRoot.querySelector('#mem-resource').disabled = true
           }
           this.mem_metric = mem_metric;
         }
@@ -1162,27 +1176,37 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#resource-templates').selected = "0";
         default_template.setAttribute('active', true);
         //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
+      } else {
+        this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, this.gpu_metric.min);
       }
 
       // Post-UI markup to disable unchangeable values
+      this.shadowRoot.querySelector('#cpu-resource').disabled = false;
+      this.shadowRoot.querySelector('#mem-resource').disabled = false;
+      this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+      this.shadowRoot.querySelector('#session-resource').disabled = false;
+      this.shadowRoot.querySelector('#launch-button').disabled = false;
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+
       if (this.cpu_metric.min == this.cpu_metric.max) {
         this.shadowRoot.querySelector('#cpu-resource').max = this.cpu_metric.max + 1;
-        this.shadowRoot.querySelector('#cpu-resource').disabled = true
-      } else {
-        this.shadowRoot.querySelector('#cpu-resource').disabled = false;
       }
       if (this.mem_metric.min == this.mem_metric.max) {
         this.shadowRoot.querySelector('#mem-resource').max = this.mem_metric.max + 1;
-        this.shadowRoot.querySelector('#mem-resource').disabled = true
-      } else {
-        this.shadowRoot.querySelector('#mem-resource').disabled = false;
+      }
+      if (this.cpu_metric.min == this.cpu_metric.max || this.mem_metric.min == this.mem_metric.max) {
+        this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
+        this.shadowRoot.querySelector('#mem-resource').disabled = true;
+        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+        this.shadowRoot.querySelector('#session-resource').disabled = true;
+        this.shadowRoot.querySelector('#launch-button').disabled = true;
+        this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Not enough resource';
       }
       if (this.gpu_metric.min == this.gpu_metric.max) {
         this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true
-      } else {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
+      this.metric_updating = false;
     }
   }
 
@@ -1464,35 +1488,37 @@ ${this.resource_templates.map(item => html`
             <wl-expansion name="resource-group">
               <span slot="title">Advanced</span>
               <span slot="description">Custom allocation</span>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">CPU</span>
-                <paper-slider id="cpu-resource" class="cpu"
-                              pin snaps expand editable
-                              min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                              value="${this.cpu_request}"></paper-slider>
-                <span class="caption">Core</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">RAM</span>
-                <paper-slider id="mem-resource" class="mem"
-                              pin snaps step=0.1 editable
-                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                              value="${this.mem_request}"></paper-slider>
-                <span class="caption">GB</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">GPU</span>
-                <paper-slider id="gpu-resource" class="gpu"
-                              pin snaps editable step="${this.gpu_step}"
-                              min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
-                <span class="caption">GPU</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:50px;">Sessions</span>
-                <paper-slider id="session-resource" class="session"
-                              pin snaps editable step=1
-                              min=1 max=5 value="${this.session_request}"></paper-slider>
-                <span class="caption">#</span>
+              <div class="vertical layout">
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:30px;">CPU</span>
+                  <paper-slider id="cpu-resource" class="cpu"
+                                pin snaps expand editable
+                                min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
+                                value="${this.cpu_request}"></paper-slider>
+                  <span class="caption">Core</span>
+                </div>
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:30px;">RAM</span>
+                  <paper-slider id="mem-resource" class="mem"
+                                pin snaps step=0.1 editable
+                                min="${this.mem_metric.min}" max="${this.mem_metric.max}"
+                                value="${this.mem_request}"></paper-slider>
+                  <span class="caption">GB</span>
+                </div>
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:30px;">GPU</span>
+                  <paper-slider id="gpu-resource" class="gpu"
+                                pin snaps editable step="${this.gpu_step}"
+                                min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
+                  <span class="caption">GPU</span>
+                </div>
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:50px;">Sessions</span>
+                  <paper-slider id="session-resource" class="session"
+                                pin snaps editable step=1
+                                min=1 max=5 value="${this.session_request}"></paper-slider>
+                  <span class="caption">#</span>
+                </div>
               </div>
             </wl-expansion>
 

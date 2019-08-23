@@ -284,8 +284,10 @@ class Client {
    */
   isAPIVersionCompatibleWith(version) {
     let apiVersion = this._apiVersion;
-    apiVersion = apiVersion.split('.').map(s => s.padStart(10)).join('.');
-    version = version.split('.').map(s => s.padStart(10)).join('.');
+    if (apiVersion !== null && version !== null) {
+      apiVersion = apiVersion.split('.').map(s => s.padStart(10)).join('.');
+      version = version.split('.').map(s => s.padStart(10)).join('.');
+    }
     return version <= apiVersion;
   }
 

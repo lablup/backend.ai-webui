@@ -16,12 +16,16 @@ export default class BackendAIPainKiller {
     "Cannot read property 'split' of undefined": 'Wrong API server address.',
     "server responded failure: 400 Bad Request - The virtual folder already exists with the same name.": "A virtual folder with the same name already exists. Delete your own folder or decline the invitation.",
     "server responded failure: 400 Bad Request - Missing or invalid API parameters. (You cannot create more vfolders.)": "You cannot create more vfolders due to resource policy",
+    "server responded failure: 401 Unauthorized - Credential/signature mismatch. (Access key not found)": "Login information mismatch. Check your information",
+    "server responded failure: 401 Unauthorized - Credential/signature mismatch.": "Login information mismatch. Check your information",
   };
   static regexTable = {
-    'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.'
+    'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.',
+    'server responded failure: 400 Bad Request - Missing or invalid API parameters. (Your resource quota is exceeded. (cpu=24 mem=512g cuda.shares=80))': 'Resource limit exceed. Check your free resources.'
   };
 
   static relieve(msg) {
+    console.log(msg);
     if (window.backendaiconsole.debug === true) {
       return msg;
     }
@@ -29,7 +33,9 @@ export default class BackendAIPainKiller {
       return this.errorMessageTable[msg];
     } else {
       for (const regex of Object.keys(this.regexTable)) {
-        if (RegExp(regex).test(msg)) return this.regexTable[regex];
+        if (RegExp(regex).test(msg)) {
+          return this.regexTable[regex];
+        }
       }
       return 'Problem found during process.';
     }
