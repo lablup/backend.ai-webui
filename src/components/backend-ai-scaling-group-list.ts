@@ -137,8 +137,8 @@ class BackendAIScalingGroupList extends BackendAIPage {
 
       window.backendaiclient.domain.list()
       .then(({ domains }) => {
-        this.requestUpdate(); // without this render is called beforehands, so update is required
         this.domains = domains;
+        this.requestUpdate(); // without this render is called beforehands, so update is required
       })
 
     }
@@ -253,6 +253,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
     window.backendaiclient.scalingGroup.list()
     .then(({ scaling_groups  }) => {
       this.scalingGroups = scaling_groups;
+      this.requestUpdate(); // without this render is called beforehands, so update is required
     })
   }
 
