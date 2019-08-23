@@ -207,6 +207,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
             class="fg blue"
             @click=${() => {
               this.selectedIndex = rowData.index;
+              this.shadowRoot.querySelector("#modify-scaling-group-active").checked = this.scalingGroups[rowData.index].is_active;
               this._launchDialogById("#modify-scaling-group-dialog")
             }}
           ></paper-icon-button>
@@ -237,6 +238,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
     if (scalingGroup === "") {
       this.notification.text = "Enter valid scaling group name";
       this.notification.show();
+      this._hideDialogById("#create-scaling-group-dialog");
       return;
     }
 
@@ -454,7 +456,6 @@ class BackendAIScalingGroupList extends BackendAIPage {
               <div id="switch">
                 <wl-switch
                   id="modify-scaling-group-active"
-                  ?checked=${this.scalingGroups.length === 0 ? true : this.scalingGroups[this.selectedIndex].is_active}
                 ></wl-switch>
               </div>
               <wl-button
