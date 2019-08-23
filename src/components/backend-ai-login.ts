@@ -446,6 +446,7 @@ class BackendAiLogin extends LitElement {
         this._connectViaGQL();
       }
     }).catch((err) => {   // Connection failed
+      console.log(err);
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
           this.notification.text = PainKiller.relieve(err.message);
