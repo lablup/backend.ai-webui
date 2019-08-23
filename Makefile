@@ -47,8 +47,8 @@ web:
 	cd deploy/$(site); rm -rf ./*; mkdir console
 	cp -Rp build/rollup/* deploy/$(site)/console
 	cp ./configs/$(site).toml deploy/$(site)/console/config.toml
-	if [ -f "./configs/$(site).custom.css" ];then \
-		cp ./configs/$(site).custom.css deploy/$(site)/console/resources/custom.css
+	if [ -f "./configs/$(site).css" ];then \
+		cp ./configs/$(site).css deploy/$(site)/console/resources/custom.css; \
 	fi
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
