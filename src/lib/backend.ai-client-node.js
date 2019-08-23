@@ -1900,6 +1900,12 @@ class ScalingGroup {
     }
   }
 
+  /**
+   * Create a scaling group
+   *
+   * @param {string} name - Scaling group name
+   * @param {string} description - Scaling group description
+   */
   create(name, description="") {
     const input = {
       description,
@@ -1925,6 +1931,12 @@ class ScalingGroup {
     // }
   }
 
+  /**
+   * Associate a scaling group with a domain
+   *
+   * @param {string} domain - domain name
+   * @param {string} scaling_group - scaling group name
+   */
   associateWithDomain(domain, scaling_group) {
     let q = `mutation($domain: String!, $scaling_group: String!) {` +
             `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
@@ -1934,6 +1946,34 @@ class ScalingGroup {
     let v = {
       domain,
       scaling_group
+    };
+
+    return this.client.gql(q, v);
+  }
+
+  /**
+   * Modify a scaling group
+   *
+   * @param {string} name - scaling group name
+   * @param {json} input - object containing desired modifications
+   * {
+   *   'description': String          // description of scaling group
+   *   'is_active': Boolean           // active status of scaling group
+   *   'driver': String
+   *   'driver_opts': JSONString
+   *   'scheduler': String
+   *   'scheduler_opts': JSONString
+   * }
+   */
+  modify(name, input) {
+    let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
+            `  modify_scaling_group(name: $name, props: $input) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      name,
+      input
     };
 
     return this.client.gql(q, v);

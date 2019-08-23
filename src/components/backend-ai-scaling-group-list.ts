@@ -101,6 +101,18 @@ class BackendAIScalingGroupList extends BackendAIPage {
           --input-font-family: Roboto, Noto, sans-serif;
         }
 
+        wl-dialog wl-label {
+          --label-font-family: Roboto, Noto, sans-serif;
+          --label-color: #282828;
+          margin-bottom: 5px;
+        }
+
+        wl-dialog wl-switch {
+          margin-bottom: 20px;
+          --switch-color-checked: #29b6f6;
+          --switch-bg-checked: #bbdefb;
+        }
+
         wl-select {
           --input-color-disabled: #222;
           --input-label-color-disabled: #222;
@@ -149,7 +161,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
       html`
         <lablup-shields
           app=""
-          color="green"
+          color=${rowData.item.is_active ? "green" : "red"}
           description=${rowData.item.is_active ? "Active" : "Inactive"}
           ui="flat"
         ></lablup-shields>
@@ -247,6 +259,36 @@ class BackendAIScalingGroupList extends BackendAIPage {
       this._hideDialogById("#create-scaling-group-dialog");
       this.notification.show();
     })
+  }
+
+  _modifyScalingGroup() {
+    const description = this.shadowRoot.querySelector("#modify-scaling-group-description").value,
+          is_active = this.shadowRoot.querySelector("#modify-scaling-group-active").checked,
+          name = this.scalingGroups[this.selectedIndex].name;
+
+    let input = {};
+    if (description !== this.scalingGroups[this.selectedIndex].description) input.description = description;
+    if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input.is_active = is_active;
+
+    if (Object.keys(input) === 0) {
+      this.notification.text = "No changes made";
+      this.notification.show();
+
+      return;
+    }
+
+    window.backendaiclient.scalingGroup.modify(name, input)
+    .then(({ modify_scaling_group }) => {
+      if (modify_scaling_group.ok) {
+        this.notification.text = "Scaling group successfully modified";
+        this._refreshList()
+      } else {
+        this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
+      }
+      this._hideDialogById("#modify-scaling-group-dialog");
+      this.notification.show();
+    })
+
   }
 
   _refreshList() {
@@ -367,17 +409,19 @@ class BackendAIScalingGroupList extends BackendAIPage {
           </h3>
           <form>
             <fieldset>
-              <wl-textfield
+              <wl-textarea
+                id="modify-scaling-group-description"
                 type="text"
-                label="Scaling Group Name"
-                value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].name}
-              ></wl-textfield>
+                label="Description"
+                value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].description}
+              ></wl-textarea>
               <wl-label for="switch">
-                Hello world
+                Active Status
               </wl-label>
               <div id="switch">
                 <wl-switch
-                  ?checked=${true}
+                  id="modify-scaling-group-active"
+                  ?checked=${this.scalingGroups.length === 0 ? true : this.scalingGroups[this.selectedIndex].is_active}
                 ></wl-switch>
               </div>
               <wl-button
@@ -385,6 +429,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
                 type="button"
                 outlined
                 style="width: 100%; box-sizing: border-box;"
+                @click=${this._modifyScalingGroup}
               >
                 <wl-icon>check</wl-icon>
                 Save Changes
