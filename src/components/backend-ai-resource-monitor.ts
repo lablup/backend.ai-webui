@@ -1503,7 +1503,7 @@ ${this.resource_templates.map(item => html`
                 <div class="horizontal center layout">
                   <span class="resource-type" style="width:30px;">RAM</span>
                   <paper-slider id="mem-resource" class="mem"
-                                pin snaps step=0.1 editable
+                                pin snaps step=0.05 editable
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                 value="${this.mem_request}"></paper-slider>
                   <span class="caption">GB</span>
