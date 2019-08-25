@@ -442,8 +442,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
-        window.location.reload();
-        //window.location.href = '/summary';
+	    //window.location.reload();
+        window.location.href = '/';
         //this.shadowRoot.querySelector('#login-panel').login();
       } else {
         window.location.reload();
