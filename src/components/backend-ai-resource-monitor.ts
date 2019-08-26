@@ -1078,10 +1078,13 @@ class BackendAiResourceMonitor extends BackendAIPage {
           if (cpu_metric.min >= cpu_metric.max) {
             if (cpu_metric.min > cpu_metric.max) {
               cpu_metric.min = cpu_metric.max;
+              cpu_metric.max = cpu_metric.max + 1;
+              disableLaunch = true;
+              this.shadowRoot.querySelector('#cpu-resource').disabled = true;
+            } else { // min == max
+              cpu_metric.max = cpu_metric.max + 1;
+              this.shadowRoot.querySelector('#cpu-resource').disabled = true;
             }
-            cpu_metric.max = cpu_metric.max + 1;
-            disableLaunch = true;
-            this.shadowRoot.querySelector('#cpu-resource').disabled = true;
           }
           this.cpu_metric = cpu_metric;
         }
@@ -1102,9 +1105,15 @@ class BackendAiResourceMonitor extends BackendAIPage {
               gpu_metric.max = this.available_slot['gpu_slot'];
             }
           }
-          if (gpu_metric.min > gpu_metric.max) {
-            gpu_metric.min = gpu_metric.max;
-            this.shadowRoot.querySelector('#gpu-resource').disabled = true
+          if (gpu_metric.min >= gpu_metric.max) {
+            if (gpu_metric.min > gpu_metric.max) {
+              gpu_metric.min = gpu_metric.max;
+              disableLaunch = true;
+              this.shadowRoot.querySelector('#gpu-resource').disabled = true
+            } else {
+              gpu_metric.max = gpu_metric.max + 1;
+              this.shadowRoot.querySelector('#gpu-resource').disabled = true
+            }
           }
           this.gpu_metric = gpu_metric;
         }
@@ -1125,9 +1134,15 @@ class BackendAiResourceMonitor extends BackendAIPage {
               vgpu_metric.max = 0;
             }
           }
-          if (vgpu_metric.min > vgpu_metric.max) {
-            vgpu_metric.min = vgpu_metric.max;
-            this.shadowRoot.querySelector('#gpu-resource').disabled = true
+          if (vgpu_metric.min >= vgpu_metric.max) {
+            if (vgpu_metric.min > vgpu_metric.max) {
+              vgpu_metric.min = vgpu_metric.max;
+              disableLaunch = true;
+              this.shadowRoot.querySelector('#gpu-resource').disabled = true
+            } else {
+              vgpu_metric.max = vgpu_metric.max + 1;
+              this.shadowRoot.querySelector('#gpu-resource').disabled = true
+            }
           }
           this.vgpu_metric = vgpu_metric;
           if (vgpu_metric.max > 0) {
@@ -1164,13 +1179,17 @@ class BackendAiResourceMonitor extends BackendAIPage {
               mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
             }
           }
+          console.log(mem_metric);
           if (mem_metric.min >= mem_metric.max) {
             if (mem_metric.min > mem_metric.max) {
               mem_metric.min = mem_metric.max;
+              mem_metric.max = mem_metric.max + 1;
+              disableLaunch = true;
+              this.shadowRoot.querySelector('#mem-resource').disabled = true
+            } else {
+              mem_metric.max = mem_metric.max + 1;
+              this.shadowRoot.querySelector('#mem-resource').disabled = true
             }
-            mem_metric.max = mem_metric.max + 1;
-            disableLaunch = true;
-            this.shadowRoot.querySelector('#mem-resource').disabled = true
           }
           mem_metric.min = Number(mem_metric.min.toFixed(2));
           mem_metric.max = Number(mem_metric.max.toFixed(2));
