@@ -2,6 +2,7 @@ EP = ./node_modules/electron-packager/cli.js ./build/electron-app --ignore=node_
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | cut -c 15- | rev | cut -c 3- | rev)
+site := $(or $(site),default)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
