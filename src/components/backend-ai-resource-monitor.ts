@@ -1056,7 +1056,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       let disableLaunch = false;
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
-          let cpu_metric = item;
+          let cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
@@ -1083,7 +1083,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
-          let gpu_metric = item;
+          let gpu_metric = {...item};
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
             if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity' && gpu_metric.max !== NaN) {
@@ -1105,7 +1105,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           this.gpu_metric = gpu_metric;
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'vgpu') {
-          let vgpu_metric = item;
+          let vgpu_metric = {...item};
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity' && vgpu_metric.max !== NaN) {
@@ -1131,7 +1131,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
         if (item.key === 'tpu') {
-          let tpu_metric = item;
+          let tpu_metric = {...item};
           tpu_metric.min = parseInt(tpu_metric.min);
           tpu_metric.max = parseInt(tpu_metric.max);
           if (tpu_metric.min > tpu_metric.max) {
