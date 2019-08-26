@@ -53,7 +53,9 @@ web:
 	fi
 mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
-	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
+	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos;
+	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
+	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js ./app/backend.ai-console-macos/backend.ai-console.app ./app/backend.ai-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 win: dep
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
