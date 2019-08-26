@@ -305,23 +305,21 @@ export default class BackendAISummary extends BackendAIPage {
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
-      //this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
       return;
     }
-
-    //this.shadowRoot.querySelector('backend-ai-resource-monitor').active = true;
+    this._init_resource_values();
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         console.log('queueing');
-        this._init_resource_values();
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
-        this._refreshHealthPanel();
-        this._refreshInvitations();
+        if (this.activeConnected) {
+          this._refreshHealthPanel();
+          this._refreshInvitations();
+        }
       }, true);
     } else {
       console.log('running');
-      this._init_resource_values();
       this.is_superadmin = window.backendaiclient.is_superadmin;
       this.authenticated = true;
       this._refreshHealthPanel();
