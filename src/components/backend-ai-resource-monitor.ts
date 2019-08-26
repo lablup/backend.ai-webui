@@ -84,6 +84,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
+    this.init_resource();
+  }
+
+  init_resource() {
     this.supports = {};
     this.resourceLimits = {};
     this.userResourceLimit = {};

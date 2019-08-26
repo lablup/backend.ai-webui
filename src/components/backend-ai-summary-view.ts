@@ -257,6 +257,9 @@ export default class BackendAISummary extends BackendAIPage {
     this.mem_total_usage_ratio = 0;
     this.mem_current_usage_ratio = 0;
     this.mem_current_usage_percent = 0;
+    this.is_admin = false;
+    this.is_superadmin = false;
+    this.shadowRoot.querySelector('#resource-monitor').init_resource();
   }
 
   _sync_resource_values() {
@@ -308,6 +311,7 @@ export default class BackendAISummary extends BackendAIPage {
       return;
     }
     this._init_resource_values();
+    this.requestUpdate();
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         console.log('queueing');
@@ -352,7 +356,7 @@ export default class BackendAISummary extends BackendAIPage {
       if (this.active) {
         setTimeout(() => {
           this._refreshInvitations()
-        }, 10000);
+        }, 15000);
       }
     });
   }
@@ -396,7 +400,7 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="Start Menu" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
+                <backend-ai-resource-monitor id="resource-monitor" ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
               </div>
             </div>
           </lablup-activity-panel>
