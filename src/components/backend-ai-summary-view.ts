@@ -137,7 +137,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshHealthPanel() {
-    if (this.active) {
+    if (!this.activeConnected) {
       this._refreshSessionInformation();
       if (this.is_superadmin) {
         this._refreshAgentInformation();
@@ -146,7 +146,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshSessionInformation() {
-    if (this.active === false) {
+    if (!this.activeConnected) {
       return;
     }
 
@@ -183,7 +183,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshResourceInformation() {
-    if (this.active === false) {
+    if (!this.activeConnected) {
       return;
     }
     return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
@@ -193,7 +193,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshAgentInformation(status: string = 'running') {
-    if (this.active === false) {
+    if (!this.activeConnected) {
       return;
     }
     switch (this.condition) {
@@ -346,7 +346,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshInvitations() {
-    if (this.active === false) {
+    if (!this.activeConnected) {
       return;
     }
     window.backendaiclient.vfolder.invitations().then(res => {
@@ -360,7 +360,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _acceptInvitation(invitation: any) {
-    if (this.active === false) {
+    if (!this.activeConnected) {
       return;
     }
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
@@ -376,7 +376,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _deleteInvitation(invitation: any) {
-    if (this.active === false) {
+    if (!this.activeConnected) {
       return;
     }
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
