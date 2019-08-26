@@ -948,9 +948,10 @@ class BackendAiSessionList extends BackendAIPage {
       window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
         setTimeout(() => {
           this.terminationQueue = [];
-          this.refreshList();
+          this.refreshList(true, false);
         }, 1000);
       }).catch((err) => {
+        this.refreshList(true, false);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
         this.notification.show();
       });
