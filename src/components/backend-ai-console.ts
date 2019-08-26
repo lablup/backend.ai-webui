@@ -443,7 +443,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
 	    //window.location.reload();
-        window.location.href = '/';
+        //alert(window.location.href);
+        window.location.href = '/index.html'
+        //window.location.assign('/index.html');
         //this.shadowRoot.querySelector('#login-panel').login();
       } else {
         window.location.reload();
@@ -575,7 +577,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.08.4.190823</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.08.4.190826</small>
               </address>
             </div>
           </app-header-layout>
