@@ -137,13 +137,19 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshHealthPanel() {
-    this._refreshSessionInformation();
-    if (this.is_superadmin) {
-      this._refreshAgentInformation();
+    if (this.active) {
+      this._refreshSessionInformation();
+      if (this.is_superadmin) {
+        this._refreshAgentInformation();
+      }
     }
   }
 
   _refreshSessionInformation() {
+    if (this.active === false) {
+      return;
+    }
+
     this.indicator.show();
     let status = 'RUNNING';
     switch (this.condition) {
@@ -177,14 +183,19 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshResourceInformation() {
+    if (this.active === false) {
+      return;
+    }
     return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
       let rp = response.keypair_resource_policies;
       this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
-
     });
   }
 
   _refreshAgentInformation(status: string = 'running') {
+    if (this.active === false) {
+      return;
+    }
     switch (this.condition) {
       case 'running':
         status = 'ALIVE';
@@ -335,6 +346,9 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshInvitations() {
+    if (this.active === false) {
+      return;
+    }
     window.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
       if (this.active) {
@@ -346,6 +360,9 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _acceptInvitation(invitation: any) {
+    if (this.active === false) {
+      return;
+    }
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
         this.notification.text = response.msg;
@@ -359,6 +376,9 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _deleteInvitation(invitation: any) {
+    if (this.active === false) {
+      return;
+    }
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
         this.notification.text = res.msg;
