@@ -1,0 +1,16 @@
+[general]
+#apiEndpoint = ""
+#apiEndpointText = ""
+#defaultSessionEnvironment = ""
+siteDescription = "TEST"
+connectionMode = "SESSION" #connectionMode = API
+signupSupport = false
+debug = false
+
+[wsproxy]
+proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
+#proxyBaseURL = ""
+
+[plugin]
+#login = "signup-cloud.js"
+#sidebar = "report-cloud.js"
