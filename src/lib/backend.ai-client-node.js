@@ -152,6 +152,7 @@ class Client {
     this.resources = new Resources(this);
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
+    this.registry = new Registry(this);
 
     this._features= {}; // feature support list
 
@@ -1878,6 +1879,22 @@ class ScalingGroup {
   list(group = 'default') {
     const queryString = `/scaling-groups?group=${this.client.current_group}`;
     const rqst = this.client.newSignedRequest("GET", queryString, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+class Registry {
+  constructor(client) {
+    this.client = client;
+  }
+
+  add(key, value) {
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  list() {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": "config/docker/registry", "prefix": true});
     return this.client._wrapWithPromise(rqst);
   }
 }
