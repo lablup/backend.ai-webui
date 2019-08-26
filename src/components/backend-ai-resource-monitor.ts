@@ -1179,7 +1179,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
               mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
             }
           }
-          console.log(mem_metric);
           if (mem_metric.min >= mem_metric.max) {
             if (mem_metric.min > mem_metric.max) {
               mem_metric.min = mem_metric.max;
