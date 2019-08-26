@@ -84,6 +84,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
+    this.direction = "horizontal";
     this.init_resource();
   }
 
@@ -159,7 +160,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.mem_request = 1;
     this.gpu_request = 0;
     this.session_request = 1;
-    this.direction = "horizontal";
     this.scaling_groups = [];
     this.scaling_group = '';
     this.enable_scaling_group = false;
