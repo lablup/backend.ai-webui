@@ -241,6 +241,11 @@ export default class BackendAISummary extends BackendAIPage {
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
+    this.cpu_total_usage_ratio = 0;
+    this.cpu_current_usage_ratio = 0;
+    this.mem_total_usage_ratio = 0;
+    this.mem_current_usage_ratio = 0;
+    this.mem_current_usage_percent = 0;
   }
 
   _sync_resource_values() {

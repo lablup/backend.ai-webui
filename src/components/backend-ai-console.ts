@@ -426,7 +426,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   async logout(performClose = false) {
-    console.log('performclose:', performClose);
+    console.log('also close the app:', performClose);
     if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
       this.notification.text = 'Clean up now...';
       this.notification.show();
@@ -442,11 +442,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
-	    //window.location.reload();
-        //alert(window.location.href);
-        window.location.href = '/index.html'
-        //window.location.assign('/index.html');
-        //this.shadowRoot.querySelector('#login-panel').login();
+        this._page = 'summary';
+        navigate(decodeURIComponent('/'));
+        this.shadowRoot.querySelector('#login-panel').login();
       } else {
         window.location.reload();
       }
