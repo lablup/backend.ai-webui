@@ -137,13 +137,19 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshHealthPanel() {
-    this._refreshSessionInformation();
-    if (this.is_superadmin) {
-      this._refreshAgentInformation();
+    if (this.activeConnected) {
+      this._refreshSessionInformation();
+      if (this.is_superadmin) {
+        this._refreshAgentInformation();
+      }
     }
   }
 
   _refreshSessionInformation() {
+    if (!this.activeConnected) {
+      return;
+    }
+
     this.indicator.show();
     let status = 'RUNNING';
     switch (this.condition) {
@@ -177,14 +183,19 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshResourceInformation() {
+    if (!this.activeConnected) {
+      return;
+    }
     return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
       let rp = response.keypair_resource_policies;
       this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
-
     });
   }
 
   _refreshAgentInformation(status: string = 'running') {
+    if (!this.activeConnected) {
+      return;
+    }
     switch (this.condition) {
       case 'running':
         status = 'ALIVE';
@@ -241,6 +252,14 @@ export default class BackendAISummary extends BackendAIPage {
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
+    this.cpu_total_usage_ratio = 0;
+    this.cpu_current_usage_ratio = 0;
+    this.mem_total_usage_ratio = 0;
+    this.mem_current_usage_ratio = 0;
+    this.mem_current_usage_percent = "0";
+    this.is_admin = false;
+    this.is_superadmin = false;
+    (this.shadowRoot.querySelector('#resource-monitor') as any).init_resource();
   }
 
   _sync_resource_values() {
@@ -289,23 +308,22 @@ export default class BackendAISummary extends BackendAIPage {
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
-      //this.shadowRoot.querySelector('backend-ai-resource-monitor').active = false;
       return;
     }
-
-    //this.shadowRoot.querySelector('backend-ai-resource-monitor').active = true;
+    this._init_resource_values();
+    this.requestUpdate();
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         console.log('queueing');
-        this._init_resource_values();
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
-        this._refreshHealthPanel();
-        this._refreshInvitations();
+        if (this.activeConnected) {
+          this._refreshHealthPanel();
+          this._refreshInvitations();
+        }
       }, true);
     } else {
       console.log('running');
-      this._init_resource_values();
       this.is_superadmin = window.backendaiclient.is_superadmin;
       this.authenticated = true;
       this._refreshHealthPanel();
@@ -330,17 +348,23 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshInvitations() {
+    if (!this.activeConnected) {
+      return;
+    }
     window.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
       if (this.active) {
         setTimeout(() => {
           this._refreshInvitations()
-        }, 10000);
+        }, 15000);
       }
     });
   }
 
   _acceptInvitation(invitation: any) {
+    if (!this.activeConnected) {
+      return;
+    }
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
         this.notification.text = response.msg;
@@ -354,6 +378,9 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _deleteInvitation(invitation: any) {
+    if (!this.activeConnected) {
+      return;
+    }
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
         this.notification.text = res.msg;
@@ -373,7 +400,7 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="Start Menu" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
+                <backend-ai-resource-monitor id="resource-monitor" ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
               </div>
             </div>
           </lablup-activity-panel>

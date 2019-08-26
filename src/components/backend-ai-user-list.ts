@@ -393,7 +393,7 @@ class BackendAIUserList extends BackendAIPage {
   }
 
   _markIfUnlimited(value) {
-    if (['-', 0].includes(value)) {
+    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
     } else {
       return value;

@@ -171,6 +171,17 @@ class BackendAiConsole extends connect(store)(LitElement) {
       IronPositioning,
       // language=CSS
       css`
+        .drawer-menu app-header-layout,
+        paper-listbox.sidebar,
+        .drawer-menu footer,
+        #sidebar-navbar-footer {
+          background-color: var(--sidebar-background-color, var(--general-sidebar-background-color,#fafafa));
+        }
+
+        #portrait-bar .bar {
+          background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
+        }
+
         paper-icon-button {
           --paper-icon-button-ink-color: white;
         }
@@ -374,37 +385,37 @@ class BackendAiConsole extends connect(store)(LitElement) {
           break;
         case 'data':
           this.menuTitle = 'Storage';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 3;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 2;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
         case 'statistics':
           this.menuTitle = 'Statistics';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 4;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 3;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 5;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments & Presets';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 7;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 8;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 7;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 9;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 8;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'maintenance':
           this.menuTitle = 'Maintenance';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 10;
+          this.shadowRoot.getElementById('sidebar-menu').selected = 9;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
         default:
@@ -415,13 +426,15 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   async logout(performClose = false) {
-    console.log('performclose:', performClose);
+    console.log('also close the app:', performClose);
     if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
       this.notification.text = 'Clean up now...';
       this.notification.show();
       if (window.backendaiclient._config.connectionMode === 'SESSION') {
         await window.backendaiclient.logout();
       }
+      this.is_admin = false;
+      this.is_superadmin = false;
       window.backendaiclient = null;
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
@@ -431,9 +444,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
-        window.location.reload();
-        //window.location.href = '/summary';
-        //this.shadowRoot.querySelector('#login-panel').login();
+        this._page = 'summary';
+        navigate(decodeURIComponent('/'));
+        this.shadowRoot.querySelector('#login-panel').login();
       } else {
         window.location.reload();
       }
@@ -494,10 +507,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   Sessions
                 </paper-item>
               </a>
+              ${ false ? html`
               <paper-item disabled>
                 <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
                 Experiments
-              </paper-item>
+              </paper-item>`: html``}
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
@@ -563,7 +577,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.08.4.190823</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.08.5.190826</small>
               </address>
             </div>
           </app-header-layout>

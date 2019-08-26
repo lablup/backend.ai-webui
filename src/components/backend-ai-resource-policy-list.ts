@@ -662,7 +662,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _markIfUnlimited(value) {
-    if (['Unlimited', 0].includes(value)) {
+    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
     } else {
       return value;

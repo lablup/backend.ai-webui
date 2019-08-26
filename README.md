@@ -18,7 +18,7 @@ Backend.AI console focuses to
  * Virtual Folder management
     * Create / delete folders
     * Upload  / download files
-    * Share folders (coming soon)
+    * Share folders 
  * Statistics
     * User resource statistics
     * Session statistics
