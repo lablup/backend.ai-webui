@@ -633,7 +633,7 @@ class BackendAiLogin extends LitElement {
         ` : html``}
       </wl-dialog>
       <lablup-notification id="notification"></lablup-notification>
-      <backend-ai-signup id="signup-dialog"></backend-ai-signup>
+      <backend-ai-signup-hanati id="signup-dialog"></backend-ai-signup-hanati>
     `;
   }
 }
