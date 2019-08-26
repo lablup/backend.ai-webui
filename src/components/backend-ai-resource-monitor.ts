@@ -84,6 +84,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
+    this.direction = "horizontal";
+    this.init_resource();
+  }
+
+  init_resource() {
     this.supports = {};
     this.resourceLimits = {};
     this.userResourceLimit = {};
@@ -155,7 +160,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.mem_request = 1;
     this.gpu_request = 0;
     this.session_request = 1;
-    this.direction = "horizontal";
     this.scaling_groups = [];
     this.scaling_group = '';
     this.enable_scaling_group = false;
@@ -1046,9 +1050,17 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.metric_updating = false;
         return;
       }
+      // Post-UI markup to disable unchangeable values
+      this.shadowRoot.querySelector('#cpu-resource').disabled = false;
+      this.shadowRoot.querySelector('#mem-resource').disabled = false;
+      this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+      this.shadowRoot.querySelector('#session-resource').disabled = false;
+      this.shadowRoot.querySelector('#launch-button').disabled = false;
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      let disableLaunch = false;
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
-          let cpu_metric = item;
+          let cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
@@ -1063,15 +1075,19 @@ class BackendAiResourceMonitor extends BackendAIPage {
               cpu_metric.max = this.available_slot['cpu_slot'];
             }
           }
-          if (cpu_metric.min > cpu_metric.max) {
-            cpu_metric.min = cpu_metric.max;
-            this.shadowRoot.querySelector('#cpu-resource').disabled = true
+          if (cpu_metric.min >= cpu_metric.max) {
+            if (cpu_metric.min > cpu_metric.max) {
+              cpu_metric.min = cpu_metric.max;
+            }
+            cpu_metric.max = cpu_metric.max + 1;
+            disableLaunch = true;
+            this.shadowRoot.querySelector('#cpu-resource').disabled = true;
           }
           this.cpu_metric = cpu_metric;
         }
 
         if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
-          let gpu_metric = item;
+          let gpu_metric = {...item};
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
             if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity' && gpu_metric.max !== NaN) {
@@ -1093,7 +1109,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           this.gpu_metric = gpu_metric;
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'vgpu') {
-          let vgpu_metric = item;
+          let vgpu_metric = {...item};
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity' && vgpu_metric.max !== NaN) {
@@ -1119,7 +1135,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
         if (item.key === 'tpu') {
-          let tpu_metric = item;
+          let tpu_metric = {...item};
           tpu_metric.min = parseInt(tpu_metric.min);
           tpu_metric.max = parseInt(tpu_metric.max);
           if (tpu_metric.min > tpu_metric.max) {
@@ -1128,14 +1144,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
           this.tpu_metric = tpu_metric;
         }
         if (item.key === 'mem') {
-          let mem_metric = item;
-          mem_metric.min = window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
+          let mem_metric = {...item};
+          mem_metric.min = window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
           if (mem_metric.min < 0.1) {
             mem_metric.min = 0.1;
           }
           let image_mem_max = window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           if ('mem' in this.userResourceLimit) {
-            let user_mem_max = window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
+            let user_mem_max = window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
             if (parseInt(image_mem_max) !== 0) {
               mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem_slot']);
             } else {
@@ -1148,10 +1164,16 @@ class BackendAiResourceMonitor extends BackendAIPage {
               mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
             }
           }
-          if (mem_metric.min > mem_metric.max) {
-            mem_metric.min = mem_metric.max;
+          if (mem_metric.min >= mem_metric.max) {
+            if (mem_metric.min > mem_metric.max) {
+              mem_metric.min = mem_metric.max;
+            }
+            mem_metric.max = mem_metric.max + 1;
+            disableLaunch = true;
             this.shadowRoot.querySelector('#mem-resource').disabled = true
           }
+          mem_metric.min = Number(mem_metric.min.toFixed(2));
+          mem_metric.max = Number(mem_metric.max.toFixed(2));
           this.mem_metric = mem_metric;
         }
       });
@@ -1179,22 +1201,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       } else {
         this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, this.gpu_metric.min);
       }
-
-      // Post-UI markup to disable unchangeable values
-      this.shadowRoot.querySelector('#cpu-resource').disabled = false;
-      this.shadowRoot.querySelector('#mem-resource').disabled = false;
-      this.shadowRoot.querySelector('#gpu-resource').disabled = false;
-      this.shadowRoot.querySelector('#session-resource').disabled = false;
-      this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
-
-      if (this.cpu_metric.min == this.cpu_metric.max) {
-        this.shadowRoot.querySelector('#cpu-resource').max = this.cpu_metric.max + 1;
-      }
-      if (this.mem_metric.min == this.mem_metric.max) {
-        this.shadowRoot.querySelector('#mem-resource').max = this.mem_metric.max + 1;
-      }
-      if (this.cpu_metric.min == this.cpu_metric.max || this.mem_metric.min == this.mem_metric.max) {
+      if (disableLaunch) {
         this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
         this.shadowRoot.querySelector('#mem-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
@@ -1500,7 +1507,7 @@ ${this.resource_templates.map(item => html`
                 <div class="horizontal center layout">
                   <span class="resource-type" style="width:30px;">RAM</span>
                   <paper-slider id="mem-resource" class="mem"
-                                pin snaps step=0.1 editable
+                                pin snaps step=0.05 editable
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                 value="${this.mem_request}"></paper-slider>
                   <span class="caption">GB</span>
