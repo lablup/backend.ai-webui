@@ -62,6 +62,7 @@ class BackendAiSessionList extends BackendAIPage {
   public updateComplete: any;
   public _connectionMode: string;
   public enableScalingGroup: any;
+  public is_admin: any;
 
   constructor() {
     super();
@@ -78,6 +79,7 @@ class BackendAiSessionList extends BackendAIPage {
     this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
     this._boundUserInfoRenderer = this.userInfoRenderer.bind(this);
     this.refreshing = false;
+    this.is_admin = false;
     this._connectionMode = 'API';
   }
 
@@ -299,10 +301,6 @@ class BackendAiSessionList extends BackendAIPage {
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
   }
 
-  is_admin() {
-    return window.backendaiclient.is_admin;
-  }
-
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -311,11 +309,13 @@ class BackendAiSessionList extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.is_admin = window.backendaiclient.is_admin;
         this._connectionMode = window.backendaiclient._config._connectionMode;
         this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
         this._refreshJobData();
       }, true);
     } else { // already connected
+      this.is_admin = window.backendaiclient.is_admin;
       this._connectionMode = window.backendaiclient._config._connectionMode;
       this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
       this._refreshJobData();

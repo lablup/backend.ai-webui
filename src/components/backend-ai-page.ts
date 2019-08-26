@@ -8,11 +8,11 @@ import {LitElement} from 'lit-element';
 export class BackendAIPage extends LitElement {
   public active: any;
 
+  public _viewStateChanged(param: Boolean): void;
+
   constructor() {
     super();
   }
-
-  public _viewStateChanged(param: Boolean): void;
 
   _viewStateChanged(param) {
   }
@@ -27,6 +27,10 @@ export class BackendAIPage extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+  }
+
+  activeConnected() {
+    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null;
   }
 
   attributeChangedCallback(name, oldval, newval) {

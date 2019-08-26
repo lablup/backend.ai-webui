@@ -343,7 +343,7 @@ function createWindow () {
   devtools = null;
 
   mainWindow = new BrowserWindow({
-    width: 1280, 
+    width: 1280,
     height: 970,
     title: "Backend.AI",
     frame: true,
@@ -352,7 +352,7 @@ function createWindow () {
       nativeWindowOpen: true,
       nodeIntegration: false,
       preload: path.join(BASE_DIR, 'preload.js')
-    }  
+    }
   });
   // and load the index.html of the app.
   if (process.env.liveDebugMode === true) {
@@ -382,12 +382,13 @@ function createWindow () {
     }
   });
   ipcMain.on('app-closed', _ => {
+    if (process.platform !== 'darwin') {  // Force close app when it is closed even on macOS.
+      //app.quit()
+    }
     mainWindow = null;
     mainContent = null;
     devtools = null;
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
+    app.quit()
   });
 
   mainWindow.on('closed', function () {
@@ -408,12 +409,14 @@ function createWindow () {
         height: 970,
         webPreferences: {
           nodeIntegration: false
-        }         
+        }
       })
       event.newGuest = new BrowserWindow(options)
     }
   });
 }
+
+
 
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
@@ -450,7 +453,7 @@ app.on('activate', function () {
     createWindow()
   }
 });
-app.on('certificate-error', function(event, webContents, url, error, 
+app.on('certificate-error', function(event, webContents, url, error,
   certificate, callback) {
       event.preventDefault();
       callback(true);
