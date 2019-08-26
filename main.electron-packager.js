@@ -7,6 +7,9 @@ const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron');
 process.env.liveDebugMode = false;
+let windowWidth = 1280;
+let windowHeight = 970;
+
 
 // ES6 module loader with custom protocol
 const nfs = require('fs');
@@ -20,9 +23,10 @@ protocol.registerSchemesAsPrivileged([
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let mainContent;
+let devtools;
 
 var mainIndex = 'app/index.html';
-// TODO: randomize port to prevent conflict
+// Modules to control application life and create native browser window
 app.once('ready', function() {
   let port = 5050;
   //Add handler for proxy
@@ -36,10 +40,10 @@ app.once('ready', function() {
       }, 1000);
     });
     manager.start();
-  })
+  });
 
   var template;
-  if (process.platform == 'darwin') {
+  if (process.platform === 'darwin') {
     template = [
       {
         label: 'Backend.AI',
@@ -351,11 +355,11 @@ app.once('ready', function() {
 
 function createWindow () {
   // Create the browser window.
-  let devtools = null;
+  devtools = null;
 
   mainWindow = new BrowserWindow({
-    width: 1280, 
-    height: 970,
+    width: windowWidth,
+    height: windowHeight,
     title: "Backend.AI",
     frame: true,
     titleBarStyle: 'hiddenInset',
@@ -385,16 +389,19 @@ function createWindow () {
     }
   });
   ipcMain.on('app-closed', _ => {
+    if (process.platform !== 'darwin') {  // Force close app when it is closed even on macOS.
+      //app.quit()
+    }
     mainWindow = null;
     mainContent = null;
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
+    devtools = null;
+    app.quit()
   });
 
   mainWindow.on('closed', function () {
     mainWindow = null;
     mainContent = null;
+    devtools = null;
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
@@ -404,23 +411,23 @@ function createWindow () {
       Object.assign(options, {
         modal: true,
         parent: mainWindow,
-        width: 1280,
-        height: 970,
+        width: windowWidth,
+        height: windowHeight,
         webPreferences: {
           nodeIntegration: false
         }
       });
       event.newGuest = new BrowserWindow(options)
     }
-  })
+  });
 }
 
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
-    const url = request.url.substr(7)    /* all urls start with 'file://' */
-    callback({ path: path.normalize(`${BASE_DIR}/${url}`)})
+    const url = request.url.substr(7);    /* all urls start with 'file://' */
+    callback({ path: path.normalize(`${BASE_DIR}/${url}`)});
   }, (err) => {
-    if (err) console.error('Failed to register protocol')
+    if (err) console.error('Failed to register protocol');
   });
   protocol.registerBufferProtocol('es6', (req, cb) => {
     nfs.readFile(
@@ -433,20 +440,17 @@ app.on('ready', () => {
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
-      '    document.dispatchEvent(event);');
-    app.quit()
+  if (mainWindow) {
+    e.preventDefault();
+    mainWindow.webContents.send('app-close-window');
   }
-})
+});
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow()
+    createWindow();
   }
 });
 app.on('certificate-error', function(event, webContents, url, error, 
@@ -462,7 +466,7 @@ app.on('web-contents-created', (event, contents) => {
     delete webPreferences.preloadURL;
 
     // Disable Node.js integration
-    webPreferences.nodeIntegration = false
+    webPreferences.nodeIntegration = false;
 
     // Verify URL being loaded
     //if (!params.src.startsWith('https://yourapp.com/')) {
