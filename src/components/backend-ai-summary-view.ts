@@ -137,7 +137,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshHealthPanel() {
-    if (!this.activeConnected) {
+    if (this.activeConnected) {
       this._refreshSessionInformation();
       if (this.is_superadmin) {
         this._refreshAgentInformation();
