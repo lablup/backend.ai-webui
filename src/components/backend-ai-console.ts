@@ -433,6 +433,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
       if (window.backendaiclient._config.connectionMode === 'SESSION') {
         await window.backendaiclient.logout();
       }
+      this.is_admin = false;
+      this.is_superadmin = false;
       window.backendaiclient = null;
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
