@@ -256,10 +256,10 @@ export default class BackendAISummary extends BackendAIPage {
     this.cpu_current_usage_ratio = 0;
     this.mem_total_usage_ratio = 0;
     this.mem_current_usage_ratio = 0;
-    this.mem_current_usage_percent = 0;
+    this.mem_current_usage_percent = "0";
     this.is_admin = false;
     this.is_superadmin = false;
-    this.shadowRoot.querySelector('#resource-monitor').init_resource();
+    (this.shadowRoot.querySelector('#resource-monitor') as any).init_resource();
   }
 
   _sync_resource_values() {
