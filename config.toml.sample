@@ -4,8 +4,10 @@
 #defaultSessionEnvironment = ""
 siteDescription = "TEST"
 connectionMode = "SESSION" #connectionMode = API
+allowChangeSigninMode = false # Allows user to change signin mode
 signupSupport = false
 debug = false
+
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
