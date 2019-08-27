@@ -1888,13 +1888,18 @@ class Registry {
     this.client = client;
   }
 
+  list() {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": "config/docker/registry", "prefix": true});
+    return this.client._wrapWithPromise(rqst);
+  }
+
   add(key, value) {
     const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
     return this.client._wrapWithPromise(rqst);
   }
 
-  list() {
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": "config/docker/registry", "prefix": true});
+  delete(key) {
+    const rqst = this.client.newSignedRequest("POST", "/config/delete", {"key": `config/docker/registry/${key}`, "prefix": true});
     return this.client._wrapWithPromise(rqst);
   }
 }
