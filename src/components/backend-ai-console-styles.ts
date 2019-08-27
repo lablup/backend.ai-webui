@@ -271,10 +271,6 @@ export const BackendAiStyles =
       height: 48px;
     }
 
-    #portrait-bar .bar {
-      background-color: var(--general-sidebar-topbar-background-color);
-    }
-
     #main-toolbar {
       background-color: var(--general-menu-background-color);
       color: var(--general-menu-color);
@@ -611,7 +607,6 @@ export const BackendAiStyles =
 
     paper-listbox.sidebar {
       cursor: pointer;
-      background-color: var(--general-sidebar-background-color, #fafafa);
       color: var(--general-sidebar-color, #eeeeee);;
     }
 

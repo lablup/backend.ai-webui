@@ -600,7 +600,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
   }
 
   _markIfUnlimited(value) {
-    if (['-', 0, Infinity, 'Infinity'].includes(value)) {
+    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
     } else {
       return value;
