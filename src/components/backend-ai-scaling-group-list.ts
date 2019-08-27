@@ -127,6 +127,9 @@ class BackendAIScalingGroupList extends BackendAIPage {
           --input-border-style-disabled: 1px solid #ccc;
         }
 
+        wl-dialog {
+          --dialog-min-width: 350px;
+        }
       `
     ];
   }
