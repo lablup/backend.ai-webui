@@ -90,6 +90,10 @@ class BackendAIRegistryList extends BackendAIPage {
           --input-font-family: Roboto, Noto, sans-serif;
           margin-bottom: 20px
         }
+
+        wl-dialog {
+          --dialog-min-width: 350px;
+        }
       `
     ];
   }
@@ -146,11 +150,11 @@ class BackendAIRegistryList extends BackendAIPage {
     return anchor.hostname;
   }
 
-  _createRegistry() {
+  _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
-    const url = (<HTMLInputElement>this.shadowRoot.querySelector("#create-registry-url")).value,
-          username = (<HTMLInputElement>this.shadowRoot.querySelector("#create-registry-username")).value,
-          password = (<HTMLInputElement>this.shadowRoot.querySelector("#create-registry-password")).value;
+    const url = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-url")).value,
+          username = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-username")).value,
+          password = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-password")).value;
 
     if (url === "") {
       this.notification.text = "URL field is empty";
@@ -176,7 +180,7 @@ class BackendAIRegistryList extends BackendAIPage {
       } else {
         this.notification.text = "Error occurred";
       }
-      this._hideDialogById("#create-registry-dialog");
+      this._hideDialogById("#add-registry-dialog");
       this.notification.show();
     })
   }
@@ -200,6 +204,18 @@ class BackendAIRegistryList extends BackendAIPage {
       this.notification.text = "Hostname does not match!";
       this.notification.show();
     }
+  }
+
+  _rescanImage() {
+    window.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex][""])
+    .then(({ rescan_images }) => {
+      if (rescan_images.ok) {
+        this.notification.text = "Rescan image successful";
+      } else {
+        this.notification.text = PainKiller.relieve(rescan_images.msg);
+      }
+      this.notification.show();
+    })
   }
 
   _launchDialogById(id) {
@@ -252,6 +268,14 @@ class BackendAIRegistryList extends BackendAIPage {
               this._launchDialogById("#delete-registry-dialog")
             }}
           ></paper-icon-button>
+          <paper-icon-button
+            icon="refresh"
+            class="fg blue"
+            @click=${() => {
+              this.selectedIndex = rowData.index;
+              this._rescanImage();
+            }}
+          ></paper-icon-button>
         </div>
       `,
       root
@@ -269,10 +293,10 @@ class BackendAIRegistryList extends BackendAIPage {
           class="fg orange"
           id="add-registry"
           outlined
-          @click=${() => this._launchDialogById("#create-registry-dialog")}
+          @click=${() => this._launchDialogById("#add-registry-dialog")}
         >
           <wl-icon>add</wl-icon>
-          Create
+          Add Registry
         </wl-button>
       </h4>
 
@@ -299,10 +323,10 @@ class BackendAIRegistryList extends BackendAIPage {
         <vaadin-grid-column flex-grow="1" header="Controls" .renderer=${this.boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="create-registry-dialog" fixed backdrop blockscrolling>
+      <wl-dialog id="add-registry-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create Registry</span>
+            <span>Add Registry</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click=${e => this._hideDialog(e)}>
               <wl-icon>close</wl-icon>
@@ -311,31 +335,31 @@ class BackendAIRegistryList extends BackendAIPage {
           <form>
             <fieldset>
               <wl-textfield
-                id="create-registry-url"
+                id="add-registry-url"
                 type="text"
                 label="Registry URL"
               ></wl-textfield>
               <wl-textfield
-                id="create-registry-username"
+                id="add-registry-username"
                 type="text"
                 label="Username (Optional)"
               ></wl-textfield>
               <wl-textfield
-                id="create-registry-password"
+                id="add-registry-password"
                 type="password"
                 label="Password (Optional)"
               ></wl-textfield>
 
               <div class="horizontal layout center-justified">
                 <wl-button
-                  class="fg orange create-button"
+                  class="fg orange"
                   outlined
                   type="button"
                   style="box-sizing: border-box; width: 100%"
-                  @click=${this._createRegistry}
+                  @click=${this._addRegistry}
                 >
                   <wl-icon>add</wl-icon>
-                  Create Registry
+                  Add Registry
                 </wl-button>
               </div>
             </fieldset>
