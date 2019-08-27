@@ -1687,6 +1687,7 @@ class Maintenance {
       return Promise.resolve(false);
     }
   }
+
   recalculate_usage() {
     if (this.client.is_superadmin === true) {
       let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
