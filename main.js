@@ -437,11 +437,25 @@ function createWindow () {
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     if (frameName === '_blank') {
-      // open window as modal
       event.preventDefault();
       Object.assign(options, {
         //modal: true,
         frame: true,
+        titleBarStyle: '',
+        parent: mainWindow,
+        width: windowWidth,
+        height: windowHeight,
+        webPreferences: {
+          nodeIntegration: false
+        }
+      });
+      event.newGuest = new BrowserWindow(options)
+    } else {
+      event.preventDefault();
+      Object.assign(options, {
+        //modal: true,
+        frame: true,
+        titleBarStyle: '',
         parent: mainWindow,
         width: windowWidth,
         height: windowHeight,
