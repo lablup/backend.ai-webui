@@ -1349,7 +1349,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
               <div class="gauge-name">CPU</div>
             </div>
-            <div class="layout vertical start-justified wrap">
+            <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
               <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
             </div>
