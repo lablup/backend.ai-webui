@@ -24,6 +24,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/textfield';
+import 'weightless/title';
 
 import { default as PainKiller } from "./backend-ai-painkiller";
 import { BackendAiStyles } from "./backend-ai-console-styles";
@@ -207,7 +208,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _rescanImage() {
-    window.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex][""])
+    window.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
     .then(({ rescan_images }) => {
       if (rescan_images.ok) {
         this.notification.text = "Rescan image successful";
@@ -368,12 +369,12 @@ class BackendAIRegistryList extends BackendAIPage {
       </wl-dialog>
 
       <wl-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
-        <h3 slot="header" style="color: rgb(242, 100, 85)">Warning: this cannot be undone!</h3>
+        <wl-title level="3" slot="header" style="color: rgb(242, 100, 85)">Warning: this cannot be undone!</wl-title>
         <div slot="content">
           <wl-textfield
             id="delete-registry"
             type="text"
-            label="Type Registry Hostname to Delete"
+            label="Type registry hostname to delete"
           ></wl-textfield>
           <wl-button
             class="fg red delete"
