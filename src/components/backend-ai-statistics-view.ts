@@ -112,7 +112,7 @@ class BackendAIStatisticsView extends BackendAIPage {
 
     els.forEach(e => {
       e.children[0].removeAttribute("active");
-    })
+    });
     this.shadowRoot.querySelector(`#${tab.value}-list`).setAttribute("active", true);
   }
 
@@ -123,7 +123,7 @@ class BackendAIStatisticsView extends BackendAIPage {
           <h3 class="tab horizontal center layout">
             <wl-tab-group>
               <wl-tab value="usage" checked @click="${e => this._showTab(e.target)}">Usage</wl-tab>
-              <wl-tab value="insight" checked @click="${e => this._showTab(e.target)}">Insight</wl-tab>
+              <wl-tab value="insight" disabled @click="${e => this._showTab(e.target)}">Insight</wl-tab>
             </wl-tab-group>
           </h3>
           <div class="horizontal wrap layout">
