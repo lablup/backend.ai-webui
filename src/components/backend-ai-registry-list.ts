@@ -30,6 +30,7 @@ import { default as PainKiller } from "./backend-ai-painkiller";
 import { BackendAiStyles } from "./backend-ai-console-styles";
 import { IronFlex, IronFlexAlignment } from "../plastics/layout/iron-flex-layout-classes";
 import './lablup-notification';
+import './backend-ai-indicator';
 
 class BackendAIRegistryList extends BackendAIPage {
   public notification: any;
@@ -37,10 +38,10 @@ class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;
   public selectedIndex: any;
   public boundControlsRenderer: any;
+  public indicator: any;
 
   constructor() {
     super();
-
     this.active = false;
     this.registryList = [];
     this.selectedIndex = 0;
@@ -53,6 +54,9 @@ class BackendAIRegistryList extends BackendAIPage {
         type: Boolean
       },
       notification: {
+        type: Object
+      },
+      indicator: {
         type: Object
       }
     }
@@ -101,6 +105,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
+    this.indicator = this.shadowRoot.querySelector('#indicator');
   }
 
   _parseRegistryList(obj) {
@@ -208,15 +213,29 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _rescanImage() {
+    this.indicator.start('indeterminate');
+    this.indicator.set(10, 'Updating registry information...');
     window.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
     .then(({ rescan_images }) => {
       if (rescan_images.ok) {
-        this.notification.text = "Rescan image successful";
+        this.indicator.set(100, 'Registry update finished.');
+        this.indicator.end(1000);
       } else {
+        this.indicator.set(50, 'Registry update failed.');
+        this.indicator.end(1000);
         this.notification.text = PainKiller.relieve(rescan_images.msg);
+        this.notification.show();
       }
-      this.notification.show();
-    })
+    }).catch(err => {
+      this.scanning = false;
+      console.log(err);
+      this.indicator.set(50, 'Rescan failed.');
+      this.indicator.end(1000);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show();
+      }
+    });
   }
 
   _launchDialogById(id) {
@@ -287,6 +306,7 @@ class BackendAIRegistryList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
+      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <h4 class="horizontal flex center center-justified layout">
         <span>Registries</span>
         <span class="flex"></span>
