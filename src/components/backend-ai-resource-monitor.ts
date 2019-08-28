@@ -79,6 +79,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public updateComplete: any;
   public num_sessions: any;
   public vgpu_metric: any;
+  public sessions_list: any;
   public metric_updating: any;
   public metadata_updating: any;
   public location: any;
@@ -166,6 +167,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.scaling_groups = [];
     this.scaling_group = '';
     this.enable_scaling_group = false;
+    this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
   }
@@ -289,6 +291,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       enable_scaling_group: {
         type: Boolean
+      },
+      sessions_list: {
+        type: Array
       },
       location: {
         type: String
@@ -494,6 +499,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
     this.notification = this.shadowRoot.querySelector('#notification');
 
+    this._initSessions();
     this._initAliases();
     this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -523,6 +529,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
+  }
+
+  _initSessions() {
+    let fields = ["sess_id"];
+    window.backendaiclient.computeSession.list(fields=fields, status="RUNNING")
+    .then(res => {
+      this.sessions_list = res.compute_sessions.map(e => e.sess_id);
+    })
   }
 
   _initAliases() {
@@ -618,6 +632,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
+      // this.enable_scaling_group = false;
       if (this.enable_scaling_group === true) {
         let sgs = await window.backendaiclient.scalingGroup.list();
         this.scaling_groups = sgs.scaling_groups;
@@ -664,6 +679,12 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
+
+    if (this.sessions_list.includes(sessionName)) {
+      this.notification.text = "Duplicate session name not allowed.";
+      this.notification.show();
+      return;
+    }
     if (this.enable_scaling_group) {
       this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
     }
@@ -693,8 +714,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
         config['gpu'] = 0.0;
       }
     }
-    if (sessionName.length < 4) {
-      sessionName = undefined;
+    if (sessionName.length == 0) { // No name is given
+      sessionName = this.generateSessionId();
     }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
@@ -706,8 +727,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.notification.show();
 
     let sessions = [];
-    for (var i = 0; i < this.num_sessions; i++) {
-      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
+    const randStr = this._getRandomString();
+
+    if (this.num_sessions > 1) {
+      for (let i = 1; i <= this.num_sessions; i++) {
+        sessions.push({kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config});
+      }
+    } else {
+      sessions.push({kernelName, sessionName, config});
     }
 
     const createSessionQueue = sessions.map(item => {
@@ -735,6 +762,24 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
     });
+  }
+
+  _getRandomString() {
+    let randnum = Math.floor(Math.random() * 52 * 52 * 52);
+
+    const parseNum = (num) => {
+      if (num < 26) return String.fromCharCode(65 + num);
+      else return String.fromCharCode(97 + num - 26);
+    };
+
+    let randstr = "";
+
+    for (let i = 0; i < 3; i++) {
+      randstr += parseNum(randnum % 52);
+      randnum = Math.floor(randnum / 52);
+    }
+
+    return randstr;
   }
 
   _createKernel(kernelName, sessionName, config) {
@@ -844,6 +889,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
       this.updateMetric();
     }
+  }
+
+  generateSessionId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 8; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text + "-console";
   }
 
   async _updateVirtualFolderList() {
