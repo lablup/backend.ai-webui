@@ -471,6 +471,7 @@ class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
+          console.log("refresh!!");
           var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
           document.dispatchEvent(event);
         }
@@ -883,6 +884,8 @@ class BackendAiSessionList extends BackendAIPage {
       this.terminateSessionDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
       this.notification.show();
+      let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
     });
   }
 
