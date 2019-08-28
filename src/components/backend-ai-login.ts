@@ -216,6 +216,7 @@ class BackendAiLogin extends LitElement {
         this.connection_mode = 'SESSION';
       }
       this.refreshPanel();
+      this.requestUpdate();
     }
   }
 
@@ -621,11 +622,11 @@ class BackendAiLogin extends LitElement {
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Login</div>
-            ${this.change_signin_support ? html`
-                <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`IAM` : html`ID/password`} user?</a></small>
-            ` : html``}
+            <div>Login with ${this.connection_mode == 'SESSION' ? html`ID/password` : html`IAM`}</div>
             <div class="flex"></div>
+            ${this.change_signin_support ? html`
+                <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`Use IAM` : html`Use ID/password`}</a></small>
+            ` : html``}
             ${this.signup_support ? html`
             <span style="font-size:14px;margin-right:10px;">Not a user? </span>
             <wl-button style="width:80px;font-weight:500;" class="signup-button fg green signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
