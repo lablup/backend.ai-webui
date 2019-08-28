@@ -79,10 +79,19 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public updateComplete: any;
   public num_sessions: any;
   public vgpu_metric: any;
+  public metric_updating: any;
+  public metadata_updating: any;
+  public location: any;
 
   constructor() {
     super();
     this.active = false;
+    this.direction = "horizontal";
+    this.location = '';
+    this.init_resource();
+  }
+
+  init_resource() {
     this.supports = {};
     this.resourceLimits = {};
     this.userResourceLimit = {};
@@ -154,10 +163,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.mem_request = 1;
     this.gpu_request = 0;
     this.session_request = 1;
-    this.direction = "horizontal";
     this.scaling_groups = [];
     this.scaling_group = '';
     this.enable_scaling_group = false;
+    this.metric_updating = false;
+    this.metadata_updating = false;
   }
 
   static get is() {
@@ -279,6 +289,15 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       enable_scaling_group: {
         type: Boolean
+      },
+      location: {
+        type: String
+      },
+      metric_updating: {
+        type: Boolean
+      },
+      metadata_updating: {
+        type: Boolean
       }
     }
   }
@@ -322,7 +341,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           paper-progress {
-              width: 100px;
+              width: 90px;
               border-radius: 3px;
               --paper-progress-height: 10px;
               --paper-progress-active-color: #3677EB;
@@ -337,7 +356,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           .resources.horizontal .short-indicator .gauge-label {
-              width: 80px;
+              width: 50px;
           }
 
           span.caption {
@@ -360,7 +379,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           .gauge-label {
-              width: 120px;
+              width: 100px;
               font-weight: 300;
               font-size: 12px;
           }
@@ -446,6 +465,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
               display: block;
           }
 
+          .resources .monitor {
+              margin-right: 5px;
+          }
           .resources.vertical .monitor {
               margin-bottom: 10px;
           }
@@ -476,8 +498,12 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
-      this._refreshConcurrency();
-      this.aggregateResource();
+      if (this.activeConnected && this.metadata_updating === false) {
+        this.metadata_updating = true;
+        this._refreshConcurrency();
+        this.aggregateResource();
+        this.metadata_updating = false;
+      }
     });
     gpu_resource.addEventListener('value-change', () => {
       if (gpu_resource.value > 0) {
@@ -513,20 +539,28 @@ class BackendAiResourceMonitor extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        if (this.activeConnected && this.metadata_updating === false) {
+          this.metadata_updating = true;
+          this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
+          if (this.enable_scaling_group === true) {
+            let sgs = await window.backendaiclient.scalingGroup.list();
+            this.scaling_groups = sgs.scaling_groups;
+          }
+          this._refreshResourcePolicy();
+          this.metadata_updating = false;
+        }
+      }, true);
+    } else { // already connected
+      if (this.activeConnected && this.metadata_updating === false) {
+        this.metadata_updating = true;
         this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
         if (this.enable_scaling_group === true) {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
         }
         this._refreshResourcePolicy();
-      }, true);
-    } else { // already connected
-      this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
-      if (this.enable_scaling_group === true) {
-        let sgs = await window.backendaiclient.scalingGroup.list();
-        this.scaling_groups = sgs.scaling_groups;
+        this.metadata_updating = false;
       }
-      this._refreshResourcePolicy();
     }
   }
 
@@ -561,6 +595,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this._refreshResourceValues();
     }).catch((err) => {
       console.log(err);
+      this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
@@ -686,6 +721,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
+      this.metadata_updating = false;
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
@@ -1022,23 +1058,39 @@ class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateMetric() {
+    if (this.metric_updating == true) return;
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateMetric();
       }, true);
     } else {
+      this.metric_updating = true;
       let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
-      if (typeof selectedItem === 'undefined' || selectedItem === null) return;
+      if (typeof selectedItem === 'undefined' || selectedItem === null) {
+        this.metric_updating = false;
+        return;
+      }
       let kernel = selectedItem.id;
       let currentVersion = this.shadowRoot.querySelector('#version').value;
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       await this._updateVirtualFolderList();
       let available_slot = await this._aggregateResourceUse();
-      if (!currentResource) return;
+      if (!currentResource) {
+        this.metric_updating = false;
+        return;
+      }
+      // Post-UI markup to disable unchangeable values
+      this.shadowRoot.querySelector('#cpu-resource').disabled = false;
+      this.shadowRoot.querySelector('#mem-resource').disabled = false;
+      this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+      this.shadowRoot.querySelector('#session-resource').disabled = false;
+      this.shadowRoot.querySelector('#launch-button').disabled = false;
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      let disableLaunch = false;
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
-          let cpu_metric = item;
+          let cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
@@ -1053,14 +1105,22 @@ class BackendAiResourceMonitor extends BackendAIPage {
               cpu_metric.max = this.available_slot['cpu_slot'];
             }
           }
-          if (cpu_metric.min > cpu_metric.max) {
-            // TODO: dynamic maximum per user policy
+          if (cpu_metric.min >= cpu_metric.max) {
+            if (cpu_metric.min > cpu_metric.max) {
+              cpu_metric.min = cpu_metric.max;
+              cpu_metric.max = cpu_metric.max + 1;
+              disableLaunch = true;
+              this.shadowRoot.querySelector('#cpu-resource').disabled = true;
+            } else { // min == max
+              cpu_metric.max = cpu_metric.max + 1;
+              this.shadowRoot.querySelector('#cpu-resource').disabled = true;
+            }
           }
           this.cpu_metric = cpu_metric;
         }
 
         if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
-          let gpu_metric = item;
+          let gpu_metric = {...item};
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
             if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity' && gpu_metric.max !== NaN) {
@@ -1075,13 +1135,20 @@ class BackendAiResourceMonitor extends BackendAIPage {
               gpu_metric.max = this.available_slot['gpu_slot'];
             }
           }
-          if (gpu_metric.min > gpu_metric.max) {
-            // TODO: dynamic maximum per user policy
+          if (gpu_metric.min >= gpu_metric.max) {
+            if (gpu_metric.min > gpu_metric.max) {
+              gpu_metric.min = gpu_metric.max;
+              disableLaunch = true;
+              this.shadowRoot.querySelector('#gpu-resource').disabled = true
+            } else {
+              gpu_metric.max = gpu_metric.max + 1;
+              this.shadowRoot.querySelector('#gpu-resource').disabled = true
+            }
           }
           this.gpu_metric = gpu_metric;
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'vgpu') {
-          let vgpu_metric = item;
+          let vgpu_metric = {...item};
           vgpu_metric.min = parseInt(vgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity' && vgpu_metric.max !== NaN) {
@@ -1097,8 +1164,15 @@ class BackendAiResourceMonitor extends BackendAIPage {
               vgpu_metric.max = 0;
             }
           }
-          if (vgpu_metric.min > vgpu_metric.max) {
-            // TODO: dynamic maximum per user policy
+          if (vgpu_metric.min >= vgpu_metric.max) {
+            if (vgpu_metric.min > vgpu_metric.max) {
+              vgpu_metric.min = vgpu_metric.max;
+              disableLaunch = true;
+              this.shadowRoot.querySelector('#gpu-resource').disabled = true
+            } else {
+              vgpu_metric.max = vgpu_metric.max + 1;
+              this.shadowRoot.querySelector('#gpu-resource').disabled = true
+            }
           }
           this.vgpu_metric = vgpu_metric;
           if (vgpu_metric.max > 0) {
@@ -1106,7 +1180,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
         if (item.key === 'tpu') {
-          let tpu_metric = item;
+          let tpu_metric = {...item};
           tpu_metric.min = parseInt(tpu_metric.min);
           tpu_metric.max = parseInt(tpu_metric.max);
           if (tpu_metric.min > tpu_metric.max) {
@@ -1115,14 +1189,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
           this.tpu_metric = tpu_metric;
         }
         if (item.key === 'mem') {
-          let mem_metric = item;
-          mem_metric.min = window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g', 'g');
+          let mem_metric = {...item};
+          mem_metric.min = window.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
           if (mem_metric.min < 0.1) {
             mem_metric.min = 0.1;
           }
           let image_mem_max = window.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           if ('mem' in this.userResourceLimit) {
-            let user_mem_max = window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g', 'g');
+            let user_mem_max = window.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
             if (parseInt(image_mem_max) !== 0) {
               mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem_slot']);
             } else {
@@ -1135,9 +1209,19 @@ class BackendAiResourceMonitor extends BackendAIPage {
               mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
             }
           }
-          if (mem_metric.min > mem_metric.max) {
-            // TODO: dynamic maximum per user policy
+          if (mem_metric.min >= mem_metric.max) {
+            if (mem_metric.min > mem_metric.max) {
+              mem_metric.min = mem_metric.max;
+              mem_metric.max = mem_metric.max + 1;
+              disableLaunch = true;
+              this.shadowRoot.querySelector('#mem-resource').disabled = true
+            } else {
+              mem_metric.max = mem_metric.max + 1;
+              this.shadowRoot.querySelector('#mem-resource').disabled = true
+            }
           }
+          mem_metric.min = Number(mem_metric.min.toFixed(2));
+          mem_metric.max = Number(mem_metric.max.toFixed(2));
           this.mem_metric = mem_metric;
         }
       });
@@ -1162,27 +1246,22 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#resource-templates').selected = "0";
         default_template.setAttribute('active', true);
         //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
-      }
-
-      // Post-UI markup to disable unchangeable values
-      if (this.cpu_metric.min == this.cpu_metric.max) {
-        this.shadowRoot.querySelector('#cpu-resource').max = this.cpu_metric.max + 1;
-        this.shadowRoot.querySelector('#cpu-resource').disabled = true
       } else {
-        this.shadowRoot.querySelector('#cpu-resource').disabled = false;
+        this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, this.gpu_metric.min);
       }
-      if (this.mem_metric.min == this.mem_metric.max) {
-        this.shadowRoot.querySelector('#mem-resource').max = this.mem_metric.max + 1;
-        this.shadowRoot.querySelector('#mem-resource').disabled = true
-      } else {
-        this.shadowRoot.querySelector('#mem-resource').disabled = false;
+      if (disableLaunch) {
+        this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
+        this.shadowRoot.querySelector('#mem-resource').disabled = true;
+        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+        this.shadowRoot.querySelector('#session-resource').disabled = true;
+        this.shadowRoot.querySelector('#launch-button').disabled = true;
+        this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Not enough resource';
       }
       if (this.gpu_metric.min == this.gpu_metric.max) {
         this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true
-      } else {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
+      this.metric_updating = false;
     }
   }
 
@@ -1223,6 +1302,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       });
       this._updateEnvironment();
     }).catch((err) => {
+      this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
@@ -1300,7 +1380,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
               <div class="gauge-name">CPU</div>
             </div>
-            <div class="layout vertical start-justified wrap">
+            <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
               <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
             </div>
@@ -1311,7 +1391,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
+              <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
               <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
             </div>
           </div>
@@ -1464,35 +1544,37 @@ ${this.resource_templates.map(item => html`
             <wl-expansion name="resource-group">
               <span slot="title">Advanced</span>
               <span slot="description">Custom allocation</span>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">CPU</span>
-                <paper-slider id="cpu-resource" class="cpu"
-                              pin snaps expand editable
-                              min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                              value="${this.cpu_request}"></paper-slider>
-                <span class="caption">Core</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">RAM</span>
-                <paper-slider id="mem-resource" class="mem"
-                              pin snaps step=0.1 editable
-                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                              value="${this.mem_request}"></paper-slider>
-                <span class="caption">GB</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:30px;">GPU</span>
-                <paper-slider id="gpu-resource" class="gpu"
-                              pin snaps editable step="${this.gpu_step}"
-                              min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
-                <span class="caption">GPU</span>
-              </div>
-              <div class="horizontal center layout">
-                <span class="resource-type" style="width:50px;">Sessions</span>
-                <paper-slider id="session-resource" class="session"
-                              pin snaps editable step=1
-                              min=1 max=5 value="${this.session_request}"></paper-slider>
-                <span class="caption">#</span>
+              <div class="vertical layout">
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:30px;">CPU</span>
+                  <paper-slider id="cpu-resource" class="cpu"
+                                pin snaps expand editable
+                                min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
+                                value="${this.cpu_request}"></paper-slider>
+                  <span class="caption">Core</span>
+                </div>
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:30px;">RAM</span>
+                  <paper-slider id="mem-resource" class="mem"
+                                pin snaps step=0.05 editable
+                                min="${this.mem_metric.min}" max="${this.mem_metric.max}"
+                                value="${this.mem_request}"></paper-slider>
+                  <span class="caption">GB</span>
+                </div>
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:30px;">GPU</span>
+                  <paper-slider id="gpu-resource" class="gpu"
+                                pin snaps editable step="${this.gpu_step}"
+                                min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
+                  <span class="caption">GPU</span>
+                </div>
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:50px;">Sessions</span>
+                  <paper-slider id="session-resource" class="session"
+                                pin snaps editable step=1
+                                min=1 max=5 value="${this.session_request}"></paper-slider>
+                  <span class="caption">#</span>
+                </div>
               </div>
             </wl-expansion>
 
