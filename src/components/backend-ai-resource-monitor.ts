@@ -498,10 +498,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
 
     this.notification = this.shadowRoot.querySelector('#notification');
-
-    this._initSessions();
-    this._initAliases();
-    this.aggregateResource();
+    if (this.activeConnected && this.metadata_updating === false) {
+      this._initSessions();
+      this._initAliases();
+      this.aggregateResource();
+    }
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.activeConnected && this.metadata_updating === false) {

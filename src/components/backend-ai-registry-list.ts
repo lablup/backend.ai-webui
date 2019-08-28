@@ -227,7 +227,6 @@ class BackendAIRegistryList extends BackendAIPage {
         this.notification.show();
       }
     }).catch(err => {
-      this.scanning = false;
       console.log(err);
       this.indicator.set(50, 'Rescan failed.');
       this.indicator.end(1000);
