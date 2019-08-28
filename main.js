@@ -23,23 +23,11 @@ protocol.registerSchemesAsPrivileged([
 let mainWindow;
 let mainContent;
 let devtools;
+let manager = new ProxyManager();
 
 var mainIndex = 'build/electron-app/app/index.html';
 // Modules to control application life and create native browser window
 app.once('ready', function() {
-  let port = 5050;
-  //Add handler for proxy
-  ipcMain.once('ready', (event) => {
-    let manager = new ProxyManager();
-    manager.once("ready", () => {
-      let url = 'http://localhost:' + manager.port + "/";
-      console.log("Proxy is ready:" + url);
-      setTimeout(() => {
-        event.reply('proxy-ready', url);
-      }, 1000);
-    });
-    manager.start();
-  });
 
   var template;
   if (process.platform === 'darwin') {
@@ -419,6 +407,16 @@ function createWindow () {
       mainWindow.webContents.send('app-close-window');
     }
   });
+
+  mainWindow.webContents.once('did-finish-load', () => {
+    manager.once("ready", () => {
+      let url = 'http://localhost:' + manager.port + "/";
+      console.log("Proxy is ready:" + url);
+      mainWindow.webContents.send('proxy-ready', url);
+    });
+    manager.start();
+  });
+
   ipcMain.on('app-closed', _ => {
     if (process.platform !== 'darwin') {  // Force close app when it is closed even on macOS.
       //app.quit()
@@ -437,11 +435,25 @@ function createWindow () {
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     if (frameName === '_blank') {
-      // open window as modal
       event.preventDefault();
       Object.assign(options, {
         //modal: true,
         frame: true,
+        titleBarStyle: '',
+        parent: mainWindow,
+        width: windowWidth,
+        height: windowHeight,
+        webPreferences: {
+          nodeIntegration: false
+        }
+      });
+      event.newGuest = new BrowserWindow(options)
+    } else {
+      event.preventDefault();
+      Object.assign(options, {
+        //modal: true,
+        frame: true,
+        titleBarStyle: '',
         parent: mainWindow,
         width: windowWidth,
         height: windowHeight,
