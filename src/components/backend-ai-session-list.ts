@@ -50,6 +50,7 @@ class BackendAiSessionList extends BackendAIPage {
   public _boundControlRenderer: any;
   public _boundSessionInfoRenderer: any;
   public _boundCheckboxRenderer: any;
+  public _boundUserInfoRenderer: any;
   public refreshing: any;
   public loadingIndicator: any;
   public shadowRoot: any;
@@ -59,6 +60,9 @@ class BackendAiSessionList extends BackendAIPage {
   public terminateSessionDialog: any;
   public terminateSelectedSessionsDialog: any;
   public updateComplete: any;
+  public _connectionMode: string;
+  public enableScalingGroup: any;
+  public is_admin: any;
 
   constructor() {
     super();
@@ -73,7 +77,10 @@ class BackendAiSessionList extends BackendAIPage {
     this._boundControlRenderer = this.controlRenderer.bind(this);
     this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
     this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
+    this._boundUserInfoRenderer = this.userInfoRenderer.bind(this);
     this.refreshing = false;
+    this.is_admin = false;
+    this._connectionMode = 'API';
   }
 
   static get is() {
@@ -126,6 +133,9 @@ class BackendAiSessionList extends BackendAIPage {
         type: Object
       },
       refreshing: {
+        type: Boolean
+      },
+      enableScalingGroup: {
         type: Boolean
       }
     };
@@ -291,10 +301,6 @@ class BackendAiSessionList extends BackendAIPage {
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
   }
 
-  is_admin() {
-    return window.backendaiclient.is_admin;
-  }
-
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -303,9 +309,15 @@ class BackendAiSessionList extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.is_admin = window.backendaiclient.is_admin;
+        this._connectionMode = window.backendaiclient._config._connectionMode;
+        this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
         this._refreshJobData();
       }, true);
     } else { // already connected
+      this.is_admin = window.backendaiclient.is_admin;
+      this._connectionMode = window.backendaiclient._config._connectionMode;
+      this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
       this._refreshJobData();
     }
   }
@@ -400,11 +412,16 @@ class BackendAiSessionList extends BackendAIPage {
       default:
         status = "RUNNING";
     }
-
     let fields = [
       "sess_id", "lang", "created_at", "terminated_at", "status",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
+    if (this.enableScalingGroup) {
+      fields.push("scaling_group");
+    }
+    if (this._connectionMode === "SESSION") {
+      fields.push("user_email");
+    }
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
       var sessions = response.compute_sessions;
@@ -586,7 +603,7 @@ class BackendAiSessionList extends BackendAIPage {
   }
 
   _msecToSec(value) {
-    return Number(value / 1000).toFixed(2);
+    return Number(value / 1000).toFixed(0);
   }
 
   _elapsed(start, end) {
@@ -858,6 +875,8 @@ class BackendAiSessionList extends BackendAIPage {
       this.terminateSessionDialog.hide();
       this.notification.text = "Session terminated.";
       this.notification.show();
+      let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
     }).catch((err) => {
       this._selected_items = [];
       this._clearCheckboxes();
@@ -929,9 +948,10 @@ class BackendAiSessionList extends BackendAIPage {
       window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
         setTimeout(() => {
           this.terminationQueue = [];
-          this.refreshList();
+          this.refreshList(true, false);
         }, 1000);
       }).catch((err) => {
+        this.refreshList(true, false);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
         this.notification.show();
       });
@@ -979,6 +999,19 @@ ${item.map(item => html`
              .kernel-id="${rowData.item.sess_id}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}">
+             ${rowData.item.appSupport ? html`
+            <paper-icon-button class="fg controls-running green"
+                               @click="${(e) => this._showAppLauncher(e)}"
+                               icon="vaadin:caret-right"></paper-icon-button>
+            <paper-icon-button class="fg controls-running"
+                               @click="${(e) => this._runJupyterTerminal(e)}"
+                               icon="vaadin:terminal"></paper-icon-button>
+                               ` : html``}
+             ${this.condition === 'running' ? html`
+            <paper-icon-button class="fg red controls-running"
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"
+                               icon="delete"></paper-icon-button>
+                               ` : html``}
              ${this._isRunning ? html`
             <paper-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
@@ -987,20 +1020,6 @@ ${item.map(item => html`
             <paper-icon-button disabled class="fg controls-running" icon="assignment"
             ></paper-icon-button>
              `}
-             ${rowData.item.appSupport ? html`
-            <paper-icon-button class="fg controls-running green"
-                               @click="${(e) => this._showAppLauncher(e)}"
-                               icon="vaadin:package"></paper-icon-button>
-            <paper-icon-button class="fg controls-running"
-                               @click="${(e) => this._runJupyterTerminal(e)}"
-                               icon="vaadin:terminal"></paper-icon-button>
-                               ` : html``}
-             ${this.condition === 'running' ? html`
-            <paper-icon-button class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"
-                               @click2="${(e) => this._terminateSession(e)}"
-                               icon="delete"></paper-icon-button>
-                               ` : html``}
         </div>`, root
     );
   }
@@ -1023,6 +1042,16 @@ ${item.map(item => html`
     render(
       html`
         <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+      `, root
+    );
+  }
+
+  userInfoRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div class="layout vertical">
+          <span class="indicator">${this._connectionMode === "API" ? rowData.item.access_key : rowData.item.user_email}</span>
+        </div>
       `, root
     );
   }
@@ -1052,12 +1081,7 @@ ${item.map(item => html`
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="130px" header="API Key" flex-grow="0" path="access_key">
-            <template>
-              <div class="layout vertical">
-                <span class="indicator">[[item.access_key]]</span>
-              </div>
-            </template>
+          <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === "API" ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
         <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
@@ -1075,6 +1099,15 @@ ${item.map(item => html`
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
+            <template is="dom-if" if="[[item.scaling_group]]">
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:work"></iron-icon>
+                <span>[[item.scaling_group]]</span>
+                <span class="indicator">SG</span>
+              </div>
+            </div>
+            </template>
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
                 <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
@@ -1205,8 +1238,8 @@ ${item.map(item => html`
             <p>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
          </div>
       </wl-dialog>
 

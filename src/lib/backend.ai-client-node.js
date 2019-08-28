@@ -148,15 +148,18 @@ class Client {
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
     this.group = new Group(this);
+    this.domain = new Domain(this);
     this.resources = new Resources(this);
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
+    this.domain = new Domain(this);
+
+    this._features= {}; // feature support list
 
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
   }
-
   /**
    * Return the server-side manager version.
    */
@@ -247,6 +250,27 @@ class Client {
   }
 
   /**
+   * Check compatibility of current manager
+   */
+  supports(feature) {
+    if (Object.keys(this._features).length === 0) {
+      this._updateSupportList();
+    }
+    if (feature in this._features) {
+      return this._features[feature];
+    } else {
+      return false;
+    }
+  }
+
+  _updateSupportList() {
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
+      this._features['scaling-group'] = true;
+      this._features['group'] = true;
+    }
+  }
+
+  /**
    * Return if manager is compatible with given version.
    */
   isManagerVersionCompatibleWith(version) {
@@ -261,8 +285,10 @@ class Client {
    */
   isAPIVersionCompatibleWith(version) {
     let apiVersion = this._apiVersion;
-    apiVersion = apiVersion.split('.').map(s => s.padStart(10)).join('.');
-    version = version.split('.').map(s => s.padStart(10)).join('.');
+    if (apiVersion !== null && version !== null) {
+      apiVersion = apiVersion.split('.').map(s => s.padStart(10)).join('.');
+      version = version.split('.').map(s => s.padStart(10)).join('.');
+    }
     return version <= apiVersion;
   }
 
@@ -678,16 +704,16 @@ class ResourcePreset {
   /**
    * Return the GraphQL Promise object containing resource preset list.
    */
-  list() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, null);
+  list(param = null) {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, param);
     return this.client._wrapWithPromise(rqst);
   }
 
   /**
    * Return the GraphQL Promise object containing resource preset checking result.
    */
-  check() {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, null);
+  check(param = null) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, param);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1581,6 +1607,56 @@ class Group {
   }
 }
 
+class Domain {
+  /**
+   * The domain API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+   * Get domain information.
+   * @param {string} domain_name - domain name of group
+   * @param {array} fields - fields to query.  Default fields are: ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+         'allowed_docker_registries', 'integration_id', 'scaling_groups']
+   * {
+   *   'name': String,          // Group name.
+   *   'description': String,   // Description for group.
+   *   'is_active': Boolean,    // Whether the group is active or not.
+   *   'created_at': String,    // Created date of group.
+   *   'modified_at': String,   // Modified date of group.
+   *   'total_resource_slots': JSOONString,   // Total resource slots
+   *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
+   *   'allowed_docker_registries': [String],   // Allowed docker registry lists
+   *   'integration_id': [String],   // Integration ids
+   *   'scaling_groups': [String],   // Scaling groups
+   * };
+   */
+  get(domain_name = false,
+       fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+         'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
+    let q, v;
+    if (domain_name !== false) {
+      q = `query($name: String) {` +
+        `  domain(name: $name) { ${fields.join(" ")} }` +
+        '}';
+      v = {'name': domain_name};
+      return this.client.gql(q, v);
+    }
+  }
+
+  list(fields = [ 'name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id' ]) {
+    let q = `query {` +
+            ` domains { ${fields.join(" ")} }` +
+            `}`;
+    let v = {};
+
+    return this.client.gql(q, v);
+  }
+}
+
 class Maintenance {
   /**
    * The Maintenance API wrapper.
@@ -1809,10 +1885,118 @@ class ScalingGroup {
     this.client = client;
   }
 
-  list(group = 'default') {
-    const queryString = `/scaling-groups?group=${this.client.current_group}`;
-    const rqst = this.client.newSignedRequest("GET", queryString, null);
-    return this.client._wrapWithPromise(rqst);
+  list(group='default') {
+    if (this.client.is_admin) {
+      const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+
+      const q = `query {` +
+                `  scaling_groups { ${fields.join(" ")} }` +
+                `}`;
+      const v = {};
+
+      return this.client.gql(q, v);
+    } else {
+      const queryString = `/scaling-groups?group=${this.client.current_group}`;
+      const rqst = this.client.newSignedRequest("GET", queryString, null);
+      return this.client._wrapWithPromise(rqst);
+    }
+  }
+
+  /**
+   * Create a scaling group
+   *
+   * @param {string} name - Scaling group name
+   * @param {string} description - Scaling group description
+   */
+  create(name, description="") {
+    const input = {
+      description,
+      is_active: true,
+      driver: "static",
+      scheduler: "fifo",
+      driver_opts: "{}",
+      scheduler_opts: "{}"
+    };
+    // if (this.client.is_admin === true) {
+    let q = `mutation($name: String!, $input: ScalingGroupInput!) {` +
+    `  create_scaling_group(name: $name, props: $input) {` +
+    `    ok msg` +
+    `  }` +
+    `}`;
+    let v = {
+      name,
+      input
+    };
+    return this.client.gql(q, v);
+    // } else {
+    //   return Promise.resolve(false);
+    // }
+  }
+
+  /**
+   * Associate a scaling group with a domain
+   *
+   * @param {string} domain - domain name
+   * @param {string} scaling_group - scaling group name
+   */
+  associateWithDomain(domain, scaling_group) {
+    let q = `mutation($domain: String!, $scaling_group: String!) {` +
+            `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      domain,
+      scaling_group
+    };
+
+    return this.client.gql(q, v);
+  }
+
+  /**
+   * Modify a scaling group
+   *
+   * @param {string} name - scaling group name
+   * @param {json} input - object containing desired modifications
+   * {
+   *   'description': String          // description of scaling group
+   *   'is_active': Boolean           // active status of scaling group
+   *   'driver': String
+   *   'driver_opts': JSONString
+   *   'scheduler': String
+   *   'scheduler_opts': JSONString
+   * }
+   */
+  modify(name, input) {
+    let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
+            `  modify_scaling_group(name: $name, props: $input) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      name,
+      input
+    };
+
+    return this.client.gql(q, v);
+  }
+
+  /**
+   * Delete a scaling group
+   *
+   * @param {string} name - name of scaling group to be deleted
+   */
+  delete(name) {
+    let q = `mutation($name: String!) {` +
+            `  delete_scaling_group(name: $name) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      name
+    };
+
+    return this.client.gql(q, v);
   }
 }
 
