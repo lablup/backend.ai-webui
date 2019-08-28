@@ -80,6 +80,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public num_sessions: any;
   public vgpu_metric: any;
   public metric_updating: any;
+  public metadata_updating: any;
   public location: any;
 
   constructor() {
@@ -166,6 +167,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.scaling_group = '';
     this.enable_scaling_group = false;
     this.metric_updating = false;
+    this.metadata_updating = false;
   }
 
   static get is() {
@@ -290,6 +292,12 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       location: {
         type: String
+      },
+      metric_updating: {
+        type: Boolean
+      },
+      metadata_updating: {
+        type: Boolean
       }
     }
   }
@@ -490,9 +498,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
-      if (this.activeConnected) {
+      if (this.activeConnected && this.metadata_updating === false) {
+        this.metadata_updating = true;
         this._refreshConcurrency();
         this.aggregateResource();
+        this.metadata_updating = false;
       }
     });
     gpu_resource.addEventListener('value-change', () => {
@@ -523,29 +533,34 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   async _viewStateChanged(active) {
     await this.updateComplete;
-    console.log('resource monitor on', this.location);
-    console.log('resource monitor:', active);
     if (this.active === false) {
-      console.log('turn off resource monitor on', this.location);
       return;
     }
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        if (this.activeConnected && this.metadata_updating === false) {
+          this.metadata_updating = true;
+          this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
+          if (this.enable_scaling_group === true) {
+            let sgs = await window.backendaiclient.scalingGroup.list();
+            this.scaling_groups = sgs.scaling_groups;
+          }
+          this._refreshResourcePolicy();
+          this.metadata_updating = false;
+        }
+      }, true);
+    } else { // already connected
+      if (this.activeConnected && this.metadata_updating === false) {
+        this.metadata_updating = true;
         this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
         if (this.enable_scaling_group === true) {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
         }
         this._refreshResourcePolicy();
-      }, true);
-    } else { // already connected
-      this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
-      if (this.enable_scaling_group === true) {
-        let sgs = await window.backendaiclient.scalingGroup.list();
-        this.scaling_groups = sgs.scaling_groups;
+        this.metadata_updating = false;
       }
-      this._refreshResourcePolicy();
     }
   }
 
@@ -580,6 +595,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this._refreshResourceValues();
     }).catch((err) => {
       console.log(err);
+      this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
@@ -705,6 +721,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
+      this.metadata_updating = false;
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
@@ -1285,6 +1302,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       });
       this._updateEnvironment();
     }).catch((err) => {
+      this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
