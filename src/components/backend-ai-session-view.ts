@@ -96,12 +96,14 @@ class BackendAiSessionView extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
+      this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
       this._status = 'inactive';
       for (var x = 0; x < this._lists.length; x++) {
         this._lists[x].removeAttribute('active');
       }
       return;
     }
+    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', true);
     this.shadowRoot.querySelector('#running-jobs').setAttribute('active', true);
     this._status = 'active';
   }
@@ -130,7 +132,7 @@ class BackendAiSessionView extends BackendAIPage {
             <wl-tab value="others" @click="${(e) => this._showTab(e.target)}">Others</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
-          <backend-ai-resource-monitor ?active="${this.active}"></backend-ai-resource-monitor>
+          <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
         </h3>
         <div id="running-lists" class="tab-content">
           <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>

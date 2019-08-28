@@ -631,11 +631,14 @@ class BackendAIResourcePolicyList extends BackendAIPage {
     let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     let input = this._readResourcePolicyInput();
 
-    window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
-      this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-      this.notification.text = "Resource policy successfully updated.";
-      this.notification.show();
-      this.shadowRoot.querySelector('#resource-policy-list').refresh();
+    window.backendaiclient.resourcePolicy.mutate(name, input)
+    .then(({ modify_keypair_resource_policy }) => {
+      if (modify_keypair_resource_policy.ok) {
+        this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+        this.notification.text = "Resource policy successfully updated.";
+        this.notification.show();
+        this.refresh();
+      }
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
