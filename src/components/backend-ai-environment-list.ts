@@ -267,9 +267,6 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
     window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      console.log(this.allowed_registries);
-
-
       return window.backendaiclient.image.list();
     }).then((response) => {
       let images = response.images;
