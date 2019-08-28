@@ -40,7 +40,8 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public _boundRequirementsRenderer: any;
   public _boundControlsRenderer : any;
   public selectedIndex: any;
-  public disabled: any;
+  public _gpu_disabled: any;
+  public _fgpu_disabled: any;
 
   constructor() {
     super();
@@ -51,7 +52,8 @@ class BackendAiEnvironmentList extends BackendAIPage {
     this._boundRequirementsRenderer = this.requirementsRenderer.bind(this);
     this._boundControlsRenderer = this.controlsRenderer.bind(this);
     this.selectedIndex = 0;
-    this.disabled = false;
+    this._gpu_disabled = false;
+    this._fgpu_disabled = false;
   }
 
   static get is() {
@@ -230,7 +232,8 @@ class BackendAiEnvironmentList extends BackendAIPage {
             icon="icons:settings"
             @click=${() => {
               this.selectedIndex = rowData.index;
-              console.log(this.images);
+              this._gpu_disabled = this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_device").length === 0;
+              this._fgpu_disabled = this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_shares").length === 0;
               this._launchDialogById("#modify-image-dialog")
               this.requestUpdate();
             }}
@@ -343,16 +346,19 @@ class BackendAiEnvironmentList extends BackendAIPage {
                     ${[1, 2, 3, 4, 5, 6, 7, 8].map(item => html`
                       <option
                         value=${item}
+                        ?selected=${this.images.length !== 0 && this.images[this.selectedIndex].resource_limits[0].min == item}
                       >${item}</option>
                     `)}
                   </wl-select>
                   <wl-select
                     label="GPU"
                     id="modify-image-gpu"
-                    ?disabled=${this.images.length !== 0 && this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_device").length === 0}
+                    ?disabled=${this._gpu_disabled}
                   >
                     ${[0, 1, 2, 3, 4].map(item => html`
-                      <option value=${item}>${item}</option>
+                      <option
+                        value=${item}
+                      >${item}</option>
                     `)}
                   </wl-select>
                 </div>
@@ -362,16 +368,21 @@ class BackendAiEnvironmentList extends BackendAIPage {
                     id="modify-image-mem"
                   >
                     ${["256m", "512m", "1g", "2g", "4g", "8g", "16g"].map(item => html`
-                      <option value=${item}>${item}</option>
+                      <option
+                        value=${item}
+                        ?selected=${this.images.length !== 0 && this.images[this.selectedIndex].resource_limits[1].min == item}
+                      >${item}</option>
                     `)}
                   </wl-select>
                   <wl-select
                     label="fGPU"
                     id="modify-image-fgpu"
-                    ?disabled=${this.images.length !== 0 && this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_shares").length === 0}
+                    ?disabled=${this._fgpu_disabled}
                   >
                     ${[0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
-                      <option value=${item}>${item}</option>
+                      <option
+                        value=${item}
+                      >${item}</option>
                     `)}
                   </wl-select>
                 </div>
