@@ -681,7 +681,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.num_sessions = this.session_request;
 
     if (this.sessions_list.includes(sessionName)) {
-      this.notification.text = "Duplicate session name not allowed."
+      this.notification.text = "Duplicate session name not allowed.";
       this.notification.show();
       return;
     }
@@ -714,8 +714,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
         config['gpu'] = 0.0;
       }
     }
-    if (sessionName.length < 4) {
-      sessionName = undefined;
+    if (sessionName.length == 0) { // No name is given
+      sessionName = this.generateSessionId();
     }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
@@ -770,7 +770,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     const parseNum = (num) => {
       if (num < 26) return String.fromCharCode(65 + num);
       else return String.fromCharCode(97 + num - 26);
-    }
+    };
 
     let randstr = "";
 
@@ -889,6 +889,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
       this.updateMetric();
     }
+  }
+
+  generateSessionId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 8; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text + "-console";
   }
 
   async _updateVirtualFolderList() {
