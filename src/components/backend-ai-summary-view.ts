@@ -309,7 +309,7 @@ export default class BackendAISummary extends BackendAIPage {
       this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
       return;
     }
-    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', true);
+    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     this._init_resource_values();
     this.requestUpdate();
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {

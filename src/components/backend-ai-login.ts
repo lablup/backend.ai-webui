@@ -69,6 +69,7 @@ class BackendAiLogin extends LitElement {
   public user: any;
   public email: any;
   public signup_support: any;
+  public change_signin_support: any;
 
   constructor() {
     super();
@@ -86,6 +87,7 @@ class BackendAiLogin extends LitElement {
     this.blockType = '';
     this.config = null;
     this.signup_support = false;
+    this.change_signin_support = false;
     window.backendaiconsole = {};
   }
 
@@ -139,6 +141,9 @@ class BackendAiLogin extends LitElement {
       },
       signup_support: {
         type: Boolean
+      },
+      change_signin_support: {
+        type: Boolean
       }
     };
   }
@@ -178,6 +183,9 @@ class BackendAiLogin extends LitElement {
           --dialog-width: 400px;
         }
 
+        h3 small {
+            font-size: 13px;
+        }
         wl-button {
           width: 335px;
           --button-bg: transparent;
@@ -200,7 +208,33 @@ class BackendAiLogin extends LitElement {
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
-  refreshPanel(config) {
+  _changeSigninMode() {
+    if (this.change_signin_support === true) {
+      if (this.connection_mode == 'SESSION') {
+        this.connection_mode = 'API';
+      } else {
+        this.connection_mode = 'SESSION';
+      }
+      this.refreshPanel();
+    }
+  }
+
+  refreshPanel() {
+    // TODO : use lit-element dynamic assignment
+    if (this.connection_mode == 'SESSION') {
+      this.shadowRoot.querySelector('#id_api_key').style.display = 'none';
+      this.shadowRoot.querySelector('#id_secret_key').style.display = 'none';
+      this.shadowRoot.querySelector('#id_user_id').style.display = 'block';
+      this.shadowRoot.querySelector('#id_password').style.display = 'block';
+    } else {
+      this.shadowRoot.querySelector('#id_api_key').style.display = 'block';
+      this.shadowRoot.querySelector('#id_secret_key').style.display = 'block';
+      this.shadowRoot.querySelector('#id_user_id').style.display = 'none';
+      this.shadowRoot.querySelector('#id_password').style.display = 'none';
+    }
+  }
+
+  refreshWithConfig(config) {
     if (typeof config.plugin === "undefined" || typeof config.plugin.login === "undefined" || config.plugin.login === '') {
     } else {
       import('../plugins/' + config.plugin.login).then(() => {
@@ -231,6 +265,12 @@ class BackendAiLogin extends LitElement {
     } else {
       this.signup_support = true;
     }
+    if (typeof config.general === "undefined" || typeof config.general.allowChangeSigninMode === "undefined" || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode == false) {
+      this.change_signin_support = false;
+    } else {
+      this.change_signin_support = true;
+    }
+
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
@@ -261,21 +301,13 @@ class BackendAiLogin extends LitElement {
     if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
       this.connection_mode = 'API';
     } else {
-      // TODO : use lit-element dynamic assignment
       if (config.general.connectionMode.toUpperCase() === 'SESSION') {
         this.connection_mode = 'SESSION';
-        this.shadowRoot.querySelector('#id_api_key').style.display = 'none';
-        this.shadowRoot.querySelector('#id_secret_key').style.display = 'none';
-        this.shadowRoot.querySelector('#id_user_id').style.display = 'block';
-        this.shadowRoot.querySelector('#id_password').style.display = 'block';
       } else {
         this.connection_mode = 'API';
-        this.shadowRoot.querySelector('#id_api_key').style.display = 'block';
-        this.shadowRoot.querySelector('#id_secret_key').style.display = 'block';
-        this.shadowRoot.querySelector('#id_user_id').style.display = 'none';
-        this.shadowRoot.querySelector('#id_password').style.display = 'none';
       }
     }
+    this.refreshPanel();
   }
 
   open() {
@@ -590,6 +622,9 @@ class BackendAiLogin extends LitElement {
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <div>Login</div>
+            ${this.change_signin_support ? html`
+                <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`IAM` : html`ID/password`} user?</a></small>
+            ` : html``}
             <div class="flex"></div>
             ${this.signup_support ? html`
             <span style="font-size:14px;margin-right:10px;">Not a user? </span>

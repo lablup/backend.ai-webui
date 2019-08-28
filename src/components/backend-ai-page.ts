@@ -29,7 +29,7 @@ export class BackendAIPage extends LitElement {
     super.disconnectedCallback();
   }
 
-  activeConnected() {
+  get activeConnected() {
     return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null;
   }
 
