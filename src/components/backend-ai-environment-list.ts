@@ -20,10 +20,13 @@ import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
+
 import 'weightless/button';
-import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/checkbox';
+import 'weightless/icon';
+import 'weightless/select';
+import 'weightless/textfield';
 
 import './backend-ai-resource-template-list';
 
@@ -35,14 +38,20 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public alias: any;
   public allowed_registries: any;
   public _boundRequirementsRenderer: any;
+  public _boundControlsRenderer : any;
+  public selectedIndex: any;
+  public disabled: any;
 
   constructor() {
     super();
     setPassiveTouchGestures(true);
-    this.images = {};
+    this.images = [];
     this.active = false;
     this.allowed_registries = [];
     this._boundRequirementsRenderer = this.requirementsRenderer.bind(this);
+    this._boundControlsRenderer = this.controlsRenderer.bind(this);
+    this.selectedIndex = 0;
+    this.disabled = false;
   }
 
   static get is() {
@@ -87,6 +96,22 @@ class BackendAiEnvironmentList extends BackendAIPage {
           font-size: 9px;
           margin-right: 5px;
         }
+
+        wl-button {
+          --button-bg: var(--paper-yellow-50);
+          --button-bg-hover: var(--paper-yellow-100);
+          --button-bg-active: var(--paper-yellow-600);
+        }
+
+        wl-dialog {
+          --dialog-min-width: 350px;
+        }
+
+        wl-dialog wl-select {
+          --input-font-family: Quicksand, Roboto;
+          margin-bottom: 20px;
+        }
+
       `];
   }
 
@@ -106,6 +131,47 @@ class BackendAiEnvironmentList extends BackendAIPage {
         type: Array
       }
     }
+  }
+
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
+
+  _hideDialogById(id) {
+    return this.shadowRoot.querySelector(id).hide();
+  }
+
+  _launchDialogById(id) {
+    return this.shadowRoot.querySelector(id).show();
+  }
+
+  modifyImage() {
+    const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
+          mem = this.shadowRoot.querySelector("#modify-image-mem").value,
+          gpu = this.shadowRoot.querySelector("#modify-image-gpu").value,
+         fgpu = this.shadowRoot.querySelector("#modify-image-fgpu").value;
+
+    let input = {
+      "cpu": {
+        "min": cpu
+      },
+      "mem": {
+        "min": mem
+      }
+    }
+    if (this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_device").length !== 0) input["cuda.device"] = { "min": gpu };
+    if (this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_shares").length !== 0) input["cuda.shares"] = { "min": fgpu };
+
+    const image = this.images[this.selectedIndex];
+
+    window.backendaiclient.image.modify(image.registry, image.name.replace("/", "%2F"), image.tag, input)
+    .then(res => {
+      this._getImages();
+      this.requestUpdate();
+      this._hideDialogById("#modify-image-dialog");
+    })
   }
 
   requirementsRenderer(root, column?, rowData?) {
@@ -148,6 +214,31 @@ class BackendAiEnvironmentList extends BackendAIPage {
             ` : html``}
       `, root
     );
+  }
+
+  controlsRenderer(root, column, rowData) {
+    render (
+      html`
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+          kernel-id="[[item.digest]]"
+        >
+          <paper-icon-button
+            class="fg blue controls-running"
+            on-tap="_modifyImage"
+            icon="icons:settings"
+            @click=${() => {
+              this.selectedIndex = rowData.index;
+              console.log(this.images);
+              this._launchDialogById("#modify-image-dialog")
+              this.requestUpdate();
+            }}
+          ></paper-icon-button>
+        </div>
+      `,
+      root
+    )
   }
 
   render() {
@@ -229,17 +320,76 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
         <vaadin-grid-column width="150px" flex-grow="0" resizable header="Resource Limit" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">Control</template>
-          <template>
-            <div id="controls" class="layout horizontal flex center"
-                 kernel-id="[[item.digest]]">
-              <paper-icon-button class="fg blue controls-running" disabled
-                                 on-tap="_modifyImage" icon="icons:settings"></paper-icon-button>
-            </div>
-          </template>
+        <vaadin-grid-column resizable header="Control" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
+      <wl-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
+        <wl-card elevation="1" class="login-panel intro">
+          <h3 class="horizontal center layout">
+            <span>Modify Image</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <form id="login-form">
+            <fieldset>
+              <div style="display: flex">
+                <div style="flex: 1">
+                  <wl-select
+                    label="CPU"
+                    id="modify-image-cpu"
+                  >
+                    ${[1, 2, 3, 4, 5, 6, 7, 8].map(item => html`
+                      <option
+                        value=${item}
+                      >${item}</option>
+                    `)}
+                  </wl-select>
+                  <wl-select
+                    label="GPU"
+                    id="modify-image-gpu"
+                    ?disabled=${this.images.length !== 0 && this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_device").length === 0}
+                  >
+                    ${[0, 1, 2, 3, 4].map(item => html`
+                      <option value=${item}>${item}</option>
+                    `)}
+                  </wl-select>
+                </div>
+                <div style="flex: 1">
+                  <wl-select
+                    label="RAM"
+                    id="modify-image-mem"
+                  >
+                    ${["256m", "512m", "1g", "2g", "4g", "8g", "16g"].map(item => html`
+                      <option value=${item}>${item}</option>
+                    `)}
+                  </wl-select>
+                  <wl-select
+                    label="fGPU"
+                    id="modify-image-fgpu"
+                    ?disabled=${this.images.length !== 0 && this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_shares").length === 0}
+                  >
+                    ${[0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
+                      <option value=${item}>${item}</option>
+                    `)}
+                  </wl-select>
+                </div>
+              </div>
+              <wl-button
+                class="fg orange create-button"
+                outlined
+                type="button"
+                style="box-sizing: border-box; width: 100%"
+                @click=${this.modifyImage}
+              >
+                <wl-icon>check</wl-icon>
+                Save Changes
+              </wl-button>
+            </fieldset>
+          </form>
+        </wl-card>
+      </wl-dialog>
     `;
   }
 
@@ -263,7 +413,6 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
   _getImages() {
     this.indicator.show();
-
 
     window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;

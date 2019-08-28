@@ -1383,6 +1383,26 @@ class Image {
     v = {};
     return this.client.gql(q, v);
   }
+
+  /*
+   *
+   */
+  modify(registry, image, tag, input) {
+    let promiseArray = [];
+    Object.keys(input).forEach(slot_type => {
+      Object.keys(input[slot_type]).forEach(key => {
+        const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`, "value": input[slot_type][key]});
+        promiseArray.push(this.client._wrapWithPromise(rqst));
+      })
+    })
+
+    return Promise.all(promiseArray);
+  }
+
+  get(registry, image, tag) {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true});
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class ComputeSession {
