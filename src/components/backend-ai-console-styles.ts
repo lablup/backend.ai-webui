@@ -903,4 +903,8 @@ export const BackendAiStyles =
     wl-dialog.dialog-ask {
       --dialog-min-width: 350px;
     }
+
+    vaadin-grid {
+        font-family: var(--general-font-family);
+    }
   `;
