@@ -128,6 +128,12 @@ class LablupShields extends LitElement {
     super.attributeChangedCallback(name, oldval, newval);
   }
 
+  updated(changedProps) {
+    if (changedProps.has("color")) {
+      this._colorChanged();
+    }
+  }
+
   _classChanged() {
     this._formatItem();
   }
