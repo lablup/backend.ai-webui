@@ -328,7 +328,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           paper-progress {
-              width: 100px;
+              width: 90px;
               border-radius: 3px;
               --paper-progress-height: 10px;
               --paper-progress-active-color: #3677EB;
@@ -343,7 +343,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           .resources.horizontal .short-indicator .gauge-label {
-              width: 80px;
+              width: 50px;
           }
 
           span.caption {
@@ -366,7 +366,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           .gauge-label {
-              width: 120px;
+              width: 100px;
               font-weight: 300;
               font-size: 12px;
           }
@@ -452,6 +452,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
               display: block;
           }
 
+          .resources .monitor {
+              margin-right: 5px;
+          }
           .resources.vertical .monitor {
               margin-bottom: 10px;
           }
@@ -1360,7 +1363,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
+              <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
               <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
             </div>
           </div>
