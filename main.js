@@ -7,6 +7,8 @@ const BASE_DIR = __dirname;
 const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron');
 process.env.liveDebugMode = false;
+let windowWidth = 1280;
+let windowHeight = 970;
 
 // ES6 module loader with custom protocol
 const nfs = require('fs');
@@ -21,26 +23,14 @@ protocol.registerSchemesAsPrivileged([
 let mainWindow;
 let mainContent;
 let devtools;
+let manager = new ProxyManager();
 
 var mainIndex = 'build/electron-app/app/index.html';
 // Modules to control application life and create native browser window
 app.once('ready', function() {
-  let port = 5050;
-  //Add handler for proxy
-  ipcMain.once('ready', (event) => {
-    let manager = new ProxyManager();
-    manager.once("ready", () => {
-      let url = 'http://localhost:' + manager.port + "/";
-      console.log("Proxy is ready:" + url);
-      setTimeout(() => {
-        event.reply('proxy-ready', url);
-      }, 1000);
-    });
-    manager.start();
-  })
 
   var template;
-  if (process.platform == 'darwin') {
+  if (process.platform === 'darwin') {
     template = [
       {
         label: 'Backend.AI',
@@ -248,8 +238,33 @@ app.once('ready', function() {
         label: '&File',
         submenu: [
           {
-            label: '&Open',
-            accelerator: 'Ctrl+O',
+            label: 'Login',
+            click: function() {
+              mainWindow.loadURL(url.format({ // Load HTML into new Window
+                pathname: path.join(mainIndex),
+                protocol: 'file',
+                slashes: true
+              }));
+            }
+          },
+          {
+            label: 'Logout',
+            click: function () {
+              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
+                '    document.dispatchEvent(event);');
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Force Update Screen',
+            click: function () {
+              mainContent.reloadIgnoringCache();
+            }
+          },
+          {
+            type: 'separator'
           },
           {
             label: '&Close',
@@ -266,6 +281,16 @@ app.once('ready', function() {
       {
         label: '&View',
         submenu: [
+          {
+            label: '&Reload',
+            accelerator: 'Ctrl+R',
+            click: function() {
+              var focusedWindow = BrowserWindow.getFocusedWindow();
+              if (focusedWindow) {
+                focusedWindow.reload();
+              }
+            }
+          },
           {
             label: 'Zoom In',
             accelerator: 'Ctrl+=',
@@ -325,7 +350,7 @@ app.once('ready', function() {
           {
             label: 'Learn More',
             click: function() {
-              shell.openExternal('https://github.com/lablup/backend.ai');
+              shell.openExternal('https://www.backend.ai/');
             }
           }
         ]
@@ -343,15 +368,16 @@ function createWindow () {
   devtools = null;
 
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 970,
+    width: windowWidth,
+    height: windowHeight,
     title: "Backend.AI",
     frame: true,
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,
-      preload: path.join(BASE_DIR, 'preload.js')
+      preload: path.join(BASE_DIR, 'preload.js'),
+      devTools: true
     }
   });
   // and load the index.html of the app.
@@ -381,6 +407,16 @@ function createWindow () {
       mainWindow.webContents.send('app-close-window');
     }
   });
+
+  mainWindow.webContents.once('did-finish-load', () => {
+    manager.once("ready", () => {
+      let url = 'http://localhost:' + manager.port + "/";
+      console.log("Proxy is ready:" + url);
+      mainWindow.webContents.send('proxy-ready', url);
+    });
+    manager.start();
+  });
+
   ipcMain.on('app-closed', _ => {
     if (process.platform !== 'darwin') {  // Force close app when it is closed even on macOS.
       //app.quit()
@@ -399,18 +435,32 @@ function createWindow () {
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     if (frameName === '_blank') {
-      // open window as modal
-      event.preventDefault()
+      event.preventDefault();
       Object.assign(options, {
         //modal: true,
         frame: true,
+        titleBarStyle: '',
         parent: mainWindow,
-        width: 1280,
-        height: 970,
+        width: windowWidth,
+        height: windowHeight,
         webPreferences: {
           nodeIntegration: false
         }
-      })
+      });
+      event.newGuest = new BrowserWindow(options)
+    } else {
+      event.preventDefault();
+      Object.assign(options, {
+        //modal: true,
+        frame: true,
+        titleBarStyle: '',
+        parent: mainWindow,
+        width: windowWidth,
+        height: windowHeight,
+        webPreferences: {
+          nodeIntegration: false
+        }
+      });
       event.newGuest = new BrowserWindow(options)
     }
   });
@@ -425,7 +475,7 @@ app.on('ready', () => {
     let options = { path: path.normalize(`${BASE_DIR}/${url}`)};
     callback(options);
   }, (err) => {
-    if (err) console.error('Failed to register protocol')
+    if (err) console.error('Failed to register protocol');
   });
   // Force mime-type to javascript
   protocol.registerBufferProtocol('es6', (req, cb) => {
@@ -439,18 +489,18 @@ app.on('ready', () => {
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
+  if (mainWindow) {
+    e.preventDefault();
+    mainWindow.webContents.send('app-close-window');
   }
 });
+
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow()
+    createWindow();
   }
 });
 app.on('certificate-error', function(event, webContents, url, error,
@@ -462,11 +512,11 @@ app.on('certificate-error', function(event, webContents, url, error,
 app.on('web-contents-created', (event, contents) => {
   contents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if unused or verify their location is legitimate
-    delete webPreferences.preload
-    delete webPreferences.preloadURL
+    delete webPreferences.preload;
+    delete webPreferences.preloadURL;
 
     // Disable Node.js integration
-    webPreferences.nodeIntegration = false
+    webPreferences.nodeIntegration = false;
 
     // Verify URL being loaded
     //if (!params.src.startsWith('https://yourapp.com/')) {

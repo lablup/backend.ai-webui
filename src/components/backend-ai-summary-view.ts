@@ -149,7 +149,6 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-
     this.indicator.show();
     let status = 'RUNNING';
     switch (this.condition) {
@@ -166,7 +165,6 @@ export default class BackendAISummary extends BackendAIPage {
     let fields = ["sess_id"];
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.indicator.hide();
-
       this.jobs = response;
       this.sessions = response.compute_sessions;
       if (this.active === true) {
@@ -256,10 +254,10 @@ export default class BackendAISummary extends BackendAIPage {
     this.cpu_current_usage_ratio = 0;
     this.mem_total_usage_ratio = 0;
     this.mem_current_usage_ratio = 0;
-    this.mem_current_usage_percent = 0;
+    this.mem_current_usage_percent = "0";
     this.is_admin = false;
     this.is_superadmin = false;
-    this.shadowRoot.querySelector('#resource-monitor').init_resource();
+    (this.shadowRoot.querySelector('#resource-monitor') as any).init_resource();
   }
 
   _sync_resource_values() {
@@ -308,26 +306,30 @@ export default class BackendAISummary extends BackendAIPage {
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
+      this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
       return;
     }
+    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', true);
     this._init_resource_values();
     this.requestUpdate();
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        console.log('queueing');
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
         if (this.activeConnected) {
           this._refreshHealthPanel();
           this._refreshInvitations();
+          let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+          document.dispatchEvent(event);
         }
       }, true);
     } else {
-      console.log('running');
       this.is_superadmin = window.backendaiclient.is_superadmin;
       this.authenticated = true;
       this._refreshHealthPanel();
       this._refreshInvitations();
+      let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+      document.dispatchEvent(event);
     }
   }
 
@@ -400,7 +402,7 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="Start Menu" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor id="resource-monitor" ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
+                <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
               </div>
             </div>
           </lablup-activity-panel>
