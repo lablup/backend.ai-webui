@@ -302,7 +302,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       this.plugins['login'] = config.plugin.login;
     }
     let loginPanel = this.shadowRoot.querySelector('#login-panel');
-    loginPanel.refreshPanel(config);
+    loginPanel.refreshWithConfig(config);
   }
 
   refreshPage() {

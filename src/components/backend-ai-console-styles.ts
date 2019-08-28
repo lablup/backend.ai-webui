@@ -904,14 +904,12 @@ export const BackendAiStyles =
           border-bottom: 1px solid #ccc;
       }
 
-      wl-dialog wl-button {
+      wl-dialog wl-button.cancel {
           margin-right: 5px;
       }
 
-      wl-dialog wl-button.cancel {
-      }
-
       wl-dialog wl-button.ok {
+          margin-right: 5px;
       }
 
       wl-dialog.dialog-ask {
