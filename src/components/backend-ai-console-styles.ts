@@ -900,6 +900,14 @@ export const BackendAiStyles =
           margin: 5px 20px;
       }
 
+      wl-dialog wl-title {
+          border-bottom: 1px solid #ccc;
+      }
+
+      wl-dialog wl-button {
+          margin-right: 5px;
+      }
+
       wl-dialog.dialog-ask {
           --dialog-min-width: 350px;
       }
