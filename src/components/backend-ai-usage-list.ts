@@ -219,6 +219,7 @@ class BackendAIUsageList extends BackendAIPage {
           html`
           <div class="layout horizontal center flex" style="width:100%;">
               <h3>${this._map[key]}</h3>
+              <span></span>
               <span class="flex"></span>
           </div>
           <backend-ai-chart
