@@ -148,138 +148,138 @@ class BackendAiSessionList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-            height: calc(100vh - 240px);
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        paper-icon-button.controls-running {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        paper-icon-button.apps {
-          --paper-icon-button: {
-            width: 50px;
-            height: 50px;
-            min-width: 50px;
-            min-height: 50px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        #work-dialog {
-          --dialog-height: calc(100vh - 130px);
-          right: 0;
-          top: 50px;
-        }
-
-        @media screen and (max-width: 899px) {
-          #work-dialog {
-            left: 0;
-            --dialog-width: 100%;
+          vaadin-grid {
+              border: 0;
+              font-size: 14px;
+              height: calc(100vh - 240px);
           }
-        }
 
-        @media screen and (min-width: 900px) {
-          #work-dialog {
-            left: 100px;
-            --dialog-width: calc(100% - 220px);
+          paper-item {
+              height: 30px;
+              --paper-item-min-height: 30px;
           }
-        }
 
-        #work-area {
-          width: 100%;
-          height: calc(100vh - 120px);
-          background-color: #222;
-          color: #efefef;
-        }
+          iron-icon {
+              width: 16px;
+              height: 16px;
+              min-width: 16px;
+              min-height: 16px;
+              padding: 0;
+          }
 
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
+          wl-button > wl-icon {
+              --icon-size: 24px;
+              padding: 0;
+          }
 
-        div.label,
-        span.label {
-          font-size: 12px;
-        }
+          wl-icon {
+              --icon-size: 16px;
+              padding: 0;
+          }
 
-        .app-icon {
-          margin-left: 5px;
-          margin-right: 5px;
-        }
+          paper-icon-button.controls-running {
+              --paper-icon-button: {
+                  width: 25px;
+                  height: 25px;
+                  min-width: 25px;
+                  min-height: 25px;
+                  padding: 3px;
+                  margin-right: 5px;
+              };
+          }
 
-        div.configuration {
-          width: 70px !important;
-        }
+          paper-icon-button.apps {
+              --paper-icon-button: {
+                  width: 50px;
+                  height: 50px;
+                  min-width: 50px;
+                  min-height: 50px;
+                  padding: 3px;
+                  margin-right: 5px;
+              };
+          }
 
-        div.configuration iron-icon {
-          padding-right: 5px;
-        }
+          #work-dialog {
+              --dialog-height: calc(100vh - 130px);
+              right: 0;
+              top: 50px;
+          }
 
-        paper-icon-button.apps {
-          width: 48px;
-          height: 48px;
-        }
+          @media screen and (max-width: 899px) {
+              #work-dialog {
+                  left: 0;
+                  --dialog-width: 100%;
+              }
+          }
 
-        .app-icon .label {
-          display: block;
-          width: 60px;
-          text-align: center;
-          height: 25px;
-        }
+          @media screen and (min-width: 900px) {
+              #work-dialog {
+                  left: 100px;
+                  --dialog-width: calc(100% - 220px);
+              }
+          }
 
-        wl-button.multiple-action-button {
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-red-600);
-        }
+          #work-area {
+              width: 100%;
+              height: calc(100vh - 120px);
+              background-color: #222;
+              color: #efefef;
+          }
 
-        div.filters #access-key-filter {
-          --paper-input-container-input: {
-            font-size: small;
-          };
-          --paper-input-container-label: {
-            font-size: small;
-          };
-        }
+          div.indicator,
+          span.indicator {
+              font-size: 9px;
+              margin-right: 5px;
+          }
+
+          div.label,
+          span.label {
+              font-size: 12px;
+          }
+
+          .app-icon {
+              margin-left: 5px;
+              margin-right: 5px;
+          }
+
+          div.configuration {
+              width: 70px !important;
+          }
+
+          div.configuration iron-icon {
+              padding-right: 5px;
+          }
+
+          paper-icon-button.apps {
+              width: 48px;
+              height: 48px;
+          }
+
+          .app-icon .label {
+              display: block;
+              width: 60px;
+              text-align: center;
+              height: 25px;
+          }
+
+          wl-button.multiple-action-button {
+              --button-color: var(--paper-red-600);
+              --button-color-active: red;
+              --button-color-hover: red;
+              --button-bg: var(--paper-red-50);
+              --button-bg-hover: var(--paper-red-100);
+              --button-bg-active: var(--paper-red-600);
+              --button-bg-active-flat: var(--paper-red-600);
+          }
+
+          div.filters #access-key-filter {
+              --paper-input-container-input: {
+                  font-size: small;
+              };
+              --paper-input-container-label: {
+                  font-size: small;
+              };
+          }
       `];
   }
 
