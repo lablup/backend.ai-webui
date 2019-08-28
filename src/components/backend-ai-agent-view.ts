@@ -59,11 +59,13 @@ class BackendAIAgentView extends BackendAIPage {
     if (active === false) {
       this.shadowRoot.querySelector('#running-agents').active = false;
       this.shadowRoot.querySelector('#finished-agents').active = false;
+      this.shadowRoot.querySelector('#scaling-groups').active = false;
       this._status = 'inactive';
       return;
     }
     this.shadowRoot.querySelector('#running-agents').active = true;
     this.shadowRoot.querySelector('#finished-agents').active = true;
+    this.shadowRoot.querySelector('#scaling-groups').active = false;
     this._status = 'active';
   }
 
@@ -96,7 +98,7 @@ class BackendAIAgentView extends BackendAIPage {
           <backend-ai-agent-list id="finished-agents" condition="finished" ?active="${this._status === 'active'}"></backend-ai-agent-list>
         </div>
         <div id="scaling-group-lists" class="tab-content" style="display:none;">
-          <backend-ai-scaling-group-list ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
+          <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
         </div>
       </wl-card>
     `;
