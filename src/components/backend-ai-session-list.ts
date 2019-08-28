@@ -1231,8 +1231,8 @@ ${item.map(item => html`
             <p>This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
          </div>
       </wl-dialog>
       <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
