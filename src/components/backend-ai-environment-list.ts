@@ -5,6 +5,7 @@
 
 import {css, html} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
+import {render} from 'lit-html';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
@@ -33,6 +34,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public updateComplete: any;
   public alias: any;
   public allowed_registries: any;
+  public _boundRequirementsRenderer: any;
 
   constructor() {
     super();
@@ -40,10 +42,19 @@ class BackendAiEnvironmentList extends BackendAIPage {
     this.images = {};
     this.active = false;
     this.allowed_registries = [];
+    this._boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   }
 
   static get is() {
     return 'backend-ai-environment-list';
+  }
+
+  _markIfUnlimited(value) {
+    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+      return '∞';
+    } else {
+      return value;
+    }
   }
 
   static get styles() {
@@ -95,6 +106,48 @@ class BackendAiEnvironmentList extends BackendAIPage {
         type: Array
       }
     }
+  }
+
+  requirementsRenderer(root, column?, rowData?) {
+    render(
+      html`
+          <div class="layout horizontal center flex">
+            <div class="layout horizontal configuration">
+              <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+              <span>${rowData.item.cpu_limit_min}</span> ~
+              <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
+              <span class="indicator">core</span>
+            </div>
+          </div>
+          <div class="layout horizontal center flex">
+            <div class="layout horizontal configuration">
+              <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+              <span>${rowData.item.mem_limit_min}</span> ~
+              <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
+            </div>
+          </div>
+        ${rowData.item.cuda_device_limit_min ? html`
+           <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
+                <span>${rowData.item.cuda_device_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
+                <span class="indicator">GPU</span>
+              </div>
+            </div>
+            ` : html``}
+        ${rowData.item.cuda_shares_limit_min ? html`
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:apps"></iron-icon>
+                <span>${rowData.item.cuda_shares_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
+                <span class="indicator">fGPU</span>
+              </div>
+            </div>
+            ` : html``}
+      `, root
+    );
   }
 
   render() {
@@ -174,45 +227,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="150px" flex-grow="0" resizable>
-          <template class="header">Requirements</template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[item.cpu_limit_min]]</span> ~
-                <span>[[item.cpu_limit_max]]</span>
-                <span class="indicator">core</span>
-              </div>
-            </div>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[item.mem_limit_min]]</span> ~
-                <span>[[item.mem_limit_max]]</span>
-              </div>
-            </div>
-            <template is="dom-if" if="[[item.cuda_device_limit_min]]">
-              <div class="layout horizontal center flex">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
-                  <span>[[item.cuda_device_limit_min]]</span> ~
-                  <span>[[item.cuda_device_limit_max]]</span>
-                  <span class="indicator">GPU</span>
-                </div>
-              </div>
-            </template>
-            <template is="dom-if" if="[[item.cuda_shares_limit_min]]">
-              <div class="layout horizontal center flex">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
-                  <span>[[item.cuda_shares_limit_min]]</span> ~
-                  <span>[[item.cuda_shares_limit_max]]</span>
-                  <span class="indicator">fGPU</span>
-                </div>
-              </div>
-            </template>
-          </template>
+        <vaadin-grid-column width="150px" flex-grow="0" resizable header="Resource Limit" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable>
           <template class="header">Control</template>
@@ -375,3 +390,4 @@ class BackendAiEnvironmentList extends BackendAIPage {
 }
 
 customElements.define(BackendAiEnvironmentList.is, BackendAiEnvironmentList);
+
