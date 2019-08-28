@@ -948,9 +948,10 @@ class BackendAiSessionList extends BackendAIPage {
       window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
         setTimeout(() => {
           this.terminationQueue = [];
-          this.refreshList();
+          this.refreshList(true, false);
         }, 1000);
       }).catch((err) => {
+        this.refreshList(true, false);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
         this.notification.show();
       });
@@ -998,6 +999,19 @@ ${item.map(item => html`
              .kernel-id="${rowData.item.sess_id}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}">
+             ${rowData.item.appSupport ? html`
+            <paper-icon-button class="fg controls-running green"
+                               @click="${(e) => this._showAppLauncher(e)}"
+                               icon="vaadin:caret-right"></paper-icon-button>
+            <paper-icon-button class="fg controls-running"
+                               @click="${(e) => this._runJupyterTerminal(e)}"
+                               icon="vaadin:terminal"></paper-icon-button>
+                               ` : html``}
+             ${this.condition === 'running' ? html`
+            <paper-icon-button class="fg red controls-running"
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"
+                               icon="delete"></paper-icon-button>
+                               ` : html``}
              ${this._isRunning ? html`
             <paper-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
@@ -1006,20 +1020,6 @@ ${item.map(item => html`
             <paper-icon-button disabled class="fg controls-running" icon="assignment"
             ></paper-icon-button>
              `}
-             ${rowData.item.appSupport ? html`
-            <paper-icon-button class="fg controls-running green"
-                               @click="${(e) => this._showAppLauncher(e)}"
-                               icon="vaadin:package"></paper-icon-button>
-            <paper-icon-button class="fg controls-running"
-                               @click="${(e) => this._runJupyterTerminal(e)}"
-                               icon="vaadin:terminal"></paper-icon-button>
-                               ` : html``}
-             ${this.condition === 'running' ? html`
-            <paper-icon-button class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"
-                               @click2="${(e) => this._terminateSession(e)}"
-                               icon="delete"></paper-icon-button>
-                               ` : html``}
         </div>`, root
     );
   }
@@ -1238,8 +1238,8 @@ ${item.map(item => html`
             <p>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
          </div>
       </wl-dialog>
 
