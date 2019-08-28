@@ -281,10 +281,10 @@ class BackendAIScalingGroupList extends BackendAIPage {
           name = this.scalingGroups[this.selectedIndex].name;
 
     let input = {};
-    if (description !== this.scalingGroups[this.selectedIndex].description) input.description = description;
-    if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input.is_active = is_active;
+    if (description !== this.scalingGroups[this.selectedIndex].description) input[ "description" ] = description;
+    if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input[ "is_active" ] = is_active;
 
-    if (Object.keys(input) === 0) {
+    if (Object.keys(input).length === 0) {
       this.notification.text = "No changes made";
       this.notification.show();
 
