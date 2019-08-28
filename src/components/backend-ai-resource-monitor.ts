@@ -65,6 +65,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public launch_ready: any;
   public concurrency_used: any;
   public concurrency_max: any;
+  public concurrency_limit: any;
   public _status: any;
   public cpu_request: any;
   public mem_request: any;
@@ -159,6 +160,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.launch_ready = false;
     this.concurrency_used = 0;
     this.concurrency_max = 0;
+    this.concurrency_limit = 0;
     this._status = 'inactive';
     this.cpu_request = 1;
     this.mem_request = 1;
@@ -239,6 +241,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
         type: Number
       },
       concurrency_max: {
+        type: Number
+      },
+      concurrency_limit: {
         type: Number
       },
       vfolders: {
@@ -1053,9 +1058,12 @@ class BackendAiResourceMonitor extends BackendAIPage {
       });
       if (this.concurrency_max === 0) {
         used_slot_percent['concurrency'] = 0;
+        remaining_slot['concurrency'] = this.concurrency_max;
       } else {
         used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
+        remaining_slot['concurrency'] = this.concurrency_max - this.concurrency_used;
       }
+      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
       return this.available_slot;
@@ -1316,6 +1324,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
       if (this.gpu_metric.min == this.gpu_metric.max) {
         this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+      }
+      if (this.concurrency_limit == 1) {
+        this.shadowRoot.querySelector('#session-resource').max = 2;
+        this.shadowRoot.querySelector('#session-resource').value = 1;
+        this.shadowRoot.querySelector('#session-resource').disabled = true;
       }
       this.metric_updating = false;
     }
@@ -1628,7 +1641,7 @@ ${this.resource_templates.map(item => html`
                   <span class="resource-type" style="width:50px;">Sessions</span>
                   <paper-slider id="session-resource" class="session"
                                 pin snaps editable step=1
-                                min=1 max=5 value="${this.session_request}"></paper-slider>
+                                min="1" max="${this.concurrency_limit}" value="${this.session_request}"></paper-slider>
                   <span class="caption">#</span>
                 </div>
               </div>
