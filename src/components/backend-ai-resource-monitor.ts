@@ -507,7 +507,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.activeConnected && this.metadata_updating === false) {
         this.metadata_updating = true;
-        this._refreshConcurrency();
         this.aggregateResource();
         this.metadata_updating = false;
       }
@@ -745,7 +744,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
-      this._refreshConcurrency();
+      this.aggregateResource();
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
@@ -909,24 +908,27 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   async _aggregateResourceUse() {
     let total_slot = {};
-    let param = null;
-    if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
-      let scaling_group = 'default';
-      if (this.scaling_group !== '') {
-        scaling_group = this.scaling_group;
+    return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
+      this.concurrency_used = response.keypair.concurrency_used;
+      let param = null;
+      if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
+        let scaling_group = 'default';
+        if (this.scaling_group !== '') {
+          scaling_group = this.scaling_group;
+        } else {
+          scaling_group = this.scaling_groups[0]['name'];
+        }
+        param = {
+          'group': window.backendaiclient.current_group,
+          'scaling_group': scaling_group
+        };
       } else {
-        scaling_group = this.scaling_groups[0]['name'];
+        param = {
+          'group': window.backendaiclient.current_group
+        };
       }
-      param = {
-        'group': window.backendaiclient.current_group,
-        'scaling_group': scaling_group
-      };
-    } else {
-      param = {
-        'group': window.backendaiclient.current_group
-      };
-    }
-    return window.backendaiclient.resourcePreset.check(param).then((response) => {
+      return window.backendaiclient.resourcePreset.check(param);
+    }).then((response) => {
       if (response.presets) { // Same as refreshResourceTemplate.
         let presets = response.presets;
         let available_presets = [];
