@@ -224,14 +224,13 @@ class BackendAiLogin extends LitElement {
       window.backendaiconsole.debug = false;
     } else if (config.general.debug === true) {
       window.backendaiconsole.debug = true;
-      console.log('debug flag is set to true');
+      console.log('Debug flag is set to true');
     }
     if (typeof config.general === "undefined" || typeof config.general.signupSupport === "undefined" || config.general.signupSupport === '' || config.general.signupSupport == false) {
       this.signup_support = false;
     } else {
       this.signup_support = true;
     }
-    console.log(this.signup_support);
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
@@ -361,6 +360,10 @@ class BackendAiLogin extends LitElement {
     return false;
   }
 
+  _submitIfEnter(e) {
+    if (e.keyCode == 13) this._login();
+  }
+
   _login() {
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
@@ -443,6 +446,7 @@ class BackendAiLogin extends LitElement {
         this._connectViaGQL();
       }
     }).catch((err) => {   // Connection failed
+      console.log(err);
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
           this.notification.text = PainKiller.relieve(err.message);
@@ -595,15 +599,15 @@ class BackendAiLogin extends LitElement {
           <form id="login-form">
             <fieldset>
               <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
-                           label="API Key" value="${this.api_key}"></paper-input>
+                           label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="password" name="secret_key" id="id_secret_key" style="display:none;"
-                           label="Secret Key" value="${this.secret_key}"></paper-input>
+                           label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="text" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
-                           label="ID" value="${this.user_id}"></paper-input>
+                           label="ID" value="${this.user_id}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="password" name="password" id="id_password" style="display:none;"
-                           label="Password" value="${this.password}"></paper-input>
+                           label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="API Endpoint" value="${this.api_endpoint}"></paper-input>
+                           label="API Endpoint" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></paper-input>
               <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
                            label="API Endpoint" value=""></paper-input>

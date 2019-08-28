@@ -5,6 +5,7 @@
 
 import {css, html} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
+import {render} from 'lit-html';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
@@ -32,16 +33,28 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public shadowRoot: any;
   public updateComplete: any;
   public alias: any;
+  public allowed_registries: any;
+  public _boundRequirementsRenderer: any;
 
   constructor() {
     super();
     setPassiveTouchGestures(true);
     this.images = {};
     this.active = false;
+    this.allowed_registries = [];
+    this._boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   }
 
   static get is() {
     return 'backend-ai-environment-list';
+  }
+
+  _markIfUnlimited(value) {
+    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+      return '∞';
+    } else {
+      return value;
+    }
   }
 
   static get styles() {
@@ -88,8 +101,53 @@ class BackendAiEnvironmentList extends BackendAIPage {
       },
       indicator: {
         type: Object
+      },
+      allowed_registries: {
+        type: Array
       }
     }
+  }
+
+  requirementsRenderer(root, column?, rowData?) {
+    render(
+      html`
+          <div class="layout horizontal center flex">
+            <div class="layout horizontal configuration">
+              <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+              <span>${rowData.item.cpu_limit_min}</span> ~
+              <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
+              <span class="indicator">core</span>
+            </div>
+          </div>
+          <div class="layout horizontal center flex">
+            <div class="layout horizontal configuration">
+              <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+              <span>${rowData.item.mem_limit_min}</span> ~
+              <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
+            </div>
+          </div>
+        ${rowData.item.cuda_device_limit_min ? html`
+           <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
+                <span>${rowData.item.cuda_device_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
+                <span class="indicator">GPU</span>
+              </div>
+            </div>
+            ` : html``}
+        ${rowData.item.cuda_shares_limit_min ? html`
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="icons:apps"></iron-icon>
+                <span>${rowData.item.cuda_shares_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
+                <span class="indicator">fGPU</span>
+              </div>
+            </div>
+            ` : html``}
+      `, root
+    );
   }
 
   render() {
@@ -169,45 +227,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="150px" flex-grow="0" resizable>
-          <template class="header">Requirements</template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
-                <span>[[item.cpu_limit_min]]</span> ~
-                <span>[[item.cpu_limit_max]]</span>
-                <span class="indicator">core</span>
-              </div>
-            </div>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
-                <span>[[item.mem_limit_min]]</span> ~
-                <span>[[item.mem_limit_max]]</span>
-              </div>
-            </div>
-            <template is="dom-if" if="[[item.cuda_device_limit_min]]">
-              <div class="layout horizontal center flex">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
-                  <span>[[item.cuda_device_limit_min]]</span> ~
-                  <span>[[item.cuda_device_limit_max]]</span>
-                  <span class="indicator">GPU</span>
-                </div>
-              </div>
-            </template>
-            <template is="dom-if" if="[[item.cuda_shares_limit_min]]">
-              <div class="layout horizontal center flex">
-                <div class="layout horizontal configuration">
-                  <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
-                  <span>[[item.cuda_shares_limit_min]]</span> ~
-                  <span>[[item.cuda_shares_limit_max]]</span>
-                  <span class="indicator">fGPU</span>
-                </div>
-              </div>
-            </template>
-          </template>
+        <vaadin-grid-column width="150px" flex-grow="0" resizable header="Resource Limit" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable>
           <template class="header">Control</template>
@@ -243,58 +263,66 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
   _getImages() {
     this.indicator.show();
-    window.backendaiclient.image.list().then((response) => {
-      let images = response.images;
-      images.forEach((image) => {
-        let tags = image.tag.split('-');
-        if (tags[1] !== undefined) {
-          image.baseversion = tags[0];
-          image.baseimage = tags[1];
-          if (tags[2] !== undefined) {
-            image.additional_req = tags[2].toUpperCase();
-          }
-        } else {
-          image.baseversion = image.tag;
-        }
-        let names = image.name.split('/');
-        if (names[1] !== undefined) {
-          image.namespace = names[0];
-          image.lang = names[1];
-        } else {
-          image.lang = image.names;
-        }
-        let langs = image.lang.split('-');
-        let baseimage = [this._humanizeName(image.baseimage)];
-        if (langs[1] !== undefined) {
-          image.lang = langs[1];
-          baseimage.push(this._humanizeName(langs[0]));
-          //image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
-        }
-        image.baseimage = baseimage;//this._humanizeName(image.baseimage);
-        image.lang = this._humanizeName(image.lang);
 
-        var resource_limit = image.resource_limits;
-        resource_limit.forEach((resource) => {
-          if (resource.max == 0) {
-            resource.max = '∞';
+
+    window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
+      this.allowed_registries = response.domain.allowed_docker_registries;
+      return window.backendaiclient.image.list();
+    }).then((response) => {
+      let images = response.images;
+      let domainImages = [];
+      images.forEach((image) => {
+        if (this.allowed_registries.includes(image.registry)) {
+          let tags = image.tag.split('-');
+          if (tags[1] !== undefined) {
+            image.baseversion = tags[0];
+            image.baseimage = tags[1];
+            if (tags[2] !== undefined) {
+              image.additional_req = tags[2].toUpperCase();
+            }
+          } else {
+            image.baseversion = image.tag;
           }
-          if (resource.key == 'cuda.device') {
-            resource.key = 'cuda_device';
+          let names = image.name.split('/');
+          if (names[1] !== undefined) {
+            image.namespace = names[0];
+            image.lang = names[1];
+          } else {
+            image.lang = image.names;
           }
-          if (resource.key == 'cuda.shares') {
-            resource.key = 'cuda_shares';
+          let langs = image.lang.split('-');
+          let baseimage = [this._humanizeName(image.baseimage)];
+          if (langs[1] !== undefined) {
+            image.lang = langs[1];
+            baseimage.push(this._humanizeName(langs[0]));
+            //image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
           }
-          image[resource.key + '_limit_min'] = this._addUnit(resource.min);
-          image[resource.key + '_limit_max'] = this._addUnit(resource.max);
-        });
+          image.baseimage = baseimage;//this._humanizeName(image.baseimage);
+          image.lang = this._humanizeName(image.lang);
+
+          var resource_limit = image.resource_limits;
+          resource_limit.forEach((resource) => {
+            if (resource.max == 0) {
+              resource.max = '∞';
+            }
+            if (resource.key == 'cuda.device') {
+              resource.key = 'cuda_device';
+            }
+            if (resource.key == 'cuda.shares') {
+              resource.key = 'cuda_shares';
+            }
+            image[resource.key + '_limit_min'] = this._addUnit(resource.min);
+            image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+          });
+          domainImages.push(image);
+        }
       });
-      let image_keys = Object.keys(images);
+      let image_keys = Object.keys(domainImages);
       //console.log(image_keys);
       //let sorted_images = {};
       //image_keys.sort();
-      this.images = images;
+      this.images = domainImages;
       this.indicator.hide();
-
     });
   }
 
@@ -356,10 +384,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
       return value;
     }
   }
-
-  _indexFrom1(index) {
-    return index + 1;
-  }
 }
 
 customElements.define(BackendAiEnvironmentList.is, BackendAiEnvironmentList);
+

@@ -11,6 +11,7 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 
 import './backend-ai-agent-list';
+import './backend-ai-scaling-group-list';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 
 /**
@@ -58,11 +59,13 @@ class BackendAIAgentView extends BackendAIPage {
     if (active === false) {
       this.shadowRoot.querySelector('#running-agents').active = false;
       this.shadowRoot.querySelector('#finished-agents').active = false;
+      this.shadowRoot.querySelector('#scaling-groups').active = false;
       this._status = 'inactive';
       return;
     }
     this.shadowRoot.querySelector('#running-agents').active = true;
     this.shadowRoot.querySelector('#finished-agents').active = true;
+    this.shadowRoot.querySelector('#scaling-groups').active = false;
     this._status = 'active';
   }
 
@@ -80,9 +83,10 @@ class BackendAIAgentView extends BackendAIPage {
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Connected</wl-tab>  
+            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Connected</wl-tab>
             <wl-tab value="terminated-lists" @click="${(e) => this._showTab(e.target)}">Terminated</wl-tab>
             <wl-tab value="maintenance-lists" disabled>Maintaining</wl-tab>
+            <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>Scaling Group</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
         </h3>
@@ -92,6 +96,9 @@ class BackendAIAgentView extends BackendAIPage {
         </div>
         <div id="terminated-lists" class="tab-content" style="display:none;">
           <backend-ai-agent-list id="finished-agents" condition="finished" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+        </div>
+        <div id="scaling-group-lists" class="tab-content" style="display:none;">
+          <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
         </div>
       </wl-card>
     `;
