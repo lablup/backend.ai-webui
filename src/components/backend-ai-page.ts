@@ -29,6 +29,10 @@ export class BackendAIPage extends LitElement {
     super.disconnectedCallback();
   }
 
+  activeConnected() {
+    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null;
+  }
+
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'active' && newval !== null) {
       this.active = true;
