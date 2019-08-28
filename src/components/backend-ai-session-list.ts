@@ -1238,8 +1238,8 @@ ${item.map(item => html`
             <p>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
          </div>
       </wl-dialog>
 

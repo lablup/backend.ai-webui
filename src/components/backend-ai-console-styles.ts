@@ -908,6 +908,12 @@ export const BackendAiStyles =
           margin-right: 5px;
       }
 
+      wl-dialog wl-button.cancel {
+      }
+
+      wl-dialog wl-button.ok {
+      }
+
       wl-dialog.dialog-ask {
           --dialog-min-width: 350px;
       }

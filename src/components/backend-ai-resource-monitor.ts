@@ -80,11 +80,13 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public num_sessions: any;
   public vgpu_metric: any;
   public metric_updating: any;
+  public location: any;
 
   constructor() {
     super();
     this.active = false;
     this.direction = "horizontal";
+    this.location = '';
     this.init_resource();
   }
 
@@ -285,6 +287,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       enable_scaling_group: {
         type: Boolean
+      },
+      location: {
+        type: String
       }
     }
   }
@@ -485,8 +490,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.aggregateResource();
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
-      this._refreshConcurrency();
-      this.aggregateResource();
+      if (this.activeConnected) {
+        this._refreshConcurrency();
+        this.aggregateResource();
+      }
     });
     gpu_resource.addEventListener('value-change', () => {
       if (gpu_resource.value > 0) {
@@ -516,7 +523,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   async _viewStateChanged(active) {
     await this.updateComplete;
+    console.log('resource monitor on', this.location);
+    console.log('resource monitor:', active);
     if (this.active === false) {
+      console.log('turn off resource monitor on', this.location);
       return;
     }
     // If disconnected
