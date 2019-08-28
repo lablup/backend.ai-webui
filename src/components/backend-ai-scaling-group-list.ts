@@ -27,6 +27,7 @@ import 'weightless/select';
 import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
+import 'weightless/title';
 import './lablup-notification';
 
 import { default as PainKiller } from "./backend-ai-painkiller";
@@ -155,7 +156,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
       window.backendaiclient.scalingGroup.list()
       .then(res => {
         this.scalingGroups = res.scaling_groups;
-      })
+      });
 
       window.backendaiclient.domain.list()
       .then(({ domains }) => {
@@ -476,12 +477,12 @@ class BackendAIScalingGroupList extends BackendAIPage {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
-        <h3 slot="header" style="color: #EF1320">Warning: this cannot be undone!</h3>
+        <wl-title slot="header" level="3" style="color: #EF1320">Warning: this cannot be undone!</wl-title>
         <div slot="content">
           <wl-textfield
             id="delete-scaling-group"
             type="text"
-            label="Type Scaling Group Name to Delete"
+            label="Type Scaling Group name to delete"
           ></wl-textfield>
           <wl-button
             class="fg red delete"
