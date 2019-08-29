@@ -27,15 +27,11 @@ export default class BackendAISplash extends LitElement {
         }
 
         .splash {
-          position: absolute;
-          top: calc(50% - 150px);
-          left: calc(50% - 170px);
           width: 340px;
           height: 300px;
           border: 1px solid #aaa;
           border-radius: 4px;
           background-color: #ffffff;
-          box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.2);
         }
 
         .splash-header {
