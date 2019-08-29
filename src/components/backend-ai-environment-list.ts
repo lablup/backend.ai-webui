@@ -46,6 +46,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public _fgpu_disabled: any;
   public notification: any;
   public servicePorts: any;
+  public _boundButtonRenderer: any;
 
   constructor() {
     super();
@@ -59,6 +60,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
     this._gpu_disabled = false;
     this._fgpu_disabled = false;
     this.servicePorts = [];
+    this._boundButtonRenderer = this._buttonRenderer.bind(this);
   }
 
   static get is() {
@@ -332,6 +334,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
             @click=${() => {
               this.selectedIndex = rowData.index;
               this._parseServicePorts();
+              console.log(this.servicePorts);
               this._launchDialogById("#modify-app-dialog")
               this.requestUpdate();
             }}
@@ -519,7 +522,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
       <wl-dialog id="modify-app-dialog" fixed backdrop blockscrolling>
         <div slot="header" class="gutterBottom">
           <div class="horizontal center layout">
-            <span>Manage Apps</span>
+            <span style="font-family: Quicksand, Roboto; font-size: 20px;">Manage Apps</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${e => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -533,22 +536,22 @@ class BackendAiEnvironmentList extends BackendAIPage {
           style="height: 100%;"
           .items=${this.servicePorts}
         >
-          <vaadin-grid-column flex-grow="2" header="App Name" resizable .renderer=${this._appRenderer}>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="2" header="Protocol" resizable .renderer=${this._protocolRenderer}>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="2" header="Port Number" resizable .renderer=${this._portRenderer}>
-          </vaadin-grid-column>
-          <vaadin-grid-column width="70px" flex-grow="0" header=" " resizable>
-            <template>
-              <div>
-                <wl-button fab flat class="fg pink">
-                  <wl-icon>add</wl-icon>
-                </wl-button>
-              </div>
-            </template>
-          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="2" header="App Name" resizable .renderer=${this._appRenderer}> </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="2" header="Protocol" resizable .renderer=${this._protocolRenderer}> </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="2" header="Port Number" resizable .renderer=${this._portRenderer}> </vaadin-grid-column>
+          <vaadin-grid-column width="70px" flex-grow="0" header=" " resizable .renderer=${this._boundButtonRenderer}> </vaadin-grid-column>
         </vaadin-grid>
+        <div slot="footer">
+          <wl-button
+            class="fg orange"
+            outlined
+            type="button"
+            style="box-sizing: border-box; width: 100%;"
+          >
+            <wl-icon>check</wl-icon>
+            Finish
+          </wl-button>
+        </div>
       </wl-dialog>
     `;
   }
@@ -584,6 +587,21 @@ class BackendAiEnvironmentList extends BackendAIPage {
           type="number"
           value=${rowData.item.port}
         ></wl-textfield>
+      `,
+      root
+    )
+  }
+
+  _buttonRenderer(root, column, rowData) {
+    render (
+      html`
+        <div>
+          <wl-button fab flat class="fg pink">
+            <wl-icon>
+              ${rowData.index === this.servicePorts.length - 1 ? "add" : "remove"}
+            </wl-icon>
+          </wl-button>
+        </div>
       `,
       root
     )
