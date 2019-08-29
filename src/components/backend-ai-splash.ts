@@ -5,10 +5,6 @@
 import {css, customElement, html, LitElement, property} from "lit-element";
 
 import 'weightless/dialog';
-import 'weightless/banner';
-
-import 'weightless/progress-bar';
-import 'weightless/title';
 
 @customElement("backend-ai-splash")
 export default class BackendAISplash extends LitElement {
