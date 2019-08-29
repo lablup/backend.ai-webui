@@ -152,6 +152,8 @@ class Client {
     this.resources = new Resources(this);
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
+    this.registry = new Registry(this);
+    this.domain = new Domain(this);
 
     this._features= {}; // feature support list
 
@@ -1373,13 +1375,21 @@ class Image {
    * list container images registered on the manager.
    *
    * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
+   * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
    */
-  list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
+  list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"], installed_only = false) {
     let q, v;
-    q = `query {` +
-      `  images { ${fields.join(" ")} }` +
-      '}';
-    v = {};
+    if (installed_only === false) {
+      q = `query {` +
+        `  images { ${fields.join(" ")} }` +
+        '}';
+      v = {};
+    } else {
+      q = `query($installed:Boolean) {` +
+        `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+        '}';
+      v = {'installed': installed_only};
+    }
     return this.client.gql(q, v);
   }
 }
@@ -1645,6 +1655,15 @@ class Domain {
       return this.client.gql(q, v);
     }
   }
+
+  list(fields = [ 'name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id' ]) {
+    let q = `query {` +
+            ` domains { ${fields.join(" ")} }` +
+            `}`;
+    let v = {};
+
+    return this.client.gql(q, v);
+  }
 }
 
 class Maintenance {
@@ -1686,6 +1705,7 @@ class Maintenance {
       return Promise.resolve(false);
     }
   }
+
   recalculate_usage() {
     if (this.client.is_superadmin === true) {
       let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
@@ -1875,9 +1895,138 @@ class ScalingGroup {
     this.client = client;
   }
 
-  list(group = 'default') {
-    const queryString = `/scaling-groups?group=${this.client.current_group}`;
-    const rqst = this.client.newSignedRequest("GET", queryString, null);
+  list(group='default') {
+    if (this.client.is_admin) {
+      const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+
+      const q = `query {` +
+                `  scaling_groups { ${fields.join(" ")} }` +
+                `}`;
+      const v = {};
+
+      return this.client.gql(q, v);
+    } else {
+      const queryString = `/scaling-groups?group=${this.client.current_group}`;
+      const rqst = this.client.newSignedRequest("GET", queryString, null);
+      return this.client._wrapWithPromise(rqst);
+    }
+  }
+
+  /**
+   * Create a scaling group
+   *
+   * @param {string} name - Scaling group name
+   * @param {string} description - Scaling group description
+   */
+  create(name, description="") {
+    const input = {
+      description,
+      is_active: true,
+      driver: "static",
+      scheduler: "fifo",
+      driver_opts: "{}",
+      scheduler_opts: "{}"
+    };
+    // if (this.client.is_admin === true) {
+    let q = `mutation($name: String!, $input: ScalingGroupInput!) {` +
+    `  create_scaling_group(name: $name, props: $input) {` +
+    `    ok msg` +
+    `  }` +
+    `}`;
+    let v = {
+      name,
+      input
+    };
+    return this.client.gql(q, v);
+    // } else {
+    //   return Promise.resolve(false);
+    // }
+  }
+
+  /**
+   * Associate a scaling group with a domain
+   *
+   * @param {string} domain - domain name
+   * @param {string} scaling_group - scaling group name
+   */
+  associateWithDomain(domain, scaling_group) {
+    let q = `mutation($domain: String!, $scaling_group: String!) {` +
+            `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      domain,
+      scaling_group
+    };
+
+    return this.client.gql(q, v);
+  }
+
+  /**
+   * Modify a scaling group
+   *
+   * @param {string} name - scaling group name
+   * @param {json} input - object containing desired modifications
+   * {
+   *   'description': String          // description of scaling group
+   *   'is_active': Boolean           // active status of scaling group
+   *   'driver': String
+   *   'driver_opts': JSONString
+   *   'scheduler': String
+   *   'scheduler_opts': JSONString
+   * }
+   */
+  modify(name, input) {
+    let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
+            `  modify_scaling_group(name: $name, props: $input) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      name,
+      input
+    };
+
+    return this.client.gql(q, v);
+  }
+
+  /**
+   * Delete a scaling group
+   *
+   * @param {string} name - name of scaling group to be deleted
+   */
+  delete(name) {
+    let q = `mutation($name: String!) {` +
+            `  delete_scaling_group(name: $name) {` +
+            `    ok msg` +
+            `  }` +
+            `}`;
+    let v = {
+      name
+    };
+
+    return this.client.gql(q, v);
+  }
+}
+
+class Registry {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list() {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": "config/docker/registry", "prefix": true});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  add(key, value) {
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  delete(key) {
+    const rqst = this.client.newSignedRequest("POST", "/config/delete", {"key": `config/docker/registry/${key}`, "prefix": true});
     return this.client._wrapWithPromise(rqst);
   }
 }

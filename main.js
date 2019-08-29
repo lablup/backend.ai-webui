@@ -434,39 +434,33 @@ function createWindow () {
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+    console.log('frame name:', frameName);
     if (frameName === '_blank') {
-      event.preventDefault();
-      Object.assign(options, {
-        //modal: true,
-        frame: true,
-        titleBarStyle: '',
-        parent: mainWindow,
-        width: windowWidth,
-        height: windowHeight,
-        webPreferences: {
-          nodeIntegration: false
-        }
-      });
-      event.newGuest = new BrowserWindow(options)
+      newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
     } else {
-      event.preventDefault();
-      Object.assign(options, {
-        //modal: true,
-        frame: true,
-        titleBarStyle: '',
-        parent: mainWindow,
-        width: windowWidth,
-        height: windowHeight,
-        webPreferences: {
-          nodeIntegration: false
-        }
-      });
-      event.newGuest = new BrowserWindow(options)
+      newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
     }
   });
 }
 
-
+function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures) {
+  event.preventDefault();
+  Object.assign(options, {
+    //modal: true,
+    frame: true,
+    titleBarStyle: '',
+    width: windowWidth,
+    height: windowHeight,
+    webPreferences: {
+      nodeIntegration: false
+    }
+  });
+  event.newGuest = new BrowserWindow(options);
+  event.newGuest.loadURL(url);
+  event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
+  });
+}
 
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {

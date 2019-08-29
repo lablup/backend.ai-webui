@@ -16,6 +16,7 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 import './backend-ai-environment-list';
 import './backend-ai-resource-template-list';
+import './backend-ai-registry-list';
 import './lablup-notification';
 
 class BackendAiEnvironmentView extends BackendAIPage {
@@ -120,6 +121,7 @@ class BackendAiEnvironmentView extends BackendAIPage {
           <wl-tab-group>
             <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">Images</wl-tab>
             <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">Resource Presets</wl-tab>
+            <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">Registries</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
         </h3>
@@ -127,6 +129,9 @@ class BackendAiEnvironmentView extends BackendAIPage {
           <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
         </div>
         <backend-ai-resource-template-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-template-list>
+        <div id="registry-lists" class="tab-content">
+          <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
+        </div>
       </wl-card>
     `;
   }

@@ -148,138 +148,138 @@ class BackendAiSessionList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-            height: calc(100vh - 240px);
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        paper-icon-button.controls-running {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        paper-icon-button.apps {
-          --paper-icon-button: {
-            width: 50px;
-            height: 50px;
-            min-width: 50px;
-            min-height: 50px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
-
-        #work-dialog {
-          --dialog-height: calc(100vh - 130px);
-          right: 0;
-          top: 50px;
-        }
-
-        @media screen and (max-width: 899px) {
-          #work-dialog {
-            left: 0;
-            --dialog-width: 100%;
+          vaadin-grid {
+              border: 0;
+              font-size: 14px;
+              height: calc(100vh - 240px);
           }
-        }
 
-        @media screen and (min-width: 900px) {
-          #work-dialog {
-            left: 100px;
-            --dialog-width: calc(100% - 220px);
+          paper-item {
+              height: 30px;
+              --paper-item-min-height: 30px;
           }
-        }
 
-        #work-area {
-          width: 100%;
-          height: calc(100vh - 120px);
-          background-color: #222;
-          color: #efefef;
-        }
+          iron-icon {
+              width: 16px;
+              height: 16px;
+              min-width: 16px;
+              min-height: 16px;
+              padding: 0;
+          }
 
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
+          wl-button > wl-icon {
+              --icon-size: 24px;
+              padding: 0;
+          }
 
-        div.label,
-        span.label {
-          font-size: 12px;
-        }
+          wl-icon {
+              --icon-size: 16px;
+              padding: 0;
+          }
 
-        .app-icon {
-          margin-left: 5px;
-          margin-right: 5px;
-        }
+          paper-icon-button.controls-running {
+              --paper-icon-button: {
+                  width: 25px;
+                  height: 25px;
+                  min-width: 25px;
+                  min-height: 25px;
+                  padding: 3px;
+                  margin-right: 5px;
+              };
+          }
 
-        div.configuration {
-          width: 70px !important;
-        }
+          paper-icon-button.apps {
+              --paper-icon-button: {
+                  width: 50px;
+                  height: 50px;
+                  min-width: 50px;
+                  min-height: 50px;
+                  padding: 3px;
+                  margin-right: 5px;
+              };
+          }
 
-        div.configuration iron-icon {
-          padding-right: 5px;
-        }
+          #work-dialog {
+              --dialog-height: calc(100vh - 130px);
+              right: 0;
+              top: 50px;
+          }
 
-        paper-icon-button.apps {
-          width: 48px;
-          height: 48px;
-        }
+          @media screen and (max-width: 899px) {
+              #work-dialog {
+                  left: 0;
+                  --dialog-width: 100%;
+              }
+          }
 
-        .app-icon .label {
-          display: block;
-          width: 60px;
-          text-align: center;
-          height: 25px;
-        }
+          @media screen and (min-width: 900px) {
+              #work-dialog {
+                  left: 100px;
+                  --dialog-width: calc(100% - 220px);
+              }
+          }
 
-        wl-button.multiple-action-button {
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-red-600);
-        }
+          #work-area {
+              width: 100%;
+              height: calc(100vh - 120px);
+              background-color: #222;
+              color: #efefef;
+          }
 
-        div.filters #access-key-filter {
-          --paper-input-container-input: {
-            font-size: small;
-          };
-          --paper-input-container-label: {
-            font-size: small;
-          };
-        }
+          div.indicator,
+          span.indicator {
+              font-size: 9px;
+              margin-right: 5px;
+          }
+
+          div.label,
+          span.label {
+              font-size: 12px;
+          }
+
+          .app-icon {
+              margin-left: 5px;
+              margin-right: 5px;
+          }
+
+          div.configuration {
+              width: 70px !important;
+          }
+
+          div.configuration iron-icon {
+              padding-right: 5px;
+          }
+
+          paper-icon-button.apps {
+              width: 48px;
+              height: 48px;
+          }
+
+          .app-icon .label {
+              display: block;
+              width: 60px;
+              text-align: center;
+              height: 25px;
+          }
+
+          wl-button.multiple-action-button {
+              --button-color: var(--paper-red-600);
+              --button-color-active: red;
+              --button-color-hover: red;
+              --button-bg: var(--paper-red-50);
+              --button-bg-hover: var(--paper-red-100);
+              --button-bg-active: var(--paper-red-600);
+              --button-bg-active-flat: var(--paper-red-600);
+          }
+
+          div.filters #access-key-filter {
+              --paper-input-container-input: {
+                  font-size: small;
+              };
+              --paper-input-container-label: {
+                  font-size: small;
+              };
+          }
       `];
   }
 
@@ -323,63 +323,43 @@ class BackendAiSessionList extends BackendAIPage {
   }
 
   _initializeAppTemplate() {
-    let jupyterBase = [
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Notebook',
-        'redirect': "&redirect=/tree",
-        'src': './resources/icons/jupyter.png'
-      },
-      {
-        'name': 'jupyterlab',
-        'title': 'JupyterLab',
-        'redirect': "&redirect=/lab",
-        'src': './resources/icons/jupyterlab.png',
-        'icon': 'vaadin:flask'
-      }];
-    let TFBase = jupyterBase.concat(
-      {
-        'name': 'tensorboard',
-        'title': 'TensorBoard',
-        'redirect': "&redirect=/",
-        'src': './resources/icons/tensorflow.png'
-      });
-    let RBase = jupyterBase.concat(
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Extension',
-        'redirect': "&redirect=/nbextensions",
-        'src': './resources/icons/jupyter.png',
-        'icon': 'vaadin:clipboard-pulse'
-      });
-    let FFBase = TFBase.concat(
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Extension',
-        'redirect': "&redirect=/nbextensions",
-        'src': './resources/icons/jupyter.png',
-        'icon': 'vaadin:clipboard-pulse'
-      });
     this.appTemplate = {
-      'tensorflow': TFBase,
-      'python': jupyterBase,
-      'python-intel': jupyterBase,
-      'python-tensorflow': TFBase,
-      'python-ff': FFBase,
-      'python-pytorch': TFBase,
-      'ngc-digits':
-        TFBase.concat(
+      'jupyter':
+        [{
+          'name': 'jupyter',
+          'title': 'Jupyter Notebook',
+          'redirect': "&redirect=/tree",
+          'src': './resources/icons/jupyter.png'
+        },
           {
-            'name': 'digits',
-            'title': 'DIGITS',
-            'redirect': "&redirect=/",
-            'src': './resources/icons/nvidia.png'
-          }),
-      'ngc-tensorflow': TFBase,
-      'ngc-pytorch': TFBase,
-      'julia': jupyterBase,
-      'r': jupyterBase,
-      'r-base': RBase
+            'name': 'jupyter',
+            'title': 'Jupyter Extension',
+            'redirect': "&redirect=/nbextensions",
+            'src': './resources/icons/jupyter.png',
+            'icon': 'vaadin:clipboard-pulse'
+          }],
+      'jupyterlab':
+        [{
+          'name': 'jupyterlab',
+          'title': 'JupyterLab',
+          'redirect': "&redirect=/lab",
+          'src': './resources/icons/jupyterlab.png',
+          'icon': 'vaadin:flask'
+        }],
+      'tensorboard':
+        [{
+          'name': 'tensorboard',
+          'title': 'TensorBoard',
+          'redirect': "&redirect=/",
+          'src': './resources/icons/tensorflow.png'
+        }],
+      'digits':
+        [{
+          'name': 'digits',
+          'title': 'DIGITS',
+          'redirect': "&redirect=/",
+          'src': './resources/icons/nvidia.png'
+        }]
     };
   }
 
@@ -413,7 +393,7 @@ class BackendAiSessionList extends BackendAIPage {
         status = "RUNNING";
     }
     let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status",
+      "sess_id", "lang", "created_at", "terminated_at", "status", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -432,8 +412,8 @@ class BackendAiSessionList extends BackendAIPage {
           previous_session_keys.push(previous_sessions[objectKey].sess_id);
         });
         Object.keys(sessions).map((objectKey, index) => {
-          var session = sessions[objectKey];
-          var occupied_slots = JSON.parse(session.occupied_slots);
+          let session = sessions[objectKey];
+          let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].lang.split('/')[2];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
@@ -444,7 +424,14 @@ class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           sessions[objectKey].io_read_bytes_mb = this._byteToMB(sessions[objectKey].io_read_bytes);
           sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
-          sessions[objectKey].appSupport = this._isAppRunning(sessions[objectKey].lang);
+          let service_info = JSON.parse(sessions[objectKey].service_ports);
+          sessions[objectKey].app_services = service_info.map(a => a.name);
+          if (sessions[objectKey].app_services.length === 0) {
+            sessions[objectKey].appSupport = false;
+          } else {
+            sessions[objectKey].appSupport = true;
+          }
+
           if (this.condition === 'running') {
             sessions[objectKey].running = true;
           } else {
@@ -471,6 +458,7 @@ class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
+          console.log("refresh!!");
           var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
           document.dispatchEvent(event);
         }
@@ -515,28 +503,6 @@ class BackendAiSessionList extends BackendAIPage {
     return d.toLocaleString();
   }
 
-  _isAppRunning(lang) {
-    if (this.condition != 'running') return false;
-    let support_kernels = [
-      'python',
-      'python-intel',
-      'python-ff',
-      'python-tensorflow',
-      'python-pytorch',
-      'ngc-digits',
-      'ngc-tensorflow',
-      'ngc-pytorch',
-      'julia',
-      'r',
-      'r-base',
-    ];
-    //let support_kernels = this.appTemplate.keys;
-    //console.log(support_kernels);
-    lang = lang.split('/')[2].split(':')[0];
-    //lang = lang.split('/')[3].split(':')[0];
-    return this.condition === 'running' && support_kernels.includes(lang);
-  }
-
   _getKernelInfo(lang) {
     const kernel_alias = {
       'python': [
@@ -576,6 +542,11 @@ class BackendAiSessionList extends BackendAIPage {
         {'category': 'Env', 'tag': 'Octave', 'color': 'yellow'}],
       'swift': [
         {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
+      'h2o': [
+        {'category': 'Env', 'tag': 'H2O', 'color': 'yellow'}],
+      'lablup-pytorch': [
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
+        {'tag': 'Cloudia', 'color': 'green'}],
     };
     let tags = [];
     if (lang === undefined) return [];
@@ -710,12 +681,15 @@ class BackendAiSessionList extends BackendAIPage {
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
     const kernelImage = controls['kernel-image'];
-    let imageName = kernelImage.split(":")[0];
-    if (imageName in this.appTemplate) {
-      this.appSupportList = this.appTemplate[imageName];
-    } else {
-      this.appSupportList = [];
-    }
+    const appServices = controls['app-services'];
+    this.appSupportList = [];
+    appServices.forEach((elm) => {
+      if (elm in this.appTemplate) {
+        this.appTemplate[elm].forEach((app) => {
+          this.appSupportList.push(app);
+        });
+      }
+    });
     let dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.setAttribute('kernel-id', kernelId);
     dialog.setAttribute('access-key', accessKey);
@@ -733,7 +707,6 @@ class BackendAiSessionList extends BackendAIPage {
       return false;
     }
 
-    ////
     let param = {
       endpoint: window.backendaiclient._config.endpoint
     };
@@ -883,6 +856,8 @@ class BackendAiSessionList extends BackendAIPage {
       this.terminateSessionDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
       this.notification.show();
+      let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
     });
   }
 
@@ -998,7 +973,21 @@ ${item.map(item => html`
         <div id="controls" class="layout horizontal flex center"
              .kernel-id="${rowData.item.sess_id}"
              .access-key="${rowData.item.access_key}"
-             .kernel-image="${rowData.item.kernel_image}">
+             .kernel-image="${rowData.item.kernel_image}"
+             .app-services="${rowData.item.app_services}">
+             ${rowData.item.appSupport ? html`
+            <paper-icon-button class="fg controls-running green"
+                               @click="${(e) => this._showAppLauncher(e)}"
+                               icon="vaadin:caret-right"></paper-icon-button>
+            <paper-icon-button class="fg controls-running"
+                               @click="${(e) => this._runJupyterTerminal(e)}"
+                               icon="vaadin:terminal"></paper-icon-button>
+                               ` : html``}
+             ${this.condition === 'running' ? html`
+            <paper-icon-button class="fg red controls-running"
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"
+                               icon="delete"></paper-icon-button>
+                               ` : html``}
              ${this._isRunning ? html`
             <paper-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
@@ -1007,20 +996,6 @@ ${item.map(item => html`
             <paper-icon-button disabled class="fg controls-running" icon="assignment"
             ></paper-icon-button>
              `}
-             ${rowData.item.appSupport ? html`
-            <paper-icon-button class="fg controls-running green"
-                               @click="${(e) => this._showAppLauncher(e)}"
-                               icon="vaadin:package"></paper-icon-button>
-            <paper-icon-button class="fg controls-running"
-                               @click="${(e) => this._runJupyterTerminal(e)}"
-                               icon="vaadin:terminal"></paper-icon-button>
-                               ` : html``}
-             ${this.condition === 'running' ? html`
-            <paper-icon-button class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"
-                               @click2="${(e) => this._terminateSession(e)}"
-                               icon="delete"></paper-icon-button>
-                               ` : html``}
         </div>`, root
     );
   }
@@ -1229,8 +1204,8 @@ ${item.map(item => html`
             <p>This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
          </div>
       </wl-dialog>
       <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
@@ -1239,8 +1214,8 @@ ${item.map(item => html`
             <p>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
          </div>
       </wl-dialog>
 

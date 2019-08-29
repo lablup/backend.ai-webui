@@ -65,6 +65,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public launch_ready: any;
   public concurrency_used: any;
   public concurrency_max: any;
+  public concurrency_limit: any;
   public _status: any;
   public cpu_request: any;
   public mem_request: any;
@@ -79,12 +80,16 @@ class BackendAiResourceMonitor extends BackendAIPage {
   public updateComplete: any;
   public num_sessions: any;
   public vgpu_metric: any;
+  public sessions_list: any;
   public metric_updating: any;
+  public metadata_updating: any;
+  public location: any;
 
   constructor() {
     super();
     this.active = false;
     this.direction = "horizontal";
+    this.location = '';
     this.init_resource();
   }
 
@@ -105,7 +110,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'RAPID (NGC)': 'ngc-rapid',
       'DIGITS (NGC)': 'ngc-digits',
       'PyTorch (NGC)': 'ngc-pytorch',
-      'TensorFlow (NGC)': 'ngc-tensorflow'
+      'TensorFlow (NGC)': 'ngc-tensorflow',
+      'PyTorch (Cloudia)': 'lablup-pytorch',
+      'H2O': 'h2o',
     };
     this.tags = {
       'TensorFlow': [],
@@ -120,7 +127,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'RAPID (NGC)': ['NVidia GPU Cloud'],
       'DIGITS (NGC)': ['NVidia GPU Cloud'],
       'PyTorch (NGC)': ['NVidia GPU Cloud'],
-      'TensorFlow (NGC)': ['NVidia GPU Cloud']
+      'TensorFlow (NGC)': ['NVidia GPU Cloud'],
+      'PyTorch (Cloudia)': ['Cloudia'],
+      'H2O': ['h2o.ai'],
     };
     this.versions = ['3.6'];
     this.languages = [];
@@ -155,6 +164,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.launch_ready = false;
     this.concurrency_used = 0;
     this.concurrency_max = 0;
+    this.concurrency_limit = 0;
     this._status = 'inactive';
     this.cpu_request = 1;
     this.mem_request = 1;
@@ -163,7 +173,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.scaling_groups = [];
     this.scaling_group = '';
     this.enable_scaling_group = false;
+    this.sessions_list = [];
     this.metric_updating = false;
+    this.metadata_updating = false;
   }
 
   static get is() {
@@ -235,6 +247,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       concurrency_max: {
         type: Number
       },
+      concurrency_limit: {
+        type: Number
+      },
       vfolders: {
         type: Array
       },
@@ -285,6 +300,18 @@ class BackendAiResourceMonitor extends BackendAIPage {
       },
       enable_scaling_group: {
         type: Boolean
+      },
+      sessions_list: {
+        type: Array
+      },
+      location: {
+        type: String
+      },
+      metric_updating: {
+        type: Boolean
+      },
+      metadata_updating: {
+        type: Boolean
       }
     }
   }
@@ -328,7 +355,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           paper-progress {
-              width: 100px;
+              width: 90px;
               border-radius: 3px;
               --paper-progress-height: 10px;
               --paper-progress-active-color: #3677EB;
@@ -343,7 +370,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           .resources.horizontal .short-indicator .gauge-label {
-              width: 80px;
+              width: 50px;
           }
 
           span.caption {
@@ -366,7 +393,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           .gauge-label {
-              width: 120px;
+              width: 100px;
               font-weight: 300;
               font-size: 12px;
           }
@@ -452,6 +479,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
               display: block;
           }
 
+          .resources .monitor {
+              margin-right: 5px;
+          }
           .resources.vertical .monitor {
               margin-bottom: 10px;
           }
@@ -477,13 +507,18 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
 
     this.notification = this.shadowRoot.querySelector('#notification');
-
-    this._initAliases();
-    this.aggregateResource();
+    if (this.activeConnected && this.metadata_updating === false) {
+      this._initSessions();
+      this._initAliases();
+      this.aggregateResource();
+    }
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
-      this._refreshConcurrency();
-      this.aggregateResource();
+      if (this.activeConnected && this.metadata_updating === false) {
+        this.metadata_updating = true;
+        this.aggregateResource();
+        this.metadata_updating = false;
+      }
     });
     gpu_resource.addEventListener('value-change', () => {
       if (gpu_resource.value > 0) {
@@ -505,6 +540,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
+  _initSessions() {
+    let fields = ["sess_id"];
+    window.backendaiclient.computeSession.list(fields=fields, status="RUNNING")
+    .then(res => {
+      this.sessions_list = res.compute_sessions.map(e => e.sess_id);
+    })
+  }
+
   _initAliases() {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
@@ -519,20 +562,28 @@ class BackendAiResourceMonitor extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        if (this.activeConnected && this.metadata_updating === false) {
+          this.metadata_updating = true;
+          this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
+          if (this.enable_scaling_group === true) {
+            let sgs = await window.backendaiclient.scalingGroup.list();
+            this.scaling_groups = sgs.scaling_groups;
+          }
+          this._refreshResourcePolicy();
+          this.metadata_updating = false;
+        }
+      }, true);
+    } else { // already connected
+      if (this.activeConnected && this.metadata_updating === false) {
+        this.metadata_updating = true;
         this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
         if (this.enable_scaling_group === true) {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
         }
         this._refreshResourcePolicy();
-      }, true);
-    } else { // already connected
-      this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
-      if (this.enable_scaling_group === true) {
-        let sgs = await window.backendaiclient.scalingGroup.list();
-        this.scaling_groups = sgs.scaling_groups;
+        this.metadata_updating = false;
       }
-      this._refreshResourcePolicy();
     }
   }
 
@@ -567,6 +618,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this._refreshResourceValues();
     }).catch((err) => {
       console.log(err);
+      this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
@@ -589,6 +641,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
+      // this.enable_scaling_group = false;
       if (this.enable_scaling_group === true) {
         let sgs = await window.backendaiclient.scalingGroup.list();
         this.scaling_groups = sgs.scaling_groups;
@@ -635,6 +688,12 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
+
+    if (this.sessions_list.includes(sessionName)) {
+      this.notification.text = "Duplicate session name not allowed.";
+      this.notification.show();
+      return;
+    }
     if (this.enable_scaling_group) {
       this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
     }
@@ -664,8 +723,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
         config['gpu'] = 0.0;
       }
     }
-    if (sessionName.length < 4) {
-      sessionName = undefined;
+    if (sessionName.length == 0) { // No name is given
+      sessionName = this.generateSessionId();
     }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
@@ -677,8 +736,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.notification.show();
 
     let sessions = [];
-    for (var i = 0; i < this.num_sessions; i++) {
-      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'config': config});
+    const randStr = this._getRandomString();
+
+    if (this.num_sessions > 1) {
+      for (let i = 1; i <= this.num_sessions; i++) {
+        sessions.push({kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config});
+      }
+    } else {
+      sessions.push({kernelName, sessionName, config});
     }
 
     const createSessionQueue = sessions.map(item => {
@@ -688,10 +753,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
-      this._refreshConcurrency();
+      this.aggregateResource();
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
+      this.metadata_updating = false;
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
@@ -705,6 +771,24 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
     });
+  }
+
+  _getRandomString() {
+    let randnum = Math.floor(Math.random() * 52 * 52 * 52);
+
+    const parseNum = (num) => {
+      if (num < 26) return String.fromCharCode(65 + num);
+      else return String.fromCharCode(97 + num - 26);
+    };
+
+    let randstr = "";
+
+    for (let i = 0; i < 3; i++) {
+      randstr += parseNum(randnum % 52);
+      randnum = Math.floor(randnum / 52);
+    }
+
+    return randstr;
   }
 
   _createKernel(kernelName, sessionName, config) {
@@ -816,6 +900,14 @@ class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  generateSessionId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 8; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text + "-console";
+  }
+
   async _updateVirtualFolderList() {
     let l = window.backendaiclient.vfolder.list();
     l.then((value) => {
@@ -825,24 +917,27 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   async _aggregateResourceUse() {
     let total_slot = {};
-    let param = null;
-    if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
-      let scaling_group = 'default';
-      if (this.scaling_group !== '') {
-        scaling_group = this.scaling_group;
+    return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
+      this.concurrency_used = response.keypair.concurrency_used;
+      let param = null;
+      if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
+        let scaling_group = 'default';
+        if (this.scaling_group !== '') {
+          scaling_group = this.scaling_group;
+        } else {
+          scaling_group = this.scaling_groups[0]['name'];
+        }
+        param = {
+          'group': window.backendaiclient.current_group,
+          'scaling_group': scaling_group
+        };
       } else {
-        scaling_group = this.scaling_groups[0]['name'];
+        param = {
+          'group': window.backendaiclient.current_group
+        };
       }
-      param = {
-        'group': window.backendaiclient.current_group,
-        'scaling_group': scaling_group
-      };
-    } else {
-      param = {
-        'group': window.backendaiclient.current_group
-      };
-    }
-    return window.backendaiclient.resourcePreset.check(param).then((response) => {
+      return window.backendaiclient.resourcePreset.check(param);
+    }).then((response) => {
       if (response.presets) { // Same as refreshResourceTemplate.
         let presets = response.presets;
         let available_presets = [];
@@ -967,9 +1062,12 @@ class BackendAiResourceMonitor extends BackendAIPage {
       });
       if (this.concurrency_max === 0) {
         used_slot_percent['concurrency'] = 0;
+        remaining_slot['concurrency'] = this.concurrency_max;
       } else {
         used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
+        remaining_slot['concurrency'] = this.concurrency_max - this.concurrency_used;
       }
+      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
       return this.available_slot;
@@ -1231,6 +1329,11 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
+      if (this.concurrency_limit == 1) {
+        this.shadowRoot.querySelector('#session-resource').max = 2;
+        this.shadowRoot.querySelector('#session-resource').value = 1;
+        this.shadowRoot.querySelector('#session-resource').disabled = true;
+      }
       this.metric_updating = false;
     }
   }
@@ -1248,7 +1351,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
       'resource_limits { key min max }'
     ];
-    window.backendaiclient.image.list(fields).then((response) => {
+    window.backendaiclient.image.list(fields, true).then((response) => {
       const images = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
@@ -1272,6 +1375,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       });
       this._updateEnvironment();
     }).catch((err) => {
+      this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
         this.notification.show();
@@ -1360,7 +1464,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.mem_slot}GB/${this.total_slot.mem_slot}GB</span>
+              <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
               <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
             </div>
           </div>
@@ -1541,7 +1645,7 @@ ${this.resource_templates.map(item => html`
                   <span class="resource-type" style="width:50px;">Sessions</span>
                   <paper-slider id="session-resource" class="session"
                                 pin snaps editable step=1
-                                min=1 max=5 value="${this.session_request}"></paper-slider>
+                                min="1" max="${this.concurrency_limit}" value="${this.session_request}"></paper-slider>
                   <span class="caption">#</span>
                 </div>
               </div>

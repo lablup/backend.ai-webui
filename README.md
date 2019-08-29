@@ -81,7 +81,7 @@ $ npm i
 
 ```
 $ npm run server:d # To run dev. web server
-$ npm build:d # To watch source changes
+$ npm run build:d # To watch source changes
 $ npm run wsproxy # To run websocket proxy
 ```
 

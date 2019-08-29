@@ -7,12 +7,13 @@ import {css, html, LitElement} from "lit-element";
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
-import '@polymer/paper-input/paper-input';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
+import 'weightless/textfield';
+
 import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -69,6 +70,7 @@ class BackendAiLogin extends LitElement {
   public user: any;
   public email: any;
   public signup_support: any;
+  public change_signin_support: any;
 
   constructor() {
     super();
@@ -86,6 +88,7 @@ class BackendAiLogin extends LitElement {
     this.blockType = '';
     this.config = null;
     this.signup_support = false;
+    this.change_signin_support = false;
     window.backendaiconsole = {};
   }
 
@@ -139,6 +142,9 @@ class BackendAiLogin extends LitElement {
       },
       signup_support: {
         type: Boolean
+      },
+      change_signin_support: {
+        type: Boolean
       }
     };
   }
@@ -163,24 +169,38 @@ class BackendAiLogin extends LitElement {
         fieldset input {
           width: 100%;
           border: 0;
-          border-bottom: 1px solid #aaa;
-          margin: 15px 0;
+          margin: 15px 0 0 0;
           font: inherit;
           font-size: 16px;
           outline: none;
         }
 
-        fieldset input:focus {
-          border-bottom: 1.5px solid #0d47a1;
+        wl-textfield {
+          --input-font-family: 'Quicksand', sans-serif;
         }
 
         #login-panel {
           --dialog-width: 400px;
         }
 
+        h3 small {
+          --button-font-size: 12px;
+        }
+
         wl-button {
-          width: 335px;
           --button-bg: transparent;
+        }
+
+        wl-button.mini {
+          font-size: 12px;
+        }
+
+        wl-button.full {
+          width: 335px;
+        }
+
+        wl-button.login-button,
+        wl-button.login-cancel-button {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
@@ -188,6 +208,16 @@ class BackendAiLogin extends LitElement {
         wl-button.signup-button {
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
+        }
+
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
         }
       `];
   }
@@ -200,7 +230,34 @@ class BackendAiLogin extends LitElement {
     this.notification = this.shadowRoot.querySelector('#notification');
   }
 
-  refreshPanel(config) {
+  _changeSigninMode() {
+    if (this.change_signin_support === true) {
+      if (this.connection_mode == 'SESSION') {
+        this.connection_mode = 'API';
+      } else {
+        this.connection_mode = 'SESSION';
+      }
+      this.refreshPanel();
+      this.requestUpdate();
+    }
+  }
+
+  refreshPanel() {
+    // TODO : use lit-element dynamic assignment
+    if (this.connection_mode == 'SESSION') {
+      this.shadowRoot.querySelector('#id_api_key').style.display = 'none';
+      this.shadowRoot.querySelector('#id_secret_key').style.display = 'none';
+      this.shadowRoot.querySelector('#id_user_id').style.display = 'block';
+      this.shadowRoot.querySelector('#id_password').style.display = 'block';
+    } else {
+      this.shadowRoot.querySelector('#id_api_key').style.display = 'block';
+      this.shadowRoot.querySelector('#id_secret_key').style.display = 'block';
+      this.shadowRoot.querySelector('#id_user_id').style.display = 'none';
+      this.shadowRoot.querySelector('#id_password').style.display = 'none';
+    }
+  }
+
+  refreshWithConfig(config) {
     if (typeof config.plugin === "undefined" || typeof config.plugin.login === "undefined" || config.plugin.login === '') {
     } else {
       import('../plugins/' + config.plugin.login).then(() => {
@@ -231,6 +288,12 @@ class BackendAiLogin extends LitElement {
     } else {
       this.signup_support = true;
     }
+    if (typeof config.general === "undefined" || typeof config.general.allowChangeSigninMode === "undefined" || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode == false) {
+      this.change_signin_support = false;
+    } else {
+      this.change_signin_support = true;
+    }
+
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
@@ -261,21 +324,13 @@ class BackendAiLogin extends LitElement {
     if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
       this.connection_mode = 'API';
     } else {
-      // TODO : use lit-element dynamic assignment
       if (config.general.connectionMode.toUpperCase() === 'SESSION') {
         this.connection_mode = 'SESSION';
-        this.shadowRoot.querySelector('#id_api_key').style.display = 'none';
-        this.shadowRoot.querySelector('#id_secret_key').style.display = 'none';
-        this.shadowRoot.querySelector('#id_user_id').style.display = 'block';
-        this.shadowRoot.querySelector('#id_password').style.display = 'block';
       } else {
         this.connection_mode = 'API';
-        this.shadowRoot.querySelector('#id_api_key').style.display = 'block';
-        this.shadowRoot.querySelector('#id_secret_key').style.display = 'block';
-        this.shadowRoot.querySelector('#id_user_id').style.display = 'none';
-        this.shadowRoot.querySelector('#id_password').style.display = 'none';
       }
     }
+    this.refreshPanel();
   }
 
   open() {
@@ -326,6 +381,7 @@ class BackendAiLogin extends LitElement {
     if (this.api_endpoint === '') {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
+    this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
       this.notification.text = 'Please wait to login...';
@@ -351,6 +407,11 @@ class BackendAiLogin extends LitElement {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _cancelLogin(e) {
+    this._hideDialog(e);
+    this.open();
   }
 
   _validate_data(value) {
@@ -589,30 +650,35 @@ class BackendAiLogin extends LitElement {
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Login</div>
+            <div>Login with ${this.connection_mode == 'SESSION' ? html`ID/password` : html`IAM`}</div>
             <div class="flex"></div>
+            ${this.change_signin_support ? html`
+                <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`Use IAM` : html`Use ID/password`}</a></small>
+            ` : html``}
             ${this.signup_support ? html`
-            <span style="font-size:14px;margin-right:10px;">Not a user? </span>
-            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            <div class="vertical center-justified layout">
+              <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
+              <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            </div>
             ` : html``}
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
-                           label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="password" name="secret_key" id="id_secret_key" style="display:none;"
-                           label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="text" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
-                           label="ID" value="${this.user_id}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="password" name="password" id="id_password" style="display:none;"
-                           label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="API Endpoint" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></paper-input>
-              <paper-input type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
+              <wl-textfield type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
+                           label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"
+                           label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="email" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
+                           label="ID" value="${this.user_id}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="password" name="password" id="id_password" style="display:none;"
+                           label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
+                           label="API Endpoint" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></wl-textfield>
+              <wl-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
-                           label="API Endpoint" value=""></paper-input>
+                           label="API Endpoint" value=""></wl-textfield>
               <br/><br/>
-              <wl-button class="fg red full" id="login-button" outlined type="button"
+              <wl-button class="fg red full login-button" id="login-button" outlined type="button"
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
                           Login</wl-button>
@@ -624,10 +690,16 @@ class BackendAiLogin extends LitElement {
         ${this.blockMessage != '' ? html`
         <wl-card>
           ${this.blockType !== '' ? html`
-          <h3>${this.blockType}</h3>
+          <h3 class="horizontal center layout" style="font-weight:bold">
+            <span id="work-title">${this.blockType}</span>
+            <div class="flex"></div>
+          </h3>
           ` : html``}
           <div style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
+          </div>
+          <div style="text-align:right;padding-top:15px;">
+            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">Cancel login</wl-button>
           </div>
         </wl-card>
         ` : html``}
