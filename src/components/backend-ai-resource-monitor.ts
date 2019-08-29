@@ -110,7 +110,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'RAPID (NGC)': 'ngc-rapid',
       'DIGITS (NGC)': 'ngc-digits',
       'PyTorch (NGC)': 'ngc-pytorch',
-      'TensorFlow (NGC)': 'ngc-tensorflow'
+      'TensorFlow (NGC)': 'ngc-tensorflow',
+      'PyTorch (Cloudia)': 'lablup-pytorch',
+      'H2O': 'h2o',
     };
     this.tags = {
       'TensorFlow': [],
@@ -125,7 +127,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'RAPID (NGC)': ['NVidia GPU Cloud'],
       'DIGITS (NGC)': ['NVidia GPU Cloud'],
       'PyTorch (NGC)': ['NVidia GPU Cloud'],
-      'TensorFlow (NGC)': ['NVidia GPU Cloud']
+      'TensorFlow (NGC)': ['NVidia GPU Cloud'],
+      'PyTorch (Cloudia)': ['Cloudia'],
+      'H2O': ['h2o.ai'],
     };
     this.versions = ['3.6'];
     this.languages = [];
