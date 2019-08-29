@@ -413,7 +413,7 @@ class BackendAiSessionList extends BackendAIPage {
         status = "RUNNING";
     }
     let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status",
+      "sess_id", "lang", "created_at", "terminated_at", "status", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -444,7 +444,14 @@ class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           sessions[objectKey].io_read_bytes_mb = this._byteToMB(sessions[objectKey].io_read_bytes);
           sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
-          sessions[objectKey].appSupport = this._isAppRunning(sessions[objectKey].lang);
+          let service_info = JSON.parse(sessions[objectKey].service_ports);
+          sessions[objectKey].app_services = service_info.map(a => a.name);
+          if (sessions[objectKey].app_services.length === 0) {
+            sessions[objectKey].appSupport = false;
+          } else {
+            sessions[objectKey].appSupport = true;
+          }
+
           if (this.condition === 'running') {
             sessions[objectKey].running = true;
           } else {
@@ -514,28 +521,6 @@ class BackendAiSessionList extends BackendAIPage {
   _humanReadableTime(d: any) {
     d = new Date(d);
     return d.toLocaleString();
-  }
-
-  _isAppRunning(lang) {
-    if (this.condition != 'running') return false;
-    let support_kernels = [
-      'python',
-      'python-intel',
-      'python-ff',
-      'python-tensorflow',
-      'python-pytorch',
-      'ngc-digits',
-      'ngc-tensorflow',
-      'ngc-pytorch',
-      'julia',
-      'r',
-      'r-base',
-    ];
-    //let support_kernels = this.appTemplate.keys;
-    //console.log(support_kernels);
-    lang = lang.split('/')[2].split(':')[0];
-    //lang = lang.split('/')[3].split(':')[0];
-    return this.condition === 'running' && support_kernels.includes(lang);
   }
 
   _getKernelInfo(lang) {
