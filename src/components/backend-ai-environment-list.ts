@@ -43,6 +43,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public selectedIndex: any;
   public _gpu_disabled: any;
   public _fgpu_disabled: any;
+  public notification: any;
 
   constructor() {
     super();
@@ -124,7 +125,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
         type: Boolean
       },
       images: {
-        type: Object,
+        type: Array,
         hasChanged: () => true
       },
       indicator: {
@@ -132,6 +133,18 @@ class BackendAiEnvironmentList extends BackendAIPage {
       },
       allowed_registries: {
         type: Array
+      },
+      notification: {
+        type: Object
+      },
+      selectedIndex: {
+        type: Number
+      },
+      _gpu_disabled: {
+        type: Boolean
+      },
+      _fgpu_disabled: {
+        type: Boolean
       }
     }
   }
