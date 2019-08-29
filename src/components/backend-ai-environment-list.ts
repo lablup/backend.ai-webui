@@ -25,6 +25,7 @@ import './lablup-notification';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
+import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/select';
 import 'weightless/textfield';
@@ -44,6 +45,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public _gpu_disabled: any;
   public _fgpu_disabled: any;
   public notification: any;
+  public servicePorts: any;
 
   constructor() {
     super();
@@ -56,6 +58,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
     this.selectedIndex = 0;
     this._gpu_disabled = false;
     this._fgpu_disabled = false;
+    this.servicePorts = [];
   }
 
   static get is() {
@@ -111,11 +114,32 @@ class BackendAiEnvironmentList extends BackendAIPage {
           --dialog-min-width: 350px;
         }
 
-        wl-dialog wl-select {
-          --input-font-family: Quicksand, Roboto;
+        wl-dialog#modify-image-dialog wl-select,
+        wl-dialog#modify-image-dialog wl-textfield {
           margin-bottom: 20px;
         }
 
+        wl-select, wl-textfield {
+          --input-font-family: Quicksand, Roboto;
+        }
+
+        wl-dialog wl-textfield {
+          --input-font-size: 14px;
+        }
+
+        #modify-app-dialog {
+          --dialog-height: 500px;
+          --dialog-max-height: 550px;
+          --dialog-min-width: 600px;
+        }
+
+        wl-dialog vaadin-grid {
+          margin: 0px 20px;
+        }
+
+        .gutterBottom {
+          margin-bottom: 20px;
+        }
       `];
   }
 
@@ -145,6 +169,9 @@ class BackendAiEnvironmentList extends BackendAIPage {
       },
       _fgpu_disabled: {
         type: Boolean
+      },
+      servicePorts: {
+        type: Array
       }
     }
   }
@@ -260,7 +287,24 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
     const mem_idx = this._gpu_disabled ? ( this._fgpu_disabled ? 1 : 2  ) : ( this._fgpu_disabled ? 2 : 3  );
     this.shadowRoot.querySelector("#modify-image-mem").value = resource_limits[mem_idx].min;
+  }
 
+  _parseServicePorts() {
+    if (this.images[this.selectedIndex].labels["ai.backend.service-ports"] === "") {
+      this.servicePorts = [];
+    } else {
+      this.servicePorts =
+        this.images[this.selectedIndex].labels["ai.backend.service-ports"]
+        .split(",")
+        .map(e => {
+          const sp = e.split(":");
+          return {
+            "app": sp[0],
+            "protocol": sp[1],
+            "port": sp[2]
+          };
+        });
+    }
   }
 
   controlsRenderer(root, column, rowData) {
@@ -279,6 +323,16 @@ class BackendAiEnvironmentList extends BackendAIPage {
               this.selectedIndex = rowData.index;
               this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
               this._launchDialogById("#modify-image-dialog")
+              this.requestUpdate();
+            }}
+          ></paper-icon-button>
+          <paper-icon-button
+            class="fg pink controls-running"
+            icon="icons:apps"
+            @click=${() => {
+              this.selectedIndex = rowData.index;
+              this._parseServicePorts();
+              this._launchDialogById("#modify-app-dialog")
               this.requestUpdate();
             }}
           ></paper-icon-button>
@@ -380,13 +434,14 @@ class BackendAiEnvironmentList extends BackendAIPage {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <form id="login-form">
+          <form>
             <fieldset>
-              <div style="display: flex">
-                <div style="flex: 1">
+              <div style="display: flex; flex-direction: column;">
+                <div style="display: flex;">
                   <wl-select
                     label="CPU"
                     id="modify-image-cpu"
+                    style="flex: 1"
                   >
                     ${[1, 2, 3, 4, 5, 6, 7, 8].map(item => html`
                       <option
@@ -395,23 +450,25 @@ class BackendAiEnvironmentList extends BackendAIPage {
                     `)}
                   </wl-select>
                   <wl-select
-                    label="GPU"
-                    id="modify-image-gpu"
-                    ?disabled=${this._gpu_disabled}
+                    label="RAM"
+                    id="modify-image-mem"
+                    style="flex: 1"
                   >
-                    ${[0, 1, 2, 3, 4].map(item => html`
+                    ${["64m", "128m", "256m", "512m", "1g", "2g", "4g", "8g", "16g"].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
                     `)}
                   </wl-select>
                 </div>
-                <div style="flex: 1">
+                <div style="display: flex;">
                   <wl-select
-                    label="RAM"
-                    id="modify-image-mem"
+                    label="GPU"
+                    id="modify-image-gpu"
+                    style="flex: 1"
+                    ?disabled=${this._gpu_disabled}
                   >
-                    ${["64m", "128m", "256m", "512m", "1g", "2g", "4g", "8g", "16g"].map(item => html`
+                    ${[0, 1, 2, 3, 4].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
@@ -421,6 +478,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
                     label="fGPU"
                     id="modify-image-fgpu"
                     ?disabled=${this._fgpu_disabled}
+                    style="flex: 1"
                   >
                     ${[0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
                       <option
@@ -428,6 +486,20 @@ class BackendAiEnvironmentList extends BackendAIPage {
                       >${item}</option>
                     `)}
                   </wl-select>
+                </div>
+                <div style="display: flex;">
+                  <wl-textfield
+                    type="text"
+                    label="App Name"
+                    id="modify-image-app-name"
+                    style="flex: 1"
+                  ></wl-textfield>
+                  <wl-textfield
+                    type="number"
+                    label="Port Number"
+                    id="modify-image-app-port"
+                    style="flex: 1"
+                  ></wl-textfield>
                 </div>
               </div>
               <wl-button
@@ -444,8 +516,79 @@ class BackendAiEnvironmentList extends BackendAIPage {
           </form>
         </wl-card>
       </wl-dialog>
+      <wl-dialog id="modify-app-dialog" fixed backdrop blockscrolling>
+        <div slot="header" class="gutterBottom">
+          <div class="horizontal center layout">
+            <span>Manage Apps</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${e => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </div>
+          <wl-divider></wl-divider>
+        </div>
+        <vaadin-grid
+          slot="content"
+          theme="column-borders compact"
+          style="height: 100%;"
+          .items=${this.servicePorts}
+        >
+          <vaadin-grid-column flex-grow="2" header="App Name" resizable .renderer=${this._appRenderer}>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="2" header="Protocol" resizable .renderer=${this._protocolRenderer}>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="2" header="Port Number" resizable .renderer=${this._portRenderer}>
+          </vaadin-grid-column>
+          <vaadin-grid-column width="70px" flex-grow="0" header=" " resizable>
+            <template>
+              <div>
+                <wl-button fab flat class="fg pink">
+                  <wl-icon>add</wl-icon>
+                </wl-button>
+              </div>
+            </template>
+          </vaadin-grid-column>
+        </vaadin-grid>
+      </wl-dialog>
     `;
   }
+
+  _appRenderer(root, column, rowData) {
+    render (
+      html`
+        <wl-textfield
+          type="text"
+          value=${rowData.item.app}
+        ></wl-textfield>
+      `,
+      root
+    )
+  }
+
+  _protocolRenderer(root, column, rowData) {
+    render (
+      html`
+        <wl-textfield
+          type="text"
+          value=${rowData.item.protocol}
+        ></wl-textfield>
+      `,
+      root
+    )
+  }
+
+  _portRenderer(root, column, rowData) {
+    render (
+      html`
+        <wl-textfield
+          type="number"
+          value=${rowData.item.port}
+        ></wl-textfield>
+      `,
+      root
+    )
+  }
+
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
@@ -518,6 +661,8 @@ class BackendAiEnvironmentList extends BackendAIPage {
             image[resource.key + '_limit_min'] = this._addUnit(resource.min);
             image[resource.key + '_limit_max'] = this._addUnit(resource.max);
           });
+
+          image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value }), {});
           domainImages.push(image);
         }
       });
