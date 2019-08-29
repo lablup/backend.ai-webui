@@ -323,63 +323,43 @@ class BackendAiSessionList extends BackendAIPage {
   }
 
   _initializeAppTemplate() {
-    let jupyterBase = [
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Notebook',
-        'redirect': "&redirect=/tree",
-        'src': './resources/icons/jupyter.png'
-      },
-      {
-        'name': 'jupyterlab',
-        'title': 'JupyterLab',
-        'redirect': "&redirect=/lab",
-        'src': './resources/icons/jupyterlab.png',
-        'icon': 'vaadin:flask'
-      }];
-    let TFBase = jupyterBase.concat(
-      {
-        'name': 'tensorboard',
-        'title': 'TensorBoard',
-        'redirect': "&redirect=/",
-        'src': './resources/icons/tensorflow.png'
-      });
-    let RBase = jupyterBase.concat(
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Extension',
-        'redirect': "&redirect=/nbextensions",
-        'src': './resources/icons/jupyter.png',
-        'icon': 'vaadin:clipboard-pulse'
-      });
-    let FFBase = TFBase.concat(
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Extension',
-        'redirect': "&redirect=/nbextensions",
-        'src': './resources/icons/jupyter.png',
-        'icon': 'vaadin:clipboard-pulse'
-      });
     this.appTemplate = {
-      'tensorflow': TFBase,
-      'python': jupyterBase,
-      'python-intel': jupyterBase,
-      'python-tensorflow': TFBase,
-      'python-ff': FFBase,
-      'python-pytorch': TFBase,
-      'ngc-digits':
-        TFBase.concat(
+      'jupyter':
+        [{
+          'name': 'jupyter',
+          'title': 'Jupyter Notebook',
+          'redirect': "&redirect=/tree",
+          'src': './resources/icons/jupyter.png'
+        },
           {
-            'name': 'digits',
-            'title': 'DIGITS',
-            'redirect': "&redirect=/",
-            'src': './resources/icons/nvidia.png'
-          }),
-      'ngc-tensorflow': TFBase,
-      'ngc-pytorch': TFBase,
-      'julia': jupyterBase,
-      'r': jupyterBase,
-      'r-base': RBase
+            'name': 'jupyter',
+            'title': 'Jupyter Extension',
+            'redirect': "&redirect=/nbextensions",
+            'src': './resources/icons/jupyter.png',
+            'icon': 'vaadin:clipboard-pulse'
+          }],
+      'jupyterlab':
+        [{
+          'name': 'jupyterlab',
+          'title': 'JupyterLab',
+          'redirect': "&redirect=/lab",
+          'src': './resources/icons/jupyterlab.png',
+          'icon': 'vaadin:flask'
+        }],
+      'tensorboard':
+        [{
+          'name': 'tensorboard',
+          'title': 'TensorBoard',
+          'redirect': "&redirect=/",
+          'src': './resources/icons/tensorflow.png'
+        }],
+      'digits':
+        [{
+          'name': 'digits',
+          'title': 'DIGITS',
+          'redirect': "&redirect=/",
+          'src': './resources/icons/nvidia.png'
+        }]
     };
   }
 
@@ -432,8 +412,8 @@ class BackendAiSessionList extends BackendAIPage {
           previous_session_keys.push(previous_sessions[objectKey].sess_id);
         });
         Object.keys(sessions).map((objectKey, index) => {
-          var session = sessions[objectKey];
-          var occupied_slots = JSON.parse(session.occupied_slots);
+          let session = sessions[objectKey];
+          let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].lang.split('/')[2];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
@@ -696,12 +676,15 @@ class BackendAiSessionList extends BackendAIPage {
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
     const kernelImage = controls['kernel-image'];
-    let imageName = kernelImage.split(":")[0];
-    if (imageName in this.appTemplate) {
-      this.appSupportList = this.appTemplate[imageName];
-    } else {
-      this.appSupportList = [];
-    }
+    const appServices = controls['app-services'];
+    this.appSupportList = [];
+    appServices.forEach((elm) => {
+      if (elm in this.appTemplate) {
+        this.appTemplate[elm].forEach((app) => {
+          this.appSupportList.push(app);
+        });
+      }
+    });
     let dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.setAttribute('kernel-id', kernelId);
     dialog.setAttribute('access-key', accessKey);
@@ -719,7 +702,6 @@ class BackendAiSessionList extends BackendAIPage {
       return false;
     }
 
-    ////
     let param = {
       endpoint: window.backendaiclient._config.endpoint
     };
@@ -986,7 +968,8 @@ ${item.map(item => html`
         <div id="controls" class="layout horizontal flex center"
              .kernel-id="${rowData.item.sess_id}"
              .access-key="${rowData.item.access_key}"
-             .kernel-image="${rowData.item.kernel_image}">
+             .kernel-image="${rowData.item.kernel_image}"
+             .app-services="${rowData.item.app_services}">
              ${rowData.item.appSupport ? html`
             <paper-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
