@@ -37,7 +37,10 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'About Backend.AI Console',
-            selector: 'orderFrontStandardAboutPanel:'
+            click: function () {
+              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
+                '    document.dispatchEvent(event);');
+            }
           },
           {
             type: 'separator'
