@@ -174,19 +174,33 @@ class BackendAiLogin extends LitElement {
           font-size: 16px;
           outline: none;
         }
+
         wl-textfield {
-            --input-font-family: 'Quicksand', sans-serif;
+          --input-font-family: 'Quicksand', sans-serif;
         }
+
         #login-panel {
           --dialog-width: 400px;
         }
 
         h3 small {
-            font-size: 13px;
+          --button-font-size: 12px;
         }
+
         wl-button {
-          width: 335px;
           --button-bg: transparent;
+        }
+
+        wl-button.mini {
+          font-size: 12px;
+        }
+
+        wl-button.full {
+          width: 335px;
+        }
+
+        wl-button.login-button,
+        wl-button.login-cancel-button {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
@@ -194,6 +208,16 @@ class BackendAiLogin extends LitElement {
         wl-button.signup-button {
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
+        }
+
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
         }
       `];
   }
@@ -383,6 +407,11 @@ class BackendAiLogin extends LitElement {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _cancelLogin(e) {
+    this._hideDialog(e);
+    this.open();
   }
 
   _validate_data(value) {
@@ -627,8 +656,10 @@ class BackendAiLogin extends LitElement {
                 <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`Use IAM` : html`Use ID/password`}</a></small>
             ` : html``}
             ${this.signup_support ? html`
-            <span style="font-size:14px;margin-right:10px;">Not a user? </span>
-            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            <div class="vertical center-justified layout">
+              <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
+              <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            </div>
             ` : html``}
           </h3>
           <form id="login-form">
@@ -647,7 +678,7 @@ class BackendAiLogin extends LitElement {
                            style="display:none;"
                            label="API Endpoint" value=""></wl-textfield>
               <br/><br/>
-              <wl-button class="fg red full" id="login-button" outlined type="button"
+              <wl-button class="fg red full login-button" id="login-button" outlined type="button"
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
                           Login</wl-button>
@@ -659,10 +690,16 @@ class BackendAiLogin extends LitElement {
         ${this.blockMessage != '' ? html`
         <wl-card>
           ${this.blockType !== '' ? html`
-          <h3>${this.blockType}</h3>
+          <h3 class="horizontal center layout" style="font-weight:bold">
+            <span id="work-title">${this.blockType}</span>
+            <div class="flex"></div>
+          </h3>
           ` : html``}
           <div style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
+          </div>
+          <div style="text-align:right;padding-top:15px;">
+            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">Cancel login</wl-button>
           </div>
         </wl-card>
         ` : html``}
