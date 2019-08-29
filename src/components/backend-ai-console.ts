@@ -30,6 +30,7 @@ import toml from 'markty-toml';
 import 'weightless/select';
 import 'weightless/progress-spinner';
 import './lablup-notification';
+import './backend-ai-splash';
 
 import '../lib/backend.ai-client-es6.js';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -91,6 +92,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   public _offline: any;
   public _drawerOpened: any;
   public notification: any;
+  public splash: any;
 
   constructor() {
     super();
@@ -153,6 +155,9 @@ class BackendAiConsole extends connect(store)(LitElement) {
         type: Object
       },
       notification: {
+        type: Object
+      },
+      splash: {
         type: Object
       },
       _page: {type: String},
@@ -247,6 +252,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('#notification');
+    this.splash = this.shadowRoot.querySelector('#about-panel');
     if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
       this.shadowRoot.querySelector('.portrait-canvas').style.visibility = 'hidden';
     }
@@ -575,6 +581,10 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   <a href="https://cloud.backend.ai/@lablupinc/terms-of-service-payment">Terms of Service</a>
                   ·
                   <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
+                  ·
+                  <a @click="${() => {
+      this.splash.show()
+    }}">About</a>
                 </small>
               </div>
             </footer>
@@ -629,6 +639,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       </backend-ai-offline-indicator>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-login id="login-panel"></backend-ai-login>
+      <backend-ai-splash id="about-panel"></backend-ai-splash>
     `;
   }
 
