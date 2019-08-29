@@ -1351,7 +1351,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
       'resource_limits { key min max }'
     ];
-    window.backendaiclient.image.list(fields).then((response) => {
+    window.backendaiclient.image.list(fields, true).then((response) => {
       const images = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
