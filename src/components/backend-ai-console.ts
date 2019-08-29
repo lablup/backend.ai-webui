@@ -63,6 +63,8 @@ declare global {
     backendaiconsole: any;
     backendaiwsproxy: any;
     isElectron: boolean;
+    buildVersion: string;
+    packageVersion: string;
     __local_proxy: string;
   }
 
