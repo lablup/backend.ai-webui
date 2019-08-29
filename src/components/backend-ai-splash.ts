@@ -8,10 +8,8 @@ import 'weightless/dialog';
 
 @customElement("backend-ai-splash")
 export default class BackendAISplash extends LitElement {
-  @property({type: Boolean}) show = false;
   @property({type: Object}) dialog = Object();
-
-
+  
   constructor() {
     super();
   }
