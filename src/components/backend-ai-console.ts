@@ -264,6 +264,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     if (window.isElectron) {
       configPath = './config.toml';
       document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
+      document.addEventListener('backend-ai-show-splash', this.splash.show.bind(this));
     } else {
       configPath = '../../config.toml';
     }
@@ -584,9 +585,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
                   ·
                   <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
                   ·
-                  <a @click="${() => {
-      this.splash.show()
-    }}">About</a>
+                  <a @click="${() => {this.splash.show();}}">About</a>
                 </small>
               </div>
             </footer>
