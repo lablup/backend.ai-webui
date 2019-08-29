@@ -1376,7 +1376,7 @@ class Image {
    *
    * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
    */
-  list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]) {
+  list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"]) {
     let q, v;
     q = `query {` +
       `  images { ${fields.join(" ")} }` +
