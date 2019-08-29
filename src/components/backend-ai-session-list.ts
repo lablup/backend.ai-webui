@@ -542,6 +542,11 @@ class BackendAiSessionList extends BackendAIPage {
         {'category': 'Env', 'tag': 'Octave', 'color': 'yellow'}],
       'swift': [
         {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
+      'h2o': [
+        {'category': 'Env', 'tag': 'H2O', 'color': 'yellow'}],
+      'lablup-pytorch': [
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
+        {'tag': 'Cloudia', 'color': 'green'}],
     };
     let tags = [];
     if (lang === undefined) return [];
