@@ -1399,11 +1399,6 @@ class Image {
     return Promise.all(promiseArray);
   }
 
-  test() {
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": "images/", "prefix": true});
-    return this.client._wrapWithPromise(rqst);
-  }
-
   get(registry, image, tag) {
     const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true});
     return this.client._wrapWithPromise(rqst);
