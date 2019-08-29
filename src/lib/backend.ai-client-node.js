@@ -152,6 +152,7 @@ class Client {
     this.resources = new Resources(this);
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
+    this.registry = new Registry(this);
     this.domain = new Domain(this);
 
     this._features= {}; // feature support list
@@ -1716,6 +1717,7 @@ class Maintenance {
       return Promise.resolve(false);
     }
   }
+
   recalculate_usage() {
     if (this.client.is_superadmin === true) {
       let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
@@ -2017,6 +2019,27 @@ class ScalingGroup {
     };
 
     return this.client.gql(q, v);
+  }
+}
+
+class Registry {
+  constructor(client) {
+    this.client = client;
+  }
+
+  list() {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": "config/docker/registry", "prefix": true});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  add(key, value) {
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  delete(key) {
+    const rqst = this.client.newSignedRequest("POST", "/config/delete", {"key": `config/docker/registry/${key}`, "prefix": true});
+    return this.client._wrapWithPromise(rqst);
   }
 }
 

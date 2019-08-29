@@ -101,6 +101,15 @@ class BackendAIUsageList extends BackendAIPage {
           --input-label-font-size: 12px;
           --input-border-style-disabled: 1px solid #ccc;
         }
+
+        h3 {
+            display: block;
+            font-weight: 100;
+            width: 100%;
+            padding: 5px 15px;
+            text-align: left;
+            border-top: 1px solid #ccc;
+        }
       `
     ]
   }
@@ -196,18 +205,23 @@ class BackendAIUsageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="layout horizontal end-justified" style="width: 80%;">
+      <div class="layout horizontal end-justified flex">
+      <div class="flex"></div>
         <wl-select label="Select Period" style="width: 130px" @input=${this.pulldownChange}>
           <option value disabled>Select Period</option>
           <option value="1D" selected>1 Day</option>
           <option value="1W">1 Week</option>
         </wl-select>
       </div>
-      <div class="layout vertical center">
+      <div class="layout vertical center flex wrap">
       ${
         Object.keys(this._map).map((key, idx) =>
           html`
-          <h3 style="width:80px;" class="horizontal center-justified layout">${this._map[key]}</h3>
+          <div class="layout horizontal center flex" style="width:100%;">
+              <h3>${this._map[key]}</h3>
+              <span></span>
+              <span class="flex"></span>
+          </div>
           <backend-ai-chart
             width="1000"
             height="150"

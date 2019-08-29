@@ -302,7 +302,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
       this.plugins['login'] = config.plugin.login;
     }
     let loginPanel = this.shadowRoot.querySelector('#login-panel');
-    loginPanel.refreshPanel(config);
+    loginPanel.refreshWithConfig(config);
   }
 
   refreshPage() {
@@ -581,7 +581,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.08.5.190827</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.08.5.190828</small>
               </address>
             </div>
           </app-header-layout>
