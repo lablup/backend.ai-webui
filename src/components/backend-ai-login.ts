@@ -357,6 +357,7 @@ class BackendAiLogin extends LitElement {
     if (this.api_endpoint === '') {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
+    this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
       this.notification.text = 'Please wait to login...';
