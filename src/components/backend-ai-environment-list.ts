@@ -20,6 +20,7 @@ import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
+import './lablup-notification';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -155,23 +156,38 @@ class BackendAiEnvironmentList extends BackendAIPage {
           gpu = this.shadowRoot.querySelector("#modify-image-gpu").value,
          fgpu = this.shadowRoot.querySelector("#modify-image-fgpu").value;
 
-    let input = {
-      "cpu": {
-        "min": cpu
-      },
-      "mem": {
-        "min": mem
-      }
-    }
-    if (this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_device").length !== 0) input["cuda.device"] = { "min": gpu };
-    if (this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_shares").length !== 0) input["cuda.shares"] = { "min": fgpu };
+    const { resource_limits } = this.images[this.selectedIndex];
+
+    let input = {};
+
+    const mem_idx = this._gpu_disabled ? ( this._fgpu_disabled ? 1 : 2  ) : ( this._fgpu_disabled ? 2 : 3  );
+    if (cpu !== resource_limits[0].min) input["cpu"] = { "min": cpu };
+    if (mem !== resource_limits[mem_idx].min) input["mem"] = { "min": mem }
+    if (!this._gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = { "min": gpu };
+    if (!this._fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = { "min": fgpu };
 
     const image = this.images[this.selectedIndex];
 
+    if (Object.keys(input).length === 0) {
+      this.notification.text = "No changes made";
+      this.notification.show();
+      this._hideDialogById("#modify-image-dialog");
+      return;
+    }
+
     window.backendaiclient.image.modify(image.registry, image.name.replace("/", "%2F"), image.tag, input)
     .then(res => {
-      this._getImages();
-      this.requestUpdate();
+      const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
+
+      if (ok) {
+        this._getImages();
+        this.requestUpdate();
+        this.notification.text = "Successfully modified";
+      } else {
+        this.notification.text = "Problem occurred";
+      }
+
+      this.notification.show();
       this._hideDialogById("#modify-image-dialog");
     })
   }
@@ -218,6 +234,22 @@ class BackendAiEnvironmentList extends BackendAIPage {
     );
   }
 
+  _setPulldownDefaults(resource_limits) {
+    this._gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
+    this._fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
+
+    this.shadowRoot.querySelector("#modify-image-cpu").value = resource_limits[0].min;
+    if (!this._gpu_disabled)
+      this.shadowRoot.querySelector("#modify-image-gpu").value = resource_limits[1].min;
+
+    if (!this._fgpu_disabled)
+      this.shadowRoot.querySelector("#modify-image-fgpu").value = resource_limits[2].min;
+
+    const mem_idx = this._gpu_disabled ? ( this._fgpu_disabled ? 1 : 2  ) : ( this._fgpu_disabled ? 2 : 3  );
+    this.shadowRoot.querySelector("#modify-image-mem").value = resource_limits[mem_idx].min;
+
+  }
+
   controlsRenderer(root, column, rowData) {
     render (
       html`
@@ -232,8 +264,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
             icon="icons:settings"
             @click=${() => {
               this.selectedIndex = rowData.index;
-              this._gpu_disabled = this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_device").length === 0;
-              this._fgpu_disabled = this.images[this.selectedIndex].resource_limits.filter(e => e.key === "cuda_shares").length === 0;
+              this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
               this._launchDialogById("#modify-image-dialog")
               this.requestUpdate();
             }}
@@ -247,6 +278,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-column width="40px" flex-grow="0" text-align="center">
@@ -346,7 +378,6 @@ class BackendAiEnvironmentList extends BackendAIPage {
                     ${[1, 2, 3, 4, 5, 6, 7, 8].map(item => html`
                       <option
                         value=${item}
-                        ?selected=${this.images.length !== 0 && this.images[this.selectedIndex].resource_limits[0].min == item}
                       >${item}</option>
                     `)}
                   </wl-select>
@@ -367,10 +398,9 @@ class BackendAiEnvironmentList extends BackendAIPage {
                     label="RAM"
                     id="modify-image-mem"
                   >
-                    ${["256m", "512m", "1g", "2g", "4g", "8g", "16g"].map(item => html`
+                    ${["64m", "128m", "256m", "512m", "1g", "2g", "4g", "8g", "16g"].map(item => html`
                       <option
                         value=${item}
-                        ?selected=${this.images.length !== 0 && this.images[this.selectedIndex].resource_limits[1].min == item}
                       >${item}</option>
                     `)}
                   </wl-select>
@@ -406,6 +436,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.notification = this.shadowRoot.querySelector('#notification');
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
@@ -534,7 +565,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
       'ubuntu16.04': 'Ubuntu 16.04',
       'ubuntu18.04': 'Ubuntu 18.04',
       'anaconda2018.12': 'Anaconda 2018.12',
-      'alpine3.8': 'Alpine Lunux 3.8',
+      'alpine3.8': 'Alpine Linux 3.8',
       'ngc': 'NVidia GPU Cloud',
       'ff': 'Research Env.',
     };
