@@ -306,7 +306,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
-  updated(changedProps) {
+  updated(changedProps: any) {
     if (changedProps.has('_page')) {
       let view = this._page;
       // load data for view
@@ -400,7 +400,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
-  updateTitleColor(backgroundColorVal, colorVal) {
+  updateTitleColor(backgroundColorVal: string, colorVal: string) {
     (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.backgroundColor = backgroundColorVal;
     (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.color = colorVal;
   }

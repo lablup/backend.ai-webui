@@ -17,6 +17,7 @@ export default class LablupNotification extends LitElement {
   @property({type: Object}) indicator;
   @property({type: Object}) notification;
   @property({type: Boolean}) active = false;
+  @property({type: Number}) step = 0;
 
   constructor() {
     super();
@@ -44,7 +45,7 @@ export default class LablupNotification extends LitElement {
   render() {
     // language=HTML
     return html`
-        <wl-snackbar id="notification" backdrop hideDelay="4000" style="bottom: ${20 + 20 * window.__snackbars}px;"></wl-snackbar>
+        <wl-snackbar id="notification" backdrop hideDelay="4000"></wl-snackbar>
     `;
   }
 
@@ -54,6 +55,9 @@ export default class LablupNotification extends LitElement {
 
   firstUpdated() {
     this.notification = this.shadowRoot.querySelector('wl-snackbar');
+    this.step = window.__snackbars;
+    (this.notification as HTMLElement).style.bottom = (20 + 20 * this.step) + 'px';
+    document.addEventListener('lablup-notification-hide', this.ladder.bind(this));
   }
 
   connectedCallback() {
@@ -68,8 +72,12 @@ export default class LablupNotification extends LitElement {
 
   }
 
+  async ladder() {
+
+  }
   async show(message: string = '') {
     this.active = true;
+    this.step = window.__snackbars;
     await this.updateComplete;
     if (message === '') {
       this.notification.innerHTML = this.text;
@@ -86,6 +94,8 @@ export default class LablupNotification extends LitElement {
     this.notification.hide();
     window.__snackbars = window.__snackbars - 1;
     this.active = false;
+    let event = new CustomEvent("lablup-notification-hide", {"detail": window.__snackbars});
+    document.dispatchEvent(event);
   }
 
   async toggle() {
