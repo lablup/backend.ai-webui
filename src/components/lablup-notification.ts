@@ -5,6 +5,7 @@
 
 import {css, customElement, html, property, LitElement} from "lit-element";
 import 'weightless/snackbar';
+import 'weightless/button';
 import LablupTermsOfService from "./lablup-terms-of-service";
 
 @customElement("lablup-notification")
@@ -39,6 +40,10 @@ export default class LablupNotification extends LitElement {
           font-family: 'Quicksand', Roboto, sans-serif;
           z-index: 10000;
         }
+
+        wl-button {
+            --button-font-size: 12px;
+        }
       `];
   }
 
@@ -69,11 +74,34 @@ export default class LablupNotification extends LitElement {
   async ladder() {
 
   }
-  async show(message: string = '') {
+
+  _hideNotification(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-snackbar');
+    dialog.hide();
+  }
+
+  async show(persistent: boolean = false, message: string = '') {
     this.gc();
     let notification = document.createElement('wl-snackbar');
+    if (message === '') {
+      notification.innerHTML = this.text;
+    } else {
+      notification.innerHTML = message;
+      this.text = message;
+    }
+    if (persistent === false) {
+      notification.setAttribute('hideDelay', '4000');
+    } else {
+      notification.setAttribute('hideDelay', '86400');
+      let button = document.createElement('wl-button');
+      button.setAttribute('slot', "action");
+      button.setAttribute('flat', "");
+      button.addEventListener('click', this._hideNotification.bind(this));
+      button.innerHTML = "Close";
+      notification.appendChild(button);
+    }
     notification.setAttribute('backdrop', '');
-    notification.setAttribute('hideDelay', '4000');
     notification.style.bottom = (20 + 45 * this.step) + 'px';
     notification.style.position = 'fixed';
     notification.style.right = '20px';
@@ -84,24 +112,11 @@ export default class LablupNotification extends LitElement {
     document.body.appendChild(notification);
     this.notifications.push(notification);
     await this.updateComplete;
-    if (message === '') {
-      notification.innerHTML = this.text;
-    } else {
-      notification.innerHTML = message;
-      this.text = message;
-    }
     notification.show();
   }
 
   gc() {
     if (this.notifications.length > 0) {
-      /*this.notifications.forEach((noti, index, obj) => {
-        if (noti.open === false) {
-          console.log(noti.innerHTML);
-          noti.parentNode.removeChild(noti);
-          obj.splice(index, 1);
-        }
-      });*/
       let opened_notifications = this.notifications.filter(noti => noti.open === true);
       this.notifications = opened_notifications;
     }
