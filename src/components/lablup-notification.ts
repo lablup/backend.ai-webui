@@ -15,9 +15,7 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) text = '';
   @property({type: String}) message = '';
   @property({type: Object}) indicator;
-  @property({type: Object}) notification;
   @property({type: Array}) notifications = Array();
-  @property({type: Object}) notificationPool = Object();
   @property({type: Boolean}) active = true;
   @property({type: Number}) step = 0;
 
@@ -54,7 +52,6 @@ export default class LablupNotification extends LitElement {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('wl-snackbar');
     this.notificationPool = this.shadowRoot.querySelector('#notification-pool');
   }
 
@@ -74,11 +71,11 @@ export default class LablupNotification extends LitElement {
 
   }
   async show(message: string = '') {
+    this.gc();
     let notification = document.createElement('wl-snackbar');
     notification.setAttribute('backdrop', '');
     notification.setAttribute('hideDelay', '4000');
     notification.style.bottom = (20 + 45 * this.step) + 'px';
-    this.step = this.step + 1;
     notification.style.position = 'fixed';
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
@@ -97,23 +94,20 @@ export default class LablupNotification extends LitElement {
     notification.show();
   }
 
-  async hide() {
-    await this.updateComplete;
-    this.notification.hide();
-    this.step = this.step - 1;
-  }
-
-  async toggle() {
-    await this.updateComplete;
-    if (this.notification.open === true) {
-      this.hide();
-      //this.indicator.open = false;
-    } else {
-      this.show();
-      //this.indicator.open = true;
+  gc() {
+    if (this.notifications.length > 0) {
+      /*this.notifications.forEach((noti, index, obj) => {
+        if (noti.open === false) {
+          console.log(noti.innerHTML);
+          noti.parentNode.removeChild(noti);
+          obj.splice(index, 1);
+        }
+      });*/
+      let opened_notifications = this.notifications.filter(noti => noti.open === true);
+      this.notifications = opened_notifications;
     }
+    this.step = this.notifications.length;
   }
-
 }
 declare global {
   interface HTMLElementTagNameMap {
