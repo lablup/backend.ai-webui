@@ -467,7 +467,7 @@ class BackendAiExperimentView extends BackendAIPage {
         this.notification.show();
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -569,10 +569,10 @@ class BackendAiExperimentView extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
@@ -1009,7 +1009,7 @@ class BackendAiExperimentView extends BackendAIPage {
     }).catch((err) => {
       if (err && err.message) {
         this.$.notification.text = PainKiller.relieve(err.message);
-        this.$.notification.show();
+        this.$.notification.show(true);
       }
     });
   }

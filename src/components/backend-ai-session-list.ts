@@ -478,7 +478,7 @@ class BackendAiSessionList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -636,7 +636,7 @@ class BackendAiSessionList extends BackendAIPage {
         console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.message);
-          this.notification.show();
+          this.notification.show(true);
         }
       });
   }
@@ -667,10 +667,10 @@ class BackendAiSessionList extends BackendAIPage {
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -855,7 +855,7 @@ class BackendAiSessionList extends BackendAIPage {
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
       let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     });
@@ -891,7 +891,7 @@ class BackendAiSessionList extends BackendAIPage {
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
     });
   }
 
@@ -911,7 +911,7 @@ class BackendAiSessionList extends BackendAIPage {
       this._selected_items = [];
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
     });
   }
 
@@ -928,13 +928,13 @@ class BackendAiSessionList extends BackendAIPage {
       }).catch((err) => {
         this.refreshList(true, false);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-        this.notification.show();
+        this.notification.show(true);
       });
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
