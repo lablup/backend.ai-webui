@@ -1390,6 +1390,7 @@ class Image {
    */
   modifyResource(registry, image, tag, input) {
     let promiseArray = [];
+    image = image.replace("/", "%2F");
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {
         const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`, "value": input[slot_type][key]});
@@ -1401,6 +1402,8 @@ class Image {
   }
 
   modifyLabel(registry, image, tag, key, value) {
+    image = image.replace("/", "%2F");
+    tag = tag.replace("/", "%2F");
     const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/labels/${key}`, "value": value});
     return this.client._wrapWithPromise(rqst);
   }
