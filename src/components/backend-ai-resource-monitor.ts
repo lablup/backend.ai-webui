@@ -831,6 +831,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'rust': 'Rust',
       'scala': 'Scala',
       'scheme': 'Scheme',
+      'lablup-pytorch': 'PyTorch (Cloudia)',
+      'h2o': 'H2O.ai',
     };
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
