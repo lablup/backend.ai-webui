@@ -1388,7 +1388,7 @@ class Image {
   /*
    *
    */
-  modify(registry, image, tag, input) {
+  modifyResource(registry, image, tag, input) {
     let promiseArray = [];
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {
@@ -1398,6 +1398,11 @@ class Image {
     })
 
     return Promise.all(promiseArray);
+  }
+
+  modifyLabel(registry, image, tag, key, value) {
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/labels/${key}`, "value": value});
+    return this.client._wrapWithPromise(rqst);
   }
 
   get(registry, image, tag) {
