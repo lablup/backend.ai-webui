@@ -504,7 +504,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -554,7 +554,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -569,7 +569,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }

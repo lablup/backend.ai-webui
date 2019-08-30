@@ -273,7 +273,7 @@ class BackendAICredentialList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -288,7 +288,7 @@ class BackendAICredentialList extends BackendAIPage {
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     }
   }
@@ -306,7 +306,7 @@ class BackendAICredentialList extends BackendAIPage {
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     }
   }
@@ -337,7 +337,7 @@ class BackendAICredentialList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -369,7 +369,7 @@ class BackendAICredentialList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }

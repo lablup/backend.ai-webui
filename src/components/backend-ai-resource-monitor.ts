@@ -627,10 +627,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -767,10 +767,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
@@ -1386,7 +1386,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
