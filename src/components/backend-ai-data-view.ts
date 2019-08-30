@@ -918,7 +918,7 @@ class BackendAIData extends BackendAIPage {
       this._toggleCheckbox();
     });
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   _refreshFolderList() {
@@ -1007,7 +1007,7 @@ class BackendAIData extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
     this.closeDialog('add-folder-dialog');
@@ -1030,7 +1030,7 @@ class BackendAIData extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -1062,7 +1062,7 @@ class BackendAIData extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }

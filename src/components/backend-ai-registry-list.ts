@@ -104,7 +104,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#indicator');
   }
 
@@ -232,7 +232,7 @@ class BackendAIRegistryList extends BackendAIPage {
       this.indicator.end(1000);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }

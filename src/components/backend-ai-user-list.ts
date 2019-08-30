@@ -217,7 +217,7 @@ class BackendAIUserList extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   async _viewStateChanged(active) {
@@ -261,7 +261,7 @@ class BackendAIUserList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -291,7 +291,7 @@ class BackendAIUserList extends BackendAIPage {
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     }
   }
@@ -321,7 +321,7 @@ class BackendAIUserList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -353,7 +353,7 @@ class BackendAIUserList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }

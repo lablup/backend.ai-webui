@@ -5,6 +5,7 @@
 
 import {css, customElement, html, property, LitElement} from "lit-element";
 import 'weightless/snackbar';
+import 'weightless/button';
 import LablupTermsOfService from "./lablup-terms-of-service";
 
 @customElement("lablup-notification")
@@ -15,8 +16,8 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) text = '';
   @property({type: String}) message = '';
   @property({type: Object}) indicator;
-  @property({type: Object}) notification;
-  @property({type: Boolean}) active = false;
+  @property({type: Array}) notifications = Array();
+  @property({type: Boolean}) active = true;
   @property({type: Number}) step = 0;
 
   constructor() {
@@ -39,14 +40,16 @@ export default class LablupNotification extends LitElement {
           font-family: 'Quicksand', Roboto, sans-serif;
           z-index: 10000;
         }
+
+        wl-button {
+            --button-font-size: 12px;
+        }
       `];
   }
 
   render() {
     // language=HTML
-    return html`
-        <wl-snackbar id="notification" backdrop hideDelay="4000"></wl-snackbar>
-    `;
+    return html``;
   }
 
   shouldUpdate() {
@@ -54,10 +57,6 @@ export default class LablupNotification extends LitElement {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('wl-snackbar');
-    this.step = window.__snackbars;
-    (this.notification as HTMLElement).style.bottom = (20 + 20 * this.step) + 'px';
-    document.addEventListener('lablup-notification-hide', this.ladder.bind(this));
   }
 
   connectedCallback() {
@@ -75,40 +74,54 @@ export default class LablupNotification extends LitElement {
   async ladder() {
 
   }
-  async show(message: string = '') {
-    this.active = true;
-    this.step = window.__snackbars;
-    await this.updateComplete;
+
+  _hideNotification(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-snackbar');
+    dialog.hide();
+  }
+
+  async show(persistent: boolean = false, message: string = '') {
+    this.gc();
+    let notification = document.createElement('wl-snackbar');
     if (message === '') {
-      this.notification.innerHTML = this.text;
+      notification.innerHTML = this.text;
     } else {
-      this.notification.innerHTML = message;
+      notification.innerHTML = message;
       this.text = message;
     }
-    this.notification.show();
-    window.__snackbars = window.__snackbars + 1;
-  }
-
-  async hide() {
-    await this.updateComplete;
-    this.notification.hide();
-    window.__snackbars = window.__snackbars - 1;
-    this.active = false;
-    let event = new CustomEvent("lablup-notification-hide", {"detail": window.__snackbars});
-    document.dispatchEvent(event);
-  }
-
-  async toggle() {
-    await this.updateComplete;
-    if (this.notification.open === true) {
-      this.hide();
-      //this.indicator.open = false;
+    if (persistent === false) {
+      notification.setAttribute('hideDelay', '4000');
     } else {
-      this.show();
-      //this.indicator.open = true;
+      notification.setAttribute('hideDelay', '86400');
+      let button = document.createElement('wl-button');
+      button.setAttribute('slot', "action");
+      button.setAttribute('flat', "");
+      button.addEventListener('click', this._hideNotification.bind(this));
+      button.innerHTML = "Close";
+      notification.appendChild(button);
     }
+    notification.setAttribute('backdrop', '');
+    notification.style.bottom = (20 + 45 * this.step) + 'px';
+    notification.style.position = 'fixed';
+    notification.style.right = '20px';
+    notification.style.fontSize = '16px';
+    notification.style.fontWeight = '400';
+    notification.style.fontFamily = "'Quicksand', Roboto, sans-serif";
+    notification.style.zIndex = "10000";
+    document.body.appendChild(notification);
+    this.notifications.push(notification);
+    await this.updateComplete;
+    notification.show();
   }
 
+  gc() {
+    if (this.notifications.length > 0) {
+      let opened_notifications = this.notifications.filter(noti => noti.open === true);
+      this.notifications = opened_notifications;
+    }
+    this.step = this.notifications.length;
+  }
 }
 declare global {
   interface HTMLElementTagNameMap {
