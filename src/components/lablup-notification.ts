@@ -17,7 +17,8 @@ export default class LablupNotification extends LitElement {
   @property({type: Object}) indicator;
   @property({type: Object}) notification;
   @property({type: Array}) notifications = Array();
-  @property({type: Boolean}) active = false;
+  @property({type: Object}) notificationPool = Object();
+  @property({type: Boolean}) active = true;
   @property({type: Number}) step = 0;
 
   constructor() {
@@ -45,8 +46,7 @@ export default class LablupNotification extends LitElement {
 
   render() {
     // language=HTML
-    return html`<wl-snackbar></wl-snackbar>
-    `;
+    return html``;
   }
 
   shouldUpdate() {
@@ -54,10 +54,8 @@ export default class LablupNotification extends LitElement {
   }
 
   firstUpdated() {
-    this.active = true;
     this.notification = this.shadowRoot.querySelector('wl-snackbar');
-    this.step = window.__snackbars;
-    document.addEventListener('lablup-notification-hide', this.ladder.bind(this));
+    this.notificationPool = this.shadowRoot.querySelector('#notification-pool');
   }
 
   connectedCallback() {
@@ -76,11 +74,10 @@ export default class LablupNotification extends LitElement {
 
   }
   async show(message: string = '') {
-    console.log(this.step);
     let notification = document.createElement('wl-snackbar');
     notification.setAttribute('backdrop', '');
     notification.setAttribute('hideDelay', '4000');
-    notification.style.bottom = (20 + 20 * this.step) + 'px';
+    notification.style.bottom = (20 + 45 * this.step) + 'px';
     this.step = this.step + 1;
     notification.style.position = 'fixed';
     notification.style.right = '20px';
@@ -88,7 +85,8 @@ export default class LablupNotification extends LitElement {
     notification.style.fontWeight = '400';
     notification.style.fontFamily = "'Quicksand', Roboto, sans-serif";
     notification.style.zIndex = "10000";
-    console.log(notification);
+    document.body.appendChild(notification);
+    this.notifications.push(notification);
     await this.updateComplete;
     if (message === '') {
       notification.innerHTML = this.text;
