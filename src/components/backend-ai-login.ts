@@ -227,7 +227,7 @@ class BackendAiLogin extends LitElement {
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
 
     this.shadowRoot.querySelector('#login-button').addEventListener('tap', this._login.bind(this));
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   _changeSigninMode() {
