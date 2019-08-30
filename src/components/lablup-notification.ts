@@ -16,6 +16,7 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) message = '';
   @property({type: Object}) indicator;
   @property({type: Object}) notification;
+  @property({type: Array}) notifications = Array();
   @property({type: Boolean}) active = false;
   @property({type: Number}) step = 0;
 
@@ -44,8 +45,7 @@ export default class LablupNotification extends LitElement {
 
   render() {
     // language=HTML
-    return html`
-        <wl-snackbar id="notification" backdrop hideDelay="4000"></wl-snackbar>
+    return html`<wl-snackbar></wl-snackbar>
     `;
   }
 
@@ -54,9 +54,9 @@ export default class LablupNotification extends LitElement {
   }
 
   firstUpdated() {
+    this.active = true;
     this.notification = this.shadowRoot.querySelector('wl-snackbar');
     this.step = window.__snackbars;
-    (this.notification as HTMLElement).style.bottom = (20 + 20 * this.step) + 'px';
     document.addEventListener('lablup-notification-hide', this.ladder.bind(this));
   }
 
@@ -76,26 +76,33 @@ export default class LablupNotification extends LitElement {
 
   }
   async show(message: string = '') {
-    this.active = true;
-    this.step = window.__snackbars;
+    console.log(this.step);
+    let notification = document.createElement('wl-snackbar');
+    notification.setAttribute('backdrop', '');
+    notification.setAttribute('hideDelay', '4000');
+    notification.style.bottom = (20 + 20 * this.step) + 'px';
+    this.step = this.step + 1;
+    notification.style.position = 'fixed';
+    notification.style.right = '20px';
+    notification.style.fontSize = '16px';
+    notification.style.fontWeight = '400';
+    notification.style.fontFamily = "'Quicksand', Roboto, sans-serif";
+    notification.style.zIndex = "10000";
+    console.log(notification);
     await this.updateComplete;
     if (message === '') {
-      this.notification.innerHTML = this.text;
+      notification.innerHTML = this.text;
     } else {
-      this.notification.innerHTML = message;
+      notification.innerHTML = message;
       this.text = message;
     }
-    this.notification.show();
-    window.__snackbars = window.__snackbars + 1;
+    notification.show();
   }
 
   async hide() {
     await this.updateComplete;
     this.notification.hide();
-    window.__snackbars = window.__snackbars - 1;
-    this.active = false;
-    let event = new CustomEvent("lablup-notification-hide", {"detail": window.__snackbars});
-    document.dispatchEvent(event);
+    this.step = this.step - 1;
   }
 
   async toggle() {
