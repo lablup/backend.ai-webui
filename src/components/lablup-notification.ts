@@ -52,7 +52,6 @@ export default class LablupNotification extends LitElement {
   }
 
   firstUpdated() {
-    this.notificationPool = this.shadowRoot.querySelector('#notification-pool');
   }
 
   connectedCallback() {
