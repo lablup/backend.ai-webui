@@ -46,7 +46,6 @@ class BackendAiEnvironmentList extends BackendAIPage {
   public _fgpu_disabled: any;
   public notification: any;
   public servicePorts: any;
-  public _boundButtonRenderer: any;
 
   constructor() {
     super();
@@ -60,7 +59,6 @@ class BackendAiEnvironmentList extends BackendAIPage {
     this._gpu_disabled = false;
     this._fgpu_disabled = false;
     this.servicePorts = [];
-    this._boundButtonRenderer = this._buttonRenderer.bind(this);
   }
 
   static get is() {
@@ -141,6 +139,18 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
         .gutterBottom {
           margin-bottom: 20px;
+        }
+
+        div.container {
+          display: flex;
+          flex-direction: column;
+          padding: 0px 30px;
+        }
+
+        div.row {
+          display: grid;
+          grid-template-columns: 4fr 4fr 4fr 1fr;
+          margin-bottom: 10px;
         }
       `];
   }
@@ -332,9 +342,9 @@ class BackendAiEnvironmentList extends BackendAIPage {
             class="fg pink controls-running"
             icon="icons:apps"
             @click=${() => {
+              if (this.selectedIndex !== rowData.index) this._clearRows();
               this.selectedIndex = rowData.index;
               this._parseServicePorts();
-              console.log(this.servicePorts);
               this._launchDialogById("#modify-app-dialog")
               this.requestUpdate();
             }}
@@ -530,17 +540,49 @@ class BackendAiEnvironmentList extends BackendAIPage {
           </div>
           <wl-divider></wl-divider>
         </div>
-        <vaadin-grid
-          slot="content"
-          theme="column-borders compact"
-          style="height: 100%;"
-          .items=${this.servicePorts}
-        >
-          <vaadin-grid-column flex-grow="2" header="App Name" resizable .renderer=${this._appRenderer}> </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="2" header="Protocol" resizable .renderer=${this._protocolRenderer}> </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="2" header="Port Number" resizable .renderer=${this._portRenderer}> </vaadin-grid-column>
-          <vaadin-grid-column width="70px" flex-grow="0" header=" " resizable .renderer=${this._boundButtonRenderer}> </vaadin-grid-column>
-        </vaadin-grid>
+        <div slot="content" id="modify-app-container" class="container">
+          <div class="row">
+            <div> App Name </div>
+            <div> Protocol </div>
+            <div> Port </div>
+            <div> Action </div>
+          </div>
+          ${this.servicePorts.map((item, index) => html`
+          <div class="row">
+            <wl-textfield
+              type="text"
+              value=${item.app}
+            ></wl-textfield>
+            <wl-textfield
+              type="text"
+              value=${item.protocol}
+            ></wl-textfield>
+            <wl-textfield
+              type="number"
+              value=${item.port}
+            ></wl-textfield>
+            <wl-button
+              fab flat
+              class="fg pink"
+              @click=${e => this._removeRow(e)}
+            >
+              <wl-icon> remove </wl-icon>
+            </wl-button>
+          </div>
+          `)}
+          <div class="row">
+            <wl-textfield type="text"></wl-textfield>
+            <wl-textfield type="text"></wl-textfield>
+            <wl-textfield type="number"></wl-textfield>
+            <wl-button
+              fab flat
+              class="fg pink"
+              @click=${this._addRow}
+            >
+              <wl-icon>add</wl-icon>
+            </wl-button>
+          </div>
+        </div>
         <div slot="footer">
           <wl-button
             class="fg orange"
@@ -556,57 +598,55 @@ class BackendAiEnvironmentList extends BackendAIPage {
     `;
   }
 
-  _appRenderer(root, column, rowData) {
-    render (
-      html`
-        <wl-textfield
-          type="text"
-          value=${rowData.item.app}
-        ></wl-textfield>
-      `,
-      root
-    )
+  _removeRow(e) {
+    let i = 0;
+    const path = e.composedPath();
+    while (path[i].localName !== "div") i++;
+    path[i].remove();
   }
 
-  _protocolRenderer(root, column, rowData) {
-    render (
-      html`
-        <wl-textfield
-          type="text"
-          value=${rowData.item.protocol}
-        ></wl-textfield>
-      `,
-      root
-    )
+  _addRow() {
+    const container = this.shadowRoot.querySelector("#modify-app-container");
+    const lastChild = container.children[container.children.length - 1];
+    const div = this._createRow();
+    container.insertBefore(div, lastChild);
   }
 
-  _portRenderer(root, column, rowData) {
-    render (
-      html`
-        <wl-textfield
-          type="number"
-          value=${rowData.item.port}
-        ></wl-textfield>
-      `,
-      root
-    )
+  _createRow() {
+    const div = document.createElement("div");
+    div.setAttribute("class", "row extra");
+
+    const app = document.createElement("wl-textfield");
+    app.setAttribute("type", "text");
+
+    const protocol = document.createElement("wl-textfield");
+    app.setAttribute("type", "text");
+
+    const port = document.createElement("wl-textfield");
+    app.setAttribute("type", "number");
+
+    const button = document.createElement("wl-button");
+    button.setAttribute("class", "fg pink");
+    button.setAttribute("fab", "");
+    button.setAttribute("flat", "");
+    button.addEventListener("click", e => this._removeRow(e));
+
+    const icon = document.createElement("wl-icon");
+    icon.innerHTML = "remove";
+    button.appendChild(icon);
+
+    div.appendChild(port);
+    div.appendChild(protocol);
+    div.appendChild(app);
+    div.appendChild(button);
+
+    return div;
   }
 
-  _buttonRenderer(root, column, rowData) {
-    render (
-      html`
-        <div>
-          <wl-button fab flat class="fg pink">
-            <wl-icon>
-              ${rowData.index === this.servicePorts.length - 1 ? "add" : "remove"}
-            </wl-icon>
-          </wl-button>
-        </div>
-      `,
-      root
-    )
+  _clearRows() {
+    const container = this.shadowRoot.querySelector("#modify-app-container");
+    container.querySelectorAll(".row.extra").forEach(e => { e.remove(); })
   }
-
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
