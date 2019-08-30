@@ -227,7 +227,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.image.modify(image.registry, image.name.replace("/", "%2F"), image.tag, input)
+    window.backendaiclient.image.modifyResource(image.registry, image.name.replace("/", "%2F"), image.tag, input)
     .then(res => {
       const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
 
@@ -301,7 +301,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
     this.shadowRoot.querySelector("#modify-image-mem").value = resource_limits[mem_idx].min;
   }
 
-  _parseServicePorts() {
+  _decodeServicePort() {
     if (this.images[this.selectedIndex].labels["ai.backend.service-ports"] === "") {
       this.servicePorts = [];
     } else {
@@ -317,6 +317,25 @@ class BackendAiEnvironmentList extends BackendAIPage {
           };
         });
     }
+  }
+
+  _parseServicePort() {
+    const container = this.shadowRoot.querySelector("#modify-app-container");
+    const rows = container.querySelectorAll(".row:not(.header)");
+
+    const valid = row => Array.prototype.filter.call(row.querySelectorAll("wl-textfield"), tf => tf.value === "").length === 0;
+    const encodeRow = row => Array.prototype.map.call(row.querySelectorAll("wl-textfield"), tf => tf.value).join(":");
+
+    return Array.prototype.filter.call(rows, row => valid(row)).map(row => encodeRow(row)).join(",");
+  }
+
+  modifyServicePort() {
+    const value = this._parseServicePort();
+    const image = this.images[this.selectedIndex];
+    window.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
+    .then(res => {
+      console.log(res);
+    })
   }
 
   controlsRenderer(root, column, rowData) {
@@ -344,7 +363,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
             @click=${() => {
               if (this.selectedIndex !== rowData.index) this._clearRows();
               this.selectedIndex = rowData.index;
-              this._parseServicePorts();
+              this._decodeServicePort();
               this._launchDialogById("#modify-app-dialog")
               this.requestUpdate();
             }}
@@ -541,7 +560,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
           <wl-divider></wl-divider>
         </div>
         <div slot="content" id="modify-app-container" class="container">
-          <div class="row">
+          <div class="row header">
             <div> App Name </div>
             <div> Protocol </div>
             <div> Port </div>
@@ -589,6 +608,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
             outlined
             type="button"
             style="box-sizing: border-box; width: 100%;"
+            @click=${this.modifyServicePort}
           >
             <wl-icon>check</wl-icon>
             Finish
@@ -599,8 +619,8 @@ class BackendAiEnvironmentList extends BackendAIPage {
   }
 
   _removeRow(e) {
-    let i = 0;
     const path = e.composedPath();
+    let i = 0;
     while (path[i].localName !== "div") i++;
     path[i].remove();
   }
