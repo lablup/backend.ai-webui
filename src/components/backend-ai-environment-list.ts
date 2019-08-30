@@ -227,7 +227,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.image.modifyResource(image.registry, image.name.replace("/", "%2F"), image.tag, input)
+    window.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
     .then(res => {
       const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
 
@@ -323,7 +323,10 @@ class BackendAiEnvironmentList extends BackendAIPage {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row:not(.header)");
 
-    const valid = row => Array.prototype.filter.call(row.querySelectorAll("wl-textfield"), tf => tf.value === "").length === 0;
+    const valid = row => Array.prototype.filter.call(
+      row.querySelectorAll("wl-textfield"),
+      (tf, idx) => tf.value === "" || (idx === 1 && !["http", "tcp", "pty"].includes(tf.value))
+    ).length === 0;
     const encodeRow = row => Array.prototype.map.call(row.querySelectorAll("wl-textfield"), tf => tf.value).join(":");
 
     return Array.prototype.filter.call(rows, row => valid(row)).map(row => encodeRow(row)).join(",");
@@ -333,8 +336,17 @@ class BackendAiEnvironmentList extends BackendAIPage {
     const value = this._parseServicePort();
     const image = this.images[this.selectedIndex];
     window.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
-    .then(res => {
-      console.log(res);
+    .then(({ result }) => {
+      if (result === "ok") {
+        this.notification.text = "Service port successfully modified";
+      } else {
+        this.notification.text = "Error Occurred";
+      }
+      this._getImages();
+      this.requestUpdate();
+      this._clearRows();
+      this.notification.show();
+      this._hideDialogById("#modify-app-dialog");
     })
   }
 
@@ -519,20 +531,6 @@ class BackendAiEnvironmentList extends BackendAIPage {
                     `)}
                   </wl-select>
                 </div>
-                <div style="display: flex;">
-                  <wl-textfield
-                    type="text"
-                    label="App Name"
-                    id="modify-image-app-name"
-                    style="flex: 1"
-                  ></wl-textfield>
-                  <wl-textfield
-                    type="number"
-                    label="Port Number"
-                    id="modify-image-app-port"
-                    style="flex: 1"
-                  ></wl-textfield>
-                </div>
               </div>
               <wl-button
                 class="fg orange create-button"
@@ -665,7 +663,11 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
   _clearRows() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
-    container.querySelectorAll(".row.extra").forEach(e => { e.remove(); })
+    const rows = container.querySelectorAll(".row");
+    const lastRow = rows[rows.length - 1];
+
+    lastRow.querySelectorAll("wl-textfield").forEach(tf => { tf.value = ""; });
+    container.querySelectorAll(".row.extra").forEach(e => { e.remove(); });
   }
 
   firstUpdated() {
