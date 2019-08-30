@@ -87,7 +87,7 @@ export default class LablupTermsOfService extends LitElement {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
     //this.approveCheckbox = this.shadowRoot.querySelector('#approve-terms-of-service');
     //this.approveCheckbox.addEventListener('iron-change', this._changeApproved.bind(this));

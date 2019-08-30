@@ -918,7 +918,7 @@ class BackendAIData extends BackendAIPage {
       this._toggleCheckbox();
     });
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   _refreshFolderList() {
