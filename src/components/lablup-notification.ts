@@ -3,22 +3,23 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from 'lit-element';
+import {css, customElement, html, property, LitElement} from "lit-element";
 import 'weightless/snackbar';
+import LablupTermsOfService from "./lablup-terms-of-service";
 
-class LablupNotification extends LitElement {
-  public active: any;
-  public message: any;
-  public notification: any;
+@customElement("lablup-notification")
+export default class LablupNotification extends LitElement {
   public shadowRoot: any;
   public updateComplete: any;
-  public text: any;
-  public indicator: any;
+
+  @property({type: String}) text = '';
+  @property({type: String}) message = '';
+  @property({type: Object}) indicator;
+  @property({type: Object}) notification;
+  @property({type: Boolean}) active = false;
 
   constructor() {
     super();
-    this.active = true;
-    this.message = '';
   }
 
   static get is() {
@@ -41,21 +42,10 @@ class LablupNotification extends LitElement {
       `];
   }
 
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      text: {
-        type: String
-      }
-    };
-  }
-
   render() {
     // language=HTML
     return html`
-      <wl-snackbar id="notification" backdrop hideDelay="3000"></wl-snackbar>
+        <wl-snackbar id="notification" backdrop hideDelay="4000"></wl-snackbar>
     `;
   }
 
@@ -104,5 +94,8 @@ class LablupNotification extends LitElement {
   }
 
 }
-
-customElements.define(LablupNotification.is, LablupNotification);
+declare global {
+  interface HTMLElementTagNameMap {
+    "lablup-notification": LablupNotification;
+  }
+}
