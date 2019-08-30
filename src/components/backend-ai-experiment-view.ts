@@ -368,7 +368,7 @@ class BackendAiExperimentView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.shadowRoot.querySelector('#launch-session').addEventListener('tap', this._launchSessionDialog.bind(this));
     this.shadowRoot.querySelector('#launch-button').addEventListener('tap', this._newSession.bind(this));
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));

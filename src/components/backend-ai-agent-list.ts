@@ -136,7 +136,7 @@ class BackendAIAgentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   connectedCallback() {

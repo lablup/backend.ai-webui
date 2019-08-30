@@ -57,7 +57,7 @@ export default class BackendAiSignup extends LitElement {
   firstUpdated() {
     this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
   }
 

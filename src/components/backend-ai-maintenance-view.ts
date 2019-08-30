@@ -179,7 +179,7 @@ class BackendAiMaintenanceView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#indicator');
 
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
