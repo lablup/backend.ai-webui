@@ -66,7 +66,6 @@ declare global {
     buildVersion: string;
     packageVersion: string;
     __local_proxy: string;
-    __snackbars: number;
     lablupNotification: any;
   }
 
@@ -187,7 +186,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
-    window.__snackbars = 0;
     window.lablupNotification = this.shadowRoot.querySelector('#notification');
     this.notification = window.lablupNotification;
     this.splash = this.shadowRoot.querySelector('#about-panel');
