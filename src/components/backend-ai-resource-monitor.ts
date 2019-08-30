@@ -569,7 +569,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
             let sgs = await window.backendaiclient.scalingGroup.list();
             this.scaling_groups = sgs.scaling_groups;
           }
+          this._initSessions();
+          this._initAliases();
           this._refreshResourcePolicy();
+          this.aggregateResource();
           this.metadata_updating = false;
         }
       }, true);
@@ -581,7 +584,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
         }
+        this._initSessions();
+        this._initAliases();
         this._refreshResourcePolicy();
+        this.aggregateResource();
         this.metadata_updating = false;
       }
     }

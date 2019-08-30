@@ -248,6 +248,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
 
         paper-item {
             font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+            font-weight: 400;
         }
       `];
   }
