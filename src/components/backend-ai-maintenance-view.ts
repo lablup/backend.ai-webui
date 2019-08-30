@@ -179,7 +179,7 @@ class BackendAiMaintenanceView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#indicator');
 
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
@@ -216,7 +216,7 @@ class BackendAiMaintenanceView extends BackendAIPage {
       this.indicator.end(1000);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -239,7 +239,7 @@ class BackendAiMaintenanceView extends BackendAIPage {
       this.indicator.end(1000);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }

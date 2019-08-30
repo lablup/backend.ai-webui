@@ -66,7 +66,7 @@ declare global {
     buildVersion: string;
     packageVersion: string;
     __local_proxy: string;
-    __snackbars: number;
+    lablupNotification: any;
   }
 
   interface ai {
@@ -186,8 +186,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
-    window.__snackbars = 0;
-    this.notification = this.shadowRoot.querySelector('#notification');
+    window.lablupNotification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.splash = this.shadowRoot.querySelector('#about-panel');
     if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';

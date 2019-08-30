@@ -368,7 +368,7 @@ class BackendAiExperimentView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.shadowRoot.querySelector('#launch-session').addEventListener('tap', this._launchSessionDialog.bind(this));
     this.shadowRoot.querySelector('#launch-button').addEventListener('tap', this._newSession.bind(this));
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
@@ -467,7 +467,7 @@ class BackendAiExperimentView extends BackendAIPage {
         this.notification.show();
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -569,10 +569,10 @@ class BackendAiExperimentView extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
@@ -1009,7 +1009,7 @@ class BackendAiExperimentView extends BackendAIPage {
     }).catch((err) => {
       if (err && err.message) {
         this.$.notification.text = PainKiller.relieve(err.message);
-        this.$.notification.show();
+        this.$.notification.show(true);
       }
     });
   }
