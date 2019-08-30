@@ -32,7 +32,6 @@ export default class LablupNotification extends LitElement {
       css`
         wl-snackbar {
           position: fixed;
-          bottom: 20px;
           right: 20px;
           font-size: 16px;
           font-weight: 400;
@@ -45,7 +44,7 @@ export default class LablupNotification extends LitElement {
   render() {
     // language=HTML
     return html`
-        <wl-snackbar id="notification" backdrop hideDelay="4000"></wl-snackbar>
+        <wl-snackbar id="notification" backdrop hideDelay="4000" style="bottom: ${20 + 20 * window.__snackbars}px;"></wl-snackbar>
     `;
   }
 
@@ -69,27 +68,34 @@ export default class LablupNotification extends LitElement {
 
   }
 
-  async show(message = false) {
+  async show(message: string = '') {
+    this.active = true;
     await this.updateComplete;
-    if (message === false) {
+    if (message === '') {
       this.notification.innerHTML = this.text;
     } else {
       this.notification.innerHTML = message;
+      this.text = message;
     }
     this.notification.show();
+    window.__snackbars = window.__snackbars + 1;
   }
 
   async hide() {
     await this.updateComplete;
     this.notification.hide();
+    window.__snackbars = window.__snackbars - 1;
+    this.active = false;
   }
 
   async toggle() {
     await this.updateComplete;
     if (this.notification.open === true) {
-      this.indicator.open = false;
+      this.hide();
+      //this.indicator.open = false;
     } else {
-      this.indicator.open = true;
+      this.show();
+      //this.indicator.open = true;
     }
   }
 
