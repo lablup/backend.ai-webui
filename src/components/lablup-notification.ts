@@ -91,7 +91,7 @@ export default class LablupNotification extends LitElement {
       this.text = message;
     }
     if (persistent === false) {
-      notification.setAttribute('hideDelay', '4000');
+      notification.setAttribute('hideDelay', '3000');
     } else {
       notification.setAttribute('hideDelay', '86400');
       let button = document.createElement('wl-button');
