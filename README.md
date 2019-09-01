@@ -221,6 +221,10 @@ You can manually modify config.toml for your need.
 Electron building is automated using `Makefile`.
 
 ```
+$ make clean  # clean prebuilt codes
+$ make mac # build macOS app
+$ make win # build win64 app
+$ make linux # build linux app
 $ make all # build win64/macos/linux app
 ```
 
