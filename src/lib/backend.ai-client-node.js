@@ -1896,7 +1896,7 @@ class ScalingGroup {
   }
 
   list(group='default') {
-    if (this.client.is_admin) {
+    if (this.client.is_superadmin === true) {
       const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
 
       const q = `query {` +
