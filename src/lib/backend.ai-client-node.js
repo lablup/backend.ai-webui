@@ -1377,7 +1377,7 @@ class Image {
    * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
    * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
    */
-  list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"], installed_only = false) {
+  list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"]) {
     let q, v;
     if (installed_only === false) {
       q = `query {` +
@@ -1391,6 +1391,34 @@ class Image {
       v = {'installed': installed_only};
     }
     return this.client.gql(q, v);
+  }
+
+  /*
+   *
+   */
+  modifyResource(registry, image, tag, input) {
+    let promiseArray = [];
+    image = image.replace("/", "%2F");
+    Object.keys(input).forEach(slot_type => {
+      Object.keys(input[slot_type]).forEach(key => {
+        const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`, "value": input[slot_type][key]});
+        promiseArray.push(this.client._wrapWithPromise(rqst));
+      })
+    })
+
+    return Promise.all(promiseArray);
+  }
+
+  modifyLabel(registry, image, tag, key, value) {
+    image = image.replace("/", "%2F");
+    tag = tag.replace("/", "%2F");
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/labels/${key}`, "value": value});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  get(registry, image, tag) {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true});
+    return this.client._wrapWithPromise(rqst);
   }
 }
 
