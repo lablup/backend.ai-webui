@@ -1904,7 +1904,7 @@ class ScalingGroup {
       const v = {};
       return this.client.gql(q, v);
     } else {
-      return false;
+      return Promise.resolve(false);
     }
   }
 
