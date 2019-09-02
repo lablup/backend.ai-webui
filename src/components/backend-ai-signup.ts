@@ -57,7 +57,7 @@ export default class BackendAiSignup extends LitElement {
   firstUpdated() {
     this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
   }
 
@@ -166,7 +166,7 @@ export default class BackendAiSignup extends LitElement {
     }).catch((e) => {
       if (e.message) {
         this.notification.text = e.message;
-        this.notification.show();
+        this.notification.show(true);
       }
       console.log(e);
     });

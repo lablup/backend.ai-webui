@@ -133,7 +133,7 @@ export default class BackendAISummary extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   _refreshHealthPanel() {
@@ -176,7 +176,7 @@ export default class BackendAISummary extends BackendAIPage {
       this.jobs = [];
       this.sessions = [];
       this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
-      this.notification.show();
+      this.notification.show(true);
     });
   }
 
@@ -227,7 +227,7 @@ export default class BackendAISummary extends BackendAIPage {
     }).catch(err => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -375,7 +375,7 @@ export default class BackendAISummary extends BackendAIPage {
       })
       .catch(err => {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       })
   }
 

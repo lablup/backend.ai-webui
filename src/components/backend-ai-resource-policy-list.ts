@@ -477,7 +477,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   async _viewStateChanged(active) {
@@ -563,7 +563,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -644,7 +644,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-policy-dialog').hide();
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -659,7 +659,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
