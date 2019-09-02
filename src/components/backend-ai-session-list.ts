@@ -426,7 +426,7 @@ class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
           let service_info = JSON.parse(sessions[objectKey].service_ports);
           sessions[objectKey].app_services = service_info.map(a => a.name);
-          if (sessions[objectKey].app_services.length === 0) {
+          if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
             sessions[objectKey].appSupport = false;
           } else {
             sessions[objectKey].appSupport = true;
