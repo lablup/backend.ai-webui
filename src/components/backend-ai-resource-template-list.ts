@@ -386,7 +386,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
                 label="Preset Name"
                 auto-validate
                 required
-                pattern="[a-zA-Z0-9]*"
+                pattern="[a-zA-Z0-9\.\-\_]*"
                 error-message="Policy name only accepts letters and numbers"
               ></paper-input>
               <h4>Resource Preset</h4>
