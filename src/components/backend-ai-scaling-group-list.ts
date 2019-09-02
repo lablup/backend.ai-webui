@@ -153,7 +153,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
     } else { // already connected
-      window.backendaiclient.scalingGroup.list()
+      window.backendaiclient.scalingGroup.list_all()
       .then(res => {
         this.scalingGroups = res.scaling_groups;
       });
