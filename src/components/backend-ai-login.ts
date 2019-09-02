@@ -225,9 +225,7 @@ class BackendAiLogin extends LitElement {
   firstUpdated() {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
-
-    this.shadowRoot.querySelector('#login-button').addEventListener('tap', this._login.bind(this));
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   _changeSigninMode() {
@@ -269,11 +267,11 @@ class BackendAiLogin extends LitElement {
           } else {
             this.notification.text = PainKiller.relieve('Plugin loading failed.');
           }
-          this.notification.show();
+          this.notification.show(true);
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          this.notification.show();
+          this.notification.show(true);
         }
       });
     }
@@ -468,7 +466,7 @@ class BackendAiLogin extends LitElement {
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
-          this.notification.show();
+          this.notification.show(true);
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -514,7 +512,7 @@ class BackendAiLogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show();
+        this.notification.show(true);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -580,7 +578,7 @@ class BackendAiLogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show();
+        this.notification.show(true);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -625,11 +623,11 @@ class BackendAiLogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show();
+        this.notification.show(true);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show();
+        this.notification.show(true);
       }
       this.open();
     });

@@ -1377,7 +1377,7 @@ class Image {
    * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
    * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
    */
-  list(fields = ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"], installed_only = false) {
+  list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false) {
     let q, v;
     if (installed_only === false) {
       q = `query {` +
@@ -1391,6 +1391,54 @@ class Image {
       v = {'installed': installed_only};
     }
     return this.client.gql(q, v);
+  }
+
+  /**
+   * Modify resource of given image.
+   *
+   * @param {string} registry - Registry name
+   * @param {string} image - image name.
+   * @param {string} tag - image tag.
+   * @param {object} input - value list to set.
+   */
+  modifyResource(registry, image, tag, input) {
+    let promiseArray = [];
+    image = image.replace("/", "%2F");
+    Object.keys(input).forEach(slot_type => {
+      Object.keys(input[slot_type]).forEach(key => {
+        const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`, "value": input[slot_type][key]});
+        promiseArray.push(this.client._wrapWithPromise(rqst));
+      })
+    });
+    return Promise.all(promiseArray);
+  }
+
+  /**
+   * Modify label of given image.
+   *
+   * @param {string} registry - Registry name
+   * @param {string} image - image name.
+   * @param {string} tag - image tag.
+   * @param {string} key - key to change.
+   * @param {string} value - value for the key.
+   */
+  modifyLabel(registry, image, tag, key, value) {
+    image = image.replace("/", "%2F");
+    tag = tag.replace("/", "%2F");
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/labels/${key}`, "value": value});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get image label information.
+   *
+   * @param {string} registry - Registry name
+   * @param {string} image - image name.
+   * @param {string} tag - tag to get.
+   */
+  get(registry, image, tag) {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true});
+    return this.client._wrapWithPromise(rqst);
   }
 }
 
@@ -1895,21 +1943,23 @@ class ScalingGroup {
     this.client = client;
   }
 
-  list(group='default') {
-    if (this.client.is_admin) {
+  list_all() {
+    if (this.client.is_superadmin === true) {
       const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
-
       const q = `query {` +
-                `  scaling_groups { ${fields.join(" ")} }` +
-                `}`;
+        `  scaling_groups { ${fields.join(" ")} }` +
+        `}`;
       const v = {};
-
       return this.client.gql(q, v);
     } else {
-      const queryString = `/scaling-groups?group=${this.client.current_group}`;
-      const rqst = this.client.newSignedRequest("GET", queryString, null);
-      return this.client._wrapWithPromise(rqst);
+      return Promise.resolve(false);
     }
+  }
+
+  list(group='default') {
+    const queryString = `/scaling-groups?group=${this.client.current_group}`;
+    const rqst = this.client.newSignedRequest("GET", queryString, null);
+    return this.client._wrapWithPromise(rqst);
   }
 
   /**

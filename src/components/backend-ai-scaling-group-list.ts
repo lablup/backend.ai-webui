@@ -136,7 +136,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   connectedCallback() {
@@ -153,7 +153,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
     } else { // already connected
-      window.backendaiclient.scalingGroup.list()
+      window.backendaiclient.scalingGroup.list_all()
       .then(res => {
         this.scalingGroups = res.scaling_groups;
       });
@@ -272,7 +272,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
     .catch(err => {
       this.notification.text = PainKiller.relieve(err);
       this._hideDialogById("#create-scaling-group-dialog");
-      this.notification.show();
+      this.notification.show(true);
     })
   }
 

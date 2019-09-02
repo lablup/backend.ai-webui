@@ -296,7 +296,7 @@ class BackendAiSessionList extends BackendAIPage {
       !window.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
     }
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
   }
@@ -426,7 +426,7 @@ class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
           let service_info = JSON.parse(sessions[objectKey].service_ports);
           sessions[objectKey].app_services = service_info.map(a => a.name);
-          if (sessions[objectKey].app_services.length === 0) {
+          if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
             sessions[objectKey].appSupport = false;
           } else {
             sessions[objectKey].appSupport = true;
@@ -478,7 +478,7 @@ class BackendAiSessionList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -636,7 +636,7 @@ class BackendAiSessionList extends BackendAIPage {
         console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.message);
-          this.notification.show();
+          this.notification.show(true);
         }
       });
   }
@@ -667,10 +667,10 @@ class BackendAiSessionList extends BackendAIPage {
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -855,7 +855,7 @@ class BackendAiSessionList extends BackendAIPage {
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
       let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     });
@@ -891,7 +891,7 @@ class BackendAiSessionList extends BackendAIPage {
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
     });
   }
 
@@ -911,7 +911,7 @@ class BackendAiSessionList extends BackendAIPage {
       this._selected_items = [];
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
     });
   }
 
@@ -928,13 +928,13 @@ class BackendAiSessionList extends BackendAIPage {
       }).catch((err) => {
         this.refreshList(true, false);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-        this.notification.show();
+        this.notification.show(true);
       });
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }

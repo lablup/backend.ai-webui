@@ -24,11 +24,13 @@ class BackendAiEnvironmentView extends BackendAIPage {
   public _activeTab: any;
   public updateComplete: any;
   public shadowRoot: any;
+  public is_superadmin: any;
 
   constructor() {
     super();
     this.images = {};
     this.active = false;
+    this.is_superadmin = false;
     this._activeTab = 'image-lists';
   }
 
@@ -121,7 +123,8 @@ class BackendAiEnvironmentView extends BackendAIPage {
           <wl-tab-group>
             <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">Images</wl-tab>
             <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">Resource Presets</wl-tab>
-            <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">Registries</wl-tab>
+            ${window.backendaiclient.is_superadmin === true ? html`
+              <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">Registries</wl-tab>` : html``}
           </wl-tab-group>
           <div class="flex"></div>
         </h3>

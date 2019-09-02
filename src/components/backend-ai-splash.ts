@@ -25,12 +25,11 @@ export default class BackendAISplash extends LitElement {
         }
 
         #splash-panel {
-          --dialog-width: 340px;
+            --dialog-width: 345px;
           --dialog-height: 300px;
         }
 
         .splash-header {
-          width: 340px;
           height: 120px;
           background-size: contain;
           background-repeat: no-repeat;
@@ -89,7 +88,7 @@ export default class BackendAISplash extends LitElement {
               <li><span id="mode-detail" class="detail">${window.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${window.buildVersion}</span></li>
             </ul>
             <ul>
-              <li>Powered by open-source software</li>
+              <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
               <li class="copyright">Copyright &copy; 2015-2019 Lablup Inc.</li>
             </ul>
           </div>

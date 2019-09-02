@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, html, LitElement} from "lit-element";
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
+import {css, customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -42,6 +41,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+import BackendAISplash from "./backend-ai-splash";
 
 /**
  Backend.AI GUI Console
@@ -66,6 +66,7 @@ declare global {
     buildVersion: string;
     packageVersion: string;
     __local_proxy: string;
+    lablupNotification: any;
   }
 
   interface ai {
@@ -73,101 +74,32 @@ declare global {
   }
 }
 
-class BackendAiConsole extends connect(store)(LitElement) {
-  public menuTitle: any;
-  public user_id: any;
-  public domain: any;
-  public is_connected: any;
-  public is_admin: any;
-  public is_superadmin: any;
-  public _page: any;
-  public groups: any;
-  public connection_mode: any;
-  public plugins: any;
-  public shadowRoot: any;
-  public config: any;
-  public siteDescription: any;
-  public connection_server: any;
-  public proxy_url: any;
-  public current_group: any;
-  public _offlineIndicatorOpened: any;
-  public _offline: any;
-  public _drawerOpened: any;
-  public notification: any;
-  public splash: any;
-
+@customElement("backend-ai-console")
+export default class BackendAIConsole extends connect(store)(LitElement) {
   constructor() {
     super();
-    setPassiveTouchGestures(true);
-    this.menuTitle = 'LOGIN REQUIRED';
-    this.user_id = 'DISCONNECTED';
-    this.domain = 'CLICK TO CONNECT';
-    this.is_connected = false;
-    this.is_admin = false;
-    this.is_superadmin = false;
-    this._page = '';
-    this.groups = [];
-    this.connection_mode = 'API';
-    this.plugins = {};
   }
 
-  static get is() {
-    return 'backend-ai-console';
-  }
-
-  static get properties() {
-    return {
-      menuTitle: {
-        type: String
-      },
-      siteDescription: {
-        type: String
-      },
-      user_id: {
-        type: String
-      },
-      domain: {
-        type: String
-      },
-      is_connected: {
-        type: Boolean
-      },
-      is_admin: {
-        type: Boolean
-      },
-      is_superadmin: {
-        type: Boolean
-      },
-      proxy_url: {
-        type: String
-      },
-      connection_mode: {
-        type: String
-      },
-      connection_server: {
-        type: String
-      },
-      groups: {
-        type: Array
-      },
-      current_group: {
-        type: String
-      },
-      plugins: {
-        type: Object
-      },
-      notification: {
-        type: Object
-      },
-      splash: {
-        type: Object
-      },
-      _page: {type: String},
-      _drawerOpened: {type: Boolean},
-      _offlineIndicatorOpened: {type: Boolean},
-      _offline: {type: Boolean}
-    }
-  }
+  @property({type: String}) menuTitle = 'LOGIN REQUIRED';
+  @property({type: String}) siteDescription = '';
+  @property({type: String}) user_id = 'DISCONNECTED';
+  @property({type: String}) domain = 'CLICK TO CONNECT';
+  @property({type: Boolean}) is_connected = false;
+  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) is_superadmin = false;
+  @property({type: String}) proxy_url = '';
+  @property({type: String}) connection_mode = 'API';
+  @property({type: String}) connection_server = '';
+  @property({type: Array}) groups = Array();
+  @property({type: String}) current_group = '';
+  @property({type: Object}) plugins = Object();
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) splash = Object();
+  @property({type: String}) _page = '';
+  @property({type: Boolean}) _drawerOpened = false;
+  @property({type: Boolean}) _offlineIndicatorOpened = false;
+  @property({type: Boolean}) _offline = false;
+  @property({type: Object}) config = Object();
 
   static get styles() {
     return [
@@ -248,15 +180,17 @@ class BackendAiConsole extends connect(store)(LitElement) {
 
         paper-item {
             font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+            font-weight: 400;
         }
       `];
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    window.lablupNotification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.splash = this.shadowRoot.querySelector('#about-panel');
     if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
-      this.shadowRoot.querySelector('.portrait-canvas').style.visibility = 'hidden';
+      (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
@@ -271,12 +205,12 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
       if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-        this.shadowRoot.querySelector('#login-panel').login();
+        (this.shadowRoot.querySelector('#login-panel') as any).login();
       }
     }).catch(err => {
       console.log("Initialization failed.");
       if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-        this.shadowRoot.querySelector('#login-panel').block('Configuration is not loaded.', 'Error');
+        (this.shadowRoot.querySelector('#login-panel') as any).block('Configuration is not loaded.', 'Error');
       }
     });
   }
@@ -311,11 +245,11 @@ class BackendAiConsole extends connect(store)(LitElement) {
       this.plugins['login'] = config.plugin.login;
     }
     let loginPanel = this.shadowRoot.querySelector('#login-panel');
-    loginPanel.refreshWithConfig(config);
+    (loginPanel as any).refreshWithConfig(config);
   }
 
   refreshPage() {
-    this.shadowRoot.getElementById('sign-button').icon = 'icons:exit-to-app';
+    (this.shadowRoot.getElementById('sign-button') as any).icon = 'icons:exit-to-app';
     this.is_connected = true;
     window.backendaiclient.proxyURL = this.proxy_url;
     if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
@@ -334,7 +268,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 
   showUpdateNotifier() {
-    let indicator = this.shadowRoot.getElementById('backend-ai-indicator');
+    let indicator = <any>this.shadowRoot.getElementById('backend-ai-indicator');
     indicator.innerHTML = 'New console available. Please <a onclick="window.location.reload()">reload</a> to update.';
     indicator.show();
   }
@@ -359,8 +293,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
     this.current_group = window.backendaiclient.current_group;
     this.groups = window.backendaiclient.groups;
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
-      this.shadowRoot.getElementById('group-select').disabled = true;
-      this.shadowRoot.getElementById('group-select').label = 'No Project';
+      (this.shadowRoot.getElementById('group-select') as any).disabled = true;
+      (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
     }
     //this.shadowRoot.getElementById('group-select')._requestRender();
   }
@@ -372,7 +306,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
     }
   }
 
-  updated(changedProps) {
+  updated(changedProps: any) {
     if (changedProps.has('_page')) {
       let view = this._page;
       // load data for view
@@ -383,57 +317,57 @@ class BackendAiConsole extends connect(store)(LitElement) {
       switch (view) {
         case 'summary':
           this.menuTitle = 'Summary';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 0;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 0;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'job':
           this.menuTitle = 'Sessions';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 1;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 1;
           this.updateTitleColor('var(--paper-red-800)', '#efefef');
           break;
         case 'experiment':
           this.menuTitle = 'Experiments';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 2;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 2;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'data':
           this.menuTitle = 'Storage';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 2;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 2;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
         case 'statistics':
           this.menuTitle = 'Statistics';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 3;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 3;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 5;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 5;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments & Presets';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 6;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 6;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 7;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 7;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 8;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 8;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'maintenance':
           this.menuTitle = 'Maintenance';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 9;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 9;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
-          this.shadowRoot.getElementById('sidebar-menu').selected = 0;
+          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 0;
       }
     }
   }
@@ -459,16 +393,16 @@ class BackendAiConsole extends connect(store)(LitElement) {
       } else if (window.isElectron) {
         this._page = 'summary';
         navigate(decodeURIComponent('/'));
-        this.shadowRoot.querySelector('#login-panel').login();
+        (this.shadowRoot.querySelector('#login-panel') as any).login();
       } else {
         window.location.reload();
       }
     }
   }
 
-  updateTitleColor(backgroundColorVal, colorVal) {
-    this.shadowRoot.querySelector('#main-toolbar').style.backgroundColor = backgroundColorVal;
-    this.shadowRoot.querySelector('#main-toolbar').style.color = colorVal;
+  updateTitleColor(backgroundColorVal: string, colorVal: string) {
+    (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.backgroundColor = backgroundColorVal;
+    (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.color = colorVal;
   }
 
   changeGroup(e) {
@@ -592,7 +526,7 @@ class BackendAiConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.08.6.190829</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.09.0.190902</small>
               </address>
             </div>
           </app-header-layout>
@@ -606,8 +540,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
               <span condensed-title>${this.menuTitle}</span>
               <span class="flex"></span>
               <div class="vertical end-justified flex layout">
-                <div style="font-size: 10px;text-align:right">${this.user_id}</div>
-                <div style="font-size: 8px;text-align:right">${this.domain}</div>
+                <div style="font-size: 12px;text-align:right">${this.user_id}</div>
+                <div style="font-size: 10px;text-align:right">${this.domain}</div>
               </div>
               <paper-icon-button id="sign-button" icon="icons:launch" @click="${() => this.logout()}"></paper-icon-button>
             </app-toolbar>
@@ -652,4 +586,8 @@ class BackendAiConsole extends connect(store)(LitElement) {
   }
 }
 
-customElements.define(BackendAiConsole.is, BackendAiConsole);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-console": BackendAIConsole;
+  }
+}

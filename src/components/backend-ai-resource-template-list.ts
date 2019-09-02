@@ -371,7 +371,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       <wl-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create resource preset</span> 
+            <span>Create resource preset</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -386,7 +386,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
                 label="Preset Name"
                 auto-validate
                 required
-                pattern="[a-zA-Z0-9]*"
+                pattern="[a-zA-Z0-9\.\-\_]*"
                 error-message="Policy name only accepts letters and numbers"
               ></paper-input>
               <h4>Resource Preset</h4>
@@ -440,7 +440,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   async _viewStateChanged(active) {
@@ -504,7 +504,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -554,7 +554,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -569,7 +569,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
