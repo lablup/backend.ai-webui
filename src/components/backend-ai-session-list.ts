@@ -296,7 +296,7 @@ class BackendAiSessionList extends BackendAIPage {
       !window.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
     }
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
   }
@@ -323,63 +323,43 @@ class BackendAiSessionList extends BackendAIPage {
   }
 
   _initializeAppTemplate() {
-    let jupyterBase = [
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Notebook',
-        'redirect': "&redirect=/tree",
-        'src': './resources/icons/jupyter.png'
-      },
-      {
-        'name': 'jupyterlab',
-        'title': 'JupyterLab',
-        'redirect': "&redirect=/lab",
-        'src': './resources/icons/jupyterlab.png',
-        'icon': 'vaadin:flask'
-      }];
-    let TFBase = jupyterBase.concat(
-      {
-        'name': 'tensorboard',
-        'title': 'TensorBoard',
-        'redirect': "&redirect=/",
-        'src': './resources/icons/tensorflow.png'
-      });
-    let RBase = jupyterBase.concat(
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Extension',
-        'redirect': "&redirect=/nbextensions",
-        'src': './resources/icons/jupyter.png',
-        'icon': 'vaadin:clipboard-pulse'
-      });
-    let FFBase = TFBase.concat(
-      {
-        'name': 'jupyter',
-        'title': 'Jupyter Extension',
-        'redirect': "&redirect=/nbextensions",
-        'src': './resources/icons/jupyter.png',
-        'icon': 'vaadin:clipboard-pulse'
-      });
     this.appTemplate = {
-      'tensorflow': TFBase,
-      'python': jupyterBase,
-      'python-intel': jupyterBase,
-      'python-tensorflow': TFBase,
-      'python-ff': FFBase,
-      'python-pytorch': TFBase,
-      'ngc-digits':
-        TFBase.concat(
+      'jupyter':
+        [{
+          'name': 'jupyter',
+          'title': 'Jupyter Notebook',
+          'redirect': "&redirect=/tree",
+          'src': './resources/icons/jupyter.png'
+        },
           {
-            'name': 'digits',
-            'title': 'DIGITS',
-            'redirect': "&redirect=/",
-            'src': './resources/icons/nvidia.png'
-          }),
-      'ngc-tensorflow': TFBase,
-      'ngc-pytorch': TFBase,
-      'julia': jupyterBase,
-      'r': jupyterBase,
-      'r-base': RBase
+            'name': 'jupyter',
+            'title': 'Jupyter Extension',
+            'redirect': "&redirect=/nbextensions",
+            'src': './resources/icons/jupyter.png',
+            'icon': 'vaadin:clipboard-pulse'
+          }],
+      'jupyterlab':
+        [{
+          'name': 'jupyterlab',
+          'title': 'JupyterLab',
+          'redirect': "&redirect=/lab",
+          'src': './resources/icons/jupyterlab.png',
+          'icon': 'vaadin:flask'
+        }],
+      'tensorboard':
+        [{
+          'name': 'tensorboard',
+          'title': 'TensorBoard',
+          'redirect': "&redirect=/",
+          'src': './resources/icons/tensorflow.png'
+        }],
+      'digits':
+        [{
+          'name': 'digits',
+          'title': 'DIGITS',
+          'redirect': "&redirect=/",
+          'src': './resources/icons/nvidia.png'
+        }]
     };
   }
 
@@ -413,7 +393,7 @@ class BackendAiSessionList extends BackendAIPage {
         status = "RUNNING";
     }
     let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status",
+      "sess_id", "lang", "created_at", "terminated_at", "status", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -432,8 +412,8 @@ class BackendAiSessionList extends BackendAIPage {
           previous_session_keys.push(previous_sessions[objectKey].sess_id);
         });
         Object.keys(sessions).map((objectKey, index) => {
-          var session = sessions[objectKey];
-          var occupied_slots = JSON.parse(session.occupied_slots);
+          let session = sessions[objectKey];
+          let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].lang.split('/')[2];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
@@ -444,7 +424,14 @@ class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           sessions[objectKey].io_read_bytes_mb = this._byteToMB(sessions[objectKey].io_read_bytes);
           sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
-          sessions[objectKey].appSupport = this._isAppRunning(sessions[objectKey].lang);
+          let service_info = JSON.parse(sessions[objectKey].service_ports);
+          sessions[objectKey].app_services = service_info.map(a => a.name);
+          if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
+            sessions[objectKey].appSupport = false;
+          } else {
+            sessions[objectKey].appSupport = true;
+          }
+
           if (this.condition === 'running') {
             sessions[objectKey].running = true;
           } else {
@@ -491,7 +478,7 @@ class BackendAiSessionList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -514,28 +501,6 @@ class BackendAiSessionList extends BackendAIPage {
   _humanReadableTime(d: any) {
     d = new Date(d);
     return d.toLocaleString();
-  }
-
-  _isAppRunning(lang) {
-    if (this.condition != 'running') return false;
-    let support_kernels = [
-      'python',
-      'python-intel',
-      'python-ff',
-      'python-tensorflow',
-      'python-pytorch',
-      'ngc-digits',
-      'ngc-tensorflow',
-      'ngc-pytorch',
-      'julia',
-      'r',
-      'r-base',
-    ];
-    //let support_kernels = this.appTemplate.keys;
-    //console.log(support_kernels);
-    lang = lang.split('/')[2].split(':')[0];
-    //lang = lang.split('/')[3].split(':')[0];
-    return this.condition === 'running' && support_kernels.includes(lang);
   }
 
   _getKernelInfo(lang) {
@@ -577,6 +542,11 @@ class BackendAiSessionList extends BackendAIPage {
         {'category': 'Env', 'tag': 'Octave', 'color': 'yellow'}],
       'swift': [
         {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
+      'h2o': [
+        {'category': 'Env', 'tag': 'H2O', 'color': 'yellow'}],
+      'lablup-pytorch': [
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
+        {'tag': 'Cloudia', 'color': 'green'}],
     };
     let tags = [];
     if (lang === undefined) return [];
@@ -666,7 +636,7 @@ class BackendAiSessionList extends BackendAIPage {
         console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.message);
-          this.notification.show();
+          this.notification.show(true);
         }
       });
   }
@@ -697,10 +667,10 @@ class BackendAiSessionList extends BackendAIPage {
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -711,12 +681,15 @@ class BackendAiSessionList extends BackendAIPage {
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
     const kernelImage = controls['kernel-image'];
-    let imageName = kernelImage.split(":")[0];
-    if (imageName in this.appTemplate) {
-      this.appSupportList = this.appTemplate[imageName];
-    } else {
-      this.appSupportList = [];
-    }
+    const appServices = controls['app-services'];
+    this.appSupportList = [];
+    appServices.forEach((elm) => {
+      if (elm in this.appTemplate) {
+        this.appTemplate[elm].forEach((app) => {
+          this.appSupportList.push(app);
+        });
+      }
+    });
     let dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.setAttribute('kernel-id', kernelId);
     dialog.setAttribute('access-key', accessKey);
@@ -734,7 +707,6 @@ class BackendAiSessionList extends BackendAIPage {
       return false;
     }
 
-    ////
     let param = {
       endpoint: window.backendaiclient._config.endpoint
     };
@@ -883,7 +855,7 @@ class BackendAiSessionList extends BackendAIPage {
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
       let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     });
@@ -919,7 +891,7 @@ class BackendAiSessionList extends BackendAIPage {
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
     });
   }
 
@@ -939,7 +911,7 @@ class BackendAiSessionList extends BackendAIPage {
       this._selected_items = [];
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show();
+      this.notification.show(true);
     });
   }
 
@@ -956,13 +928,13 @@ class BackendAiSessionList extends BackendAIPage {
       }).catch((err) => {
         this.refreshList(true, false);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-        this.notification.show();
+        this.notification.show(true);
       });
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -1001,7 +973,8 @@ ${item.map(item => html`
         <div id="controls" class="layout horizontal flex center"
              .kernel-id="${rowData.item.sess_id}"
              .access-key="${rowData.item.access_key}"
-             .kernel-image="${rowData.item.kernel_image}">
+             .kernel-image="${rowData.item.kernel_image}"
+             .app-services="${rowData.item.app_services}">
              ${rowData.item.appSupport ? html`
             <paper-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"

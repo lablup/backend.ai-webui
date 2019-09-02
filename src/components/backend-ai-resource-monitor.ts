@@ -110,7 +110,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'RAPID (NGC)': 'ngc-rapid',
       'DIGITS (NGC)': 'ngc-digits',
       'PyTorch (NGC)': 'ngc-pytorch',
-      'TensorFlow (NGC)': 'ngc-tensorflow'
+      'TensorFlow (NGC)': 'ngc-tensorflow',
+      'PyTorch (Cloudia)': 'lablup-pytorch',
+      'H2O': 'h2o',
     };
     this.tags = {
       'TensorFlow': [],
@@ -125,7 +127,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'RAPID (NGC)': ['NVidia GPU Cloud'],
       'DIGITS (NGC)': ['NVidia GPU Cloud'],
       'PyTorch (NGC)': ['NVidia GPU Cloud'],
-      'TensorFlow (NGC)': ['NVidia GPU Cloud']
+      'TensorFlow (NGC)': ['NVidia GPU Cloud'],
+      'PyTorch (Cloudia)': ['Cloudia'],
+      'H2O': ['h2o.ai'],
     };
     this.versions = ['3.6'];
     this.languages = [];
@@ -502,7 +506,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
 
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     if (this.activeConnected && this.metadata_updating === false) {
       this._initSessions();
       this._initAliases();
@@ -565,7 +569,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
             let sgs = await window.backendaiclient.scalingGroup.list();
             this.scaling_groups = sgs.scaling_groups;
           }
+          this._initSessions();
+          this._initAliases();
           this._refreshResourcePolicy();
+          this.aggregateResource();
           this.metadata_updating = false;
         }
       }, true);
@@ -577,7 +584,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
         }
+        this._initSessions();
+        this._initAliases();
         this._refreshResourcePolicy();
+        this.aggregateResource();
         this.metadata_updating = false;
       }
     }
@@ -617,10 +627,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -757,10 +767,10 @@ class BackendAiResourceMonitor extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show();
+        this.notification.show(true);
       }
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
@@ -821,6 +831,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'rust': 'Rust',
       'scala': 'Scala',
       'scheme': 'Scheme',
+      'lablup-pytorch': 'PyTorch (Cloudia)',
+      'h2o': 'H2O.ai',
     };
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
@@ -1347,7 +1359,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
       'resource_limits { key min max }'
     ];
-    window.backendaiclient.image.list(fields).then((response) => {
+    window.backendaiclient.image.list(fields, true).then((response) => {
       const images = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
@@ -1374,7 +1386,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }

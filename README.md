@@ -46,9 +46,9 @@ Backend.AI console focuses to
 ## Setup Guide
 ### Configuration
 
-Backend.AI Console uses `config.ini` located in app root directory. You can prepare many `config.ini.[POSTFIX]` in `configs` directory to switch various configurations.
+Backend.AI Console uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
 
-These are options in `config.ini`.
+These are options in `config.toml`.
 
 ```
 [general]
@@ -185,8 +185,8 @@ Testing / Running example
 Check your image name is `backendai-console_console` or `backendai-console_console-ssl`. Otherwise, change the image name in the script below.
 
 ```
-$ docker run --name backendai-console -v $(pwd)/config.ini:/usr/share/nginx/html/config.ini -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
-$ docker run --name backendai-console-ssl -v $(pwd)/config.ini:/usr/share/nginx/html/config.ini -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+$ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+$ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
 
 ### Running websocket proxy with node.js
@@ -213,7 +213,7 @@ Example:
 $ make web site=beta
 ```
 
-You can manually modify config.ini for your need.
+You can manually modify config.toml for your need.
 
 ## App Building Guide
 ### Building Electron App
@@ -221,6 +221,10 @@ You can manually modify config.ini for your need.
 Electron building is automated using `Makefile`.
 
 ```
+$ make clean  # clean prebuilt codes
+$ make mac # build macOS app
+$ make win # build win64 app
+$ make linux # build linux app
 $ make all # build win64/macos/linux app
 ```
 

@@ -632,7 +632,7 @@ export const BackendAiStyles =
 
       wl-card > h3 {
           font-size: 20px;
-          font-weight: 200;
+          font-weight: 400;
           padding: 10px 20px;
           margin: 0;
           display: block;

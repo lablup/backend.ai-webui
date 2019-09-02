@@ -1375,13 +1375,21 @@ class Image {
    * list container images registered on the manager.
    *
    * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
+   * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
    */
   list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"]) {
     let q, v;
-    q = `query {` +
-      `  images { ${fields.join(" ")} }` +
-      '}';
-    v = {};
+    if (installed_only === false) {
+      q = `query {` +
+        `  images { ${fields.join(" ")} }` +
+        '}';
+      v = {};
+    } else {
+      q = `query($installed:Boolean) {` +
+        `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+        '}';
+      v = {'installed': installed_only};
+    }
     return this.client.gql(q, v);
   }
 

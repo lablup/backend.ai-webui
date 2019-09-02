@@ -136,7 +136,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   connectedCallback() {
@@ -272,7 +272,7 @@ class BackendAIScalingGroupList extends BackendAIPage {
     .catch(err => {
       this.notification.text = PainKiller.relieve(err);
       this._hideDialogById("#create-scaling-group-dialog");
-      this.notification.show();
+      this.notification.show(true);
     })
   }
 

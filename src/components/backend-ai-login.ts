@@ -174,19 +174,33 @@ class BackendAiLogin extends LitElement {
           font-size: 16px;
           outline: none;
         }
+
         wl-textfield {
-            --input-font-family: 'Quicksand', sans-serif;
+          --input-font-family: 'Quicksand', sans-serif;
         }
+
         #login-panel {
           --dialog-width: 400px;
         }
 
         h3 small {
-            font-size: 13px;
+          --button-font-size: 12px;
         }
+
         wl-button {
-          width: 335px;
           --button-bg: transparent;
+        }
+
+        wl-button.mini {
+          font-size: 12px;
+        }
+
+        wl-button.full {
+          width: 335px;
+        }
+
+        wl-button.login-button,
+        wl-button.login-cancel-button {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
@@ -195,15 +209,23 @@ class BackendAiLogin extends LitElement {
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
         }
+
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
       `];
   }
 
   firstUpdated() {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
-
-    this.shadowRoot.querySelector('#login-button').addEventListener('tap', this._login.bind(this));
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
   }
 
   _changeSigninMode() {
@@ -245,11 +267,11 @@ class BackendAiLogin extends LitElement {
           } else {
             this.notification.text = PainKiller.relieve('Plugin loading failed.');
           }
-          this.notification.show();
+          this.notification.show(true);
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          this.notification.show();
+          this.notification.show(true);
         }
       });
     }
@@ -357,6 +379,7 @@ class BackendAiLogin extends LitElement {
     if (this.api_endpoint === '') {
       this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
     }
+    this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
       this.notification.text = 'Please wait to login...';
@@ -382,6 +405,11 @@ class BackendAiLogin extends LitElement {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _cancelLogin(e) {
+    this._hideDialog(e);
+    this.open();
   }
 
   _validate_data(value) {
@@ -438,7 +466,7 @@ class BackendAiLogin extends LitElement {
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
-          this.notification.show();
+          this.notification.show(true);
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -484,7 +512,7 @@ class BackendAiLogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show();
+        this.notification.show(true);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -550,7 +578,7 @@ class BackendAiLogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show();
+        this.notification.show(true);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -595,11 +623,11 @@ class BackendAiLogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show();
+        this.notification.show(true);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show();
+        this.notification.show(true);
       }
       this.open();
     });
@@ -626,8 +654,10 @@ class BackendAiLogin extends LitElement {
                 <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`Use IAM` : html`Use ID/password`}</a></small>
             ` : html``}
             ${this.signup_support ? html`
-            <span style="font-size:14px;margin-right:10px;">Not a user? </span>
-            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            <div class="vertical center-justified layout">
+              <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
+              <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            </div>
             ` : html``}
           </h3>
           <form id="login-form">
@@ -646,7 +676,7 @@ class BackendAiLogin extends LitElement {
                            style="display:none;"
                            label="API Endpoint" value=""></wl-textfield>
               <br/><br/>
-              <wl-button class="fg red full" id="login-button" outlined type="button"
+              <wl-button class="fg red full login-button" id="login-button" outlined type="button"
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
                           Login</wl-button>
@@ -658,10 +688,16 @@ class BackendAiLogin extends LitElement {
         ${this.blockMessage != '' ? html`
         <wl-card>
           ${this.blockType !== '' ? html`
-          <h3>${this.blockType}</h3>
+          <h3 class="horizontal center layout" style="font-weight:bold">
+            <span id="work-title">${this.blockType}</span>
+            <div class="flex"></div>
+          </h3>
           ` : html``}
           <div style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
+          </div>
+          <div style="text-align:right;padding-top:15px;">
+            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">Cancel login</wl-button>
           </div>
         </wl-card>
         ` : html``}
