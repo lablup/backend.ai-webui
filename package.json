@@ -71,7 +71,7 @@
     "browserify": "^16.5.0",
     "buffer": "^5.4.2",
     "cors": "^2.8.5",
-    "electron": "^6.0.5",
+    "electron": "^6.0.7",
     "electron-installer-dmg": "^3.0.0",
     "electron-packager": "^14.0.5",
     "electron-tabs": "^0.9.5",
