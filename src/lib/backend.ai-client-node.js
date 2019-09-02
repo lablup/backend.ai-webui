@@ -1393,8 +1393,13 @@ class Image {
     return this.client.gql(q, v);
   }
 
-  /*
+  /**
+   * Modify resource of given image.
    *
+   * @param {string} registry - Registry name
+   * @param {string} image - image name.
+   * @param {string} tag - image tag.
+   * @param {object} input - value list to set.
    */
   modifyResource(registry, image, tag, input) {
     let promiseArray = [];
@@ -1404,11 +1409,19 @@ class Image {
         const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`, "value": input[slot_type][key]});
         promiseArray.push(this.client._wrapWithPromise(rqst));
       })
-    })
-
+    });
     return Promise.all(promiseArray);
   }
 
+  /**
+   * Modify label of given image.
+   *
+   * @param {string} registry - Registry name
+   * @param {string} image - image name.
+   * @param {string} tag - image tag.
+   * @param {string} key - key to change.
+   * @param {string} value - value for the key.
+   */
   modifyLabel(registry, image, tag, key, value) {
     image = image.replace("/", "%2F");
     tag = tag.replace("/", "%2F");
@@ -1416,6 +1429,13 @@ class Image {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Get image label information.
+   *
+   * @param {string} registry - Registry name
+   * @param {string} image - image name.
+   * @param {string} tag - tag to get.
+   */
   get(registry, image, tag) {
     const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true});
     return this.client._wrapWithPromise(rqst);
