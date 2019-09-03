@@ -57,6 +57,7 @@ class BackendAIData extends BackendAIPage {
   public vhosts: any;
   public uploadFilesExist: any;
   public _boundIndexRenderer: any;
+  public _boundTypeRenderer: any;
   public _boundControlFolderListRenderer: any;
   public _boundControlFileListRenderer: any;
   public _boundPermissionViewRenderer: any;
@@ -91,6 +92,7 @@ class BackendAIData extends BackendAIPage {
     this.uploadFilesExist = false;
     this.allowed_folder_type = [];
     this._boundIndexRenderer = this.indexRenderer.bind(this);
+    this._boundTypeRenderer = this.typeRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
@@ -416,6 +418,7 @@ class BackendAIData extends BackendAIPage {
               </div>
             </template>
           </vaadin-grid-column>
+          <vaadin-grid-column width="45px" flex-grow="0" resizable header="Type" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
           <vaadin-grid-column width="85px" flex-grow="0" resizable header="Permission" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
           <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
         </vaadin-grid>
@@ -923,6 +926,19 @@ class BackendAIData extends BackendAIPage {
     )
   }
 
+  typeRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout vertical">
+        ${rowData.item.type == 'user' ? html`
+          <wl-icon>person</wl-icon>
+        ` : html`
+          <wl-icon>group</wl-icon>
+        `}
+        </div>`, root
+    )
+  }
   firstUpdated() {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
