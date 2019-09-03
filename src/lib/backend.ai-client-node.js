@@ -802,7 +802,7 @@ class VFolder {
    *
    * @param {string} name - Virtual folder name.
    * @param {string} host - Host name to create virtual folder in it.
-   * @param {string} type - Virtual folder type. Supporting types are ['user', 'group'].
+   * @param {string} group - Virtual folder group name.
    */
   create(name, host = '', group = '') {
     let body = {
