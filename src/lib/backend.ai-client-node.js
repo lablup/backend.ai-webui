@@ -811,7 +811,7 @@ class VFolder {
     if (host !== '') {
       body.host = host;
     }
-    if (this.client.supports('group-folder') && ['user', 'group'].includes(group)) {
+    if (this.client.supports('group-folder') && group !== '') {
       body.group = group;
     }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
