@@ -268,6 +268,7 @@ class Client {
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       this._features['scaling-group'] = true;
       this._features['group'] = true;
+      this._features['group-folder'] = true;
     }
   }
 
@@ -789,16 +790,30 @@ class VFolder {
   }
 
   /**
+   * Get allowed types of folders
+   *
+   */
+  allowed_types() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/allowed_types`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
    * Create a Virtual folder on specific host.
    *
    * @param {string} name - Virtual folder name.
    * @param {string} host - Host name to create virtual folder in it.
+   * @param {string} group - Virtual folder group name.
    */
-  create(name, host = null) {
+  create(name, host = '', group = '') {
     let body = {
-      'name': name,
-      'host': host
+      'name': name
     };
+    if (host !== '') {
+      body.host = host;
+    }
+    if (this.client.supports('group-folder') && group !== '') {
+      body.group = group;
+    }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
     return this.client._wrapWithPromise(rqst);
   }
