@@ -15,7 +15,7 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import './backend-ai-environment-list';
-import './backend-ai-resource-template-list';
+import './backend-ai-resource-preset-list';
 import './backend-ai-registry-list';
 import './lablup-notification';
 
@@ -131,7 +131,7 @@ class BackendAiEnvironmentView extends BackendAIPage {
         <div id="image-lists" class="tab-content">
           <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
         </div>
-        <backend-ai-resource-template-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-template-list>
+        <backend-ai-resource-preset-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-preset-list>
         <div id="registry-lists" class="tab-content">
           <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
         </div>
