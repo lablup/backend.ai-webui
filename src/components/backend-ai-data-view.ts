@@ -927,10 +927,6 @@ class BackendAIData extends BackendAIPage {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
 
-    window.backendaiclient.vfolder.allowed_types().then(response => {
-      this.allowed_folder_type = response;
-    });
-
     this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
     this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
@@ -961,11 +957,17 @@ class BackendAIData extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = window.backendaiclient.is_admin;
         this.authenticated = true;
+        window.backendaiclient.vfolder.allowed_types().then(response => {
+          this.allowed_folder_type = response;
+        });
         this._refreshFolderList();
       }, true);
     } else {
       this.is_admin = window.backendaiclient.is_admin;
       this.authenticated = true;
+      window.backendaiclient.vfolder.allowed_types().then(response => {
+        this.allowed_folder_type = response;
+      });
       this._refreshFolderList();
     }
   }
