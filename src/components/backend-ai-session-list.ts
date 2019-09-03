@@ -359,7 +359,14 @@ class BackendAiSessionList extends BackendAIPage {
           'title': 'DIGITS',
           'redirect': "&redirect=/",
           'src': './resources/icons/nvidia.png'
-        }]
+        }],
+      'h2o':
+        [{
+          'name': 'h2o',
+          'title': 'H2O.ai',
+          'redirect': "/",
+          'src': './resources/icons/h2o.png'
+        }],
     };
   }
 
