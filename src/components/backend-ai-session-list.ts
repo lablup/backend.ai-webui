@@ -412,7 +412,7 @@ class BackendAiSessionList extends BackendAIPage {
     }
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
-      var sessions = response.compute_sessions;
+      let sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
         let previous_sessions = this.compute_sessions;
         let previous_session_keys = [];
