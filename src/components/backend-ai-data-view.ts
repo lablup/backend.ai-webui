@@ -1036,10 +1036,16 @@ class BackendAIData extends BackendAIPage {
     let name = this.shadowRoot.querySelector('#add-folder-name').value;
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
     let type = this.shadowRoot.querySelector('#add-folder-type').value;
+    let group;
     if (['user', 'group'].includes(type) === false) {
       type = 'user';
     }
-    let job = window.backendaiclient.vfolder.create(name, host, window.backendaiclient.current_group);
+    if (type == 'user') {
+      group = '';
+    } else {
+      group = window.backendaiclient.current_group;
+    }
+    let job = window.backendaiclient.vfolder.create(name, host, group);
     job.then((value) => {
       this.notification.text = 'Folder is successfully created.';
       this.notification.show();
