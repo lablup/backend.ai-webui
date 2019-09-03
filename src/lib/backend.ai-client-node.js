@@ -268,6 +268,7 @@ class Client {
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       this._features['scaling-group'] = true;
       this._features['group'] = true;
+      this._features['group-folder'] = true;
     }
   }
 
@@ -803,12 +804,14 @@ class VFolder {
    * @param {string} host - Host name to create virtual folder in it.
    * @param {string} type - Virtual folder type. Supporting types are ['user', 'group'].
    */
-  create(name, host = null, type = null) {
+  create(name, host = '', type = '') {
     let body = {
-      'name': name,
-      'host': host
+      'name': name
     };
-    if (type !== null && ['user', 'group'].includes(type)) {
+    if (host !== '') {
+      body.host = host;
+    }
+    if (this.client.supports('group-folder') && ['user', 'group'].includes(type)) {
       body.group = type;
     }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
