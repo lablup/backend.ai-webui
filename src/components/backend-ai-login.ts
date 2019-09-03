@@ -569,8 +569,8 @@ class BackendAiLogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-      this.notification.text = 'Connected.';
-      this.notification.show();
+      //this.notification.text = 'Connected.';
+      //this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {

@@ -392,7 +392,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
         this._page = 'summary';
-        navigate(decodeURIComponent('/'));
+        window.history.pushState({}, '', '/summary');
+        store.dispatch(navigate(decodeURIComponent('/')));
         (this.shadowRoot.querySelector('#login-panel') as any).login();
       } else {
         window.location.reload();
@@ -526,7 +527,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.09.0.190902</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.09.0.190903</small>
               </address>
             </div>
           </app-header-layout>
