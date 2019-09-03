@@ -793,7 +793,7 @@ class VFolder {
    *
    */
   allowed_types() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/allowed_types`, null);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/allowed_types`, null);
     return this.client._wrapWithPromise(rqst);
   }
   /**

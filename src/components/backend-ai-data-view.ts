@@ -69,6 +69,7 @@ class BackendAIData extends BackendAIPage {
   public deleteFileDialog: any;
   public indicator: any;
   public updateComplete: any;
+  public allowed_folder_type: any;
 
   constructor() {
     super();
@@ -88,6 +89,7 @@ class BackendAIData extends BackendAIPage {
     this.vhost = '';
     this.vhosts = [];
     this.uploadFilesExist = false;
+    this.allowed_folder_type = [];
     this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
@@ -430,13 +432,25 @@ class BackendAIData extends BackendAIPage {
           <section>
             <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                          error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-            <paper-dropdown-menu id="add-folder-host" label="Host">
-              <paper-listbox slot="dropdown-content" selected="0">
-              ${this.vhosts.map(item => html`
-                <paper-item id="${item}" label="${item}">${item}</paper-item>
-              `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
+            <div class="horizontal layout">
+              <paper-dropdown-menu id="add-folder-host" label="Host">
+                <paper-listbox slot="dropdown-content" selected="0">
+                ${this.vhosts.map(item => html`
+                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+                `)}
+                </paper-listbox>
+              </paper-dropdown-menu>
+              <paper-dropdown-menu id="add-folder-type" label="Type">
+                <paper-listbox slot="dropdown-content" selected="0">
+                ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+                  <paper-item label="group">Group</paper-item>              
+                ` : html``}
+                ${this.allowed_folder_type.includes('user') ? html`
+                  <paper-item label="user">User</paper-item>                            
+                ` : html``}
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
             <br/>
             <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
               <wl-icon>rowing</wl-icon>
@@ -912,6 +926,11 @@ class BackendAIData extends BackendAIPage {
   firstUpdated() {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
+
+    window.backendaiclient.vfolder.allowed_types().then(response => {
+      this.allowed_folder_type = response;
+    });
+
     this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
     this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
@@ -998,6 +1017,10 @@ class BackendAIData extends BackendAIPage {
   _addFolder() {
     let name = this.shadowRoot.querySelector('#add-folder-name').value;
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
+    let type = this.shadowRoot.querySelector('#add-folder-type').value;
+    if (['user', 'group'].includes(type) === false) {
+      type = 'user';
+    }
     let job = window.backendaiclient.vfolder.create(name, host);
     job.then((value) => {
       this.notification.text = 'Folder is successfully created.';
