@@ -424,21 +424,6 @@ class BackendAiSessionList extends BackendAIPage {
     });
   }
 
-  _startProgressDialog() {
-    this.shadowRoot.querySelector('#app-progress').value = 0;
-    this.shadowRoot.querySelector('#app-progress-text').textContent = 'Initializing...';
-    this.shadowRoot.querySelector('#app-progress-dialog').open();
-  }
-
-  _setProgressDialog(value, text = '') {
-    this.shadowRoot.querySelector('#app-progress-text').textContent = text;
-    this.shadowRoot.querySelector('#app-progress').value = value;
-  }
-
-  _endProgressDialog() {
-    this.shadowRoot.querySelector('#app-progress-dialog').close();
-  }
-
   _humanReadableTime(d: any) {
     d = new Date(d);
     return d.toLocaleString();
@@ -825,6 +810,7 @@ class BackendAiSessionList extends BackendAIPage {
     return Promise.all(terminateSessionQueue).then(response => {
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
       this.notification.text = "Sessions terminated.";
       this.notification.show();
 
@@ -846,6 +832,7 @@ class BackendAiSessionList extends BackendAIPage {
     return Promise.all(terminateSessionQueue).then(response => {
       this._selected_items = [];
       this._clearCheckboxes();
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
       this.notification.text = "Sessions terminated.";
       this.notification.show();
     }).catch((err) => {
