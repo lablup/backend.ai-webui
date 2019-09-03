@@ -4,9 +4,10 @@
  */
 
 import { css, html } from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
+import 'weightless/progress-spinner';
 import 'weightless/tab-group';
 import 'weightless/tab';
 
@@ -128,7 +129,7 @@ class BackendAIStatisticsView extends BackendAIPage {
           </h3>
           <div class="horizontal wrap layout">
             <div id="usage-stat" class="tab-content">
-              <backend-ai-usage-list id="usage-list"></backend-ai-usage-list>
+              <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
             </div>
             <div id="insight-stat" class="tab-content" style="display: none;">
               <div></div>

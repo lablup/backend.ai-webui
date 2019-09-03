@@ -382,13 +382,13 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      this.notification.text = 'Please wait to login...';
-      this.notification.show();
+      //this.notification.text = 'Connecting...';
+      //this.notification.show();
       this._connectUsingSession();
     } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      this.notification.text = 'Please wait to login...';
-      this.notification.show();
+      //this.notification.text = 'Connecting...';
+      //this.notification.show();
       this._connectUsingAPI();
     } else {
       this.open();
@@ -426,7 +426,7 @@ class BackendAiLogin extends LitElement {
   _login() {
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
-    this.notification.text = 'Please wait to login...';
+    this.notification.text = 'Connecting...';
     this.notification.show();
     if (this.connection_mode === 'SESSION') {
       this.user_id = this.shadowRoot.querySelector('#id_user_id').value;
@@ -495,7 +495,9 @@ class BackendAiLogin extends LitElement {
 
   _connectGQL() {
     // Test connection
-    this.block();
+    if (this.loginPanel.open !== true) {
+      this.block();
+    }
     this.client.getManagerVersion().then(response => {
       return this.client.isAPIVersionCompatibleWith('v4.20190601');
     }).then(response => {
