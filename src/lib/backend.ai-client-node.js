@@ -789,6 +789,14 @@ class VFolder {
   }
 
   /**
+   * Get allowed types of folders
+   *
+   */
+  allowed_types() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/allowed_types`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
    * Create a Virtual folder on specific host.
    *
    * @param {string} name - Virtual folder name.
