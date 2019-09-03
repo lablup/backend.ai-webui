@@ -1023,7 +1023,7 @@ class BackendAIData extends BackendAIPage {
     if (['user', 'group'].includes(type) === false) {
       type = 'user';
     }
-    let job = window.backendaiclient.vfolder.create(name, host, type);
+    let job = window.backendaiclient.vfolder.create(name, host, window.backendaiclient.current_group);
     job.then((value) => {
       this.notification.text = 'Folder is successfully created.';
       this.notification.show();
