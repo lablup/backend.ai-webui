@@ -30,7 +30,7 @@ import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIResourceTemplateList extends BackendAIPage {
+class BackendAiResourcePresetList extends BackendAIPage {
   public keypairs: any;
   public resourcePolicy: any;
   public keypairInfo: any;
@@ -76,7 +76,7 @@ class BackendAIResourceTemplateList extends BackendAIPage {
   }
 
   static get is() {
-    return 'backend-ai-resource-template-list';
+    return 'backend-ai-resource-preset-list';
   }
 
   static get properties() {
@@ -648,4 +648,4 @@ class BackendAIResourceTemplateList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAIResourceTemplateList.is, BackendAIResourceTemplateList);
+customElements.define(BackendAiResourcePresetList.is, BackendAiResourcePresetList);

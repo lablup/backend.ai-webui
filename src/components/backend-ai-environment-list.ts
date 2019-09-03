@@ -30,7 +30,7 @@ import 'weightless/icon';
 import 'weightless/select';
 import 'weightless/textfield';
 
-import './backend-ai-resource-template-list';
+import './backend-ai-resource-preset-list';
 
 class BackendAiEnvironmentList extends BackendAIPage {
   public images: any;
