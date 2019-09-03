@@ -804,15 +804,15 @@ class VFolder {
    * @param {string} host - Host name to create virtual folder in it.
    * @param {string} type - Virtual folder type. Supporting types are ['user', 'group'].
    */
-  create(name, host = '', type = '') {
+  create(name, host = '', group = '') {
     let body = {
       'name': name
     };
     if (host !== '') {
       body.host = host;
     }
-    if (this.client.supports('group-folder') && ['user', 'group'].includes(type)) {
-      body.group = type;
+    if (this.client.supports('group-folder') && ['user', 'group'].includes(group)) {
+      body.group = group;
     }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
     return this.client._wrapWithPromise(rqst);
