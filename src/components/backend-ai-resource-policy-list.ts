@@ -44,7 +44,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
   @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 48, 64, 128, 192, 256, 512, "Unlimited"];
   @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-  @property({type: Array}) vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+  @property({type: Array}) fgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
   @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
   @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
   @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
@@ -235,9 +235,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
+                <paper-dropdown-menu id="fgpu-resource" label="fgpu">
                   <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.vgpu_metric.map(item => html`
+                  ${this.fgpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
@@ -421,7 +421,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
     this.shadowRoot.querySelector('#cpu-resource').value = resourcePolicy.total_resource_slots.cpu;
     this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots['cuda_device'];
-    this.shadowRoot.querySelector('#vgpu-resource').value = resourcePolicy.total_resource_slots['cuda_shares'];
+    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePolicy.total_resource_slots['cuda_shares'];
     this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
 
     this.shadowRoot.querySelector('#concurrency-limit').value = resourcePolicy.max_concurrent_sessions;
@@ -492,7 +492,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
-    let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
+    let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
     let vfolder_hosts = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
@@ -508,16 +508,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } else {
       gpu_resource = parseInt(gpu_resource).toString();
     }
-    if (vgpu_resource === "Unlimited") {
-      vgpu_resource = "Infinity";
+    if (fgpu_resource === "Unlimited") {
+      fgpu_resource = "Infinity";
     } else {
-      vgpu_resource = parseFloat(vgpu_resource).toString();
+      fgpu_resource = parseFloat(fgpu_resource).toString();
     }
     let total_resource_slots = {
       "cpu": cpu_resource,
       "mem": ram_resource,
       "cuda.device": gpu_resource,
-      "cuda.shares": vgpu_resource
+      "cuda.shares": fgpu_resource
     };
     let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit').value;
     let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit').value;

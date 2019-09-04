@@ -30,49 +30,31 @@ import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
+@customElement("backend-ai-resource-preset-list")
 class BackendAiResourcePresetList extends BackendAIPage {
-  public keypairs: any;
-  public resourcePolicy: any;
-  public keypairInfo: any;
-  public is_admin: any;
-  public cpu_metric: any;
-  public ram_metric: any;
-  public gpu_metric: any;
-  public fgpu_metric: any;
-  public rate_metric: any;
-  public concurrency_metric: any;
-  public container_per_session_metric: any;
-  public idle_timeout_metric: any;
-  public vfolder_capacity_metric: any;
-  public vfolder_count_metric: any;
-  public _boundResourceRenderer: any;
-  public _boundControlRenderer: any;
-  public shadowRoot: any;
-  public resourcePresets: any;
-  public gpu_allocatable: any;
-  public notification: any;
-  public updateComplete: any;
-  public condition: any;
+  @property({type: Array}) keypairs = {};
+  @property({type: Array}) resourcePolicy = {};
+  @property({type: Array}) keypairInfo = {};
+  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) active = false;
+  @property({type: Boolean}) gpu_allocatable = false;
+  @property({type: String}) condition = '';
+  @property({type: Object}) resourcePresets;
+  @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
+  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 48, 64, 128, 192, 256, 512, "Unlimited"];
+  @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+  @property({type: Array}) fgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+  @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
+  @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
+  @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
+  @property({type: Array}) idle_timeout_metric = [60, 600, 900, 1800, 3600, 43200, 86400, 604800, 1209600];
+  @property({type: Array}) vfolder_capacity_metric = [1, 2, 5, 10, 20, 50, 100, 200, 1000];
+  @property({type: Array}) vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
+  @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
+  @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
 
   constructor() {
     super();
-    this.keypairs = {};
-    this.resourcePolicy = {};
-    this.keypairInfo = {};
-    this.is_admin = false;
-    this.active = false;
-    this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
-    this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
-    this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.fgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
-    this.concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
-    this.container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
-    this.idle_timeout_metric = [60, 180, 540, 900, 1800, 3600];
-    this.vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
-    this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
-    this._boundResourceRenderer = this.resourceRenderer.bind(this);
-    this._boundControlRenderer = this.controlRenderer.bind(this);
   }
 
   static get is() {
@@ -139,68 +121,68 @@ class BackendAiResourcePresetList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-            height: calc(100vh - 265px);
-        }
+          vaadin-grid {
+              border: 0;
+              font-size: 14px;
+              height: calc(100vh - 265px);
+          }
 
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
+          paper-item {
+              height: 30px;
+              --paper-item-min-height: 30px;
+          }
 
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
+          wl-button > wl-icon {
+              --icon-size: 24px;
+              padding: 0;
+          }
 
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
+          wl-icon {
+              --icon-size: 16px;
+              padding: 0;
+          }
 
-        vaadin-item {
-          font-size: 13px;
-          font-weight: 100;
-        }
+          vaadin-item {
+              font-size: 13px;
+              font-weight: 100;
+          }
 
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
+          div.indicator,
+          span.indicator {
+              font-size: 9px;
+              margin-right: 5px;
+          }
 
-        div.configuration {
-          width: 70px !important;
-        }
+          div.configuration {
+              width: 70px !important;
+          }
 
-        div.configuration wl-icon {
-          padding-right: 5px;
-        }
+          div.configuration wl-icon {
+              padding-right: 5px;
+          }
 
-        wl-button.create-button {
-          width: 335px;
-          --button-bg: white;
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
-        }
+          wl-button.create-button {
+              width: 335px;
+              --button-bg: white;
+              --button-bg-hover: var(--paper-yellow-100);
+              --button-bg-active: var(--paper-yellow-600);
+          }
 
-        wl-button {
-          --button-bg: var(--paper-yellow-50);
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
-        }
+          wl-button {
+              --button-bg: var(--paper-yellow-50);
+              --button-bg-hover: var(--paper-yellow-100);
+              --button-bg-active: var(--paper-yellow-600);
+          }
 
-        wl-button#create-policy-button {
-          width: 100%;
-          box-sizing: border-box;
-          margin-top: 15px;
-        }
+          wl-button#create-policy-button {
+              width: 100%;
+              box-sizing: border-box;
+              margin-top: 15px;
+          }
 
-        wl-card {
-          margin: 0;
-        }
+          wl-card {
+              margin: 0;
+          }
       `];
   }
 
@@ -648,4 +630,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAiResourcePresetList.is, BackendAiResourcePresetList);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-resource-preset-list": BackendAiResourcePresetList;
+  }
+}
