@@ -19,10 +19,11 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
+
 import 'weightless/button';
-import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/dialog';
+import 'weightless/icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-notification';
@@ -125,6 +126,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
               border: 0;
               font-size: 14px;
               height: calc(100vh - 265px);
+          }
+
+          paper-dropdown-menu {
           }
 
           paper-item {
@@ -309,14 +313,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
                           error-message="Policy name only accepts letters and numbers"></paper-input>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="cpu-resource" label="CPU">
+                <paper-dropdown-menu id="cpu-resource" label="CPU" vertical-align="middle">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.cpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
+                <paper-dropdown-menu id="ram-resource" label="RAM (GB)" vertical-align="middle">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.ram_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
@@ -325,14 +329,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 </paper-dropdown-menu>
               </div>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable}>
+                <paper-dropdown-menu id="gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable} vertical-align="bottom" vertical-offset="-90">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.gpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable}>
+                <paper-dropdown-menu id="fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable} vertical-align="bottom" vertical-offset="-90">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.fgpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
@@ -373,14 +377,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
               ></paper-input>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="create-cpu-resource" label="CPU">
+                <paper-dropdown-menu id="create-cpu-resource" label="CPU" vertical-align="middle">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.cpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="create-ram-resource" label="RAM (GB)">
+                <paper-dropdown-menu id="create-ram-resource" label="RAM (GB)" vertical-align="middle">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.ram_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
@@ -389,14 +393,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 </paper-dropdown-menu>
               </div>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="create-gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable}>
+                <paper-dropdown-menu id="create-gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable} vertical-align="bottom" vertical-offset="-90">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.gpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="create-fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable}>
+                <paper-dropdown-menu id="create-fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable} vertical-align="bottom" vertical-offset="-90">
                   <paper-listbox slot="dropdown-content" selected="0">
                   ${this.fgpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
