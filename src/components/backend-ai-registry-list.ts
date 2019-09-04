@@ -32,38 +32,16 @@ import { IronFlex, IronFlexAlignment } from "../plastics/layout/iron-flex-layout
 import './lablup-notification';
 import './backend-ai-indicator';
 
+@customElement("backend-ai-registry-list")
 class BackendAIRegistryList extends BackendAIPage {
-  public notification: any;
-  public active: any;
-  public registryList: any;
-  public selectedIndex: any;
-  public boundControlsRenderer: any;
-  public indicator: any;
+  @property({type: Object}) indicator = Object();
+  @property({type: Array}) registryList = [];
+  @property({type: Number}) selectedIndex = 0;
+  @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
+  @property({type: Boolean}) active = false;
 
   constructor() {
     super();
-    this.active = false;
-    this.registryList = [];
-    this.selectedIndex = 0;
-    this.boundControlsRenderer = this._controlsRenderer.bind(this);
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      notification: {
-        type: Object
-      },
-      indicator: {
-        type: Object
-      }
-    }
-  }
-
-  static get is() {
-    return 'backend-ai-registry-list'
   }
 
   static get styles() {
@@ -113,25 +91,25 @@ class BackendAIRegistryList extends BackendAIPage {
 
     return Object.keys(obj).map(hostname =>
       isString(obj[hostname])
-      ? {
-        "": obj[hostname],
-        hostname
-      }
-      : {
-        ...obj[hostname],
-        hostname
-      }
+        ? {
+          "": obj[hostname],
+          hostname
+        }
+        : {
+          ...obj[hostname],
+          hostname
+        }
     );
 
   }
 
   _refreshRegistryList() {
     window.backendaiclient.registry.list()
-    .then(({ result }) => {
-      this.registryList = this._parseRegistryList(result);
-      console.log(this.registryList);
-      this.requestUpdate();
-    })
+      .then(({ result }) => {
+        this.registryList = this._parseRegistryList(result);
+        console.log(this.registryList);
+        this.requestUpdate();
+      })
   }
 
   async _viewStateChanged(active) {
@@ -159,8 +137,8 @@ class BackendAIRegistryList extends BackendAIPage {
   _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
     const url = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-url")).value,
-          username = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-username")).value,
-          password = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-password")).value;
+      username = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-username")).value,
+      password = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-password")).value;
 
     if (url === "") {
       this.notification.text = "URL field is empty";
@@ -179,16 +157,16 @@ class BackendAIRegistryList extends BackendAIPage {
 
     const key = `config/docker/registry/${this._getHostname(url)}`;
     window.backendaiclient.registry.add(key, input)
-    .then(({ result }) => {
-      if (result === "ok") {
-        this.notification.text = "Registry successfully added";
-        this._refreshRegistryList();
-      } else {
-        this.notification.text = "Error occurred";
-      }
-      this._hideDialogById("#add-registry-dialog");
-      this.notification.show();
-    })
+      .then(({ result }) => {
+        if (result === "ok") {
+          this.notification.text = "Registry successfully added";
+          this._refreshRegistryList();
+        } else {
+          this.notification.text = "Error occurred";
+        }
+        this._hideDialogById("#add-registry-dialog");
+        this.notification.show();
+      })
   }
 
   _deleteRegistry() {
@@ -196,16 +174,16 @@ class BackendAIRegistryList extends BackendAIPage {
 
     if (this.registryList[this.selectedIndex].hostname === name) {
       window.backendaiclient.registry.delete(name)
-      .then(({ result }) => {
-        if (result === "ok") {
-          this.notification.text = "Registry successfully deleted";
-          this._refreshRegistryList();
-        } else {
-          this.notification.text = "Error Occurred";
-        }
-        this._hideDialogById("#delete-registry-dialog");
-        this.notification.show();
-      })
+        .then(({ result }) => {
+          if (result === "ok") {
+            this.notification.text = "Registry successfully deleted";
+            this._refreshRegistryList();
+          } else {
+            this.notification.text = "Error Occurred";
+          }
+          this._hideDialogById("#delete-registry-dialog");
+          this.notification.show();
+        })
     } else {
       this.notification.text = "Hostname does not match!";
       this.notification.show();
@@ -216,17 +194,17 @@ class BackendAIRegistryList extends BackendAIPage {
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Updating registry information...');
     window.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
-    .then(({ rescan_images }) => {
-      if (rescan_images.ok) {
-        this.indicator.set(100, 'Registry update finished.');
-        this.indicator.end(1000);
-      } else {
-        this.indicator.set(50, 'Registry update failed.');
-        this.indicator.end(1000);
-        this.notification.text = PainKiller.relieve(rescan_images.msg);
-        this.notification.show();
-      }
-    }).catch(err => {
+      .then(({ rescan_images }) => {
+        if (rescan_images.ok) {
+          this.indicator.set(100, 'Registry update finished.');
+          this.indicator.end(1000);
+        } else {
+          this.indicator.set(50, 'Registry update failed.');
+          this.indicator.end(1000);
+          this.notification.text = PainKiller.relieve(rescan_images.msg);
+          this.notification.show();
+        }
+      }).catch(err => {
       console.log(err);
       this.indicator.set(50, 'Rescan failed.');
       this.indicator.end(1000);
@@ -283,17 +261,17 @@ class BackendAIRegistryList extends BackendAIPage {
             icon="delete"
             class="fg red"
             @click=${() => {
-              this.selectedIndex = rowData.index;
-              this._launchDialogById("#delete-registry-dialog")
-            }}
+        this.selectedIndex = rowData.index;
+        this._launchDialogById("#delete-registry-dialog")
+      }}
           ></paper-icon-button>
           <paper-icon-button
             icon="refresh"
             class="fg blue"
             @click=${() => {
-              this.selectedIndex = rowData.index;
-              this._rescanImage();
-            }}
+        this.selectedIndex = rowData.index;
+        this._rescanImage();
+      }}
           ></paper-icon-button>
         </div>
       `,
@@ -411,4 +389,8 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAIRegistryList.is, BackendAIRegistryList);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-registry-list": BackendAIRegistryList;
+  }
+}
