@@ -9,6 +9,7 @@ import 'weightless/progress-spinner';
 @customElement("lablup-loading-indicator")
 export default class LablupLoadingIndicator extends LitElement {
   @property({type: Object}) indicator;
+  @property({type: Boolean}) active = false;
 
   constructor() {
     super();
@@ -28,17 +29,6 @@ export default class LablupLoadingIndicator extends LitElement {
           right: 60px;
         }
       `];
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      indicator: {
-        type: Object
-      }
-    };
   }
 
   render() {
