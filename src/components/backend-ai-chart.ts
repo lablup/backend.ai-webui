@@ -39,8 +39,6 @@ const ByteConverter = {
 
 @customElement("backend-ai-chart")
 export default class BackendAIChart extends LitElement {
-	public shadowRoot: any;
-
   @property({type: String}) title = '';
   @property({type: Number}) elevation = 1;
   @property({type: String}) message = '';
@@ -210,7 +208,7 @@ export default class BackendAIChart extends LitElement {
           aspect    = width / height;
 
     const resize = () => {
-      const { offsetWidth } = this.shadowRoot.host.parentNode;
+      const {offsetWidth} = (this.shadowRoot.host.parentNode as any);
       const targetWidth = this._scaledSVGWidth(offsetWidth);
       svg.attr("width", targetWidth);
       svg.attr("height", Math.round(targetWidth / aspect));

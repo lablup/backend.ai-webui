@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -42,7 +42,8 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIData extends BackendAIPage {
+@customElement("backend-ai-data-view")
+export default class BackendAIData extends BackendAIPage {
   public folders: any;
   public folderInfo: any;
   public is_admin: any;
@@ -1408,5 +1409,8 @@ class BackendAIData extends BackendAIPage {
       })
   }
 }
-
-customElements.define('backend-ai-data-view', BackendAIData);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-data-view": BackendAIData;
+  }
+}
