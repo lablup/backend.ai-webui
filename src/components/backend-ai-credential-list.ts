@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -48,7 +48,6 @@ export default class BackendAICredentialList extends BackendAIPage {
     created_at: ''
   };
   @property({type: Boolean}) isAdmin = false;
-  @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
   @property({type: Object}) keypairs = Object();
   @property({type: Object}) resourcePolicy = Object();

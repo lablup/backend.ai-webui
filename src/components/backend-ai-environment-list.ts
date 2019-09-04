@@ -32,14 +32,12 @@ import './backend-ai-resource-preset-list';
 
 @customElement("backend-ai-environment-list")
 export default class BackendAIEnvironmentList extends BackendAIPage {
-
   @property({type: Array}) images = Array();
   @property({type: Array}) allowed_registries = Array();
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
   @property({type: Array}) servicePorts = Array();
   @property({type: Number}) selectedIndex = 0;
-  @property({type: Boolean}) active = false;
   @property({type: Boolean}) _gpu_disabled = false;
   @property({type: Boolean}) _fgpu_disabled = false;
   @property({type: Object}) alias = Object();

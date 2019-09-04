@@ -29,7 +29,6 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 
 @customElement("backend-ai-agent-view")
 export default class BackendAIAgentView extends BackendAIPage {
-  @property({type: Boolean}) active = false;
   @property({type: String}) _status = 'inactive';
 
   constructor() {

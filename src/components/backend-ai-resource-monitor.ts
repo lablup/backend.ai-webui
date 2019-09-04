@@ -38,120 +38,105 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAiResourceMonitor extends BackendAIPage {
-  public supports: any;
-  public resourceLimits: any;
-  public userResourceLimit: any;
-  public aliases: any;
-  public tags: any;
-  public versions: any;
-  public languages: any;
-  public gpu_mode: any;
-  public gpu_step: any;
-  public cpu_metric: any;
-  public mem_metric: any;
-  public gpu_metric: any;
-  public tpu_metric: any;
-  public images: any;
-  public defaultResourcePolicy: any;
-  public total_slot: any;
-  public used_slot: any;
-  public available_slot: any;
-  public resource_info: any;
-  public used_slot_percent: any;
-  public resource_templates: any;
-  public vfolders: any;
-  public default_language: any;
-  public launch_ready: any;
-  public concurrency_used: any;
-  public concurrency_max: any;
-  public concurrency_limit: any;
-  public _status: any;
-  public cpu_request: any;
-  public mem_request: any;
-  public gpu_request: any;
-  public session_request: any;
-  public direction: any;
-  public scaling_groups: any;
-  public scaling_group: any;
-  public enable_scaling_group: any;
-  public shadowRoot: any;
-  public notification: any;
-  public updateComplete: any;
-  public num_sessions: any;
-  public vgpu_metric: any;
-  public sessions_list: any;
-  public metric_updating: any;
-  public metadata_updating: any;
-  public location: any;
+@customElement("backend-ai-resource-monitor")
+export default class BackendAiResourceMonitor extends BackendAIPage {
+  @property({type: String}) direction = "horizontal";
+  @property({type: String}) location = '';
+  @property({type: Object}) supports = Object();
+  @property({type: Object}) resourceLimits = Object();
+  @property({type: Object}) userResourceLimit = Object();
+  @property({type: Object}) aliases = {
+    'TensorFlow': 'python-tensorflow',
+    'Lablup ResearchEnv.': 'python-ff',
+    'Python': 'python',
+    'Python (Intel)': 'python-intel',
+    'PyTorch': 'python-pytorch',
+    'Chainer': 'chainer',
+    'R': 'r-base',
+    'Julia': 'julia',
+    'Lua': 'lua',
+    'RAPID (NGC)': 'ngc-rapid',
+    'DIGITS (NGC)': 'ngc-digits',
+    'PyTorch (NGC)': 'ngc-pytorch',
+    'TensorFlow (NGC)': 'ngc-tensorflow',
+    'PyTorch (Cloudia)': 'lablup-pytorch',
+    'H2O': 'h2o',
+  };
+  @property({type: Object}) tags = {
+    'TensorFlow': [],
+    'Lablup ResearchEnv.': [],
+    'Python': [],
+    'Python (MKL)': ['Intel MKL'],
+    'PyTorch': [],
+    'Chainer': [],
+    'R': [],
+    'Julia': [],
+    'Lua': [],
+    'RAPID (NGC)': ['NVidia GPU Cloud'],
+    'DIGITS (NGC)': ['NVidia GPU Cloud'],
+    'PyTorch (NGC)': ['NVidia GPU Cloud'],
+    'TensorFlow (NGC)': ['NVidia GPU Cloud'],
+    'PyTorch (Cloudia)': ['Cloudia'],
+    'H2O': ['h2o.ai'],
+  };
+  @property({type: Array}) versions;
+  @property({type: Array}) languages;
+  @property({type: String}) gpu_mode;
+  @property({type: Number}) gpu_step = 0.05;
+  @property({type: Object}) cpu_metric = {
+    'min': '1',
+    'max': '1'
+  };
+  @property({type: Object}) mem_metric = {
+    'min': '1',
+    'max': '1'
+  };
+  @property({type: Object}) gpu_metric = {
+    'min': 0,
+    'max': 0
+  };
+  @property({type: Object}) fgpu_metric;
+  @property({type: Object}) tpu_metric = {
+    'min': '1',
+    'max': '1'
+  };
+  @property({type: Object}) images;
+  @property({type: String}) defaultResourcePolicy;
+  @property({type: Object}) total_slot;
+  @property({type: Object}) used_slot;
+  @property({type: Object}) available_slot;
+  @property({type: Number}) concurrency_used;
+  @property({type: Number}) concurrency_max;
+  @property({type: Number}) concurrency_limit;
+  @property({type: Array}) vfolders;
+  @property({type: Object}) resource_info;
+  @property({type: Object}) used_slot_percent;
+  @property({type: Array}) resource_templates;
+  @property({type: String}) default_language;
+  @property({type: Boolean}) launch_ready;
+  @property({type: Number}) cpu_request;
+  @property({type: Number}) mem_request;
+  @property({type: Number}) gpu_request;
+  @property({type: Number}) session_request;
+  @property({type: Boolean}) _status;
+  @property({type: Number}) num_sessions;
+  @property({type: String}) scaling_group;
+  @property({type: Array}) scaling_groups;
+  @property({type: Boolean}) enable_scaling_group;
+  @property({type: Array}) sessions_list;
+  @property({type: Boolean}) metric_updating;
+  @property({type: Boolean}) metadata_updating;
 
   constructor() {
     super();
     this.active = false;
-    this.direction = "horizontal";
-    this.location = '';
     this.init_resource();
   }
 
   init_resource() {
-    this.supports = {};
-    this.resourceLimits = {};
-    this.userResourceLimit = {};
-    this.aliases = {
-      'TensorFlow': 'python-tensorflow',
-      'Lablup ResearchEnv.': 'python-ff',
-      'Python': 'python',
-      'Python (Intel)': 'python-intel',
-      'PyTorch': 'python-pytorch',
-      'Chainer': 'chainer',
-      'R': 'r-base',
-      'Julia': 'julia',
-      'Lua': 'lua',
-      'RAPID (NGC)': 'ngc-rapid',
-      'DIGITS (NGC)': 'ngc-digits',
-      'PyTorch (NGC)': 'ngc-pytorch',
-      'TensorFlow (NGC)': 'ngc-tensorflow',
-      'PyTorch (Cloudia)': 'lablup-pytorch',
-      'H2O': 'h2o',
-    };
-    this.tags = {
-      'TensorFlow': [],
-      'Lablup ResearchEnv.': [],
-      'Python': [],
-      'Python (MKL)': ['Intel MKL'],
-      'PyTorch': [],
-      'Chainer': [],
-      'R': [],
-      'Julia': [],
-      'Lua': [],
-      'RAPID (NGC)': ['NVidia GPU Cloud'],
-      'DIGITS (NGC)': ['NVidia GPU Cloud'],
-      'PyTorch (NGC)': ['NVidia GPU Cloud'],
-      'TensorFlow (NGC)': ['NVidia GPU Cloud'],
-      'PyTorch (Cloudia)': ['Cloudia'],
-      'H2O': ['h2o.ai'],
-    };
     this.versions = ['3.6'];
     this.languages = [];
     this.gpu_mode = 'no';
-    this.gpu_step = 0.05;
-    this.cpu_metric = {
-      'min': '1',
-      'max': '1'
-    };
-    this.mem_metric = {
-      'min': '1',
-      'max': '1'
-    };
-    this.gpu_metric = {
-      'min': '0',
-      'max': '0'
-    };
-    this.tpu_metric = {
-      'min': '1',
-      'max': '1'
-    };
-    this.images = {};
     this.defaultResourcePolicy = 'UNLIMITED';
     this.total_slot = {};
     this.used_slot = {};
@@ -180,140 +165,6 @@ class BackendAiResourceMonitor extends BackendAIPage {
 
   static get is() {
     return 'backend-ai-resource-monitor';
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      supports: {
-        type: Object
-      },
-      resourceLimits: {
-        type: Object
-      },
-      userResourceLimit: {
-        type: Object
-      },
-      aliases: {
-        type: Object
-      },
-      tags: {
-        type: Object
-      },
-      versions: {
-        type: Array
-      },
-      languages: {
-        type: Array
-      },
-      gpu_mode: {
-        type: String
-      },
-      gpu_step: {
-        type: Number
-      },
-      cpu_metric: {
-        type: Object
-      },
-      mem_metric: {
-        type: Object
-      },
-      gpu_metric: {
-        type: Object
-      },
-      tpu_metric: {
-        type: Object
-      },
-      images: {
-        type: Object
-      },
-      defaultResourcePolicy: {
-        type: String
-      },
-      total_slot: {
-        type: Object
-      },
-      used_slot: {
-        type: Object
-      },
-      available_slot: {
-        type: Object
-      },
-      concurrency_used: {
-        type: Number
-      },
-      concurrency_max: {
-        type: Number
-      },
-      concurrency_limit: {
-        type: Number
-      },
-      vfolders: {
-        type: Array
-      },
-      resource_info: {
-        type: Object
-      },
-      used_slot_percent: {
-        type: Object
-      },
-      resource_templates: {
-        type: Array
-      },
-      default_language: {
-        type: String
-      },
-      launch_ready: {
-        type: Boolean
-      },
-      cpu_request: {
-        type: Number
-      },
-      mem_request: {
-        type: Number
-      },
-      gpu_request: {
-        type: Number
-      },
-      session_request: {
-        type: Number
-      },
-      _status: {
-        type: Boolean
-      },
-      direction: {
-        type: String
-      },
-      num_sessions: {
-        type: Number
-      },
-      scaling_group: {
-        type: String
-      },
-      scaling_groups: {
-        type: Array
-      },
-      notification: {
-        type: Object
-      },
-      enable_scaling_group: {
-        type: Boolean
-      },
-      sessions_list: {
-        type: Array
-      },
-      location: {
-        type: String
-      },
-      metric_updating: {
-        type: Boolean
-      },
-      metadata_updating: {
-        type: Boolean
-      }
-    }
   }
 
   static get styles() {
@@ -672,7 +523,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
         this.gpu_step = 1;
       }
       if ('cuda.shares' in results) {
-        this.gpu_mode = 'vgpu';
+        this.gpu_mode = 'fgpu';
         this.gpu_step = 0.05;
       }
     });
@@ -710,8 +561,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
       config['scaling_group'] = this.scaling_group;
     }
     config['cpu'] = this.cpu_request;
-    if (this.gpu_mode == 'vgpu') {
-      config['vgpu'] = this.gpu_request;
+    if (this.gpu_mode == 'fgpu') {
+      config['fgpu'] = this.gpu_request;
     } else {
       config['gpu'] = this.gpu_request;
     }
@@ -723,8 +574,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
-      if (this.gpu_mode == 'vgpu') {
-        config['vgpu'] = 0.0;
+      if (this.gpu_mode == 'fgpu') {
+        config['fgpu'] = 0.0;
       } else {
         config['gpu'] = 0.0;
       }
@@ -1000,9 +851,9 @@ class BackendAiResourceMonitor extends BackendAIPage {
       }
       if ('cuda.shares' in resource_limit) {
         if (resource_limit['cuda.shares'] === 'Infinity') {
-          total_slot['vgpu_slot'] = this.resource_info['cuda.shares'];
+          total_slot['fgpu_slot'] = this.resource_info['cuda.shares'];
         } else {
-          total_slot['vgpu_slot'] = resource_limit['cuda.shares'];
+          total_slot['fgpu_slot'] = resource_limit['cuda.shares'];
         }
       }
       let remaining_slot: Object = Object();
@@ -1043,21 +894,21 @@ class BackendAiResourceMonitor extends BackendAIPage {
         }
       }
       if ('cuda.shares' in resource_remaining) {
-        remaining_slot['vgpu_slot'] = resource_remaining['cuda.shares'];
+        remaining_slot['fgpu_slot'] = resource_remaining['cuda.shares'];
         if ('cuda.shares' in resource_using) {
-          used_slot['vgpu_slot'] = parseFloat(resource_using['cuda.shares']).toFixed(2);
+          used_slot['fgpu_slot'] = parseFloat(resource_using['cuda.shares']).toFixed(2);
         } else {
-          used_slot['vgpu_slot'] = 0;
+          used_slot['fgpu_slot'] = 0;
         }
       }
 
-      if ('vgpu_slot' in used_slot) {
-        total_slot['vgpu_slot'] = parseFloat(total_slot['vgpu_slot']).toFixed(2);
+      if ('fgpu_slot' in used_slot) {
+        total_slot['fgpu_slot'] = parseFloat(total_slot['fgpu_slot']).toFixed(2);
       }
       this.total_slot = total_slot;
       this.used_slot = used_slot;
       let used_slot_percent = {};
-      ['cpu_slot', 'mem_slot', 'gpu_slot', 'vgpu_slot'].forEach((slot) => {
+      ['cpu_slot', 'mem_slot', 'gpu_slot', 'fgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
           used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
         } else {
@@ -1200,7 +1051,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
             if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity' && gpu_metric.max !== NaN) {
-              gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['vgpu_slot']);
+              gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['fgpu_slot']);
             } else {
               gpu_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['gpu_slot']);
             }
@@ -1223,36 +1074,36 @@ class BackendAiResourceMonitor extends BackendAIPage {
           }
           this.gpu_metric = gpu_metric;
         }
-        if (item.key === 'cuda.shares' && this.gpu_mode === 'vgpu') {
-          let vgpu_metric = {...item};
-          vgpu_metric.min = parseInt(vgpu_metric.min);
+        if (item.key === 'cuda.shares' && this.gpu_mode === 'fgpu') {
+          let fgpu_metric = {...item};
+          fgpu_metric.min = parseInt(fgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
-            if (parseFloat(vgpu_metric.max) !== 0 && vgpu_metric.max !== 'Infinity' && vgpu_metric.max !== NaN) {
-              vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
+            if (parseFloat(fgpu_metric.max) !== 0 && fgpu_metric.max !== 'Infinity' && fgpu_metric.max !== NaN) {
+              fgpu_metric.max = Math.min(parseFloat(fgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['fgpu_slot']);
             } else {
 
-              vgpu_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['vgpu_slot']);
+              fgpu_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['fgpu_slot']);
             }
           } else {
-            if (parseFloat(vgpu_metric.max) !== 0) {
-              vgpu_metric.max = Math.min(parseFloat(vgpu_metric.max), available_slot['vgpu_slot']);
+            if (parseFloat(fgpu_metric.max) !== 0) {
+              fgpu_metric.max = Math.min(parseFloat(fgpu_metric.max), available_slot['fgpu_slot']);
             } else {
-              vgpu_metric.max = 0;
+              fgpu_metric.max = 0;
             }
           }
-          if (vgpu_metric.min >= vgpu_metric.max) {
-            if (vgpu_metric.min > vgpu_metric.max) {
-              vgpu_metric.min = vgpu_metric.max;
+          if (fgpu_metric.min >= fgpu_metric.max) {
+            if (fgpu_metric.min > fgpu_metric.max) {
+              fgpu_metric.min = fgpu_metric.max;
               disableLaunch = true;
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             } else {
-              vgpu_metric.max = vgpu_metric.max + 1;
+              fgpu_metric.max = fgpu_metric.max + 1;
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             }
           }
-          this.vgpu_metric = vgpu_metric;
-          if (vgpu_metric.max > 0) {
-            this.gpu_metric = vgpu_metric;
+          this.fgpu_metric = fgpu_metric;
+          if (fgpu_metric.max > 0) {
+            this.gpu_metric = fgpu_metric;
           }
         }
         if (item.key === 'tpu') {
@@ -1301,11 +1152,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
           this.mem_metric = mem_metric;
         }
       });
-      if (this.gpu_metric === {}) {
-        this.gpu_metric = {
-          min: 0,
-          max: 0
-        };
+      if (this.gpu_metric.min == 0 && this.gpu_metric.max == 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
@@ -1489,7 +1336,7 @@ class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-          ${this.total_slot.vgpu_slot ?
+          ${this.total_slot.fgpu_slot ?
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
@@ -1497,8 +1344,8 @@ class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_slot.vgpu_slot}/${this.total_slot.vgpu_slot}</span>
-              <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.vgpu_slot}"></paper-progress>
+              <span class="gauge-label">${this.used_slot.fgpu_slot}/${this.total_slot.fgpu_slot}</span>
+              <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.fgpu_slot}"></paper-progress>
             </div>
           </div>` :
       html``}
@@ -1673,4 +1520,8 @@ ${this.resource_templates.map(item => html`
   }
 }
 
-customElements.define(BackendAiResourceMonitor.is, BackendAiResourceMonitor);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-resource-monitor": BackendAiResourceMonitor;
+  }
+}

@@ -43,7 +43,6 @@ export default class BackendAIUsageList extends BackendAIPage {
   @property({type: Object}) collection = {};
   @property({type: Array}) data = [];
   @property({type: String}) period = '1D';
-  @property({type: Boolean}) active = false;
 
   constructor() {
     super();

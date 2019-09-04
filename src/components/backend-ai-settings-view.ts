@@ -25,7 +25,6 @@ import 'weightless/switch';
 @customElement("backend-ai-settings-view")
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
-  @property({type: Boolean}) active = false;
 
   constructor() {
     super();

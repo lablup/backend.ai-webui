@@ -26,7 +26,6 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 @customElement("backend-ai-agent-list")
 export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
-  @property({type: Boolean}) active = false;
   @property({type: Array}) agents = Array();
   @property({type: Object}) notification = Object();
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
