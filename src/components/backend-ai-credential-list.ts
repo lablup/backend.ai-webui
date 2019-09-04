@@ -43,7 +43,12 @@ export default class BackendAICredentialList extends BackendAIPage {
     access_key: 'ABC',
     secret_key: 'ABC',
     last_used: '',
-    is_admin: false
+    is_admin: false,
+    resource_policy: '',
+    rate_limit: 5000,
+    concurrency_used: 0,
+    num_queries: 0,
+    created_at: ''
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) active = false;

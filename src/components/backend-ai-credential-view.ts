@@ -2,7 +2,8 @@
  * Backend.AI-credential-view
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-input/paper-input';
@@ -43,129 +44,36 @@ import {
 
  @group Backend.AI Console
  */
-class BackendAICredentialView extends BackendAIPage {
-  public cpu_metric: any;
-  public ram_metric: any;
-  public gpu_metric: any;
-  public vgpu_metric: any;
-  public rate_metric: any;
-  public concurrency_metric: any;
-  public container_per_session_metric: any;
-  public idle_timeout_metric: any;
-  public vfolder_capacity_metric: any;
-  public vfolder_count_metric: any;
-  public resource_policies: any;
-  public resource_policy_names: any;
-  public is_admin: any;
-  public allowed_vfolder_hosts: any;
-  public default_vfolder_host: any;
-  public _status: any;
-  public use_user_list: any;
-  public _activeTab: any;
-  public new_access_key: any;
-  public new_secret_key: any;
-  public notification: any;
+@customElement("backend-ai-credential-view")
+export default class BackendAICredentialView extends BackendAIPage {
   public shadowRoot: any;
   public updateComplete: any;
 
+  @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
+  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
+  @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+  @property({type: Array}) vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+  @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
+  @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
+  @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
+  @property({type: Array}) idle_timeout_metric = [60, 180, 540, 900, 1800, 3600];
+  @property({type: Array}) vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
+  @property({type: Array}) vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
+  @property({type: Object}) resource_policies = Object();
+  @property({type: Array}) resource_policy_names = Array();
+  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) active = false;
+  @property({type: String}) _status = 'inactive';
+  @property({type: Array}) allowed_vfolder_hosts = Array();
+  @property({type: String}) default_vfolder_host = '';
+  @property({type: Boolean}) use_user_list = false;
+  @property({type: String}) new_access_key = '';
+  @property({type: String}) new_secret_key = '';
+  @property({type: String}) _activeTab = 'credential-lists';
+  @property({type: Object}) notification = Object();
+
   constructor() {
     super();
-    this.active = false;
-    this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
-    this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
-    this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
-    this.concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
-    this.container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
-    this.idle_timeout_metric = [60, 180, 540, 900, 1800, 3600];
-    this.vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
-    this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
-    this.resource_policies = {};
-    this.resource_policy_names = [];
-    this.is_admin = false;
-    this.allowed_vfolder_hosts = [];
-    this.default_vfolder_host = '';
-    this._status = false;
-    this.use_user_list = false;
-    this._activeTab = 'credential-lists';
-    this.new_access_key = '';
-    this.new_secret_key = '';
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      _activeTab: {
-        type: String
-      },
-      cpu_metric: {
-        type: Array
-      },
-      ram_metric: {
-        type: Array
-      },
-      gpu_metric: {
-        type: Array
-      },
-      vgpu_metric: {
-        type: Array
-      },
-      rate_metric: {
-        type: Array
-      },
-      concurrency_metric: {
-        type: Array
-      },
-      container_per_session_metric: {
-        type: Array
-      },
-      idle_timeout_metric: {
-        type: Array
-      },
-      vfolder_capacity_metric: {
-        type: Array
-      },
-      vfolder_count_metric: {
-        type: Array
-      },
-      resource_policies: {
-        type: Object
-      },
-      resource_policy_names: {
-        type: Array
-      },
-      is_admin: {
-        type: Boolean
-      },
-      allowed_vfolder_hosts: {
-        type: Array
-      },
-      default_vfolder_host: {
-        type: String
-      },
-      _status: {
-        type: Boolean
-      },
-      notification: {
-        type: Object
-      },
-      use_user_list: {
-        type: Boolean
-      },
-      new_access_key: {
-        type: String
-      },
-      new_secret_key: {
-        type: String
-      }
-    }
-  }
-
-  static get is() {
-    return 'backend-ai-credential-view';
   }
 
   static get styles() {
@@ -887,5 +795,8 @@ class BackendAICredentialView extends BackendAIPage {
     `;
   }
 }
-
-customElements.define(BackendAICredentialView.is, BackendAICredentialView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-credential-view": BackendAICredentialView;
+  }
+}
