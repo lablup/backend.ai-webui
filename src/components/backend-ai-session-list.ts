@@ -38,7 +38,7 @@ import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 @customElement("backend-ai-session-list")
-class BackendAiSessionList extends BackendAIPage {
+export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
 
   @property({type: Boolean}) active = true;

@@ -3,7 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {html} from "lit-element";
+import {customElement, html, property, LitElement} from "lit-element";
+
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -25,25 +26,16 @@ import {BackendAiStyles} from "./backend-ai-console-styles";
 
  @group Backend.AI Console
  */
-class BackendAIAgentView extends BackendAIPage {
-  public updateComplete: any;
+
+@customElement("backend-ai-agent-view")
+export default class BackendAIAgentView extends BackendAIPage {
   public shadowRoot: any;
-  public _status: any;
+
+  @property({type: Boolean}) active = false;
+  @property({type: String}) _status = 'inactive';
 
   constructor() {
     super();
-    this.active = false;
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      _status: {
-        type: Boolean
-      }
-    };
   }
 
   static get styles() {
@@ -105,4 +97,8 @@ class BackendAIAgentView extends BackendAIPage {
   }
 }
 
-customElements.define('backend-ai-agent-view', BackendAIAgentView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-agent-view": BackendAIAgentView;
+  }
+}
