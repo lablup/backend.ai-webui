@@ -6,19 +6,12 @@
 import {css, customElement, html, property, LitElement} from "lit-element";
 import 'weightless/progress-spinner';
 
-class LablupLoadingIndicator extends LitElement {
-  public active: any;
-  public indicator: any;
-  public shadowRoot: any;
-  public updateComplete: any;
-
+@customElement("lablup-loading-indicator")
+export default class LablupLoadingIndicator extends LitElement {
+  @property({type: Object}) indicator;
   constructor() {
     super();
     this.active = false;
-  }
-
-  static get is() {
-    return 'lablup-loading-indicator';
   }
 
   static get styles() {
@@ -100,7 +93,10 @@ class LablupLoadingIndicator extends LitElement {
       this.indicator.style.display = 'block';
     }
   }
-
 }
 
-customElements.define(LablupLoadingIndicator.is, LablupLoadingIndicator);
+declare global {
+  interface HTMLElementTagNameMap {
+    "lablup-loading-indicator": LablupLoadingIndicator;
+  }
+}
