@@ -3,11 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
-
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -32,37 +30,23 @@ import 'weightless/textfield';
 
 import './backend-ai-resource-preset-list';
 
-class BackendAiEnvironmentList extends BackendAIPage {
-  public images: any;
-  public indicator: any;
-  public shadowRoot: any;
-  public updateComplete: any;
-  public alias: any;
-  public allowed_registries: any;
-  public _boundRequirementsRenderer: any;
-  public _boundControlsRenderer : any;
-  public selectedIndex: any;
-  public _gpu_disabled: any;
-  public _fgpu_disabled: any;
-  public notification: any;
-  public servicePorts: any;
+@customElement("backend-ai-environment-list")
+export default class BackendAIEnvironmentList extends BackendAIPage {
+
+  @property({type: Array}) images = Array();
+  @property({type: Array}) allowed_registries = Array();
+  @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
+  @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
+  @property({type: Array}) servicePorts = Array();
+  @property({type: Number}) selectedIndex = 0;
+  @property({type: Boolean}) active = false;
+  @property({type: Boolean}) _gpu_disabled = false;
+  @property({type: Boolean}) _fgpu_disabled = false;
+  @property({type: Object}) alias = Object();
+  @property({type: Object}) indicator = Object();
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
-    this.images = [];
-    this.active = false;
-    this.allowed_registries = [];
-    this._boundRequirementsRenderer = this.requirementsRenderer.bind(this);
-    this._boundControlsRenderer = this.controlsRenderer.bind(this);
-    this.selectedIndex = 0;
-    this._gpu_disabled = false;
-    this._fgpu_disabled = false;
-    this.servicePorts = [];
-  }
-
-  static get is() {
-    return 'backend-ai-environment-list';
   }
 
   _markIfUnlimited(value) {
@@ -214,7 +198,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
 
     const mem_idx = this._gpu_disabled ? ( this._fgpu_disabled ? 1 : 2  ) : ( this._fgpu_disabled ? 2 : 3  );
     if (cpu !== resource_limits[0].min) input["cpu"] = { "min": cpu };
-    if (mem !== resource_limits[mem_idx].min) input["mem"] = { "min": mem }
+    if (mem !== resource_limits[mem_idx].min) input["mem"] = {"min": mem};
     if (!this._gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = { "min": gpu };
     if (!this._fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = { "min": fgpu };
 
@@ -365,7 +349,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
             @click=${() => {
               this.selectedIndex = rowData.index;
               this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
-              this._launchDialogById("#modify-image-dialog")
+        this._launchDialogById("#modify-image-dialog");
               this.requestUpdate();
             }}
           ></paper-icon-button>
@@ -376,7 +360,7 @@ class BackendAiEnvironmentList extends BackendAIPage {
               if (this.selectedIndex !== rowData.index) this._clearRows();
               this.selectedIndex = rowData.index;
               this._decodeServicePort();
-              this._launchDialogById("#modify-app-dialog")
+        this._launchDialogById("#modify-app-dialog");
               this.requestUpdate();
             }}
           ></paper-icon-button>
@@ -815,5 +799,8 @@ class BackendAiEnvironmentList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAiEnvironmentList.is, BackendAiEnvironmentList);
-
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-environment-list": BackendAIEnvironmentList;
+  }
+}
