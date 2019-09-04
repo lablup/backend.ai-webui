@@ -139,39 +139,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       `];
   }
 
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      images: {
-        type: Array,
-        hasChanged: () => true
-      },
-      indicator: {
-        type: Object
-      },
-      allowed_registries: {
-        type: Array
-      },
-      notification: {
-        type: Object
-      },
-      selectedIndex: {
-        type: Number
-      },
-      _gpu_disabled: {
-        type: Boolean
-      },
-      _fgpu_disabled: {
-        type: Boolean
-      },
-      servicePorts: {
-        type: Array
-      }
-    }
-  }
-
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');

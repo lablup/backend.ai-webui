@@ -6,58 +6,33 @@ import {css, customElement, html, property, LitElement} from "lit-element";
 
 import 'weightless/dialog';
 import 'weightless/banner';
-
 import 'weightless/progress-bar';
 import 'weightless/title';
 
+@customElement("backend-ai-indicator")
 class BackendAIIndicator extends LitElement {
-  public value: any;
-  public text: any;
-  public mode: any;
-  public dialog: any;
-  public shadowRoot: any;
+  @property({type: Number}) value = 0;
+  @property({type: String}) text = '';
+  @property({type: String}) mode = 'determinate';
+  @property({type: Object}) dialog;
 
   constructor() {
     super();
-    this.value = 0;
-    this.text = '';
-    this.mode = 'determinate';
-  }
-
-  static get is() {
-    return 'backend-ai-indicator';
-  }
-
-  static get properties() {
-    return {
-      value: {
-        type: Number
-      },
-      text: {
-        type: String
-      },
-      dialog: {
-        type: Object
-      },
-      mode: {
-        type: String
-      }
-    };
   }
 
   static get styles() {
     return [
       // language=CSS
       css`
-        wl-dialog {
-          position: fixed;
-          right: 20px;
-          bottom: 20px;
-          z-index: 9000;
-          --dialog-height: 80px;
-          --dialog-width: 250px;
-          --dialog-content-padding: 15px;
-        }
+          wl-dialog {
+              position: fixed;
+              right: 20px;
+              bottom: 20px;
+              z-index: 9000;
+              --dialog-height: 80px;
+              --dialog-width: 250px;
+              --dialog-content-padding: 15px;
+          }
       `];
   }
 
@@ -100,4 +75,8 @@ class BackendAIIndicator extends LitElement {
   }
 }
 
-customElements.define(BackendAIIndicator.is, BackendAIIndicator);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-indicator": BackendAIIndicator;
+  }
+}
