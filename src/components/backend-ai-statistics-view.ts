@@ -21,7 +21,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 @customElement("backend-ai-statistics-view")
-class BackendAIStatisticsView extends BackendAIPage {
+export default class BackendAIStatisticsView extends BackendAIPage {
   @property({type: String}) _status = "inactive";
   @property({type: Boolean}) active = false;
 
