@@ -3,16 +3,17 @@
 
  @group Backend.AI Console
  */
-import {LitElement} from 'lit-element';
+import {LitElement, property} from 'lit-element';
 
 export class BackendAIPage extends LitElement {
-  public active: boolean;
   public shadowRoot: any;
   public updateComplete: any;
   public notification: any;
+  @property({type: Boolean}) active = false;
 
   constructor() {
     super();
+    this.active = false;
   }
 
   public _viewStateChanged(param: Boolean): void;

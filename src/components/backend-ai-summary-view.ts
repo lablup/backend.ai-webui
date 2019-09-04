@@ -25,7 +25,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-summary-view")
 export default class BackendAISummary extends BackendAIPage {
-  @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'running';
   @property({type: Object}) sessions = Object();
   @property({type: Object}) jobs = Object();

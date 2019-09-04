@@ -9,9 +9,9 @@ import 'weightless/progress-spinner';
 @customElement("lablup-loading-indicator")
 export default class LablupLoadingIndicator extends LitElement {
   @property({type: Object}) indicator;
+
   constructor() {
     super();
-    this.active = false;
   }
 
   static get styles() {

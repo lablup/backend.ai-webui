@@ -59,7 +59,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) resource_policies = Object();
   @property({type: Array}) resource_policy_names = Array();
   @property({type: Boolean}) is_admin = false;
-  @property({type: Boolean}) active = false;
   @property({type: String}) _status = 'inactive';
   @property({type: Array}) allowed_vfolder_hosts = Array();
   @property({type: String}) default_vfolder_host = '';

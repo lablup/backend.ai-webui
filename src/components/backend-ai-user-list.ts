@@ -43,7 +43,6 @@ import {
 
 @customElement("backend-ai-user-list")
 export default class BackendAIUserList extends BackendAIPage {
-  @property({type: Boolean}) active = false;
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
   @property({type: Object}) users = Object();

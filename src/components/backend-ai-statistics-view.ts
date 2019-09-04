@@ -23,7 +23,6 @@ import {
 @customElement("backend-ai-statistics-view")
 export default class BackendAIStatisticsView extends BackendAIPage {
   @property({type: String}) _status = "inactive";
-  @property({type: Boolean}) active = false;
 
   constructor() {
     super();

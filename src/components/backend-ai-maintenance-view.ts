@@ -28,7 +28,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Boolean}) scanning = false;
   @property({type: Boolean}) recalculating = false;
-  @property({type: Boolean}) active = false;
   @property({type: Object}) notification = Object();
   @property({type: Object}) indicator = Object();
 

@@ -38,7 +38,6 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: Array}) registryList = [];
   @property({type: Number}) selectedIndex = 0;
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
-  @property({type: Boolean}) active = false;
 
   constructor() {
     super();
