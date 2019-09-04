@@ -21,7 +21,7 @@ import './backend-ai-registry-list';
 import './lablup-notification';
 
 @customElement("backend-ai-environment-view")
-class BackendAIEnvironmentView extends BackendAIPage {
+export default class BackendAIEnvironmentView extends BackendAIPage {
   @property({type: String}) images = Object();
   @property({type: Boolean}) is_superadmin = false;
   @property({type: String}) _activeTab = 'image-lists';

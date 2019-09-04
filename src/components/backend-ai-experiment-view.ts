@@ -43,7 +43,8 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAiExperimentView extends BackendAIPage {
+@customElement("backend-ai-experiment-view")
+export default class BackendAIExperimentView extends BackendAIPage {
   public supports: any;
   public resourceLimits: any;
   public userResourceLimit: any;
@@ -1427,5 +1428,8 @@ ${this.resource_templates.map(item => html`
 `;
   }
 }
-
-customElements.define(BackendAiExperimentView.is, BackendAiExperimentView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-experiment-view": BackendAIExperimentView;
+  }
+}

@@ -47,8 +47,8 @@ declare global {
 
  @group Backend.AI Console
  */
-
-class BackendAiLogin extends LitElement {
+@customElement("backend-ai-login")
+export default class BackendAILogin extends LitElement {
   public api_key: any;
   public secret_key: any;
   public user_id: any;
@@ -709,5 +709,8 @@ class BackendAiLogin extends LitElement {
     `;
   }
 }
-
-customElements.define(BackendAiLogin.is, BackendAiLogin);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-login": BackendAILogin;
+  }
+}
