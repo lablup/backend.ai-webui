@@ -20,23 +20,14 @@ import './backend-ai-resource-preset-list';
 import './backend-ai-registry-list';
 import './lablup-notification';
 
-class BackendAiEnvironmentView extends BackendAIPage {
-  public images: any;
-  public _activeTab: any;
-  public updateComplete: any;
-  public shadowRoot: any;
-  public is_superadmin: any;
+@customElement("backend-ai-environment-view")
+class BackendAIEnvironmentView extends BackendAIPage {
+  @property({type: String}) images = Object();
+  @property({type: Boolean}) is_superadmin = false;
+  @property({type: String}) _activeTab = 'image-lists';
 
   constructor() {
     super();
-    this.images = {};
-    this.active = false;
-    this.is_superadmin = false;
-    this._activeTab = 'image-lists';
-  }
-
-  static get is() {
-    return 'backend-ai-environment-view';
   }
 
   static get styles() {
@@ -148,4 +139,9 @@ class BackendAiEnvironmentView extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAiEnvironmentView.is, BackendAiEnvironmentView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-environment-view": BackendAIEnvironmentView;
+  }
+}
+
