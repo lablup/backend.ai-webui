@@ -20,23 +20,17 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAIUsageList extends BackendAIPage {
-  public collection: any;
-  public data: any;
-  public period: any;
-  public active: any;
-  public templates: { [key: string] : any};
-  public _map: any;
-  public shadowRoot: any;
-  public updateComplete: any;
-
-  constructor() {
-    super();
-    this.collection = {};
-    this.data = [];
-    this.period = '1D';
-    this.active = false;
-    this.templates = {
+@customElement("backend-ai-usage-list")
+export default class BackendAIUsageList extends BackendAIPage {
+  @property({type: Object}) _map = {
+    "num_sessions": "Sessions",
+    "cpu_allocated": "CPU",
+    "mem_allocated": "Memory",
+    "gpu_allocated": "GPU",
+    "io_read_bytes": "IO-Read",
+    "io_write_bytes": "IO-Write"
+  };
+  @property({type: Object}) templates = {
       "1D": {
         "interval": 15 / 15,
         "length": 4 * 24
@@ -46,43 +40,13 @@ class BackendAIUsageList extends BackendAIPage {
         "length": 4 * 24 * 7
       }
     };
+  @property({type: Object}) collection = {};
+  @property({type: Array}) data = [];
+  @property({type: String}) period = '1D';
+  @property({type: Boolean}) active = false;
 
-    this._map = {
-      "num_sessions": "Sessions",
-      "cpu_allocated": "CPU",
-      "mem_allocated": "Memory",
-      "gpu_allocated": "GPU",
-      "io_read_bytes": "IO-Read",
-      "io_write_bytes": "IO-Write"
-    }
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean,
-        reflect: true
-      },
-      collection: {
-        type: Object
-      },
-      data: {
-        type: Array
-      },
-      period: {
-        type: String
-      },
-      templates: {
-        type: Object
-      },
-      _map: {
-        type: Object
-      }
-    }
-  }
-
-  static get is() {
-      return 'backend-ai-usage-list';
+  constructor() {
+    super();
   }
 
   static get styles() {
@@ -237,4 +201,8 @@ class BackendAIUsageList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAIUsageList.is, BackendAIUsageList);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-usage-list": BackendAIUsageList;
+  }
+}
