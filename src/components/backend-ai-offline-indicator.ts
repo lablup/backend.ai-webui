@@ -1,4 +1,4 @@
-import {css, html, LitElement} from 'lit-element';
+import {css, customElement, html, property, LitElement} from "lit-element";
 
 class BackendAiOfflineIndicator extends LitElement {
   static get is() {
