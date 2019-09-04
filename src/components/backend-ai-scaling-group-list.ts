@@ -34,26 +34,16 @@ import { default as PainKiller } from "./backend-ai-painkiller";
 import { BackendAiStyles } from "./backend-ai-console-styles";
 import { IronFlex, IronFlexAlignment } from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIScalingGroupList extends BackendAIPage {
-  public scalingGroups: any;
-  public domains: any;
-  public notification: any;
-  public shadowRoot: any;
-  public updateComplete: any;
-  public _boundControlRenderer: any;
-  public selectedIndex: any;
+@customElement("backend-ai-scaling-group-list")
+export default class BackendAIScalingGroupList extends BackendAIPage {
+  @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
+  @property({type: Number}) selectedIndex = 0;
+  @property({type: Array}) domains = Array();
+  @property({type: Array}) scalingGroups = Array();
 
   constructor() {
     super();
     this.active = false;
-    this.scalingGroups = [];
-    this.domains = [];
-    this._boundControlRenderer = this._controlRenderer.bind(this);
-    this.selectedIndex = 0;
-  }
-
-  static get is() {
-    return 'backend-ai-scaling-group-list';
   }
 
   static get properties() {
@@ -500,4 +490,8 @@ class BackendAIScalingGroupList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAIScalingGroupList.is, BackendAIScalingGroupList);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-scaling-group-list": BackendAIScalingGroupList;
+  }
+}
