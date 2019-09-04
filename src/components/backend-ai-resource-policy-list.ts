@@ -42,9 +42,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
   @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
-  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 48, 64, 128, 192, 256, 512, "Unlimited"];
+  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
   @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-  @property({type: Array}) fgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+  @property({type: Array}) fgpu_metric = [0, 0.2, 0.3, 0.5, 1, 2, 3, 4, 8, 16, "Unlimited"];
   @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
   @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
   @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
