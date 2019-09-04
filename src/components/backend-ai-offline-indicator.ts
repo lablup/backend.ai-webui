@@ -5,7 +5,7 @@
 import {css, customElement, html, property, LitElement} from "lit-element";
 
 @customElement("backend-ai-offline-indicator")
-class BackendAIOfflineIndicator extends LitElement {
+export default class BackendAIOfflineIndicator extends LitElement {
   @property({type: Boolean}) active = false;
 
   static get styles() {
