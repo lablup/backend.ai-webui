@@ -46,9 +46,6 @@ import {
  */
 @customElement("backend-ai-credential-view")
 export default class BackendAICredentialView extends BackendAIPage {
-  public shadowRoot: any;
-  public updateComplete: any;
-
   @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
   @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
   @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];

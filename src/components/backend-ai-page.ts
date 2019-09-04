@@ -6,7 +6,10 @@
 import {LitElement} from 'lit-element';
 
 export class BackendAIPage extends LitElement {
-  public active: any;
+  public active: boolean;
+  public shadowRoot: any;
+  public updateComplete: any;
+  public notification: any;
 
   constructor() {
     super();

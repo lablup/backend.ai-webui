@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
@@ -40,75 +40,22 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIUserList extends BackendAIPage {
-  public condition: any;
-  public users: any;
-  public isAdmin: any;
-  public userInfo: any;
-  public userInfoGroups: any;
-  public _boundControlRenderer: any;
-  public editMode: any;
-  public indicator: any;
-  public shadowRoot: any;
-  public notification: any;
-  public updateComplete: any;
-  public keypairs: any;
+
+@customElement("backend-ai-user-list")
+export default class BackendAIUserList extends BackendAIPage {
+  @property({type: Boolean}) active = false;
+  @property({type: Boolean}) isAdmin = false;
+  @property({type: Boolean}) editMode = false;
+  @property({type: Object}) users = Object();
+  @property({type: Object}) userInfo = Object();
+  @property({type: Array}) userInfoGroups = Array();
+  @property({type: String}) condition = 'active';
+  @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) indicator;
+  @property({type: Object}) keypairs;
 
   constructor() {
     super();
-    this.active = false;
-    this.condition = 'active';
-    this.users = {};
-    this.isAdmin = false;
-    this.userInfo = {};
-    this.userInfoGroups = [];
-    this._boundControlRenderer = this.controlRenderer.bind(this);
-    this.editMode = false;
-  }
-
-  static get is() {
-    return 'backend-ai-user-list';
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      condition: {
-        type: String
-      },
-      keypairs: {
-        type: Object
-      },
-      resourcePolicy: {
-        type: Object
-      },
-      userInfo: {
-        type: Object
-      },
-      users: {
-        type: Object
-      },
-      isAdmin: {
-        type: Boolean
-      },
-      _status: {
-        type: Boolean
-      },
-      notification: {
-        type: Object
-      },
-      userInfoGroups: {
-        type: Object
-      },
-      editMode: {
-        type: Boolean
-      },
-      indicator: {
-        type: Object
-      }
-    };
   }
 
   static get styles() {
@@ -654,4 +601,8 @@ class BackendAIUserList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAIUserList.is, BackendAIUserList);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-user-list": BackendAIUserList;
+  }
+}

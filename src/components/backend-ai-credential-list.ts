@@ -34,9 +34,6 @@ import {
 
 @customElement("backend-ai-credential-list")
 export default class BackendAICredentialList extends BackendAIPage {
-  public shadowRoot: any;
-  public updateComplete: any;
-
   @property({type: Object}) notification;
   @property({type: Object}) keypairInfo = {
     user_id: '1',
