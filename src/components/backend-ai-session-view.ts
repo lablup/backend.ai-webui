@@ -24,10 +24,7 @@ import {
 import LablupNotification from "./lablup-notification";
 
 @customElement("backend-ai-session-view")
-class BackendAiSessionView extends BackendAIPage {
-  public shadowRoot: any;
-  public updateComplete: any;
-
+export default class BackendAiSessionView extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
