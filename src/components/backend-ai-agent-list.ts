@@ -3,7 +3,7 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -23,45 +23,21 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIAgentList extends BackendAIPage {
-  public condition: any;
-  public agents: any;
-  public _boundContactDateRenderer: any;
-  public _boundStatusRenderer: any;
-  public _boundControlRenderer: any;
-  public notification: any;
+@customElement("backend-ai-agent-list")
+export default class BackendAIAgentList extends BackendAIPage {
   public shadowRoot: any;
   public updateComplete: any;
 
+  @property({type: String}) condition = 'running';
+  @property({type: Boolean}) active = false;
+  @property({type: Array}) agents = Array();
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
+  @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
+  @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+
   constructor() {
     super();
-    this.condition = 'running';
-    this.active = false;
-    this.agents = [];
-    this._boundContactDateRenderer = this.contactDateRenderer.bind(this);
-    this._boundStatusRenderer = this.statusRenderer.bind(this);
-    this._boundControlRenderer = this.controlRenderer.bind(this);
-  }
-
-  static get is() {
-    return 'backend-ai-agent-list';
-  }
-
-  static get properties() {
-    return {
-      condition: {
-        type: String  // finished, running, archived
-      },
-      active: {
-        type: Boolean
-      },
-      agents: {
-        type: Array
-      },
-      notification: {
-        type: Object
-      }
-    };
   }
 
   static get styles() {
@@ -71,67 +47,67 @@ class BackendAIAgentList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-            height: calc(100vh - 200px);
-        }
+          vaadin-grid {
+              border: 0;
+              font-size: 14px;
+              height: calc(100vh - 200px);
+          }
 
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
+          paper-item {
+              height: 30px;
+              --paper-item-min-height: 30px;
+          }
 
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
+          wl-button > wl-icon {
+              --icon-size: 24px;
+              padding: 0;
+          }
 
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
+          wl-icon {
+              --icon-size: 16px;
+              padding: 0;
+          }
 
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
-        }
+          iron-icon {
+              width: 16px;
+              height: 16px;
+              min-width: 16px;
+              min-height: 16px;
+              padding: 0;
+          }
 
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
-        }
+          paper-icon-button {
+              --paper-icon-button: {
+                  width: 25px;
+                  height: 25px;
+                  min-width: 25px;
+                  min-height: 25px;
+                  padding: 3px;
+                  margin-right: 5px;
+              };
+          }
 
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
+          div.indicator,
+          span.indicator {
+              font-size: 9px;
+              margin-right: 5px;
+          }
 
-        vaadin-progress-bar {
-          width: 100px;
-          height: 6px;
-        }
+          vaadin-progress-bar {
+              width: 100px;
+              height: 6px;
+          }
 
-        paper-progress {
-          width: 100px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677EB;
-          --paper-progress-secondary-color: #98BE5A;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
+          paper-progress {
+              width: 100px;
+              border-radius: 3px;
+              --paper-progress-height: 10px;
+              --paper-progress-active-color: #3677EB;
+              --paper-progress-secondary-color: #98BE5A;
+              --paper-progress-transition-duration: 0.08s;
+              --paper-progress-transition-timing-function: ease;
+              --paper-progress-transition-delay: 0s;
+          }
       `];
   }
 
@@ -419,5 +395,8 @@ class BackendAIAgentList extends BackendAIPage {
     `;
   }
 }
-
-customElements.define(BackendAIAgentList.is, BackendAIAgentList);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-agent-list": BackendAIAgentList;
+  }
+}
