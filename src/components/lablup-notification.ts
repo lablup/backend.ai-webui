@@ -6,7 +6,6 @@
 import {css, customElement, html, property, LitElement} from "lit-element";
 import 'weightless/snackbar';
 import 'weightless/button';
-import LablupTermsOfService from "./lablup-terms-of-service";
 
 @customElement("lablup-notification")
 export default class LablupNotification extends LitElement {
