@@ -20,35 +20,13 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-
+@customElement("backend-ai-statistics-view")
 class BackendAIStatisticsView extends BackendAIPage {
-	public _status: any;
-	public updateComplete: any;
-	public shadowRoot: any;
+  @property({type: String}) _status = "inactive";
+  @property({type: Boolean}) active = false;
 
   constructor() {
     super();
-    this.active = false;
-    this._status = "inactive";
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean,
-        reflect: true
-      },
-      _status: {
-        type: Boolean
-      },
-      _lists: {
-        type: Object
-      }
-    }
-  }
-
-  static get is() {
-      return 'backend-ai-statistics-view';
   }
 
   static get styles() {
@@ -140,4 +118,8 @@ class BackendAIStatisticsView extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAIStatisticsView.is, BackendAIStatisticsView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-statistics-view": BackendAIStatisticsView;
+  }
+}
