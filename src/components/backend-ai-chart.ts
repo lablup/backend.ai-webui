@@ -82,12 +82,6 @@ export default class BackendAIChart extends LitElement {
       }
     };
   }
-
-
-
-
-
-
   /**
    * @param collection              {object}   Object containing the fields listed below
    * @param collection.data         {Array}    Array containing objects of x y values
