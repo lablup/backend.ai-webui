@@ -258,7 +258,6 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _deleteKey(e) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
     window.backendaiclient.keypair.delete(accessKey).then(response => {
@@ -281,7 +280,6 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _mutateKey(e, is_active) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
     let original = this.keypairs.find(this._findKeyItem, accessKey);

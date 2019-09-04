@@ -6,7 +6,7 @@
 import {LitElement, property} from 'lit-element';
 
 export class BackendAIPage extends LitElement {
-  public shadowRoot: any;
+  public shadowRoot: any; // ShadowRoot
   public updateComplete: any;
   public notification: any;
   @property({type: Boolean}) active = false;
