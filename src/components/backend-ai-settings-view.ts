@@ -23,7 +23,7 @@ import 'weightless/card';
 import 'weightless/switch';
 
 @customElement("backend-ai-settings-view")
-class BackendAiSettingsView extends BackendAIPage {
+export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Boolean}) active = false;
 
