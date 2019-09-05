@@ -363,7 +363,7 @@ function createWindow () {
     }
   });
   // Load HTML into new Window (file-based serving)
-  nfs.readFile('./app/config.toml', 'utf-8', (err, data) => {
+  nfs.readFile(path.join(BASE_DIR, '/app/config.toml'), 'utf-8', (err, data) => {
     if (err) {
       console.log('No configuration file found.');
       return;
