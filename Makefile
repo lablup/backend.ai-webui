@@ -2,6 +2,7 @@ EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | cut -c 15- | rev | cut -c 3- | rev)
+REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
 site := $(or $(site),default)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
@@ -14,6 +15,7 @@ test_electron:
 proxy:
 	node ./src/wsproxy/local_proxy.js
 versiontag:
+	echo '{ "package": "${BUILD_VERSION}", "build": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
 	sed -i -E 's/window.packageVersion = "\(.*\)"/window.packageVersion = "${BUILD_VERSION}"/g' index.html
 	sed -i -E 's/window.buildVersion = "\(.*\)"/window.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
 	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.ts
