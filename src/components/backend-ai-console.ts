@@ -392,6 +392,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
+        this.user_id = '';
+        this.domain = '';
         this._page = 'summary';
         window.history.pushState({}, '', '/summary');
         store.dispatch(navigate(decodeURIComponent('/')));
