@@ -545,7 +545,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
-
     if (this.sessions_list.includes(sessionName)) {
       this.notification.text = "Duplicate session name not allowed.";
       this.notification.show();
