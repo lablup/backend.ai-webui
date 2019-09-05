@@ -260,7 +260,6 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _sync_resource_values() {
-    console.log(this.resources);
     this.manager_version = window.backendaiclient.managerVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
