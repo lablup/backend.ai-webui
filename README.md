@@ -52,15 +52,24 @@ These are options in `config.toml`.
 
 ```
 [general]
-apiEndpoint = [Default API Endpoint. If blank, user input field will be shown.]
-apiEndpointText = [Placeholder text instead of API endpoint input field.]
-defaultSessionEnvironment = [Default session kernel. If blank, alphabetically first kernel will be default.]
-siteDescription = [Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]
-connectionMode = [Connection mode. Default is API. Currenly supports API and SESSION]
+apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
+apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
+defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically first kernel will be default.]"
+siteDescription = "[Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]"
+connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
+allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
+signupSupport = false # Enable / disable signup feature support. Manager plugin is required.
+debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
+
 [wsproxy]
-proxyURL = [Proxy URL]
-proxyBaseURL = [Base URL of websocket proxy,]
-proxyListenIP = [Websocket proxy configuration IP.]
+proxyURL = "[Proxy URL]"
+proxyBaseURL = "[Base URL of websocket proxy,]"
+proxyListenIP = "[Websocket proxy configuration IP.]"
+
+[server]
+consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
+                   # Uses websocket proxy in the app
+
 ```
 
 ## Development Guide
@@ -206,6 +215,7 @@ Note: Default setup will build `es6-bundled` version. If you want to use `es6-un
 ```
 $ make web site=[SITE CONFIG FILE POSTFIX]
 ```
+If no prefix is given, default configuration file will be used.
 
 Example:
 
@@ -233,6 +243,7 @@ $ make all # build win64/macos/linux app
 ```
 $ make win
 ```
+Note: Building Windows x86-64 on other than Windows requires Wine > 3.0
 
 #### macOS version
 
@@ -262,5 +273,5 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 
 ```
 $ make dep # Compile with app dependencies
-$ ./node_modules/electron/cli.js . 
+$ npm run electron:d  # OR, ./node_modules/electron/cli.js . 
 ```
