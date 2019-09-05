@@ -3,6 +3,7 @@ const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = 
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
+const toml = require('markty-toml');
 const BASE_DIR = __dirname;
 const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
 const versions = require('./version');
@@ -26,9 +27,10 @@ let devtools;
 let manager = new ProxyManager();
 
 var mainIndex = 'build/electron-app/app/index.html';
+let mainURL;
+
 // Modules to control application life and create native browser window
 app.once('ready', function() {
-
   var template;
   if (process.platform === 'darwin') {
     template = [
@@ -400,11 +402,23 @@ function createWindow () {
     }));
   } else {
     // Load HTML into new Window (file-based serving)
-    mainWindow.loadURL(url.format({
-      pathname: path.join(mainIndex),
-      protocol: 'file',
-      slashes: true
-    }));
+    nfs.readFile('build/electron-app/app/config.toml', 'utf-8', (err, data) => {
+      if (err) {
+        console.log('No configuration file found.');
+        return;
+      }
+      let config = toml(data);
+      if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
+        mainURL = config.server.consoleServerURL;
+      } else {
+        mainURL = url.format({
+          pathname: path.join(mainIndex),
+          protocol: 'file',
+          slashes: true
+        });
+      }
+      mainWindow.loadURL(mainURL);
+    });
   }
   mainContent = mainWindow.webContents;
   devtools = new BrowserWindow();
