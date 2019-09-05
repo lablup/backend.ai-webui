@@ -388,7 +388,9 @@ class Client {
         config['cuda.device'] = parseFloat(parseFloat(resources['gpu'])).toFixed(2);
       }
       if (resources['vgpu']) { // Temporary fix for resource handling
-        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu'])).toFixed(2);
+        config['cuda.shares'] = parseFloat(parseFloat(resources['vgpu'])).toFixed(2); // under 19.03
+      } else if (resources['fgpu']) {
+        config['cuda.shares'] = parseFloat(parseFloat(resources['fgpu'])).toFixed(2); // 19.09 and above
       }
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
@@ -1549,9 +1551,9 @@ class Resources {
     this.resources['cuda.device'] = {};
     this.resources['cuda.device'].total = 0;
     this.resources['cuda.device'].used = 0;
-    this.resources.vgpu = {};
-    this.resources.vgpu.total = 0;
-    this.resources.vgpu.used = 0;
+    this.resources.fgpu = {};
+    this.resources.fgpu.total = 0;
+    this.resources.fgpu.used = 0;
     this.resources['cuda.shares'] = {};
     this.resources['cuda.shares'].total = 0;
     this.resources['cuda.shares'].used = 0;
@@ -1593,9 +1595,9 @@ class Resources {
           if ('cuda.device' in occupied_slots) {
             this.resources.gpu.used = parseInt(this.resources.gpu.used) + parseInt(Number(occupied_slots['cuda.device']));
           }
-          this.resources.vgpu.total = parseFloat(this.resources.vgpu.total) + parseFloat(available_slots['cuda.shares']);
+          this.resources.fgpu.total = parseFloat(this.resources.fgpu.total) + parseFloat(available_slots['cuda.shares']);
           if ('cuda.shares' in occupied_slots) {
-            this.resources.vgpu.used = parseFloat(this.resources.vgpu.used) + parseFloat(occupied_slots['cuda.shares']);
+            this.resources.fgpu.used = parseFloat(this.resources.fgpu.used) + parseFloat(occupied_slots['cuda.shares']);
           }
           if (isNaN(this.resources.cpu.used)) {
             this.resources.cpu.used = 0;
@@ -1606,17 +1608,17 @@ class Resources {
           if (isNaN(this.resources.gpu.used)) {
             this.resources.gpu.used = 0;
           }
-          if (isNaN(this.resources.vgpu.used)) {
-            this.resources.vgpu.used = 0;
+          if (isNaN(this.resources.fgpu.used)) {
+            this.resources.fgpu.used = 0;
           }
         });
-        this.resources.vgpu.used = this.resources.vgpu.used.toFixed(2);
-        this.resources.vgpu.total = this.resources.vgpu.total.toFixed(2);
+        this.resources.fgpu.used = this.resources.fgpu.used.toFixed(2);
+        this.resources.fgpu.total = this.resources.fgpu.total.toFixed(2);
         this.resources.agents.total = Object.keys(this.agents).length; // TODO : remove terminated agents
         this.resources.agents.using = Object.keys(this.agents).length;
-        this.resources['cuda.shares'].used = this.resources.vgpu.used;
+        this.resources['cuda.shares'].used = this.resources.fgpu.used;
         this.resources['cuda.device'].used = this.resources.gpu.used;
-        this.resources['cuda.shares'].total = this.resources.vgpu.total;
+        this.resources['cuda.shares'].total = this.resources.fgpu.total;
         this.resources['cuda.device'].total = this.resources.gpu.total;
         return this.resources;
       }).catch(err => {
