@@ -2,6 +2,7 @@ EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | cut -c 15- | rev | cut -c 3- | rev)
+REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
 site := $(or $(site),default)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
