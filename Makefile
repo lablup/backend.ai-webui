@@ -1,7 +1,7 @@
 EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --asar --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
-BUILD_VERSION := $(shell grep version package.json | cut -c 15- | rev | cut -c 3- | rev)
+BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
 REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
 site := $(or $(site),default)
 
