@@ -1,4 +1,4 @@
-EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --asar --ignore="\.git(ignore|modules)" --out=app
+EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | cut -c 15- | rev | cut -c 3- | rev)
@@ -37,6 +37,8 @@ dep:
 	sed -i -E 's/\.\/dist\/components\/backend-ai-console.js/es6:\/\dist\/components\/backend-ai-console.js/g' build/electron-app/app/index.html
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
+	mkdir -p ./build/electron-app/app/dist/lib
+	cp ./src/lib/marktytoml.js ./build/electron-app/app/dist/lib/marktytoml.js
 	cp ./preload.js ./build/electron-app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json

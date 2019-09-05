@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-console",
-  "version": "19.09.0",
+  "version": "19.09.1",
   "repository": "https://github.com/lablup/backend.ai-console.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
@@ -9,7 +9,7 @@
     "lint": "eslint *.js",
     "test": "node ./src/wsproxy/local_proxy.js",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
-    "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copywa && npm run copyresource && npm run copyconfig && rollup -c rollup.config.ts",
+    "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copywa && npm run copyresource && npm run copyconfig && npm run copytomlreader && rollup -c rollup.config.ts",
     "server:p": "./node_modules/serve/bin/serve.js build/rollup",
     "server:d": "./node_modules/es-dev-server/dist/cli.js --file-extensions .ts --app-index index.html --watch --node-resolve --port 9081 --compatibility esm",
     "build:d": "./node_modules/typescript/bin/tsc --watch",
@@ -18,6 +18,7 @@
     "copywa": "mkdir -p build/rollup/src/lib/web-animations-js && mkdir -p src/lib/web-animations-js && cp node_modules/web-animations-js/web-animations-next-lite.min.js src/lib/web-animations-js && cp src/lib/web-animations-js/web-animations-next-lite.min.js build/rollup/src/lib/web-animations-js",
     "copyresource": "cp -Rp resources build/rollup && cp -Rp manifest build/rollup",
     "copyconfig": "cp config.toml build/rollup && cp manifest.json build/rollup",
+    "copytomlreader": "cp ./node_modules/markty-toml/dist/marktytoml.js ./src/lib/marktytoml.js",
     "copyindex": "cp index.html build/rollup",
     "update": "./node_modules/typescript/bin/tsc"
   },
@@ -97,5 +98,8 @@
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7",
     "ws": "^7.1.2"
+  },
+  "vaadin": {
+    "disableUsageStatistics": true
   }
 }
