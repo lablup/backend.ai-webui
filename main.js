@@ -31,7 +31,6 @@ let mainURL;
 
 // Modules to control application life and create native browser window
 app.once('ready', function() {
-
   var template;
   if (process.platform === 'darwin') {
     template = [
@@ -402,7 +401,7 @@ function createWindow () {
         return;
       }
       let config = toml(data);
-      if ('server' in config && 'consoleServerURL' in config.server) {
+      if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
         mainURL = config.server.consoleServerURL;
       } else {
         mainURL = url.format({

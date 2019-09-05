@@ -13,7 +13,7 @@ proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
 #proxyBaseURL = ""
 
 [server]
-consoleServerURL =
+consoleServerURL = ""
 
 [plugin]
 #login = "signup-cloud.js"
