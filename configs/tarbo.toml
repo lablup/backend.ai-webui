@@ -2,10 +2,13 @@
 apiEndpoint = "https://node01.aihub.onprem.backend.ai"
 apiEndpointText = "Backend.AI Enterprise"
 defaultSessionEnvironment = "index.docker.io/lablup/python-tensorflow"
-siteDescription = "AI Hub"
-connectionMode = "API"
+siteDescription = "AI Square"
+connectionMode = "SESSION"
 signupSupport = false
 
 [wsproxy]
-proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
+proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL =
+
+[server]
+consoleServerURL = ""

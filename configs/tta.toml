@@ -8,3 +8,6 @@ signupSupport = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
+
+[server]
+consoleServerURL = ""
