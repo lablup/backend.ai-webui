@@ -45,9 +45,9 @@ app.once('ready', function() {
             }
           },
           {
-            label: versions.version +' (rev.' + versions.revision + ')',
+            label: 'App version ' + versions.package +' (rev.' + versions.revision + ')',
             click: function () {
-              clipboard.writeText(versions.version +' (rev.' + versions.revision + ')');
+              clipboard.writeText(versions.package +' (rev.' + versions.revision + ')');
               const response = dialog.showMessageBox({type:'info', message:'Version information is copied to clipboard.'});
             }
           },
