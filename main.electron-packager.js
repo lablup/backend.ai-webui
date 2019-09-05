@@ -27,6 +27,12 @@ let devtools;
 let manager = new ProxyManager();
 
 var mainIndex = 'app/index.html';
+let mainURL = url.format({
+  pathname: path.join(mainIndex),
+  protocol: 'file',
+  slashes: true
+});
+
 // Modules to control application life and create native browser window
 app.once('ready', function() {
   var template;
@@ -357,15 +363,11 @@ function createWindow () {
       nativeWindowOpen: true,
       nodeIntegration: false,
       preload: path.join(BASE_DIR, 'preload.js'),
-      devTools: false 
+      devTools: false
     }
   });
 
-  mainWindow.loadURL(url.format({ // Load HTML into new Window
-    pathname: path.join(mainIndex),
-    protocol: 'file',
-    slashes: true
-  }));
+  mainWindow.loadURL(mainURL);
 
   mainContent = mainWindow.webContents;
   //devtools = new BrowserWindow();
@@ -465,8 +467,8 @@ app.on('activate', function () {
     createWindow();
   }
 });
-app.on('certificate-error', function(event, webContents, url, error, 
-  certificate, callback) {
+app.on('certificate-error', function (event, webContents, url, error,
+                                      certificate, callback) {
       event.preventDefault();
       callback(true);
 });

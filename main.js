@@ -26,6 +26,11 @@ let devtools;
 let manager = new ProxyManager();
 
 var mainIndex = 'build/electron-app/app/index.html';
+let mainURL = url.format({
+  pathname: path.join(mainIndex),
+  protocol: 'file',
+  slashes: true
+});
 // Modules to control application life and create native browser window
 app.once('ready', function() {
 
@@ -393,11 +398,7 @@ function createWindow () {
     }));
   } else {
     // Load HTML into new Window (file-based serving)
-    mainWindow.loadURL(url.format({
-      pathname: path.join(mainIndex),
-      protocol: 'file',
-      slashes: true
-    }));
+    mainWindow.loadURL(mainURL);
   }
   mainContent = mainWindow.webContents;
   devtools = new BrowserWindow();
