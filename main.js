@@ -1,12 +1,12 @@
 // Modules to control application life and create native browser window / Local tester file
-const {app, Menu, shell, BrowserWindow, protocol} = require('electron');
+const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
 const BASE_DIR = __dirname;
 const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
-const { ipcMain } = require('electron');
+const versions = require('./version');
 process.env.liveDebugMode = false;
 let windowWidth = 1280;
 let windowHeight = 970;
@@ -42,6 +42,13 @@ app.once('ready', function() {
             click: function () {
               mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
                 '    document.dispatchEvent(event);');
+            }
+          },
+          {
+            label: versions.version +' (rev.' + versions.revision + ')',
+            click: function () {
+              clipboard.writeText(versions.version +' (rev.' + versions.revision + ')');
+              const response = dialog.showMessageBox({type:'info', message:'Version information is copied to clipboard.'});
             }
           },
           {

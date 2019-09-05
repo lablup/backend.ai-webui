@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer } = require('electron');
 
 process.once('loaded', () => {
   ipcRenderer.on('proxy-ready', (event, proxy_url) => {
