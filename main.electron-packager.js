@@ -3,13 +3,13 @@ const {app, Menu, shell, BrowserWindow, protocol} = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
+const toml = require('markty-toml');
 const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron');
 process.env.liveDebugMode = false;
 let windowWidth = 1280;
 let windowHeight = 970;
-
 
 // ES6 module loader with custom protocol
 const nfs = require('fs');
@@ -27,11 +27,7 @@ let devtools;
 let manager = new ProxyManager();
 
 var mainIndex = 'app/index.html';
-let mainURL = url.format({
-  pathname: path.join(mainIndex),
-  protocol: 'file',
-  slashes: true
-});
+let mainURL;
 
 // Modules to control application life and create native browser window
 app.once('ready', function() {
@@ -366,13 +362,28 @@ function createWindow () {
       devTools: false
     }
   });
-
-  mainWindow.loadURL(mainURL);
-
-  mainContent = mainWindow.webContents;
-  //devtools = new BrowserWindow();
-  //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-  //mainWindow.webContents.openDevTools({ mode: 'detach' });
+  // Load HTML into new Window (file-based serving)
+  nfs.readFile('./app/config.toml', 'utf-8', (err, data) => {
+    if (err) {
+      console.log('No configuration file found.');
+      return;
+    }
+    let config = toml(data);
+    if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
+      mainURL = config.server.consoleServerURL;
+    } else {
+      mainURL = url.format({
+        pathname: path.join(mainIndex),
+        protocol: 'file',
+        slashes: true
+      });
+    }
+    mainWindow.loadURL(mainURL);
+    mainContent = mainWindow.webContents;
+    //devtools = new BrowserWindow();
+    //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+    //mainWindow.webContents.openDevTools({ mode: 'detach' });
+  });
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
     if (mainWindow) {
