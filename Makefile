@@ -37,8 +37,10 @@ dep:
 	sed -i -E 's/\.\/dist\/components\/backend-ai-console.js/es6:\/\dist\/components\/backend-ai-console.js/g' build/electron-app/app/index.html
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
-	mkdir -p ./build/electron-app/app/dist/lib
-	cp ./src/lib/marktytoml.js ./build/electron-app/app/dist/lib/marktytoml.js
+	mkdir -p ./build/electron-app/node_modules/markty
+	mkdir -p ./build/electron-app/node_modules/markty-toml
+	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
+	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
 	cp ./preload.js ./build/electron-app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
