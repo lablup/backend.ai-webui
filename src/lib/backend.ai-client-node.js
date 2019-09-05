@@ -199,10 +199,11 @@ class Client {
       } else if (rawFile === false && contentType.startsWith('text/')) {
         body = await resp.text();
       } else {
-        if (resp.blob === undefined)
+        if (resp.blob === undefined) {
           body = await resp.buffer();  // for node-fetch
-        else
+        } else {
           body = await resp.blob();
+        }
       }
       errorType = Client.ERR_SERVER;
       if (!resp.ok) {
