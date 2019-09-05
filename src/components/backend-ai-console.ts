@@ -67,6 +67,7 @@ declare global {
     packageVersion: string;
     __local_proxy: string;
     lablupNotification: any;
+    process: any;
   }
 
   interface ai {
@@ -189,7 +190,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     window.lablupNotification = this.shadowRoot.querySelector('#notification');
     this.notification = window.lablupNotification;
     this.splash = this.shadowRoot.querySelector('#about-panel');
-    if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
+    if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
