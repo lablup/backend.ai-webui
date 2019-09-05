@@ -3,6 +3,7 @@ const {app, Menu, shell, BrowserWindow, protocol} = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
+const toml = require('markty-toml');
 const BASE_DIR = __dirname;
 const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
 const { ipcMain } = require('electron');
@@ -26,11 +27,8 @@ let devtools;
 let manager = new ProxyManager();
 
 var mainIndex = 'build/electron-app/app/index.html';
-let mainURL = url.format({
-  pathname: path.join(mainIndex),
-  protocol: 'file',
-  slashes: true
-});
+let mainURL;
+
 // Modules to control application life and create native browser window
 app.once('ready', function() {
 
@@ -398,7 +396,23 @@ function createWindow () {
     }));
   } else {
     // Load HTML into new Window (file-based serving)
-    mainWindow.loadURL(mainURL);
+    nfs.readFile('build/electron-app/app/config.toml', 'utf-8', (err, data) => {
+      if (err) {
+        console.log('No configuration file found.');
+        return;
+      }
+      let config = toml(data);
+      if ('server' in config && 'consoleServerURL' in config.server) {
+        mainURL = config.server.consoleServerURL;
+      } else {
+        mainURL = url.format({
+          pathname: path.join(mainIndex),
+          protocol: 'file',
+          slashes: true
+        });
+      }
+      mainWindow.loadURL(mainURL);
+    });
   }
   mainContent = mainWindow.webContents;
   devtools = new BrowserWindow();
