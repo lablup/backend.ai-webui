@@ -10,3 +10,6 @@ signupSupport = false
 #proxyURL = "https://web.kmu-bigdata.onpremise.backend.ai:8443/"
 proxyURL = "https://wsproxy.onprem.backend.ai:8443/"
 #proxyBaseURL =
+
+[server]
+consoleServerURL = ""
