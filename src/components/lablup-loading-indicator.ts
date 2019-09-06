@@ -8,6 +8,7 @@ import 'weightless/progress-spinner';
 
 @customElement("lablup-loading-indicator")
 export default class LablupLoadingIndicator extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) indicator;
   @property({type: Boolean}) active = false;
 

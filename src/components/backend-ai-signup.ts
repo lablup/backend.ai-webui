@@ -38,6 +38,7 @@ import {
  */
 @customElement("backend-ai-signup")
 export default class BackendAiSignup extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) company_name = '';
   @property({type: String}) company_id = '';
   @property({type: String}) user_name = '';
