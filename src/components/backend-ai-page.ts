@@ -1,5 +1,5 @@
 /**
- Backend.AI view page for Single-page application
+ Backend.AI base view page for Single-page application
 
  @group Backend.AI Console
  */
