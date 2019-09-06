@@ -283,7 +283,7 @@ export default class BackendAIChart extends LitElement {
 
     // update existing dot groups.
     dotGroup
-      .each(function (pd, pi) {
+      .each(function (this: any, pd, pi) {
         const dots = d3
           .select(this)
           .selectAll(".dot")
@@ -310,7 +310,7 @@ export default class BackendAIChart extends LitElement {
     // make new dot groups if necessary
     dotGroup
       .enter()
-      .each(function (pd, pidx) {
+      .each(function (this: any, pd, pidx) {
         d3
           .select(this)
           .append("g")
@@ -350,7 +350,7 @@ export default class BackendAIChart extends LitElement {
       .data(data)
       .enter()
       .append("g")
-      .each(function (pd, pidx) {
+      .each(function (this: any, pd, pidx) {
         const tooltip = d3
           .select(this)
           .attr("class", "tooltip");
@@ -388,7 +388,7 @@ export default class BackendAIChart extends LitElement {
       .exit().remove();
 
     rect
-      .on("mousemove", function () {
+      .on("mousemove", function (this: any) {
         // due to the use of "this", this must be a function, and not an arrow function!
         const bisectDate = d3.bisector(d => d.x).left;
         const x0 = xScale.invert(d3.mouse(this)[0]),
@@ -413,7 +413,7 @@ export default class BackendAIChart extends LitElement {
         focus
           .selectAll("g.tooltip")
           .data(data)
-          .each(function (pd) {
+          .each(function (this: any, pd) {
             const tooltip = d3
               .select(this);
 
@@ -580,7 +580,7 @@ export default class BackendAIChart extends LitElement {
       .data(data)
       .enter()
       .append("path")
-      .each(function (pd, pidx) {
+      .each(function (this: any, pd, pidx) {
         d3
           .select(this)
           .datum(pd)
@@ -595,7 +595,7 @@ export default class BackendAIChart extends LitElement {
       .data(data)
       .enter()
       .append("g")
-      .each(function (pd, pidx) {
+      .each(function (this: any, pd, pidx) {
         d3
           .select(this)
           .attr("class", "dot-group")
@@ -622,7 +622,7 @@ export default class BackendAIChart extends LitElement {
       .data(data)
       .enter()
       .append("circle")
-      .each(function (pd, pidx) {
+      .each(function (this: any, pd, pidx) {
         d3
           .select(this)
           .style("fill", "none")
@@ -643,7 +643,7 @@ export default class BackendAIChart extends LitElement {
       .data(data)
       .enter()
       .append("g")
-      .each(function (pd, pidx) {
+      .each(function (this: any, pd, pidx) {
         const tooltip = d3
           .select(this)
           .attr("class", "tooltip");
@@ -685,7 +685,7 @@ export default class BackendAIChart extends LitElement {
       .on("mouseout", () => {
         focus.style("display", "none")
       })
-      .on("mousemove", function () {
+      .on("mousemove", function (this: any) {
         // due to the use of "this", this must be a function, and not an arrow function!
         const bisectDate = d3.bisector(d => d.x).left;
         const x0 = xScale.invert(d3.mouse(this)[0]),
@@ -709,7 +709,7 @@ export default class BackendAIChart extends LitElement {
         focus
           .selectAll("g.tooltip")
           .data(data)
-          .each(function (pd) {
+          .each(function (this: any, pd) {
             const tooltip = d3
               .select(this);
 
