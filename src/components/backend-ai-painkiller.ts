@@ -9,8 +9,6 @@ declare global {
 }
 
 export default class BackendAIPainKiller {
-  public errorMessageTable: any;
-  public regexTable: any;
   static errorMessageTable = {
     "Cannot read property 'map' of null": "User has no group. Please contact administrator to fix it.",
     "Cannot read property 'split' of undefined": 'Wrong API server address.',
@@ -25,6 +23,8 @@ export default class BackendAIPainKiller {
     'integrity error: duplicate key value violates unique constraint "pk_scaling_groups"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A scaling group with the same name already exists.',
     'server responded failure: 400 Bad Request - Missing or invalid API parameters. (Your resource quota is exceeded. (cpu=24 mem=512g cuda.shares=80))': 'Resource limit exceed. Check your free resources.'
   };
+  public errorMessageTable: any;
+  public regexTable: any;
 
   static relieve(msg) {
     console.log(msg);

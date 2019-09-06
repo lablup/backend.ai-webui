@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
@@ -30,7 +30,6 @@ import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
-import BackendAIAgentView from "./backend-ai-agent-view";
 
 @customElement("backend-ai-resource-policy-list")
 export default class BackendAIResourcePolicyList extends BackendAIPage {
@@ -544,14 +543,14 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let input = this._readResourcePolicyInput();
 
     window.backendaiclient.resourcePolicy.mutate(name, input)
-    .then(({ modify_keypair_resource_policy }) => {
-      if (modify_keypair_resource_policy.ok) {
-        this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-        this.notification.text = "Resource policy successfully updated.";
-        this.notification.show();
-        this.refresh();
-      }
-    }).catch(err => {
+      .then(({modify_keypair_resource_policy}) => {
+        if (modify_keypair_resource_policy.ok) {
+          this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+          this.notification.text = "Resource policy successfully updated.";
+          this.notification.show();
+          this.refresh();
+        }
+      }).catch(err => {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-policy-dialog').hide();

@@ -3,9 +3,9 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
-import { render } from 'lit-html';
-import { BackendAIPage } from './backend-ai-page';
+import {css, customElement, html, property} from "lit-element";
+import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -30,9 +30,9 @@ import 'weightless/textfield';
 import 'weightless/title';
 import './lablup-notification';
 
-import { default as PainKiller } from "./backend-ai-painkiller";
-import { BackendAiStyles } from "./backend-ai-console-styles";
-import { IronFlex, IronFlexAlignment } from "../plastics/layout/iron-flex-layout-classes";
+import {default as PainKiller} from "./backend-ai-painkiller";
+import {BackendAiStyles} from "./backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 @customElement("backend-ai-scaling-group-list")
 export default class BackendAIScalingGroupList extends BackendAIPage {
@@ -144,21 +144,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       }, true);
     } else { // already connected
       window.backendaiclient.scalingGroup.list_all()
-      .then(res => {
-        this.scalingGroups = res.scaling_groups;
-      });
+        .then(res => {
+          this.scalingGroups = res.scaling_groups;
+        });
 
       window.backendaiclient.domain.list()
-      .then(({ domains }) => {
-        this.domains = domains;
-        this.requestUpdate(); // without this render is called beforehands, so update is required
-      })
+        .then(({domains}) => {
+          this.domains = domains;
+          this.requestUpdate(); // without this render is called beforehands, so update is required
+        })
 
     }
   }
 
   _activeStatusRenderer(root, column, rowData) {
-    render (
+    render(
       html`
         <lablup-shields
           app=""
@@ -173,7 +173,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
-    render (
+    render(
       html`
         <div>${idx}</div>
       `,
@@ -190,7 +190,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _controlRenderer(root, column, rowData) {
-    render (
+    render(
       html`
         <div
           id="controls"
@@ -200,18 +200,18 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             icon="settings"
             class="fg blue"
             @click=${() => {
-              this.selectedIndex = rowData.index;
-              this.shadowRoot.querySelector("#modify-scaling-group-active").checked = this.scalingGroups[rowData.index].is_active;
-              this._launchDialogById("#modify-scaling-group-dialog")
-            }}
+        this.selectedIndex = rowData.index;
+        this.shadowRoot.querySelector("#modify-scaling-group-active").checked = this.scalingGroups[rowData.index].is_active;
+        this._launchDialogById("#modify-scaling-group-dialog")
+      }}
           ></paper-icon-button>
           <paper-icon-button
             icon="delete"
             class="fg red"
             @click=${() => {
-              this.selectedIndex = rowData.index;
-              this._launchDialogById("#delete-scaling-group-dialog")
-            }}
+        this.selectedIndex = rowData.index;
+        this._launchDialogById("#delete-scaling-group-dialog")
+      }}
           ></paper-icon-button>
         </div>
       `, root
@@ -226,8 +226,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   _createScalingGroup() {
     const scalingGroup = this.shadowRoot.querySelector("#scaling-group-name").value,
-          description = this.shadowRoot.querySelector("#scaling-group-description").value,
-          domain = this.shadowRoot.querySelector("#scaling-group-domain").value;
+      description = this.shadowRoot.querySelector("#scaling-group-description").value,
+      domain = this.shadowRoot.querySelector("#scaling-group-domain").value;
 
     if (scalingGroup === "") {
       this.notification.text = "Enter valid scaling group name";
@@ -237,43 +237,43 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     }
 
     window.backendaiclient.scalingGroup.create(scalingGroup, description)
-    .then(({ create_scaling_group: res }) => {
-      if (res.ok) {
-        return window.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
-      } else {
-        this.notification.text = PainKiller.relieve(res.msg);
-        this.notification.show();
+      .then(({create_scaling_group: res}) => {
+        if (res.ok) {
+          return window.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
+        } else {
+          this.notification.text = PainKiller.relieve(res.msg);
+          this.notification.show();
 
-        return Promise.reject(res.msg);
-      }
-    })
-    .then(({ associate_scaling_group_with_domain: res }) => {
-      if (res.ok) {
-        this.notification.text = "Scaling group succesfully created";
-        this._refreshList();
-        this.shadowRoot.querySelector("#scaling-group-name").value = "";
-        this.shadowRoot.querySelector("#scaling-group-description").value = "";
-      } else {
-        this.notification.text = PainKiller.relieve(res.msg);
-      }
-      this._hideDialogById("#create-scaling-group-dialog");
-      this.notification.show();
-    })
-    .catch(err => {
-      this.notification.text = PainKiller.relieve(err);
-      this._hideDialogById("#create-scaling-group-dialog");
-      this.notification.show(true);
-    })
+          return Promise.reject(res.msg);
+        }
+      })
+      .then(({associate_scaling_group_with_domain: res}) => {
+        if (res.ok) {
+          this.notification.text = "Scaling group succesfully created";
+          this._refreshList();
+          this.shadowRoot.querySelector("#scaling-group-name").value = "";
+          this.shadowRoot.querySelector("#scaling-group-description").value = "";
+        } else {
+          this.notification.text = PainKiller.relieve(res.msg);
+        }
+        this._hideDialogById("#create-scaling-group-dialog");
+        this.notification.show();
+      })
+      .catch(err => {
+        this.notification.text = PainKiller.relieve(err);
+        this._hideDialogById("#create-scaling-group-dialog");
+        this.notification.show(true);
+      })
   }
 
   _modifyScalingGroup() {
     const description = this.shadowRoot.querySelector("#modify-scaling-group-description").value,
-          is_active = this.shadowRoot.querySelector("#modify-scaling-group-active").checked,
-          name = this.scalingGroups[this.selectedIndex].name;
+      is_active = this.shadowRoot.querySelector("#modify-scaling-group-active").checked,
+      name = this.scalingGroups[this.selectedIndex].name;
 
     let input = {};
-    if (description !== this.scalingGroups[this.selectedIndex].description) input[ "description" ] = description;
-    if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input[ "is_active" ] = is_active;
+    if (description !== this.scalingGroups[this.selectedIndex].description) input["description"] = description;
+    if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input["is_active"] = is_active;
 
     if (Object.keys(input).length === 0) {
       this.notification.text = "No changes made";
@@ -283,16 +283,16 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     }
 
     window.backendaiclient.scalingGroup.modify(name, input)
-    .then(({ modify_scaling_group }) => {
-      if (modify_scaling_group.ok) {
-        this.notification.text = "Scaling group successfully modified";
-        this._refreshList();
-      } else {
-        this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
-      }
-      this._hideDialogById("#modify-scaling-group-dialog");
-      this.notification.show();
-    })
+      .then(({modify_scaling_group}) => {
+        if (modify_scaling_group.ok) {
+          this.notification.text = "Scaling group successfully modified";
+          this._refreshList();
+        } else {
+          this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
+        }
+        this._hideDialogById("#modify-scaling-group-dialog");
+        this.notification.show();
+      })
   }
 
   _deleteScalingGroup() {
@@ -306,26 +306,26 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     }
 
     window.backendaiclient.scalingGroup.delete(name)
-    .then(({ delete_scaling_group }) => {
-      if (delete_scaling_group.ok) {
-        this.notification.text = "Scaling group successfully deleted";
-        this._refreshList();
-        this.shadowRoot.querySelector("#delete-scaling-group").value = "";
-      } else {
-        this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
-      }
+      .then(({delete_scaling_group}) => {
+        if (delete_scaling_group.ok) {
+          this.notification.text = "Scaling group successfully deleted";
+          this._refreshList();
+          this.shadowRoot.querySelector("#delete-scaling-group").value = "";
+        } else {
+          this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
+        }
 
-      this._hideDialogById("#delete-scaling-group-dialog");
-      this.notification.show();
-    })
+        this._hideDialogById("#delete-scaling-group-dialog");
+        this.notification.show();
+      })
   }
 
   _refreshList() {
     window.backendaiclient.scalingGroup.list()
-    .then(({ scaling_groups  }) => {
-      this.scalingGroups = scaling_groups;
-      this.requestUpdate(); // without this render is called beforehands, so update is required
-    })
+      .then(({scaling_groups}) => {
+        this.scalingGroups = scaling_groups;
+        this.requestUpdate(); // without this render is called beforehands, so update is required
+      })
   }
 
   render() {
@@ -411,10 +411,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                 <option disabled>Select Domain</option>
                 ${this.domains.map(e => html`
                     <option value="${e.name}">
-                      ${ e.name }
+                      ${e.name}
                     </option>
                   `
-                )}
+    )}
               </wl-select>
               <div class="horizontal layout center-justified">
                 <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
