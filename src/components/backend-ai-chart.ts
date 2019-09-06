@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, LitElement, property} from "lit-element";
 
 import "@polymer/paper-icon-button/paper-icon-button";
 import "weightless/card";
@@ -20,11 +20,11 @@ const ByteConverter = {
   toTB: bytes => bytes / (1024 * 1024 * 1024 * 1024),
   log1024: n => n <= 0 ? 0 : Math.log(n) / Math.log(1024),
 
-  readableUnit: function(bytes) {
+  readableUnit: function (bytes) {
     return ["B", "KB", "MB", "GB", "TB"][Math.floor(this.log1024(bytes))];
   },
 
-  scale: function(data) {
+  scale: function (data) {
     const minUnit = this.readableUnit(d3.min(data, d => d.y));
 
     return {
@@ -66,6 +66,17 @@ export default class BackendAIChart extends LitElement {
     "#ffa600"
   ];
 
+  /**
+   * @param collection              {object}   Object containing the fields listed below
+   * @param collection.data         {Array}    Array containing objects of x y values
+   * @param collection.axisTitle    {object}   Object containing x axis title at key "x" and y axis title at key "y"
+   * @param collection.axisTitle.x  {string} X axis title
+   * @param collection.axisTitle.y  {string} Y axis title
+   */
+  constructor() {
+    super();
+  }
+
   static get properties() {
     return {
       collection: {
@@ -80,16 +91,6 @@ export default class BackendAIChart extends LitElement {
       }
     };
   }
-  /**
-   * @param collection              {object}   Object containing the fields listed below
-   * @param collection.data         {Array}    Array containing objects of x y values
-   * @param collection.axisTitle    {object}   Object containing x axis title at key "x" and y axis title at key "y"
-   * @param collection.axisTitle.x  {string} X axis title
-   * @param collection.axisTitle.y  {string} Y axis title
-   */
-  constructor() {
-    super();
-  }
 
   static get is() {
     return "backend-ai-chart";
@@ -102,57 +103,57 @@ export default class BackendAIChart extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-        wl-card {
-          display: block;
-          background: white;
-          box-sizing: border-box;
-          margin: 15px 0px;
-          padding: 0;
-          border-radius: 5px;
-        }
+          wl-card {
+              display: block;
+              background: white;
+              box-sizing: border-box;
+              margin: 15px 0px;
+              padding: 0;
+              border-radius: 5px;
+          }
 
-        wl-card > div {
-          font-size: 12px;
-        }
+          wl-card > div {
+              font-size: 12px;
+          }
 
-        #chart-canvas {
-          margin: auto 10px;
-        }
+          #chart-canvas {
+              margin: auto 10px;
+          }
 
-        .line {
-          fill: none;
-          stroke-width: 1;
-        }
+          .line {
+              fill: none;
+              stroke-width: 1;
+          }
 
-        .axisGray line {
-          stroke: #646464;
-        }
+          .axisGray line {
+              stroke: #646464;
+          }
 
-        .axisGray path {
-          stroke: #646464;
-        }
+          .axisGray path {
+              stroke: #646464;
+          }
 
-        .textGray text {
-          fill: #8c8c8c;
-        }
+          .textGray text {
+              fill: #8c8c8c;
+          }
 
-        text.normalize {
-          font-size: 11px;
-        }
+          text.normalize {
+              font-size: 11px;
+          }
 
-        text.title {
-          font-size: 15px;
-        }
+          text.title {
+              font-size: 15px;
+          }
 
-        .x.axis {
-          font-size: 14px;
-        }
+          .x.axis {
+              font-size: 14px;
+          }
 
-        text.tooltip-x,
-        text.tooltip-y {
-          font-size: 10px;
-          fill: #37474f;
-        }
+          text.tooltip-x,
+          text.tooltip-y {
+              font-size: 10px;
+              fill: #37474f;
+          }
       `
     ];
   }
@@ -193,19 +194,19 @@ export default class BackendAIChart extends LitElement {
   }
 
   _scaledSVGWidth(offsetWidth) {
-    return offsetWidth > 1700 ? 1600:
-           offsetWidth > 1400 ? 1300:
-           offsetWidth > 1200 ? 1000:
-           offsetWidth >  900 ?  800:
-           offsetWidth >  700 ?  600:
-                                 400;
+    return offsetWidth > 1700 ? 1600 :
+      offsetWidth > 1400 ? 1300 :
+        offsetWidth > 1200 ? 1000 :
+          offsetWidth > 900 ? 800 :
+            offsetWidth > 700 ? 600 :
+              400;
   }
 
   responsiveHelper(svg) {
     const container = d3.select(svg.node().parentNode),
-          width     = parseInt(svg.node().getAttribute("width")),
-          height    = parseInt(svg.node().getAttribute("height")),
-          aspect    = width / height;
+      width = parseInt(svg.node().getAttribute("width")),
+      height = parseInt(svg.node().getAttribute("height")),
+      aspect = width / height;
 
     const resize = () => {
       const {offsetWidth} = (this.shadowRoot.host.parentNode as any);
@@ -237,13 +238,13 @@ export default class BackendAIChart extends LitElement {
       line,
       rectHeight
     } = this.toolbox();
-    const { colors } = this;
-    const { axisTitle } = this.collection;
+    const {colors} = this;
+    const {axisTitle} = this.collection;
 
     // queryselector() was used for rect and focus because using d3's select function somehow doesn't work
     const g = d3.select(this.shadowRoot.querySelector("#d3-container")),
-          rect = d3.select(this.shadowRoot.querySelector("#mouse-rect")),
-          focus = d3.select(this.shadowRoot.querySelector("#focus"));
+      rect = d3.select(this.shadowRoot.querySelector("#mouse-rect")),
+      focus = d3.select(this.shadowRoot.querySelector("#focus"));
 
     // update lines
     const lines = g
@@ -375,7 +376,7 @@ export default class BackendAIChart extends LitElement {
           .attr("class", "tooltip-y")
           .style("font-size", "8px")
           .style("fill", "37474f")
-          .attr("transform",  `translate(0, ${rectHeight / 2})`)
+          .attr("transform", `translate(0, ${rectHeight / 2})`)
           .attr("dx", 5)
           .attr("dy", "1em")
       });
@@ -386,14 +387,14 @@ export default class BackendAIChart extends LitElement {
       .exit().remove();
 
     rect
-      .on("mousemove", function() {
+      .on("mousemove", function () {
         // due to the use of "this", this must be a function, and not an arrow function!
         const bisectDate = d3.bisector(d => d.x).left;
         const x0 = xScale.invert(d3.mouse(this)[0]),
-              i = bisectDate(data[0], x0, 1),
-              d0 = data[0][i - 1],
-              d1 = data[0][i],
-              closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
+          i = bisectDate(data[0], x0, 1),
+          d0 = data[0][i - 1],
+          d1 = data[0][i],
+          closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
         const formatTime = d3.timeFormat("%b %d %H:%M");
 
         // adjust position of highlight circles
@@ -437,14 +438,14 @@ export default class BackendAIChart extends LitElement {
   }
 
   toolbox() {
-    const margin      = { top: 50, right: 50, bottom: 50, left: 50 },
-          graphWidth  = this.width - margin.left - margin.right,
-          graphHeight = this.height - margin.top - margin.bottom;
+    const margin = {top: 50, right: 50, bottom: 50, left: 50},
+      graphWidth = this.width - margin.left - margin.right,
+      graphHeight = this.height - margin.top - margin.bottom;
 
     if (this.collection.unit_hint === "bytes") this.scaleData();
 
     // assumption: data is already zipped
-    const { data } = this.collection;
+    const {data} = this.collection;
 
     const xScale = d3
       .scaleTime()
@@ -472,7 +473,7 @@ export default class BackendAIChart extends LitElement {
 
     const rectWidth = 40, rectHeight = 40;
 
-    return { margin, graphWidth, graphHeight, data, xScale, xAxis, yScale, yAxis, line, rectWidth, rectHeight };
+    return {margin, graphWidth, graphHeight, data, xScale, xAxis, yScale, yAxis, line, rectWidth, rectHeight};
   }
 
   init() {
@@ -488,8 +489,8 @@ export default class BackendAIChart extends LitElement {
       line,
       rectHeight
     } = this.toolbox();
-    const { colors } = this;
-    const { axisTitle } = this.collection;
+    const {colors} = this;
+    const {axisTitle} = this.collection;
     /*
     <svg>
       <g transform="translate(n, n)">
@@ -677,16 +678,20 @@ export default class BackendAIChart extends LitElement {
       .attr("height", graphHeight)
       .style("fill", "none")
       .style("pointer-events", "all")
-      .on("mouseover", () => {focus.style("display", "inline")})
-      .on("mouseout", () => {focus.style("display", "none")})
-      .on("mousemove", function() {
+      .on("mouseover", () => {
+        focus.style("display", "inline")
+      })
+      .on("mouseout", () => {
+        focus.style("display", "none")
+      })
+      .on("mousemove", function () {
         // due to the use of "this", this must be a function, and not an arrow function!
         const bisectDate = d3.bisector(d => d.x).left;
         const x0 = xScale.invert(d3.mouse(this)[0]),
-              i = bisectDate(data[0], x0, 1),
-              d0 = data[0][i - 1],
-              d1 = data[0][i],
-              closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
+          i = bisectDate(data[0], x0, 1),
+          d0 = data[0][i - 1],
+          d1 = data[0][i],
+          closer = x0 - d0.x < d1.x - x0 ? i - 1 : i;
         const formatTime = d3.timeFormat("%b %d %H:%M");
 
         // relocate the circles that highlight spots

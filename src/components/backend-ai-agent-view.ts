@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {customElement, html, property, LitElement} from "lit-element";
+import {customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
 
