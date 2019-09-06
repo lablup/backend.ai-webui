@@ -54,6 +54,64 @@ export default class BackendAiSignup extends LitElement {
     super();
   }
 
+  static get styles() {
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
+      // language=CSS
+      css`
+          paper-icon-button {
+              --paper-icon-button-ink-color: white;
+          }
+
+          fieldset input {
+              width: 100%;
+              border: 0;
+              border-bottom: 1px solid #aaa;
+              margin: 15px 0;
+              font: inherit;
+              font-size: 16px;
+              outline: none;
+          }
+
+          fieldset input:focus {
+              border-bottom: 1.5px solid #0d47a1;
+          }
+
+          #signup-panel {
+              --dialog-width: 400px;
+          }
+
+          wl-button {
+              --button-bg: transparent;
+              --button-bg-hover: var(--paper-red-100);
+              --button-bg-active: var(--paper-red-600);
+              --button-bg-disabled: #ddd;
+              --button-color: var(--paper-red-600);
+              --button-color-disabled: #222;
+          }
+
+          wl-button.full {
+              width: 335px;
+          }
+
+          wl-button.fab {
+              --button-bg: var(--paper-light-green-600);
+              --button-bg-hover: var(--paper-green-600);
+              --button-bg-active: var(--paper-green-900);
+          }
+
+          wl-button.signup {
+              --button-bg: transparent;
+              --button-bg-hover: var(--paper-green-300);
+              --button-bg-active: var(--paper-green-300);
+          }
+      `];
+  }
+
   firstUpdated() {
     this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
@@ -183,64 +241,6 @@ export default class BackendAiSignup extends LitElement {
       return errorMsgSet[err];
     }
     return err;
-  }
-
-  static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-
-        fieldset input {
-          width: 100%;
-          border: 0;
-          border-bottom: 1px solid #aaa;
-          margin: 15px 0;
-          font: inherit;
-          font-size: 16px;
-          outline: none;
-        }
-
-        fieldset input:focus {
-          border-bottom: 1.5px solid #0d47a1;
-        }
-
-        #signup-panel {
-          --dialog-width: 400px;
-        }
-
-        wl-button {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-disabled: #ddd;
-          --button-color: var(--paper-red-600);
-          --button-color-disabled: #222;
-        }
-
-        wl-button.full {
-          width: 335px;
-        }
-
-        wl-button.fab {
-          --button-bg: var(--paper-light-green-600);
-          --button-bg-hover: var(--paper-green-600);
-          --button-bg-active: var(--paper-green-900);
-        }
-
-        wl-button.signup {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-green-300);
-          --button-bg-active: var(--paper-green-300);
-        }
-      `];
   }
 
   render() {

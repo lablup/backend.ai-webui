@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
 import '@polymer/iron-icon/iron-icon';
@@ -999,7 +999,7 @@ ${item.map(item => html`
           </vaadin-grid-column>
           `
       : html``
-      }
+    }
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>

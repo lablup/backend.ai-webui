@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
@@ -131,36 +131,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     super();
     this.active = false;
     this.init_resource();
-  }
-
-  init_resource() {
-    this.versions = ['3.6'];
-    this.languages = [];
-    this.gpu_mode = 'no';
-    this.defaultResourcePolicy = 'UNLIMITED';
-    this.total_slot = {};
-    this.used_slot = {};
-    this.available_slot = {};
-    this.resource_info = {};
-    this.used_slot_percent = {};
-    this.resource_templates = [];
-    this.vfolders = [];
-    this.default_language = '';
-    this.launch_ready = false;
-    this.concurrency_used = 0;
-    this.concurrency_max = 0;
-    this.concurrency_limit = 0;
-    this._status = 'inactive';
-    this.cpu_request = 1;
-    this.mem_request = 1;
-    this.gpu_request = 0;
-    this.session_request = 1;
-    this.scaling_groups = [];
-    this.scaling_group = '';
-    this.enable_scaling_group = false;
-    this.sessions_list = [];
-    this.metric_updating = false;
-    this.metadata_updating = false;
   }
 
   static get is() {
@@ -353,6 +323,36 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       `];
   }
 
+  init_resource() {
+    this.versions = ['3.6'];
+    this.languages = [];
+    this.gpu_mode = 'no';
+    this.defaultResourcePolicy = 'UNLIMITED';
+    this.total_slot = {};
+    this.used_slot = {};
+    this.available_slot = {};
+    this.resource_info = {};
+    this.used_slot_percent = {};
+    this.resource_templates = [];
+    this.vfolders = [];
+    this.default_language = '';
+    this.launch_ready = false;
+    this.concurrency_used = 0;
+    this.concurrency_max = 0;
+    this.concurrency_limit = 0;
+    this._status = 'inactive';
+    this.cpu_request = 1;
+    this.mem_request = 1;
+    this.gpu_request = 0;
+    this.session_request = 1;
+    this.scaling_groups = [];
+    this.scaling_group = '';
+    this.enable_scaling_group = false;
+    this.sessions_list = [];
+    this.metric_updating = false;
+    this.metadata_updating = false;
+  }
+
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
@@ -393,10 +393,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _initSessions() {
     let fields = ["sess_id"];
-    window.backendaiclient.computeSession.list(fields=fields, status="RUNNING")
-    .then(res => {
-      this.sessions_list = res.compute_sessions.map(e => e.sess_id);
-    })
+    window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING")
+      .then(res => {
+        this.sessions_list = res.compute_sessions.map(e => e.sess_id);
+      })
   }
 
   _initAliases() {
