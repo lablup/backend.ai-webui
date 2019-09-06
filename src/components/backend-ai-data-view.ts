@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -940,6 +940,7 @@ export default class BackendAIData extends BackendAIPage {
         </div>`, root
     )
   }
+
   firstUpdated() {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);

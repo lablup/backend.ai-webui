@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
 
@@ -45,14 +45,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   constructor() {
     super();
-  }
-
-  _markIfUnlimited(value) {
-    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
-      return '∞';
-    } else {
-      return value;
-    }
   }
 
   static get styles() {
@@ -137,6 +129,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       `];
   }
 
+  _markIfUnlimited(value) {
+    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+      return '∞';
+    } else {
+      return value;
+    }
+  }
+
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
@@ -153,19 +153,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   modifyImage() {
     const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
-          mem = this.shadowRoot.querySelector("#modify-image-mem").value,
-          gpu = this.shadowRoot.querySelector("#modify-image-gpu").value,
-         fgpu = this.shadowRoot.querySelector("#modify-image-fgpu").value;
+      mem = this.shadowRoot.querySelector("#modify-image-mem").value,
+      gpu = this.shadowRoot.querySelector("#modify-image-gpu").value,
+      fgpu = this.shadowRoot.querySelector("#modify-image-fgpu").value;
 
-    const { resource_limits } = this.images[this.selectedIndex];
+    const {resource_limits} = this.images[this.selectedIndex];
 
     let input = {};
 
-    const mem_idx = this._gpu_disabled ? ( this._fgpu_disabled ? 1 : 2  ) : ( this._fgpu_disabled ? 2 : 3  );
-    if (cpu !== resource_limits[0].min) input["cpu"] = { "min": cpu };
+    const mem_idx = this._gpu_disabled ? (this._fgpu_disabled ? 1 : 2) : (this._fgpu_disabled ? 2 : 3);
+    if (cpu !== resource_limits[0].min) input["cpu"] = {"min": cpu};
     if (mem !== resource_limits[mem_idx].min) input["mem"] = {"min": mem};
-    if (!this._gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = { "min": gpu };
-    if (!this._fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = { "min": fgpu };
+    if (!this._gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
+    if (!this._fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
 
     const image = this.images[this.selectedIndex];
 
@@ -177,20 +177,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
 
     window.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
-    .then(res => {
-      const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
+      .then(res => {
+        const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
 
-      if (ok) {
-        this._getImages();
-        this.requestUpdate();
-        this.notification.text = "Successfully modified";
-      } else {
-        this.notification.text = "Problem occurred";
-      }
+        if (ok) {
+          this._getImages();
+          this.requestUpdate();
+          this.notification.text = "Successfully modified";
+        } else {
+          this.notification.text = "Problem occurred";
+        }
 
-      this.notification.show();
-      this._hideDialogById("#modify-image-dialog");
-    })
+        this.notification.show();
+        this._hideDialogById("#modify-image-dialog");
+      })
   }
 
   requirementsRenderer(root, column?, rowData?) {
@@ -246,7 +246,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     if (!this._fgpu_disabled)
       this.shadowRoot.querySelector("#modify-image-fgpu").value = resource_limits[2].min;
 
-    const mem_idx = this._gpu_disabled ? ( this._fgpu_disabled ? 1 : 2  ) : ( this._fgpu_disabled ? 2 : 3  );
+    const mem_idx = this._gpu_disabled ? (this._fgpu_disabled ? 1 : 2) : (this._fgpu_disabled ? 2 : 3);
     this.shadowRoot.querySelector("#modify-image-mem").value = resource_limits[mem_idx].min;
   }
 
@@ -256,15 +256,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else {
       this.servicePorts =
         this.images[this.selectedIndex].labels["ai.backend.service-ports"]
-        .split(",")
-        .map(e => {
-          const sp = e.split(":");
-          return {
-            "app": sp[0],
-            "protocol": sp[1],
-            "port": sp[2]
-          };
-        });
+          .split(",")
+          .map(e => {
+            const sp = e.split(":");
+            return {
+              "app": sp[0],
+              "protocol": sp[1],
+              "port": sp[2]
+            };
+          });
     }
   }
 
@@ -285,22 +285,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const value = this._parseServicePort();
     const image = this.images[this.selectedIndex];
     window.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
-    .then(({ result }) => {
-      if (result === "ok") {
-        this.notification.text = "Service port successfully modified";
-      } else {
-        this.notification.text = "Error Occurred";
-      }
-      this._getImages();
-      this.requestUpdate();
-      this._clearRows();
-      this.notification.show();
-      this._hideDialogById("#modify-app-dialog");
-    })
+      .then(({result}) => {
+        if (result === "ok") {
+          this.notification.text = "Service port successfully modified";
+        } else {
+          this.notification.text = "Error Occurred";
+        }
+        this._getImages();
+        this.requestUpdate();
+        this._clearRows();
+        this.notification.show();
+        this._hideDialogById("#modify-app-dialog");
+      })
   }
 
   controlsRenderer(root, column, rowData) {
-    render (
+    render(
       html`
         <div
           id="controls"
@@ -312,22 +312,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             on-tap="_modifyImage"
             icon="icons:settings"
             @click=${() => {
-              this.selectedIndex = rowData.index;
-              this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
+        this.selectedIndex = rowData.index;
+        this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
         this._launchDialogById("#modify-image-dialog");
-              this.requestUpdate();
-            }}
+        this.requestUpdate();
+      }}
           ></paper-icon-button>
           <paper-icon-button
             class="fg pink controls-running"
             icon="icons:apps"
             @click=${() => {
-              if (this.selectedIndex !== rowData.index) this._clearRows();
-              this.selectedIndex = rowData.index;
-              this._decodeServicePort();
+        if (this.selectedIndex !== rowData.index) this._clearRows();
+        this.selectedIndex = rowData.index;
+        this._decodeServicePort();
         this._launchDialogById("#modify-app-dialog");
-              this.requestUpdate();
-            }}
+        this.requestUpdate();
+      }}
           ></paper-icon-button>
         </div>
       `,
@@ -615,8 +615,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const rows = container.querySelectorAll(".row");
     const lastRow = rows[rows.length - 1];
 
-    lastRow.querySelectorAll("wl-textfield").forEach(tf => { tf.value = ""; });
-    container.querySelectorAll(".row.extra").forEach(e => { e.remove(); });
+    lastRow.querySelectorAll("wl-textfield").forEach(tf => {
+      tf.value = "";
+    });
+    container.querySelectorAll(".row.extra").forEach(e => {
+      e.remove();
+    });
   }
 
   firstUpdated() {
@@ -691,7 +695,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image[resource.key + '_limit_max'] = this._addUnit(resource.max);
           });
 
-          image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value }), {});
+          image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
           domainImages.push(image);
         }
       });
