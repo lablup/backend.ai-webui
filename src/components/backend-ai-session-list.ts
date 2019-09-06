@@ -558,6 +558,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           };
           return this.sendRequest(rqst);
         }
+        return Promise.resolve(true);
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
