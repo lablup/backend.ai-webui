@@ -39,6 +39,7 @@ const ByteConverter = {
 
 @customElement("backend-ai-chart")
 export default class BackendAIChart extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) title = '';
   @property({type: Number}) elevation = 1;
   @property({type: String}) message = '';
