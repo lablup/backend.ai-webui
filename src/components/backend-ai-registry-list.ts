@@ -49,6 +49,12 @@ class BackendAIRegistryList extends BackendAIPage {
       IronFlex,
       IronFlexAlignment,
       css`
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 265px);
+        }
+
         h4 {
           font-weight: 200;
           font-size: 14px;

@@ -50,13 +50,14 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Number}) gpu_used = 0;
   @property({type: Number}) fgpu_total = 0;
   @property({type: Number}) fgpu_used = 0;
-  @property({type: Array}) invitations = [];
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
+  public invitations: any;
 
   constructor() {
     super();
+    this.invitations = [];
   }
 
   static get styles() {
