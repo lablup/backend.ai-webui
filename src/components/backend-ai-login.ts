@@ -3,9 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
-
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
+import {css, customElement, html, LitElement, property} from "lit-element";
 
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
@@ -86,67 +84,67 @@ export default class BackendAILogin extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
+          paper-icon-button {
+              --paper-icon-button-ink-color: white;
+          }
 
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
+          app-drawer-layout:not([narrow]) [drawer-toggle] {
+              display: none;
+          }
 
-        fieldset input {
-          width: 100%;
-          border: 0;
-          margin: 15px 0 0 0;
-          font: inherit;
-          font-size: 16px;
-          outline: none;
-        }
+          fieldset input {
+              width: 100%;
+              border: 0;
+              margin: 15px 0 0 0;
+              font: inherit;
+              font-size: 16px;
+              outline: none;
+          }
 
-        wl-textfield {
-          --input-font-family: 'Quicksand', sans-serif;
-        }
+          wl-textfield {
+              --input-font-family: 'Quicksand', sans-serif;
+          }
 
-        #login-panel {
-          --dialog-width: 400px;
-        }
+          #login-panel {
+              --dialog-width: 400px;
+          }
 
-        h3 small {
-          --button-font-size: 12px;
-        }
+          h3 small {
+              --button-font-size: 12px;
+          }
 
-        wl-button {
-          --button-bg: transparent;
-        }
+          wl-button {
+              --button-bg: transparent;
+          }
 
-        wl-button.mini {
-          font-size: 12px;
-        }
+          wl-button.mini {
+              font-size: 12px;
+          }
 
-        wl-button.full {
-          width: 335px;
-        }
+          wl-button.full {
+              width: 335px;
+          }
 
-        wl-button.login-button,
-        wl-button.login-cancel-button {
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
+          wl-button.login-button,
+          wl-button.login-cancel-button {
+              --button-bg-hover: var(--paper-red-100);
+              --button-bg-active: var(--paper-red-600);
+          }
 
-        wl-button.signup-button {
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
+          wl-button.signup-button {
+              --button-bg-hover: var(--paper-green-100);
+              --button-bg-active: var(--paper-green-600);
+          }
 
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
+          wl-button > wl-icon {
+              --icon-size: 24px;
+              padding: 0;
+          }
 
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
+          wl-icon {
+              --icon-size: 16px;
+              padding: 0;
+          }
       `];
   }
 

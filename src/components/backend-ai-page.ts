@@ -16,6 +16,10 @@ export class BackendAIPage extends LitElement {
     this.active = false;
   }
 
+  get activeConnected() {
+    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null;
+  }
+
   public _viewStateChanged(param: Boolean): void;
 
   _viewStateChanged(param) {
@@ -31,10 +35,6 @@ export class BackendAIPage extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-  }
-
-  get activeConnected() {
-    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null;
   }
 
   attributeChangedCallback(name, oldval, newval) {

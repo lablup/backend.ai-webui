@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -37,36 +37,36 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-yellow-600);
-        }
+          wl-tab-group {
+              --tab-group-indicator-bg: var(--paper-yellow-600);
+          }
 
-        wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: var(--paper-yellow-900);
-          --tab-color-active-hover: var(--paper-yellow-900);
-          --tab-color-active-filled: #ccc;
-          --tab-bg-active: var(--paper-yellow-200);
-          --tab-bg-filled: var(--paper-yellow-200);
-          --tab-bg-active-hover: var(--paper-yellow-200);
-        }
+          wl-tab {
+              --tab-color: #666;
+              --tab-color-hover: #222;
+              --tab-color-hover-filled: #222;
+              --tab-color-active: var(--paper-yellow-900);
+              --tab-color-active-hover: var(--paper-yellow-900);
+              --tab-color-active-filled: #ccc;
+              --tab-bg-active: var(--paper-yellow-200);
+              --tab-bg-filled: var(--paper-yellow-200);
+              --tab-bg-active-hover: var(--paper-yellow-200);
+          }
 
-        div h4 {
-          margin: 0;
-          font-weight: 100;
-          font-size: 16px;
-          padding-left: 20px;
-          border-bottom: 1px solid #ccc;
-          width: 100%;
-        }
+          div h4 {
+              margin: 0;
+              font-weight: 100;
+              font-size: 16px;
+              padding-left: 20px;
+              border-bottom: 1px solid #ccc;
+              width: 100%;
+          }
 
-        wl-card wl-card {
-          margin: 0;
-          padding: 0;
-          --card-elevation: 0;
-        }
+          wl-card wl-card {
+              margin: 0;
+              padding: 0;
+              --card-elevation: 0;
+          }
 
       `
     ];
