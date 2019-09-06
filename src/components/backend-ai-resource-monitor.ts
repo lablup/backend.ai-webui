@@ -1253,7 +1253,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _chooseResourceTemplate(e) {
-    const termButton = e.target;
     const button = e.target.closest('wl-button');
     const cpu = button.cpu;
     const mem = button.mem;

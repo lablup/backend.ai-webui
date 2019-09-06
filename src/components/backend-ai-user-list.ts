@@ -184,7 +184,6 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _refreshUserData() {
-    let status = 'active';
     let is_active = true;
     switch (this.condition) {
       case 'active':
@@ -197,10 +196,10 @@ export default class BackendAIUserList extends BackendAIPage {
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return window.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
-      Object.keys(users).map((objectKey, index) => {
-        var user = users[objectKey];
+      //Object.keys(users).map((objectKey, index) => {
+      //var user = users[objectKey];
         // Blank for the next impl.
-      });
+      //});
       this.users = users;
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
@@ -248,8 +247,6 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   refresh() {
-    //let user_id = window.backendaiclient_email;
-    let user_id = null;
     this._refreshUserData();
   }
 

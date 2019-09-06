@@ -204,14 +204,6 @@ export default class BackendAISummary extends BackendAIPage {
       default:
         status = 'ALIVE';
     }
-    let fields = ['id',
-      'addr',
-      'status',
-      'first_contact',
-      'cpu_cur_pct',
-      'mem_cur_bytes',
-      'occupied_slots',
-      'available_slots'];
     this.indicator.show();
 
     window.backendaiclient.resources.totalResourceInformation().then((response) => {
