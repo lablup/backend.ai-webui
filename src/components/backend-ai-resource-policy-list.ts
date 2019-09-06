@@ -492,7 +492,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
-    let vfolder_hosts = [];
+    let vfolder_hosts: Array<object> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
