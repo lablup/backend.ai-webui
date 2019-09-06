@@ -279,6 +279,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         if (res.status == 200) {
           return res.text();
         }
+        return '';
       })
       .then(res => {
         this.config = toml(res);

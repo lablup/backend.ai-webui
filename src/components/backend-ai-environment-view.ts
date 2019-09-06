@@ -88,6 +88,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     if (active === false) {
       return true;
     }
+    return false;
   }
 
   _showTab(tab) {
