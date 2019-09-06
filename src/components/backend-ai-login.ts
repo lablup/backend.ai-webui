@@ -49,104 +49,32 @@ declare global {
  */
 @customElement("backend-ai-login")
 export default class BackendAILogin extends LitElement {
-  public api_key: any;
-  public secret_key: any;
-  public user_id: any;
-  public password: any;
-  public api_endpoint: any;
-  public domain_name: any;
-  public proxy_url: any;
-  public connection_mode: any;
-  public default_session_environment: any;
-  public blockMessage: any;
-  public blockType: any;
-  public config: any;
-  public loginPanel: any;
-  public shadowRoot: any;
-  public blockPanel: any;
-  public notification: any;
-  public clientConfig: any;
-  public client: any;
-  public user: any;
-  public email: any;
-  public signup_support: any;
-  public change_signin_support: any;
+  @property({type: String}) api_key = '';
+  @property({type: String}) secret_key = '';
+  @property({type: String}) user_id = '';
+  @property({type: String}) password = '';
+  @property({type: String}) proxy_url = 'http://127.0.0.1:5050/';
+  @property({type: String}) api_endpoint = '';
+  @property({type: String}) domain_name = '';
+  @property({type: String}) default_session_environment = '';
+  @property({type: String}) blockType = '';
+  @property({type: String}) blockMessage = '';
+  @property({type: String}) connection_mode = 'API';
+;
+  @property({type: String}) user;
+  @property({type: String}) email;
+  @property({type: Object}) config = Object();
+  @property({type: Object}) loginPanel;
+  @property({type: Object}) blockPanel;
+  @property({type: Object}) clientConfig;
+  @property({type: Object}) client;
+  @property({type: Object}) notification;
+  @property({type: Boolean}) signup_support = false;
+  @property({type: Boolean}) change_signin_support = false;
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
-    this.api_key = '';
-    this.secret_key = '';
-    this.user_id = '';
-    this.password = '';
-    this.api_endpoint = '';
-    this.domain_name = '';
-    this.proxy_url = 'http://127.0.0.1:5050/';
-    this.connection_mode = 'API';
-    this.default_session_environment = '';
-    this.blockMessage = '';
-    this.blockType = '';
-    this.config = null;
-    this.signup_support = false;
-    this.change_signin_support = false;
     window.backendaiconsole = {};
-  }
-
-  static get is() {
-    return 'backend-ai-login';
-  }
-
-  static get properties() {
-    return {
-      api_key: {
-        type: String
-      },
-      secret_key: {
-        type: String
-      },
-      user_id: {
-        type: String
-      },
-      password: {
-        type: String
-      },
-      proxy_url: {
-        type: String
-      },
-      api_endpoint: {
-        type: String
-      },
-      domain_name: {
-        type: String
-      },
-      default_session_environment: {
-        type: String
-      },
-      config: {
-        type: Object
-      },
-      notification: {
-        type: Object
-      },
-      loginPanel: {
-        type: Object
-      },
-      blockPanel: {
-        type: Object
-      },
-      blockMessage: {
-        type: String
-      },
-      blockType: {
-        type: String
-      },
-      signup_support: {
-        type: Boolean
-      },
-      change_signin_support: {
-        type: Boolean
-      }
-    };
   }
 
   static get styles() {
@@ -243,15 +171,15 @@ export default class BackendAILogin extends LitElement {
   refreshPanel() {
     // TODO : use lit-element dynamic assignment
     if (this.connection_mode == 'SESSION') {
-      this.shadowRoot.querySelector('#id_api_key').style.display = 'none';
-      this.shadowRoot.querySelector('#id_secret_key').style.display = 'none';
-      this.shadowRoot.querySelector('#id_user_id').style.display = 'block';
-      this.shadowRoot.querySelector('#id_password').style.display = 'block';
+      (this.shadowRoot.querySelector('#id_api_key') as any).style.display = 'none';
+      (this.shadowRoot.querySelector('#id_secret_key') as any).style.display = 'none';
+      (this.shadowRoot.querySelector('#id_user_id') as any).style.display = 'block';
+      (this.shadowRoot.querySelector('#id_password') as any).style.display = 'block';
     } else {
-      this.shadowRoot.querySelector('#id_api_key').style.display = 'block';
-      this.shadowRoot.querySelector('#id_secret_key').style.display = 'block';
-      this.shadowRoot.querySelector('#id_user_id').style.display = 'none';
-      this.shadowRoot.querySelector('#id_password').style.display = 'none';
+      (this.shadowRoot.querySelector('#id_api_key') as any).style.display = 'block';
+      (this.shadowRoot.querySelector('#id_secret_key') as any).style.display = 'block';
+      (this.shadowRoot.querySelector('#id_user_id') as any).style.display = 'none';
+      (this.shadowRoot.querySelector('#id_password') as any).style.display = 'none';
     }
   }
 
@@ -298,20 +226,20 @@ export default class BackendAILogin extends LitElement {
       this.proxy_url = config.wsproxy.proxyURL;
     }
     if (typeof config.general === "undefined" || typeof config.general.apiEndpoint === "undefined" || config.general.apiEndpoint === '') {
-      this.shadowRoot.querySelector('#id_api_endpoint').style.display = 'block';
-      this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'none';
+      (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'block';
+      (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
     } else {
       this.api_endpoint = config.general.apiEndpoint;
       if (typeof config.general === "undefined" || typeof config.general.apiEndpointText === "undefined" || config.general.apiEndpointText === '') {
-        this.shadowRoot.querySelector('#id_api_endpoint').style.display = 'block';
-        this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'none';
+        (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'block';
+        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
       } else {
-        this.shadowRoot.querySelector('#id_api_endpoint').style.display = 'none';
-        this.shadowRoot.querySelector('#id_api_endpoint_humanized').style.display = 'block';
-        this.shadowRoot.querySelector('#id_api_endpoint_humanized').value = config.general.apiEndpointText;
+        (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'none';
+        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'block';
+        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).value = config.general.apiEndpointText;
       }
-      this.shadowRoot.querySelector('#id_api_endpoint').disabled = true;
-      this.shadowRoot.querySelector('#id_api_endpoint_humanized').disabled = true;
+      (this.shadowRoot.querySelector('#id_api_endpoint') as any).disabled = true;
+      (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).disabled = true;
     }
 
     if (typeof config.general === "undefined" || typeof config.general.defaultSessionEnvironment === "undefined" || config.general.defaultSessionEnvironment === '') {
@@ -352,11 +280,11 @@ export default class BackendAILogin extends LitElement {
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
-    this.shadowRoot.querySelector('#block-panel').show();
+    (this.shadowRoot.querySelector('#block-panel') as any).show();
   }
 
   free() {
-    this.shadowRoot.querySelector('#block-panel').hide();
+    (this.shadowRoot.querySelector('#block-panel') as any).hide();
   }
 
   login() {
@@ -396,9 +324,9 @@ export default class BackendAILogin extends LitElement {
   }
 
   _showSignupDialog() {
-    this.shadowRoot.querySelector('#signup-dialog').endpoint = this.api_endpoint;
+    (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
     //this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
-    this.shadowRoot.querySelector('#signup-dialog').open();
+    (this.shadowRoot.querySelector('#signup-dialog') as any).open();
   }
 
   _hideDialog(e) {
@@ -424,17 +352,17 @@ export default class BackendAILogin extends LitElement {
   }
 
   _login() {
-    this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
+    this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     this.notification.text = 'Connecting...';
     this.notification.show();
     if (this.connection_mode === 'SESSION') {
-      this.user_id = this.shadowRoot.querySelector('#id_user_id').value;
-      this.password = this.shadowRoot.querySelector('#id_password').value;
+      this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
+      this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
       this._connectUsingSession();
     } else {
-      this.api_key = this.shadowRoot.querySelector('#id_api_key').value;
-      this.secret_key = this.shadowRoot.querySelector('#id_secret_key').value;
+      this.api_key = (this.shadowRoot.querySelector('#id_api_key') as any).value;
+      this.secret_key = (this.shadowRoot.querySelector('#id_secret_key') as any).value;
       this._connectUsingAPI();
     }
   }
