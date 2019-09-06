@@ -434,7 +434,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _refreshPolicyData() {
     return window.backendaiclient.resourcePolicy.get().then((response) => {
       let rp = response.keypair_resource_policies;
-      let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      //let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
       return rp;
     }).then((response) => {
       let resourcePolicies = response;
@@ -537,8 +537,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _modifyResourcePolicy() {
-    let is_active = true;
-    let is_admin = false;
     let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     let input = this._readResourcePolicyInput();
 
@@ -561,7 +559,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _deleteKey(e) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
     window.backendaiclient.keypair.delete(accessKey).then(response => {

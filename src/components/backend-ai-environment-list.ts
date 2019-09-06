@@ -699,7 +699,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           domainImages.push(image);
         }
       });
-      let image_keys = Object.keys(domainImages);
+      //let image_keys = Object.keys(domainImages);
       //console.log(image_keys);
       //let sorted_images = {};
       //image_keys.sort();

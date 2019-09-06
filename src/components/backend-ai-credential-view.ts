@@ -361,8 +361,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _addResourcePolicy() {
-    let is_active = true;
-    let is_admin = false;
     let name;
     if (this.shadowRoot.querySelector('#id_new_policy_name').value != '') {
       if (this.shadowRoot.querySelector('#id_new_policy_name').invalid == true) {
@@ -475,8 +473,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _modifyResourcePolicy() {
-    let is_active = true;
-    let is_admin = false;
     let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     let input = this._readResourcePolicyInput();
 

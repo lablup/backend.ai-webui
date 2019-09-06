@@ -496,8 +496,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   refresh() {
-    //let user_id = window.backendaiclient_email;
-    let user_id = null;
     this._refreshTemplateData();
   }
 
@@ -546,7 +544,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _deleteKey(e) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
     window.backendaiclient.keypair.delete(accessKey).then(response => {

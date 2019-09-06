@@ -606,7 +606,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controls = controller.closest('#controls');
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
-    const kernelImage = controls['kernel-image'];
     const appServices = controls['app-services'];
     this.appSupportList = [];
     appServices.forEach((elm) => {
@@ -716,7 +715,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const kernelId = controls['kernel-id'];
-    let accessKey = window.backendaiclient._config.accessKey;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(kernelId, 'jupyter')
