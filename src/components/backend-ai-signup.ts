@@ -13,7 +13,7 @@ import 'weightless/card';
 import './lablup-notification';
 import './lablup-terms-of-service';
 
-import '../lib/backend.ai-client-es6.js';
+import '../lib/backend.ai-client-es6';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {

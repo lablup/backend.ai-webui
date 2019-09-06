@@ -931,7 +931,7 @@ export default class BackendAIData extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div class="layout vertical">
+        <div class="layout vertical center-justified">
         ${rowData.item.type == 'user' ? html`
           <wl-icon>person</wl-icon>
         ` : html`

@@ -31,7 +31,7 @@ import 'weightless/progress-spinner';
 import './lablup-notification';
 import './backend-ai-splash';
 
-import '../lib/backend.ai-client-es6.js';
+import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
