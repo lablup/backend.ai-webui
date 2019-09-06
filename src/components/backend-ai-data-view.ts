@@ -365,11 +365,11 @@ export default class BackendAIData extends BackendAIPage {
   _toggleCheckbox() {
     let buttons = this.shadowRoot.querySelectorAll(".multiple-action-buttons");
     if (this.fileListGrid.selectedItems.length > 0) {
-      [].forEach.call(buttons, (e) => {
+      [].forEach.call(buttons, (e: HTMLElement) => {
         e.style.display = 'block';
       });
     } else {
-      [].forEach.call(buttons, (e) => {
+      [].forEach.call(buttons, (e: HTMLElement) => {
         e.style.display = 'none';
       });
     }
