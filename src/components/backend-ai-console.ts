@@ -67,6 +67,7 @@ declare global {
     packageVersion: string;
     __local_proxy: string;
     lablupNotification: any;
+    process: any;
   }
 
   interface ai {
@@ -189,7 +190,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     window.lablupNotification = this.shadowRoot.querySelector('#notification');
     this.notification = window.lablupNotification;
     this.splash = this.shadowRoot.querySelector('#about-panel');
-    if (window.isElectron && process.platform === 'darwin') { // For macOS (TODO)
+    if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
@@ -391,8 +392,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
+        this.user_id = '';
+        this.domain = '';
         this._page = 'summary';
-        navigate(decodeURIComponent('/'));
+        window.history.pushState({}, '', '/summary');
+        store.dispatch(navigate(decodeURIComponent('/')));
         (this.shadowRoot.querySelector('#login-panel') as any).login();
       } else {
         window.location.reload();
@@ -526,7 +530,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.09.0.190902</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.09.2.190906</small>
               </address>
             </div>
           </app-header-layout>

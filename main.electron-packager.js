@@ -1,15 +1,15 @@
 // Modules to control application life and create native browser window
-const {app, Menu, shell, BrowserWindow, protocol} = require('electron');
+const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
 const url = require('url');
 const path = require('path');
+const toml = require('markty-toml');
 const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
-const { ipcMain } = require('electron');
+const versions = require('./app/version');
 process.env.liveDebugMode = false;
 let windowWidth = 1280;
 let windowHeight = 970;
-
 
 // ES6 module loader with custom protocol
 const nfs = require('fs');
@@ -27,6 +27,8 @@ let devtools;
 let manager = new ProxyManager();
 
 var mainIndex = 'app/index.html';
+let mainURL;
+
 // Modules to control application life and create native browser window
 app.once('ready', function() {
   var template;
@@ -40,6 +42,13 @@ app.once('ready', function() {
             click: function () {
               mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
                 '    document.dispatchEvent(event);');
+            }
+          },
+          {
+            label: 'App version ' + versions.package +' (rev.' + versions.revision + ')',
+            click: function () {
+              clipboard.writeText(versions.package +' (rev.' + versions.revision + ')');
+              const response = dialog.showMessageBox({type:'info', message:'Version information is copied to clipboard.'});
             }
           },
           {
@@ -357,20 +366,31 @@ function createWindow () {
       nativeWindowOpen: true,
       nodeIntegration: false,
       preload: path.join(BASE_DIR, 'preload.js'),
-      devTools: false 
+      devTools: false
     }
   });
-
-  mainWindow.loadURL(url.format({ // Load HTML into new Window
-    pathname: path.join(mainIndex),
-    protocol: 'file',
-    slashes: true
-  }));
-
-  mainContent = mainWindow.webContents;
-  //devtools = new BrowserWindow();
-  //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-  //mainWindow.webContents.openDevTools({ mode: 'detach' });
+  // Load HTML into new Window (file-based serving)
+  nfs.readFile(path.join(BASE_DIR, '/app/config.toml'), 'utf-8', (err, data) => {
+    if (err) {
+      console.log('No configuration file found.');
+      return;
+    }
+    let config = toml(data);
+    if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
+      mainURL = config.server.consoleServerURL;
+    } else {
+      mainURL = url.format({
+        pathname: path.join(mainIndex),
+        protocol: 'file',
+        slashes: true
+      });
+    }
+    mainWindow.loadURL(mainURL);
+    mainContent = mainWindow.webContents;
+    //devtools = new BrowserWindow();
+    //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+    //mainWindow.webContents.openDevTools({ mode: 'detach' });
+  });
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
     if (mainWindow) {
@@ -464,8 +484,8 @@ app.on('activate', function () {
     createWindow();
   }
 });
-app.on('certificate-error', function(event, webContents, url, error, 
-  certificate, callback) {
+app.on('certificate-error', function (event, webContents, url, error,
+                                      certificate, callback) {
       event.preventDefault();
       callback(true);
 });

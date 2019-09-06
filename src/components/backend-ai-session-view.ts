@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
@@ -21,37 +21,19 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import LablupNotification from "./lablup-notification";
 
-class BackendAiSessionView extends BackendAIPage {
-  public _status: any;
-  public _lists: any;
-  public shadowRoot: any;
-  public updateComplete: any;
-
+@customElement("backend-ai-session-view")
+export default class BackendAiSessionView extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
     this._status = 'inactive';
   }
 
-  static get is() {
-    return 'backend-ai-session-view';
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean,
-        reflect: true
-      },
-      _status: {
-        type: Boolean
-      },
-      _lists: {
-        type: Object
-      }
-    }
-  }
+  @property({type: String}) _status = 'inactive';
+  @property({type: Boolean}) active = true;
+  @property({type: Object}) _lists = Object();
 
   static get styles() {
     return [
@@ -67,8 +49,13 @@ class BackendAiSessionView extends BackendAIPage {
           padding-bottom: 0;
           padding-left: 0;
         }
+
         wl-tab-group {
           --tab-group-indicator-bg: var(--paper-red-500);
+        }
+
+        wl-tab-group wl-divider {
+          display: none;
         }
 
         wl-tab {
@@ -98,7 +85,7 @@ class BackendAiSessionView extends BackendAIPage {
     if (active === false) {
       this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
       this._status = 'inactive';
-      for (var x = 0; x < this._lists.length; x++) {
+      for (let x = 0; x < this._lists.length; x++) {
         this._lists[x].removeAttribute('active');
       }
       return;
@@ -109,12 +96,12 @@ class BackendAiSessionView extends BackendAIPage {
   }
 
   _showTab(tab) {
-    var els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (var x = 0; x < els.length; x++) {
+    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + tab.value + '-lists').style.display = 'block';
-    for (var x = 0; x < this._lists.length; x++) {
+    for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
     this.shadowRoot.querySelector('#' + tab.value + '-jobs').setAttribute('active', true);
@@ -148,4 +135,8 @@ class BackendAiSessionView extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAiSessionView.is, BackendAiSessionView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-session-view": BackendAiSessionView;
+  }
+}

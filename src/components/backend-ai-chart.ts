@@ -1,9 +1,14 @@
-import * as d3 from "d3";
+/**
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ */
 
-import {css, html, LitElement} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
+
 import "@polymer/paper-icon-button/paper-icon-button";
 import "weightless/card";
 
+import * as d3 from "d3";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -32,29 +37,49 @@ const ByteConverter = {
   }
 };
 
-class BackendAIChart extends LitElement {
-  public idx: any;
-	public title: any;
-	public elevation: any;
-	public message: any;
-	public width: any;
-	public height: any;
-	public colors: any;
-	public collection: any;
-	public shadowRoot: any;
-	public offsetWidth: any;
-	public data: any;
-	public xScale: any;
-	public xAxis: any;
-	public yAxis: any;
-	public yScale: any;
-	public line: any;
-	public rectHeight: any;
-	public axisTitle: any;
-	public margin: any;
-	public graphWidth: any;
-	public graphHeight: any;
+@customElement("backend-ai-chart")
+export default class BackendAIChart extends LitElement {
+  @property({type: String}) title = '';
+  @property({type: Number}) elevation = 1;
+  @property({type: String}) message = '';
+  @property({type: Number}) width = 300;
+  @property({type: Number}) height = 300;
+  @property({type: Number}) idx;
+  @property({type: Number}) graphWidth;
+  @property({type: Number}) graphHeight;
+  @property({type: Number}) margin;
+  @property({type: Number}) offsetWidth;
+  @property({type: Object}) data;
+  @property({type: Object}) collection;
+  @property({type: Object}) xScale;
+  @property({type: Object}) yScale;
+  @property({type: Object}) xAxis;
+  @property({type: Object}) yAxis;
+  @property({type: Object}) line;
+  @property({type: Object}) rectHeight;
+  @property({type: Object}) axisTitle;
 
+  @property({type: Array}) colors = [
+    "#4bc0c0",
+    "#003f5c",
+    "#ff6e54",
+    "#ffa600"
+  ];
+
+  static get properties() {
+    return {
+      collection: {
+        type: Object,
+        hasChanged(newval, oldval) {
+          if (oldval === undefined) return true;
+
+          if (newval.period !== oldval.period) return true;
+
+          return false;
+        }
+      }
+    };
+  }
   /**
    * @param collection              {object}   Object containing the fields listed below
    * @param collection.data         {Array}    Array containing objects of x y values
@@ -64,17 +89,6 @@ class BackendAIChart extends LitElement {
    */
   constructor() {
     super();
-    this.title = "";
-    this.elevation = 1;
-    this.message = "";
-    this.width = 300;
-    this.height = 300;
-    this.colors = [
-        "#4bc0c0",
-        "#003f5c",
-        "#ff6e54",
-        "#ffa600"
-    ]
   }
 
   static get is() {
@@ -143,39 +157,6 @@ class BackendAIChart extends LitElement {
     ];
   }
 
-  static get properties() {
-    return {
-      title: {
-        type: String
-      },
-      elevation: {
-        type: Number
-      },
-      message: {
-        type: String
-      },
-      collection: {
-        type: Object,
-        hasChanged(newval, oldval) {
-          if (oldval === undefined) return true;
-
-          if (newval.period !== oldval.period) return true;
-
-          return false;
-        }
-      },
-      width: {
-        type: Number
-      },
-      height: {
-        type: Number
-      },
-      idx: {
-        type: Number
-      }
-    };
-  }
-
   updated(changedProps) {
     if (changedProps.has('collection') && changedProps.get("collection") !== undefined) {
       this.draw();
@@ -227,7 +208,7 @@ class BackendAIChart extends LitElement {
           aspect    = width / height;
 
     const resize = () => {
-      const { offsetWidth } = this.shadowRoot.host.parentNode;
+      const {offsetWidth} = (this.shadowRoot.host.parentNode as any);
       const targetWidth = this._scaledSVGWidth(offsetWidth);
       svg.attr("width", targetWidth);
       svg.attr("height", Math.round(targetWidth / aspect));
@@ -751,4 +732,8 @@ class BackendAIChart extends LitElement {
 
 }
 
-customElements.define(BackendAIChart.is, BackendAIChart);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-chart": BackendAIChart;
+  }
+}

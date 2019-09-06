@@ -3,10 +3,11 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import { css, html } from "lit-element";
-import {BackendAIPage} from './backend-ai-page.js';
+import {css, customElement, html, property, LitElement} from "lit-element";
+import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
+import 'weightless/progress-spinner';
 import 'weightless/tab-group';
 import 'weightless/tab';
 
@@ -19,35 +20,12 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-
-class BackendAIStatisticsView extends BackendAIPage {
-	public _status: any;
-	public updateComplete: any;
-	public shadowRoot: any;
+@customElement("backend-ai-statistics-view")
+export default class BackendAIStatisticsView extends BackendAIPage {
+  @property({type: String}) _status = "inactive";
 
   constructor() {
     super();
-    this.active = false;
-    this._status = "inactive";
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean,
-        reflect: true
-      },
-      _status: {
-        type: Boolean
-      },
-      _lists: {
-        type: Object
-      }
-    }
-  }
-
-  static get is() {
-      return 'backend-ai-statistics-view';
   }
 
   static get styles() {
@@ -128,7 +106,7 @@ class BackendAIStatisticsView extends BackendAIPage {
           </h3>
           <div class="horizontal wrap layout">
             <div id="usage-stat" class="tab-content">
-              <backend-ai-usage-list id="usage-list"></backend-ai-usage-list>
+              <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
             </div>
             <div id="insight-stat" class="tab-content" style="display: none;">
               <div></div>
@@ -139,4 +117,8 @@ class BackendAIStatisticsView extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAIStatisticsView.is, BackendAIStatisticsView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-statistics-view": BackendAIStatisticsView;
+  }
+}

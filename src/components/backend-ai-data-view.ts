@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -42,7 +42,8 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAIData extends BackendAIPage {
+@customElement("backend-ai-data-view")
+export default class BackendAIData extends BackendAIPage {
   public folders: any;
   public folderInfo: any;
   public is_admin: any;
@@ -57,6 +58,7 @@ class BackendAIData extends BackendAIPage {
   public vhosts: any;
   public uploadFilesExist: any;
   public _boundIndexRenderer: any;
+  public _boundTypeRenderer: any;
   public _boundControlFolderListRenderer: any;
   public _boundControlFileListRenderer: any;
   public _boundPermissionViewRenderer: any;
@@ -69,6 +71,7 @@ class BackendAIData extends BackendAIPage {
   public deleteFileDialog: any;
   public indicator: any;
   public updateComplete: any;
+  public allowed_folder_type: any;
 
   constructor() {
     super();
@@ -88,7 +91,9 @@ class BackendAIData extends BackendAIPage {
     this.vhost = '';
     this.vhosts = [];
     this.uploadFilesExist = false;
+    this.allowed_folder_type = [];
     this._boundIndexRenderer = this.indexRenderer.bind(this);
+    this._boundTypeRenderer = this.typeRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
@@ -414,6 +419,7 @@ class BackendAIData extends BackendAIPage {
               </div>
             </template>
           </vaadin-grid-column>
+          <vaadin-grid-column width="45px" flex-grow="0" resizable header="Type" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
           <vaadin-grid-column width="85px" flex-grow="0" resizable header="Permission" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
           <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
         </vaadin-grid>
@@ -430,13 +436,25 @@ class BackendAIData extends BackendAIPage {
           <section>
             <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
                          error-message="Allows letters, numbers and -_." auto-validate></paper-input>
-            <paper-dropdown-menu id="add-folder-host" label="Host">
-              <paper-listbox slot="dropdown-content" selected="0">
-              ${this.vhosts.map(item => html`
-                <paper-item id="${item}" label="${item}">${item}</paper-item>
-              `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
+            <div class="horizontal layout">
+              <paper-dropdown-menu id="add-folder-host" label="Host">
+                <paper-listbox slot="dropdown-content" selected="0">
+                ${this.vhosts.map(item => html`
+                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+                `)}
+                </paper-listbox>
+              </paper-dropdown-menu>
+              <paper-dropdown-menu id="add-folder-type" label="Type">
+                <paper-listbox slot="dropdown-content" selected="0">
+                ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+                  <paper-item label="group">Group</paper-item>              
+                ` : html``}
+                ${this.allowed_folder_type.includes('user') ? html`
+                  <paper-item label="user">User</paper-item>                            
+                ` : html``}
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
             <br/>
             <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
               <wl-icon>rowing</wl-icon>
@@ -909,9 +927,23 @@ class BackendAIData extends BackendAIPage {
     )
   }
 
+  typeRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout vertical">
+        ${rowData.item.type == 'user' ? html`
+          <wl-icon>person</wl-icon>
+        ` : html`
+          <wl-icon>group</wl-icon>
+        `}
+        </div>`, root
+    )
+  }
   firstUpdated() {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
+
     this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
     this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
@@ -942,11 +974,17 @@ class BackendAIData extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = window.backendaiclient.is_admin;
         this.authenticated = true;
+        window.backendaiclient.vfolder.allowed_types().then(response => {
+          this.allowed_folder_type = response;
+        });
         this._refreshFolderList();
       }, true);
     } else {
       this.is_admin = window.backendaiclient.is_admin;
       this.authenticated = true;
+      window.backendaiclient.vfolder.allowed_types().then(response => {
+        this.allowed_folder_type = response;
+      });
       this._refreshFolderList();
     }
   }
@@ -998,7 +1036,17 @@ class BackendAIData extends BackendAIPage {
   _addFolder() {
     let name = this.shadowRoot.querySelector('#add-folder-name').value;
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
-    let job = window.backendaiclient.vfolder.create(name, host);
+    let type = this.shadowRoot.querySelector('#add-folder-type').value;
+    let group;
+    if (['user', 'group'].includes(type) === false) {
+      type = 'user';
+    }
+    if (type == 'user') {
+      group = '';
+    } else {
+      group = window.backendaiclient.current_group;
+    }
+    let job = window.backendaiclient.vfolder.create(name, host, group);
     job.then((value) => {
       this.notification.text = 'Folder is successfully created.';
       this.notification.show();
@@ -1361,5 +1409,8 @@ class BackendAIData extends BackendAIPage {
       })
   }
 }
-
-customElements.define('backend-ai-data-view', BackendAIData);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-data-view": BackendAIData;
+  }
+}

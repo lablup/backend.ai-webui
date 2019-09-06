@@ -3,22 +3,16 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from 'lit-element';
+import {css, customElement, html, property, LitElement} from "lit-element";
 import 'weightless/progress-spinner';
 
-class LablupLoadingIndicator extends LitElement {
-  public active: any;
-  public indicator: any;
-  public shadowRoot: any;
-  public updateComplete: any;
+@customElement("lablup-loading-indicator")
+export default class LablupLoadingIndicator extends LitElement {
+  @property({type: Object}) indicator;
+  @property({type: Boolean}) active = false;
 
   constructor() {
     super();
-    this.active = false;
-  }
-
-  static get is() {
-    return 'lablup-loading-indicator';
   }
 
   static get styles() {
@@ -35,17 +29,6 @@ class LablupLoadingIndicator extends LitElement {
           right: 60px;
         }
       `];
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      indicator: {
-        type: Object
-      }
-    };
   }
 
   render() {
@@ -100,7 +83,10 @@ class LablupLoadingIndicator extends LitElement {
       this.indicator.style.display = 'block';
     }
   }
-
 }
 
-customElements.define(LablupLoadingIndicator.is, LablupLoadingIndicator);
+declare global {
+  interface HTMLElementTagNameMap {
+    "lablup-loading-indicator": LablupLoadingIndicator;
+  }
+}

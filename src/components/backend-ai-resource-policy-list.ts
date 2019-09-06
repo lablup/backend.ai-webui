@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
@@ -30,123 +30,35 @@ import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import BackendAIAgentView from "./backend-ai-agent-view";
 
-class BackendAIResourcePolicyList extends BackendAIPage {
-  public visible: any;
-  public keypairs: any;
-  public resourcePolicy: any;
-  public keypairInfo: any;
-  public is_admin: any;
-  public cpu_metric: any;
-  public ram_metric: any;
-  public gpu_metric: any;
-  public vgpu_metric: any;
-  public rate_metric: any;
-  public concurrency_metric: any;
-  public container_per_session_metric: any;
-  public idle_timeout_metric: any;
-  public vfolder_capacity_metric: any;
-  public vfolder_count_metric: any;
-  public allowed_vfolder_hosts: any;
-  public default_vfolder_host: any;
-  public _boundResourceRenderer: any;
-  public _boundControlRenderer: any;
-  public notification: any;
-  public shadowRoot: any;
-  public updateComplete: any;
-  public condition: any;
+@customElement("backend-ai-resource-policy-list")
+export default class BackendAIResourcePolicyList extends BackendAIPage {
+  @property({type: Boolean}) visible = false;
+  @property({type: Object}) keypairs = {};
+  @property({type: Object}) resourcePolicy = {};
+  @property({type: Object}) keypairInfo = {};
+  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) active = false;
+  @property({type: String}) condition = 'active';
+  @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
+  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
+  @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
+  @property({type: Array}) fgpu_metric = [0, 0.2, 0.3, 0.5, 1, 2, 3, 4, 8, 16, "Unlimited"];
+  @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
+  @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
+  @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
+  @property({type: Array}) idle_timeout_metric = [60, 600, 900, 1800, 3600, 43200, 86400, 604800, 1209600];
+  @property({type: Array}) vfolder_capacity_metric = [1, 2, 5, 10, 20, 50, 100, 200, 1000];
+  @property({type: Array}) vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
+  @property({type: Array}) allowed_vfolder_hosts = [];
+  @property({type: String}) default_vfolder_host = '';
+  @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
+  @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
 
   constructor() {
     super();
-    this.visible = false;
-    this.keypairs = {};
-    this.resourcePolicy = {};
-    this.keypairInfo = {};
-    this.is_admin = false;
-    this.active = false;
-    this.cpu_metric = [1, 2, 3, 4, 8, 16, 24, "Unlimited"];
-    this.ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
-    this.gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.vgpu_metric = [0, 0.3, 0.6, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-    this.rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
-    this.concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
-    this.container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
-    this.idle_timeout_metric = [60, 180, 540, 900, 1800, 3600];
-    this.vfolder_capacity_metric = [1, 2, 5, 10, 50, 100, 200, 1000];
-    this.vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
-    this.is_admin = false;
-    this.allowed_vfolder_hosts = [];
-    this.default_vfolder_host = '';
-    this._boundResourceRenderer = this.resourceRenderer.bind(this);
-    this._boundControlRenderer = this.controlRenderer.bind(this);
   }
-
-  static get is() {
-    return 'backend-ai-resource-policy-list';
-  }
-
-  static get properties() {
-    return {
-      visible: {
-        type: Boolean
-      },
-      keypairs: {
-        type: Object
-      },
-      notification: {
-        type: Object
-      },
-      active: {
-        type: Boolean
-      },
-      resourcePolicy: {
-        type: Object
-      },
-      keypairInfo: {
-        type: Object
-      },
-      cpu_metric: {
-        type: Array
-      },
-      ram_metric: {
-        type: Array
-      },
-      gpu_metric: {
-        type: Array
-      },
-      vgpu_metric: {
-        type: Array
-      },
-      rate_metric: {
-        type: Array
-      },
-      concurrency_metric: {
-        type: Array
-      },
-      container_per_session_metric: {
-        type: Array
-      },
-      idle_timeout_metric: {
-        type: Array
-      },
-      vfolder_capacity_metric: {
-        type: Array
-      },
-      vfolder_count_metric: {
-        type: Array
-      },
-      is_admin: {
-        type: Boolean
-      },
-      allowed_vfolder_hosts: {
-        type: Array
-      },
-      default_vfolder_host: {
-        type: String
-      }
-    };
-  }
-
 
   static get styles() {
     return [
@@ -323,9 +235,9 @@ class BackendAIResourcePolicyList extends BackendAIPage {
                   `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vgpu-resource" label="vGPU">
+                <paper-dropdown-menu id="fgpu-resource" label="fgpu">
                   <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.vgpu_metric.map(item => html`
+                  ${this.fgpu_metric.map(item => html`
                     <paper-item value="${item}">${item}</paper-item>
                   `)}
                   </paper-listbox>
@@ -509,7 +421,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
     this.shadowRoot.querySelector('#cpu-resource').value = resourcePolicy.total_resource_slots.cpu;
     this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots['cuda_device'];
-    this.shadowRoot.querySelector('#vgpu-resource').value = resourcePolicy.total_resource_slots['cuda_shares'];
+    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePolicy.total_resource_slots['cuda_shares'];
     this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
 
     this.shadowRoot.querySelector('#concurrency-limit').value = resourcePolicy.max_concurrent_sessions;
@@ -580,7 +492,7 @@ class BackendAIResourcePolicyList extends BackendAIPage {
     let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
-    let vgpu_resource = this.shadowRoot.querySelector('#vgpu-resource').value;
+    let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
     let vfolder_hosts = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
@@ -596,16 +508,16 @@ class BackendAIResourcePolicyList extends BackendAIPage {
     } else {
       gpu_resource = parseInt(gpu_resource).toString();
     }
-    if (vgpu_resource === "Unlimited") {
-      vgpu_resource = "Infinity";
+    if (fgpu_resource === "Unlimited") {
+      fgpu_resource = "Infinity";
     } else {
-      vgpu_resource = parseFloat(vgpu_resource).toString();
+      fgpu_resource = parseFloat(fgpu_resource).toString();
     }
     let total_resource_slots = {
       "cpu": cpu_resource,
       "mem": ram_resource,
       "cuda.device": gpu_resource,
-      "cuda.shares": vgpu_resource
+      "cuda.shares": fgpu_resource
     };
     let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit').value;
     let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit').value;
@@ -675,4 +587,10 @@ class BackendAIResourcePolicyList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAIResourcePolicyList.is, BackendAIResourcePolicyList);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-resource-policy-list": BackendAIResourcePolicyList;
+  }
+}
+

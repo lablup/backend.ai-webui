@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-console",
-  "version": "19.09.0",
+  "version": "19.09.2",
   "repository": "https://github.com/lablup/backend.ai-console.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
@@ -17,7 +17,7 @@
     "copywc": "mkdir -p build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles src/lib && cp node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js src/lib",
     "copywa": "mkdir -p build/rollup/src/lib/web-animations-js && mkdir -p src/lib/web-animations-js && cp node_modules/web-animations-js/web-animations-next-lite.min.js src/lib/web-animations-js && cp src/lib/web-animations-js/web-animations-next-lite.min.js build/rollup/src/lib/web-animations-js",
     "copyresource": "cp -Rp resources build/rollup && cp -Rp manifest build/rollup",
-    "copyconfig": "cp config.toml build/rollup && cp manifest.json build/rollup",
+    "copyconfig": "cp config.toml build/rollup && cp version.json build/rollup && cp manifest.json build/rollup",
     "copyindex": "cp index.html build/rollup",
     "update": "./node_modules/typescript/bin/tsc"
   },
@@ -75,7 +75,7 @@
     "electron-installer-dmg": "^3.0.0",
     "electron-packager": "^14.0.5",
     "electron-tabs": "^0.9.5",
-    "es-dev-server": "^1.17.1",
+    "es-dev-server": "^1.17.2",
     "eslint": "^5.16.0",
     "eslint-config-google": "^0.12.0",
     "express": "^4.17.1",
@@ -97,5 +97,8 @@
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7",
     "ws": "^7.1.2"
+  },
+  "vaadin": {
+    "disableUsageStatistics": true
   }
 }

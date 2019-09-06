@@ -3,10 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
-
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -24,28 +22,18 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator';
 import './backend-ai-indicator';
 
-class BackendAiMaintenanceView extends BackendAIPage {
-  public images: any;
-  public scanning: any;
-  public recalculating: any;
-  public notification: any;
-  public shadowRoot: any;
-  public indicator: any;
-  public updateComplete: any;
+@customElement("backend-ai-maintenance-view")
+export default class BackendAiMaintenanceView extends BackendAIPage {
+
+  @property({type: Object}) images = Object();
+  @property({type: Boolean}) scanning = false;
+  @property({type: Boolean}) recalculating = false;
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) indicator = Object();
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
-    this.images = {};
-    this.active = false;
-    this.scanning = false;
-    this.recalculating = false;
   }
-
-  static get is() {
-    return 'backend-ai-maintenance-view';
-  }
-
   static get styles() {
     return [
       BackendAiStyles,
@@ -245,4 +233,8 @@ class BackendAiMaintenanceView extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAiMaintenanceView.is, BackendAiMaintenanceView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-maintenance-view": BackendAiMaintenanceView;
+  }
+}

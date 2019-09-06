@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
@@ -47,8 +47,8 @@ declare global {
 
  @group Backend.AI Console
  */
-
-class BackendAiLogin extends LitElement {
+@customElement("backend-ai-login")
+export default class BackendAILogin extends LitElement {
   public api_key: any;
   public secret_key: any;
   public user_id: any;
@@ -382,13 +382,13 @@ class BackendAiLogin extends LitElement {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      this.notification.text = 'Please wait to login...';
-      this.notification.show();
+      //this.notification.text = 'Connecting...';
+      //this.notification.show();
       this._connectUsingSession();
     } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      this.notification.text = 'Please wait to login...';
-      this.notification.show();
+      //this.notification.text = 'Connecting...';
+      //this.notification.show();
       this._connectUsingAPI();
     } else {
       this.open();
@@ -426,7 +426,7 @@ class BackendAiLogin extends LitElement {
   _login() {
     this.api_endpoint = this.shadowRoot.querySelector('#id_api_endpoint').value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
-    this.notification.text = 'Please wait to login...';
+    this.notification.text = 'Connecting...';
     this.notification.show();
     if (this.connection_mode === 'SESSION') {
       this.user_id = this.shadowRoot.querySelector('#id_user_id').value;
@@ -495,7 +495,9 @@ class BackendAiLogin extends LitElement {
 
   _connectGQL() {
     // Test connection
-    this.block();
+    if (this.loginPanel.open !== true) {
+      this.block();
+    }
     this.client.getManagerVersion().then(response => {
       return this.client.isAPIVersionCompatibleWith('v4.20190601');
     }).then(response => {
@@ -569,8 +571,8 @@ class BackendAiLogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-      this.notification.text = 'Connected.';
-      this.notification.show();
+      //this.notification.text = 'Connected.';
+      //this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
@@ -707,5 +709,8 @@ class BackendAiLogin extends LitElement {
     `;
   }
 }
-
-customElements.define(BackendAiLogin.is, BackendAiLogin);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-login": BackendAILogin;
+  }
+}

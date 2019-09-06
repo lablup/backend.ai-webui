@@ -3,9 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
 import {render} from 'lit-html';
-
 
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -38,107 +37,37 @@ import {BackendAiStyles} from './backend-ai-console-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
-class BackendAiSessionList extends BackendAIPage {
-  public condition: any;
-  public jobs: any;
-  public compute_sessions: any;
-  public terminationQueue: any;
-  public filterAccessKey: any;
-  public appSupportList: any;
-  public appTemplate: any;
-  public _selected_items: any;
-  public _boundControlRenderer: any;
-  public _boundSessionInfoRenderer: any;
-  public _boundCheckboxRenderer: any;
-  public _boundUserInfoRenderer: any;
-  public refreshing: any;
-  public loadingIndicator: any;
+@customElement("backend-ai-session-list")
+export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
-  public _grid: any;
-  public refreshTimer: any;
-  public notification: any;
-  public terminateSessionDialog: any;
-  public terminateSelectedSessionsDialog: any;
-  public updateComplete: any;
-  public _connectionMode: string;
-  public enableScalingGroup: any;
-  public is_admin: any;
+
+  @property({type: Boolean}) active = true;
+  @property({type: String}) condition = 'running';
+  @property({type: Object}) jobs = Object();
+  @property({type: Array}) compute_sessions = Array();
+  @property({type: Array}) terminationQueue = Array();
+  @property({type: String}) filterAccessKey = '';
+  @property({type: Array}) appSupportList = Array();
+  @property({type: Object}) appTemplate = Object();
+  @property({type: Array}) _selected_items = Array();
+  @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
+  @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
+  @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
+  @property({type: Boolean}) refreshing = false;
+  @property({type: Boolean}) is_admin = false;
+  @property({type: String}) _connectionMode = 'API';
+  @property({type: Object}) _grid = Object();
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) terminateSessionDialog = Object();
+  @property({type: Object}) terminateSelectedSessionsDialog = Object();
+  @property({type: Boolean}) enableScalingGroup = false;
+  @property({type: Object}) loadingIndicator = Object();
+  @property({type: Object}) refreshTimer = Object();
+
 
   constructor() {
     super();
-    this.condition = 'running';
-    this.jobs = {};
-    this.compute_sessions = [];
-    this.terminationQueue = [];
-    this.filterAccessKey = '';
-    this.appSupportList = [];
-    this.appTemplate = {};
-    this._selected_items = [];
-    this._boundControlRenderer = this.controlRenderer.bind(this);
-    this._boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
-    this._boundCheckboxRenderer = this.checkboxRenderer.bind(this);
-    this._boundUserInfoRenderer = this.userInfoRenderer.bind(this);
-    this.refreshing = false;
-    this.is_admin = false;
-    this._connectionMode = 'API';
-  }
-
-  static get is() {
-    return 'backend-ai-session-list';
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean,
-        reflect: true
-      },
-      condition: {
-        type: String
-      },
-      _grid: {
-        type: Object
-      },
-      _selected_items: {
-        type: Array
-      },
-      jobs: {
-        type: Object
-      },
-      compute_sessions: {
-        type: Object
-      },
-      terminationQueue: {
-        type: Array
-      },
-      filterAccessKey: {
-        type: String
-      },
-      appSupportList: {
-        type: Array
-      },
-      appTemplate: {
-        type: Object
-      },
-      notification: {
-        type: Object
-      },
-      loadingIndicator: {
-        type: Object
-      },
-      terminateSessionDialog: {
-        type: Object
-      },
-      terminateSelectedSessionsDialog: {
-        type: Object
-      },
-      refreshing: {
-        type: Boolean
-      },
-      enableScalingGroup: {
-        type: Boolean
-      }
-    };
   }
 
   static get styles() {
@@ -148,138 +77,138 @@ class BackendAiSessionList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-          vaadin-grid {
-              border: 0;
-              font-size: 14px;
-              height: calc(100vh - 240px);
-          }
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 240px);
+        }
 
-          paper-item {
-              height: 30px;
-              --paper-item-min-height: 30px;
-          }
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
 
-          iron-icon {
-              width: 16px;
-              height: 16px;
-              min-width: 16px;
-              min-height: 16px;
-              padding: 0;
-          }
+        iron-icon {
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+          min-height: 16px;
+          padding: 0;
+        }
 
-          wl-button > wl-icon {
-              --icon-size: 24px;
-              padding: 0;
-          }
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
 
-          wl-icon {
-              --icon-size: 16px;
-              padding: 0;
-          }
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
 
-          paper-icon-button.controls-running {
-              --paper-icon-button: {
-                  width: 25px;
-                  height: 25px;
-                  min-width: 25px;
-                  min-height: 25px;
-                  padding: 3px;
-                  margin-right: 5px;
-              };
-          }
+        paper-icon-button.controls-running {
+          --paper-icon-button: {
+            width: 25px;
+            height: 25px;
+            min-width: 25px;
+            min-height: 25px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
 
-          paper-icon-button.apps {
-              --paper-icon-button: {
-                  width: 50px;
-                  height: 50px;
-                  min-width: 50px;
-                  min-height: 50px;
-                  padding: 3px;
-                  margin-right: 5px;
-              };
-          }
+        paper-icon-button.apps {
+          --paper-icon-button: {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            min-height: 50px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
 
+        #work-dialog {
+          --dialog-height: calc(100vh - 130px);
+          right: 0;
+          top: 50px;
+        }
+
+        @media screen and (max-width: 899px) {
           #work-dialog {
-              --dialog-height: calc(100vh - 130px);
-              right: 0;
-              top: 50px;
+            left: 0;
+            --dialog-width: 100%;
           }
+        }
 
-          @media screen and (max-width: 899px) {
-              #work-dialog {
-                  left: 0;
-                  --dialog-width: 100%;
-              }
+        @media screen and (min-width: 900px) {
+          #work-dialog {
+            left: 100px;
+            --dialog-width: calc(100% - 220px);
           }
+        }
 
-          @media screen and (min-width: 900px) {
-              #work-dialog {
-                  left: 100px;
-                  --dialog-width: calc(100% - 220px);
-              }
-          }
+        #work-area {
+          width: 100%;
+          height: calc(100vh - 120px);
+          background-color: #222;
+          color: #efefef;
+        }
 
-          #work-area {
-              width: 100%;
-              height: calc(100vh - 120px);
-              background-color: #222;
-              color: #efefef;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        div.label,
+        span.label {
+          font-size: 12px;
+        }
 
-          div.label,
-          span.label {
-              font-size: 12px;
-          }
+        .app-icon {
+          margin-left: 5px;
+          margin-right: 5px;
+        }
 
-          .app-icon {
-              margin-left: 5px;
-              margin-right: 5px;
-          }
+        div.configuration {
+          width: 70px !important;
+        }
 
-          div.configuration {
-              width: 70px !important;
-          }
+        div.configuration iron-icon {
+          padding-right: 5px;
+        }
 
-          div.configuration iron-icon {
-              padding-right: 5px;
-          }
+        paper-icon-button.apps {
+          width: 48px;
+          height: 48px;
+        }
 
-          paper-icon-button.apps {
-              width: 48px;
-              height: 48px;
-          }
+        .app-icon .label {
+          display: block;
+          width: 60px;
+          text-align: center;
+          height: 25px;
+        }
 
-          .app-icon .label {
-              display: block;
-              width: 60px;
-              text-align: center;
-              height: 25px;
-          }
+        wl-button.multiple-action-button {
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-red-600);
+        }
 
-          wl-button.multiple-action-button {
-              --button-color: var(--paper-red-600);
-              --button-color-active: red;
-              --button-color-hover: red;
-              --button-bg: var(--paper-red-50);
-              --button-bg-hover: var(--paper-red-100);
-              --button-bg-active: var(--paper-red-600);
-              --button-bg-active-flat: var(--paper-red-600);
-          }
-
-          div.filters #access-key-filter {
-              --paper-input-container-input: {
-                  font-size: small;
-              };
-              --paper-input-container-label: {
-                  font-size: small;
-              };
-          }
+        div.filters #access-key-filter {
+          --paper-input-container-input: {
+            font-size: small;
+          };
+          --paper-input-container-label: {
+            font-size: small;
+          };
+        }
       `];
   }
 
@@ -295,6 +224,7 @@ class BackendAiSessionList extends BackendAIPage {
     if (!window.backendaiclient ||
       !window.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)';
     }
     this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
@@ -359,7 +289,14 @@ class BackendAiSessionList extends BackendAIPage {
           'title': 'DIGITS',
           'redirect': "&redirect=/",
           'src': './resources/icons/nvidia.png'
-        }]
+        }],
+      'h2o':
+        [{
+          'name': 'h2o',
+          'title': 'H2O.ai',
+          'redirect': "/",
+          'src': './resources/icons/h2o.png'
+        }],
     };
   }
 
@@ -404,7 +341,7 @@ class BackendAiSessionList extends BackendAIPage {
     }
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
-      var sessions = response.compute_sessions;
+      let sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
         let previous_sessions = this.compute_sessions;
         let previous_session_keys = [];
@@ -425,7 +362,11 @@ class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].io_read_bytes_mb = this._byteToMB(sessions[objectKey].io_read_bytes);
           sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
           let service_info = JSON.parse(sessions[objectKey].service_ports);
-          sessions[objectKey].app_services = service_info.map(a => a.name);
+          if (Array.isArray(service_info) === true) {
+            sessions[objectKey].app_services = service_info.map(a => a.name);
+          } else {
+            sessions[objectKey].app_services = [];
+          }
           if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
             sessions[objectKey].appSupport = false;
           } else {
@@ -481,21 +422,6 @@ class BackendAiSessionList extends BackendAIPage {
         this.notification.show(true);
       }
     });
-  }
-
-  _startProgressDialog() {
-    this.shadowRoot.querySelector('#app-progress').value = 0;
-    this.shadowRoot.querySelector('#app-progress-text').textContent = 'Initializing...';
-    this.shadowRoot.querySelector('#app-progress-dialog').open();
-  }
-
-  _setProgressDialog(value, text = '') {
-    this.shadowRoot.querySelector('#app-progress-text').textContent = text;
-    this.shadowRoot.querySelector('#app-progress').value = value;
-  }
-
-  _endProgressDialog() {
-    this.shadowRoot.querySelector('#app-progress-dialog').close();
   }
 
   _humanReadableTime(d: any) {
@@ -884,6 +810,7 @@ class BackendAiSessionList extends BackendAIPage {
     return Promise.all(terminateSessionQueue).then(response => {
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
       this.notification.text = "Sessions terminated.";
       this.notification.show();
 
@@ -905,6 +832,7 @@ class BackendAiSessionList extends BackendAIPage {
     return Promise.all(terminateSessionQueue).then(response => {
       this._selected_items = [];
       this._clearCheckboxes();
+      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
       this.notification.text = "Sessions terminated.";
       this.notification.show();
     }).catch((err) => {
@@ -1071,7 +999,7 @@ ${item.map(item => html`
           </vaadin-grid-column>
           `
       : html``
-    }
+      }
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
@@ -1223,4 +1151,8 @@ ${item.map(item => html`
   }
 }
 
-customElements.define(BackendAiSessionList.is, BackendAiSessionList);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-session-list": BackendAiSessionList;
+  }
+}

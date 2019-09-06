@@ -3,7 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
+
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -31,70 +32,30 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 
-class BackendAICredentialList extends BackendAIPage {
-  public condition: any;
-  public keypairs: any;
-  public resourcePolicy: any;
-  public keypairInfo: any;
-  public isAdmin: any;
-  public _boundControlRenderer: any;
-  public indicator: any;
-  public shadowRoot: any;
-  public notification: any;
-  public updateComplete: any;
+@customElement("backend-ai-credential-list")
+export default class BackendAICredentialList extends BackendAIPage {
+  @property({type: Object}) notification;
+  @property({type: Object}) keypairInfo = {
+    user_id: '1',
+    access_key: 'ABC',
+    secret_key: 'ABC',
+    last_used: '',
+    is_admin: false,
+    resource_policy: '',
+    rate_limit: 5000,
+    concurrency_used: 0,
+    num_queries: 0,
+    created_at: ''
+  };
+  @property({type: Boolean}) isAdmin = false;
+  @property({type: String}) condition = 'active';
+  @property({type: Object}) keypairs = Object();
+  @property({type: Object}) resourcePolicy = Object();
+  @property({type: Object}) indicator = Object();
+  @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
 
   constructor() {
     super();
-    this.active = false;
-    this.condition = 'active';
-    this.keypairs = {};
-    this.resourcePolicy = {};
-    this.keypairInfo = {
-      user_id: '1',
-      access_key: 'ABC',
-      secret_key: 'ABC',
-      last_used: '',
-      is_admin: false
-    };
-
-    this.isAdmin = false;
-    this._boundControlRenderer = this.controlRenderer.bind(this);
-  }
-
-  static get is() {
-    return 'backend-ai-credential-list';
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      condition: {
-        type: String
-      },
-      keypairs: {
-        type: Object
-      },
-      resourcePolicy: {
-        type: Object
-      },
-      keypairInfo: {
-        type: Object
-      },
-      isAdmin: {
-        type: Boolean
-      },
-      _status: {
-        type: Boolean
-      },
-      notification: {
-        type: Object
-      },
-      indicator: {
-        type: Object
-      }
-    };
   }
 
   static get styles() {
@@ -714,4 +675,8 @@ class BackendAICredentialList extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAICredentialList.is, BackendAICredentialList);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-credential-list": BackendAICredentialList;
+  }
+}

@@ -3,7 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, html} from "lit-element";
+import {css, customElement, html, property, LitElement} from "lit-element";
+
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -15,27 +16,18 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import './backend-ai-environment-list';
-import './backend-ai-resource-template-list';
+import './backend-ai-resource-preset-list';
 import './backend-ai-registry-list';
 import './lablup-notification';
 
-class BackendAiEnvironmentView extends BackendAIPage {
-  public images: any;
-  public _activeTab: any;
-  public updateComplete: any;
-  public shadowRoot: any;
-  public is_superadmin: any;
+@customElement("backend-ai-environment-view")
+export default class BackendAIEnvironmentView extends BackendAIPage {
+  @property({type: String}) images = Object();
+  @property({type: Boolean}) is_superadmin = false;
+  @property({type: String}) _activeTab = 'image-lists';
 
   constructor() {
     super();
-    this.images = {};
-    this.active = false;
-    this.is_superadmin = false;
-    this._activeTab = 'image-lists';
-  }
-
-  static get is() {
-    return 'backend-ai-environment-view';
   }
 
   static get styles() {
@@ -131,7 +123,7 @@ class BackendAiEnvironmentView extends BackendAIPage {
         <div id="image-lists" class="tab-content">
           <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
         </div>
-        <backend-ai-resource-template-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-template-list>
+        <backend-ai-resource-preset-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-preset-list>
         <div id="registry-lists" class="tab-content">
           <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
         </div>
@@ -147,4 +139,9 @@ class BackendAiEnvironmentView extends BackendAIPage {
   }
 }
 
-customElements.define(BackendAiEnvironmentView.is, BackendAiEnvironmentView);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-environment-view": BackendAIEnvironmentView;
+  }
+}
+

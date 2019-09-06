@@ -1,35 +1,28 @@
-import {css, html, LitElement} from "lit-element";
+/**
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ */
+import {css, customElement, html, property, LitElement} from "lit-element";
 import '@polymer/paper-icon-button/paper-icon-button';
 import 'weightless/card';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
-class LablupActivityPanel extends LitElement {
-  public title: any;
-  public elevation: any;
-  public message: any;
-  public panelId: any;
-  public width: any;
-  public horizontalsize: any;
-  public marginWidth: any;
-  public pinned: any;
-  public shadowRoot: any;
-  public minwidth: any;
-  public maxwidth: any;
+@customElement("lablup-activity-panel")
+export default class LablupActivityPanel extends LitElement {
+  @property({type: String}) title = '';
+  @property({type: String}) message = '';
+  @property({type: String}) panelId = '';
+  @property({type: String}) horizontalsize = '';
+  @property({type: Number}) elevation = 1;
+  @property({type: Number}) width = 280;
+  @property({type: Number}) marginWidth = 16;
+  @property({type: Number}) minwidth = 0;
+  @property({type: Number}) maxwidth = 0;
+  @property({type: Boolean}) pinned = false;
 
   constructor() {
     super();
-    this.title = '';
-    this.elevation = 1;
-    this.message = '';
-    this.panelId = '';
-    this.width = 280;
-    this.horizontalsize = '';
-    this.marginWidth = 16;
-  }
-
-  static get is() {
-    return 'lablup-activity-panel';
   }
 
   static get styles() {
@@ -38,95 +31,58 @@ class LablupActivityPanel extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-        wl-card {
-          display: block;
-          background: white;
-          box-sizing: border-box;
-          margin: 16px;
-          padding: 0;
-          border-radius: 5px;
-        }
+          wl-card {
+              display: block;
+              background: white;
+              box-sizing: border-box;
+              margin: 16px;
+              padding: 0;
+              border-radius: 5px;
+          }
 
-        wl-card > h4 {
-          border-left: 3px solid var(--paper-green-900);
-          background-color: var(--paper-green-500);
-          color: #eee;
-          font-size: 14px;
-          font-weight: 400;
-          height: 32px;
-          padding: 5px 15px 5px 20px;
-          margin: 0 0 10px 0;
-          border-bottom: 1px solid #DDD;
-          @apply --layout-justified;
-          display: flex;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
+          wl-card > h4 {
+              border-left: 3px solid var(--paper-green-900);
+              background-color: var(--paper-green-500);
+              color: #eee;
+              font-size: 14px;
+              font-weight: 400;
+              height: 32px;
+              padding: 5px 15px 5px 20px;
+              margin: 0 0 10px 0;
+              border-bottom: 1px solid #DDD;
+              @apply --layout-justified;
+              display: flex;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+          }
 
-        wl-card > div {
-          margin: 20px;
-          padding-bottom: 20px;
-          font-size: 12px;
-          padding-left: 3px;
-        }
+          wl-card > div {
+              margin: 20px;
+              padding-bottom: 20px;
+              font-size: 12px;
+              padding-left: 3px;
+          }
 
-        wl-card > h4 > paper-icon-button {
-          display: flex;
-        }
+          wl-card > h4 > paper-icon-button {
+              display: flex;
+          }
 
-        wl-card > h4 > paper-icon-button,
-        wl-card > h4 > paper-icon-button #icon {
-          width: 15px;
-          height: 15px;
-          padding: 0;
-        }
+          wl-card > h4 > paper-icon-button,
+          wl-card > h4 > paper-icon-button #icon {
+              width: 15px;
+              height: 15px;
+              padding: 0;
+          }
 
-        ul {
-          padding-inline-start: 0;
-        }
+          ul {
+              padding-inline-start: 0;
+          }
 
-        #button {
-          display: none;
-        }
+          #button {
+              display: none;
+          }
       `];
-  }
-
-  static get properties() {
-    return {
-      title: {
-        type: String
-      },
-      elevation: {
-        type: Number
-      },
-      message: {
-        type: String
-      },
-      panelId: {
-        type: String
-      },
-      pinned: {
-        type: Boolean
-      },
-      minwidth: {
-        type: Number
-      },
-      maxwidth: {
-        type: Number
-      },
-      width: {
-        type: Number,
-        value: 280
-      },
-      horizontalsize: {
-        type: String
-      },
-      marginWidth: {
-        type: Number,
-        value: 16
-      }
-    }
   }
 
   render() {
@@ -176,4 +132,8 @@ class LablupActivityPanel extends LitElement {
   }
 }
 
-customElements.define(LablupActivityPanel.is, LablupActivityPanel);
+declare global {
+  interface HTMLElementTagNameMap {
+    "lablup-activity-panel": LablupActivityPanel;
+  }
+}

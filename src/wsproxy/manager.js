@@ -7,7 +7,7 @@ const ai = require('../lib/backend.ai-client-node'),
   SGateway = require("./gateway/consoleproxy");
 
 class Manager extends EventEmitter {
-  constructor(listen_ip, proxyBaseURL, proxyBasePort) {
+  constructor(listen_ip, proxyBaseHost, proxyBasePort) {
     super();
     if(listen_ip === undefined) {
       this.listen_ip = "127.0.0.1"
@@ -15,23 +15,22 @@ class Manager extends EventEmitter {
       this.listen_ip = listen_ip;
     }
 
-    if(proxyBaseURL === undefined) {
-      this.proxyBaseURL = "127.0.0.1"
+    if(proxyBaseHost === undefined) {
+      this.proxyBaseHost = "127.0.0.1"
     } else {
-      this.proxyBaseURL = proxyBaseURL;
+      this.proxyBaseHost = proxyBaseHost;
     }
-    if (proxyBasePort !== undefined) {
-      this.proxyBasePort = proxyBasePort;
-      this.port = this.proxyBasePort;
-    } else {
 
-      this.port = undefined;
+    if (proxyBasePort !== undefined) {
+      this.port = proxyBasePort;
+    } else {
+      this.port = 0; //with 0, OS will assign the port
     }
     this.app = express();
     this.aiclient = undefined;
     this.proxies = {};
     this.ports = [];
-    this.baseURL = "http://" + this.listen_ip + ":" + this.port;
+    this.baseURL = undefined;
     this.init();
   }
 
@@ -177,10 +176,10 @@ class Manager extends EventEmitter {
 
   start() {
     return new Promise((resolve) => {
-      this.listener = this.app.listen(this.port, () => {
+      this.listener = this.app.listen(this.port, this.listen_ip, () => {
         console.log(`Listening on port ${this.listener.address().port}!`)
         this.port = this.listener.address().port;
-        this.baseURL = "http://" + this.listen_ip + ":" + this.port;
+        this.baseURL = "http://" + this.proxyBaseHost + ":" + this.port;
         resolve(this.listener.address().port);
         this.emit("ready");
       });

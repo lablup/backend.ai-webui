@@ -1,16 +1,11 @@
-import {css, html, LitElement} from 'lit-element';
+/**
+ @license
+ Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ */
+import {css, customElement, html, property, LitElement} from "lit-element";
 
-class BackendAiOfflineIndicator extends LitElement {
-  static get is() {
-    return 'backend-ai-offline-indicator';
-  }
-
-  static get properties() {
-    return {
-      active: {type: Boolean}
-    };
-  }
-
+@customElement("backend-ai-offline-indicator")
+export default class BackendAIOfflineIndicator extends LitElement {
   static get styles() {
     return [
       css`
@@ -54,4 +49,8 @@ class BackendAiOfflineIndicator extends LitElement {
   }
 }
 
-window.customElements.define(BackendAiOfflineIndicator.is, BackendAiOfflineIndicator);
+declare global {
+  interface HTMLElementTagNameMap {
+    "backend-ai-offline-indicator": BackendAIOfflineIndicator;
+  }
+}

@@ -25,7 +25,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-summary-view")
 export default class BackendAISummary extends BackendAIPage {
-  @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'running';
   @property({type: Object}) sessions = Object();
   @property({type: Object}) jobs = Object();
@@ -244,9 +243,9 @@ export default class BackendAISummary extends BackendAIPage {
     this.resources.gpu = {};
     this.resources.gpu.total = 0;
     this.resources.gpu.used = 0;
-    this.resources.vgpu = {};
-    this.resources.vgpu.total = 0;
-    this.resources.vgpu.used = 0;
+    this.resources.fgpu = {};
+    this.resources.fgpu.total = 0;
+    this.resources.fgpu.used = 0;
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
@@ -269,14 +268,14 @@ export default class BackendAISummary extends BackendAIPage {
     } else {
       this.gpu_total = this.resources.gpu.total;
     }
-    if (isNaN(this.resources.vgpu.total)) {
+    if (isNaN(this.resources.fgpu.total)) {
       this.fgpu_total = null;
     } else {
-      this.fgpu_total = this.resources.vgpu.total;
+      this.fgpu_total = this.resources.fgpu.total;
     }
     this.cpu_used = this.resources.cpu.used;
     this.gpu_used = this.resources.gpu.used;
-    this.fgpu_used = this.resources.vgpu.used;
+    this.fgpu_used = this.resources.fgpu.used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
