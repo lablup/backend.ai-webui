@@ -650,7 +650,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       return window.backendaiclient.image.list();
     }).then((response) => {
       let images = response.images;
-      let domainImages = [];
+      let domainImages: any = [];
       images.forEach((image) => {
         if (this.allowed_registries.includes(image.registry)) {
           let tags = image.tag.split('-');

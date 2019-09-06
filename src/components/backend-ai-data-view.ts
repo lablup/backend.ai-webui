@@ -1199,7 +1199,7 @@ export default class BackendAIData extends BackendAIPage {
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
 
-      let temp = [];
+      let temp: any = [];
       for (let i = 0; i < e.dataTransfer.files.length; i++) {
         const file = e.dataTransfer.files[i];
         if (file.size > 2 ** 20) {
@@ -1306,7 +1306,7 @@ export default class BackendAIData extends BackendAIPage {
   _deleteFileWithCheck(e) {
     let files = this.deleteFileDialog.files;
     if (files.length > 0) {
-      let filenames = [];
+      let filenames: string[] = [];
       files.forEach((file) => {
         let filename = this.explorer.breadcrumb.concat(file.filename).join("/");
         filenames.push(filename);

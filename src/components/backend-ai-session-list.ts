@@ -344,7 +344,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       let sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
         let previous_sessions = this.compute_sessions;
-        let previous_session_keys = [];
+        let previous_session_keys: any = [];
         Object.keys(previous_sessions).map((objectKey, index) => {
           previous_session_keys.push(previous_sessions[objectKey].sess_id);
         });
@@ -474,7 +474,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
         {'tag': 'Cloudia', 'color': 'green'}],
     };
-    let tags = [];
+    let tags: any = [];
     if (lang === undefined) return [];
     let name = lang.split('/')[2].split(':')[0];
     if (name in kernel_alias) {
