@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -11,7 +11,7 @@ import 'weightless/progress-spinner';
 import 'weightless/tab-group';
 import 'weightless/tab';
 
-import { BackendAiStyles } from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-console-styles';
 import './backend-ai-usage-list.js';
 import {
   IronFlex,
@@ -95,8 +95,8 @@ export default class BackendAIStatisticsView extends BackendAIPage {
   }
 
   render() {
-      // language=HTML
-      return html`
+    // language=HTML
+    return html`
         <wl-card class="item">
           <h3 class="tab horizontal center layout">
             <wl-tab-group>
