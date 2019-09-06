@@ -256,12 +256,12 @@ export default class BackendAISummary extends BackendAIPage {
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources.gpu.total)) {
-      this.gpu_total = null;
+      this.gpu_total = 0;
     } else {
       this.gpu_total = this.resources.gpu.total;
     }
     if (isNaN(this.resources.fgpu.total)) {
-      this.fgpu_total = null;
+      this.fgpu_total = 0;
     } else {
       this.fgpu_total = this.resources.fgpu.total;
     }
@@ -503,7 +503,7 @@ export default class BackendAISummary extends BackendAIPage {
       : html``}
             </div>
           </lablup-activity-panel>
-          ${this.invitations.map(invitation =>
+      ${this.invitations ? this.invitations.map(invitation =>
       html`
             <lablup-activity-panel title="Invitation">
               <div slot="message">
@@ -538,7 +538,7 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             </lablup-activity-panel>
             `
-    )}
+    ) : ''}
         </div>
       </wl-card>
 `;

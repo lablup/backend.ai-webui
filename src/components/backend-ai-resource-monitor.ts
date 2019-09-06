@@ -585,21 +585,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
     }
-    const kernelName = this._generateKernelIndex(kernel, version);
+    const kernelName: string = this._generateKernelIndex(kernel, version);
     this.shadowRoot.querySelector('#launch-button').disabled = true;
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
     this.notification.text = 'Preparing session...';
     this.notification.show();
 
-    let sessions = [];
+    let sessions: any = [];
     const randStr = this._getRandomString();
 
     if (this.num_sessions > 1) {
       for (let i = 1; i <= this.num_sessions; i++) {
-        sessions.push({kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config});
+        let add_session = {'kernelName': kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config};
+        sessions.push(add_session);
       }
     } else {
-      sessions.push({kernelName, sessionName, config});
+      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, config});
     }
 
     const createSessionQueue = sessions.map(item => {
@@ -726,7 +727,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       } else {
         basename = kernelName;
       }
-      let tags = [];
+      let tags: string[] = [];
       if (alias in this.tags) {
         tags = tags.concat(this.tags[alias]);
       }
@@ -777,7 +778,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let total_slot = {};
     return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
-      let param = null;
+      let param: any;
       if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
         let scaling_group = 'default';
         if (this.scaling_group !== '') {
@@ -798,7 +799,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }).then((response) => {
       if (response.presets) { // Same as refreshResourceTemplate.
         let presets = response.presets;
-        let available_presets = [];
+        let available_presets: any = [];
         presets.forEach((item) => {
           if (item.allocatable === true) {
             if ('cuda.shares' in item.resource_slots) {
@@ -943,7 +944,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _refreshResourceTemplate() {
-    let param = null;
+    let param: any;
     if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
       let scaling_group = 'default';
       if (this.scaling_group !== '') {
@@ -963,7 +964,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     window.backendaiclient.resourcePreset.check(param).then((response) => {
       if (response.presets) {
         let presets = response.presets;
-        let available_presets = [];
+        let available_presets: any = [];
         presets.forEach((item) => {
           if (item.allocatable === true) {
             if ('cuda.shares' in item.resource_slots) {
@@ -1206,7 +1207,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'resource_limits { key min max }'
     ];
     window.backendaiclient.image.list(fields, true).then((response) => {
-      const images = [];
+      const images: Array<object> = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
         if (item.installed === true) {
