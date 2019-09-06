@@ -2,7 +2,7 @@
  * Backend.AI-credential-view
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
 

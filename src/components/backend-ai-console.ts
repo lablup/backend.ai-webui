@@ -41,7 +41,6 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
-import BackendAISplash from "./backend-ai-splash";
 
 /**
  Backend.AI GUI Console
@@ -77,10 +76,6 @@ declare global {
 
 @customElement("backend-ai-console")
 export default class BackendAIConsole extends connect(store)(LitElement) {
-  constructor() {
-    super();
-  }
-
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
   @property({type: String}) siteDescription = '';
   @property({type: String}) user_id = 'DISCONNECTED';
@@ -101,6 +96,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
+
+  constructor() {
+    super();
+  }
 
   static get styles() {
     return [
@@ -458,11 +457,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   Sessions
                 </paper-item>
               </a>
-              ${ false ? html`
+              ${false ? html`
               <paper-item disabled>
                 <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
                 Experiments
-              </paper-item>`: html``}
+              </paper-item>` : html``}
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
@@ -523,7 +522,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   ·
                   <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
                   ·
-                  <a @click="${() => {this.splash.show();}}">About</a>
+                  <a @click="${() => {
+      this.splash.show();
+    }}">About</a>
                 </small>
               </div>
             </footer>
