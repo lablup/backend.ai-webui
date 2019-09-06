@@ -76,6 +76,7 @@ declare global {
 
 @customElement("backend-ai-console")
 export default class BackendAIConsole extends connect(store)(LitElement) {
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
   @property({type: String}) siteDescription = '';
   @property({type: String}) user_id = 'DISCONNECTED';

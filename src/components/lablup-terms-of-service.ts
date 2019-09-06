@@ -22,6 +22,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("lablup-terms-of-service")
 export default class LablupTermsOfService extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) tosEntryURL = 'terms-of-service-payment';
   @property({type: String}) tosContent = '';
   @property({type: Boolean}) show = false;
