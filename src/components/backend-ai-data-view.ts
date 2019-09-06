@@ -585,7 +585,7 @@ export default class BackendAIData extends BackendAIPage {
               </template>
             </vaadin-grid-column>
           </vaadin-grid>` : html``}
-          <vaadin-grid id="fileList-grid" lass="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
+          <vaadin-grid id="fileList-grid" class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
