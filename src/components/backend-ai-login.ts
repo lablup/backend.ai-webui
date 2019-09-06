@@ -287,24 +287,35 @@ export default class BackendAILogin extends LitElement {
   }
 
   login() {
-    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
-    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
-    this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.user_id'));
-    this.password = JSON.parse(localStorage.getItem('backendaiconsole.password'));
-    if (this.api_key === null) {
+    let api_key: any = localStorage.getItem('backendaiconsole.api_key');
+    let secret_key: any = localStorage.getItem('backendaiconsole.secret_key');
+    let user_id: any = localStorage.getItem('backendaiconsole.user_id');
+    let password: any = localStorage.getItem('backendaiconsole.password');
+    if (api_key != null) {
+      this.api_key = api_key;
+    } else {
       this.api_key = '';
     }
-    if (this.secret_key === null) {
+    if (secret_key != null) {
+      this.secret_key = JSON.parse(secret_key);
+    } else {
       this.secret_key = '';
     }
-    if (this.user_id === null) {
+    if (user_id != null) {
+      this.user_id = JSON.parse(user_id);
+    } else {
       this.user_id = '';
     }
-    if (this.password === null) {
+    if (password != null) {
+      this.password = JSON.parse(password);
+    } else {
       this.password = '';
     }
     if (this.api_endpoint === '') {
-      this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
+      let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
+      if (api_endpoint != null) {
+        this.api_endpoint = JSON.parse(api_endpoint);
+      }
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
