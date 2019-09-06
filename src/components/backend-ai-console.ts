@@ -310,10 +310,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   updated(changedProps: any) {
     if (changedProps.has('_page')) {
-      let view = this._page;
+      let view: string = this._page;
       // load data for view
       if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
-        view = view.split(/[\/]+/).pop();
+        let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
+        if (typeof modified_view != 'undefined') {
+          view = modified_view;
+        } else {
+          view = 'summary';
+        }
         this._page = view;
       }
       switch (view) {
