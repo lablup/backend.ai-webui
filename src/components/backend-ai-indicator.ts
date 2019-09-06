@@ -11,6 +11,7 @@ import 'weightless/title';
 
 @customElement("backend-ai-indicator")
 export default class BackendAIIndicator extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
   @property({type: String}) text = '';
   @property({type: String}) mode = 'determinate';

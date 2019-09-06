@@ -33,13 +33,14 @@ import './backend-ai-indicator';
 
 @customElement("backend-ai-registry-list")
 class BackendAIRegistryList extends BackendAIPage {
+  public registryList: any;
   @property({type: Object}) indicator = Object();
-  @property({type: Array}) registryList = [];
   @property({type: Number}) selectedIndex = 0;
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
 
   constructor() {
     super();
+    this.registryList = [];
   }
 
   static get styles() {

@@ -405,10 +405,10 @@ export default class BackendAIExperimentView extends BackendAIPage {
 
   _initTabBar() {
     /* Test code */
-    let b = document.body.querySelector('#console-shell');
+    /*let b = document.body.querySelector('#console-shell');
     let c = b.shadowRoot.querySelector('#top-tab-menu');
     let d = this.shadowRoot.querySelector('#topbar-tabs');
-    c.appendChild(d);
+    c.appendChild(d);*/
   }
 
   _initAliases() {
@@ -793,7 +793,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
     window.backendaiclient.resourcePreset.check().then((response) => {
       if (response.presets) {
         let presets = response.presets;
-        let available_presets = [];
+        let available_presets: any = [];
         presets.forEach((item) => {
           if (item.allocatable === true) {
             if ('cuda.shares' in item.resource_slots) {
@@ -985,7 +985,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
       'resource_limits { key min max }'
     ];
     window.backendaiclient.image.list(fields).then((response) => {
-      const images = [];
+      const images: any = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
         if (item.installed === true) {
