@@ -69,6 +69,8 @@
     "emitDecoratorMetadata": false         /* Enables experimental support for emitting type metadata for decorators. */
   },
   "include": [
-    "src/components/*"
+    "src/components/*",
+    "src/reducers/*",
+    "src/*"
   ]
 }
