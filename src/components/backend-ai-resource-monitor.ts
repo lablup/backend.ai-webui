@@ -60,6 +60,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'PyTorch (NGC)': 'ngc-pytorch',
     'TensorFlow (NGC)': 'ngc-tensorflow',
     'PyTorch (Cloudia)': 'lablup-pytorch',
+    'Neural Network Intelligence': 'nni',
     'H2O': 'h2o',
   };
   @property({type: Object}) tags = {
@@ -77,6 +78,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'PyTorch (NGC)': ['NVidia GPU Cloud'],
     'TensorFlow (NGC)': ['NVidia GPU Cloud'],
     'PyTorch (Cloudia)': ['Cloudia'],
+    'Neural Network Intelligence': ['Microsoft'],
     'H2O': ['h2o.ai'],
   };
   @property({type: Array}) versions;
@@ -683,6 +685,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'scala': 'Scala',
       'scheme': 'Scheme',
       'lablup-pytorch': 'PyTorch (Cloudia)',
+      'nni': 'Neural Network Intelligence',
       'h2o': 'H2O.ai',
     };
     let humanizedName = null;

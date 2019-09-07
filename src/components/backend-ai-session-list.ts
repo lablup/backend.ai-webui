@@ -297,6 +297,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           'redirect': "/",
           'src': './resources/icons/h2o.png'
         }],
+      'nniboard':
+        [{
+          'name': 'nniboard',
+          'title': 'NNI Board',
+          'redirect': "/",
+          'src': './resources/icons/nni.png'
+        }],
     };
   }
 
