@@ -161,14 +161,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           paper-slider {
-              width: 285px;
+              width: 285px !important;
               --paper-slider-input: {
-                  width: 70px;
+                  width: 120px !important;
+                  min-width: 120px !important;
               };
               --paper-slider-height: 3px;
           }
 
-          paper-slider.mem {
+          .slider-input {
+              width: 100px;
+          }
+
+          paper-slider.mem,
+          paper-slider.shmem {
               --paper-slider-knob-color: var(--paper-orange-400);
               --paper-slider-active-color: var(--paper-orange-400);
           }
@@ -204,6 +210,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
           span.caption {
               width: 30px;
+              display: block;
               font-size: 12px;
               padding-left: 10px;
           }
@@ -213,8 +220,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               width: 100px;
           }
 
-          span.resource-type {
+          div.resource-type {
               font-size: 14px;
+              width: 50px;
           }
 
           .gauge-name {
@@ -311,6 +319,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           .resources .monitor {
               margin-right: 5px;
           }
+
           .resources.vertical .monitor {
               margin-bottom: 10px;
           }
@@ -1516,7 +1525,7 @@ ${this.resource_templates.map(item => html`
               <span slot="description">Custom allocation</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:30px;">CPU</span>
+                  <div class="resource-type" style="width:50px;">CPU</div>
                   <paper-slider id="cpu-resource" class="cpu"
                                 pin snaps expand editable
                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
@@ -1524,7 +1533,7 @@ ${this.resource_templates.map(item => html`
                   <span class="caption">Core</span>
                 </div>
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:30px;">RAM</span>
+                  <div class="resource-type" style="width:50px;">RAM</div>
                   <paper-slider id="mem-resource" class="mem"
                                 pin snaps step=0.05 editable
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
@@ -1532,7 +1541,7 @@ ${this.resource_templates.map(item => html`
                   <span class="caption">GB</span>
                 </div>
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:30px;">Shared Memory</span>
+                  <div class="resource-type" style="width:50px;">Shared Memory</div>
                   <paper-slider id="mem-resource" class="mem"
                                 pin snaps step=0.025 editable
                                 min="0.0625" max="${this.shmem_metric.max}"
@@ -1540,14 +1549,14 @@ ${this.resource_templates.map(item => html`
                   <span class="caption">GB</span>
                 </div>
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:30px;">GPU</span>
+                  <div class="resource-type" style="width:50px;">GPU</div>
                   <paper-slider id="gpu-resource" class="gpu"
                                 pin snaps editable step="${this.gpu_step}"
                                 min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
                   <span class="caption">GPU</span>
                 </div>
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:50px;">Sessions</span>
+                  <div class="resource-type" style="width:50px;">Sessions</div>
                   <paper-slider id="session-resource" class="session"
                                 pin snaps editable step=1
                                 min="1" max="${this.concurrency_limit}" value="${this.session_request}"></paper-slider>
