@@ -16,7 +16,8 @@ export default class BackendAIPainKiller {
     "server responded failure: 400 Bad Request - Missing or invalid API parameters. (You cannot create more vfolders.)": "You cannot create more vfolders due to resource policy",
     "server responded failure: 401 Unauthorized - Credential/signature mismatch. (Access key not found)": "Login information mismatch. Check your information",
     "server responded failure: 401 Unauthorized - Credential/signature mismatch.": "Login information mismatch. Check your information",
-    "server responded failure: 412 Precondition Failed - You have reached your resource limit.": "Reached your resource limit. Check resources and sessions."
+    "server responded failure: 412 Precondition Failed - You have reached your resource limit.": "Reached your resource limit. Check resources and sessions.",
+    "Authentication failed. Check information and manager status.": "Authentication failed. Check information and manager status."
   };
   static regexTable = {
     'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.',
