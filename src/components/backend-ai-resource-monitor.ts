@@ -590,6 +590,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       config['mem'] = String(this.mem_request) + 'g';
     }
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
+      config['shmem'] = String(this.shmem_request) + 'g';
+    }
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
       if (this.gpu_mode == 'fgpu') {
