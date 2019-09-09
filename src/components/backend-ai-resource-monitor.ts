@@ -93,6 +93,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Object}) shmem_metric = {
+    'min': 0.0625,
+    'max': 1,
+    'preferred': 0.0625
+  };
   @property({type: Object}) gpu_metric = {
     'min': 0,
     'max': 0
@@ -118,6 +123,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) launch_ready;
   @property({type: Number}) cpu_request;
   @property({type: Number}) mem_request;
+  @property({type: Number}) shmem_request;
   @property({type: Number}) gpu_request;
   @property({type: Number}) session_request;
   @property({type: Boolean}) _status;
@@ -155,14 +161,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
 
           paper-slider {
-              width: 285px;
+              width: 285px !important;
               --paper-slider-input: {
-                  width: 70px;
+                  width: 120px !important;
+                  min-width: 120px !important;
               };
               --paper-slider-height: 3px;
           }
 
-          paper-slider.mem {
+          .slider-input {
+              width: 100px;
+          }
+
+          paper-slider.mem,
+          paper-slider.shmem {
               --paper-slider-knob-color: var(--paper-orange-400);
               --paper-slider-active-color: var(--paper-orange-400);
           }
@@ -198,6 +210,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
           span.caption {
               width: 30px;
+              display: block;
               font-size: 12px;
               padding-left: 10px;
           }
@@ -207,8 +220,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               width: 100px;
           }
 
-          span.resource-type {
+          div.resource-type {
               font-size: 14px;
+              width: 50px;
           }
 
           .gauge-name {
@@ -305,6 +319,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           .resources .monitor {
               margin-right: 5px;
           }
+
           .resources.vertical .monitor {
               margin-bottom: 10px;
           }
@@ -345,6 +360,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this._status = 'inactive';
     this.cpu_request = 1;
     this.mem_request = 1;
+    this.shmem_request = 0.0625;
     this.gpu_request = 0;
     this.session_request = 1;
     this.scaling_groups = [];
@@ -544,6 +560,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
+    this.shmem_request = this.shadowRoot.querySelector('#shmem-resource').value;
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
@@ -572,6 +589,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
     } else {
       config['mem'] = String(this.mem_request) + 'g';
+    }
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
+      config['shmem'] = String(this.shmem_request) + 'g';
     }
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
@@ -1018,6 +1038,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
       let disableLaunch = false;
+      let shmem_metric: any = {
+        'min': 0.0625,
+        'max': 1,
+        'preferred': 0.125
+      };
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
           let cpu_metric = {...item};
@@ -1154,7 +1179,34 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           mem_metric.max = Number(mem_metric.max.toFixed(2));
           this.mem_metric = mem_metric;
         }
+        if (item.key === 'shmem') { // Shared memory is preferred value. No min/max is required.
+          shmem_metric = {...item};
+          if ('preferred' in shmem_metric) {
+            shmem_metric.preferred = window.backendaiclient.utils.changeBinaryUnit(shmem_metric.preferred, 'g', 'g');
+          } else {
+            shmem_metric.preferred = 0.0625;
+          }
+        }
       });
+      // Shared memory setting
+      shmem_metric.max = this.mem_metric.max;
+      shmem_metric.min = 0.0625; // 64m
+      if (shmem_metric.min >= shmem_metric.max) {
+        if (shmem_metric.min > shmem_metric.max) {
+          shmem_metric.min = shmem_metric.max;
+          shmem_metric.max = shmem_metric.max + 1;
+          disableLaunch = true;
+          this.shadowRoot.querySelector('#shmem-resource').disabled = true;
+        } else {
+          shmem_metric.max = shmem_metric.max + 1;
+          this.shadowRoot.querySelector('#shmem-resource').disabled = true;
+        }
+      }
+      shmem_metric.min = Number(shmem_metric.min.toFixed(2));
+      shmem_metric.max = Number(shmem_metric.max.toFixed(2));
+      this.shmem_metric = shmem_metric;
+
+      // GPU metric
       if (this.gpu_metric.min == 0 && this.gpu_metric.max == 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
@@ -1261,12 +1313,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const cpu = button.cpu;
     const mem = button.mem;
     const gpu = button.gpu;
+    this.shmem_request = 0.0625;
     this._updateResourceIndicator(cpu, mem, gpu);
     //button.raised = true;
   }
 
   _updateResourceIndicator(cpu, mem, gpu) {
     this.shadowRoot.querySelector('#gpu-resource').value = gpu;
+    this.shadowRoot.querySelector('#shmem-resource').value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu;
@@ -1476,7 +1530,7 @@ ${this.resource_templates.map(item => html`
               <span slot="description">Custom allocation</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:30px;">CPU</span>
+                  <div class="resource-type" style="width:50px;">CPU</div>
                   <paper-slider id="cpu-resource" class="cpu"
                                 pin snaps expand editable
                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
@@ -1484,7 +1538,7 @@ ${this.resource_templates.map(item => html`
                   <span class="caption">Core</span>
                 </div>
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:30px;">RAM</span>
+                  <div class="resource-type" style="width:50px;">RAM</div>
                   <paper-slider id="mem-resource" class="mem"
                                 pin snaps step=0.05 editable
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
@@ -1492,14 +1546,22 @@ ${this.resource_templates.map(item => html`
                   <span class="caption">GB</span>
                 </div>
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:30px;">GPU</span>
+                  <div class="resource-type" style="width:50px;">Shared Memory</div>
+                  <paper-slider id="shmem-resource" class="mem"
+                                pin snaps step=0.0025 editable
+                                min="0.0" max="${this.shmem_metric.max}"
+                                value="${this.shmem_request}"></paper-slider>
+                  <span class="caption">GB</span>
+                </div>
+                <div class="horizontal center layout">
+                  <div class="resource-type" style="width:50px;">GPU</div>
                   <paper-slider id="gpu-resource" class="gpu"
                                 pin snaps editable step="${this.gpu_step}"
                                 min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
                   <span class="caption">GPU</span>
                 </div>
                 <div class="horizontal center layout">
-                  <span class="resource-type" style="width:50px;">Sessions</span>
+                  <div class="resource-type" style="width:50px;">Sessions</div>
                   <paper-slider id="session-resource" class="session"
                                 pin snaps editable step=1
                                 min="1" max="${this.concurrency_limit}" value="${this.session_request}"></paper-slider>
