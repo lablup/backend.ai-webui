@@ -1313,12 +1313,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const cpu = button.cpu;
     const mem = button.mem;
     const gpu = button.gpu;
+    this.shmem_request = 0.0625;
     this._updateResourceIndicator(cpu, mem, gpu);
     //button.raised = true;
   }
 
   _updateResourceIndicator(cpu, mem, gpu) {
     this.shadowRoot.querySelector('#gpu-resource').value = gpu;
+    this.shadowRoot.querySelector('#shmem-resource').value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu;
