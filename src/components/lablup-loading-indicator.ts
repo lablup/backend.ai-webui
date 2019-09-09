@@ -3,11 +3,12 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/progress-spinner';
 
 @customElement("lablup-loading-indicator")
 export default class LablupLoadingIndicator extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) indicator;
   @property({type: Boolean}) active = false;
 

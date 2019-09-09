@@ -31,7 +31,7 @@ import 'weightless/progress-spinner';
 import './lablup-notification';
 import './backend-ai-splash';
 
-import '../lib/backend.ai-client-es6.js';
+import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -41,7 +41,6 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
-import BackendAISplash from "./backend-ai-splash";
 
 /**
  Backend.AI GUI Console
@@ -77,10 +76,7 @@ declare global {
 
 @customElement("backend-ai-console")
 export default class BackendAIConsole extends connect(store)(LitElement) {
-  constructor() {
-    super();
-  }
-
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
   @property({type: String}) siteDescription = '';
   @property({type: String}) user_id = 'DISCONNECTED';
@@ -101,6 +97,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
+
+  constructor() {
+    super();
+  }
 
   static get styles() {
     return [
@@ -280,6 +280,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         if (res.status == 200) {
           return res.text();
         }
+        return '';
       })
       .then(res => {
         this.config = toml(res);
@@ -293,10 +294,28 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.domain = window.backendaiclient._config.domainName;
     this.current_group = window.backendaiclient.current_group;
     this.groups = window.backendaiclient.groups;
+    let groupSelectionBox = this.shadowRoot.getElementById('group-select');
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
       (this.shadowRoot.getElementById('group-select') as any).disabled = true;
       (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
     }
+    // Detached from template to support live-update after creating new group (will need it)
+    let opt = document.createElement('option');
+    opt.setAttribute('disabled', 'true');
+    opt.innerHTML = 'Select Project';
+    groupSelectionBox.appendChild(opt);
+    this.groups.map(group => {
+      opt = document.createElement('option');
+      opt.value = group;
+      if (this.current_group === group) {
+        opt.selected = true;
+      } else {
+        opt.selected = false;
+      }
+      opt.innerHTML = group;
+      groupSelectionBox.appendChild(opt);
+    });
+    groupSelectionBox.updateOptions();
     //this.shadowRoot.getElementById('group-select')._requestRender();
   }
 
@@ -309,10 +328,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   updated(changedProps: any) {
     if (changedProps.has('_page')) {
-      let view = this._page;
+      let view: string = this._page;
       // load data for view
       if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
-        view = view.split(/[\/]+/).pop();
+        let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
+        if (typeof modified_view != 'undefined') {
+          view = modified_view;
+        } else {
+          view = 'summary';
+        }
         this._page = view;
       }
       switch (view) {
@@ -440,10 +464,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </app-header>
             <wl-select id="group-select" name="group-select" label="Project"
               @input="${this.changeGroup}" value="${this.current_group}">
-               <option value disabled>Select Project</option>
-                ${this.groups.map(group => html`
-                <option value="${group}" ?selected="${this.current_group === group}">${group}</option>
-                `)}
             </wl-select>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
               <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
@@ -458,11 +478,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   Sessions
                 </paper-item>
               </a>
-              ${ false ? html`
+              ${false ? html`
               <paper-item disabled>
                 <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
                 Experiments
-              </paper-item>`: html``}
+              </paper-item>` : html``}
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
@@ -523,14 +543,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   ·
                   <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
                   ·
-                  <a @click="${() => {this.splash.show();}}">About</a>
+                  <a @click="${() => {
+      this.splash.show();
+    }}">About</a>
                 </small>
               </div>
             </footer>
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.09.2.190906</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.09.3.190909</small>
               </address>
             </div>
           </app-header-layout>

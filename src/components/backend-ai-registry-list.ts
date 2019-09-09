@@ -1,12 +1,11 @@
-
 /**
  @license
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
-import { render } from 'lit-html';
-import { BackendAIPage } from './backend-ai-page';
+import {css, customElement, html, property} from "lit-element";
+import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
@@ -26,21 +25,22 @@ import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
 
-import { default as PainKiller } from "./backend-ai-painkiller";
-import { BackendAiStyles } from "./backend-ai-console-styles";
-import { IronFlex, IronFlexAlignment } from "../plastics/layout/iron-flex-layout-classes";
+import {default as PainKiller} from "./backend-ai-painkiller";
+import {BackendAiStyles} from "./backend-ai-console-styles";
+import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 import './lablup-notification';
 import './backend-ai-indicator';
 
 @customElement("backend-ai-registry-list")
 class BackendAIRegistryList extends BackendAIPage {
+  public registryList: any;
   @property({type: Object}) indicator = Object();
-  @property({type: Array}) registryList = [];
   @property({type: Number}) selectedIndex = 0;
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
 
   constructor() {
     super();
+    this.registryList = [];
   }
 
   static get styles() {
@@ -49,6 +49,12 @@ class BackendAIRegistryList extends BackendAIPage {
       IronFlex,
       IronFlexAlignment,
       css`
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 265px);
+        }
+
         h4 {
           font-weight: 200;
           font-size: 14px;
@@ -104,7 +110,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   _refreshRegistryList() {
     window.backendaiclient.registry.list()
-      .then(({ result }) => {
+      .then(({result}) => {
         this.registryList = this._parseRegistryList(result);
         console.log(this.registryList);
         this.requestUpdate();
@@ -149,14 +155,14 @@ class BackendAIRegistryList extends BackendAIPage {
     input[""] = url;
 
     if (username !== "") {
-      input[ 'username' ] = username;
+      input['username'] = username;
 
-      if (password !== "") input[ 'password' ] = password;
+      if (password !== "") input['password'] = password;
     }
 
     const key = `config/docker/registry/${this._getHostname(url)}`;
     window.backendaiclient.registry.add(key, input)
-      .then(({ result }) => {
+      .then(({result}) => {
         if (result === "ok") {
           this.notification.text = "Registry successfully added";
           this._refreshRegistryList();
@@ -173,7 +179,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
     if (this.registryList[this.selectedIndex].hostname === name) {
       window.backendaiclient.registry.delete(name)
-        .then(({ result }) => {
+        .then(({result}) => {
           if (result === "ok") {
             this.notification.text = "Registry successfully deleted";
             this._refreshRegistryList();
@@ -193,7 +199,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Updating registry information...');
     window.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
-      .then(({ rescan_images }) => {
+      .then(({rescan_images}) => {
         if (rescan_images.ok) {
           this.indicator.set(100, 'Registry update finished.');
           this.indicator.end(1000);
@@ -230,7 +236,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
-    render (
+    render(
       html`
         <div>${idx}</div>
       `,
@@ -239,7 +245,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _registryRenderer(root, column, rowData) {
-    render (
+    render(
       html`
         <div>
           ${rowData.item[""]}
@@ -250,7 +256,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _controlsRenderer(root, column, rowData) {
-    render (
+    render(
       html`
         <div
           id="controls"

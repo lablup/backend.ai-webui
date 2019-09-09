@@ -9,8 +9,6 @@ declare global {
 }
 
 export default class BackendAIPainKiller {
-  public errorMessageTable: any;
-  public regexTable: any;
   static errorMessageTable = {
     "Cannot read property 'map' of null": "User has no group. Please contact administrator to fix it.",
     "Cannot read property 'split' of undefined": 'Wrong API server address.',
@@ -18,13 +16,16 @@ export default class BackendAIPainKiller {
     "server responded failure: 400 Bad Request - Missing or invalid API parameters. (You cannot create more vfolders.)": "You cannot create more vfolders due to resource policy",
     "server responded failure: 401 Unauthorized - Credential/signature mismatch. (Access key not found)": "Login information mismatch. Check your information",
     "server responded failure: 401 Unauthorized - Credential/signature mismatch.": "Login information mismatch. Check your information",
-    "server responded failure: 412 Precondition Failed - You have reached your resource limit.": "Reached your resource limit. Check resources and sessions."
+    "server responded failure: 412 Precondition Failed - You have reached your resource limit.": "Reached your resource limit. Check resources and sessions.",
+    "Authentication failed. Check information and manager status.": "Authentication failed. Check information and manager status."
   };
   static regexTable = {
     'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.',
     'integrity error: duplicate key value violates unique constraint "pk_scaling_groups"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A scaling group with the same name already exists.',
     'server responded failure: 400 Bad Request - Missing or invalid API parameters. (Your resource quota is exceeded. (cpu=24 mem=512g cuda.shares=80))': 'Resource limit exceed. Check your free resources.'
   };
+  public errorMessageTable: any;
+  public regexTable: any;
 
   static relieve(msg) {
     console.log(msg);

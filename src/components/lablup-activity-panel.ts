@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, LitElement, property} from "lit-element";
 import '@polymer/paper-icon-button/paper-icon-button';
 import 'weightless/card';
 
@@ -10,6 +10,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement("lablup-activity-panel")
 export default class LablupActivityPanel extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) title = '';
   @property({type: String}) message = '';
   @property({type: String}) panelId = '';
@@ -104,24 +105,24 @@ export default class LablupActivityPanel extends LitElement {
       const button = this.shadowRoot.getElementById('button');
       this.shadowRoot.querySelector('h4').removeChild(button);
     } else {
-      this.shadowRoot.querySelector('#button').addEventListener('tap', this._removePanel.bind(this));
+      (this.shadowRoot.querySelector('#button') as any).addEventListener('tap', this._removePanel.bind(this));
     }
-    this.shadowRoot.querySelector('wl-card').style.width = this.width + "px";
+    (this.shadowRoot.querySelector('wl-card') as any).style.width = this.width + "px";
     if (this.minwidth) {
-      this.shadowRoot.querySelector('wl-card').style.minWidth = this.minwidth + "px";
+      (this.shadowRoot.querySelector('wl-card') as any).style.minWidth = this.minwidth + "px";
     }
     if (this.maxwidth) {
-      this.shadowRoot.querySelector('wl-card').style.minWidth = this.maxwidth + "px";
+      (this.shadowRoot.querySelector('wl-card') as any).style.minWidth = this.maxwidth + "px";
     }
     if (this.horizontalsize) {
       if (this.horizontalsize == '2x') {
-        this.shadowRoot.querySelector('wl-card').style.width = (this.width * 2 + 32) + "px";
+        (this.shadowRoot.querySelector('wl-card') as any).style.width = (this.width * 2 + 32) + "px";
       }
       if (this.horizontalsize == '3x') {
-        this.shadowRoot.querySelector('wl-card').style.width = (this.width * 3 + 32) + "px";
+        (this.shadowRoot.querySelector('wl-card') as any).style.width = (this.width * 3 + 32) + "px";
       }
     }
-    this.shadowRoot.querySelector('wl-card').style.margin = this.marginWidth + "px";
+    (this.shadowRoot.querySelector('wl-card') as any).style.margin = this.marginWidth + "px";
   }
 
   connectedCallback() {

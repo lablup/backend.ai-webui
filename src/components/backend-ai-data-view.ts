@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -365,11 +365,11 @@ export default class BackendAIData extends BackendAIPage {
   _toggleCheckbox() {
     let buttons = this.shadowRoot.querySelectorAll(".multiple-action-buttons");
     if (this.fileListGrid.selectedItems.length > 0) {
-      [].forEach.call(buttons, (e) => {
+      [].forEach.call(buttons, (e: HTMLElement) => {
         e.style.display = 'block';
       });
     } else {
-      [].forEach.call(buttons, (e) => {
+      [].forEach.call(buttons, (e: HTMLElement) => {
         e.style.display = 'none';
       });
     }
@@ -585,7 +585,7 @@ export default class BackendAIData extends BackendAIPage {
               </template>
             </vaadin-grid-column>
           </vaadin-grid>` : html``}
-          <vaadin-grid id="fileList-grid" lass="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
+          <vaadin-grid id="fileList-grid" class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
@@ -931,7 +931,7 @@ export default class BackendAIData extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div class="layout vertical">
+        <div class="layout vertical center-justified">
         ${rowData.item.type == 'user' ? html`
           <wl-icon>person</wl-icon>
         ` : html`
@@ -940,6 +940,7 @@ export default class BackendAIData extends BackendAIPage {
         </div>`, root
     )
   }
+
   firstUpdated() {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
@@ -1198,7 +1199,7 @@ export default class BackendAIData extends BackendAIPage {
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
 
-      let temp = [];
+      let temp: any = [];
       for (let i = 0; i < e.dataTransfer.files.length; i++) {
         const file = e.dataTransfer.files[i];
         if (file.size > 2 ** 20) {
@@ -1305,7 +1306,7 @@ export default class BackendAIData extends BackendAIPage {
   _deleteFileWithCheck(e) {
     let files = this.deleteFileDialog.files;
     if (files.length > 0) {
-      let filenames = [];
+      let filenames: string[] = [];
       files.forEach((file) => {
         let filename = this.explorer.breadcrumb.concat(file.filename).join("/");
         filenames.push(filename);

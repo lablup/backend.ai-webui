@@ -168,7 +168,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   _refreshKeyData(user_id?) {
-    let status = 'active';
     let is_active = true;
     switch (this.condition) {
       case 'active':
@@ -279,8 +278,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   refresh() {
-    //let user_id = window.backendaiclient_email;
-    let user_id = null;
     this._refreshKeyData();
   }
 
@@ -289,7 +286,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   _deleteKey(e) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
     window.backendaiclient.keypair.delete(accessKey).then(response => {
@@ -312,7 +308,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   _mutateKey(e, is_active) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
     let original = this.keypairs.find(this._findKeyItem, accessKey);

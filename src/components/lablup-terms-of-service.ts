@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, LitElement, property} from "lit-element";
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -22,6 +22,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("lablup-terms-of-service")
 export default class LablupTermsOfService extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) tosEntryURL = 'terms-of-service-payment';
   @property({type: String}) tosContent = '';
   @property({type: Boolean}) show = false;
@@ -180,6 +181,7 @@ export default class LablupTermsOfService extends LitElement {
     this.show = false;
     this.dialog.hide();
   }
+
   _changeApproved() {
     if (this.approveCheckbox.checked == true) {
       this.show = false;

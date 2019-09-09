@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
@@ -21,19 +21,18 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import LablupNotification from "./lablup-notification";
 
 @customElement("backend-ai-session-view")
 export default class BackendAiSessionView extends BackendAIPage {
+  @property({type: String}) _status = 'inactive';
+  @property({type: Boolean}) active = true;
+  @property({type: Object}) _lists = Object();
+
   constructor() {
     super();
     this.active = false;
     this._status = 'inactive';
   }
-
-  @property({type: String}) _status = 'inactive';
-  @property({type: Boolean}) active = true;
-  @property({type: Object}) _lists = Object();
 
   static get styles() {
     return [

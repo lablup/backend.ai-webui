@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
 import '@polymer/iron-icon/iron-icon';
@@ -297,6 +297,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           'redirect': "/",
           'src': './resources/icons/h2o.png'
         }],
+      'nniboard':
+        [{
+          'name': 'nniboard',
+          'title': 'NNI Board',
+          'redirect': "/",
+          'src': './resources/icons/nni.png'
+        }],
     };
   }
 
@@ -344,7 +351,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       let sessions = response.compute_sessions;
       if (sessions !== undefined && sessions.length != 0) {
         let previous_sessions = this.compute_sessions;
-        let previous_session_keys = [];
+        let previous_session_keys: any = [];
         Object.keys(previous_sessions).map((objectKey, index) => {
           previous_session_keys.push(previous_sessions[objectKey].sess_id);
         });
@@ -474,7 +481,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
         {'tag': 'Cloudia', 'color': 'green'}],
     };
-    let tags = [];
+    let tags: any = [];
     if (lang === undefined) return [];
     let name = lang.split('/')[2].split(':')[0];
     if (name in kernel_alias) {
@@ -558,6 +565,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           };
           return this.sendRequest(rqst);
         }
+        return Promise.resolve(true);
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
@@ -606,7 +614,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controls = controller.closest('#controls');
     const kernelId = controls['kernel-id'];
     const accessKey = controls['access-key'];
-    const kernelImage = controls['kernel-image'];
     const appServices = controls['app-services'];
     this.appSupportList = [];
     appServices.forEach((elm) => {
@@ -716,7 +723,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const kernelId = controls['kernel-id'];
-    let accessKey = window.backendaiclient._config.accessKey;
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(kernelId, 'jupyter')
@@ -999,7 +1005,7 @@ ${item.map(item => html`
           </vaadin-grid-column>
           `
       : html``
-      }
+    }
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>

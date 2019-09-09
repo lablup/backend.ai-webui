@@ -2,7 +2,7 @@
  * Backend.AI-credential-view
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -316,7 +316,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
-    let vfolder_hosts = [];
+    let vfolder_hosts: string[] = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
@@ -361,8 +361,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _addResourcePolicy() {
-    let is_active = true;
-    let is_admin = false;
     let name;
     if (this.shadowRoot.querySelector('#id_new_policy_name').value != '') {
       if (this.shadowRoot.querySelector('#id_new_policy_name').invalid == true) {
@@ -475,8 +473,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _modifyResourcePolicy() {
-    let is_active = true;
-    let is_admin = false;
     let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     let input = this._readResourcePolicyInput();
 

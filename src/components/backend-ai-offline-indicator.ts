@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, LitElement} from "lit-element";
 
 @customElement("backend-ai-offline-indicator")
 export default class BackendAIOfflineIndicator extends LitElement {

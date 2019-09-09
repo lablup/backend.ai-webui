@@ -276,7 +276,7 @@ class BackendAIDropdownMenu extends PolymerElement {
   }
 
   _computeInputValue(selectedItems) {
-    var selectedLabels = [];
+    var selectedLabels: string[] = [];
     for (var i = 0; i < selectedItems.length; i++) {
       var label = selectedItems[i].label || selectedItems[i].getAttribute('label') || selectedItems[i].textContent.trim();
       selectedLabels.push(label);

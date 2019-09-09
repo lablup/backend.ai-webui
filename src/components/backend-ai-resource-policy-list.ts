@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
@@ -30,7 +30,6 @@ import './lablup-notification';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
-import BackendAIAgentView from "./backend-ai-agent-view";
 
 @customElement("backend-ai-resource-policy-list")
 export default class BackendAIResourcePolicyList extends BackendAIPage {
@@ -435,7 +434,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _refreshPolicyData() {
     return window.backendaiclient.resourcePolicy.get().then((response) => {
       let rp = response.keypair_resource_policies;
-      let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      //let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
       return rp;
     }).then((response) => {
       let resourcePolicies = response;
@@ -493,7 +492,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
     let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
     let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
-    let vfolder_hosts = [];
+    let vfolder_hosts: Array<object> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
     if (cpu_resource === "Unlimited") {
       cpu_resource = "Infinity";
@@ -538,20 +537,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _modifyResourcePolicy() {
-    let is_active = true;
-    let is_admin = false;
     let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     let input = this._readResourcePolicyInput();
 
     window.backendaiclient.resourcePolicy.mutate(name, input)
-    .then(({ modify_keypair_resource_policy }) => {
-      if (modify_keypair_resource_policy.ok) {
-        this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-        this.notification.text = "Resource policy successfully updated.";
-        this.notification.show();
-        this.refresh();
-      }
-    }).catch(err => {
+      .then(({modify_keypair_resource_policy}) => {
+        if (modify_keypair_resource_policy.ok) {
+          this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+          this.notification.text = "Resource policy successfully updated.";
+          this.notification.show();
+          this.refresh();
+        }
+      }).catch(err => {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-policy-dialog').hide();
@@ -562,7 +559,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _deleteKey(e) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
     window.backendaiclient.keypair.delete(accessKey).then(response => {

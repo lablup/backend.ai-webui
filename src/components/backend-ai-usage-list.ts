@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -11,7 +11,7 @@ import 'weightless/tab-group';
 import 'weightless/tab';
 import 'weightless/select';
 
-import { BackendAiStyles } from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-console-styles';
 import './backend-ai-chart.js'
 import {
   IronFlex,
@@ -31,21 +31,22 @@ export default class BackendAIUsageList extends BackendAIPage {
     "io_write_bytes": "IO-Write"
   };
   @property({type: Object}) templates = {
-      "1D": {
-        "interval": 15 / 15,
-        "length": 4 * 24
-      },
-      "1W": {
-        "interval": 15 / 15,
-        "length": 4 * 24 * 7
-      }
-    };
+    "1D": {
+      "interval": 15 / 15,
+      "length": 4 * 24
+    },
+    "1W": {
+      "interval": 15 / 15,
+      "length": 4 * 24 * 7
+    }
+  };
   @property({type: Object}) collection = {};
-  @property({type: Array}) data = [];
   @property({type: String}) period = '1D';
+  public data: any;
 
   constructor() {
     super();
+    this.data = [];
   }
 
   static get styles() {
@@ -84,7 +85,9 @@ export default class BackendAIUsageList extends BackendAIPage {
     } else {
       this.active = false;
       this._menuChanged(false);
-      this.shadowRoot.querySelectorAll("backend-ai-chart").forEach(e => { e.wipe(); });
+      this.shadowRoot.querySelectorAll("backend-ai-chart").forEach(e => {
+        e.wipe();
+      });
     }
 
     super.attributeChangedCallback(name, oldval, newval);
@@ -106,38 +109,40 @@ export default class BackendAIUsageList extends BackendAIPage {
       }, true);
     } else {
       this.init()
-      .then(res => {
-        this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {chart.init()});
-      })
+        .then(res => {
+          this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {
+            chart.init()
+          });
+        })
     }
   }
 
   init() {
     return window.backendaiclient.resources.user_stats()
-    .then(res => {
-      const {period, templates} = this;
-      this.data = res;
+      .then(res => {
+        const {period, templates} = this;
+        this.data = res;
 
-      this.collection[period] = {};
-      Object.keys(this._map).forEach(key => {
-        this.collection[period][key] = {
-          data: [
-            res
-              .filter((e, i) => res.length - templates[period].length <= i)
-              .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
-          ],
-          axisTitle: {
-            x: "Date",
-            y: this._map[key]
-          },
-          period,
-          unit_hint: res[0][key].unit_hint
-        }
+        this.collection[period] = {};
+        Object.keys(this._map).forEach(key => {
+          this.collection[period][key] = {
+            data: [
+              res
+                .filter((e, i) => res.length - templates[period].length <= i)
+                .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
+            ],
+            axisTitle: {
+              x: "Date",
+              y: this._map[key]
+            },
+            period,
+            unit_hint: res[0][key].unit_hint
+          }
 
-      });
+        });
 
-      return this.updateComplete;
-    })
+        return this.updateComplete;
+      })
   }
 
   pulldownChange(e) {
@@ -151,7 +156,7 @@ export default class BackendAIUsageList extends BackendAIPage {
         collection[period][key] = {
           data: [
             data
-                .filter((e, i) => data.length - templates[period].length <= i)
+              .filter((e, i) => data.length - templates[period].length <= i)
               .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
           ],
           axisTitle: {
@@ -178,8 +183,8 @@ export default class BackendAIUsageList extends BackendAIPage {
       </div>
       <div class="layout vertical center flex wrap">
       ${
-        Object.keys(this._map).map((key, idx) =>
-          html`
+      Object.keys(this._map).map((key, idx) =>
+        html`
           <div class="layout horizontal center flex" style="width:100%;">
               <h3>${this._map[key]}</h3>
               <span></span>
@@ -194,7 +199,7 @@ export default class BackendAIUsageList extends BackendAIPage {
             .collection=${this.collection[this.period][key]}
           ></backend-ai-chart>
           `)
-      }
+    }
       </div>
     `;
   }

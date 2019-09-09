@@ -50,13 +50,14 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Number}) gpu_used = 0;
   @property({type: Number}) fgpu_total = 0;
   @property({type: Number}) fgpu_used = 0;
-  @property({type: Array}) invitations = [];
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
+  public invitations: any;
 
   constructor() {
     super();
+    this.invitations = [];
   }
 
   static get styles() {
@@ -204,14 +205,6 @@ export default class BackendAISummary extends BackendAIPage {
       default:
         status = 'ALIVE';
     }
-    let fields = ['id',
-      'addr',
-      'status',
-      'first_contact',
-      'cpu_cur_pct',
-      'mem_cur_bytes',
-      'occupied_slots',
-      'available_slots'];
     this.indicator.show();
 
     window.backendaiclient.resources.totalResourceInformation().then((response) => {
@@ -264,12 +257,12 @@ export default class BackendAISummary extends BackendAIPage {
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources.gpu.total)) {
-      this.gpu_total = null;
+      this.gpu_total = 0;
     } else {
       this.gpu_total = this.resources.gpu.total;
     }
     if (isNaN(this.resources.fgpu.total)) {
-      this.fgpu_total = null;
+      this.fgpu_total = 0;
     } else {
       this.fgpu_total = this.resources.fgpu.total;
     }
@@ -511,7 +504,7 @@ export default class BackendAISummary extends BackendAIPage {
       : html``}
             </div>
           </lablup-activity-panel>
-          ${this.invitations.map(invitation =>
+      ${this.invitations ? this.invitations.map(invitation =>
       html`
             <lablup-activity-panel title="Invitation">
               <div slot="message">
@@ -546,7 +539,7 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             </lablup-activity-panel>
             `
-    )}
+    ) : ''}
         </div>
       </wl-card>
 `;

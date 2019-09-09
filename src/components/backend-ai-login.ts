@@ -3,9 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
-
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
+import {css, customElement, html, LitElement, property} from "lit-element";
 
 import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
@@ -49,6 +47,7 @@ declare global {
  */
 @customElement("backend-ai-login")
 export default class BackendAILogin extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) api_key = '';
   @property({type: String}) secret_key = '';
   @property({type: String}) user_id = '';
@@ -86,67 +85,67 @@ export default class BackendAILogin extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
+          paper-icon-button {
+              --paper-icon-button-ink-color: white;
+          }
 
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
+          app-drawer-layout:not([narrow]) [drawer-toggle] {
+              display: none;
+          }
 
-        fieldset input {
-          width: 100%;
-          border: 0;
-          margin: 15px 0 0 0;
-          font: inherit;
-          font-size: 16px;
-          outline: none;
-        }
+          fieldset input {
+              width: 100%;
+              border: 0;
+              margin: 15px 0 0 0;
+              font: inherit;
+              font-size: 16px;
+              outline: none;
+          }
 
-        wl-textfield {
-          --input-font-family: 'Quicksand', sans-serif;
-        }
+          wl-textfield {
+              --input-font-family: 'Quicksand', sans-serif;
+          }
 
-        #login-panel {
-          --dialog-width: 400px;
-        }
+          #login-panel {
+              --dialog-width: 400px;
+          }
 
-        h3 small {
-          --button-font-size: 12px;
-        }
+          h3 small {
+              --button-font-size: 12px;
+          }
 
-        wl-button {
-          --button-bg: transparent;
-        }
+          wl-button {
+              --button-bg: transparent;
+          }
 
-        wl-button.mini {
-          font-size: 12px;
-        }
+          wl-button.mini {
+              font-size: 12px;
+          }
 
-        wl-button.full {
-          width: 335px;
-        }
+          wl-button.full {
+              width: 335px;
+          }
 
-        wl-button.login-button,
-        wl-button.login-cancel-button {
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
+          wl-button.login-button,
+          wl-button.login-cancel-button {
+              --button-bg-hover: var(--paper-red-100);
+              --button-bg-active: var(--paper-red-600);
+          }
 
-        wl-button.signup-button {
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
+          wl-button.signup-button {
+              --button-bg-hover: var(--paper-green-100);
+              --button-bg-active: var(--paper-green-600);
+          }
 
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
+          wl-button > wl-icon {
+              --icon-size: 24px;
+              padding: 0;
+          }
 
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
+          wl-icon {
+              --icon-size: 16px;
+              padding: 0;
+          }
       `];
   }
 
@@ -288,24 +287,35 @@ export default class BackendAILogin extends LitElement {
   }
 
   login() {
-    this.api_key = JSON.parse(localStorage.getItem('backendaiconsole.api_key'));
-    this.secret_key = JSON.parse(localStorage.getItem('backendaiconsole.secret_key'));
-    this.user_id = JSON.parse(localStorage.getItem('backendaiconsole.user_id'));
-    this.password = JSON.parse(localStorage.getItem('backendaiconsole.password'));
-    if (this.api_key === null) {
+    let api_key: any = localStorage.getItem('backendaiconsole.api_key');
+    let secret_key: any = localStorage.getItem('backendaiconsole.secret_key');
+    let user_id: any = localStorage.getItem('backendaiconsole.user_id');
+    let password: any = localStorage.getItem('backendaiconsole.password');
+    if (api_key != null) {
+      this.api_key = api_key;
+    } else {
       this.api_key = '';
     }
-    if (this.secret_key === null) {
+    if (secret_key != null) {
+      this.secret_key = JSON.parse(secret_key);
+    } else {
       this.secret_key = '';
     }
-    if (this.user_id === null) {
+    if (user_id != null) {
+      this.user_id = JSON.parse(user_id);
+    } else {
       this.user_id = '';
     }
-    if (this.password === null) {
+    if (password != null) {
+      this.password = JSON.parse(password);
+    } else {
       this.password = '';
     }
     if (this.api_endpoint === '') {
-      this.api_endpoint = JSON.parse(localStorage.getItem('backendaiconsole.api_endpoint'));
+      let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
+      if (api_endpoint != null) {
+        this.api_endpoint = JSON.parse(api_endpoint);
+      }
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
@@ -389,12 +399,13 @@ export default class BackendAILogin extends LitElement {
       }).catch((err) => {   // Connection failed
         this.free();
         if (this.loginPanel.open !== true) {
+          console.log(err);
           if (err.message !== undefined) {
             this.notification.text = PainKiller.relieve(err.message);
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
-          this.notification.show(true);
+          this.notification.show();
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');

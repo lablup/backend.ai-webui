@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
@@ -496,8 +496,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   refresh() {
-    //let user_id = window.backendaiclient_email;
-    let user_id = null;
     this._refreshTemplateData();
   }
 
@@ -546,7 +544,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _deleteKey(e) {
-    const termButton = e.target;
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
     window.backendaiclient.keypair.delete(accessKey).then(response => {

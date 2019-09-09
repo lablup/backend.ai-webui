@@ -10,6 +10,7 @@ import 'weightless/icon';
 
 @customElement("backend-ai-splash")
 export default class BackendAISplash extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
 
   constructor() {

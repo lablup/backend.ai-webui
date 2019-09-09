@@ -1,5 +1,5 @@
 /**
- Backend.AI view page for Single-page application
+ Backend.AI base view page for Single-page application
 
  @group Backend.AI Console
  */
@@ -14,6 +14,10 @@ export class BackendAIPage extends LitElement {
   constructor() {
     super();
     this.active = false;
+  }
+
+  get activeConnected() {
+    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null;
   }
 
   public _viewStateChanged(param: Boolean): void;
@@ -31,10 +35,6 @@ export class BackendAIPage extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-  }
-
-  get activeConnected() {
-    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null;
   }
 
   attributeChangedCallback(name, oldval, newval) {

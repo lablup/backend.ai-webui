@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, property, LitElement} from "lit-element";
+import {css, customElement, html, LitElement, property} from "lit-element";
 
 import 'weightless/dialog';
 import 'weightless/banner';
@@ -11,6 +11,7 @@ import 'weightless/title';
 
 @customElement("backend-ai-indicator")
 export default class BackendAIIndicator extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
   @property({type: String}) text = '';
   @property({type: String}) mode = 'determinate';

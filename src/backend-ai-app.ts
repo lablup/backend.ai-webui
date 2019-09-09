@@ -8,7 +8,7 @@ export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
 export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
-export const navigate = (path) => (dispatch) => {
+export const navigate = (path: any) => (dispatch: any) => {
   // Extract the page name from path.
   if (['/summary', '/job', '/experiment', '/data', '/statistics', '/agent', '/resource', '/user', '/credential', '/environment', '/settings', '/maintenance'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
     path = path.split(/[\/]+/).pop();
