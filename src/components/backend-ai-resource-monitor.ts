@@ -1018,6 +1018,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
       let disableLaunch = false;
+      let shmem_metric: object = {
+        'min': 0.0625,
+        'max': 1,
+        'preferred': 0.125
+      };
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
           let cpu_metric = {...item};
@@ -1154,7 +1159,30 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           mem_metric.max = Number(mem_metric.max.toFixed(2));
           this.mem_metric = mem_metric;
         }
+        if (item.key === 'shmem') { // Shared memory is preferred value. No min/max is required.
+          shmem_metric = {...item};
+          shmem_mertic.preferred = window.backendaiclient.utils.changeBinaryUnit(shmem_metric.preferred, 'g', 'g');
+        }
       });
+      // Shared memory setting
+      shmem_metric.max = this.mem_metric.max;
+      shmem_metric.min = '0.0625'; // 64m
+      if (shmem_metric.min >= shmem_metric.max) {
+        if (shmem_metric.min > shmem_metric.max) {
+          shmem_metric.min = shmem_metric.max;
+          shmem_metric.max = shmem_metric.max + 1;
+          disableLaunch = true;
+          this.shadowRoot.querySelector('#shmem-resource').disabled = true;
+        } else {
+          shmem_metric.max = shmem_metric.max + 1;
+          this.shadowRoot.querySelector('#shmem-resource').disabled = true;
+        }
+      }
+      shmem_metric.min = Number(shmem_metric.min.toFixed(2));
+      shmem_metric.max = Number(shmem_metric.max.toFixed(2));
+      this.shmem_metric = shmem_metric;
+
+      // GPU metric
       if (this.gpu_metric.min == 0 && this.gpu_metric.max == 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
