@@ -83,7 +83,7 @@
     "pwa-helpers": "^0.9.1",
     "redux": "^4.0.3",
     "redux-thunk": "^2.3.0",
-    "rollup": "^1.21.0",
+    "rollup": "^1.21.1",
     "rollup-plugin-babel": "^4.3.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^5.1.1",
