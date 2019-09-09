@@ -93,6 +93,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Object}) shmem_metric = {
+    'min': 0.0625,
+    'max': 1,
+    'preferred': 0.0625
+  };
   @property({type: Object}) gpu_metric = {
     'min': 0,
     'max': 0
@@ -118,6 +123,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) launch_ready;
   @property({type: Number}) cpu_request;
   @property({type: Number}) mem_request;
+  @property({type: Number}) shmem_request;
   @property({type: Number}) gpu_request;
   @property({type: Number}) session_request;
   @property({type: Boolean}) _status;
@@ -345,6 +351,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this._status = 'inactive';
     this.cpu_request = 1;
     this.mem_request = 1;
+    this.shmem_request = 0.0625;
     this.gpu_request = 0;
     this.session_request = 1;
     this.scaling_groups = [];
@@ -544,6 +551,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
+    this.shmem_request = this.shadowRoot.querySelector('#shmem-resource').value;
     this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
@@ -1018,7 +1026,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
       let disableLaunch = false;
-      let shmem_metric: object = {
+      let shmem_metric: any = {
         'min': 0.0625,
         'max': 1,
         'preferred': 0.125
@@ -1161,12 +1169,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
         if (item.key === 'shmem') { // Shared memory is preferred value. No min/max is required.
           shmem_metric = {...item};
-          shmem_mertic.preferred = window.backendaiclient.utils.changeBinaryUnit(shmem_metric.preferred, 'g', 'g');
+          if ('preferred' in shmem_metric) {
+            shmem_metric.preferred = window.backendaiclient.utils.changeBinaryUnit(shmem_metric.preferred, 'g', 'g');
+          } else {
+            shmem_metric.preferred = 0.0625;
+          }
         }
       });
       // Shared memory setting
       shmem_metric.max = this.mem_metric.max;
-      shmem_metric.min = '0.0625'; // 64m
+      shmem_metric.min = 0.0625; // 64m
       if (shmem_metric.min >= shmem_metric.max) {
         if (shmem_metric.min > shmem_metric.max) {
           shmem_metric.min = shmem_metric.max;
@@ -1517,6 +1529,14 @@ ${this.resource_templates.map(item => html`
                                 pin snaps step=0.05 editable
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                 value="${this.mem_request}"></paper-slider>
+                  <span class="caption">GB</span>
+                </div>
+                <div class="horizontal center layout">
+                  <span class="resource-type" style="width:30px;">Shared Memory</span>
+                  <paper-slider id="mem-resource" class="mem"
+                                pin snaps step=0.025 editable
+                                min="0.0625" max="${this.shmem_metric.max}"
+                                value="${this.shmem_request}"></paper-slider>
                   <span class="caption">GB</span>
                 </div>
                 <div class="horizontal center layout">
