@@ -294,10 +294,28 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.domain = window.backendaiclient._config.domainName;
     this.current_group = window.backendaiclient.current_group;
     this.groups = window.backendaiclient.groups;
+    let groupSelectionBox = this.shadowRoot.getElementById('group-select');
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
       (this.shadowRoot.getElementById('group-select') as any).disabled = true;
       (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
     }
+    // Detached from template to support live-update after creating new group (will need it)
+    let opt = document.createElement('option');
+    opt.setAttribute('disabled', 'true');
+    opt.innerHTML = 'Select Project';
+    groupSelectionBox.appendChild(opt);
+    this.groups.map(group => {
+      opt = document.createElement('option');
+      opt.value = group;
+      if (this.current_group === group) {
+        opt.selected = true;
+      } else {
+        opt.selected = false;
+      }
+      opt.innerHTML = group;
+      groupSelectionBox.appendChild(opt);
+    });
+    groupSelectionBox.updateOptions();
     //this.shadowRoot.getElementById('group-select')._requestRender();
   }
 
@@ -446,10 +464,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </app-header>
             <wl-select id="group-select" name="group-select" label="Project"
               @input="${this.changeGroup}" value="${this.current_group}">
-               <option value disabled>Select Project</option>
-                ${this.groups.map(group => html`
-                <option value="${group}" ?selected="${this.current_group === group}">${group}</option>
-                `)}
             </wl-select>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
               <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
