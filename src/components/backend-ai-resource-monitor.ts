@@ -1543,8 +1543,8 @@ ${this.resource_templates.map(item => html`
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:50px;">Shared Memory</div>
                   <paper-slider id="mem-resource" class="mem"
-                                pin snaps step=0.025 editable
-                                min="0.0625" max="${this.shmem_metric.max}"
+                                pin snaps step=0.0025 editable
+                                min="0.0" max="${this.shmem_metric.max}"
                                 value="${this.shmem_request}"></paper-slider>
                   <span class="caption">GB</span>
                 </div>
