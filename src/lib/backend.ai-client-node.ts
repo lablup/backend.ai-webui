@@ -461,6 +461,10 @@ class Client {
       if (resources['scaling_group']) {
         params['config'].scaling_group = resources['scaling_group'];
       }
+      if (resources['shmem']) {
+        params['config'].resource_opts = {};
+        params['config'].resource_opts.shmem = resources['shmem'];
+      }
     }
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
     return this._wrapWithPromise(rqst);
