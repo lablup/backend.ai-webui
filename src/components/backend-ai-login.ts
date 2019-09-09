@@ -399,12 +399,13 @@ export default class BackendAILogin extends LitElement {
       }).catch((err) => {   // Connection failed
         this.free();
         if (this.loginPanel.open !== true) {
+          console.log(err);
           if (err.message !== undefined) {
             this.notification.text = PainKiller.relieve(err.message);
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
-          this.notification.show(true);
+          this.notification.show();
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
