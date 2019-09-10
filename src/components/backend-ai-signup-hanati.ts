@@ -39,6 +39,7 @@ import {
  */
 @customElement("backend-ai-signup-hanati")
 export default class BackendAiSignupHanaTI extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: String}) company_name = '';
   @property({type: String}) company_id = '';
   @property({type: String}) user_name = '';
