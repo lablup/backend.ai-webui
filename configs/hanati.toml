@@ -1,0 +1,12 @@
+[general]
+#apiEndpoint = 
+apiEndpointText = "Hana Cloudia"
+#defaultSessionEnvironment = 
+siteDescription = "Hana Cloudia"
+connectionMode = "SESSION"
+
+[wsproxy]
+proxyListenIP = "0.0.0.0"
+
+[plugin]
+#login = "test-plugin.js"
