@@ -91,7 +91,7 @@
     "serve": "^11.1.0",
     "tinyify": "^2.5.1",
     "tslib": "^1.10.0",
-    "typescript": "^3.6.2",
+    "typescript": "^3.6.3",
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.2",
     "webpack": "^4.39.3",
