@@ -1375,7 +1375,7 @@ export default class BackendAIData extends BackendAIPage {
       })
   }
 
-  _shareFolder(e); {
+  _shareFolder(e) {
     // the .children property is an HtmlCollection. They don't have the map function like an array would
     const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
 
