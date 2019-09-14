@@ -427,7 +427,7 @@ export default class BackendAIData extends BackendAIPage {
       <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered">
           <h3 class="horizontal center layout">
-            <span>Create a new virtual folder</span>
+            <span>Create a new folder</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -466,7 +466,7 @@ export default class BackendAIData extends BackendAIPage {
       <wl-dialog id="delete-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card class="login-panel intro centered">
           <h3 class="horizontal center layout">
-            <span>Delete a virtual folder</span>
+            <span>Delete a folder</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>

@@ -1342,7 +1342,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                                    value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
                                    error-message="4 or more characters">
                       </paper-input>
-                      <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Virtual folders">
+                      <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders">
                       ${this.vfolders.map(item => html`
                         <paper-item value="${item.name}">${item.name}</paper-item>
                       `)}
