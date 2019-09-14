@@ -269,7 +269,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                   </paper-listbox>
                 </paper-dropdown-menu>
               </div>
-              <h4>Virtual Folders</h4>
+              <h4>Folders</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
                   <paper-listbox slot="dropdown-content" selected="0">
