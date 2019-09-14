@@ -827,7 +827,7 @@ export default class BackendAIData extends BackendAIPage {
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
 
-          ${rowData.item.is_owner
+          ${rowData.item.is_owner && rowData.item.type == 'user' 
         ? html`
               <paper-icon-button
                 class="fg blue controls-running"
@@ -1375,7 +1375,7 @@ export default class BackendAIData extends BackendAIPage {
       })
   }
 
-  _shareFolder(e) {
+  _shareFolder(e); {
     // the .children property is an HtmlCollection. They don't have the map function like an array would
     const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
 
