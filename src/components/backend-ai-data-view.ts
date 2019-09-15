@@ -447,10 +447,10 @@ export default class BackendAIData extends BackendAIPage {
               <paper-dropdown-menu id="add-folder-type" label="Type">
                 <paper-listbox slot="dropdown-content" selected="0">
                 ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
-                  <paper-item label="group">Group</paper-item>              
+                  <paper-item label="group">Group</paper-item>
                 ` : html``}
                 ${this.allowed_folder_type.includes('user') ? html`
-                  <paper-item label="user">User</paper-item>                            
+                  <paper-item label="user">User</paper-item>
                 ` : html``}
                 </paper-listbox>
               </paper-dropdown-menu>
@@ -1258,15 +1258,15 @@ export default class BackendAIData extends BackendAIPage {
     const explorer = this.explorer;
     const path = explorer.breadcrumb.concat(fileObj.name).join("/");
     fd.append("src", fileObj, path);
-    const index = this.uploadFiles.indexOf(fileObj);
-    console.log(fd);
     let job = window.backendaiclient.vfolder.uploadFormData(fd, explorer.id);
     job.then(resp => {
       this._clearExplorer();
-      this.uploadFiles[index].complete = true;
+      this.uploadFiles[this.uploadFiles.indexOf(fileObj)].complete = true;
+      this.uploadFiles = this.uploadFiles.slice();
       setTimeout(() => {
         this.uploadFiles.splice(this.uploadFiles.indexOf(fileObj), 1);
         this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
+        this.uploadFiles = this.uploadFiles.slice();
       }, 1000);
     });
   }
