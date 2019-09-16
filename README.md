@@ -15,7 +15,7 @@ Backend.AI console focuses to
     * Choose and run environment-supported apps
  * Experiments
     * Manages container stream
- * Virtual Folder management
+ * Storage management
     * Create / delete folders
     * Upload  / download files
     * Share folders 

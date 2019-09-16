@@ -376,6 +376,9 @@ function createWindow () {
       return;
     }
     let config = toml(data);
+    if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    }
     if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
       mainURL = config.server.consoleServerURL;
     } else {
