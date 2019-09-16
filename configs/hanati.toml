@@ -4,7 +4,7 @@ apiEndpointText = "Hana Cloudia"
 #defaultSessionEnvironment = 
 siteDescription = "Hana Cloudia"
 connectionMode = "SESSION"
-allowChangeSigninMode = false # Allows user to change signin mode
+allowChangeSigninMode = false
 signupSupport = true
 
 [wsproxy]

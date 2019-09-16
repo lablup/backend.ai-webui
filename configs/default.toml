@@ -3,8 +3,8 @@
 #apiEndpointText =
 #defaultSessionEnvironment =
 siteDescription = "Console"
-connectionMode = "SESSION" #connectionMode = API
-allowChangeSigninMode = false # Allows user to change signin mode
+connectionMode = "SESSION"
+allowChangeSigninMode = false
 signupSupport = false
 debug = false
 
