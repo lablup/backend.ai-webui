@@ -115,8 +115,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronPositioning,
       // language=CSS
       css`
-          .drawer-menu app-header-layout,
-          #portrait-bar,
+          .drawer-menu,
           paper-listbox.sidebar,
           .drawer-menu footer,
           #sidebar-navbar-footer {
@@ -129,6 +128,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
           paper-icon-button {
               --paper-icon-button-ink-color: white;
+          }
+          .drawer-content .mdc-drawer {
+              width: 190px!important;
+              --mdc-drawer-width: 190px;
           }
 
           app-drawer-layout:not([narrow]) [drawer-toggle] {
@@ -452,8 +455,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      <mwc-drawer id="app-body" open>
-        <div class="drawer-content drawer-menu">
+      <mwc-drawer id="app-body" type="dismissible" open>
+        <div class="drawer-content drawer-menu" style="width:190px;">
             <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
                 <div class="portrait-canvas">
@@ -567,8 +570,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <div slot="appContent">
           <mwc-top-app-bar type="prominentFixed" id="main-toolbar">
               <mwc-icon-button icon="menu" slot="navigationIcon" on></mwc-icon-button>
-              <div slot="title" style="width:300px;">${this.menuTitle}</div>
-               <div slot="actionItems" class="vertical end-justified flex layout" on>
+              <div slot="title">${this.menuTitle}</div>
+               <div slot="actionItems" class="vertical layout" on>
                 <div style="font-size: 12px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 10px;text-align:right">${this.domain}</div>
               </div>

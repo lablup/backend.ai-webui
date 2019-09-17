@@ -128,6 +128,7 @@ export const BackendAiStyles =
           line-height: 16px;
           font-size: 16px;
           font-weight: 100;
+          color: var(--general-sidebar-topbar-color, #efefef);
           font-family: var(--general-font-family);
       }
 
@@ -230,9 +231,6 @@ export const BackendAiStyles =
           /*@apply --shadow-elevation-4dp;*/
           --app-drawer-width: 190px;
           width: 190px;
-      }
-
-      .drawer-menu {
           border-bottom-right-radius: 20px;
           background-color: var(--general-sidebar-background-color, #fafafa);
       }
@@ -333,7 +331,7 @@ export const BackendAiStyles =
       }
 
       @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-          #main-toolbar app-toolbar.bar {
+          #main-toolbar .bar {
               /*-webkit-backdrop-filter: saturate(180%) blur(20px);
               backdrop-filter: saturate(180%) blur(20px);*/
           }
