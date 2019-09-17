@@ -219,7 +219,6 @@ export const BackendAiStyles =
       .wl-card-title {
           font-weight: 200;
       }
-
       .drawer-menu {
           overflow-y: auto;
           overflow-x: hidden;
@@ -230,11 +229,12 @@ export const BackendAiStyles =
           will-change: transform;
           /*@apply --shadow-elevation-4dp;*/
           --app-drawer-width: 190px;
+          width: 190px;
       }
 
-      app-drawer.drawer-menu {
-          border-top-right-radius: 20px;
+      .drawer-menu {
           border-bottom-right-radius: 20px;
+          background-color: var(--general-sidebar-background-color, #fafafa);
       }
 
       app-drawer-layout:not([narrow]) [drawer-toggle] {
@@ -253,18 +253,6 @@ export const BackendAiStyles =
 
       .drawer-menu::-webkit-scrollbar {
           display: none !important;
-      }
-
-      .drawer-menu app-header-layout {
-          background-color: var(--general-sidebar-background-color, #fafafa);
-      }
-
-      #sidebar-lectures paper-item:nth-child(even) {
-          background-color: var(--general-sidebar-item-even-background-color, transparent);
-      }
-
-      #sidebar-lectures paper-item:nth-child(odd) {
-          background-color: var(--general-sidebar-item-odd-background-color, transparent);
       }
 
       #portrait-bar {
@@ -303,7 +291,7 @@ export const BackendAiStyles =
           left: 0;
           left: 0;
           right: 0;
-          bottom: 120px !important; /* Workaround to prevent miscalculated height */
+          bottom: 0 !important; /* Workaround to prevent miscalculated height */
           text-align: center;
           width: 100%;
           height: 45px;
