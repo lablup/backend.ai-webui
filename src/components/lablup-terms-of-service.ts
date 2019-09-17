@@ -25,6 +25,7 @@ export default class LablupTermsOfService extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) tosEntryURL = '/resources/documents/terms-of-service.html';
   @property({type: String}) tosContent = '';
+  @property({type: String}) title = '';
   @property({type: Boolean}) show = false;
   @property({type: Boolean}) approved = false;
   @property({type: Object}) notification;
@@ -77,7 +78,7 @@ export default class LablupTermsOfService extends LitElement {
     return html`
       <lablup-notification id="notification"></lablup-notification>
       <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling scrollable>
-        <wl-title level="3" slot="header">Terms of Service</wl-title>
+        <wl-title level="3" slot="header">${this.title}</wl-title>
         <div slot="content">
           <div id="terms-of-service-dialog-content"></div>
         </div>
