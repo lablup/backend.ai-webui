@@ -840,43 +840,44 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.resource_templates = available_presets;
       }
 
-      let group_resource = response.scaling_group_remaining;
+      let scaling_group_resource = response.scaling_group_remaining;
 
       ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
-        if (slot in response.keypair_using && slot in group_resource) {
-          group_resource[slot] = parseFloat(group_resource[slot]) + parseFloat(response.keypair_using[slot]);
+        if (slot in response.keypair_using && slot in scaling_group_resource) {
+          scaling_group_resource[slot] = parseFloat(scaling_group_resource[slot]) + parseFloat(response.keypair_using[slot]);
         }
       });
       //this.resource_info = response.scaling_group_remaining;
-      this.resource_info = group_resource;
-      let resource_limit = response.keypair_limits;
-      if ('cpu' in resource_limit) {
-        if (resource_limit['cpu'] === 'Infinity') {
+      this.resource_info = scaling_group_resource;
+      let keypair_resource_limit = response.keypair_limits;
+      if ('cpu' in keypair_resource_limit) {
+        if (keypair_resource_limit['cpu'] === 'Infinity') {
           total_slot['cpu_slot'] = this.resource_info.cpu;
         } else {
-          total_slot['cpu_slot'] = resource_limit['cpu'];
+          total_slot['cpu_slot'] = keypair_resource_limit['cpu'];
         }
       }
-      if ('mem' in resource_limit) {
-        if (resource_limit['mem'] === 'Infinity') {
+      if ('mem' in keypair_resource_limit) {
+        if (keypair_resource_limit['mem'] === 'Infinity') {
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resource_info.mem, 'g'));
         } else {
-          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'], 'g'));
+
+          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(keypair_resource_limit['mem'], 'g'));
         }
       }
       total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
-      if ('cuda.device' in resource_limit) {
-        if (resource_limit['cuda.device'] === 'Infinity') {
+      if ('cuda.device' in keypair_resource_limit) {
+        if (keypair_resource_limit['cuda.device'] === 'Infinity') {
           total_slot['gpu_slot'] = this.resource_info['cuda.device'];
         } else {
-          total_slot['gpu_slot'] = resource_limit['cuda.device'];
+          total_slot['gpu_slot'] = keypair_resource_limit['cuda.device'];
         }
       }
-      if ('cuda.shares' in resource_limit) {
-        if (resource_limit['cuda.shares'] === 'Infinity') {
+      if ('cuda.shares' in keypair_resource_limit) {
+        if (keypair_resource_limit['cuda.shares'] === 'Infinity') {
           total_slot['fgpu_slot'] = this.resource_info['cuda.shares'];
         } else {
-          total_slot['fgpu_slot'] = resource_limit['cuda.shares'];
+          total_slot['fgpu_slot'] = keypair_resource_limit['cuda.shares'];
         }
       }
       let remaining_slot: Object = Object();
@@ -1281,7 +1282,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supports[supportsKey] = [];
         }
         this.supports[supportsKey].push(item.tag);
-        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
+        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.keypair_resource_limits;
       });
       this._updateEnvironment();
     }).catch((err) => {
