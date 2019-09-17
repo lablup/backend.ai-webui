@@ -260,7 +260,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   refreshPage() {
-    (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit-to-app';
+    (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.is_connected = true;
     window.backendaiclient.proxyURL = this.proxy_url;
     if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
@@ -576,13 +576,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </div>
         <div slot="appContent">
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
-              <mwc-icon-button icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
-              <h2 style="font-size:22px;" slot="title">${this.menuTitle}</h2>
-              <div slot="actionItems" class="vertical end-justified flex layout">
-                <div style="font-size: 12px;text-align:right">${this.user_id}</div>
-                <div style="font-size: 10px;text-align:right">${this.domain}</div>
-              </div>
-              <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button>
+            <mwc-icon-button icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
+            <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
+            <div slot="actionItems" class="vertical end-justified flex layout">
+              <div style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</div>
+              <div style="font-size: 12px;text-align:right">${this.domain}</div>
+            </div>
+            <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button>
           </mwc-top-app-bar-fixed>
 
           <div class="content">
