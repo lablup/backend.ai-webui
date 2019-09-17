@@ -16,6 +16,10 @@ import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 
+import '@material/mwc-drawer';
+import '@material/mwc-top-app-bar';
+import '@material/mwc-icon-button';
+
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
@@ -111,78 +115,83 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronPositioning,
       // language=CSS
       css`
-        .drawer-menu app-header-layout,
-        paper-listbox.sidebar,
-        .drawer-menu footer,
-        #sidebar-navbar-footer {
-          background-color: var(--sidebar-background-color, var(--general-sidebar-background-color,#fafafa));
-        }
-
-        #portrait-bar .bar {
-          background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
-        }
-
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
-
-        .page {
-          display: none;
-        }
-
-        .page[active] {
-          display: block;
-        }
-
-        wl-progress-spinner {
-          --progress-spinner-size: 48px;
-          --progress-spinner-stroke-width: 12px;
-          width: 48px;
-          height: 48px;
-          position: fixed;
-          top: calc(50vh - 24px);
-        }
-
-        @media screen and (max-width: 899px) {
-          wl-progress-spinner {
-            left: calc(50% - 24px);
+          .drawer-menu app-header-layout,
+          #portrait-bar,
+          paper-listbox.sidebar,
+          .drawer-menu footer,
+          #sidebar-navbar-footer {
+              background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
           }
-        }
 
-        @media screen and (min-width: 900px) {
-          wl-progress-spinner {
-            left: calc(50% + 71px);
+          #portrait-bar .bar {
+              background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
           }
-        }
 
-        .draggable {
-          -webkit-user-select: none !important;
-          -webkit-app-region: drag !important;
-        }
+          paper-icon-button {
+              --paper-icon-button-ink-color: white;
+          }
 
-        mwc-tab {
-          color: #ffffff;
-        }
+          app-drawer-layout:not([narrow]) [drawer-toggle] {
+              display: none;
+          }
 
-        wl-select {
-          --input-bg: transparent;
-          --input-color: rgb(221, 221, 221);
-          --input-color-disabled: rgb(221, 221, 221);
-          --input-label-color: rgb(221, 221, 221);
-          --input-label-font-size: 10px;
-          --input-padding-left-right: 20px;
-          --input-border-style: 0;
-            --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-        }
+          .page {
+              display: none;
+          }
 
-        paper-item {
-            font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-            font-weight: 400;
-        }
+          .page[active] {
+              display: block;
+          }
+
+          wl-progress-spinner {
+              --progress-spinner-size: 48px;
+              --progress-spinner-stroke-width: 12px;
+              width: 48px;
+              height: 48px;
+              position: fixed;
+              top: calc(50vh - 24px);
+          }
+
+          @media screen and (max-width: 899px) {
+              wl-progress-spinner {
+                  left: calc(50% - 24px);
+              }
+          }
+
+          @media screen and (min-width: 900px) {
+              wl-progress-spinner {
+                  left: calc(50% + 71px);
+              }
+          }
+
+          .draggable {
+              -webkit-user-select: none !important;
+              -webkit-app-region: drag !important;
+          }
+
+          mwc-tab {
+              color: #ffffff;
+          }
+
+          .mdc-drawer {
+              width: 190px !important;
+          }
+
+          wl-select {
+              --input-bg: transparent;
+              --input-color: rgb(221, 221, 221);
+              --input-color-disabled: rgb(221, 221, 221);
+              --input-label-color: rgb(221, 221, 221);
+              --input-label-font-size: 10px;
+              --input-padding-left-right: 20px;
+              --input-border-style: 0;
+              --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          }
+
+          paper-item {
+              font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+              font-weight: 400;
+          }
       `];
   }
 
@@ -443,10 +452,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      <app-drawer-layout id="app-body" responsive-width="900px" drawer-width="190px" style="position:relative;z-index:0;">
-        <app-drawer swipe-open slot="drawer" class="drawer-menu" style="z-index:0;">
-          <app-header-layout has-scrolling-region class="vertical layout">
-            <app-header id="portrait-bar" slot="header" effects="waterfall" fixed class="draggable">
+      <mwc-drawer id="app-body" open>
+        <div class="drawer-content drawer-menu">
+            <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
                 <div class="portrait-canvas">
                   <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
@@ -461,7 +469,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </div>
                 <span class="flex"></span>
               </div>
-            </app-header>
+            </div>
             <wl-select id="group-select" name="group-select" label="Project"
               @input="${this.changeGroup}" value="${this.current_group}">
             </wl-select>
@@ -552,31 +560,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.09.4.190916</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.09.4.190917</small>
               </address>
             </div>
-          </app-header-layout>
-        </app-drawer>
-        <app-header-layout main id="main-panel" style="z-index:0;">
-          <app-header slot="header" id="main-toolbar" fixed shadow class="draggable" effects="waterfall resize-title"
-            condenses style="height: 96px; z-index:1;" effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
-            <app-toolbar sticky style="height:48px;" class="draggable bar">
-              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <span condensed-title>${this.menuTitle}</span>
-              <span class="flex"></span>
-              <div class="vertical end-justified flex layout">
+        </div>
+        <div slot="appContent">
+          <mwc-top-app-bar type="prominentFixed" id="main-toolbar">
+              <mwc-icon-button icon="menu" slot="navigationIcon" on></mwc-icon-button>
+              <div slot="title" style="width:300px;">${this.menuTitle}</div>
+               <div slot="actionItems" class="vertical end-justified flex layout" on>
                 <div style="font-size: 12px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 10px;text-align:right">${this.domain}</div>
               </div>
-              <paper-icon-button id="sign-button" icon="icons:launch" @click="${() => this.logout()}"></paper-icon-button>
-            </app-toolbar>
-            <div class="horizontal flex wrap layout">
-              <h2 main-title style="width:300px;">${this.menuTitle}</h2>
-              <div id="top-tab-menu"></div>
-            </div>
-          </app-header>
-          <div class="content">
+              <mwc-icon-button slot="actionItems" id="sign-button" icon="icons:launch" on @click="${() => this.logout()}"></mwc-icon-button>
+          </mwc-top-app-bar>
+
+          <div class="main-content content">
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
             <section role="main" id="content" class="container layout vertical center">
               <div id="app-page">
@@ -593,8 +592,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               </div>
             </section>
           </div>
-        </app-header-layout>
-      </app-drawer-layout>
+          </div>
+      </mwc-drawer>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
