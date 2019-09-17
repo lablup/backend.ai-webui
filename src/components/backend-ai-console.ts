@@ -11,22 +11,16 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
-import '@polymer/app-layout/app-layout';
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
-
-import '@material/mwc-drawer';
-import '@material/mwc-top-app-bar';
+import '../plastics/mwc/mwc-drawer';
+import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon-button';
 
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-image/iron-image';
-import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
-import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
-import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import toml from 'markty-toml';
 
@@ -45,6 +39,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+//import '@material/mwc-drawer';
 
 /**
  Backend.AI GUI Console
@@ -126,12 +121,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
           }
 
-          paper-icon-button {
+          mwc-icon-button {
               --paper-icon-button-ink-color: white;
           }
-          .drawer-content .mdc-drawer {
-              width: 190px!important;
+
+          #app-body {
               --mdc-drawer-width: 190px;
+              --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
+              --mdc-drawer-border-left: 0;
+              --mdc-drawer-border-right: 0;
           }
 
           app-drawer-layout:not([narrow]) [drawer-toggle] {
@@ -262,7 +260,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   refreshPage() {
-    (this.shadowRoot.getElementById('sign-button') as any).icon = 'icons:exit-to-app';
+    (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit-to-app';
     this.is_connected = true;
     window.backendaiclient.proxyURL = this.proxy_url;
     if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
@@ -441,7 +439,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   updateTitleColor(backgroundColorVal: string, colorVal: string) {
-    (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.backgroundColor = backgroundColorVal;
+    (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.setProperty('--mdc-theme-primary', backgroundColorVal);
     (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.color = colorVal;
   }
 
@@ -452,11 +450,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     document.dispatchEvent(event);
   }
 
+  toggleDrawer() {
+    let drawer = this.shadowRoot.querySelector('mwc-drawer');
+    if (drawer.open === true) {
+      drawer.open = false;
+    } else {
+      drawer.open = true;
+    }
+  }
+
   render() {
     // language=HTML
     return html`
       <mwc-drawer id="app-body" type="dismissible" open>
-        <div class="drawer-content drawer-menu" style="width:190px;">
+        <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
             <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
                 <div class="portrait-canvas">
@@ -568,17 +575,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
         </div>
         <div slot="appContent">
-          <mwc-top-app-bar type="prominentFixed" id="main-toolbar">
-              <mwc-icon-button icon="menu" slot="navigationIcon" on></mwc-icon-button>
-              <div slot="title">${this.menuTitle}</div>
-               <div slot="actionItems" class="vertical layout" on>
+          <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
+              <mwc-icon-button icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
+              <h2 style="font-size:22px;" slot="title">${this.menuTitle}</h2>
+              <div slot="actionItems" class="vertical end-justified flex layout">
                 <div style="font-size: 12px;text-align:right">${this.user_id}</div>
                 <div style="font-size: 10px;text-align:right">${this.domain}</div>
               </div>
-              <mwc-icon-button slot="actionItems" id="sign-button" icon="icons:launch" on @click="${() => this.logout()}"></mwc-icon-button>
-          </mwc-top-app-bar>
+              <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button>
+          </mwc-top-app-bar-fixed>
 
-          <div class="main-content content">
+          <div class="content">
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
             <section role="main" id="content" class="container layout vertical center">
               <div id="app-page">
