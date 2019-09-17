@@ -220,6 +220,7 @@ export const BackendAiStyles =
       .wl-card-title {
           font-weight: 200;
       }
+
       .drawer-menu {
           overflow-y: auto;
           overflow-x: hidden;
@@ -229,9 +230,7 @@ export const BackendAiStyles =
           /* pointer-events: none; */
           will-change: transform;
           /*@apply --shadow-elevation-4dp;*/
-          --app-drawer-width: 190px;
-          width: 190px;
-          border-bottom-right-radius: 20px;
+          /*border-bottom-right-radius: 20px;*/
           background-color: var(--general-sidebar-background-color, #fafafa);
       }
 
@@ -803,7 +802,7 @@ export const BackendAiStyles =
 
       /* Drawer */
 
-      .drawer-menu app-header {
+      .drawer-menu .portrait-bar {
           padding-left: 0 !important;
           background-color: transparent;
           color: var(--general-sidebar-topbar-color);
