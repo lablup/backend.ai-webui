@@ -21,6 +21,7 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-image/iron-image';
+
 import '@vaadin/vaadin-icons/vaadin-icons';
 import toml from 'markty-toml';
 
