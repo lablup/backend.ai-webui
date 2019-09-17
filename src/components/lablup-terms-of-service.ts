@@ -23,7 +23,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 @customElement("lablup-terms-of-service")
 export default class LablupTermsOfService extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: String}) tosEntryURL = 'terms-of-service-payment';
+  @property({type: String}) tosEntryURL = '/resources/documents/terms-of-service.html';
   @property({type: String}) tosContent = '';
   @property({type: Boolean}) show = false;
   @property({type: Boolean}) approved = false;
@@ -44,26 +44,32 @@ export default class LablupTermsOfService extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        @media screen and (max-width: 669px) {
-          wl-dialog.terms-of-service-dialog {
-            --dialog-width: 80% !important;
-            --dialog-height: 80vh;
+          @media screen and (max-width: 669px) {
+              wl-dialog.terms-of-service-dialog {
+                  --dialog-width: 80% !important;
+                  --dialog-height: 80vh;
+              }
           }
-        }
 
-        @media screen and (min-width: 670px) {
-          wl-dialog.terms-of-service-dialog {
-            --dialog-width: 650px !important;
-            --dialog-height: 80vh;
+          @media screen and (min-width: 670px) {
+              wl-dialog.terms-of-service-dialog {
+                  --dialog-width: 650px !important;
+                  --dialog-height: 80vh;
+              }
           }
-        }
 
-        wl-button {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-green-300);
-          --button-bg-active: var(--paper-green-300);
-        }
+          wl-button {
+              --button-bg: transparent;
+              --button-bg-hover: var(--paper-green-300);
+              --button-bg-active: var(--paper-green-300);
+          }
       `];
+  }
+
+  tos_contents() {
+    // language=HTML
+    return html`
+    `;
   }
 
   render() {
@@ -73,7 +79,7 @@ export default class LablupTermsOfService extends LitElement {
       <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling scrollable>
         <wl-title level="3" slot="header">Terms of Service</wl-title>
         <div slot="content">
-          <div id="terms-of-service-dialog-content">${this.tosContent}</div>
+          <div id="terms-of-service-dialog-content"></div>
         </div>
         <div slot="footer">
           <wl-button class="fg green" id="dismiss-button" outlined type="button" @click="${() => {
@@ -140,22 +146,14 @@ export default class LablupTermsOfService extends LitElement {
         body: JSON.stringify({'mode': 'dialog'})
       };
       this.sendRequest(rqst).then((response) => {
+        console.log(response);
         if (typeof response !== 'undefined') {
-          if (response.success === 1) {
-            this.tosContent = response.content;
-            //this.approveCheckbox.style.display = 'block';
-          } else {
-            if (typeof response.error_msg !== 'undefined') {
-              this.tosContent = response.error_msg;
-              //this.approveCheckbox.style.display = 'none';
-            } else {
-              //this.tosContent = "Load failed.";
-              //this.approveCheckbox.style.display = 'none';
-              this.tosContent = "Beta Terms of Service";
-              //this.approveCheckbox.style.display = 'block';
-            }
-          }
+          this.tosContent = response;
+          //this.approveCheckbox.style.display = 'block';
+        } else {
+          this.tosContent = '';
         }
+        this.shadowRoot.querySelector('#terms-of-service-dialog-content').innerHTML = this.tosContent;
         this.show = true;
         this.dialog.show();
       }).catch((err) => {
