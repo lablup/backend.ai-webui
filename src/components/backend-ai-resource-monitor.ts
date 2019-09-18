@@ -444,7 +444,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     this.scaling_group = e.target.value;
     if (this.activeConnected && this.metadata_updating === false) {
-      await this.updateMetric();
+      this.metadata_updating = true;
+      this._refreshResourcePolicy();
+      this.aggregateResource();
+      this.metadata_updating = false;
     }
   }
 
@@ -468,9 +471,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.metadata_updating = true;
       this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
       if (this.enable_scaling_group === true) {
-        let sgs = await window.backendaiclient.scalingGroup.list();
-        this.scaling_groups = sgs.scaling_groups;
         if (this.scaling_group === '') {
+          let sgs = await window.backendaiclient.scalingGroup.list();
+          this.scaling_groups = sgs.scaling_groups;
           if (this.direction === 'vertical') {
             this.scaling_group = this.scaling_groups[0].name;
             let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
@@ -559,11 +562,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
-      // this.enable_scaling_group = false;
-      if (this.enable_scaling_group === true) {
-        let sgs = await window.backendaiclient.scalingGroup.list();
-        this.scaling_groups = sgs.scaling_groups;
-      }
       await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
