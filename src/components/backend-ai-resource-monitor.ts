@@ -319,7 +319,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         wl-expansion {
-          --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          --font-family-serif: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
@@ -438,9 +438,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  updateScalingGroup(e) {
+  async updateScalingGroup(e) {
+    if (e.target.value === '' || e.target.value === this.scaling_group) {
+      return;
+    }
     this.scaling_group = e.target.value;
-    console.log(this.scaling_group);
+    if (this.activeConnected && this.metadata_updating === false) {
+      await this.updateMetric();
+    }
   }
 
   async _viewStateChanged(active) {
@@ -468,8 +473,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (this.scaling_group === '') {
           this.scaling_group = this.scaling_groups[0].name;
           let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
-          scaling_group_selection_box.updateOptions();
-          scaling_group_selection_box.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, scaling_group_selection_box));
           // Detached from template to support live-update after creating new group (will need it)
           let opt = document.createElement('option');
           opt.setAttribute('disabled', 'true');
@@ -487,6 +490,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             scaling_group_selection_box.appendChild(opt);
           });
           scaling_group_selection_box.updateOptions();
+          // update sg on dialog
+          let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
+          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this));
         }
       }
       this._initSessions();
