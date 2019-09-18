@@ -161,7 +161,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       css`
         wl-card h4 {
           padding: 5px 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid #dddddd;
           font-weight: 100;
         }
 
@@ -197,8 +197,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         paper-progress {
           width: 90px;
           --paper-progress-height: 5px;
-          --paper-progress-active-color: #3677EB;
-          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-active-color: #98be5a;
+          --paper-progress-secondary-color: #3677eb;
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
@@ -207,13 +207,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         paper-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
-          --paper-progress-active-color: #3677EB;
+          --paper-progress-active-color: #3677eb;
         }
 
         paper-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
-          --paper-progress-active-color: #98BE5A;
+          --paper-progress-active-color: #98be5a;
         }
 
         paper-progress.full-bar {
@@ -332,7 +332,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --button-bg-active: var(--paper-red-600);
           --button-bg-hover: var(--paper-red-600);
           --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: #89A;
+          --button-color: #8899aa;
           --button-color-active: red;
           --button-color-hover: red;
         }
@@ -1045,8 +1045,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
       ['cpu_slot', 'mem_slot', 'gpu_slot', 'fgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
-          used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
-          used_sg_slot_percent[slot] = (used_sg_slot[slot] / total_sg_slot[slot]) * 100.0;
+          if (total_slot[slot] != 0) {
+            used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
+          } else {
+            used_slot_percent[slot] = 0;
+          }
+          if (total_sg_slot[slot] != 0) {
+            used_sg_slot_percent[slot] = (used_sg_slot[slot] / total_sg_slot[slot]) * 100.0;
+          } else {
+            used_sg_slot_percent[slot] = 0;
+          }
         } else {
         }
         if (slot in remaining_slot) {
@@ -1549,6 +1557,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </wl-button>
         </div>
       </div>
+      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      <div class="vertical start-justified layout">
+        <div class="layout horizontal center start-justified">
+          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
+          <span style="margin-right:5px;">Current Scaling Group (${this.scaling_group})</span>
+        </div>
+        <div class="layout horizontal center start-justified">
+          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
+          <span style="margin-right:5px;">User Resource Limit</span>
+        </div>
+      </div>
+` : html``}
+
       <wl-dialog id="new-session-dialog"
                     fixed backdrop blockscrolling persistent
                     style="padding:0;">
