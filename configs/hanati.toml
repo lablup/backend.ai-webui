@@ -1,7 +1,7 @@
 [general]
-#apiEndpoint = 
+#apiEndpoint =
 apiEndpointText = "Hana Cloudia"
-#defaultSessionEnvironment = 
+defaultSessionEnvironment = "registry.hanacloudia.com/hana_nvidia/ngc-tensorflow"
 siteDescription = "Hana Cloudia"
 connectionMode = "SESSION"
 allowChangeSigninMode = false
@@ -9,6 +9,7 @@ signupSupport = true
 
 [wsproxy]
 proxyListenIP = "0.0.0.0"
+disableCertCheck = true
 
 [plugin]
 #login = "test-plugin.js"
