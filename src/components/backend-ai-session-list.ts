@@ -304,6 +304,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           'redirect': "/",
           'src': './resources/icons/nni.png'
         }],
+      'sftp':
+        [{
+          'name': 'sftp',
+          'title': 'SFTP',
+          'redirect': "/",
+          'src': './resources/icons/sftp.png'
+        }],
     };
   }
 
