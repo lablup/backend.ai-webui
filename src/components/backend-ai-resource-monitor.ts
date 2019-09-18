@@ -437,6 +437,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           if (this.enable_scaling_group === true) {
             let sgs = await window.backendaiclient.scalingGroup.list();
             this.scaling_groups = sgs.scaling_groups;
+            this.scaling_group = this.scaling_groups[0].name;
           }
           this._initSessions();
           this._initAliases();
@@ -452,6 +453,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (this.enable_scaling_group === true) {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
+          this.scaling_group = this.scaling_groups[0].name;
         }
         this._initSessions();
         this._initAliases();
@@ -803,7 +805,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.concurrency_used = response.keypair.concurrency_used;
       let param: any;
       if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
-        let scaling_group = 'default';
+        let scaling_group : string = '';
         if (this.scaling_group !== '') {
           scaling_group = this.scaling_group;
         } else {
@@ -1360,6 +1362,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <lablup-notification id="notification" open></lablup-notification>
       <div class="layout horizontal">
         <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
+          <div>
+          ${this.scaling_group}
+          </div>
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
