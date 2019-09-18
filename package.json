@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-console",
-  "version": "19.09.4",
+  "version": "19.09.5",
   "repository": "https://github.com/lablup/backend.ai-console.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
@@ -82,7 +82,7 @@
     "pwa-helpers": "^0.9.1",
     "redux": "^4.0.3",
     "redux-thunk": "^2.3.0",
-    "rollup": "^1.21.3",
+    "rollup": "^1.21.4",
     "rollup-plugin-babel": "^4.3.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^5.1.2",
@@ -94,7 +94,7 @@
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.2",
     "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.8",
+    "webpack-cli": "^3.3.9",
     "ws": "^7.1.2"
   },
   "vaadin": {
