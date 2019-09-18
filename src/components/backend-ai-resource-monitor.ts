@@ -857,6 +857,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async _aggregateResourceUse() {
     let total_slot = {};
+    let total_sg_slot = {};
     return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       let param: any;
@@ -898,25 +899,30 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.resource_templates = available_presets;
       }
 
-      let scaling_group_resource = response.scaling_group_remaining;
-      ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
-        if (slot in response.keypair_using && slot in scaling_group_resource) {
-          scaling_group_resource[slot] = parseFloat(scaling_group_resource[slot]) + parseFloat(response.keypair_using[slot]);
+      let scaling_group_resource_remaining = response.scaling_group_remaining;
+      let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
+      console.log(scaling_group_resource_using);
+      // Legacy: now it does not need to.
+      /*['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
+        if (slot in response.keypair_using && slot in scaling_group_resource_remaining) {
+          scaling_group_resource_remaining[slot] = parseFloat(scaling_group_resource_remaining[slot]) + parseFloat(response.keypair_using[slot]);
         }
-      });
+      });*/
       //this.resource_info = response.scaling_group_remaining;
-      this.resource_info = scaling_group_resource;
+      this.resource_info = scaling_group_resource_remaining;
       let keypair_resource_limit = response.keypair_limits;
       if ('cpu' in keypair_resource_limit) {
-        if (keypair_resource_limit['cpu'] === 'Infinity') {
-          total_slot['cpu_slot'] = this.resource_info.cpu;
+        total_sg_slot['cpu_slot'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
+        if (keypair_resource_limit['cpu'] === 'Infinity') { // When resource is infinity, use scaling group limit instead.
+          total_slot['cpu_slot'] = total_sg_slot['cpu_slot'];
         } else {
           total_slot['cpu_slot'] = keypair_resource_limit['cpu'];
         }
       }
       if ('mem' in keypair_resource_limit) {
+        total_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining.mem, 'g')) + parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using.mem, 'g'));
         if (keypair_resource_limit['mem'] === 'Infinity') {
-          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resource_info.mem, 'g'));
+          total_slot['mem_slot'] = total_sg_slot['mem_slot'];
         } else {
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(keypair_resource_limit['mem'], 'g'));
         }
