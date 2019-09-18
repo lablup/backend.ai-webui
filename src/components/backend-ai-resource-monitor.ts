@@ -259,9 +259,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               --input-color-disabled: rgb(24, 24, 24);
               --input-label-color: rgb(24, 24, 24);
               --input-label-font-size: 10px;
-              --input-padding-left-right: 20px;
               --input-border-style: 0;
               --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          }
+
+          #scaling-group-select {
+              width: 250px;
           }
 
           wl-button.resource-button.iron-selected {
@@ -835,7 +838,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.concurrency_used = response.keypair.concurrency_used;
       let param: any;
       if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
-        let scaling_group : string = '';
+        let scaling_group: string = '';
         if (this.scaling_group !== '') {
           scaling_group = this.scaling_group;
         } else {
@@ -1390,15 +1393,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-notification id="notification" open></lablup-notification>
+      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      <div class="layout horizontal start-justified">
+        <wl-select id="scaling-group-select" name="scaling-group-select" label="Scaling Group"
+          @input="${this.updateScalingGroup}" value="${this.scaling_group}">
+        </wl-select>
+      </div>
+      ` : html``}
       <div class="layout horizontal">
         <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
-          ${this.enable_scaling_group && this.direction === 'vertical' ? html`
-          <div>
-          <wl-select id="scaling-group-select" name="scaling-group-select" label="Scaling Group"
-            @input="${this.updateScalingGroup}" value="${this.scaling_group}">
-          </wl-select>
-          </div>
-          ` : html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
