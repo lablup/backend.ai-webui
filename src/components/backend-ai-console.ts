@@ -99,6 +99,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) config = Object();
   @property({type: Object}) appBody;
   @property({type: Object}) mainToolbar;
+  @property({type: Object}) drawerToggleButton;
 
   constructor() {
     super();
@@ -205,9 +206,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   firstUpdated() {
     window.lablupNotification = this.shadowRoot.querySelector('#notification');
+    this.notification = window.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
-    this.notification = window.lablupNotification;
+    this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.splash = this.shadowRoot.querySelector('#about-panel');
     if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
@@ -233,6 +235,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         (this.shadowRoot.querySelector('#login-panel') as any).block('Configuration is not loaded.', 'Error');
       }
     });
+    this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     })
@@ -315,10 +318,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.appBody.type = 'modal';
       this.appBody.open = false;
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
+      this.drawerToggleButton.style.display = 'block';
     } else { // Open drawer
       this.appBody.type = 'dismissible';
       this.appBody.open = true;
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+      this.drawerToggleButton.style.display = 'none';
     }
   }
 
@@ -485,7 +490,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      <mwc-drawer id="app-body" type="dismissible" open>
+      <mwc-drawer id="app-body">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
             <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
@@ -599,7 +604,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </div>
         <div slot="appContent">
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
-            <mwc-icon-button icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
+            <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
             <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
             <div slot="actionItems" class="vertical end-justified flex layout">
               <div style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</div>
