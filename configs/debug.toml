@@ -6,12 +6,12 @@ siteDescription = "Console"
 connectionMode = "SESSION"
 allowChangeSigninMode = true
 signupSupport = false
-debug = false
+debug = true
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL = ""
-disableCertCheck = false
+disableCertCheck = true
 
 [server]
 consoleServerURL =
