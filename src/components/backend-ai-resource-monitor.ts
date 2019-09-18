@@ -112,14 +112,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) images;
   @property({type: String}) defaultResourcePolicy;
   @property({type: Object}) total_slot;
+  @property({type: Object}) total_sg_slot;
   @property({type: Object}) used_slot;
+  @property({type: Object}) used_sg_slot;
   @property({type: Object}) available_slot;
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
   @property({type: Array}) vfolders;
-  @property({type: Object}) resource_info;
   @property({type: Object}) used_slot_percent;
+  @property({type: Object}) used_sg_slot_percent;
   @property({type: Array}) resource_templates;
   @property({type: String}) default_language;
   @property({type: Boolean}) launch_ready;
@@ -211,7 +213,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         paper-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
-          --paper-progress-active-color: #3677EB;
+          --paper-progress-active-color: #98BE5A;
         }
 
         paper-progress.full-bar {
@@ -379,10 +381,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_mode = 'no';
     this.defaultResourcePolicy = 'UNLIMITED';
     this.total_slot = {};
+    this.total_sg_slot = {};
     this.used_slot = {};
+    this.used_sg_slot = {};
     this.available_slot = {};
-    this.resource_info = {};
     this.used_slot_percent = {};
+    this.used_sg_slot_percent = {};
     this.resource_templates = [];
     this.vfolders = [];
     this.default_language = '';
@@ -899,17 +903,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.resource_templates = available_presets;
       }
 
+      let resource_remaining = response.keypair_remaining;
+      let resource_using = response.keypair_using;
       let scaling_group_resource_remaining = response.scaling_group_remaining;
       let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
-      console.log(scaling_group_resource_using);
-      // Legacy: now it does not need to.
-      /*['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
-        if (slot in response.keypair_using && slot in scaling_group_resource_remaining) {
-          scaling_group_resource_remaining[slot] = parseFloat(scaling_group_resource_remaining[slot]) + parseFloat(response.keypair_using[slot]);
-        }
-      });*/
-      //this.resource_info = response.scaling_group_remaining;
-      this.resource_info = scaling_group_resource_remaining;
+
       let keypair_resource_limit = response.keypair_limits;
       if ('cpu' in keypair_resource_limit) {
         total_sg_slot['cpu_slot'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
@@ -928,24 +926,29 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
       }
       total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
+      total_sg_slot['mem_slot'] = total_sg_slot['mem_slot'].toFixed(2);
+
       if ('cuda.device' in keypair_resource_limit) {
+        total_sg_slot['gpu_slot'] = Number(scaling_group_resource_remaining['cuda.device']) + Number(scaling_group_resource_using['cuda.device']);
         if (keypair_resource_limit['cuda.device'] === 'Infinity') {
-          total_slot['gpu_slot'] = this.resource_info['cuda.device'];
+          total_slot['gpu_slot'] = total_sg_slot['gpu_slot'];
         } else {
           total_slot['gpu_slot'] = keypair_resource_limit['cuda.device'];
         }
       }
       if ('cuda.shares' in keypair_resource_limit) {
+        total_sg_slot['fgpu_slot'] = Number(scaling_group_resource_remaining['cuda.shares']) + Number(scaling_group_resource_using['cuda.shares']);
         if (keypair_resource_limit['cuda.shares'] === 'Infinity') {
-          total_slot['fgpu_slot'] = this.resource_info['cuda.shares'];
+          total_slot['fgpu_slot'] = total_sg_slot['fgpu_slot'];
         } else {
           total_slot['fgpu_slot'] = keypair_resource_limit['cuda.shares'];
         }
       }
       let remaining_slot: Object = Object();
       let used_slot: Object = Object();
-      let resource_remaining = response.keypair_remaining;
-      let resource_using = response.keypair_using;
+      let remaining_sg_slot: Object = Object();
+      let used_sg_slot: Object = Object();
+
       if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
         if ('cpu' in resource_using) {
           used_slot['cpu_slot'] = resource_using['cpu'];
@@ -958,6 +961,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           remaining_slot['cpu_slot'] = resource_remaining['cpu'];
         }
       }
+      if ('cpu' in scaling_group_resource_remaining) {
+        if ('cpu' in scaling_group_resource_using) {
+          used_sg_slot['cpu_slot'] = scaling_group_resource_using['cpu'];
+        } else {
+          used_sg_slot['cpu_slot'] = 0;
+        }
+        remaining_sg_slot['cpu_slot'] = scaling_group_resource_remaining['cpu'];
+      }
+
       if ('mem' in resource_remaining) {
         if ('mem' in resource_using) {
           used_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_using['mem'], 'g'));
@@ -971,6 +983,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
       }
       used_slot['mem_slot'] = used_slot['mem_slot'].toFixed(2);
+      if ('mem' in scaling_group_resource_remaining) {
+        if ('mem' in scaling_group_resource_using) {
+          used_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using['mem'], 'g'));
+        } else {
+          used_sg_slot['mem_slot'] = 0.0;
+        }
+        remaining_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining['mem'], 'g'));
+      }
+      used_sg_slot['mem_slot'] = used_sg_slot['mem_slot'].toFixed(2);
+
       if ('cuda.device' in resource_remaining) {
         remaining_slot['gpu_slot'] = resource_remaining['cuda.device'];
         if ('cuda.device' in resource_using) {
@@ -979,6 +1001,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           used_slot['gpu_slot'] = 0;
         }
       }
+      if ('cuda.device' in scaling_group_resource_remaining) {
+        remaining_sg_slot['gpu_slot'] = scaling_group_resource_remaining['cuda.device'];
+        if ('cuda.device' in scaling_group_resource_using) {
+          used_sg_slot['gpu_slot'] = scaling_group_resource_using['cuda.device'];
+        } else {
+          used_sg_slot['gpu_slot'] = 0;
+        }
+      }
+
       if ('cuda.shares' in resource_remaining) {
         remaining_slot['fgpu_slot'] = resource_remaining['cuda.shares'];
         if ('cuda.shares' in resource_using) {
@@ -987,16 +1018,35 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           used_slot['fgpu_slot'] = 0;
         }
       }
+      if ('cuda.shares' in scaling_group_resource_remaining) {
+        remaining_sg_slot['fgpu_slot'] = scaling_group_resource_remaining['cuda.shares'];
+        if ('cuda.shares' in resource_using) {
+          used_sg_slot['fgpu_slot'] = parseFloat(scaling_group_resource_using['cuda.shares']).toFixed(2);
+        } else {
+          used_sg_slot['fgpu_slot'] = 0;
+        }
+      }
 
       if ('fgpu_slot' in used_slot) {
         total_slot['fgpu_slot'] = parseFloat(total_slot['fgpu_slot']).toFixed(2);
       }
+      if ('fgpu_slot' in used_sg_slot) {
+        total_sg_slot['fgpu_slot'] = parseFloat(total_sg_slot['fgpu_slot']).toFixed(2);
+      }
+
       this.total_slot = total_slot;
+      this.total_sg_slot = total_sg_slot;
+
       this.used_slot = used_slot;
+      this.used_sg_slot = used_sg_slot;
+
       let used_slot_percent = {};
+      let used_sg_slot_percent = {};
+
       ['cpu_slot', 'mem_slot', 'gpu_slot', 'fgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
           used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
+          used_sg_slot_percent[slot] = (used_sg_slot[slot] / total_sg_slot[slot]) * 100.0;
         } else {
         }
         if (slot in remaining_slot) {
@@ -1015,6 +1065,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
+      this.used_sg_slot_percent = used_sg_slot_percent;
       return this.available_slot;
     });
   }
@@ -1435,9 +1486,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
-              <paper-progress id="cpu-usage-bar" class="start-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
+              <span class="gauge-label">${this.used_sg_slot.cpu_slot}/${this.total_sg_slot.cpu_slot}</span>
+              <paper-progress id="cpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.cpu_slot}"></paper-progress>
               <paper-progress id="cpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
+              <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
@@ -1446,9 +1498,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
+              <span class="gauge-label">${this.used_sg_slot.mem_slot}/${this.total_sg_slot.mem_slot}GB</span>
               <paper-progress id="mem-usage-bar" class="start-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
               <paper-progress id="mem-usage-bar-2" class="end-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+              <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
             </div>
           </div>
           ${this.total_slot.gpu_slot ?
