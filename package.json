@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-console",
-  "version": "19.09.4",
+  "version": "19.09.5",
   "repository": "https://github.com/lablup/backend.ai-console.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
@@ -22,15 +22,14 @@
     "update": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
-    "@polymer/app-layout": "^3.1.0",
-    "@polymer/app-route": "^3.0.2",
+    "@material/mwc-drawer": "^0.8.0",
+    "@material/mwc-icon-button": "^0.8.0",
+    "@material/mwc-top-app-bar-fixed": "^0.8.0",
     "@polymer/app-storage": "^3.0.2",
     "@polymer/iron-dropdown": "^3.0.1",
     "@polymer/iron-icon": "^3.0.1",
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/iron-image": "^3.0.2",
-    "@polymer/iron-pages": "^3.0.1",
-    "@polymer/neon-animation": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
     "@polymer/paper-checkbox": "^3.1.0",
     "@polymer/paper-dialog": "^3.0.1",
@@ -83,7 +82,7 @@
     "pwa-helpers": "^0.9.1",
     "redux": "^4.0.3",
     "redux-thunk": "^2.3.0",
-    "rollup": "^1.21.3",
+    "rollup": "^1.21.4",
     "rollup-plugin-babel": "^4.3.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^5.1.2",
@@ -95,7 +94,7 @@
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.2",
     "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.8",
+    "webpack-cli": "^3.3.9",
     "ws": "^7.1.2"
   },
   "vaadin": {

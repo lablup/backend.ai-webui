@@ -6,7 +6,6 @@
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 
@@ -16,6 +15,8 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
+import '@material/mwc-icon-button';
+
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/card';
@@ -24,6 +25,7 @@ import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/radio';
+import 'weightless/select';
 import 'weightless/slider';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -110,14 +112,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) images;
   @property({type: String}) defaultResourcePolicy;
   @property({type: Object}) total_slot;
+  @property({type: Object}) total_sg_slot;
   @property({type: Object}) used_slot;
+  @property({type: Object}) used_sg_slot;
   @property({type: Object}) available_slot;
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
   @property({type: Array}) vfolders;
-  @property({type: Object}) resource_info;
   @property({type: Object}) used_slot_percent;
+  @property({type: Object}) used_sg_slot_percent;
   @property({type: Array}) resource_templates;
   @property({type: String}) default_language;
   @property({type: Boolean}) launch_ready;
@@ -134,6 +138,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
+  @property({type: Object}) scaling_group_selection_box;
 
   constructor() {
     super();
@@ -154,189 +159,219 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          wl-card h4 {
-              padding: 5px 20px;
-              border-bottom: 1px solid #ddd;
-              font-weight: 100;
-          }
+        wl-card h4 {
+          padding: 5px 20px;
+          border-bottom: 1px solid #dddddd;
+          font-weight: 100;
+        }
 
-          paper-slider {
-              width: 285px !important;
-              --paper-slider-input: {
-                  width: 120px !important;
-                  min-width: 120px !important;
-              };
-              --paper-slider-height: 3px;
-          }
+        paper-slider {
+          width: 285px !important;
+          --paper-slider-input: {
+            width: 120px !important;
+            min-width: 120px !important;
+          };
+          --paper-slider-height: 3px;
+        }
 
-          .slider-input {
-              width: 100px;
-          }
+        .slider-input {
+          width: 100px;
+        }
 
-          paper-slider.mem,
-          paper-slider.shmem {
-              --paper-slider-knob-color: var(--paper-orange-400);
-              --paper-slider-active-color: var(--paper-orange-400);
-          }
+        paper-slider.mem,
+        paper-slider.shmem {
+          --paper-slider-knob-color: var(--paper-orange-400);
+          --paper-slider-active-color: var(--paper-orange-400);
+        }
 
-          paper-slider.cpu {
-              --paper-slider-knob-color: var(--paper-light-green-400);
-              --paper-slider-active-color: var(--paper-light-green-400);
-          }
+        paper-slider.cpu {
+          --paper-slider-knob-color: var(--paper-light-green-400);
+          --paper-slider-active-color: var(--paper-light-green-400);
+        }
 
-          paper-slider.gpu {
-              --paper-slider-knob-color: var(--paper-cyan-400);
-              --paper-slider-active-color: var(--paper-cyan-400);
-          }
+        paper-slider.gpu {
+          --paper-slider-knob-color: var(--paper-cyan-400);
+          --paper-slider-active-color: var(--paper-cyan-400);
+        }
 
-          paper-progress {
-              width: 90px;
-              border-radius: 3px;
-              --paper-progress-height: 10px;
-              --paper-progress-active-color: #3677EB;
-              --paper-progress-secondary-color: #98BE5A;
-              --paper-progress-transition-duration: 0.08s;
-              --paper-progress-transition-timing-function: ease;
-              --paper-progress-transition-delay: 0s;
-          }
+        paper-progress {
+          width: 90px;
+          --paper-progress-height: 5px;
+          --paper-progress-active-color: #98be5a;
+          --paper-progress-secondary-color: #3677eb;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
 
-          .resources.horizontal .short-indicator paper-progress {
-              width: 50px;
-          }
+        paper-progress.start-bar {
+          border-top-left-radius: 3px;
+          border-top-right-radius: 3px;
+          --paper-progress-active-color: #3677eb;
+        }
 
-          .resources.horizontal .short-indicator .gauge-label {
-              width: 50px;
-          }
+        paper-progress.end-bar {
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
+          --paper-progress-active-color: #98be5a;
+        }
 
-          span.caption {
-              width: 30px;
-              display: block;
-              font-size: 12px;
-              padding-left: 10px;
-          }
+        paper-progress.full-bar {
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+        }
 
-          div.caption {
-              font-size: 12px;
-              width: 100px;
-          }
+        .resources.horizontal .short-indicator paper-progress {
+          width: 50px;
+        }
 
-          div.resource-type {
-              font-size: 14px;
-              width: 50px;
-          }
+        .resources.horizontal .short-indicator .gauge-label {
+          width: 50px;
+        }
 
-          .gauge-name {
-              font-size: 10px;
-          }
+        span.caption {
+          width: 30px;
+          display: block;
+          font-size: 12px;
+          padding-left: 10px;
+        }
 
-          .gauge-label {
-              width: 100px;
-              font-weight: 300;
-              font-size: 12px;
-          }
+        div.caption {
+          font-size: 12px;
+          width: 100px;
+        }
 
-          .indicator {
-              font-family: monospace;
-          }
+        div.resource-type {
+          font-size: 14px;
+          width: 50px;
+        }
 
-          .resource-button {
-              height: 140px;
-              width: 120px;
-              margin: 5px;
-              padding: 0;
-              font-size: 14px;
-          }
+        .gauge-name {
+          font-size: 10px;
+        }
 
-          #new-session-dialog {
-              z-index: 100;
-          }
+        .gauge-label {
+          width: 100px;
+          font-weight: 300;
+          font-size: 12px;
+        }
 
-          wl-button.resource-button.iron-selected {
-              --button-color: var(--paper-red-600);
-              --button-bg: var(--paper-red-600);
-              --button-bg-active: var(--paper-red-600);
-              --button-bg-hover: var(--paper-red-600);
-              --button-bg-active-flat: var(--paper-orange-50);
-              --button-bg-flat: var(--paper-orange-50);
-          }
+        .indicator {
+          font-family: monospace;
+        }
 
-          .resource-button h4 {
-              padding: 5px 0;
-              margin: 0;
-              font-weight: 400;
-          }
+        .resource-button {
+          height: 140px;
+          width: 120px;
+          margin: 5px;
+          padding: 0;
+          font-size: 14px;
+        }
 
-          .resource-button ul {
-              padding: 0;
-              list-style-type: none;
-          }
+        #new-session-dialog {
+          z-index: 100;
+        }
 
-          backend-ai-dropdown-menu {
-              width: 50%;
-          }
+        wl-select {
+          --input-bg: transparent;
+          --input-color: rgb(24, 24, 24);
+          --input-color-disabled: rgb(24, 24, 24);
+          --input-label-color: rgb(24, 24, 24);
+          --input-label-font-size: 10px;
+          --input-border-style: 0;
+          --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+        }
 
-          #launch-session {
-              --button-bg: var(--paper-red-50);
-              --button-bg-hover: var(--paper-red-100);
-              --button-bg-active: var(--paper-red-600);
-          }
+        #scaling-group-select {
+          width: 250px;
+        }
 
-          wl-button.launch-button {
-              width: 335px;
-              --button-bg: var(--paper-red-50);
-              --button-bg-active: var(--paper-red-300);
-              --button-bg-hover: var(--paper-red-300);
-              --button-bg-active-flat: var(--paper-orange-50);
-              --button-color: var(--paper-red-600);
-              --button-color-active: red;
-              --button-color-hover: red;
-          }
+        wl-button.resource-button.iron-selected {
+          --button-color: var(--paper-red-600);
+          --button-bg: var(--paper-red-600);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-bg-flat: var(--paper-orange-50);
+        }
 
-          wl-button.resource-button {
-              --button-bg: white;
-              --button-bg-active: var(--paper-red-600);
-              --button-bg-hover: var(--paper-red-600);
-              --button-bg-active-flat: var(--paper-orange-50);
-              --button-color: #89A;
-              --button-color-active: red;
-              --button-color-hover: red;
-          }
+        .resource-button h4 {
+          padding: 5px 0;
+          margin: 0;
+          font-weight: 400;
+        }
 
-          wl-expansion {
-              --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-              --expansion-elevation: 0;
-              --expansion-elevation-open: 0;
-              --expansion-elevation-hover: 0;
-              --expansion-margin-open: 0;
-          }
+        .resource-button ul {
+          padding: 0;
+          list-style-type: none;
+        }
 
-          wl-expansion span {
-              font-size: 20px;
-              font-weight: 200;
-              display: block;
-          }
+        backend-ai-dropdown-menu {
+          width: 50%;
+        }
 
-          .resources .monitor {
-              margin-right: 5px;
-          }
+        #launch-session {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
 
-          .resources.vertical .monitor {
-              margin-bottom: 10px;
-          }
+        wl-button.launch-button {
+          width: 335px;
+          --button-bg: var(--paper-red-50);
+          --button-bg-active: var(--paper-red-300);
+          --button-bg-hover: var(--paper-red-300);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
 
-          .resources.vertical .monitor div:first-child {
-              width: 40px;
-          }
+        wl-button.resource-button {
+          --button-bg: white;
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: #8899aa;
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
 
-          wl-button[fab] {
-              --button-fab-size: 70px;
-              border-radius: 6px;
-          }
+        wl-expansion {
+          --font-family-serif: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          --expansion-elevation: 0;
+          --expansion-elevation-open: 0;
+          --expansion-elevation-hover: 0;
+          --expansion-margin-open: 0;
+        }
 
-          wl-label {
-              margin-right: 10px;
-              outline: none;
-          }
+        wl-expansion span {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+        }
+
+        .resources .monitor {
+          margin-right: 5px;
+        }
+
+        .resources.vertical .monitor {
+          margin-bottom: 10px;
+        }
+
+        .resources.vertical .monitor div:first-child {
+          width: 40px;
+        }
+
+        wl-button[fab] {
+          --button-fab-size: 70px;
+          border-radius: 6px;
+        }
+
+        wl-label {
+          margin-right: 10px;
+          outline: none;
+        }
       `];
   }
 
@@ -346,10 +381,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_mode = 'no';
     this.defaultResourcePolicy = 'UNLIMITED';
     this.total_slot = {};
+    this.total_sg_slot = {};
     this.used_slot = {};
+    this.used_sg_slot = {};
     this.available_slot = {};
-    this.resource_info = {};
     this.used_slot_percent = {};
+    this.used_sg_slot_percent = {};
     this.resource_templates = [];
     this.vfolders = [];
     this.default_language = '';
@@ -374,7 +411,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-
     this.notification = window.lablupNotification;
     if (this.activeConnected && this.metadata_updating === false) {
       this._initSessions();
@@ -423,6 +459,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  async updateScalingGroup(e) {
+    if (e.target.value === '' || e.target.value === this.scaling_group) {
+      return;
+    }
+    this.scaling_group = e.target.value;
+    if (this.activeConnected && this.metadata_updating === false) {
+      this.metadata_updating = true;
+      this._refreshResourcePolicy();
+      this.aggregateResource();
+      this.metadata_updating = false;
+    }
+  }
+
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (this.active === false) {
@@ -431,34 +480,52 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
-        if (this.activeConnected && this.metadata_updating === false) {
-          this.metadata_updating = true;
-          this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
-          if (this.enable_scaling_group === true) {
-            let sgs = await window.backendaiclient.scalingGroup.list();
-            this.scaling_groups = sgs.scaling_groups;
-          }
-          this._initSessions();
-          this._initAliases();
-          this._refreshResourcePolicy();
-          this.aggregateResource();
-          this.metadata_updating = false;
-        }
+        this._updatePageVariables();
       }, true);
     } else { // already connected
-      if (this.activeConnected && this.metadata_updating === false) {
-        this.metadata_updating = true;
-        this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
-        if (this.enable_scaling_group === true) {
+      this._updatePageVariables();
+    }
+  }
+
+  async _updatePageVariables() {
+    if (this.activeConnected && this.metadata_updating === false) {
+      this.metadata_updating = true;
+      this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
+      if (this.enable_scaling_group === true) {
+        if (this.scaling_group === '') {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
+          if (this.direction === 'vertical') {
+            this.scaling_group = this.scaling_groups[0].name;
+            let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
+            // Detached from template to support live-update after creating new group (will need it)
+            let opt = document.createElement('option');
+            opt.setAttribute('disabled', 'true');
+            opt.innerHTML = 'Select Project';
+            scaling_group_selection_box.appendChild(opt);
+            this.scaling_groups.map(group => {
+              opt = document.createElement('option');
+              opt.value = group.name;
+              if (this.scaling_group === group.name) {
+                opt.selected = true;
+              } else {
+                opt.selected = false;
+              }
+              opt.innerHTML = group.name;
+              scaling_group_selection_box.appendChild(opt);
+            });
+            scaling_group_selection_box.updateOptions();
+          }
+          // update sg on dialog
+          let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
+          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this));
         }
-        this._initSessions();
-        this._initAliases();
-        this._refreshResourcePolicy();
-        this.aggregateResource();
-        this.metadata_updating = false;
       }
+      this._initSessions();
+      this._initAliases();
+      this._refreshResourcePolicy();
+      this.aggregateResource();
+      this.metadata_updating = false;
     }
   }
 
@@ -516,11 +583,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
-      // this.enable_scaling_group = false;
-      if (this.enable_scaling_group === true) {
-        let sgs = await window.backendaiclient.scalingGroup.list();
-        this.scaling_groups = sgs.scaling_groups;
-      }
       await this.updateMetric();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -799,11 +861,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async _aggregateResourceUse() {
     let total_slot = {};
+    let total_sg_slot = {};
     return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       let param: any;
       if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
-        let scaling_group = 'default';
+        let scaling_group: string = '';
         if (this.scaling_group !== '') {
           scaling_group = this.scaling_group;
         } else {
@@ -840,49 +903,52 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.resource_templates = available_presets;
       }
 
-      let group_resource = response.scaling_group_remaining;
+      let resource_remaining = response.keypair_remaining;
+      let resource_using = response.keypair_using;
+      let scaling_group_resource_remaining = response.scaling_group_remaining;
+      let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
 
-      ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
-        if (slot in response.keypair_using && slot in group_resource) {
-          group_resource[slot] = parseFloat(group_resource[slot]) + parseFloat(response.keypair_using[slot]);
-        }
-      });
-      //this.resource_info = response.scaling_group_remaining;
-      this.resource_info = group_resource;
-      let resource_limit = response.keypair_limits;
-      if ('cpu' in resource_limit) {
-        if (resource_limit['cpu'] === 'Infinity') {
-          total_slot['cpu_slot'] = this.resource_info.cpu;
+      let keypair_resource_limit = response.keypair_limits;
+      if ('cpu' in keypair_resource_limit) {
+        total_sg_slot['cpu_slot'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
+        if (keypair_resource_limit['cpu'] === 'Infinity') { // When resource is infinity, use scaling group limit instead.
+          total_slot['cpu_slot'] = total_sg_slot['cpu_slot'];
         } else {
-          total_slot['cpu_slot'] = resource_limit['cpu'];
+          total_slot['cpu_slot'] = keypair_resource_limit['cpu'];
         }
       }
-      if ('mem' in resource_limit) {
-        if (resource_limit['mem'] === 'Infinity') {
-          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resource_info.mem, 'g'));
+      if ('mem' in keypair_resource_limit) {
+        total_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining.mem, 'g')) + parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using.mem, 'g'));
+        if (keypair_resource_limit['mem'] === 'Infinity') {
+          total_slot['mem_slot'] = total_sg_slot['mem_slot'];
         } else {
-          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_limit['mem'], 'g'));
+          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(keypair_resource_limit['mem'], 'g'));
         }
       }
       total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
-      if ('cuda.device' in resource_limit) {
-        if (resource_limit['cuda.device'] === 'Infinity') {
-          total_slot['gpu_slot'] = this.resource_info['cuda.device'];
+      total_sg_slot['mem_slot'] = total_sg_slot['mem_slot'].toFixed(2);
+
+      if ('cuda.device' in keypair_resource_limit) {
+        total_sg_slot['gpu_slot'] = Number(scaling_group_resource_remaining['cuda.device']) + Number(scaling_group_resource_using['cuda.device']);
+        if (keypair_resource_limit['cuda.device'] === 'Infinity') {
+          total_slot['gpu_slot'] = total_sg_slot['gpu_slot'];
         } else {
-          total_slot['gpu_slot'] = resource_limit['cuda.device'];
+          total_slot['gpu_slot'] = keypair_resource_limit['cuda.device'];
         }
       }
-      if ('cuda.shares' in resource_limit) {
-        if (resource_limit['cuda.shares'] === 'Infinity') {
-          total_slot['fgpu_slot'] = this.resource_info['cuda.shares'];
+      if ('cuda.shares' in keypair_resource_limit) {
+        total_sg_slot['fgpu_slot'] = Number(scaling_group_resource_remaining['cuda.shares']) + Number(scaling_group_resource_using['cuda.shares']);
+        if (keypair_resource_limit['cuda.shares'] === 'Infinity') {
+          total_slot['fgpu_slot'] = total_sg_slot['fgpu_slot'];
         } else {
-          total_slot['fgpu_slot'] = resource_limit['cuda.shares'];
+          total_slot['fgpu_slot'] = keypair_resource_limit['cuda.shares'];
         }
       }
       let remaining_slot: Object = Object();
       let used_slot: Object = Object();
-      let resource_remaining = response.keypair_remaining;
-      let resource_using = response.keypair_using;
+      let remaining_sg_slot: Object = Object();
+      let used_sg_slot: Object = Object();
+
       if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
         if ('cpu' in resource_using) {
           used_slot['cpu_slot'] = resource_using['cpu'];
@@ -895,6 +961,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           remaining_slot['cpu_slot'] = resource_remaining['cpu'];
         }
       }
+      if ('cpu' in scaling_group_resource_remaining) {
+        if ('cpu' in scaling_group_resource_using) {
+          used_sg_slot['cpu_slot'] = scaling_group_resource_using['cpu'];
+        } else {
+          used_sg_slot['cpu_slot'] = 0;
+        }
+        remaining_sg_slot['cpu_slot'] = scaling_group_resource_remaining['cpu'];
+      }
+
       if ('mem' in resource_remaining) {
         if ('mem' in resource_using) {
           used_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_using['mem'], 'g'));
@@ -908,6 +983,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
       }
       used_slot['mem_slot'] = used_slot['mem_slot'].toFixed(2);
+      if ('mem' in scaling_group_resource_remaining) {
+        if ('mem' in scaling_group_resource_using) {
+          used_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using['mem'], 'g'));
+        } else {
+          used_sg_slot['mem_slot'] = 0.0;
+        }
+        remaining_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining['mem'], 'g'));
+      }
+      used_sg_slot['mem_slot'] = used_sg_slot['mem_slot'].toFixed(2);
+
       if ('cuda.device' in resource_remaining) {
         remaining_slot['gpu_slot'] = resource_remaining['cuda.device'];
         if ('cuda.device' in resource_using) {
@@ -916,6 +1001,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           used_slot['gpu_slot'] = 0;
         }
       }
+      if ('cuda.device' in scaling_group_resource_remaining) {
+        remaining_sg_slot['gpu_slot'] = scaling_group_resource_remaining['cuda.device'];
+        if ('cuda.device' in scaling_group_resource_using) {
+          used_sg_slot['gpu_slot'] = scaling_group_resource_using['cuda.device'];
+        } else {
+          used_sg_slot['gpu_slot'] = 0;
+        }
+      }
+
       if ('cuda.shares' in resource_remaining) {
         remaining_slot['fgpu_slot'] = resource_remaining['cuda.shares'];
         if ('cuda.shares' in resource_using) {
@@ -924,16 +1018,43 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           used_slot['fgpu_slot'] = 0;
         }
       }
+      if ('cuda.shares' in scaling_group_resource_remaining) {
+        remaining_sg_slot['fgpu_slot'] = scaling_group_resource_remaining['cuda.shares'];
+        if ('cuda.shares' in resource_using) {
+          used_sg_slot['fgpu_slot'] = parseFloat(scaling_group_resource_using['cuda.shares']).toFixed(2);
+        } else {
+          used_sg_slot['fgpu_slot'] = 0;
+        }
+      }
 
       if ('fgpu_slot' in used_slot) {
         total_slot['fgpu_slot'] = parseFloat(total_slot['fgpu_slot']).toFixed(2);
       }
+      if ('fgpu_slot' in used_sg_slot) {
+        total_sg_slot['fgpu_slot'] = parseFloat(total_sg_slot['fgpu_slot']).toFixed(2);
+      }
+
       this.total_slot = total_slot;
+      this.total_sg_slot = total_sg_slot;
+
       this.used_slot = used_slot;
+      this.used_sg_slot = used_sg_slot;
+
       let used_slot_percent = {};
+      let used_sg_slot_percent = {};
+
       ['cpu_slot', 'mem_slot', 'gpu_slot', 'fgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
-          used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
+          if (total_slot[slot] != 0) {
+            used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
+          } else {
+            used_slot_percent[slot] = 0;
+          }
+          if (total_sg_slot[slot] != 0) {
+            used_sg_slot_percent[slot] = (used_sg_slot[slot] / total_sg_slot[slot]) * 100.0;
+          } else {
+            used_sg_slot_percent[slot] = 0;
+          }
         } else {
         }
         if (slot in remaining_slot) {
@@ -952,6 +1073,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
+      this.used_sg_slot_percent = used_sg_slot_percent;
       return this.available_slot;
     });
   }
@@ -1281,7 +1403,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supports[supportsKey] = [];
         }
         this.supports[supportsKey].push(item.tag);
-        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
+        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.keypair_resource_limits;
       });
       this._updateEnvironment();
     }).catch((err) => {
@@ -1357,6 +1479,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-notification id="notification" open></lablup-notification>
+      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      <div class="layout horizontal start-justified">
+        <wl-select id="scaling-group-select" name="scaling-group-select" label="Scaling Group"
+          @input="${this.updateScalingGroup}" value="${this.scaling_group}">
+        </wl-select>
+      </div>
+      ` : html``}
       <div class="layout horizontal">
         <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
           <div class="layout horizontal start-justified monitor">
@@ -1365,8 +1494,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
+              <span class="gauge-label">${this.used_sg_slot.cpu_slot}/${this.total_sg_slot.cpu_slot}</span>
+              <paper-progress id="cpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.cpu_slot}"></paper-progress>
+              <paper-progress id="cpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
               <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
-              <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
@@ -1375,8 +1506,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
+              <span class="gauge-label">${this.used_sg_slot.mem_slot}/${this.total_sg_slot.mem_slot}GB</span>
+              <paper-progress id="mem-usage-bar" class="start-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+              <paper-progress id="mem-usage-bar-2" class="end-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
               <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
-              <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
             </div>
           </div>
           ${this.total_slot.gpu_slot ?
@@ -1412,7 +1545,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap short-indicator" style="margin-left: 0; margin-right: auto">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-              <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+              <paper-progress class="short full-bar" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
             </div>
           </div>
           <div class="flex"></div>
@@ -1424,6 +1557,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </wl-button>
         </div>
       </div>
+      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      <div class="vertical start-justified layout">
+        <div class="layout horizontal center start-justified">
+          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
+          <span style="margin-right:5px;">Current Scaling Group (${this.scaling_group})</span>
+        </div>
+        <div class="layout horizontal center start-justified">
+          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
+          <span style="margin-right:5px;">User Resource Limit</span>
+        </div>
+      </div>
+` : html``}
+
       <wl-dialog id="new-session-dialog"
                     fixed backdrop blockscrolling persistent
                     style="padding:0;">
@@ -1431,10 +1577,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <h3 class="horizontal center layout">
             <span>Start new session</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button"
+            <mwc-icon-button icon="close" class="blue close-button"
               @click="${() => this._hideSessionDialog()}">
               Close
-            </paper-icon-button>
+            </mwc-icon-button>
           </h3>
           <form id="launch-session-form">
             <fieldset>

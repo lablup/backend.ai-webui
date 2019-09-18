@@ -11,18 +11,17 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
-import '@polymer/app-layout/app-layout';
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
+import '../plastics/mwc/mwc-drawer';
+import '../plastics/mwc/mwc-top-app-bar-fixed';
+import '@material/mwc-icon-button';
 
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-image/iron-image';
-import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
-import '@polymer/app-layout/app-scroll-effects/effects/blend-background';
-import '@polymer/app-layout/app-scroll-effects/effects/resize-title';
+
 import '@vaadin/vaadin-icons/vaadin-icons';
 import toml from 'markty-toml';
 
@@ -41,6 +40,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+//import '@material/mwc-drawer';
 
 /**
  Backend.AI GUI Console
@@ -97,6 +97,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
+  @property({type: Object}) appBody;
+  @property({type: Object}) mainToolbar;
+  @property({type: Object}) drawerToggleButton;
+  @property({type: Object}) sidebarMenu;
 
   constructor() {
     super();
@@ -111,84 +115,99 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronPositioning,
       // language=CSS
       css`
-        .drawer-menu app-header-layout,
-        paper-listbox.sidebar,
-        .drawer-menu footer,
-        #sidebar-navbar-footer {
-          background-color: var(--sidebar-background-color, var(--general-sidebar-background-color,#fafafa));
-        }
-
-        #portrait-bar .bar {
-          background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
-        }
-
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
-
-        .page {
-          display: none;
-        }
-
-        .page[active] {
-          display: block;
-        }
-
-        wl-progress-spinner {
-          --progress-spinner-size: 48px;
-          --progress-spinner-stroke-width: 12px;
-          width: 48px;
-          height: 48px;
-          position: fixed;
-          top: calc(50vh - 24px);
-        }
-
-        @media screen and (max-width: 899px) {
-          wl-progress-spinner {
-            left: calc(50% - 24px);
+          .drawer-menu,
+          paper-listbox.sidebar,
+          .drawer-menu footer,
+          #sidebar-navbar-footer {
+              background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
           }
-        }
 
-        @media screen and (min-width: 900px) {
-          wl-progress-spinner {
-            left: calc(50% + 71px);
+          #portrait-bar .bar {
+              background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
           }
-        }
 
-        .draggable {
-          -webkit-user-select: none !important;
-          -webkit-app-region: drag !important;
-        }
+          #app-body {
+              --mdc-drawer-width: 190px;
+              --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
+              --mdc-drawer-border-left: 0;
+              --mdc-drawer-border-right: 0;
+          }
 
-        mwc-tab {
-          color: #ffffff;
-        }
+          app-drawer-layout:not([narrow]) [drawer-toggle] {
+              display: none;
+          }
 
-        wl-select {
-          --input-bg: transparent;
-          --input-color: rgb(221, 221, 221);
-          --input-color-disabled: rgb(221, 221, 221);
-          --input-label-color: rgb(221, 221, 221);
-          --input-label-font-size: 10px;
-          --input-padding-left-right: 20px;
-          --input-border-style: 0;
-            --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-        }
+          .page {
+              display: none;
+          }
 
-        paper-item {
-            font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-            font-weight: 400;
-        }
+          .page[active] {
+              display: block;
+          }
+
+          wl-progress-spinner {
+              --progress-spinner-size: 48px;
+              --progress-spinner-stroke-width: 12px;
+              width: 48px;
+              height: 48px;
+              position: fixed;
+              top: calc(50vh - 24px);
+          }
+
+          @media screen and (max-width: 899px) {
+              wl-progress-spinner {
+                  left: calc(50% - 24px);
+              }
+          }
+
+          @media screen and (min-width: 900px) {
+              wl-progress-spinner {
+                  left: calc(50% + 71px);
+              }
+          }
+
+          .draggable {
+              -webkit-user-select: none !important;
+              -webkit-app-region: drag !important;
+          }
+
+          .drawer-menu footer {
+              width: 190px;
+          }
+
+          mwc-tab {
+              color: #ffffff;
+          }
+
+          .mdc-drawer {
+              width: 190px !important;
+          }
+
+          wl-select {
+              --input-bg: transparent;
+              --input-color: rgb(221, 221, 221);
+              --input-color-disabled: rgb(221, 221, 221);
+              --input-label-color: rgb(221, 221, 221);
+              --input-label-font-size: 10px;
+              --input-padding-left-right: 20px;
+              --input-border-style: 0;
+              --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          }
+
+          paper-item {
+              font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+              font-weight: 400;
+          }
       `];
   }
 
   firstUpdated() {
     window.lablupNotification = this.shadowRoot.querySelector('#notification');
     this.notification = window.lablupNotification;
+    this.appBody = this.shadowRoot.querySelector('#app-body');
+    this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
+    this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
+    this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
     this.splash = this.shadowRoot.querySelector('#about-panel');
     if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
@@ -214,6 +233,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         (this.shadowRoot.querySelector('#login-panel') as any).block('Configuration is not loaded.', 'Error');
       }
     });
+    this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
+    window.addEventListener("resize", (event) => {
+      this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
+    })
   }
 
   connectedCallback() {
@@ -250,7 +273,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   refreshPage() {
-    (this.shadowRoot.getElementById('sign-button') as any).icon = 'icons:exit-to-app';
+    (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.is_connected = true;
     window.backendaiclient.proxyURL = this.proxy_url;
     if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
@@ -287,6 +310,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }).catch(err => {
         console.log("Configuration file missing.");
       });
+  }
+
+  _changeDrawerLayout(width, height) {
+    if (width < 700) {  // Close drawer
+      this.appBody.type = 'modal';
+      this.appBody.open = false;
+      this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
+      this.drawerToggleButton.style.display = 'block';
+    } else { // Open drawer
+      this.appBody.type = 'dismissible';
+      this.appBody.open = true;
+      this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+      this.drawerToggleButton.style.display = 'none';
+    }
   }
 
   _refreshUserInfoPanel() {
@@ -342,57 +379,57 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       switch (view) {
         case 'summary':
           this.menuTitle = 'Summary';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 0;
+          this.sidebarMenu.selected = 0;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'job':
           this.menuTitle = 'Sessions';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 1;
+          this.sidebarMenu.selected = 1;
           this.updateTitleColor('var(--paper-red-800)', '#efefef');
           break;
         case 'experiment':
           this.menuTitle = 'Experiments';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 2;
+          this.sidebarMenu.selected = 2;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'data':
           this.menuTitle = 'Storage';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 2;
+          this.sidebarMenu.selected = 2;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
         case 'statistics':
           this.menuTitle = 'Statistics';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 3;
+          this.sidebarMenu.selected = 3;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 5;
+          this.sidebarMenu.selected = 5;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments & Presets';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 6;
+          this.sidebarMenu.selected = 6;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 7;
+          this.sidebarMenu.selected = 7;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 8;
+          this.sidebarMenu.selected = 8;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'maintenance':
           this.menuTitle = 'Maintenance';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 9;
+          this.sidebarMenu.selected = 9;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 0;
+          this.sidebarMenu.selected = 0;
       }
     }
   }
@@ -429,7 +466,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   updateTitleColor(backgroundColorVal: string, colorVal: string) {
-    (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.backgroundColor = backgroundColorVal;
+    (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.setProperty('--mdc-theme-primary', backgroundColorVal);
     (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.color = colorVal;
   }
 
@@ -440,13 +477,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     document.dispatchEvent(event);
   }
 
+  toggleDrawer() {
+    let drawer = this.shadowRoot.querySelector('mwc-drawer');
+    if (drawer.open === true) {
+      drawer.open = false;
+    } else {
+      drawer.open = true;
+    }
+  }
+
   render() {
     // language=HTML
     return html`
-      <app-drawer-layout id="app-body" responsive-width="900px" drawer-width="190px" style="position:relative;z-index:0;">
-        <app-drawer swipe-open slot="drawer" class="drawer-menu" style="z-index:0;">
-          <app-header-layout has-scrolling-region class="vertical layout">
-            <app-header id="portrait-bar" slot="header" effects="waterfall" fixed class="draggable">
+      <mwc-drawer id="app-body">
+        <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
+            <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
                 <div class="portrait-canvas">
                   <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
@@ -461,7 +506,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </div>
                 <span class="flex"></span>
               </div>
-            </app-header>
+            </div>
             <wl-select id="group-select" name="group-select" label="Project"
               @input="${this.changeGroup}" value="${this.current_group}">
             </wl-select>
@@ -552,30 +597,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.09.4.190916</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.09.5.190918</small>
               </address>
             </div>
-          </app-header-layout>
-        </app-drawer>
-        <app-header-layout main id="main-panel" style="z-index:0;">
-          <app-header slot="header" id="main-toolbar" fixed shadow class="draggable" effects="waterfall resize-title"
-            condenses style="height: 96px; z-index:1;" effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "parallax-background": {"scalar": 0.5}}'>
-            <app-toolbar sticky style="height:48px;" class="draggable bar">
-              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <span condensed-title>${this.menuTitle}</span>
-              <span class="flex"></span>
-              <div class="vertical end-justified flex layout">
-                <div style="font-size: 12px;text-align:right">${this.user_id}</div>
-                <div style="font-size: 10px;text-align:right">${this.domain}</div>
-              </div>
-              <paper-icon-button id="sign-button" icon="icons:launch" @click="${() => this.logout()}"></paper-icon-button>
-            </app-toolbar>
-            <div class="horizontal flex wrap layout">
-              <h2 main-title style="width:300px;">${this.menuTitle}</h2>
-              <div id="top-tab-menu"></div>
+        </div>
+        <div slot="appContent">
+          <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
+            <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
+            <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
+            <div slot="actionItems" class="vertical end-justified flex layout">
+              <div style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</div>
+              <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
-          </app-header>
+            <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button>
+          </mwc-top-app-bar-fixed>
+
           <div class="content">
             <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
             <section role="main" id="content" class="container layout vertical center">
@@ -593,8 +629,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               </div>
             </section>
           </div>
-        </app-header-layout>
-      </app-drawer-layout>
+          </div>
+      </mwc-drawer>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>

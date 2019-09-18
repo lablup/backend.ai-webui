@@ -53,6 +53,7 @@ export const BackendAiStyles =
           --general-sidebar-navbar-footer-color: #222222;
           --general-sidebar-item-even-background-color: transparent;
           --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
+          --general-dialog-background-color: #FFFFFF;
           --app-drawer-width: 190px;
           --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       }
@@ -128,6 +129,7 @@ export const BackendAiStyles =
           line-height: 16px;
           font-size: 16px;
           font-weight: 100;
+          color: var(--general-sidebar-topbar-color, #efefef);
           font-family: var(--general-font-family);
       }
 
@@ -229,12 +231,8 @@ export const BackendAiStyles =
           /* pointer-events: none; */
           will-change: transform;
           /*@apply --shadow-elevation-4dp;*/
-          --app-drawer-width: 190px;
-      }
-
-      app-drawer.drawer-menu {
-          border-top-right-radius: 20px;
-          border-bottom-right-radius: 20px;
+          /*border-bottom-right-radius: 20px;*/
+          background-color: var(--general-sidebar-background-color, #fafafa);
       }
 
       app-drawer-layout:not([narrow]) [drawer-toggle] {
@@ -253,18 +251,6 @@ export const BackendAiStyles =
 
       .drawer-menu::-webkit-scrollbar {
           display: none !important;
-      }
-
-      .drawer-menu app-header-layout {
-          background-color: var(--general-sidebar-background-color, #fafafa);
-      }
-
-      #sidebar-lectures paper-item:nth-child(even) {
-          background-color: var(--general-sidebar-item-even-background-color, transparent);
-      }
-
-      #sidebar-lectures paper-item:nth-child(odd) {
-          background-color: var(--general-sidebar-item-odd-background-color, transparent);
       }
 
       #portrait-bar {
@@ -303,7 +289,7 @@ export const BackendAiStyles =
           left: 0;
           left: 0;
           right: 0;
-          bottom: 120px !important; /* Workaround to prevent miscalculated height */
+          bottom: 0 !important; /* Workaround to prevent miscalculated height */
           text-align: center;
           width: 100%;
           height: 45px;
@@ -345,7 +331,7 @@ export const BackendAiStyles =
       }
 
       @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-          #main-toolbar app-toolbar.bar {
+          #main-toolbar .bar {
               /*-webkit-backdrop-filter: saturate(180%) blur(20px);
               backdrop-filter: saturate(180%) blur(20px);*/
           }
@@ -817,7 +803,7 @@ export const BackendAiStyles =
 
       /* Drawer */
 
-      .drawer-menu app-header {
+      .drawer-menu .portrait-bar {
           padding-left: 0 !important;
           background-color: transparent;
           color: var(--general-sidebar-topbar-color);
@@ -914,6 +900,10 @@ export const BackendAiStyles =
 
       wl-dialog.dialog-ask {
           --dialog-min-width: 350px;
+      }
+
+      wl-dialog > wl-card > h3 {
+          background-color: var(--general-dialog-background-color, #ffffff);
       }
 
       vaadin-grid {

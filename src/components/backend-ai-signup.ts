@@ -120,8 +120,20 @@ export default class BackendAiSignup extends LitElement {
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
   }
 
-  receiveAgreement() {
+  receiveTOSAgreement() {
     if (this.TOSdialog.show === false) {
+      this.TOSdialog.tosContent = "";
+      this.TOSdialog.title = "Terms of Service";
+      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
+      this.TOSdialog.open();
+    }
+  }
+
+  receivePPAgreement() {
+    if (this.TOSdialog.show === false) {
+      this.TOSdialog.tosContent = "";
+      this.TOSdialog.title = "Privacy Policy";
+      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
       this.TOSdialog.open();
     }
   }
@@ -276,7 +288,7 @@ export default class BackendAiSignup extends LitElement {
               <div>
                 <wl-checkbox id="approve-terms-of-service">
                 </wl-checkbox>
-                 I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveAgreement()}">terms of service</a>
+                 I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">terms of service</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">privacy policy</a>.
               </div>
               <br/><br/>
               <wl-button class="full" id="signup-button" outlined type="button"
