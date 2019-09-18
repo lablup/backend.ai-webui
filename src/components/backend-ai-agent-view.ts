@@ -47,13 +47,13 @@ export default class BackendAIAgentView extends BackendAIPage {
     await this.updateComplete;
     if (active === false) {
       this.shadowRoot.querySelector('#running-agents').active = false;
-      this.shadowRoot.querySelector('#finished-agents').active = false;
+      this.shadowRoot.querySelector('#terminated-agents').active = false;
       this.shadowRoot.querySelector('#scaling-groups').active = false;
       this._status = 'inactive';
       return;
     }
     this.shadowRoot.querySelector('#running-agents').active = true;
-    this.shadowRoot.querySelector('#finished-agents').active = true;
+    this.shadowRoot.querySelector('#terminated-agents').active = true;
     this.shadowRoot.querySelector('#scaling-groups').active = false;
     this._status = 'active';
   }
@@ -84,7 +84,7 @@ export default class BackendAIAgentView extends BackendAIPage {
           <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active'}"></backend-ai-agent-list>
         </div>
         <div id="terminated-lists" class="tab-content" style="display:none;">
-          <backend-ai-agent-list id="finished-agents" condition="finished" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+          <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active'}"></backend-ai-agent-list>
         </div>
         <div id="scaling-group-lists" class="tab-content" style="display:none;">
           <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
