@@ -256,6 +256,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   attributeChangedCallback(name, oldval, newval) {
     super.attributeChangedCallback(name, oldval, newval);
   }
+
   loadConfig(config) {
     if (typeof config.general !== "undefined" && 'siteDescription' in config.general) {
       this.siteDescription = config.general.siteDescription;
