@@ -424,8 +424,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  updateScalingGroup(name) {
-    console.log('name:', name.value);
+  updateScalingGroup(e) {
+    this.scaling_group = e.target.value;
+    console.log(this.scaling_group);
   }
 
   async _viewStateChanged(active) {
@@ -436,44 +437,32 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // If disconnected
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
-        if (this.activeConnected && this.metadata_updating === false) {
-          this.metadata_updating = true;
-          this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
-          if (this.enable_scaling_group === true) {
-            let sgs = await window.backendaiclient.scalingGroup.list();
-            this.scaling_groups = sgs.scaling_groups;
-            if (this.scaling_group === '') {
-              this.scaling_group = this.scaling_groups[0].name;
-              let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
-              scaling_group_selection_box.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, scaling_group_selection_box));
-            }
-          }
-          this._initSessions();
-          this._initAliases();
-          this._refreshResourcePolicy();
-          this.aggregateResource();
-          this.metadata_updating = false;
-        }
+        this._updatePageVariables();
       }, true);
     } else { // already connected
-      if (this.activeConnected && this.metadata_updating === false) {
-        this.metadata_updating = true;
-        this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
-        if (this.enable_scaling_group === true) {
-          let sgs = await window.backendaiclient.scalingGroup.list();
-          this.scaling_groups = sgs.scaling_groups;
-          if (this.scaling_group === '') {
-            this.scaling_group = this.scaling_groups[0].name;
-            let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
-            scaling_group_selection_box.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, scaling_group_selection_box));
-          }
+      this._updatePageVariables();
+    }
+  }
+
+  async _updatePageVariables() {
+    if (this.activeConnected && this.metadata_updating === false) {
+      this.metadata_updating = true;
+      this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
+      if (this.enable_scaling_group === true) {
+        let sgs = await window.backendaiclient.scalingGroup.list();
+        this.scaling_groups = sgs.scaling_groups;
+        if (this.scaling_group === '') {
+          this.scaling_group = this.scaling_groups[0].name;
+          let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
+          scaling_group_selection_box.updateOptions();
+          scaling_group_selection_box.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, scaling_group_selection_box));
         }
-        this._initSessions();
-        this._initAliases();
-        this._refreshResourcePolicy();
-        this.aggregateResource();
-        this.metadata_updating = false;
       }
+      this._initSessions();
+      this._initAliases();
+      this._refreshResourcePolicy();
+      this.aggregateResource();
+      this.metadata_updating = false;
     }
   }
 
@@ -1376,13 +1365,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div class="layout horizontal">
         <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
           ${this.enable_scaling_group && this.direction === 'vertical' ? html`
-          <paper-dropdown-menu id="scaling-group-select" label="Scaling Group" horizontal-align="left">
-            <paper-listbox selected="0" slot="dropdown-content">
+          <wl-select id="scaling-group-select" name="scaling-group-select" label="Scaling Group"
+            @input="${this.updateScalingGroup}" value="${this.scaling_group}">
 ${this.scaling_groups.map(item => html`
-                <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+            <option value="${item.name}" ?selected="${this.scaling_group === item.name}">${item.name}</option>
 `)}
-            </paper-listbox>
-          </paper-dropdown-menu>
+          </wl-select>
           ` : html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
