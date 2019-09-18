@@ -126,10 +126,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
           }
 
-          mwc-icon-button {
-              --paper-icon-button-ink-color: white;
-          }
-
           #app-body {
               --mdc-drawer-width: 190px;
               --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));

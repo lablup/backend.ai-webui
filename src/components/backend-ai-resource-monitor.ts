@@ -6,7 +6,6 @@
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 
@@ -15,6 +14,8 @@ import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
+
+import '@material/mwc-icon-button';
 
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
@@ -1480,10 +1481,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <h3 class="horizontal center layout">
             <span>Start new session</span>
             <div class="flex"></div>
-            <paper-icon-button icon="close" class="blue close-button"
+            <mwc-icon-button icon="close" class="blue close-button"
               @click="${() => this._hideSessionDialog()}">
               Close
-            </paper-icon-button>
+            </mwc-icon-button>
           </h3>
           <form id="launch-session-form">
             <fieldset>
