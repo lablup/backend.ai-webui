@@ -73,5 +73,11 @@ while [ $# -gt 0 ]; do
   shift
 done
 
+if [[ "$(docker images -q enterprise.docker.backend.ai/dist/backendai-console-builder:latest 2> /dev/null)" == "" ]]; then
+  show_error "Cannot find console builder image. Make sure you have pulled the console builder image."
+  show_info "Image name: enterprise.docker.backend.ai/dist/backendai-console-builder:latest"
+  exit 1
+fi
+
 show_info "Building Windows app..."
 docker run --rm --name backendai-console-builder -v ${PWD}:/root/backend.ai-console/app -it enterprise.docker.backend.ai/dist/backendai-console-builder /root/update-and-build.sh ${BRANCH}
