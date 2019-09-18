@@ -97,6 +97,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
+  @property({type: Object}) appBody;
+  @property({type: Object}) mainToolbar;
 
   constructor() {
     super();
@@ -203,6 +205,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   firstUpdated() {
     window.lablupNotification = this.shadowRoot.querySelector('#notification');
+    this.appBody = this.shadowRoot.querySelector('#app-body');
+    this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
     this.notification = window.lablupNotification;
     this.splash = this.shadowRoot.querySelector('#about-panel');
     if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
@@ -229,6 +233,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         (this.shadowRoot.querySelector('#login-panel') as any).block('Configuration is not loaded.', 'Error');
       }
     });
+    window.addEventListener("resize", (event) => {
+      this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
+    })
   }
 
   connectedCallback() {
@@ -244,7 +251,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   attributeChangedCallback(name, oldval, newval) {
     super.attributeChangedCallback(name, oldval, newval);
   }
-
   loadConfig(config) {
     if (typeof config.general !== "undefined" && 'siteDescription' in config.general) {
       this.siteDescription = config.general.siteDescription;
@@ -302,6 +308,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }).catch(err => {
         console.log("Configuration file missing.");
       });
+  }
+
+  _changeDrawerLayout(width, height) {
+    if (width < 700) {  // Close drawer
+      this.appBody.type = 'modal';
+      this.appBody.open = false;
+      this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
+    } else { // Open drawer
+      this.appBody.type = 'dismissible';
+      this.appBody.open = true;
+      this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+    }
   }
 
   _refreshUserInfoPanel() {
