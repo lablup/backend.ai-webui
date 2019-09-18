@@ -171,6 +171,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               -webkit-app-region: drag !important;
           }
 
+          .drawer-menu footer {
+              width: 190px;
+          }
+
           mwc-tab {
               color: #ffffff;
           }
