@@ -194,13 +194,29 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         paper-progress {
           width: 90px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
+          --paper-progress-height: 5px;
           --paper-progress-active-color: #3677EB;
           --paper-progress-secondary-color: #98BE5A;
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
+        }
+
+        paper-progress.start-bar {
+          border-top-left-radius: 3px;
+          border-top-right-radius: 3px;
+          --paper-progress-active-color: #3677EB;
+        }
+
+        paper-progress.end-bar {
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
+          --paper-progress-active-color: #3677EB;
+        }
+
+        paper-progress.full-bar {
+          border-radius: 3px;
+          --paper-progress-height: 10px;
         }
 
         .resources.horizontal .short-indicator paper-progress {
@@ -883,7 +899,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
 
       let scaling_group_resource = response.scaling_group_remaining;
-
       ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
         if (slot in response.keypair_using && slot in scaling_group_resource) {
           scaling_group_resource[slot] = parseFloat(scaling_group_resource[slot]) + parseFloat(response.keypair_using[slot]);
@@ -903,7 +918,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (keypair_resource_limit['mem'] === 'Infinity') {
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resource_info.mem, 'g'));
         } else {
-
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(keypair_resource_limit['mem'], 'g'));
         }
       }
@@ -1416,7 +1430,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
-              <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
+              <paper-progress id="cpu-usage-bar" class="start-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
+              <paper-progress id="cpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
@@ -1426,7 +1441,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap">
               <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
-              <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+              <paper-progress id="mem-usage-bar" class="start-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+              <paper-progress id="mem-usage-bar-2" class="end-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
             </div>
           </div>
           ${this.total_slot.gpu_slot ?
@@ -1462,7 +1478,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap short-indicator" style="margin-left: 0; margin-right: auto">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-              <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+              <paper-progress class="short full-bar" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
             </div>
           </div>
           <div class="flex"></div>
