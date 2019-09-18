@@ -156,203 +156,203 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          wl-card h4 {
-              padding: 5px 20px;
-              border-bottom: 1px solid #ddd;
-              font-weight: 100;
-          }
+        wl-card h4 {
+          padding: 5px 20px;
+          border-bottom: 1px solid #ddd;
+          font-weight: 100;
+        }
 
-          paper-slider {
-              width: 285px !important;
-              --paper-slider-input: {
-                  width: 120px !important;
-                  min-width: 120px !important;
-              };
-              --paper-slider-height: 3px;
-          }
+        paper-slider {
+          width: 285px !important;
+          --paper-slider-input: {
+            width: 120px !important;
+            min-width: 120px !important;
+          };
+          --paper-slider-height: 3px;
+        }
 
-          .slider-input {
-              width: 100px;
-          }
+        .slider-input {
+          width: 100px;
+        }
 
-          paper-slider.mem,
-          paper-slider.shmem {
-              --paper-slider-knob-color: var(--paper-orange-400);
-              --paper-slider-active-color: var(--paper-orange-400);
-          }
+        paper-slider.mem,
+        paper-slider.shmem {
+          --paper-slider-knob-color: var(--paper-orange-400);
+          --paper-slider-active-color: var(--paper-orange-400);
+        }
 
-          paper-slider.cpu {
-              --paper-slider-knob-color: var(--paper-light-green-400);
-              --paper-slider-active-color: var(--paper-light-green-400);
-          }
+        paper-slider.cpu {
+          --paper-slider-knob-color: var(--paper-light-green-400);
+          --paper-slider-active-color: var(--paper-light-green-400);
+        }
 
-          paper-slider.gpu {
-              --paper-slider-knob-color: var(--paper-cyan-400);
-              --paper-slider-active-color: var(--paper-cyan-400);
-          }
+        paper-slider.gpu {
+          --paper-slider-knob-color: var(--paper-cyan-400);
+          --paper-slider-active-color: var(--paper-cyan-400);
+        }
 
-          paper-progress {
-              width: 90px;
-              border-radius: 3px;
-              --paper-progress-height: 10px;
-              --paper-progress-active-color: #3677EB;
-              --paper-progress-secondary-color: #98BE5A;
-              --paper-progress-transition-duration: 0.08s;
-              --paper-progress-transition-timing-function: ease;
-              --paper-progress-transition-delay: 0s;
-          }
+        paper-progress {
+          width: 90px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677EB;
+          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
 
-          .resources.horizontal .short-indicator paper-progress {
-              width: 50px;
-          }
+        .resources.horizontal .short-indicator paper-progress {
+          width: 50px;
+        }
 
-          .resources.horizontal .short-indicator .gauge-label {
-              width: 50px;
-          }
+        .resources.horizontal .short-indicator .gauge-label {
+          width: 50px;
+        }
 
-          span.caption {
-              width: 30px;
-              display: block;
-              font-size: 12px;
-              padding-left: 10px;
-          }
+        span.caption {
+          width: 30px;
+          display: block;
+          font-size: 12px;
+          padding-left: 10px;
+        }
 
-          div.caption {
-              font-size: 12px;
-              width: 100px;
-          }
+        div.caption {
+          font-size: 12px;
+          width: 100px;
+        }
 
-          div.resource-type {
-              font-size: 14px;
-              width: 50px;
-          }
+        div.resource-type {
+          font-size: 14px;
+          width: 50px;
+        }
 
-          .gauge-name {
-              font-size: 10px;
-          }
+        .gauge-name {
+          font-size: 10px;
+        }
 
-          .gauge-label {
-              width: 100px;
-              font-weight: 300;
-              font-size: 12px;
-          }
+        .gauge-label {
+          width: 100px;
+          font-weight: 300;
+          font-size: 12px;
+        }
 
-          .indicator {
-              font-family: monospace;
-          }
+        .indicator {
+          font-family: monospace;
+        }
 
-          .resource-button {
-              height: 140px;
-              width: 120px;
-              margin: 5px;
-              padding: 0;
-              font-size: 14px;
-          }
+        .resource-button {
+          height: 140px;
+          width: 120px;
+          margin: 5px;
+          padding: 0;
+          font-size: 14px;
+        }
 
-          #new-session-dialog {
-              z-index: 100;
-          }
+        #new-session-dialog {
+          z-index: 100;
+        }
 
-          wl-select {
-              --input-bg: transparent;
-              --input-color: rgb(24, 24, 24);
-              --input-color-disabled: rgb(24, 24, 24);
-              --input-label-color: rgb(24, 24, 24);
-              --input-label-font-size: 10px;
-              --input-border-style: 0;
-              --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          }
+        wl-select {
+          --input-bg: transparent;
+          --input-color: rgb(24, 24, 24);
+          --input-color-disabled: rgb(24, 24, 24);
+          --input-label-color: rgb(24, 24, 24);
+          --input-label-font-size: 10px;
+          --input-border-style: 0;
+          --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+        }
 
-          #scaling-group-select {
-              width: 250px;
-          }
+        #scaling-group-select {
+          width: 250px;
+        }
 
-          wl-button.resource-button.iron-selected {
-              --button-color: var(--paper-red-600);
-              --button-bg: var(--paper-red-600);
-              --button-bg-active: var(--paper-red-600);
-              --button-bg-hover: var(--paper-red-600);
-              --button-bg-active-flat: var(--paper-orange-50);
-              --button-bg-flat: var(--paper-orange-50);
-          }
+        wl-button.resource-button.iron-selected {
+          --button-color: var(--paper-red-600);
+          --button-bg: var(--paper-red-600);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-bg-flat: var(--paper-orange-50);
+        }
 
-          .resource-button h4 {
-              padding: 5px 0;
-              margin: 0;
-              font-weight: 400;
-          }
+        .resource-button h4 {
+          padding: 5px 0;
+          margin: 0;
+          font-weight: 400;
+        }
 
-          .resource-button ul {
-              padding: 0;
-              list-style-type: none;
-          }
+        .resource-button ul {
+          padding: 0;
+          list-style-type: none;
+        }
 
-          backend-ai-dropdown-menu {
-              width: 50%;
-          }
+        backend-ai-dropdown-menu {
+          width: 50%;
+        }
 
-          #launch-session {
-              --button-bg: var(--paper-red-50);
-              --button-bg-hover: var(--paper-red-100);
-              --button-bg-active: var(--paper-red-600);
-          }
+        #launch-session {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
 
-          wl-button.launch-button {
-              width: 335px;
-              --button-bg: var(--paper-red-50);
-              --button-bg-active: var(--paper-red-300);
-              --button-bg-hover: var(--paper-red-300);
-              --button-bg-active-flat: var(--paper-orange-50);
-              --button-color: var(--paper-red-600);
-              --button-color-active: red;
-              --button-color-hover: red;
-          }
+        wl-button.launch-button {
+          width: 335px;
+          --button-bg: var(--paper-red-50);
+          --button-bg-active: var(--paper-red-300);
+          --button-bg-hover: var(--paper-red-300);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
 
-          wl-button.resource-button {
-              --button-bg: white;
-              --button-bg-active: var(--paper-red-600);
-              --button-bg-hover: var(--paper-red-600);
-              --button-bg-active-flat: var(--paper-orange-50);
-              --button-color: #89A;
-              --button-color-active: red;
-              --button-color-hover: red;
-          }
+        wl-button.resource-button {
+          --button-bg: white;
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-hover: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: #89A;
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
 
-          wl-expansion {
-              --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-              --expansion-elevation: 0;
-              --expansion-elevation-open: 0;
-              --expansion-elevation-hover: 0;
-              --expansion-margin-open: 0;
-          }
+        wl-expansion {
+          --font-family-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          --expansion-elevation: 0;
+          --expansion-elevation-open: 0;
+          --expansion-elevation-hover: 0;
+          --expansion-margin-open: 0;
+        }
 
-          wl-expansion span {
-              font-size: 20px;
-              font-weight: 200;
-              display: block;
-          }
+        wl-expansion span {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+        }
 
-          .resources .monitor {
-              margin-right: 5px;
-          }
+        .resources .monitor {
+          margin-right: 5px;
+        }
 
-          .resources.vertical .monitor {
-              margin-bottom: 10px;
-          }
+        .resources.vertical .monitor {
+          margin-bottom: 10px;
+        }
 
-          .resources.vertical .monitor div:first-child {
-              width: 40px;
-          }
+        .resources.vertical .monitor div:first-child {
+          width: 40px;
+        }
 
-          wl-button[fab] {
-              --button-fab-size: 70px;
-              border-radius: 6px;
-          }
+        wl-button[fab] {
+          --button-fab-size: 70px;
+          border-radius: 6px;
+        }
 
-          wl-label {
-              margin-right: 10px;
-              outline: none;
-          }
+        wl-label {
+          margin-right: 10px;
+          outline: none;
+        }
       `];
   }
 
