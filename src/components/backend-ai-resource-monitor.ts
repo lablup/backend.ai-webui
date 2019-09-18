@@ -471,25 +471,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         let sgs = await window.backendaiclient.scalingGroup.list();
         this.scaling_groups = sgs.scaling_groups;
         if (this.scaling_group === '') {
-          this.scaling_group = this.scaling_groups[0].name;
-          let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
-          // Detached from template to support live-update after creating new group (will need it)
-          let opt = document.createElement('option');
-          opt.setAttribute('disabled', 'true');
-          opt.innerHTML = 'Select Project';
-          scaling_group_selection_box.appendChild(opt);
-          this.scaling_groups.map(group => {
-            opt = document.createElement('option');
-            opt.value = group.name;
-            if (this.scaling_group === group.name) {
-              opt.selected = true;
-            } else {
-              opt.selected = false;
-            }
-            opt.innerHTML = group.name;
+          if (this.direction === 'vertical') {
+            this.scaling_group = this.scaling_groups[0].name;
+            let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
+            // Detached from template to support live-update after creating new group (will need it)
+            let opt = document.createElement('option');
+            opt.setAttribute('disabled', 'true');
+            opt.innerHTML = 'Select Project';
             scaling_group_selection_box.appendChild(opt);
-          });
-          scaling_group_selection_box.updateOptions();
+            this.scaling_groups.map(group => {
+              opt = document.createElement('option');
+              opt.value = group.name;
+              if (this.scaling_group === group.name) {
+                opt.selected = true;
+              } else {
+                opt.selected = false;
+              }
+              opt.innerHTML = group.name;
+              scaling_group_selection_box.appendChild(opt);
+            });
+            scaling_group_selection_box.updateOptions();
+          }
           // update sg on dialog
           let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
           scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this));
