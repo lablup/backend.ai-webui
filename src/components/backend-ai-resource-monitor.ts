@@ -253,6 +253,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               z-index: 100;
           }
 
+          wl-select {
+              --input-bg: transparent;
+              --input-color: rgb(24, 24, 24);
+              --input-color-disabled: rgb(24, 24, 24);
+              --input-label-color: rgb(24, 24, 24);
+              --input-label-font-size: 10px;
+              --input-padding-left-right: 20px;
+              --input-border-style: 0;
+              --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          }
+
           wl-button.resource-button.iron-selected {
               --button-color: var(--paper-red-600);
               --button-bg: var(--paper-red-600);
@@ -456,6 +467,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
           scaling_group_selection_box.updateOptions();
           scaling_group_selection_box.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, scaling_group_selection_box));
+          // Detached from template to support live-update after creating new group (will need it)
+          let opt = document.createElement('option');
+          opt.setAttribute('disabled', 'true');
+          opt.innerHTML = 'Select Project';
+          scaling_group_selection_box.appendChild(opt);
+          this.scaling_groups.map(group => {
+            opt = document.createElement('option');
+            opt.value = group.name;
+            if (this.scaling_group === group.name) {
+              opt.selected = true;
+            } else {
+              opt.selected = false;
+            }
+            opt.innerHTML = group.name;
+            scaling_group_selection_box.appendChild(opt);
+          });
+          scaling_group_selection_box.updateOptions();
         }
       }
       this._initSessions();
@@ -1365,12 +1393,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div class="layout horizontal">
         <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
           ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+          <div>
           <wl-select id="scaling-group-select" name="scaling-group-select" label="Scaling Group"
             @input="${this.updateScalingGroup}" value="${this.scaling_group}">
-${this.scaling_groups.map(item => html`
-            <option value="${item.name}" ?selected="${this.scaling_group === item.name}">${item.name}</option>
-`)}
           </wl-select>
+          </div>
           ` : html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
