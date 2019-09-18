@@ -74,4 +74,4 @@ while [ $# -gt 0 ]; do
 done
 
 show_info "Building Windows app..."
-docker run --rm --name backendai-console-builder -v ${PWD}:/root/backend.ai-console/app -it backendai-console-builder /root/update-and-build.sh ${BRANCH}
+docker run --rm --name backendai-console-builder -v ${PWD}:/root/backend.ai-console/app -it enterprise.docker.backend.ai/dist/backendai-console-builder /root/update-and-build.sh ${BRANCH}
