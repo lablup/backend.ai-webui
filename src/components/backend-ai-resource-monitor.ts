@@ -24,6 +24,7 @@ import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/radio';
+import 'weightless/select';
 import 'weightless/slider';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -134,6 +135,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
+  @property({type: Object}) scaling_group_selection_box;
 
   constructor() {
     super();
@@ -374,7 +376,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-
     this.notification = window.lablupNotification;
     if (this.activeConnected && this.metadata_updating === false) {
       this._initSessions();
@@ -423,6 +424,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  updateScalingGroup(name) {
+    console.log('name:', name.value);
+  }
+
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (this.active === false) {
@@ -437,7 +442,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           if (this.enable_scaling_group === true) {
             let sgs = await window.backendaiclient.scalingGroup.list();
             this.scaling_groups = sgs.scaling_groups;
-            this.scaling_group = this.scaling_groups[0].name;
+            if (this.scaling_group === '') {
+              this.scaling_group = this.scaling_groups[0].name;
+              let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
+              scaling_group_selection_box.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, scaling_group_selection_box));
+            }
           }
           this._initSessions();
           this._initAliases();
@@ -453,7 +462,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (this.enable_scaling_group === true) {
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
-          this.scaling_group = this.scaling_groups[0].name;
+          if (this.scaling_group === '') {
+            this.scaling_group = this.scaling_groups[0].name;
+            let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
+            scaling_group_selection_box.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, scaling_group_selection_box));
+          }
         }
         this._initSessions();
         this._initAliases();
@@ -1362,9 +1375,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <lablup-notification id="notification" open></lablup-notification>
       <div class="layout horizontal">
         <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
-          <div>
-          ${this.scaling_group}
-          </div>
+          ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+          <paper-dropdown-menu id="scaling-group-select" label="Scaling Group" horizontal-align="left">
+            <paper-listbox selected="0" slot="dropdown-content">
+${this.scaling_groups.map(item => html`
+                <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+`)}
+            </paper-listbox>
+          </paper-dropdown-menu>
+          ` : html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
