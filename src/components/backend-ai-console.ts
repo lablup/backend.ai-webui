@@ -100,6 +100,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) appBody;
   @property({type: Object}) mainToolbar;
   @property({type: Object}) drawerToggleButton;
+  @property({type: Object}) sidebarMenu;
 
   constructor() {
     super();
@@ -210,6 +211,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
+    this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
     this.splash = this.shadowRoot.querySelector('#about-panel');
     if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
@@ -380,57 +382,57 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       switch (view) {
         case 'summary':
           this.menuTitle = 'Summary';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 0;
+          this.sidebarMenu.selected = 0;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'job':
           this.menuTitle = 'Sessions';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 1;
+          this.sidebarMenu.selected = 1;
           this.updateTitleColor('var(--paper-red-800)', '#efefef');
           break;
         case 'experiment':
           this.menuTitle = 'Experiments';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 2;
+          this.sidebarMenu.selected = 2;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'data':
           this.menuTitle = 'Storage';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 2;
+          this.sidebarMenu.selected = 2;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
         case 'statistics':
           this.menuTitle = 'Statistics';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 3;
+          this.sidebarMenu.selected = 3;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 5;
+          this.sidebarMenu.selected = 5;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments & Presets';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 6;
+          this.sidebarMenu.selected = 6;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 7;
+          this.sidebarMenu.selected = 7;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 8;
+          this.sidebarMenu.selected = 8;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'maintenance':
           this.menuTitle = 'Maintenance';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 9;
+          this.sidebarMenu.selected = 9;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
-          (this.shadowRoot.getElementById('sidebar-menu') as any).selected = 0;
+          this.sidebarMenu.selected = 0;
       }
     }
   }
