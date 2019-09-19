@@ -311,8 +311,8 @@ export default class BackendAISummary extends BackendAIPage {
         if (this.activeConnected) {
           this._refreshHealthPanel();
           this._refreshInvitations();
-          let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
-          document.dispatchEvent(event);
+          //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+          //document.dispatchEvent(event);
         }
       }, true);
     } else {
@@ -320,8 +320,8 @@ export default class BackendAISummary extends BackendAIPage {
       this.authenticated = true;
       this._refreshHealthPanel();
       this._refreshInvitations();
-      let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
-      document.dispatchEvent(event);
+      //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+      //document.dispatchEvent(event);
     }
   }
 
