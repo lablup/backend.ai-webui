@@ -122,10 +122,10 @@ export default class BackendAIUsageList extends BackendAIPage {
       .then(res => {
         const {period, templates} = this;
         this.data = res;
-
-        this.collection[period] = {};
+        let collection = {};
+        collection[period] = {};
         Object.keys(this._map).forEach(key => {
-          this.collection[period][key] = {
+          collection[period][key] = {
             data: [
               res
                 .filter((e, i) => res.length - templates[period].length <= i)
@@ -140,7 +140,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           }
 
         });
-
+        this.collection = collection;
         return this.updateComplete;
       })
   }
@@ -182,7 +182,7 @@ export default class BackendAIUsageList extends BackendAIPage {
         </wl-select>
       </div>
       <div class="layout vertical center flex wrap">
-      ${
+      ${this.collection != {} ?  
       Object.keys(this._map).map((key, idx) =>
         html`
           <div class="layout horizontal center flex" style="width:100%;">
@@ -198,8 +198,7 @@ export default class BackendAIUsageList extends BackendAIPage {
             idx=${idx}
             .collection=${this.collection[this.period][key]}
           ></backend-ai-chart>
-          `)
-    }
+          `) : html``}
       </div>
     `;
   }
