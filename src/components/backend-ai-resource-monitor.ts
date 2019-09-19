@@ -64,6 +64,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'PyTorch (Cloudia)': 'lablup-pytorch',
     'Neural Network Intelligence': 'nni',
     'H2O': 'h2o',
+    'SFTP': 'sftp',
   };
   @property({type: Object}) tags = {
     'TensorFlow': [],
@@ -82,6 +83,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'PyTorch (Cloudia)': ['Cloudia'],
     'Neural Network Intelligence': ['Microsoft'],
     'H2O': ['h2o.ai'],
+    'SFTP': ['backend.ai'],
   };
   @property({type: Array}) versions;
   @property({type: Array}) languages;
@@ -767,6 +769,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'lablup-pytorch': 'PyTorch (Cloudia)',
       'nni': 'Neural Network Intelligence',
       'h2o': 'H2O.ai',
+      'sftp': 'SFTP',
     };
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
