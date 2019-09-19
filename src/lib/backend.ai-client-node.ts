@@ -172,7 +172,7 @@ class Client {
     this.code = null;
     this.kernelId = null;
     this.kernelType = null;
-    this.clientVersion = '19.06.0';
+    this.clientVersion = '19.09.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();

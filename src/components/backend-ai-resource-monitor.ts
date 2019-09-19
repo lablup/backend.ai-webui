@@ -413,16 +413,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this.notification = window.lablupNotification;
-    if (this.activeConnected && this.metadata_updating === false) {
-      this._initSessions();
-      this._initAliases();
-      this.aggregateResource();
-    }
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.activeConnected && this.metadata_updating === false) {
         this.metadata_updating = true;
-        this.aggregateResource();
+        this.aggregateResource('resource-refreshed');
         this.metadata_updating = false;
       }
     });
@@ -461,6 +456,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(e) {
+    console.log(this.scaling_group);
+    console.log(e.target.value);
     if (e.target.value === '' || e.target.value === this.scaling_group) {
       return;
     }
@@ -468,7 +465,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.activeConnected && this.metadata_updating === false) {
       this.metadata_updating = true;
       this._refreshResourcePolicy();
-      this.aggregateResource();
+      this.aggregateResource('update-scaling-group');
       this.metadata_updating = false;
     }
   }
@@ -525,7 +522,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this._initSessions();
       this._initAliases();
       this._refreshResourcePolicy();
-      this.aggregateResource();
+      this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
     }
   }
@@ -695,7 +692,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
-      this.aggregateResource();
+      this.aggregateResource('session-creation');
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
@@ -860,7 +857,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
-  async _aggregateResourceUse() {
+  async _aggregateResourceUse(from: string = '') {
+    console.log('aggregate from ', from);
     if (this.aggregate_updating === true) {
       return;
     }
@@ -870,6 +868,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       let param: any;
+      console.log(window.backendaiclient, window.backendaiclient.current_group);
       if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
         let scaling_group: string = '';
         if (this.scaling_group !== '') {
@@ -1092,13 +1091,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
-  aggregateResource() {
+  aggregateResource(from: string = '') {
+    console.log('ar called - ', from);
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._aggregateResourceUse();
+        this._aggregateResourceUse(from);
       }, true);
     } else {
-      this._aggregateResourceUse();
+      this._aggregateResourceUse(from);
     }
   }
 
@@ -1161,7 +1161,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       await this._updateVirtualFolderList();
-      let available_slot = await this._aggregateResourceUse();
+      await this._aggregateResourceUse('update-metric');
+      let available_slot = this.available_slot;
       if (!currentResource) {
         this.metric_updating = false;
         return;
