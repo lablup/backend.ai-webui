@@ -257,11 +257,18 @@ class Client {
       }
     } catch (err) {
       switch (errorType) {
+        let
+          error_message;
+          if ('title' in err) {
+            error_message = err.title;
+          } else {
+            error_message = err;
+          }
         case Client.ERR_REQUEST:
-          errorMsg = `sending request has failed: ${err}`;
+          errorMsg = `sending request has failed: ${error_message}`;
           break;
         case Client.ERR_RESPONSE:
-          errorMsg = `reading response has failed: ${err}`;
+          errorMsg = `reading response has failed: ${error_message}`;
           break;
         case Client.ERR_SERVER:
           errorMsg = 'server responded failure: '
@@ -1582,7 +1589,7 @@ class ComputeSession {
           arr.compute_sessions.forEach(e => {
             e.status = status[idx];
           })
-        })
+        });
 
         return {
           'compute_sessions': res.reduce((acc, cur) => acc.concat(cur.compute_sessions), [])
