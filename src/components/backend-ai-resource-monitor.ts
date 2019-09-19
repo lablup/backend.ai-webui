@@ -138,6 +138,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
+  @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
 
   constructor() {
@@ -860,6 +861,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _aggregateResourceUse() {
+    if (this.aggregate_updating === true) {
+      return;
+    }
+    this.aggregate_updating = true;
     let total_slot = {};
     let total_sg_slot = {};
     return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
@@ -871,6 +876,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           scaling_group = this.scaling_group;
         } else {
           scaling_group = this.scaling_groups[0]['name'];
+          this.scaling_group = scaling_group;
         }
         param = {
           'group': window.backendaiclient.current_group,
@@ -906,6 +912,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let resource_remaining = response.keypair_remaining;
       let resource_using = response.keypair_using;
       let scaling_group_resource_remaining = response.scaling_group_remaining;
+      //console.log('current:', this.scaling_group);
       let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
 
       let keypair_resource_limit = response.keypair_limits;
@@ -1074,7 +1081,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
       this.used_sg_slot_percent = used_sg_slot_percent;
+      this.aggregate_updating = false;
       return this.available_slot;
+    }).catch(err => {
+      this.aggregate_updating = false;
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show(true);
+      }
     });
   }
 
