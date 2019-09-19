@@ -256,14 +256,14 @@ class Client {
         throw body;
       }
     } catch (err) {
+      let error_message;
+      if ('title' in err) {
+        error_message = err.title;
+      } else {
+        error_message = err;
+      }
+
       switch (errorType) {
-        let
-          error_message;
-          if ('title' in err) {
-            error_message = err.title;
-          } else {
-            error_message = err;
-          }
         case Client.ERR_REQUEST:
           errorMsg = `sending request has failed: ${error_message}`;
           break;
