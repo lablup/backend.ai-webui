@@ -456,9 +456,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(e) {
-    console.log(this.scaling_group);
-    console.log(e.target.value);
-    if (e.target.value === '' || e.target.value === this.scaling_group) {
+    if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
     }
     this.scaling_group = e.target.value;
@@ -476,6 +474,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return;
     }
     // If disconnected
+    //console.log('client:', window.backendaiclient);
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
         this._updatePageVariables();
@@ -491,6 +490,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
       if (this.enable_scaling_group === true) {
         if (this.scaling_group === '') {
+          //console.log(window.backendaiclient.current_group);
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
           if (this.direction === 'vertical') {
@@ -858,7 +858,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _aggregateResourceUse(from: string = '') {
-    console.log('aggregate from ', from);
     if (this.aggregate_updating === true) {
       return;
     }
@@ -868,7 +867,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       let param: any;
-      console.log(window.backendaiclient, window.backendaiclient.current_group);
       if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
         let scaling_group: string = '';
         if (this.scaling_group !== '') {
@@ -912,6 +910,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let resource_using = response.keypair_using;
       let scaling_group_resource_remaining = response.scaling_group_remaining;
       //console.log('current:', this.scaling_group);
+      if (this.scaling_group == '') {
+
+      }
       let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
 
       let keypair_resource_limit = response.keypair_limits;
@@ -1092,7 +1093,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   aggregateResource(from: string = '') {
-    console.log('ar called - ', from);
+    //console.log('aggregate resource called - ', from);
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse(from);

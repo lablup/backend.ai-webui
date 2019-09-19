@@ -158,6 +158,7 @@ class Client {
 	public scalingGroup: any;
 	public registry: any;
 	public _features: any;
+  public ready: boolean = false;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
   static ERR_SERVER: any;
