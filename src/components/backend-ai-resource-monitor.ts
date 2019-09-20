@@ -501,7 +501,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             // Detached from template to support live-update after creating new group (will need it)
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
-            opt.innerHTML = 'Select Project';
+            opt.innerHTML = 'Select Scaling Group';
             scaling_group_selection_box.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');
