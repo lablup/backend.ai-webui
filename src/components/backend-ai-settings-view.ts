@@ -125,6 +125,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         <wl-switch id="use-gui-on-web-switch" disabled></wl-switch>
                     </div>
                 </div>
+                <div class="horizontal layout wrap setting-item">
+                    <div class="vertical center-justified layout setting-desc">
+                        <div>SFTP support</div>
+                        <div class="description">Provides SFTP server for storage folders. <br/>Requires Backend.AI SFTP image.
+                        </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                        <wl-switch id="cuda-gpu-support-switch" checked disabled></wl-switch>
+                    </div>
+                </div>
             </div>
             <h3 class="horizontal center layout">
                 <span>Scaling</span>
