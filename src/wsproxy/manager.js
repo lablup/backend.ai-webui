@@ -5,6 +5,7 @@ const express = require('express'),
 const ai = require('../lib/backend.ai-client-node'),
   Gateway = require("./gateway/tcpwsproxy"),
   SGateway = require("./gateway/consoleproxy");
+const htmldeco = require('./lib/htmldeco');
 
 class Manager extends EventEmitter {
   constructor(listen_ip, proxyBaseHost, proxyBasePort) {
@@ -147,7 +148,12 @@ class Manager extends EventEmitter {
         res.send({"code": 500});
       }
       let proxy_target = "http://localhost:" + port;
-      res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
+      if(app == 'sftp') {
+        console.log(port);
+        res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
+      } else {
+        res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
+      }
     });
 
     this.app.get('/proxy/local/:kernelId/delete', (req, res) => {
@@ -165,6 +171,12 @@ class Manager extends EventEmitter {
       } else {
         res.send({"code": 404});
       }
+    });
+
+    this.app.get('/sftp', (req, res) => {
+      let port = req.query.port;
+      let url =  "sftp://upload@127.0.0.1:" + port;
+      res.send(htmldeco("Connect with your own SFTP", "host: 127.0.0.1<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"));
     });
 
     this.app.get('/redirect', (req, res) => {
