@@ -158,6 +158,7 @@ class Client {
 	public scalingGroup: any;
 	public registry: any;
 	public _features: any;
+  public ready: boolean = false;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
   static ERR_SERVER: any;
@@ -172,7 +173,7 @@ class Client {
     this.code = null;
     this.kernelId = null;
     this.kernelType = null;
-    this.clientVersion = '19.06.0';
+    this.clientVersion = '19.09.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -256,12 +257,19 @@ class Client {
         throw body;
       }
     } catch (err) {
+      let error_message;
+      if ('title' in err) {
+        error_message = err.title;
+      } else {
+        error_message = err;
+      }
+
       switch (errorType) {
         case Client.ERR_REQUEST:
-          errorMsg = `sending request has failed: ${err}`;
+          errorMsg = `sending request has failed: ${error_message}`;
           break;
         case Client.ERR_RESPONSE:
-          errorMsg = `reading response has failed: ${err}`;
+          errorMsg = `reading response has failed: ${error_message}`;
           break;
         case Client.ERR_SERVER:
           errorMsg = 'server responded failure: '
@@ -1582,7 +1590,7 @@ class ComputeSession {
           arr.compute_sessions.forEach(e => {
             e.status = status[idx];
           })
-        })
+        });
 
         return {
           'compute_sessions': res.reduce((acc, cur) => acc.concat(cur.compute_sessions), [])
