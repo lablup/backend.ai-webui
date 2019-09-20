@@ -338,7 +338,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         status = "TERMINATED";
         break;
       case "others":
-        status = ["PREPARING", "RESTARTING", "TERMINATING"];
+        status = ["PREPARING", "RESTARTING", "TERMINATING", "CANCELLED", "PENDING"]; // "ERROR", "CANCELLED"..
+        // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
         break;
       default:
         status = "RUNNING";
