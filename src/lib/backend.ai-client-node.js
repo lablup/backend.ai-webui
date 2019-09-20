@@ -103,10 +103,11 @@ class Client {
      * @param {string} agentSignature - an extra string that will be appended to User-Agent headers when making API requests
      */
     constructor(config, agentSignature) {
+      this.ready = false;
         this.code = null;
         this.kernelId = null;
         this.kernelType = null;
-        this.clientVersion = '19.06.0';
+      this.clientVersion = '19.09.0';
         this.agentSignature = agentSignature;
         if (config === undefined) {
             this._config = ClientConfig.createFromEnv();
@@ -193,12 +194,19 @@ class Client {
             }
         }
         catch (err) {
+            let error_message;
+            if ('title' in err) {
+                error_message = err.title;
+            }
+            else {
+                error_message = err;
+            }
             switch (errorType) {
                 case Client.ERR_REQUEST:
-                    errorMsg = `sending request has failed: ${err}`;
+                    errorMsg = `sending request has failed: ${error_message}`;
                     break;
                 case Client.ERR_RESPONSE:
-                    errorMsg = `reading response has failed: ${err}`;
+                    errorMsg = `reading response has failed: ${error_message}`;
                     break;
                 case Client.ERR_SERVER:
                     errorMsg = 'server responded failure: '
@@ -1113,7 +1121,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-  
+
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [

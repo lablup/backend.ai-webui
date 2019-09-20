@@ -484,6 +484,9 @@ export default class BackendAiSessionList extends BackendAIPage {
         {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
       'h2o': [
         {'category': 'Env', 'tag': 'H2O', 'color': 'yellow'}],
+      'sftp': [
+        {'category': 'Env', 'tag': 'SFTP', 'color': 'yellow'},
+        {'tag': 'Backend.AI', 'color': 'green'}],
       'lablup-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
         {'tag': 'Cloudia', 'color': 'green'}],

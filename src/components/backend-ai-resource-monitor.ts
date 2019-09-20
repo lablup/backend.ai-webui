@@ -64,6 +64,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'PyTorch (Cloudia)': 'lablup-pytorch',
     'Neural Network Intelligence': 'nni',
     'H2O': 'h2o',
+    'SFTP': 'sftp',
   };
   @property({type: Object}) tags = {
     'TensorFlow': [],
@@ -82,6 +83,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'PyTorch (Cloudia)': ['Cloudia'],
     'Neural Network Intelligence': ['Microsoft'],
     'H2O': ['h2o.ai'],
+    'SFTP': ['backend.ai'],
   };
   @property({type: Array}) versions;
   @property({type: Array}) languages;
@@ -112,14 +114,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) images;
   @property({type: String}) defaultResourcePolicy;
   @property({type: Object}) total_slot;
+  @property({type: Object}) total_sg_slot;
   @property({type: Object}) used_slot;
+  @property({type: Object}) used_sg_slot;
   @property({type: Object}) available_slot;
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
   @property({type: Array}) vfolders;
-  @property({type: Object}) resource_info;
   @property({type: Object}) used_slot_percent;
+  @property({type: Object}) used_sg_slot_percent;
   @property({type: Array}) resource_templates;
   @property({type: String}) default_language;
   @property({type: Boolean}) launch_ready;
@@ -136,6 +140,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
+  @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
 
   constructor() {
@@ -159,7 +164,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       css`
         wl-card h4 {
           padding: 5px 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid #dddddd;
           font-weight: 100;
         }
 
@@ -194,13 +199,29 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         paper-progress {
           width: 90px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677EB;
-          --paper-progress-secondary-color: #98BE5A;
+          --paper-progress-height: 5px;
+          --paper-progress-active-color: #98be5a;
+          --paper-progress-secondary-color: #3677eb;
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
+        }
+
+        paper-progress.start-bar {
+          border-top-left-radius: 3px;
+          border-top-right-radius: 3px;
+          --paper-progress-active-color: #3677eb;
+        }
+
+        paper-progress.end-bar {
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
+          --paper-progress-active-color: #98be5a;
+        }
+
+        paper-progress.full-bar {
+          border-radius: 3px;
+          --paper-progress-height: 10px;
         }
 
         .resources.horizontal .short-indicator paper-progress {
@@ -314,7 +335,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --button-bg-active: var(--paper-red-600);
           --button-bg-hover: var(--paper-red-600);
           --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: #89A;
+          --button-color: #8899aa;
           --button-color-active: red;
           --button-color-hover: red;
         }
@@ -363,10 +384,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_mode = 'no';
     this.defaultResourcePolicy = 'UNLIMITED';
     this.total_slot = {};
+    this.total_sg_slot = {};
     this.used_slot = {};
+    this.used_sg_slot = {};
     this.available_slot = {};
-    this.resource_info = {};
     this.used_slot_percent = {};
+    this.used_sg_slot_percent = {};
     this.resource_templates = [];
     this.vfolders = [];
     this.default_language = '';
@@ -392,16 +415,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this.notification = window.lablupNotification;
-    if (this.activeConnected && this.metadata_updating === false) {
-      this._initSessions();
-      this._initAliases();
-      this.aggregateResource();
-    }
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.activeConnected && this.metadata_updating === false) {
         this.metadata_updating = true;
-        this.aggregateResource();
+        this.aggregateResource('resource-refreshed');
         this.metadata_updating = false;
       }
     });
@@ -440,14 +458,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(e) {
-    if (e.target.value === '' || e.target.value === this.scaling_group) {
+    if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
     }
     this.scaling_group = e.target.value;
     if (this.activeConnected && this.metadata_updating === false) {
       this.metadata_updating = true;
       this._refreshResourcePolicy();
-      this.aggregateResource();
+      this.aggregateResource('update-scaling-group');
       this.metadata_updating = false;
     }
   }
@@ -458,6 +476,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return;
     }
     // If disconnected
+    //console.log('client:', window.backendaiclient);
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
         this._updatePageVariables();
@@ -473,6 +492,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
       if (this.enable_scaling_group === true) {
         if (this.scaling_group === '') {
+          //console.log(window.backendaiclient.current_group);
           let sgs = await window.backendaiclient.scalingGroup.list();
           this.scaling_groups = sgs.scaling_groups;
           if (this.direction === 'vertical') {
@@ -481,7 +501,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             // Detached from template to support live-update after creating new group (will need it)
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
-            opt.innerHTML = 'Select Project';
+            opt.innerHTML = 'Select Scaling Group';
             scaling_group_selection_box.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');
@@ -504,7 +524,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this._initSessions();
       this._initAliases();
       this._refreshResourcePolicy();
-      this.aggregateResource();
+      this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
     }
   }
@@ -674,7 +694,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
-      this.aggregateResource();
+      this.aggregateResource('session-creation');
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
@@ -749,6 +769,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'lablup-pytorch': 'PyTorch (Cloudia)',
       'nni': 'Neural Network Intelligence',
       'h2o': 'H2O.ai',
+      'sftp': 'SFTP',
     };
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
@@ -839,8 +860,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
-  async _aggregateResourceUse() {
+  async _aggregateResourceUse(from: string = '') {
+    if (this.aggregate_updating === true) {
+      return;
+    }
+    this.aggregate_updating = true;
     let total_slot = {};
+    let total_sg_slot = {};
     return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       let param: any;
@@ -850,6 +876,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           scaling_group = this.scaling_group;
         } else {
           scaling_group = this.scaling_groups[0]['name'];
+          this.scaling_group = scaling_group;
         }
         param = {
           'group': window.backendaiclient.current_group,
@@ -882,50 +909,56 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.resource_templates = available_presets;
       }
 
-      let scaling_group_resource = response.scaling_group_remaining;
+      let resource_remaining = response.keypair_remaining;
+      let resource_using = response.keypair_using;
+      let scaling_group_resource_remaining = response.scaling_group_remaining;
+      //console.log('current:', this.scaling_group);
+      if (this.scaling_group == '') {
 
-      ['cpu', 'mem', 'cuda.shares', 'cuda.device'].forEach((slot) => {
-        if (slot in response.keypair_using && slot in scaling_group_resource) {
-          scaling_group_resource[slot] = parseFloat(scaling_group_resource[slot]) + parseFloat(response.keypair_using[slot]);
-        }
-      });
-      //this.resource_info = response.scaling_group_remaining;
-      this.resource_info = scaling_group_resource;
+      }
+      let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
+
       let keypair_resource_limit = response.keypair_limits;
       if ('cpu' in keypair_resource_limit) {
-        if (keypair_resource_limit['cpu'] === 'Infinity') {
-          total_slot['cpu_slot'] = this.resource_info.cpu;
+        total_sg_slot['cpu_slot'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
+        if (keypair_resource_limit['cpu'] === 'Infinity') { // When resource is infinity, use scaling group limit instead.
+          total_slot['cpu_slot'] = total_sg_slot['cpu_slot'];
         } else {
           total_slot['cpu_slot'] = keypair_resource_limit['cpu'];
         }
       }
       if ('mem' in keypair_resource_limit) {
+        total_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining.mem, 'g')) + parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using.mem, 'g'));
         if (keypair_resource_limit['mem'] === 'Infinity') {
-          total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resource_info.mem, 'g'));
+          total_slot['mem_slot'] = total_sg_slot['mem_slot'];
         } else {
-
           total_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(keypair_resource_limit['mem'], 'g'));
         }
       }
       total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
+      total_sg_slot['mem_slot'] = total_sg_slot['mem_slot'].toFixed(2);
+
       if ('cuda.device' in keypair_resource_limit) {
+        total_sg_slot['gpu_slot'] = Number(scaling_group_resource_remaining['cuda.device']) + Number(scaling_group_resource_using['cuda.device']);
         if (keypair_resource_limit['cuda.device'] === 'Infinity') {
-          total_slot['gpu_slot'] = this.resource_info['cuda.device'];
+          total_slot['gpu_slot'] = total_sg_slot['gpu_slot'];
         } else {
           total_slot['gpu_slot'] = keypair_resource_limit['cuda.device'];
         }
       }
       if ('cuda.shares' in keypair_resource_limit) {
+        total_sg_slot['fgpu_slot'] = Number(scaling_group_resource_remaining['cuda.shares']) + Number(scaling_group_resource_using['cuda.shares']);
         if (keypair_resource_limit['cuda.shares'] === 'Infinity') {
-          total_slot['fgpu_slot'] = this.resource_info['cuda.shares'];
+          total_slot['fgpu_slot'] = total_sg_slot['fgpu_slot'];
         } else {
           total_slot['fgpu_slot'] = keypair_resource_limit['cuda.shares'];
         }
       }
       let remaining_slot: Object = Object();
       let used_slot: Object = Object();
-      let resource_remaining = response.keypair_remaining;
-      let resource_using = response.keypair_using;
+      let remaining_sg_slot: Object = Object();
+      let used_sg_slot: Object = Object();
+
       if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
         if ('cpu' in resource_using) {
           used_slot['cpu_slot'] = resource_using['cpu'];
@@ -938,6 +971,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           remaining_slot['cpu_slot'] = resource_remaining['cpu'];
         }
       }
+      if ('cpu' in scaling_group_resource_remaining) {
+        if ('cpu' in scaling_group_resource_using) {
+          used_sg_slot['cpu_slot'] = scaling_group_resource_using['cpu'];
+        } else {
+          used_sg_slot['cpu_slot'] = 0;
+        }
+        remaining_sg_slot['cpu_slot'] = scaling_group_resource_remaining['cpu'];
+      }
+
       if ('mem' in resource_remaining) {
         if ('mem' in resource_using) {
           used_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resource_using['mem'], 'g'));
@@ -951,6 +993,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
       }
       used_slot['mem_slot'] = used_slot['mem_slot'].toFixed(2);
+      if ('mem' in scaling_group_resource_remaining) {
+        if ('mem' in scaling_group_resource_using) {
+          used_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using['mem'], 'g'));
+        } else {
+          used_sg_slot['mem_slot'] = 0.0;
+        }
+        remaining_sg_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining['mem'], 'g'));
+      }
+      used_sg_slot['mem_slot'] = used_sg_slot['mem_slot'].toFixed(2);
+
       if ('cuda.device' in resource_remaining) {
         remaining_slot['gpu_slot'] = resource_remaining['cuda.device'];
         if ('cuda.device' in resource_using) {
@@ -959,6 +1011,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           used_slot['gpu_slot'] = 0;
         }
       }
+      if ('cuda.device' in scaling_group_resource_remaining) {
+        remaining_sg_slot['gpu_slot'] = scaling_group_resource_remaining['cuda.device'];
+        if ('cuda.device' in scaling_group_resource_using) {
+          used_sg_slot['gpu_slot'] = scaling_group_resource_using['cuda.device'];
+        } else {
+          used_sg_slot['gpu_slot'] = 0;
+        }
+      }
+
       if ('cuda.shares' in resource_remaining) {
         remaining_slot['fgpu_slot'] = resource_remaining['cuda.shares'];
         if ('cuda.shares' in resource_using) {
@@ -967,16 +1028,43 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           used_slot['fgpu_slot'] = 0;
         }
       }
+      if ('cuda.shares' in scaling_group_resource_remaining) {
+        remaining_sg_slot['fgpu_slot'] = scaling_group_resource_remaining['cuda.shares'];
+        if ('cuda.shares' in resource_using) {
+          used_sg_slot['fgpu_slot'] = parseFloat(scaling_group_resource_using['cuda.shares']).toFixed(2);
+        } else {
+          used_sg_slot['fgpu_slot'] = 0;
+        }
+      }
 
       if ('fgpu_slot' in used_slot) {
         total_slot['fgpu_slot'] = parseFloat(total_slot['fgpu_slot']).toFixed(2);
       }
+      if ('fgpu_slot' in used_sg_slot) {
+        total_sg_slot['fgpu_slot'] = parseFloat(total_sg_slot['fgpu_slot']).toFixed(2);
+      }
+
       this.total_slot = total_slot;
+      this.total_sg_slot = total_sg_slot;
+
       this.used_slot = used_slot;
+      this.used_sg_slot = used_sg_slot;
+
       let used_slot_percent = {};
+      let used_sg_slot_percent = {};
+
       ['cpu_slot', 'mem_slot', 'gpu_slot', 'fgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
-          used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
+          if (total_slot[slot] != 0) {
+            used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
+          } else {
+            used_slot_percent[slot] = 0;
+          }
+          if (total_sg_slot[slot] != 0) {
+            used_sg_slot_percent[slot] = (used_sg_slot[slot] / total_sg_slot[slot]) * 100.0;
+          } else {
+            used_sg_slot_percent[slot] = 0;
+          }
         } else {
         }
         if (slot in remaining_slot) {
@@ -995,17 +1083,26 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
       this.available_slot = remaining_slot;
       this.used_slot_percent = used_slot_percent;
+      this.used_sg_slot_percent = used_sg_slot_percent;
+      this.aggregate_updating = false;
       return this.available_slot;
+    }).catch(err => {
+      this.aggregate_updating = false;
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show(true);
+      }
     });
   }
 
-  aggregateResource() {
+  aggregateResource(from: string = '') {
+    //console.log('aggregate resource called - ', from);
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._aggregateResourceUse();
+        this._aggregateResourceUse(from);
       }, true);
     } else {
-      this._aggregateResourceUse();
+      this._aggregateResourceUse(from);
     }
   }
 
@@ -1068,7 +1165,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       await this._updateVirtualFolderList();
-      let available_slot = await this._aggregateResourceUse();
+      await this._aggregateResourceUse('update-metric');
+      let available_slot = this.available_slot;
       if (!currentResource) {
         this.metric_updating = false;
         return;
@@ -1324,7 +1422,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supports[supportsKey] = [];
         }
         this.supports[supportsKey].push(item.tag);
-        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.keypair_resource_limits;
+        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
       });
       this._updateEnvironment();
     }).catch((err) => {
@@ -1415,8 +1513,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
+              <span class="gauge-label">${this.used_sg_slot.cpu_slot}/${this.total_sg_slot.cpu_slot}</span>
+              <paper-progress id="cpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.cpu_slot}"></paper-progress>
+              <paper-progress id="cpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
               <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
-              <paper-progress id="cpu-usage-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
@@ -1425,8 +1525,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
+              <span class="gauge-label">${this.used_sg_slot.mem_slot}/${this.total_sg_slot.mem_slot}GB</span>
+              <paper-progress id="mem-usage-bar" class="start-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+              <paper-progress id="mem-usage-bar-2" class="end-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
               <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
-              <paper-progress id="mem-usage-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
             </div>
           </div>
           ${this.total_slot.gpu_slot ?
@@ -1437,8 +1539,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
+              <span class="gauge-label">${this.used_sg_slot.gpu_slot}/${this.total_sg_slot.fgpu_slot}</span>
+              <paper-progress id="gpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.gpu_slot}"></paper-progress>
+              <paper-progress id="gpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
               <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
-              <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
             </div>
           </div>` :
       html``}
@@ -1450,8 +1554,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
+              <span class="gauge-label">${this.used_sg_slot.fgpu_slot}/${this.total_sg_slot.fgpu_slot}</span>
+              <paper-progress id="gpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.fgpu_slot}"></paper-progress>
+              <paper-progress id="gpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.fgpu_slot}"></paper-progress>
               <span class="gauge-label">${this.used_slot.fgpu_slot}/${this.total_slot.fgpu_slot}</span>
-              <paper-progress id="gpu-usage-bar" value="${this.used_slot_percent.fgpu_slot}"></paper-progress>
             </div>
           </div>` :
       html``}
@@ -1462,7 +1568,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap short-indicator" style="margin-left: 0; margin-right: auto">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-              <paper-progress class="short" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+              <paper-progress class="short full-bar" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
             </div>
           </div>
           <div class="flex"></div>
@@ -1474,6 +1580,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </wl-button>
         </div>
       </div>
+      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      <div class="vertical start-justified layout">
+        <div class="layout horizontal center start-justified">
+          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
+          <span style="margin-right:5px;">Current Scaling Group (${this.scaling_group})</span>
+        </div>
+        <div class="layout horizontal center start-justified">
+          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
+          <span style="margin-right:5px;">User Resource Limit</span>
+        </div>
+      </div>
+` : html``}
+
       <wl-dialog id="new-session-dialog"
                     fixed backdrop blockscrolling persistent
                     style="padding:0;">

@@ -17,7 +17,7 @@ export class BackendAIPage extends LitElement {
   }
 
   get activeConnected() {
-    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null;
+    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null && window.backendaiclient.ready === true;
   }
 
   public _viewStateChanged(param: Boolean): void;
