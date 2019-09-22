@@ -406,7 +406,7 @@ export default class BackendAILogin extends LitElement {
         }
         this.notification.show();
       } else {
-        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+        this.notification.text = PainKiller.relieve('Signout failed. Check login information.');
         this.notification.show();
       }
     });
