@@ -141,10 +141,16 @@ class BackendAIRegistryList extends BackendAIPage {
 
   _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
-    const url = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-url")).value,
+    const hostname = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-hostname")).value,
+      url = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-url")).value,
       username = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-username")).value,
       password = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-password")).value;
 
+    if (hostname === "") {
+      this.notification.text = "Hostname is empty";
+      this.notification.show();
+      return;
+    }
     if (url === "") {
       this.notification.text = "URL field is empty";
       this.notification.show();
@@ -337,6 +343,11 @@ class BackendAIRegistryList extends BackendAIPage {
           </h3>
           <form>
             <fieldset>
+              <wl-textfield
+                id="add-registry-hostname"
+                type="text"
+                label="Registry Hostname"
+              ></wl-textfield>
               <wl-textfield
                 id="add-registry-url"
                 type="text"
