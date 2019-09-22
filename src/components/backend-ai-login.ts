@@ -64,12 +64,14 @@ export default class BackendAILogin extends LitElement {
   @property({type: String}) email;
   @property({type: Object}) config = Object();
   @property({type: Object}) loginPanel;
+  @property({type: Object}) signoutPanel;
   @property({type: Object}) blockPanel;
   @property({type: Object}) clientConfig;
   @property({type: Object}) client;
   @property({type: Object}) notification;
   @property({type: Boolean}) signup_support = false;
   @property({type: Boolean}) change_signin_support = false;
+  @property({type: Boolean}) allow_signout = false;
 
   constructor() {
     super();
@@ -85,72 +87,80 @@ export default class BackendAILogin extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-          paper-icon-button {
-              --paper-icon-button-ink-color: white;
-          }
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
 
-          app-drawer-layout:not([narrow]) [drawer-toggle] {
-              display: none;
-          }
+        .warning {
+          color: red;
+        }
 
-          fieldset input {
-              width: 100%;
-              border: 0;
-              margin: 15px 0 0 0;
-              font: inherit;
-              font-size: 16px;
-              outline: none;
-          }
+        fieldset input {
+          width: 100%;
+          border: 0;
+          margin: 15px 0 0 0;
+          font: inherit;
+          font-size: 16px;
+          outline: none;
+        }
 
-          wl-textfield {
-              --input-font-family: 'Quicksand', sans-serif;
-          }
+        wl-textfield {
+          --input-font-family: 'Quicksand', sans-serif;
+        }
 
-          #login-panel {
-              --dialog-width: 400px;
-          }
+        #login-panel {
+          --dialog-width: 400px;
+        }
 
-          h3 small {
-              --button-font-size: 12px;
-          }
+        h3 small {
+          --button-font-size: 12px;
+        }
 
-          wl-button {
-              --button-bg: transparent;
-          }
+        wl-button {
+          --button-bg: transparent;
+        }
 
-          wl-button.mini {
-              font-size: 12px;
-          }
+        wl-button.red {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+          color: var(--paper-red-900);
+        }
 
-          wl-button.full {
-              width: 335px;
-          }
+        wl-button.mini {
+          font-size: 12px;
+        }
 
-          wl-button.login-button,
-          wl-button.login-cancel-button {
-              --button-bg-hover: var(--paper-red-100);
-              --button-bg-active: var(--paper-red-600);
-          }
+        wl-button.full {
+          width: 335px;
+        }
 
-          wl-button.signup-button {
-              --button-bg-hover: var(--paper-green-100);
-              --button-bg-active: var(--paper-green-600);
-          }
+        wl-button.login-button,
+        wl-button.login-cancel-button {
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
 
-          wl-button > wl-icon {
-              --icon-size: 24px;
-              padding: 0;
-          }
+        wl-button.signup-button {
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
 
-          wl-icon {
-              --icon-size: 16px;
-              padding: 0;
-          }
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
       `];
   }
 
   firstUpdated() {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
+    this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = window.lablupNotification;
   }
@@ -218,7 +228,11 @@ export default class BackendAILogin extends LitElement {
     } else {
       this.change_signin_support = true;
     }
-
+    if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
+      this.allow_signout = false;
+    } else {
+      this.allow_signout = true;
+    }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
@@ -333,6 +347,10 @@ export default class BackendAILogin extends LitElement {
     }
   }
 
+  signout() {
+    this.signoutPanel.show();
+  }
+
   _showSignupDialog() {
     (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
     //this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
@@ -359,6 +377,39 @@ export default class BackendAILogin extends LitElement {
 
   _submitIfEnter(e) {
     if (e.keyCode == 13) this._login();
+  }
+
+  _signoutIfEnter(e) {
+    if (e.keyCode == 13) this._signout();
+  }
+
+  _signout() {
+    let user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
+    let password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
+    this.client.signout(user_id, password).then(response => {
+      if (response === false) {
+        throw {"message": "Signout failed. Check information and manager status."};
+      } else {
+        this.notification.text = 'Signout finished.';
+        this.notification.show();
+        let event = new CustomEvent("backend-ai-logout", {"detail": this.client});
+        document.dispatchEvent(event);
+      }
+    }).catch((err) => {   // Signout failed
+      this.free();
+      if (this.signoutPanel.open !== true) {
+        console.log(err);
+        if (err.message !== undefined) {
+          this.notification.text = PainKiller.relieve(err.message);
+        } else {
+          this.notification.text = PainKiller.relieve('Login information mismatch. Check your information and try again.');
+        }
+        this.notification.show();
+      } else {
+        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+        this.notification.show();
+      }
+    });
   }
 
   _login() {
@@ -621,6 +672,33 @@ export default class BackendAILogin extends LitElement {
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
                           Login</wl-button>
+            </fieldset>
+          </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <div>Leave service</div>
+            <div class="flex"></div>
+            <wl-button class="red" fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <section>
+            <div class="warning">To confirm, please type your ID and password again.</div>
+          </section>
+          <form id="signout-form">
+            <fieldset>
+              <wl-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
+                           label="ID" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
+              <wl-textfield type="password" name="signout_password" id="id_signout_password"
+                           label="Password" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
+              <br/><br/>
+              <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
+                          @click="${() => this._signout()}">
+                          <wl-icon>check</wl-icon>
+                          Leave service</wl-button>
             </fieldset>
           </form>
         </wl-card>

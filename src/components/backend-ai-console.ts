@@ -84,6 +84,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
+  @property({type: Boolean}) allow_signout = false;
   @property({type: String}) proxy_url = '';
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
@@ -92,6 +93,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) plugins = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) splash = Object();
+  @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
   @property({type: Boolean}) _drawerOpened = false;
   @property({type: Boolean}) _offlineIndicatorOpened = false;
@@ -209,6 +211,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
     this.splash = this.shadowRoot.querySelector('#about-panel');
+    this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
@@ -221,16 +224,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       document.addEventListener('backend-ai-show-splash', this.splash.show.bind(this));
     } else {
       configPath = '../../config.toml';
+      document.addEventListener('backend-ai-logout', this.logout.bind(this));
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
       if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-        (this.shadowRoot.querySelector('#login-panel') as any).login();
+        this.loginPanel.login();
       }
     }).catch(err => {
       console.log("Initialization failed.");
       if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-        (this.shadowRoot.querySelector('#login-panel') as any).block('Configuration is not loaded.', 'Error');
+        this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
@@ -265,11 +269,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       console.log(this.connection_server);
     }
+    if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
+      this.allow_signout = false;
+    } else {
+      this.allow_signout = true;
+    }
     if (typeof config.plugin !== "undefined" && 'login' in config.plugin) {
       this.plugins['login'] = config.plugin.login;
     }
-    let loginPanel = this.shadowRoot.querySelector('#login-panel');
-    (loginPanel as any).refreshWithConfig(config);
+    this.loginPanel.refreshWithConfig(config);
   }
 
   refreshPage() {
@@ -458,7 +466,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this._page = 'summary';
         window.history.pushState({}, '', '/summary');
         store.dispatch(navigate(decodeURIComponent('/')));
-        (this.shadowRoot.querySelector('#login-panel') as any).login();
+        this.loginPanel.login();
       } else {
         window.location.reload();
       }
@@ -589,8 +597,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
                   ·
                   <a @click="${() => {
-      this.splash.show();
+      this.splash.show()
     }}">About</a>
+                  ${this.allow_signout === true ? html`
+                  ·
+                  <a @click="${() => {
+      this.loginPanel.signout()
+    }}">Leave service</a>
+                  ` : html``}
                 </small>
               </div>
             </footer>
