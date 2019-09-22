@@ -260,14 +260,15 @@ export default class BackendAiSessionList extends BackendAIPage {
           'title': 'Jupyter Notebook',
           'redirect': "&redirect=/tree",
           'src': './resources/icons/jupyter.png'
-        },
-          {
-            'name': 'jupyter',
-            'title': 'Jupyter Extension',
-            'redirect': "&redirect=/nbextensions",
-            'src': './resources/icons/jupyter.png',
-            'icon': 'vaadin:clipboard-pulse'
-          }],
+        }],
+      'jupyterextension':
+        [{
+          'name': 'jupyter',
+          'title': 'Jupyter Extension',
+          'redirect': "&redirect=/nbextensions",
+          'src': './resources/icons/jupyter.png',
+          'icon': 'vaadin:clipboard-pulse'
+        }],
       'jupyterlab':
         [{
           'name': 'jupyterlab',
