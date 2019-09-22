@@ -282,16 +282,6 @@ app.once('ready', function() {
         label: '&View',
         submenu: [
           {
-            label: '&Reload',
-            accelerator: 'Ctrl+R',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.reload();
-              }
-            }
-          },
-          {
             label: 'Zoom In',
             accelerator: 'Ctrl+=',
             click: function() {
