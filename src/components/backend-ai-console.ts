@@ -84,6 +84,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
+  @property({type: Boolean}) allow_signout = false;
   @property({type: String}) proxy_url = '';
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
@@ -266,6 +267,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (typeof config.general !== "undefined" && 'connectionServer' in config.general) {
       this.connection_server = config.general.connectionServer;
       console.log(this.connection_server);
+    }
+    if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
+      this.allow_signout = false;
+    } else {
+      this.allow_signout = true;
     }
     if (typeof config.plugin !== "undefined" && 'login' in config.plugin) {
       this.plugins['login'] = config.plugin.login;
@@ -592,10 +598,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <a @click="${() => {
       this.splash.show()
     }}">About</a>
+                  ${this.allow_signout === true ? html`
                   ·
                   <a @click="${() => {
       this.loginPanel.signout()
     }}">Leave service</a>
+                  ` : html``}
                 </small>
               </div>
             </footer>
