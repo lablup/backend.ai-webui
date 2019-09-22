@@ -87,73 +87,74 @@ export default class BackendAILogin extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-          paper-icon-button {
-              --paper-icon-button-ink-color: white;
-          }
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
 
-          .warning {
-            color: red;
-          }
-          fieldset input {
-              width: 100%;
-              border: 0;
-              margin: 15px 0 0 0;
-              font: inherit;
-              font-size: 16px;
-              outline: none;
-          }
+        .warning {
+          color: red;
+        }
 
-          wl-textfield {
-              --input-font-family: 'Quicksand', sans-serif;
-          }
+        fieldset input {
+          width: 100%;
+          border: 0;
+          margin: 15px 0 0 0;
+          font: inherit;
+          font-size: 16px;
+          outline: none;
+        }
 
-          #login-panel {
-              --dialog-width: 400px;
-          }
+        wl-textfield {
+          --input-font-family: 'Quicksand', sans-serif;
+        }
 
-          h3 small {
-              --button-font-size: 12px;
-          }
+        #login-panel {
+          --dialog-width: 400px;
+        }
 
-          wl-button {
-              --button-bg: transparent;
-          }
+        h3 small {
+          --button-font-size: 12px;
+        }
 
-          wl-button.red {
-            --button-bg: var(--paper-red-50);
-            --button-bg-hover: var(--paper-red-100);
-            --button-bg-active: var(--paper-red-600);
-            color: var(--paper-red-900);
-          }
+        wl-button {
+          --button-bg: transparent;
+        }
 
-          wl-button.mini {
-              font-size: 12px;
-          }
+        wl-button.red {
+          --button-bg: var(--paper-red-50);
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+          color: var(--paper-red-900);
+        }
 
-          wl-button.full {
-              width: 335px;
-          }
+        wl-button.mini {
+          font-size: 12px;
+        }
 
-          wl-button.login-button,
-          wl-button.login-cancel-button {
-              --button-bg-hover: var(--paper-red-100);
-              --button-bg-active: var(--paper-red-600);
-          }
+        wl-button.full {
+          width: 335px;
+        }
 
-          wl-button.signup-button {
-              --button-bg-hover: var(--paper-green-100);
-              --button-bg-active: var(--paper-green-600);
-          }
+        wl-button.login-button,
+        wl-button.login-cancel-button {
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+        }
 
-          wl-button > wl-icon {
-              --icon-size: 24px;
-              padding: 0;
-          }
+        wl-button.signup-button {
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
 
-          wl-icon {
-              --icon-size: 16px;
-              padding: 0;
-          }
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
+
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
       `];
   }
 
@@ -385,8 +386,30 @@ export default class BackendAILogin extends LitElement {
   _signout() {
     let user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
     let password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
-    alert(user_id);
-    alert(password);
+    this.client.signout(user_id, password).then(response => {
+      if (response === false) {
+        throw {"message": "Signout failed. Check information and manager status."};
+      } else {
+        this.notification.text = 'Signout finished.';
+        this.notification.show();
+        let event = new CustomEvent("backend-ai-logout", {"detail": this.client});
+        document.dispatchEvent(event);
+      }
+    }).catch((err) => {   // Signout failed
+      this.free();
+      if (this.signoutPanel.open !== true) {
+        console.log(err);
+        if (err.message !== undefined) {
+          this.notification.text = PainKiller.relieve(err.message);
+        } else {
+          this.notification.text = PainKiller.relieve('Login information mismatch. Check your information and try again.');
+        }
+        this.notification.show();
+      } else {
+        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+        this.notification.show();
+      }
+    });
   }
 
   _login() {
