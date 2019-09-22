@@ -742,7 +742,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
-              window.open(response.url + "/", '_blank');
+              window.open(response.url, '_blank');
               this.shadowRoot.querySelector('#indicator').end();
               console.log("Terminal proxy loaded: ");
               console.log(kernelId);
