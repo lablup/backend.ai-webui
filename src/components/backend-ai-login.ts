@@ -64,12 +64,14 @@ export default class BackendAILogin extends LitElement {
   @property({type: String}) email;
   @property({type: Object}) config = Object();
   @property({type: Object}) loginPanel;
+  @property({type: Object}) signoutPanel;
   @property({type: Object}) blockPanel;
   @property({type: Object}) clientConfig;
   @property({type: Object}) client;
   @property({type: Object}) notification;
   @property({type: Boolean}) signup_support = false;
   @property({type: Boolean}) change_signin_support = false;
+  @property({type: Boolean}) allow_signout = false;
 
   constructor() {
     super();
@@ -151,6 +153,7 @@ export default class BackendAILogin extends LitElement {
 
   firstUpdated() {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
+    this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = window.lablupNotification;
   }
@@ -218,7 +221,11 @@ export default class BackendAILogin extends LitElement {
     } else {
       this.change_signin_support = true;
     }
-
+    if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
+      this.allow_signout = false;
+    } else {
+      this.allow_signout = true;
+    }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {
@@ -333,6 +340,10 @@ export default class BackendAILogin extends LitElement {
     }
   }
 
+  signout() {
+    this.signoutPanel.show();
+  }
+
   _showSignupDialog() {
     (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
     //this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
@@ -359,6 +370,17 @@ export default class BackendAILogin extends LitElement {
 
   _submitIfEnter(e) {
     if (e.keyCode == 13) this._login();
+  }
+
+  _signoutIfEnter(e) {
+    if (e.keyCode == 13) this._signout();
+  }
+
+  _signout() {
+    let user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
+    let password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
+    alert(user_id);
+    alert(password);
   }
 
   _login() {
@@ -621,6 +643,27 @@ export default class BackendAILogin extends LitElement {
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
                           Login</wl-button>
+            </fieldset>
+          </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
+        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <div>Leave service</div>
+            <div class="flex"></div>
+          </h3>
+          <form id="signout-form">
+            <fieldset>
+              <wl-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
+                           label="ID" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
+              <wl-textfield type="password" name="signout_password" id="id_signout_password"
+                           label="Password" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
+              <br/><br/>
+              <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
+                          @click="${() => this._signout()}">
+                          <wl-icon>check</wl-icon>
+                          Leave service</wl-button>
             </fieldset>
           </form>
         </wl-card>
