@@ -166,7 +166,7 @@ class BackendAIRegistryList extends BackendAIPage {
       if (password !== "") input['password'] = password;
     }
 
-    const key = `config/docker/registry/${this._getHostname(url)}`;
+    const key = `config/docker/registry/${hostname}`;
     window.backendaiclient.registry.add(key, input)
       .then(({result}) => {
         if (result === "ok") {
