@@ -440,7 +440,6 @@ function createWindow () {
     devtools = null;
     app.quit()
   });
-
   mainWindow.on('closed', function () {
     mainWindow = null;
     mainContent = null;
@@ -457,11 +456,17 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   Object.assign(options, {
     frame: true,
     show: false,
-    parent: win,
+    backgroundColor: '#EFEFEF',
+    //parent: win,
     titleBarStyle: '',
     width: windowWidth,
     height: windowHeight,
-    preload:''
+    closable: true
+  });
+  Object.assign(options.webPreferences, {
+    preload: '',
+    isBrowserView: false,
+    javascript: true
   });
   if (frameName === 'modal') {
     options.modal = true;
@@ -473,6 +478,10 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   event.newGuest.loadURL(url);
   event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
+  });
+  event.newGuest.on('close', (e) => {
+    let c = BrowserWindow.getFocusedWindow();
+    c.destroy();
   });
 }
 
