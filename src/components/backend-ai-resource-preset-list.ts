@@ -479,7 +479,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _refreshTemplateData() {
-    return window.backendaiclient.resourcePreset.check().then((response) => {
+    let param = {
+      'group': window.backendaiclient.current_group
+    };
+    return window.backendaiclient.resourcePreset.check(param).then((response) => {
       let resourcePresets = response.presets;
       Object.keys(resourcePresets).map((objectKey, index) => {
         let preset = resourcePresets[objectKey];
