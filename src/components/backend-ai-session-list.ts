@@ -731,6 +731,26 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
+  _runTerminal(e) {
+    const controller = e.target;
+    const controls = controller.closest('#controls');
+    const kernelId = controls['kernel-id'];
+    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+      this.shadowRoot.querySelector('#indicator').start();
+      this._open_wsproxy(kernelId, 'ttyd')
+        .then((response) => {
+          if (response.url) {
+            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            setTimeout(() => {
+              window.open(response.url + "/", '_blank');
+              this.shadowRoot.querySelector('#indicator').end();
+              console.log("Terminal proxy loaded: ");
+              console.log(kernelId);
+            }, 1000);
+          }
+        });
+    }
+  }
   _runJupyterTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
@@ -926,7 +946,7 @@ ${item.map(item => html`
                                @click="${(e) => this._showAppLauncher(e)}"
                                icon="vaadin:caret-right"></paper-icon-button>
             <paper-icon-button class="fg controls-running"
-                               @click="${(e) => this._runJupyterTerminal(e)}"
+                               @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"></paper-icon-button>
                                ` : html``}
              ${this.condition === 'running' ? html`
