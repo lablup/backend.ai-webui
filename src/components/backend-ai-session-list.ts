@@ -260,14 +260,15 @@ export default class BackendAiSessionList extends BackendAIPage {
           'title': 'Jupyter Notebook',
           'redirect': "&redirect=/tree",
           'src': './resources/icons/jupyter.png'
-        },
-          {
-            'name': 'jupyter',
-            'title': 'Jupyter Extension',
-            'redirect': "&redirect=/nbextensions",
-            'src': './resources/icons/jupyter.png',
-            'icon': 'vaadin:clipboard-pulse'
-          }],
+        }],
+      'jupyterextension':
+        [{
+          'name': 'jupyter',
+          'title': 'Jupyter Extension',
+          'redirect': "&redirect=/nbextensions",
+          'src': './resources/icons/jupyter.png',
+          'icon': 'vaadin:clipboard-pulse'
+        }],
       'jupyterlab':
         [{
           'name': 'jupyterlab',
@@ -304,6 +305,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           'redirect': "/",
           'src': './resources/icons/nni.png'
         }],
+      'sftp':
+        [{
+          'name': 'sftp',
+          'title': 'SFTP',
+          'redirect': "/",
+          'src': './resources/icons/sftp.png'
+        }],
     };
   }
 
@@ -331,7 +339,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         status = "TERMINATED";
         break;
       case "others":
-        status = ["PREPARING", "RESTARTING", "TERMINATING"];
+        status = ["PREPARING", "RESTARTING", "TERMINATING", "CANCELLED", "PENDING"]; // "ERROR", "CANCELLED"..
+        // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
         break;
       default:
         status = "RUNNING";
@@ -477,6 +486,9 @@ export default class BackendAiSessionList extends BackendAIPage {
         {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
       'h2o': [
         {'category': 'Env', 'tag': 'H2O', 'color': 'yellow'}],
+      'sftp': [
+        {'category': 'Env', 'tag': 'SFTP', 'color': 'yellow'},
+        {'tag': 'Backend.AI', 'color': 'green'}],
       'lablup-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
         {'tag': 'Cloudia', 'color': 'green'}],

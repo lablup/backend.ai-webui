@@ -18,6 +18,7 @@ Backend.AI console focuses to
  * Storage management
     * Create / delete folders
     * Upload  / download files
+    * SFTP server (backend.ai SFTP image needed)
     * Share folders 
  * Statistics
     * User resource statistics

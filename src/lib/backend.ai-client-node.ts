@@ -158,6 +158,7 @@ class Client {
 	public scalingGroup: any;
 	public registry: any;
 	public _features: any;
+  public ready: boolean = false;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
   static ERR_SERVER: any;
@@ -172,7 +173,7 @@ class Client {
     this.code = null;
     this.kernelId = null;
     this.kernelType = null;
-    this.clientVersion = '19.06.0';
+    this.clientVersion = '19.09.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -256,12 +257,19 @@ class Client {
         throw body;
       }
     } catch (err) {
+      let error_message;
+      if ('title' in err) {
+        error_message = err.title;
+      } else {
+        error_message = err;
+      }
+
       switch (errorType) {
         case Client.ERR_REQUEST:
-          errorMsg = `sending request has failed: ${err}`;
+          errorMsg = `sending request has failed: ${error_message}`;
           break;
         case Client.ERR_RESPONSE:
-          errorMsg = `reading response has failed: ${err}`;
+          errorMsg = `reading response has failed: ${error_message}`;
           break;
         case Client.ERR_SERVER:
           errorMsg = 'server responded failure: '
@@ -316,6 +324,7 @@ class Client {
       this._features['scaling-group'] = true;
       this._features['group'] = true;
       this._features['group-folder'] = true;
+      this._features['system-images'] = true;
     }
   }
 
@@ -1469,19 +1478,20 @@ class ContainerImage {
    *
    * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
    * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
+   * @param {boolean} system_images - filter images to get system images such as console, SFTP server. true to query system images only.
    */
-  list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false) {
+  list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
     let q, v;
-    if (installed_only === false) {
+    if (this.client.supports('system-images')) {
+      q = `query($installed:Boolean) {` +
+        `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+        '}';
+      v = {'installed': installed_only, 'is_operation': system_images};
+    } else {
       q = `query {` +
         `  images { ${fields.join(" ")} }` +
         '}';
       v = {};
-    } else {
-      q = `query($installed:Boolean) {` +
-        `  images(is_installed:$installed) { ${fields.join(" ")} }` +
-        '}';
-      v = {'installed': installed_only};
     }
     return this.client.gql(q, v);
   }
@@ -1582,7 +1592,7 @@ class ComputeSession {
           arr.compute_sessions.forEach(e => {
             e.status = status[idx];
           })
-        })
+        });
 
         return {
           'compute_sessions': res.reduce((acc, cur) => acc.concat(cur.compute_sessions), [])
