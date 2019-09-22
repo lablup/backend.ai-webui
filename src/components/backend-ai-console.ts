@@ -224,6 +224,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       document.addEventListener('backend-ai-show-splash', this.splash.show.bind(this));
     } else {
       configPath = '../../config.toml';
+      document.addEventListener('backend-ai-logout', this.logout.bind(this));
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
