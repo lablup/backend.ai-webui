@@ -6,6 +6,7 @@ siteDescription = "Console"
 connectionMode = "SESSION"
 allowChangeSigninMode = true
 signupSupport = false
+allowSignout = false
 debug = false
 
 [wsproxy]

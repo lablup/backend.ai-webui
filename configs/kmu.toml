@@ -5,6 +5,7 @@ defaultSessionEnvironment = "index.docker.io/lablup/ngc-tensorflow"
 siteDescription = "Kookmin MBA"
 connectionMode = "API"
 signupSupport = false
+allowSignout = false
 
 [wsproxy]
 #proxyURL = "https://web.kmu-bigdata.onpremise.backend.ai:8443/"

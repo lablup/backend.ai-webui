@@ -5,6 +5,7 @@ defaultSessionEnvironment = "index.docker.io/lablup/ngc-tensorflow"
 siteDescription = "on TTA"
 connectionMode = "SESSION"
 signupSupport = false
+allowSignout = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"

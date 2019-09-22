@@ -5,6 +5,7 @@ defaultSessionEnvironment = "index.docker.io/lablup/python-tensorflow"
 siteDescription = "AI Square"
 connectionMode = "SESSION"
 signupSupport = false
+allowSignout = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"

@@ -5,6 +5,7 @@ defaultSessionEnvironment = "registry.hanacloudia.com/hana_nvidia/ngc-tensorflow
 siteDescription = "Hana Cloudia"
 connectionMode = "SESSION"
 allowChangeSigninMode = false
+allowSignout = true
 signupSupport = true
 
 [wsproxy]
