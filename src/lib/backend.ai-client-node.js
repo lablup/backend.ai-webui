@@ -103,11 +103,11 @@ class Client {
      * @param {string} agentSignature - an extra string that will be appended to User-Agent headers when making API requests
      */
     constructor(config, agentSignature) {
-      this.ready = false;
+        this.ready = false;
         this.code = null;
         this.kernelId = null;
         this.kernelType = null;
-      this.clientVersion = '19.09.0';
+        this.clientVersion = '19.09.0';
         this.agentSignature = agentSignature;
         if (config === undefined) {
             this._config = ClientConfig.createFromEnv();
@@ -258,6 +258,7 @@ class Client {
             this._features['scaling-group'] = true;
             this._features['group'] = true;
             this._features['group-folder'] = true;
+            this._features['system-images'] = true;
         }
     }
     /**
@@ -1121,7 +1122,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
+  
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [
@@ -1348,20 +1349,21 @@ class ContainerImage {
      *
      * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
      * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
+     * @param {boolean} system_images - filter images to get system images such as console, SFTP server. true to query system images only.
      */
-    list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false) {
+    list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
         let q, v;
-        if (installed_only === false) {
+        if (this.client.supports('system-images')) {
+            q = `query($installed:Boolean) {` +
+                `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+                '}';
+            v = { 'installed': installed_only, 'is_operation': system_images };
+        }
+        else {
             q = `query {` +
                 `  images { ${fields.join(" ")} }` +
                 '}';
             v = {};
-        }
-        else {
-            q = `query($installed:Boolean) {` +
-                `  images(is_installed:$installed) { ${fields.join(" ")} }` +
-                '}';
-            v = { 'installed': installed_only };
         }
         return this.client.gql(q, v);
     }
