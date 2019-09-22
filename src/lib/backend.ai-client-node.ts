@@ -404,6 +404,19 @@ class Client {
   }
 
   /**
+   * Leave from manager user. This requires additional console-server package.
+   *
+   */
+  async signout(userid, password) {
+    let body = {
+      'username': userid,
+      'password': password
+    };
+    let rqst = this.newSignedRequest('POST', `/auth/signout`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Return the resource slots.
    */
   async getResourceSlots() {
