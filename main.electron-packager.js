@@ -418,34 +418,33 @@ function createWindow () {
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    console.log('frame name:', frameName);
-    if (frameName === '_blank') {
-      newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
-    } else {
-      newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
-    }
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
   });
 }
 
-function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures) {
+function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {
   event.preventDefault();
   Object.assign(options, {
-    //modal: true,
     frame: true,
+    show: false,
+    parent: win,
     titleBarStyle: '',
     width: windowWidth,
     height: windowHeight,
-    webPreferences: {
-      nodeIntegration: false
-    }
+    preload:''
   });
+  if (frameName === 'modal') {
+    options.modal = true;
+  }
   event.newGuest = new BrowserWindow(options);
+  event.newGuest.once('ready-to-show', () => {
+    event.newGuest.show()
+  });
   event.newGuest.loadURL(url);
   event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
   });
 }
-
 
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
