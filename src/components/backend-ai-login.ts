@@ -91,10 +91,9 @@ export default class BackendAILogin extends LitElement {
               --paper-icon-button-ink-color: white;
           }
 
-          app-drawer-layout:not([narrow]) [drawer-toggle] {
-              display: none;
+          .warning {
+            color: red;
           }
-
           fieldset input {
               width: 100%;
               border: 0;
@@ -118,6 +117,13 @@ export default class BackendAILogin extends LitElement {
 
           wl-button {
               --button-bg: transparent;
+          }
+
+          wl-button.red {
+            --button-bg: var(--paper-red-50);
+            --button-bg-hover: var(--paper-red-100);
+            --button-bg-active: var(--paper-red-600);
+            color: var(--paper-red-900);
           }
 
           wl-button.mini {
@@ -652,7 +658,13 @@ export default class BackendAILogin extends LitElement {
           <h3 class="horizontal center layout">
             <div>Leave service</div>
             <div class="flex"></div>
+            <wl-button class="red" fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
           </h3>
+          <section>
+            <div class="warning">To confirm, please type your ID and password again.</div>
+          </section>
           <form id="signout-form">
             <fieldset>
               <wl-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
