@@ -13,6 +13,7 @@ Backend.AI console focuses to
  * Session management
     * Set default resources for runs
     * Choose and run environment-supported apps
+    * Terminal for each session
  * Experiments
     * Manages container stream
  * Storage management
