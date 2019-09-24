@@ -427,7 +427,7 @@ export default class BackendAIData extends BackendAIPage {
       <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered">
           <h3 class="horizontal center layout">
-            <span>Create a new folder</span>
+            <span>Create a new storage folder</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -455,6 +455,17 @@ export default class BackendAIData extends BackendAIPage {
                 </paper-listbox>
               </paper-dropdown-menu>
             </div>
+            ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+            <div class="horizontal layout">
+              <paper-dropdown-menu id="add-folder-group" label="Group">
+                <paper-listbox slot="dropdown-content" selected="0">
+                ${window.backendaiclient.groups.map(item => html`
+                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+                `)}
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>            
+            ` : html``}
             <br/>
             <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
               <wl-icon>rowing</wl-icon>
@@ -1045,7 +1056,11 @@ export default class BackendAIData extends BackendAIPage {
     if (type == 'user') {
       group = '';
     } else {
-      group = window.backendaiclient.current_group;
+      if (this.is_admin) {
+        group = this.shadowRoot.querySelector('#add-folder-group').value;
+      } else {
+        group = window.backendaiclient.current_group;
+      }
     }
     let job = window.backendaiclient.vfolder.create(name, host, group);
     job.then((value) => {
