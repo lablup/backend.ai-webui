@@ -499,6 +499,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             this.scaling_group = this.scaling_groups[0].name;
             let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
             // Detached from template to support live-update after creating new group (will need it)
+            while (scaling_group_selection_box.hasChildNodes()) {
+              scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
+            }
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
             opt.innerHTML = 'Select Scaling Group';
