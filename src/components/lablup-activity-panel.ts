@@ -83,7 +83,7 @@ export default class LablupActivityPanel extends LitElement {
         <h4 class="horizontal center layout" style="font-weight:bold">
           <span>${this.title}</span>
           <div class="flex"></div>
-          <wl-button id="button" fab flat inverted @click="${(e) => this._removePanel(e)}">
+          <wl-button id="button" fab flat inverted @click="${() => this._removePanel()}">
             <wl-icon>close</wl-icon>
           </wl-button>
         </h4>

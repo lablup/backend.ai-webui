@@ -502,17 +502,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             if (scaling_group_selection_box.hasChildNodes()) {
               scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
             }
-            let select = document.createElement('wl-select');
-            select.label = "Scaling Group";
-            select.name = 'scaling-group-select';
-            select.id = 'scaling-group-select';
-            select.value = this.scaling_group;
-            select.addEventListener('input', this.updateScalingGroup.bind(this));
+            let scaling_select = document.createElement('wl-select');
+            scaling_select.label = "Scaling Group";
+            scaling_select.name = 'scaling-group-select';
+            scaling_select.id = 'scaling-group-select';
+            scaling_select.value = this.scaling_group;
+            scaling_select.addEventListener('input', this.updateScalingGroup.bind(this));
 
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
             opt.innerHTML = 'Select Scaling Group';
-            select.appendChild(opt);
+            scaling_select.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');
               opt.value = group.name;
@@ -522,10 +522,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 opt.selected = false;
               }
               opt.innerHTML = group.name;
-              select.appendChild(opt);
+              scaling_select.appendChild(opt);
             });
-            select.updateOptions();
-            scaling_group_selection_box.appendChild(select);
+            //scaling_select.updateOptions();
+            scaling_group_selection_box.appendChild(scaling_select);
           }
           // update sg on dialog
           let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
@@ -585,7 +585,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _refreshResourceValues() {
     this._refreshImageList();
     this._updateGPUMode();
-    this.updateMetric();
+    this.updateMetric('refresh resource values');
   }
 
   async _launchSessionDialog() {
@@ -594,7 +594,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
-      await this.updateMetric();
+      await this.updateMetric('launch session dialog');
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
@@ -852,7 +852,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     if (this.versions !== undefined) {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
-      this.updateMetric();
+      this.updateMetric('update versions');
     }
   }
 
@@ -1159,26 +1159,30 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
-  async updateMetric() {
+  async updateMetric(from: string = '') {
     if (this.metric_updating == true) {
       //console.log('update metric blocked');
       return;
     }
-    //console.log('update metric...');
+    let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
+    let currentVersion = this.shadowRoot.querySelector('#version').value;
+    if (typeof selectedItem === 'undefined' || selectedItem === null) {
+      this.metric_updating = false;
+      return;
+    }
+    //console.log('update metric from', from);
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.updateMetric();
+        this.updateMetric(from);
       }, true);
     } else {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
-      let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
       if (typeof selectedItem === 'undefined' || selectedItem === null) {
         this.metric_updating = false;
         return;
       }
       let kernel = selectedItem.id;
-      let currentVersion = this.shadowRoot.querySelector('#version').value;
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       await this._updateVirtualFolderList();
