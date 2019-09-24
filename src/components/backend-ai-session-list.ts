@@ -333,13 +333,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
       case "running":
+        //status = "PENDING, PREAPRING, PULLING, CREATING, RUNNING, RESTARTING, TERMINATING";
         status = "RUNNING";
         break;
       case "finished":
-        status = "TERMINATED";
+        status = "TERMINATED"; //TERMINATED, CANCELLED
         break;
       case "others":
-        status = ["PREPARING", "RESTARTING", "TERMINATING", "CANCELLED", "PENDING"]; // "ERROR", "CANCELLED"..
+        status = "PREPARING, RESTARTING, TERMINATING, CANCELLED, PENDING"; // "ERROR", "CANCELLED"..
         // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
         break;
       default:
@@ -1026,18 +1027,13 @@ ${item.map(item => html`
           <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === "API" ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
-        <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
+        <vaadin-grid-column width="120px" resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
-        ${this.condition === 'others'
-      ? html`
-          <vaadin-grid-column width="150px" flex-grow="0" header="Status" resizable>
-            <template>
-              <span style="font-size: 12px;">[[item.status]]</span>
-            </template>
-          </vaadin-grid-column>
-          `
-      : html``
-    }
+        <vaadin-grid-column width="100px" flex-grow="0" header="Status" resizable>
+          <template>
+            <span style="font-size: 12px;">[[item.status]]</span>
+          </template>
+        </vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>
