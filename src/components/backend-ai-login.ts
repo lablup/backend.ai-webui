@@ -640,7 +640,7 @@ export default class BackendAILogin extends LitElement {
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Login with ${this.connection_mode == 'SESSION' ? html`E-mail/password` : html`IAM`}</div>
+            <div>Login with ${this.connection_mode == 'SESSION' ? html`E-mail` : html`IAM`}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
                 <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`Use IAM` : html`Use ID/password`}</a></small>
