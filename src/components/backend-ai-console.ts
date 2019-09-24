@@ -369,7 +369,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       opt.innerHTML = group;
       select.appendChild(opt);
     });
-    select.updateOptions();
+    //select.updateOptions();
     groupSelectionBox.appendChild(select);
   }
 
