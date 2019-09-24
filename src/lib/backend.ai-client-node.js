@@ -195,7 +195,7 @@ class Client {
         }
         catch (err) {
             let error_message;
-            if ('title' in err) {
+            if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
                 error_message = err.title;
             }
             else {
