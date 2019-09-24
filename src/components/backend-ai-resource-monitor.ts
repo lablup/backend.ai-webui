@@ -875,6 +875,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.aggregate_updating === true) {
       return;
     }
+    //console.log('aggregate from:', from);
     this.aggregate_updating = true;
     let total_slot = {};
     let total_sg_slot = {};
@@ -1170,6 +1171,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }, true);
     } else {
       this.metric_updating = true;
+      await this._aggregateResourceUse('update-metric');
       let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
       if (typeof selectedItem === 'undefined' || selectedItem === null) {
         this.metric_updating = false;
@@ -1180,7 +1182,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       await this._updateVirtualFolderList();
-      await this._aggregateResourceUse('update-metric');
       let available_slot = this.available_slot;
       if (!currentResource) {
         this.metric_updating = false;
