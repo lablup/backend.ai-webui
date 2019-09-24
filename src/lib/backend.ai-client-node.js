@@ -259,7 +259,7 @@ class Client {
             this._features['group'] = true;
             this._features['group-folder'] = true;
             this._features['system-images'] = true;
-          this._features['detailed-session-states'] = true;
+            this._features['detailed-session-states'] = true;
         }
     }
     /**
@@ -1135,7 +1135,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
+  
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [
@@ -1445,22 +1445,22 @@ class ComputeSession {
      * @param {number} offset - offset for item query. Useful for pagination.
      */
     async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = null, limit = 30, offset = 0) {
-      if (accessKey === '')
-        accessKey = null;
-      let q, v;
-      q = `query($limit:Int!, $offset:Int!, $ak:String, $status:String) {
+        if (accessKey === '')
+            accessKey = null;
+        let q, v;
+        q = `query($limit:Int!, $offset:Int!, $ak:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, status:$status) {
         items { ${fields.join(" ")}}
         total_count
       }
     }`;
-      v = {
-        'limit': limit,
-        'offset': offset,
-        'status': status
-      };
-      if (accessKey != null) {
-        v['ak'] = accessKey;
+        v = {
+            'limit': limit,
+            'offset': offset,
+            'status': status
+        };
+        if (accessKey != null) {
+            v['ak'] = accessKey;
         }
         return this.client.gql(q, v);
     }
