@@ -911,12 +911,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
       let resource_remaining = response.keypair_remaining;
       let resource_using = response.keypair_using;
-      let scaling_group_resource_remaining = response.scaling_group_remaining;
+      //let scaling_group_resource_remaining = response.scaling_group_remaining;
       //console.log('current:', this.scaling_group);
-      if (this.scaling_group == '') {
-
+      if (this.scaling_group == '') { // IT IS ERROR SITUATION.
       }
       let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
+      let scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
 
       let keypair_resource_limit = response.keypair_limits;
       if ('cpu' in keypair_resource_limit) {
