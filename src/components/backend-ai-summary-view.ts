@@ -166,7 +166,7 @@ export default class BackendAISummary extends BackendAIPage {
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.indicator.hide();
       this.jobs = response;
-      this.sessions = response.compute_sessions;
+      this.sessions = response.compute_session_list.total_count;
       if (this.active === true) {
         setTimeout(() => {
           this._refreshSessionInformation()

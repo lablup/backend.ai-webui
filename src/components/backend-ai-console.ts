@@ -345,8 +345,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
     }
     // Detached from template to support live-update after creating new group (will need it)
-    while (groupSelectionBox.hasChildNodes()) {
-      groupSelectionBox.removeChild(groupSelectionBox.firstChild);
+    if (groupSelectionBox.hasChildNodes()) {
+      console.log('it has items');
     }
     let opt = document.createElement('option');
     opt.setAttribute('disabled', 'true');
