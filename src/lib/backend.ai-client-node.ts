@@ -325,6 +325,7 @@ class Client {
       this._features['group'] = true;
       this._features['group-folder'] = true;
       this._features['system-images'] = true;
+      this._features['detailed-session-states'] = true;
     }
   }
 

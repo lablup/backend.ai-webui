@@ -333,21 +333,23 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
       case "running":
-        //status = "PENDING, PREAPRING, PULLING, CREATING, RUNNING, RESTARTING, TERMINATING";
-        status = "RUNNING";
+        status = ["PENDING", "PREPARING", "PULLING", "CREATING", "RUNNING", "RESTARTING", "TERMINATING"];
         break;
       case "finished":
-        status = "TERMINATED"; //TERMINATED, CANCELLED
+        status = ["TERMINATED", "CANCELLED"]; //TERMINATED, CANCELLED
         break;
       case "others":
-        status = "PREPARING, RESTARTING, TERMINATING, CANCELLED, PENDING"; // "ERROR", "CANCELLED"..
+        status = ["TERMINATING", "ERROR"]; // "ERROR", "CANCELLED"..
         // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
         break;
       default:
-        status = "RUNNING";
+        status = ["RUNNING"];
+    }
+    if (window.backendaiclient.supports('detailed-session-states')) {
+      status = status.join(',');
     }
     let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status", "service_ports",
+      "sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -752,6 +754,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         });
     }
   }
+
   _runJupyterTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
