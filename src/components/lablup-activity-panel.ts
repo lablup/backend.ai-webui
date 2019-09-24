@@ -33,46 +33,46 @@ export default class LablupActivityPanel extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-          wl-card {
-              display: block;
-              background: white;
-              box-sizing: border-box;
-              margin: 16px;
-              padding: 0;
-              border-radius: 5px;
-          }
+        wl-card {
+          display: block;
+          background: white;
+          box-sizing: border-box;
+          margin: 16px;
+          padding: 0;
+          border-radius: 5px;
+        }
 
-          wl-card > h4 {
-              border-left: 3px solid var(--paper-green-900);
-              background-color: var(--paper-green-500);
-              color: #eee;
-              font-size: 14px;
-              font-weight: 400;
-              height: 32px;
-              padding: 5px 15px 5px 20px;
-              margin: 0 0 10px 0;
-              border-bottom: 1px solid #DDD;
-              @apply --layout-justified;
-              display: flex;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-          }
+        wl-card > h4 {
+          border-left: 3px solid var(--paper-green-900);
+          background-color: var(--paper-green-500);
+          color: #eee;
+          font-size: 14px;
+          font-weight: 400;
+          height: 32px;
+          padding: 5px 15px 5px 20px;
+          margin: 0 0 10px 0;
+          border-bottom: 1px solid #DDD;
+          @apply --layout-justified;
+          display: flex;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
 
-          wl-card > div {
-              margin: 20px;
-              padding-bottom: 20px;
-              font-size: 12px;
-              padding-left: 3px;
-          }
+        wl-card > div {
+          margin: 20px;
+          padding-bottom: 20px;
+          font-size: 12px;
+          padding-left: 3px;
+        }
 
-          ul {
-              padding-inline-start: 0;
-          }
+        ul {
+          padding-inline-start: 0;
+        }
 
-          #button {
-              display: none;
-          }
+        #button {
+          display: none;
+        }
       `];
   }
 
