@@ -392,7 +392,7 @@ export default class BackendAILogin extends LitElement {
       } else {
         this.notification.text = 'Signout finished.';
         this.notification.show();
-        let event = new CustomEvent("backend-ai-logout", {"detail": this.client});
+        let event = new CustomEvent("backend-ai-logout", {"detail": ""});
         document.dispatchEvent(event);
       }
     }).catch((err) => {   // Signout failed
