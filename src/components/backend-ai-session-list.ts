@@ -333,7 +333,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
       case "running":
-        status = ["PENDING", "PREPARING", "PULLING", "CREATING", "RUNNING", "RESTARTING", "TERMINATING"];
+        status = ["RUNNING", "RESTARTING", "TERMINATING"];
         break;
       case "finished":
         status = ["TERMINATED", "CANCELLED"]; //TERMINATED, CANCELLED
@@ -348,6 +348,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (window.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
+    status = status.join(',');
     let fields = [
       "sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
