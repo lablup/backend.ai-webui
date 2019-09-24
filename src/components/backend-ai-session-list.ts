@@ -54,6 +54,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
+  @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Boolean}) refreshing = false;
   @property({type: Boolean}) is_admin = false;
   @property({type: String}) _connectionMode = 'API';
@@ -64,7 +65,13 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Boolean}) enableScalingGroup = false;
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) refreshTimer = Object();
-
+  @property({type: Object}) statusColorTable = {
+    'idle-timeout': 'green',
+    'user-requested': 'green',
+    'failed-to-start': 'red',
+    'creation-failed': 'red',
+    'self-terminated': 'green'
+  };
 
   constructor() {
     super();
@@ -348,7 +355,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (window.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
-    status = status.join(',');
     let fields = [
       "sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
@@ -361,7 +367,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
-      let sessions = response.compute_sessions;
+      let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
         let previous_sessions = this.compute_sessions;
         let previous_session_keys: any = [];
@@ -1003,6 +1009,18 @@ ${item.map(item => html`
     );
   }
 
+  statusRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <span style="font-size: 12px;">${rowData.item.status}</span>
+        ${rowData.item.status_info ? html`
+        <br />
+        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}"></lablup-shields>
+        ` : html``}
+      `, root
+    );
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1033,10 +1051,7 @@ ${item.map(item => html`
         ` : html``}
         <vaadin-grid-column width="120px" resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" header="Status" resizable>
-          <template>
-            <span style="font-size: 12px;">[[item.status]]</span>
-          </template>
+        <vaadin-grid-column width="100px" flex-grow="0" header="Status" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
