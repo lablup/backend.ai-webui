@@ -258,7 +258,7 @@ class Client {
       }
     } catch (err) {
       let error_message;
-      if ('title' in err) {
+      if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
         error_message = err.title;
       } else {
         error_message = err;
@@ -325,6 +325,7 @@ class Client {
       this._features['group'] = true;
       this._features['group-folder'] = true;
       this._features['system-images'] = true;
+      this._features['detailed-session-states'] = true;
     }
   }
 
@@ -1573,57 +1574,30 @@ class ComputeSession {
   /**
    * list compute sessions with specific conditions.
    *
-   * @param {array} fields - fields to query. Default fields are: ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"]
+   * @param {array} fields - fields to query. Default fields are: ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"]
    * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {number} limit - limit number of query items.
+   * @param {number} offset - offset for item query. Useful for pagination.
    */
-  async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
-       status = 'RUNNING', accessKey = null) {
+  async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+       status = 'RUNNING', accessKey = null, limit = 30, offset = 0) {
+    if (accessKey === '') accessKey = null;
     let q, v;
+    q = `query($limit:Int!, $offset:Int!, $ak:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, status:$status) {
+        items { ${fields.join(" ")}}
+        total_count
+      }
+    }`;
 
-    if (Array.isArray(status)) {
-      const promiseArray = status.map(statusElement => {
-        if (this.client.is_admin === true) {
-          if (!accessKey) accessKey = null;
-          q = `query($ak:String, $status:String) {` +
-            `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
-            '}';
-          v = {'status': statusElement, 'ak': accessKey};
-        } else {
-          q = `query($status:String) {` +
-            `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
-            '}';
-          v = {'status': statusElement};
-        }
-
-        return this.client.gql(q, v);
-      });
-
-      // return an object that contains flattened array
-      return Promise.all(promiseArray).then(res => {
-        res.forEach((arr, idx) => {
-          arr.compute_sessions.forEach(e => {
-            e.status = status[idx];
-          })
-        });
-
-        return {
-          'compute_sessions': res.reduce((acc, cur) => acc.concat(cur.compute_sessions), [])
-        }
-      });
-    }
-
-    if (this.client.is_admin === true) {
-      if (!accessKey) accessKey = null;
-      q = `query($ak:String, $status:String) {` +
-        `  compute_sessions(access_key:$ak, status:$status) { ${fields.join(" ")} }` +
-        '}';
-      v = {'status': status, 'ak': accessKey};
-    } else {
-      q = `query($status:String) {` +
-        `  compute_sessions(status:$status) { ${fields.join(" ")} }` +
-        '}';
-      v = {'status': status};
+    v = {
+      'limit': limit,
+      'offset': offset,
+      'status': status
+    };
+    if (accessKey != null) {
+      v['ak'] = accessKey;
     }
     return this.client.gql(q, v);
   }

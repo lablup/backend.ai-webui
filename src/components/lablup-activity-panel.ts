@@ -3,8 +3,9 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 import {css, customElement, html, LitElement, property} from "lit-element";
-import '@polymer/paper-icon-button/paper-icon-button';
+import 'weightless/button';
 import 'weightless/card';
+import 'weightless/icon';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
@@ -32,57 +33,46 @@ export default class LablupActivityPanel extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-          wl-card {
-              display: block;
-              background: white;
-              box-sizing: border-box;
-              margin: 16px;
-              padding: 0;
-              border-radius: 5px;
-          }
+        wl-card {
+          display: block;
+          background: white;
+          box-sizing: border-box;
+          margin: 16px;
+          padding: 0;
+          border-radius: 5px;
+        }
 
-          wl-card > h4 {
-              border-left: 3px solid var(--paper-green-900);
-              background-color: var(--paper-green-500);
-              color: #eee;
-              font-size: 14px;
-              font-weight: 400;
-              height: 32px;
-              padding: 5px 15px 5px 20px;
-              margin: 0 0 10px 0;
-              border-bottom: 1px solid #DDD;
-              @apply --layout-justified;
-              display: flex;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-          }
+        wl-card > h4 {
+          border-left: 3px solid var(--paper-green-900);
+          background-color: var(--paper-green-500);
+          color: #eee;
+          font-size: 14px;
+          font-weight: 400;
+          height: 32px;
+          padding: 5px 15px 5px 20px;
+          margin: 0 0 10px 0;
+          border-bottom: 1px solid #DDD;
+          @apply --layout-justified;
+          display: flex;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
 
-          wl-card > div {
-              margin: 20px;
-              padding-bottom: 20px;
-              font-size: 12px;
-              padding-left: 3px;
-          }
+        wl-card > div {
+          margin: 20px;
+          padding-bottom: 20px;
+          font-size: 12px;
+          padding-left: 3px;
+        }
 
-          wl-card > h4 > paper-icon-button {
-              display: flex;
-          }
+        ul {
+          padding-inline-start: 0;
+        }
 
-          wl-card > h4 > paper-icon-button,
-          wl-card > h4 > paper-icon-button #icon {
-              width: 15px;
-              height: 15px;
-              padding: 0;
-          }
-
-          ul {
-              padding-inline-start: 0;
-          }
-
-          #button {
-              display: none;
-          }
+        #button {
+          display: none;
+        }
       `];
   }
 
@@ -90,8 +80,12 @@ export default class LablupActivityPanel extends LitElement {
     // language=HTML
     return html`
       <wl-card id="activity" elevation="${this.elevation}">
-        <h4 class="layout flex justified center">${this.title}
-          <paper-icon-button id="button" icon="close"></paper-icon-button>
+        <h4 class="horizontal center layout" style="font-weight:bold">
+          <span>${this.title}</span>
+          <div class="flex"></div>
+          <wl-button id="button" fab flat inverted @click="${(e) => this._removePanel(e)}">
+            <wl-icon>close</wl-icon>
+          </wl-button>
         </h4>
         <div>
           <slot name="message"></slot>
@@ -104,8 +98,6 @@ export default class LablupActivityPanel extends LitElement {
     if (this.pinned || this.panelId == undefined) {
       const button = this.shadowRoot.getElementById('button');
       this.shadowRoot.querySelector('h4').removeChild(button);
-    } else {
-      (this.shadowRoot.querySelector('#button') as any).addEventListener('tap', this._removePanel.bind(this));
     }
     (this.shadowRoot.querySelector('wl-card') as any).style.width = this.width + "px";
     if (this.minwidth) {

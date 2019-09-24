@@ -54,6 +54,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
+  @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Boolean}) refreshing = false;
   @property({type: Boolean}) is_admin = false;
   @property({type: String}) _connectionMode = 'API';
@@ -64,7 +65,13 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Boolean}) enableScalingGroup = false;
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) refreshTimer = Object();
-
+  @property({type: Object}) statusColorTable = {
+    'idle-timeout': 'green',
+    'user-requested': 'green',
+    'failed-to-start': 'red',
+    'creation-failed': 'red',
+    'self-terminated': 'green'
+  };
 
   constructor() {
     super();
@@ -333,20 +340,23 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
       case "running":
-        status = "RUNNING";
+        status = ["RUNNING", "RESTARTING", "TERMINATING"];
         break;
       case "finished":
-        status = "TERMINATED";
+        status = ["TERMINATED", "CANCELLED"]; //TERMINATED, CANCELLED
         break;
       case "others":
-        status = ["PREPARING", "RESTARTING", "TERMINATING", "CANCELLED", "PENDING"]; // "ERROR", "CANCELLED"..
+        status = ["TERMINATING", "ERROR"]; // "ERROR", "CANCELLED"..
         // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
         break;
       default:
-        status = "RUNNING";
+        status = ["RUNNING"];
+    }
+    if (window.backendaiclient.supports('detailed-session-states')) {
+      status = status.join(',');
     }
     let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status", "service_ports",
+      "sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -357,7 +367,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
       this.loadingIndicator.hide();
-      let sessions = response.compute_sessions;
+      let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
         let previous_sessions = this.compute_sessions;
         let previous_session_keys: any = [];
@@ -751,6 +761,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         });
     }
   }
+
   _runJupyterTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
@@ -998,6 +1009,18 @@ ${item.map(item => html`
     );
   }
 
+  statusRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <span style="font-size: 12px;">${rowData.item.status}</span>
+        ${rowData.item.status_info ? html`
+        <br />
+        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}"></lablup-shields>
+        ` : html``}
+      `, root
+    );
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1026,18 +1049,10 @@ ${item.map(item => html`
           <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === "API" ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
-        <vaadin-grid-column resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
+        <vaadin-grid-column width="120px" resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
-        ${this.condition === 'others'
-      ? html`
-          <vaadin-grid-column width="150px" flex-grow="0" header="Status" resizable>
-            <template>
-              <span style="font-size: 12px;">[[item.status]]</span>
-            </template>
-          </vaadin-grid-column>
-          `
-      : html``
-    }
+        <vaadin-grid-column width="100px" flex-grow="0" header="Status" resizable .renderer="${this._boundStatusRenderer}">
+        </vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
           <template>

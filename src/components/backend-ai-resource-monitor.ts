@@ -445,9 +445,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _initSessions() {
     let fields = ["sess_id"];
-    window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING")
+    window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
       .then(res => {
-        this.sessions_list = res.compute_sessions.map(e => e.sess_id);
+        this.sessions_list = res.compute_session_list.items.map(e => e.sess_id);
       })
   }
 
@@ -911,12 +911,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
       let resource_remaining = response.keypair_remaining;
       let resource_using = response.keypair_using;
-      let scaling_group_resource_remaining = response.scaling_group_remaining;
+      //let scaling_group_resource_remaining = response.scaling_group_remaining;
       //console.log('current:', this.scaling_group);
-      if (this.scaling_group == '') {
-
+      if (this.scaling_group == '') { // IT IS ERROR SITUATION.
       }
       let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
+      let scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
 
       let keypair_resource_limit = response.keypair_limits;
       if ('cpu' in keypair_resource_limit) {

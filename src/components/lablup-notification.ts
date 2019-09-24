@@ -37,7 +37,7 @@ export default class LablupNotification extends LitElement {
           font-size: 16px;
           font-weight: 400;
           font-family: 'Quicksand', Roboto, sans-serif;
-          z-index: 10000;
+          z-index: 12345678;
         }
 
         wl-button {
@@ -107,7 +107,7 @@ export default class LablupNotification extends LitElement {
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';
     notification.style.fontFamily = "'Quicksand', Roboto, sans-serif";
-    notification.style.zIndex = "10000";
+    notification.style.zIndex = "12345678";
     document.body.appendChild(notification);
     this.notifications.push(notification);
     await this.updateComplete;

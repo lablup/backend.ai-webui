@@ -640,7 +640,7 @@ export default class BackendAILogin extends LitElement {
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Login with ${this.connection_mode == 'SESSION' ? html`ID/password` : html`IAM`}</div>
+            <div>Login with ${this.connection_mode == 'SESSION' ? html`E-mail` : html`IAM`}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
                 <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`Use IAM` : html`Use ID/password`}</a></small>
@@ -659,7 +659,7 @@ export default class BackendAILogin extends LitElement {
               <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"
                            label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
               <wl-textfield type="email" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
-                           label="ID" value="${this.user_id}" @keyup="${this._submitIfEnter}"></wl-textfield>
+                           label="E-mail" value="${this.user_id}" @keyup="${this._submitIfEnter}"></wl-textfield>
               <wl-textfield type="password" name="password" id="id_password" style="display:none;"
                            label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></wl-textfield>
               <wl-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
@@ -686,12 +686,12 @@ export default class BackendAILogin extends LitElement {
             </wl-button>
           </h3>
           <section>
-            <div class="warning">To confirm, please type your ID and password again.</div>
+            <div class="warning">To confirm, please type your E-mail and password again.</div>
           </section>
           <form id="signout-form">
             <fieldset>
               <wl-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
-                           label="ID" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
+                           label="E-mail" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
               <wl-textfield type="password" name="signout_password" id="id_signout_password"
                            label="Password" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
               <br/><br/>
