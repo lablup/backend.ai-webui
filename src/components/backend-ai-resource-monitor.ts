@@ -445,9 +445,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _initSessions() {
     let fields = ["sess_id"];
-    window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING")
+    window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
       .then(res => {
-        this.sessions_list = res.compute_sessions.map(e => e.sess_id);
+        this.sessions_list = res.compute_session_list.items.map(e => e.sess_id);
       })
   }
 

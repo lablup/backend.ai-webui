@@ -1582,6 +1582,7 @@ class ComputeSession {
    */
   async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
        status = 'RUNNING', accessKey = null, limit = 30, offset = 0) {
+    if (accessKey === '') accessKey = null;
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, status:$status) {
@@ -1589,12 +1590,15 @@ class ComputeSession {
         total_count
       }
     }`;
+
     v = {
       'limit': limit,
       'offset': offset,
-      'status': status,
-      'ak': accessKey,
-    a};
+      'status': status
+    };
+    if (accessKey != null) {
+      v['ak'] = accessKey;
+    }
     return this.client.gql(q, v);
   }
 }
