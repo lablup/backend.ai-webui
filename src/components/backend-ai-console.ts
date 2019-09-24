@@ -339,16 +339,25 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.domain = window.backendaiclient._config.domainName;
     this.current_group = window.backendaiclient.current_group;
     this.groups = window.backendaiclient.groups;
-    let groupSelectionBox = this.shadowRoot.getElementById('group-select');
+    let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
       (this.shadowRoot.getElementById('group-select') as any).disabled = true;
       (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
     }
     // Detached from template to support live-update after creating new group (will need it)
+    if (groupSelectionBox.hasChildNodes()) {
+      groupSelectionBox.removeChild(groupSelectionBox.firstChild);
+    }
+    let select = document.createElement('wl-select');
+    select.label = "Project";
+    select.name = 'group-select';
+    select.id = 'group-select';
+    select.value = this.current_group;
+    select.addEventListener('input', this.changeGroup.bind(this));
     let opt = document.createElement('option');
     opt.setAttribute('disabled', 'true');
     opt.innerHTML = 'Select Project';
-    groupSelectionBox.appendChild(opt);
+    select.appendChild(opt);
     this.groups.map(group => {
       opt = document.createElement('option');
       opt.value = group;
@@ -358,10 +367,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         opt.selected = false;
       }
       opt.innerHTML = group;
-      groupSelectionBox.appendChild(opt);
+      select.appendChild(opt);
     });
-    groupSelectionBox.updateOptions();
-    //this.shadowRoot.getElementById('group-select')._requestRender();
+    //select.updateOptions();
+    groupSelectionBox.appendChild(select);
   }
 
   _loadPageElement() {
@@ -515,9 +524,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <span class="flex"></span>
               </div>
             </div>
-            <wl-select id="group-select" name="group-select" label="Project"
-              @input="${this.changeGroup}" value="${this.current_group}">
-            </wl-select>
+            <div id="group-select-box" style="height:50px;">
+            </div>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
               <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
                 <paper-item link>
@@ -611,7 +619,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.09.7.190923</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.09.8.190925</small>
               </address>
             </div>
         </div>

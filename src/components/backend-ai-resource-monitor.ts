@@ -465,7 +465,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.activeConnected && this.metadata_updating === false) {
       this.metadata_updating = true;
       this._refreshResourcePolicy();
-      this.aggregateResource('update-scaling-group');
+      //this.aggregateResource('update-scaling-group');
       this.metadata_updating = false;
     }
   }
@@ -497,12 +497,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.scaling_groups = sgs.scaling_groups;
           if (this.direction === 'vertical') {
             this.scaling_group = this.scaling_groups[0].name;
-            let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select');
+            let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
             // Detached from template to support live-update after creating new group (will need it)
+            if (scaling_group_selection_box.hasChildNodes()) {
+              scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
+            }
+            let scaling_select = document.createElement('wl-select');
+            scaling_select.label = "Scaling Group";
+            scaling_select.name = 'scaling-group-select';
+            scaling_select.id = 'scaling-group-select';
+            scaling_select.value = this.scaling_group;
+            scaling_select.addEventListener('input', this.updateScalingGroup.bind(this));
+
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
             opt.innerHTML = 'Select Scaling Group';
-            scaling_group_selection_box.appendChild(opt);
+            scaling_select.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');
               opt.value = group.name;
@@ -512,9 +522,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 opt.selected = false;
               }
               opt.innerHTML = group.name;
-              scaling_group_selection_box.appendChild(opt);
+              scaling_select.appendChild(opt);
             });
-            scaling_group_selection_box.updateOptions();
+            //scaling_select.updateOptions();
+            scaling_group_selection_box.appendChild(scaling_select);
           }
           // update sg on dialog
           let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
@@ -574,7 +585,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _refreshResourceValues() {
     this._refreshImageList();
     this._updateGPUMode();
-    this.updateMetric();
+    this.updateMetric('refresh resource values');
   }
 
   async _launchSessionDialog() {
@@ -583,7 +594,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
-      await this.updateMetric();
+      await this.updateMetric('launch session dialog');
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
@@ -841,7 +852,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     if (this.versions !== undefined) {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
-      this.updateMetric();
+      this.updateMetric('update versions');
     }
   }
 
@@ -864,6 +875,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.aggregate_updating === true) {
       return;
     }
+    //console.log('aggregate from:', from);
     this.aggregate_updating = true;
     let total_slot = {};
     let total_sg_slot = {};
@@ -1147,25 +1159,33 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
-  async updateMetric() {
-    if (this.metric_updating == true) return;
+  async updateMetric(from: string = '') {
+    if (this.metric_updating == true) {
+      //console.log('update metric blocked');
+      return;
+    }
+    let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
+    let currentVersion = this.shadowRoot.querySelector('#version').value;
+    if (typeof selectedItem === 'undefined' || selectedItem === null) {
+      this.metric_updating = false;
+      return;
+    }
+    //console.log('update metric from', from);
     if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.updateMetric();
+        this.updateMetric(from);
       }, true);
     } else {
       this.metric_updating = true;
-      let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
+      await this._aggregateResourceUse('update-metric');
       if (typeof selectedItem === 'undefined' || selectedItem === null) {
         this.metric_updating = false;
         return;
       }
       let kernel = selectedItem.id;
-      let currentVersion = this.shadowRoot.querySelector('#version').value;
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
       await this._updateVirtualFolderList();
-      await this._aggregateResourceUse('update-metric');
       let available_slot = this.available_slot;
       if (!currentResource) {
         this.metric_updating = false;
@@ -1499,10 +1519,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return html`
       <lablup-notification id="notification" open></lablup-notification>
       ${this.enable_scaling_group && this.direction === 'vertical' ? html`
-      <div class="layout horizontal start-justified">
-        <wl-select id="scaling-group-select" name="scaling-group-select" label="Scaling Group"
-          @input="${this.updateScalingGroup}" value="${this.scaling_group}">
-        </wl-select>
+      <div id="scaling-group-select-box" class="layout horizontal start-justified">
       </div>
       ` : html``}
       <div class="layout horizontal">
