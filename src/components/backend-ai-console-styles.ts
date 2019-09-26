@@ -856,7 +856,6 @@ export const BackendAiStyles =
           bottom: 6px;
           left: 6px;
           z-index: 1000;
-          --paper-spinner-stroke-width: 6px;
       }
 
       /* Tab on head */
