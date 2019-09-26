@@ -42,7 +42,6 @@
     "@polymer/paper-material": "^3.0.1",
     "@polymer/paper-progress": "^3.0.1",
     "@polymer/paper-slider": "^3.0.1",
-    "@polymer/paper-spinner": "^3.0.2",
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/paper-toggle-button": "^3.0.1",
     "@polymer/polymer": "^3.3.0",
