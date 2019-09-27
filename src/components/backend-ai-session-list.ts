@@ -305,6 +305,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           'redirect': "/",
           'src': './resources/icons/h2o.png'
         }],
+      'vscode':
+        [{
+          'name': 'vscode',
+          'title': 'Visual Studio Code',
+          'redirect': "/",
+          'src': './resources/icons/vscode.svg'
+        }],
       'nniboard':
         [{
           'name': 'nniboard',
