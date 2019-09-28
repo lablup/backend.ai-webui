@@ -361,7 +361,7 @@ export default class BackendAISummary extends BackendAIPage {
     }
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
-        this.notification.text = response.msg;
+        this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations();
       })
@@ -377,7 +377,7 @@ export default class BackendAISummary extends BackendAIPage {
     }
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
-        this.notification.text = res.msg;
+        this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations();
       })
