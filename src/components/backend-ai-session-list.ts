@@ -298,10 +298,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           'redirect': "&redirect=/",
           'src': './resources/icons/nvidia.png'
         }],
-      'h2o':
+      'h2o-dai':
         [{
-          'name': 'h2o',
-          'title': 'H2O.ai',
+          'name': 'h2o-dai',
+          'title': 'H2O driverless AI',
           'redirect': "/",
           'src': './resources/icons/h2o.png'
         }],
