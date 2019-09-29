@@ -302,28 +302,28 @@ export default class BackendAiSessionList extends BackendAIPage {
         [{
           'name': 'h2o-dai',
           'title': 'H2O driverless AI',
-          'redirect': "/",
+          'redirect': "",
           'src': './resources/icons/h2o.png'
         }],
       'vscode':
         [{
           'name': 'vscode',
           'title': 'Visual Studio Code',
-          'redirect': "/",
+          'redirect': "",
           'src': './resources/icons/vscode.svg'
         }],
       'nniboard':
         [{
           'name': 'nniboard',
           'title': 'NNI Board',
-          'redirect': "/",
+          'redirect': "",
           'src': './resources/icons/nni.png'
         }],
       'sftp':
         [{
           'name': 'sftp',
           'title': 'SFTP',
-          'redirect': "/",
+          'redirect': "",
           'src': './resources/icons/sftp.png'
         }],
     };
