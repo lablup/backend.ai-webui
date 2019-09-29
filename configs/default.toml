@@ -7,7 +7,7 @@ connectionMode = "SESSION"
 allowChangeSigninMode = true
 signupSupport = false
 allowSignout = false
-debug = false
+debug = true 
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
