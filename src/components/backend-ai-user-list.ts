@@ -51,6 +51,8 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) indicator;
   @property({type: Object}) keypairs;
+  @property({type: Object}) signoutUserDialog = Object();
+  @property({type: String}) signoutUserName = '';
 
   constructor() {
     super();
@@ -163,6 +165,7 @@ export default class BackendAIUserList extends BackendAIPage {
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
+    this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
   }
 
   async _viewStateChanged(active) {
@@ -240,6 +243,27 @@ export default class BackendAIUserList extends BackendAIPage {
     }
   }
 
+  _signoutUserDialog(e) {
+    const controls = e.target.closest('#controls');
+    const user_id = controls['user-id'];
+    this.signoutUserName = user_id;
+    this.signoutUserDialog.show();
+  }
+
+  _signoutUser() {
+    this.client.signout(this.signoutUserName, null).then(response => {
+      this.notification.text = PainKiller.relieve('Signout finished.');
+    }).catch((err) => {   // Signout failed
+      console.log(err);
+      if (err.message !== undefined) {
+        this.notification.text = PainKiller.relieve(err.message);
+      } else {
+        this.notification.text = PainKiller.relieve('Signout failed. Check your permission and try again.');
+      }
+      this.notification.show();
+    });
+  }
+
   async _getUserData(user_id) {
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return window.backendaiclient.user.get(user_id, fields);
@@ -251,55 +275,6 @@ export default class BackendAIUserList extends BackendAIPage {
 
   _isActive() {
     return this.condition === 'active';
-  }
-
-  _deleteKey(e) {
-    const controls = e.target.closest('#controls');
-    const accessKey = controls['access-key'];
-    window.backendaiclient.keypair.delete(accessKey).then(response => {
-      this.refresh();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show(true);
-      }
-    });
-  }
-
-  _revokeKey(e) {
-    this._mutateKey(e, false);
-  }
-
-  _reuseKey(e) {
-    this._mutateKey(e, true);
-  }
-
-  _mutateKey(e, is_active) {
-    const controls = e.target.closest('#controls');
-    const accessKey = controls['access-key'];
-    let original = this.keypairs.find(this._findKeyItem, accessKey);
-    let input = {
-      'is_active': is_active,
-      'is_admin': original.is_admin,
-      'resource_policy': original.resource_policy,
-      'rate_limit': original.rate_limit,
-      'concurrency_limit': original.concurrency_limit,
-    };
-    window.backendaiclient.keypair.mutate(accessKey, input).then((response) => {
-      let event = new CustomEvent("backend-ai-credential-refresh", {"detail": this});
-      document.dispatchEvent(event);
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show(true);
-      }
-    });
-  }
-
-  _findKeyItem(element) {
-    return element.access_key = this;
   }
 
   _elapsed(start, end) {
@@ -356,16 +331,9 @@ export default class BackendAIUserList extends BackendAIPage {
                 @click="${(e) => this._editUserDetail(e)}"
               ></paper-icon-button>
 
-              ${this.isAdmin && this._isActive() && rowData.item.is_admin ? html`
-                    <paper-icon-button class="fg blue controls-running" icon="delete"
-                                       @click="${(e) => this._revokeKey(e)}"></paper-icon-button>
+              ${window.backendaiclient.is_superadmin && this._isActive() ? html`
                     <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                       @click="${(e) => this._deleteKey(e)}"></paper-icon-button>
-              ` : html``}
-
-              ${this._isActive() ? html`
-                  <paper-icon-button class="fg blue controls-running" icon="icons:redo"
-                                     on-tap="_reuseKey"></paper-icon-button>
+                                       @click="${(e) => this._signoutUserDialog(e)}"></paper-icon-button>
               ` : html``}
             </div>
       `, root
@@ -469,6 +437,16 @@ export default class BackendAIUserList extends BackendAIPage {
         <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
+      <wl-dialog id="signout-user-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>. Do you want to proceed?</p>
+         </div>
+         <div slot="footer">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${() => this._signoutUser()}">Okay</wl-button>
+         </div>
+      </wl-dialog>
       <wl-dialog id="user-info-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
