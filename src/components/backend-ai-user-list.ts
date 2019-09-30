@@ -251,7 +251,7 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _signoutUser() {
-    window.backendaiclient.signout(this.signoutUserName, null).then(response => {
+    window.backendaiclient.user.delete(this.signoutUserName).then(response => {
       this.notification.text = PainKiller.relieve('Signout finished.');
     }).catch((err) => {   // Signout failed
       console.log(err);
