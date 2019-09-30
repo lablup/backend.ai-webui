@@ -1497,10 +1497,17 @@ class ContainerImage {
   list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
     let q, v;
     if (this.client.supports('system-images')) {
-      q = `query($installed:Boolean) {` +
-        `  images(is_installed:$installed) { ${fields.join(" ")} }` +
-        '}';
-      v = {'installed': installed_only, 'is_operation': system_images};
+      if (installed_only === true) {
+        q = `query($installed:Boolean) {` +
+          `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+          '}';
+        v = {'installed': installed_only, 'is_operation': system_images};
+      } else {
+        q = `query {` +
+          `  images { ${fields.join(" ")} }` +
+          '}';
+        v = {'is_operation': system_images};
+      }
     } else {
       q = `query {` +
         `  images { ${fields.join(" ")} }` +
