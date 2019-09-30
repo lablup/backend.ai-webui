@@ -1547,6 +1547,23 @@ class ContainerImage {
   }
 
   /**
+   * install specific container images from registry
+   *
+   * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+   * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
+   */
+  install(name, registry: string = 'index.docker.io') {
+    return this.client.createIfNotExists(registy + '/' + name, 'install-kernel-' + name, {
+      'cpu': '1g', 'mem': '1g',
+    }).then(;
+    return this.client.destroyKernel('install-kernel-' + name);
+  ).
+    catch(err => {
+      throw err;
+    });
+  }
+
+  /**
    * Get image label information.
    *
    * @param {string} registry - Registry name
