@@ -369,7 +369,7 @@ class Client {
      * @param {object} resources - Per-session resource
      */
     createIfNotExists(kernelType, sessionId, resources = {}) {
-        if (sessionId === undefined)
+      if (typeof sessionId === 'undefined' || sessionId === null)
             sessionId = this.generateSessionId();
         let params = {
             "lang": kernelType,
@@ -1135,7 +1135,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-  
+
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [
@@ -1429,25 +1429,41 @@ class ContainerImage {
      * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
      */
     install(name, registry = 'index.docker.io') {
-        return this.client.createIfNotExists(registry + '/' + name, 'install-kernel-' + name, {
-            'cpu': '1g', 'mem': '1g',
+      if (registry != 'index.docker.io') {
+        registry = registry + '/';
+      } else {
+        registry = '';
+      }
+      let sessionId = this.client.generateSessionId();
+      return this.client.createIfNotExists(registry + name, sessionId, {
+        'cpu': '1', 'mem': '512m',
         }).then((response) => {
-            return this.client.destroyKernel('install-kernel-' + name);
+        return this.client.destroyKernel(sessionId);
         }).catch(err => {
             throw err;
         });
     }
     /**
-     * Get image label information.
+     * uninstall specific container images from registry (TO BE IMPLEMENTED)
      *
-     * @param {string} registry - Registry name
-     * @param {string} image - image name.
-     * @param {string} tag - tag to get.
+     * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+     * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
      */
-    get(registry, image, tag) {
-        const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true });
-        return this.client._wrapWithPromise(rqst);
+    uninstall(name, registry = 'index.docker.io') {
+      return false;
     }
+
+  /**
+   * Get image label information.
+   *
+   * @param {string} registry - Registry name
+   * @param {string} image - image name.
+   * @param {string} tag - tag to get.
+   */
+  get(registry, image, tag) {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true });
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 class ComputeSession {
     /**
