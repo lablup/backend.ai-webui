@@ -141,6 +141,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           top: 50px;
         }
 
+        #app-dialog {
+          --dialog-width: 330px;
+        }
+
         @media screen and (max-width: 899px) {
           #work-dialog {
             left: 0;
@@ -193,7 +197,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         .app-icon .label {
           display: block;
-          width: 60px;
+          width: 80px;
           text-align: center;
           height: 25px;
         }
@@ -661,6 +665,15 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.appTemplate[elm].forEach((app) => {
           this.appSupportList.push(app);
         });
+      } else {
+        if (!['ttyd', 'ipython'].includes(elm)) { // They are default apps from Backend.AI agent.
+          this.appSupportList.push({
+            'name': elm,
+            'title': elm,
+            'redirect': "",
+            'src': './resources/icons/default_app.svg'
+          });
+        }
       }
     });
     let dialog = this.shadowRoot.querySelector('#app-dialog');
