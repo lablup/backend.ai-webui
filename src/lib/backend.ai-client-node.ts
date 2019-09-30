@@ -1555,10 +1555,9 @@ class ContainerImage {
   install(name, registry: string = 'index.docker.io') {
     return this.client.createIfNotExists(registy + '/' + name, 'install-kernel-' + name, {
       'cpu': '1g', 'mem': '1g',
-    }).then(;
-    return this.client.destroyKernel('install-kernel-' + name);
-  ).
-    catch(err => {
+    }).then((response) => {
+      return this.client.destroyKernel('install-kernel-' + name);
+    }).catch(err => {
       throw err;
     });
   }
