@@ -1,11 +1,13 @@
 {
+    "username": "lablup",
+    "repo": "backend.ai-console",
     "dataSource": "issues",
     "ignoreIssuesWith": [
         "wontfix",
         "duplicate"
     ],
     "groupBy": {
-        "Enhancements:": ["enhancement", "internal"],
+        "Enhancements:": ["enhancement"],
         "Bug Fixes:": ["bug"]
     }
 }
