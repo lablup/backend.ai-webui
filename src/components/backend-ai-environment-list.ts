@@ -43,6 +43,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _fgpu_disabled = false;
   @property({type: Object}) alias = Object();
   @property({type: Object}) indicator = Object();
+  @property({type: Object}) installImageDialog = Object();
+  @property({type: String}) installImageName = '';
 
   constructor() {
     super();
@@ -80,9 +82,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
 
         wl-button {
-          --button-bg: var(--paper-yellow-50);
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
+          --button-bg: var(--paper-orange-50);
+          --button-bg-hover: var(--paper-orange-100);
+          --button-bg-active: var(--paper-orange-600);
+          --button-color: #242424;
+          color: var(--paper-orange-900);
         }
 
         wl-dialog {
@@ -194,13 +198,26 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
-  installImage(e) {
-
+  openInstallImageDialog(index) {
+    this.selectedIndex = index;
+    let chosenImage = this.images[this.selectedIndex];
+    this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
+    this.installImageDialog.show();
   }
 
   _installImage() {
-
+    this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
+    this.notification.show();
+    this.installImageDialog.hide();
+    window.backendaiclient.image.install(this.installImageName).then((response) => {
+      this.notification.text = "Install finished.";
+      this.notification.show();
+    }).catch(err => {
+      this.notification.text = "Problem occurred.";
+      this.notification.show();
+    });
   }
+
   requirementsRenderer(root, column?, rowData?) {
     render(
       html`
@@ -348,8 +365,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
-          <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.installed}" @click="${() => {
-        alert('sd')
+          <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.installed}" ?disabled="${rowData.item.installed}" @click="${(e) => {
+        this.openInstallImageDialog(rowData.index)
       }}"></wl-checkbox>
         </div>
       `, root);
@@ -572,6 +589,17 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </wl-button>
         </div>
       </wl-dialog>
+      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <p>You are about to install the image <span style="color:blue;">${this.installImageName}</span>.</p>
+            <p>This process requires significant download time. Do you want to proceed?</p>
+         </div>
+         <div slot="footer">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>
+         </div>
+      </wl-dialog>
     `;
   }
 
@@ -636,6 +664,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = this.shadowRoot.querySelector('#notification');
+    this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
@@ -662,7 +691,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       let images = response.images;
       let domainImages: any = [];
       images.forEach((image) => {
-        console.log(image.installed);
         if (this.allowed_registries.includes(image.registry)) {
           let tags = image.tag.split('-');
           if (tags[1] !== undefined) {

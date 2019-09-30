@@ -1570,6 +1570,16 @@ class ContainerImage {
   }
 
   /**
+   * uninstall specific container images from registry (TO BE IMPLEMENTED)
+   *
+   * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+   * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
+   */
+  uninstall(name, registry: string = 'index.docker.io') {
+    return false;
+  }
+
+  /**
    * Get image label information.
    *
    * @param {string} registry - Registry name
