@@ -75,6 +75,13 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
 
 ```
 
+## Branches
+
+ * master : Development branch
+ * production : Latest release branch
+ * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
+ * tags/v[versions] : version tags. Each tag represents release versions.
+ 
 ## Development Guide
 
 Backend.AI console is built with  

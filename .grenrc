@@ -1,0 +1,11 @@
+{
+    "dataSource": "issues",
+    "ignoreIssuesWith": [
+        "wontfix",
+        "duplicate"
+    ],
+    "groupBy": {
+        "Enhancements:": ["enhancement", "internal"],
+        "Bug Fixes:": ["bug"]
+    }
+}
