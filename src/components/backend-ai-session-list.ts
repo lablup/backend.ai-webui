@@ -141,6 +141,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           top: 50px;
         }
 
+        #app-dialog {
+          --dialog-width: 330px;
+        }
+
         @media screen and (max-width: 899px) {
           #work-dialog {
             left: 0;
@@ -193,7 +197,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         .app-icon .label {
           display: block;
-          width: 60px;
+          width: 80px;
           text-align: center;
           height: 25px;
         }
@@ -661,6 +665,15 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.appTemplate[elm].forEach((app) => {
           this.appSupportList.push(app);
         });
+      } else {
+        if (!['ttyd', 'ipython'].includes(elm)) { // They are default apps from Backend.AI agent.
+          this.appSupportList.push({
+            'name': elm,
+            'title': elm,
+            'redirect': "",
+            'src': './resources/icons/default_app.svg'
+          });
+        }
       }
     });
     let dialog = this.shadowRoot.querySelector('#app-dialog');
@@ -1048,7 +1061,7 @@ ${item.map(item => {
     );
   }
 
-  render(); {
+  render() {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
@@ -1076,17 +1089,9 @@ ${item.map(item => {
           <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === "API" ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
-        <vaadin-grid-column width="150px" resizable header="Session Info" .renderer="$
-{
-  this._boundSessionInfoRenderer
-}
-">
+        <vaadin-grid-column width="150px" resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="90px" flex-grow="0" header="Status" resizable .renderer="$
-{
-  this._boundStatusRenderer
-}
-">
+        <vaadin-grid-column width="90px" flex-grow="0" header="Status" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
