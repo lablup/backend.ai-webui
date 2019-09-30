@@ -19,6 +19,7 @@ import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
 import './lablup-notification';
+import './backend-ai-indicator';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -42,6 +43,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _gpu_disabled = false;
   @property({type: Boolean}) _fgpu_disabled = false;
   @property({type: Object}) alias = Object();
+  @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
@@ -209,12 +211,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
     this.notification.show();
     this.installImageDialog.hide();
+    this.indicator.start('indeterminate');
+    this.indicator.set(10, 'Downloading...');
     window.backendaiclient.image.install(this.installImageName).then((response) => {
-      this.notification.text = "Install finished.";
-      this.notification.show();
+      this.indicator.set(100, 'Install finished.');
+      this.indicator.end(1000);
     }).catch(err => {
-      this.notification.text = "Problem occurred.";
-      this.notification.show();
+      this.indicator.set(100, 'Install finished.');
+      this.indicator.end(1000);
     });
   }
 
@@ -377,6 +381,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return html`
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
           <template class="header">
@@ -662,7 +667,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = this.shadowRoot.querySelector('#notification');
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
@@ -682,7 +688,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _getImages() {
-    this.indicator.show();
+    this.loadingIndicator.show();
 
     window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
@@ -743,7 +749,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       //let sorted_images = {};
       //image_keys.sort();
       this.images = domainImages;
-      this.indicator.hide();
+      this.loadingIndicator.hide();
     });
   }
 

@@ -439,7 +439,7 @@ class Client {
    * @param {object} resources - Per-session resource
    */
   createIfNotExists(kernelType, sessionId, resources = {}) {
-    if (sessionId === undefined)
+    if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
       "lang": kernelType,
@@ -1560,10 +1560,16 @@ class ContainerImage {
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
    */
   install(name, registry: string = 'index.docker.io') {
-    return this.client.createIfNotExists(registry + '/' + name, 'install-kernel-' + name, {
-      'cpu': '1g', 'mem': '1g',
+    if (registry != 'index.docker.io') {
+      registry = registry + '/';
+    } else {
+      registry = '';
+    }
+    let sessionId = this.client.generateSessionId();
+    return this.client.createIfNotExists(registry + name, sessionId, {
+      'cpu': '1', 'mem': '512m',
     }).then((response) => {
-      return this.client.destroyKernel('install-kernel-' + name);
+      return this.client.destroyKernel(sessionId);
     }).catch(err => {
       throw err;
     });
@@ -2308,7 +2314,6 @@ class utils {
     });
     return result;
   }
-
 }
 
 // below will become "static const" properties in ES7
