@@ -36,6 +36,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Array}) allowed_registries = Array();
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
+  @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
   @property({type: Array}) servicePorts = Array();
   @property({type: Number}) selectedIndex = 0;
   @property({type: Boolean}) _gpu_disabled = false;
@@ -193,6 +194,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
+  installImage(e) {
+
+  }
+
+  _installImage() {
+
+  }
   requirementsRenderer(root, column?, rowData?) {
     render(
       html`
@@ -335,25 +343,27 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     )
   }
 
+  installRenderer(root, column, rowData) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
+          <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.installed}" @click="${() => {
+        alert('sd')
+      }}"></wl-checkbox>
+        </div>
+      `, root);
+  }
+
   render() {
     // language=HTML
     return html`
       <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-        <vaadin-grid-column width="40px" flex-grow="0" text-align="center">
+        <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
           <template class="header">
             <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
-          </template>
-          <template>
-            <div "layout horizontal center center-justified"  style="margin:0; padding:0;">
-              <template is="dom-if" if="[[item.installed]]">
-                <wl-checkbox style="--checkbox-size:12px;" checked></wl-checkbox>
-              </template>
-              <template is="dom-if" if="[[!item.installed]]">
-                <wl-checkbox style="--checkbox-size:12px;"></wl-checkbox>
-              </template>
-            </div>
           </template>
         </vaadin-grid-column>
 
@@ -647,11 +657,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
     window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return window.backendaiclient.image.list();
+      return window.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
     }).then((response) => {
       let images = response.images;
       let domainImages: any = [];
       images.forEach((image) => {
+        console.log(image.installed);
         if (this.allowed_registries.includes(image.registry)) {
           let tags = image.tag.split('-');
           if (tags[1] !== undefined) {
@@ -746,6 +757,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'scala': 'Scala',
       'base': 'Base',
       'cntk': 'CNTK',
+      'h2o': 'H2O.AI',
       'digits': 'DIGITS',
       'py3': 'Python 3',
       'py2': 'Python 2',
@@ -753,6 +765,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'py35': 'Python 3.5',
       'py36': 'Python 3.6',
       'py37': 'Python 3.7',
+      'py38': 'Python 3.8',
       'ubuntu16.04': 'Ubuntu 16.04',
       'ubuntu18.04': 'Ubuntu 18.04',
       'anaconda2018.12': 'Anaconda 2018.12',
