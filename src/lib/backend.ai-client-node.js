@@ -1367,10 +1367,18 @@ class ContainerImage {
     list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
         let q, v;
         if (this.client.supports('system-images')) {
-            q = `query($installed:Boolean) {` +
-                `  images(is_installed:$installed) { ${fields.join(" ")} }` +
-                '}';
-            v = { 'installed': installed_only, 'is_operation': system_images };
+            if (installed_only === true) {
+                q = `query($installed:Boolean) {` +
+                    `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+                    '}';
+                v = { 'installed': installed_only, 'is_operation': system_images };
+            }
+            else {
+                q = `query {` +
+                    `  images { ${fields.join(" ")} }` +
+                    '}';
+                v = { 'is_operation': system_images };
+            }
         }
         else {
             q = `query {` +
@@ -1413,6 +1421,21 @@ class ContainerImage {
         tag = tag.replace("/", "%2F");
         const rqst = this.client.newSignedRequest("POST", "/config/set", { "key": `images/${registry}/${image}/${tag}/labels/${key}`, "value": value });
         return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * install specific container images from registry
+     *
+     * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+     * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
+     */
+    install(name, registry = 'index.docker.io') {
+        return this.client.createIfNotExists(registry + '/' + name, 'install-kernel-' + name, {
+            'cpu': '1g', 'mem': '1g',
+        }).then((response) => {
+            return this.client.destroyKernel('install-kernel-' + name);
+        }).catch(err => {
+            throw err;
+        });
     }
     /**
      * Get image label information.
@@ -1836,7 +1859,7 @@ class User {
      */
     modify(email = null, input) {
         let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
-        if (this.client.is_admin === true) {
+        if (this.client.is_superadmin === true) {
             let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
                 `  modify_user(email: $email, props: $input) {` +
                 `    ok msg` +
@@ -1858,7 +1881,7 @@ class User {
      * @param {string} email - E-mail address as user id to delete.
      */
     delete(email) {
-        if (this.client.is_admin === true) {
+        if (this.client.is_superadmin === true) {
             let q = `mutation($email: String!) {` +
                 `  delete_user(email: $email) {` +
                 `    ok msg` +
