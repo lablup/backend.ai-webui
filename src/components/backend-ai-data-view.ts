@@ -56,6 +56,7 @@ export default class BackendAIData extends BackendAIPage {
   public uploadFiles: any;
   public vhost: any;
   public vhosts: any;
+  public allowedGroups: any;
   public uploadFilesExist: any;
   public _boundIndexRenderer: any;
   public _boundTypeRenderer: any;
@@ -90,6 +91,7 @@ export default class BackendAIData extends BackendAIPage {
     this.uploadFiles = [];
     this.vhost = '';
     this.vhosts = [];
+    this.allowedGroups = [];
     this.uploadFilesExist = false;
     this.allowed_folder_type = [];
     this._boundIndexRenderer = this.indexRenderer.bind(this);
@@ -141,6 +143,9 @@ export default class BackendAIData extends BackendAIPage {
         type: String
       },
       vhosts: {
+        type: Array
+      },
+      allowedGroups: {
         type: Array
       },
       invitees: {
@@ -459,12 +464,12 @@ export default class BackendAIData extends BackendAIPage {
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-group" label="Group">
                 <paper-listbox slot="dropdown-content" selected="0">
-                ${window.backendaiclient.groups.map(item => html`
-                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+                ${this.allowedGroups.map(item => html`
+                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
                 `)}
                 </paper-listbox>
               </paper-dropdown-menu>
-            </div>            
+            </div>
             ` : html``}
             <br/>
             <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
@@ -838,7 +843,7 @@ export default class BackendAIData extends BackendAIPage {
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
 
-          ${rowData.item.is_owner && rowData.item.type == 'user' 
+          ${rowData.item.is_owner && rowData.item.type == 'user'
         ? html`
               <paper-icon-button
                 class="fg blue controls-running"
@@ -1009,6 +1014,8 @@ export default class BackendAIData extends BackendAIPage {
     let vhost_info = await window.backendaiclient.vfolder.list_hosts();
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
+    const group_info = await window.backendaiclient.group.list();
+    this.allowedGroups = group_info.groups;
     this.openDialog('add-folder-dialog');
   }
 
