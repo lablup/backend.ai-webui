@@ -51,7 +51,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) appTemplate = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) _boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
+  @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
@@ -937,7 +937,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  sessionIDRenderer(root, column?, rowData?) {
+  sessionInfoRenderer(root, column?, rowData?) {
     render(
       html`
         <div class="layout vertical start">
