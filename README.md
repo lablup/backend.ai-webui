@@ -24,6 +24,7 @@ Backend.AI console focuses to
  * Statistics
     * User resource statistics
     * Session statistics
+    * Workload statistics
 
 ## Management Features
  * Keypair management

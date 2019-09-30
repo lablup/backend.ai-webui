@@ -13,7 +13,6 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
-import '@polymer/paper-spinner/paper-spinner-lite';
 import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
