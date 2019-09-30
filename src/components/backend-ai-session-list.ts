@@ -51,7 +51,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) appTemplate = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) _boundSessionInfoRenderer = this.sessionIDRenderer.bind(this);
+  @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
@@ -141,6 +141,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           top: 50px;
         }
 
+        #app-dialog {
+          --dialog-width: 330px;
+        }
+
         @media screen and (max-width: 899px) {
           #work-dialog {
             left: 0;
@@ -193,7 +197,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         .app-icon .label {
           display: block;
-          width: 60px;
+          width: 80px;
           text-align: center;
           height: 25px;
         }
@@ -298,32 +302,32 @@ export default class BackendAiSessionList extends BackendAIPage {
           'redirect': "&redirect=/",
           'src': './resources/icons/nvidia.png'
         }],
-      'h2o':
+      'h2o-dai':
         [{
-          'name': 'h2o',
-          'title': 'H2O.ai',
-          'redirect': "/",
+          'name': 'h2o-dai',
+          'title': 'H2O driverless AI',
+          'redirect': "",
           'src': './resources/icons/h2o.png'
         }],
       'vscode':
         [{
           'name': 'vscode',
           'title': 'Visual Studio Code',
-          'redirect': "/",
+          'redirect': "",
           'src': './resources/icons/vscode.svg'
         }],
       'nniboard':
         [{
           'name': 'nniboard',
           'title': 'NNI Board',
-          'redirect': "/",
+          'redirect': "",
           'src': './resources/icons/nni.png'
         }],
       'sftp':
         [{
           'name': 'sftp',
           'title': 'SFTP',
-          'redirect': "/",
+          'redirect': "",
           'src': './resources/icons/sftp.png'
         }],
     };
@@ -420,6 +424,17 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
+          let tag = session.lang.split(':')[1];
+          let tags = tag.split('-');
+          if (tags[1] !== undefined) {
+            sessions[objectKey].baseversion = tags[0];
+            sessions[objectKey].baseimage = tags[1];
+            if (tags[2] !== undefined) {
+              sessions[objectKey].additional_req = tags[2].toUpperCase();
+            }
+          } else {
+            sessions[objectKey].baseversion = sessions[objectKey].tag;
+          }
           if (this._selected_items.includes(sessions[objectKey].sess_id)) {
             sessions[objectKey].checked = true;
           } else {
@@ -650,6 +665,15 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.appTemplate[elm].forEach((app) => {
           this.appSupportList.push(app);
         });
+      } else {
+        if (!['ttyd', 'ipython'].includes(elm)) { // They are default apps from Backend.AI agent.
+          this.appSupportList.push({
+            'name': elm,
+            'title': elm,
+            'redirect': "",
+            'src': './resources/icons/default_app.svg'
+          });
+        }
       }
     });
     let dialog = this.shadowRoot.querySelector('#app-dialog');
@@ -937,16 +961,25 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  sessionIDRenderer(root, column?, rowData?) {
+  sessionInfoRenderer(root, column?, rowData?) {
     render(
       html`
         <div class="layout vertical start">
             <div>${rowData.item.sess_id}</div>
               ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
-${item.map(item => html`
+${item.map(item => {
+        if (item.category === 'Env' && rowData.item.baseversion !== undefined) {
+          item.category = item.tag;
+          item.tag = rowData.item.baseversion;
+        }
+        return html`
             <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
-            `)}
+            `
+      })}
                 `) : html``}
+        ${rowData.item.additional_req ? html`
+          <lablup-shields app="" color="blue" description="${rowData.item.additional_req}"></lablup-shields>        
+          ` : html``}
         </div>`, root
     );
   }
@@ -1056,9 +1089,9 @@ ${item.map(item => html`
           <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === "API" ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
-        <vaadin-grid-column width="120px" resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
+        <vaadin-grid-column width="150px" resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" header="Status" resizable .renderer="${this._boundStatusRenderer}">
+        <vaadin-grid-column width="90px" flex-grow="0" header="Status" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
@@ -1115,7 +1148,7 @@ ${item.map(item => html`
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="150px" flex-grow="0" resizable header="Usage">
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="Usage">
           <template>
             <div class="layout horizontal center flex">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
