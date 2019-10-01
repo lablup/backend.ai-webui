@@ -15,25 +15,9 @@
   <title>Backend.AI</title>
   <script src="./src/lib/webcomponents-loader.js"></script>
   <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
-  <script src="./dist/components/backend-ai-console.js" type="module"></script>
 
   <script>
     function isElectron() {
-      // Renderer process
-      if (typeof window !== 'undefined' && typeof window.process === 'object' &&
-        window.process.type === 'renderer') {
-        return true;
-      }
-      // Main process
-      if (typeof process !== 'undefined' && typeof process.versions === 'object' &&
-        Boolean(process.versions.electron)) {
-        return true;
-      }
-      // Detect the user agent when the `nodeIntegration` option is set to true
-      if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' &&
-        navigator.userAgent.indexOf('Electron') >= 0) {
-        return true;
-      }
       return false;
     }
 
@@ -235,6 +219,7 @@
 <noscript>
   <p>Could not render Backend.AI console. Check that JavaScript is enabled.</p>
 </noscript>
+<script src="./dist/components/backend-ai-console.js" type="module"></script>
 <script>
   document.getElementById('version-detail').innerText = window.packageVersion;
   document.getElementById('build-detail').innerText = ' Build ' + window.buildVersion;
