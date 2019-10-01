@@ -480,49 +480,49 @@ export default class BackendAiSessionList extends BackendAIPage {
   _getKernelInfo(lang) {
     const kernel_alias = {
       'python': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Python', 'color': 'blue'}],
       'python-intel': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
         {'tag': 'Intel MKL', 'color': 'green'}],
       'python-ff': [
-        {'category': 'Env', 'tag': 'Lablup Research', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'Lablup Research', 'color': 'blue'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'}],
       'python-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'}],
       'ngc-digits': [
-        {'category': 'Env', 'tag': 'DIGITS', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'DIGITS', 'color': 'blue'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'julia': [
-        {'category': 'Env', 'tag': 'Julia', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Julia', 'color': 'blue'}],
       'r': [
-        {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
       'r-base': [
-        {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
       'c': [
-        {'category': 'Env', 'tag': 'C', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'C', 'color': 'blue'}],
       'cpp': [
-        {'category': 'Env', 'tag': 'C++', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'C++', 'color': 'blue'}],
       'rust': [
-        {'category': 'Env', 'tag': 'Rust', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Rust', 'color': 'blue'}],
       'octave': [
-        {'category': 'Env', 'tag': 'Octave', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Octave', 'color': 'blue'}],
       'swift': [
-        {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Swift', 'color': 'blue'}],
       'h2o': [
-        {'category': 'Env', 'tag': 'H2O', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'H2O', 'color': 'blue'}],
       'sftp': [
-        {'category': 'Env', 'tag': 'SFTP', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'SFTP', 'color': 'blue'},
         {'tag': 'Backend.AI', 'color': 'green'}],
       'lablup-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
         {'tag': 'Cloudia', 'color': 'green'}],
     };
     let tags: any = [];
@@ -978,7 +978,7 @@ ${item.map(item => {
       })}
                 `) : html``}
         ${rowData.item.additional_req ? html`
-          <lablup-shields app="" color="blue" description="${rowData.item.additional_req}"></lablup-shields>        
+          <lablup-shields app="" color="green" description="${rowData.item.additional_req}"></lablup-shields>        
           ` : html``}
         </div>`, root
     );
