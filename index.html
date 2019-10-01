@@ -13,6 +13,9 @@
   <base href="">
   <script src="manifest/app.js" async></script>
   <title>Backend.AI</title>
+  <script src="./src/lib/webcomponents-loader.js"></script>
+  <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
+
   <script>
     function isElectron() {
       // Renderer process
@@ -231,8 +234,6 @@
 <noscript>
   <p>Could not render Backend.AI console. Check that JavaScript is enabled.</p>
 </noscript>
-<script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
-<script src="./src/lib/webcomponents-loader.js"></script>
 <script src="./dist/components/backend-ai-console.js" type="module"></script>
 <script>
   document.getElementById('version-detail').innerText = window.packageVersion;
