@@ -17,7 +17,9 @@ export default class LablupNotification extends LitElement {
   @property({type: Object}) indicator;
   @property({type: Array}) notifications = Array();
   @property({type: Boolean}) active = true;
+  @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
+  @property({type: Object}) newDesktopNotification = Object();
 
   constructor() {
     super();
@@ -56,6 +58,20 @@ export default class LablupNotification extends LitElement {
   }
 
   firstUpdated() {
+    if ("Notification" in window) {
+      console.log(Notification.permission);
+      if (Notification.permission === "granted") {
+        this.supportDesktopNotification = true;
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(() => {
+          this.supportDesktopNotification = true;
+        });
+      } else {
+        Notification.requestPermission().then(() => {
+          this.supportDesktopNotification = true;
+        });
+      }
+    }
   }
 
   connectedCallback() {
@@ -112,8 +128,19 @@ export default class LablupNotification extends LitElement {
     this.notifications.push(notification);
     await this.updateComplete;
     notification.show();
+    this._spawnDesktopNotification(notification.innerHTML, '', '');
   }
 
+  _spawnDesktopNotification(title, body, icon) {
+    if (this.supportDesktopNotification === false) {
+      return;
+    }
+    let options = {
+      body: body,
+      icon: icon
+    };
+    this.newDesktopNotification = new Notification(title, options);
+  }
   gc() {
     if (this.notifications.length > 0) {
       let opened_notifications = this.notifications.filter(noti => noti.open === true);
