@@ -808,6 +808,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         const humanizedName = this._guessHumanizedNames(item);
         if (humanizedName !== null) {
           this.aliases[item] = humanizedName;
+        } else {
+          this.aliases[item] = item;
         }
       }
       let specs = item.split('/');
