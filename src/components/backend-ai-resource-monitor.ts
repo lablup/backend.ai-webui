@@ -457,7 +457,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  async updateScalingGroup(e) {
+  async updateScalingGroup(forceUpdate = false, e) {
     if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
     }
@@ -465,8 +465,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.activeConnected && this.metadata_updating === false) {
       this.metadata_updating = true;
       this._refreshResourcePolicy();
-      //this.aggregateResource('update-scaling-group');
-      this.metadata_updating = false;
+      if (forceUpdate === true) {
+        this.metric_updating = true;
+        //await this._aggregateResourceUse('update-scaling-group');
+        this.aggregateResource('update-scaling-group'); // updateMetric does not work when no language is selected (on summary panel)
+        this.metadata_updating = false;
+      }
     }
   }
 
@@ -507,7 +511,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             scaling_select.name = 'scaling-group-select';
             scaling_select.id = 'scaling-group-select';
             scaling_select.value = this.scaling_group;
-            scaling_select.addEventListener('input', this.updateScalingGroup.bind(this));
+            scaling_select.addEventListener('input', this.updateScalingGroup.bind(this, true));
 
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
@@ -529,7 +533,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           // update sg on dialog
           let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
-          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this));
+          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, false));
         }
       }
       this._initSessions();
