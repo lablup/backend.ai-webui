@@ -216,8 +216,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     window.backendaiclient.image.install(this.installImageName).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
+      this._getImages();
     }).catch(err => {
-      this.indicator.set(100, 'Install finished.');
+      this.indicator.set(100, 'Problem occurred during installation.');
       this.indicator.end(1000);
     });
   }
