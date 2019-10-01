@@ -249,7 +249,7 @@
     document.getElementById('loading-message').innerText = 'Not supported browser.';
     document.getElementById('loading-message').style.color = 'red';
   }
-  if (window.enableSW === true) {
+  if ('enableSW' in window && window.enableSW === true) {
     window.isUpdateAvailable = new Promise(function (resolve, reject) {
       if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
         window.addEventListener('load', function () {
