@@ -13,7 +13,7 @@ import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
 
-import './lablup-notification';
+
 import './lablup-activity-panel';
 import './backend-ai-chart';
 import './backend-ai-resource-monitor';
@@ -386,7 +386,6 @@ export default class BackendAISummary extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">Statistics</h3>

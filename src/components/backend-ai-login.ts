@@ -12,7 +12,7 @@ import 'weightless/dialog';
 import 'weightless/card';
 import 'weightless/textfield';
 
-import './lablup-notification';
+
 import '../plastics/lablup-shields/lablup-shields';
 
 import './backend-ai-signup';
@@ -721,7 +721,6 @@ export default class BackendAILogin extends LitElement {
         </wl-card>
         ` : html``}
       </wl-dialog>
-      <lablup-notification id="notification"></lablup-notification>
       <backend-ai-signup id="signup-dialog"></backend-ai-signup>
     `;
   }

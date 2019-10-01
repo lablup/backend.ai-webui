@@ -22,7 +22,7 @@ import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
-import './lablup-notification';
+
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
@@ -437,7 +437,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairs}">

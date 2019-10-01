@@ -30,7 +30,6 @@ import 'weightless/slider';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 
-import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -1521,7 +1520,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification" open></lablup-notification>
       ${this.enable_scaling_group && this.direction === 'vertical' ? html`
       <div id="scaling-group-select-box" class="layout horizontal start-justified">
       </div>

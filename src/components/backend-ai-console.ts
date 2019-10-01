@@ -27,8 +27,9 @@ import toml from 'markty-toml';
 
 import 'weightless/select';
 import 'weightless/progress-spinner';
-import './lablup-notification';
+
 import './backend-ai-splash';
+import './lablup-notification';
 
 import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -656,9 +657,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
-      <lablup-notification id="notification"></lablup-notification>
       <backend-ai-login id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
+      <lablup-notification id="notification"></lablup-notification>
     `;
   }
 

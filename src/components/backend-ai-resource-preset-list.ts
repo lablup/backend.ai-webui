@@ -26,7 +26,6 @@ import 'weightless/dialog';
 import 'weightless/icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
@@ -270,7 +269,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </wl-button>
         </h4>
         <div>
-          <lablup-notification id="notification"></lablup-notification>
           <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"

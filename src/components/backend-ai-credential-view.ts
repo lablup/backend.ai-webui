@@ -18,7 +18,7 @@ import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
-import './lablup-notification';
+
 
 import './backend-ai-credential-list';
 import './backend-ai-resource-policy-list';
@@ -516,7 +516,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>

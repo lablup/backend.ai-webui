@@ -10,7 +10,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/title';
 import 'weightless/checkbox';
-import './lablup-notification';
+
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
@@ -76,7 +76,6 @@ export default class LablupTermsOfService extends LitElement {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling scrollable>
         <wl-title level="3" slot="header">${this.title}</wl-title>
         <div slot="content">

@@ -23,7 +23,7 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-import './lablup-notification';
+
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
@@ -53,6 +53,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) keypairs;
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
+  @property({type: Object}) notification = Object();
 
   constructor() {
     super();
@@ -356,9 +357,8 @@ export default class BackendAIUserList extends BackendAIPage {
       need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
 
     if (password !== confirm) {
-      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match.";
-      this.shadowRoot.querySelector("#notification").show();
-
+      this.notification.text = "Password and Confirmation do not match.";
+      this.notification.show();
       return;
     }
     let input: any = Object();
@@ -384,8 +384,8 @@ export default class BackendAIUserList extends BackendAIPage {
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
 
-      this.shadowRoot.querySelector("#notification").text = "No Changes Made";
-      this.shadowRoot.querySelector("#notification").show();
+      this.notification.text = "No Changes Made";
+      this.notification.show();
 
       return;
     }
@@ -395,19 +395,19 @@ export default class BackendAIUserList extends BackendAIPage {
         if (res.modify_user.ok) {
           this.shadowRoot.querySelector("#user-info-dialog").hide();
 
-          this.shadowRoot.querySelector("#notification").text = "Successfully Modified";
+          this.notification.text = "Successfully Modified";
           this.userInfo = {...this.userInfo, ...input, password: null};
           this._refreshUserData();
           this.shadowRoot.querySelector("#password").value = "";
           this.shadowRoot.querySelector("#confirm").value = "";
         } else {
-          this.shadowRoot.querySelector("#notification").text = `Error: ${res.modify_user.msg}`;
+          this.notification.text = `Error: ${res.modify_user.msg}`;
 
           this.shadowRoot.querySelector("#username").value = this.userInfo.username;
           this.shadowRoot.querySelector("#description").value = this.userInfo.description;
         }
 
-        this.shadowRoot.querySelector("#notification").show();
+        this.notification.show();
       })
 
   }
@@ -415,7 +415,6 @@ export default class BackendAIUserList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="User list"
                    id="user-grid" .items="${this.users}">
