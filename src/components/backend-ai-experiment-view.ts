@@ -31,7 +31,7 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
-import './lablup-notification';
+
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -1088,7 +1088,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>

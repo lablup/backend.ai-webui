@@ -29,7 +29,6 @@ import 'weightless/title';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator';
-import './lablup-notification';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -1064,7 +1063,6 @@ ${item.map(item => {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">

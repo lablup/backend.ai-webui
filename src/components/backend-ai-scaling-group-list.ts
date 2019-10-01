@@ -28,7 +28,7 @@ import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
-import './lablup-notification';
+
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -331,7 +331,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   render() {
     // languate=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <h4 class="horizontal flex center center-justified layout">
         <span>Scaling Groups</span>
         <span class="flex"></span>

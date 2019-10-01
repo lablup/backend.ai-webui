@@ -12,7 +12,7 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
-import './lablup-notification';
+
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -109,7 +109,6 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <wl-card class="item">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>

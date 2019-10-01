@@ -18,7 +18,7 @@ import 'weightless/tab-group';
 import './backend-ai-environment-list';
 import './backend-ai-resource-preset-list';
 import './backend-ai-registry-list';
-import './lablup-notification';
+
 
 @customElement("backend-ai-environment-view")
 export default class BackendAIEnvironmentView extends BackendAIPage {
@@ -109,7 +109,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">

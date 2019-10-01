@@ -28,7 +28,7 @@ import 'weightless/title';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
-import './lablup-notification';
+
 import './backend-ai-indicator';
 
 @customElement("backend-ai-registry-list")
@@ -293,7 +293,6 @@ class BackendAIRegistryList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <h4 class="horizontal flex center center-justified layout">
         <span>Registries</span>
