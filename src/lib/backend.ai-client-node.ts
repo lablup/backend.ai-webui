@@ -1625,8 +1625,8 @@ class ComputeSession {
     if (accessKey === '') accessKey = null;
     if (group === '') group = null;
     let q, v;
-    q = `query($limit:Int!, $offset:Int!, $ak:String, $group:String, $status:String) {
-      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group:$group, status:$status) {
+    q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
         items { ${fields.join(" ")}}
         total_count
       }
@@ -1641,7 +1641,7 @@ class ComputeSession {
       v['ak'] = accessKey;
     }
     if (group != null) {
-      v['group'] = group;
+      v['group_id'] = group;
     }
     return this.client.gql(q, v);
   }

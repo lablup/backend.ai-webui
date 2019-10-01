@@ -524,7 +524,7 @@ export default class BackendAILogin extends LitElement {
       let resource_policy = response['keypair'].resource_policy;
       window.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
-      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name}"];
+      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name, id}"];
       let q = `query { user { ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
       return window.backendaiclient.gql(q, v);
@@ -538,6 +538,11 @@ export default class BackendAILogin extends LitElement {
         window.backendaiclient.groups = groups.map((item) => {
           return item.name;
         });
+        let groupMap = Object();
+        groups.forEach(function (element) {
+          groupMap[element.name] = element.id;
+        });
+        window.backendaiclient.groupIds = groupMap;
       } else {
         window.backendaiclient.groups = ['default'];
       }
@@ -545,6 +550,9 @@ export default class BackendAILogin extends LitElement {
       this.domain_name = response['user'].domain_name;
       window.backendaiclient.email = this.email;
       window.backendaiclient.current_group = window.backendaiclient.groups[0];
+      window.backendaiclient.current_group_id = () => {
+        return window.backendaiclient.groupIds[window.backendaiclient.current_group];
+      };
       window.backendaiclient.is_admin = false;
       window.backendaiclient.is_superadmin = false;
 
