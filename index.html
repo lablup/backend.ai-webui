@@ -250,6 +250,15 @@
     document.getElementById('loading-message').style.color = 'red';
   }
   if (window.enableSW === true) {
+    window['isUpdateAvailable']
+      .then(isAvailable => {
+        if (isAvailable) {
+          document.addEventListener('backend-ai-connected', (e) => {
+            document.querySelector('#console-shell').showUpdateNotifier();
+          });
+          console.log('New console available. Please reload to update.');
+        }
+      });
   }
 </script>
 </body>
