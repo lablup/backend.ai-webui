@@ -587,7 +587,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         throw body;
       }
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
     return body;
   }
