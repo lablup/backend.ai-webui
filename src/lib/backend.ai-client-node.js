@@ -1461,7 +1461,10 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   get(registry, image, tag) {
-    const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true });
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {
+      "key": `images/${registry}/${image}/${tag}/resource/`,
+      "prefix": true
+    });
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -1482,13 +1485,16 @@ class ComputeSession {
      * @param {string} accessKey - access key that is used to start compute sessions.
      * @param {number} limit - limit number of query items.
      * @param {number} offset - offset for item query. Useful for pagination.
+     * @param {string} group - project group id to query. Default returns sessions from all groups.
      */
-    async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = null, limit = 30, offset = 0) {
+    async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
         if (accessKey === '')
             accessKey = null;
+      if (group === '')
+        group = null;
         let q, v;
-        q = `query($limit:Int!, $offset:Int!, $ak:String, $status:String) {
-      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, status:$status) {
+      q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
         items { ${fields.join(" ")}}
         total_count
       }
@@ -1501,6 +1507,9 @@ class ComputeSession {
         if (accessKey != null) {
             v['ak'] = accessKey;
         }
+      if (group != null) {
+        v['group_id'] = group;
+      }
         return this.client.gql(q, v);
     }
 }

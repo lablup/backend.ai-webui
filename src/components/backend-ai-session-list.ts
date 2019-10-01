@@ -375,7 +375,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
     }
-    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
+    let group_id = window.backendaiclient.current_group_id();
+    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, 50, 0, group_id).then((response) => {
       this.loadingIndicator.hide();
       let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
