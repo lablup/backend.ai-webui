@@ -477,22 +477,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async _viewStateChanged(active) {
     await this.updateComplete;
-    if (this.active === false) {
+    if (!this.active) {
       return;
     }
-    // If disconnected
-    //console.log('client:', window.backendaiclient);
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async () => {
-        this._updatePageVariables();
-      }, true);
-    } else { // already connected
-      this._updatePageVariables();
-    }
+    this.run_after_connection(this._updatePageVariables());
   }
 
   async _updatePageVariables() {
-    if (this.activeConnected && this.metadata_updating === false) {
+    if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
       this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
       if (this.enable_scaling_group === true) {
