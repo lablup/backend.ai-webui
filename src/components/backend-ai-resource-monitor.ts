@@ -905,7 +905,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       //return {'preset': this.resource_templates};
 
     }).then((response) => {
-      if (response.presets) { // Same as refreshResourceTemplate.
+      if (response.presets) {
         let presets = response.presets;
         let available_presets: any = [];
         presets.forEach((item) => {
