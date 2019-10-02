@@ -449,7 +449,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
-          console.log("refresh!!");
+          //console.log("refresh!!");
           var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
           document.dispatchEvent(event);
         }
