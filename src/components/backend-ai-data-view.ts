@@ -967,11 +967,16 @@ export default class BackendAIData extends BackendAIPage {
     });
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
+
+    document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
   }
 
   _refreshFolderList() {
     this.indicator.show();
-    let l = window.backendaiclient.vfolder.list();
+    let groupId = null;
+    groupId = window.backendaiclient.current_group_id();
+    console.log(groupId)
+    let l = window.backendaiclient.vfolder.list(groupId);
     l.then((value) => {
       this.indicator.hide();
       this.folders = value;

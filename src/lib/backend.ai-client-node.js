@@ -369,7 +369,7 @@ class Client {
      * @param {object} resources - Per-session resource
      */
     createIfNotExists(kernelType, sessionId, resources = {}) {
-      if (typeof sessionId === 'undefined' || sessionId === null)
+        if (typeof sessionId === 'undefined' || sessionId === null)
             sessionId = this.generateSessionId();
         let params = {
             "lang": kernelType,
@@ -815,8 +815,16 @@ class VFolder {
     /**
      * List Virtual folders that requested accessKey has permission to.
      */
-    list() {
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
+    list(groupId = null) {
+        let reqUrl = this.urlPrefix;
+        console.log(groupId);
+        if (groupId) {
+            console.log('hyw???');
+            const params = { group_id: groupId };
+            const q = querystring.stringify(params);
+            reqUrl += `?${q}`;
+        }
+        let rqst = this.client.newSignedRequest('GET', reqUrl, null);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1135,7 +1143,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
+  
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [
@@ -1429,16 +1437,17 @@ class ContainerImage {
      * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
      */
     install(name, registry = 'index.docker.io') {
-      if (registry != 'index.docker.io') {
-        registry = registry + '/';
-      } else {
-        registry = '';
-      }
-      let sessionId = this.client.generateSessionId();
-      return this.client.createIfNotExists(registry + name, sessionId, {
-        'cpu': '1', 'mem': '512m',
+        if (registry != 'index.docker.io') {
+            registry = registry + '/';
+        }
+        else {
+            registry = '';
+        }
+        let sessionId = this.client.generateSessionId();
+        return this.client.createIfNotExists(registry + name, sessionId, {
+            'cpu': '1', 'mem': '512m',
         }).then((response) => {
-        return this.client.destroyKernel(sessionId);
+            return this.client.destroyKernel(sessionId);
         }).catch(err => {
             throw err;
         });
@@ -1450,23 +1459,19 @@ class ContainerImage {
      * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
      */
     uninstall(name, registry = 'index.docker.io') {
-      return false;
+        return false;
     }
-
-  /**
-   * Get image label information.
-   *
-   * @param {string} registry - Registry name
-   * @param {string} image - image name.
-   * @param {string} tag - tag to get.
-   */
-  get(registry, image, tag) {
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {
-      "key": `images/${registry}/${image}/${tag}/resource/`,
-      "prefix": true
-    });
-    return this.client._wrapWithPromise(rqst);
-  }
+    /**
+     * Get image label information.
+     *
+     * @param {string} registry - Registry name
+     * @param {string} image - image name.
+     * @param {string} tag - tag to get.
+     */
+    get(registry, image, tag) {
+        const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true });
+        return this.client._wrapWithPromise(rqst);
+    }
 }
 class ComputeSession {
     /**
@@ -1490,10 +1495,10 @@ class ComputeSession {
     async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
         if (accessKey === '')
             accessKey = null;
-      if (group === '')
-        group = null;
+        if (group === '')
+            group = null;
         let q, v;
-      q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+        q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
         items { ${fields.join(" ")}}
         total_count
@@ -1507,9 +1512,9 @@ class ComputeSession {
         if (accessKey != null) {
             v['ak'] = accessKey;
         }
-      if (group != null) {
-        v['group_id'] = group;
-      }
+        if (group != null) {
+            v['group_id'] = group;
+        }
         return this.client.gql(q, v);
     }
 }
