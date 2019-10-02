@@ -860,7 +860,7 @@ class ResourcePreset {
    */
   delete(name = null) {
     if (this.client.is_admin === true && name !== null) {
-      let q = `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
+      let q = `mutation($name: String!) {` +
         `  delete_resource_preset(name: $name) {` +
         `    ok msg ` +
         `  }` +
