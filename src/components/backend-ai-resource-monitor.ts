@@ -314,8 +314,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           list-style-type: none;
         }
 
-        backend-ai-dropdown-menu {
+        #scaling-groups {
           width: 50%;
+        }
+
+        backend-ai-dropdown-menu {
+          width: 100%;
         }
 
         #launch-session {
@@ -1635,21 +1639,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
               <div class="horizontal center layout">
-                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders">
-                ${this.vfolders.map(item => html`
-                  <paper-item value="${item.name}">${item.name}</paper-item>
-                `)}
-                </backend-ai-dropdown-menu>
-                <paper-input id="session-name" label="Session name (optional)"
-                             value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
-                             error-message="4 or more characters / no whitespace">
-                </paper-input>
-              </div>
-            </fieldset>
-            <wl-expansion name="resource-group" open>
-              <span slot="title">Resource allocation</span>
-              <span slot="description"></span>
-              <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
                 <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
@@ -1662,7 +1651,23 @@ ${this.scaling_groups.map(item =>
                   </paper-listbox>
                 </paper-dropdown-menu>
                 ` : html``}
+                <paper-input id="session-name" label="Session name (optional)"
+                             value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
+                             error-message="4 or more characters / no whitespace">
+                </paper-input>
               </div>
+              <div class="horizontal center layout">
+                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders to mount">
+                ${this.vfolders.map(item => html`
+                  <paper-item value="${item.name}">${item.name}</paper-item>
+                `)}
+                </backend-ai-dropdown-menu>
+              </div>
+
+            </fieldset>
+            <wl-expansion name="resource-group" open>
+              <span slot="title">Resource allocation</span>
+              <span slot="description"></span>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
 ${this.resource_templates.map(item => html`
