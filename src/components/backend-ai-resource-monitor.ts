@@ -48,9 +48,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = {
     'TensorFlow': 'python-tensorflow',
+    'TensorFlow (Julia)': 'julia-tensorflow',
+    'TensorFlow (Swift)': 'swift-tensorflow',
     'Lablup ResearchEnv.': 'python-ff',
     'Python': 'python',
-    'Python (Intel)': 'python-intel',
+    'Python (MKL)': 'python-intel',
     'PyTorch': 'python-pytorch',
     'Chainer': 'chainer',
     'R': 'r-base',
@@ -64,9 +66,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'Neural Network Intelligence': 'nni',
     'H2O': 'h2o',
     'SFTP': 'sftp',
+    'SSH': 'ssh',
   };
   @property({type: Object}) tags = {
     'TensorFlow': [],
+    'TensorFlow (Julia)': [],
+    'TensorFlow (Swift)': [],
     'Lablup ResearchEnv.': [],
     'Python': [],
     'Python (MKL)': ['Intel MKL'],
@@ -83,6 +88,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'Neural Network Intelligence': ['Microsoft'],
     'H2O': ['h2o.ai'],
     'SFTP': ['backend.ai'],
+    'SSH': ['backend.ai'],
   };
   @property({type: Array}) versions;
   @property({type: Array}) languages;
@@ -413,6 +419,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
+    this.shadowRoot.querySelector('#scaling-groups').addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, false));
+
     this.notification = window.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
@@ -523,9 +531,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             //scaling_select.updateOptions();
             scaling_group_selection_box.appendChild(scaling_select);
           }
-          // update sg on dialog
-          let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
-          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, false));
         }
       }
       // Reload number of sessions
@@ -771,6 +776,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'python-cntk': 'CNTK',
       'python-pytorch': 'PyTorch',
       'python-tensorflow': 'TensorFlow',
+      'julia-tensorflow': 'TensorFlow (Julia)',
+      'swift-tensorflow': 'TensorFlow (Swift)',
       'r-base': 'R',
       'rust': 'Rust',
       'scala': 'Scala',
@@ -779,6 +786,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'nni': 'Neural Network Intelligence',
       'h2o': 'H2O.ai',
       'sftp': 'SFTP',
+      'ssh': 'SSH',
     };
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
@@ -1635,7 +1643,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
               <div class="horizontal center layout">
-                ${this.enable_scaling_group ? html`
                 <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
@@ -1646,7 +1653,6 @@ ${this.scaling_groups.map(item =>
     }
                   </paper-listbox>
                 </paper-dropdown-menu>
-                ` : html``}
               </div>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
