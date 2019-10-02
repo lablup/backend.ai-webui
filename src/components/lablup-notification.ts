@@ -106,11 +106,11 @@ export default class LablupNotification extends LitElement {
   _moreNotification(e) {
     const notification = e.target.closest('wl-snackbar');
     const button = e.target.closest('wl-button');
-    notification.setAttribute('hideDelay', '86400');
+    notification.setAttribute('persistent', 'true');
     if (notification.querySelector('div') !== null) {
       notification.querySelector('div').style.display = 'block';
     }
-    button.style.display = 'none';
+    button.parentNode.removeChild(button);
     if (notification.querySelector('wl-button') === null) {
       this._createCloseButton(notification);
     }
@@ -151,7 +151,7 @@ export default class LablupNotification extends LitElement {
     if (persistent === false) {
       notification.setAttribute('hideDelay', '3000');
     } else {
-      notification.setAttribute('hideDelay', '86400');
+      notification.setAttribute('persistent', 'true');
       this._createCloseButton(notification);
     }
     notification.setAttribute('backdrop', '');
