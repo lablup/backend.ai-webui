@@ -453,17 +453,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return;
     }
     this.scaling_group = e.target.value;
-    console.log(this.scaling_group);
-    if (this.active && this.metadata_updating === false) {
-      this.metadata_updating = true;
+    //console.log(this.scaling_group);
+    if (this.active) {
       if (forceUpdate === true) {
-        console.log('force update called');
+        //console.log('force update called');
         //this.metric_updating = true;
         //await this._aggregateResourceUse('update-scaling-group');
-        //this._refreshResourcePolicy();
-        this.aggregateResource('update-scaling-group'); // updateMetric does not work when no language is selected (on summary panel)
+        this._refreshResourcePolicy();
+        //this.aggregateResource('update-scaling-group'); // updateMetric does not work when no language is selected (on summary panel)
+      } else {
+        this.updateMetric('session dialog');
       }
-      this.metadata_updating = false;
     }
   }
 
@@ -572,7 +572,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       //this._refreshResourceTemplate('refresh-resource-policy');
       this._refreshImageList();
       this._updateGPUMode();
-      this.updateMetric('refresh resource values');
+      this.updateMetric('refresh resource policy');
     }).catch((err) => {
       console.log(err);
       this.metadata_updating = false;
@@ -899,7 +899,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           'group': window.backendaiclient.current_group
         };
       }
-      console.log('check resource preset from : aggregate resource use, ', from);
+      //console.log('check resource preset from : aggregate resource use, ', from);
       return window.backendaiclient.resourcePreset.check(param);
       //console.log(this.resource_templates);
       //return {'preset': this.resource_templates};
@@ -1131,14 +1131,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       //console.log('update metric blocked');
       return;
     }
+    if (from === 'refresh resource policy') {
+      //console.log('refreshing resource policy');
+      this.metric_updating = false;
+      return this._aggregateResourceUse('update-metric');
+    }
     let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
     let currentVersion = this.shadowRoot.querySelector('#version').value;
     if (typeof selectedItem === 'undefined' || selectedItem === null) {
       this.metric_updating = false;
       return;
     }
-    console.log('update metric from', from);
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    //console.log('update metric from', from);
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateMetric(from);
       }, true);
