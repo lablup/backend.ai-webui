@@ -57,63 +57,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
     super();
   }
 
-  static get is() {
-    return 'backend-ai-resource-preset-list';
-  }
-
-  static get properties() {
-    return {
-      keypairs: {
-        type: Object
-      },
-      resourcePresets: {
-        type: Object
-      },
-      keypairInfo: {
-        type: Object
-      },
-      is_admin: {
-        type: Boolean
-      },
-      notification: {
-        type: Object
-      },
-      active: {
-        type: Boolean
-      },
-      cpu_metric: {
-        type: Array
-      },
-      ram_metric: {
-        type: Array
-      },
-      gpu_metric: {
-        type: Array
-      },
-      fgpu_metric: {
-        type: Array
-      },
-      rate_metric: {
-        type: Array
-      },
-      concurrency_metric: {
-        type: Array
-      },
-      container_per_session_metric: {
-        type: Array
-      },
-      idle_timeout_metric: {
-        type: Array
-      },
-      vfolder_capacity_metric: {
-        type: Array
-      },
-      vfolder_count_metric: {
-        type: Array
-      }
-    };
-  }
-
   static get styles() {
     return [
       BackendAiStyles,
