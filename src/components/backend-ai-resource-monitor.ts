@@ -460,14 +460,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return;
     }
     this.scaling_group = e.target.value;
-    //console.log(this.scaling_group);
     if (this.active) {
+      let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
+      scaling_group_selection_box.firstChild.value = this.scaling_group;
+      this.shadowRoot.querySelector('#scaling-groups').value = this.scaling_group;
+
       if (forceUpdate === true) {
         //console.log('force update called');
         //this.metric_updating = true;
         //await this._aggregateResourceUse('update-scaling-group');
         this._refreshResourcePolicy();
-        //this.aggregateResource('update-scaling-group'); // updateMetric does not work when no language is selected (on summary panel)
+        //this.aggregateResource('update-scaling-group'); // updateMetric does not work when no language is selected (on
+        // summary panel)
       } else {
         this.updateMetric('session dialog');
       }
