@@ -1005,10 +1005,6 @@ export default class BackendAIData extends BackendAIPage {
     }
   }
 
-  _countObject(obj) {
-    return Object.keys(obj).length;
-  }
-
   async _addFolderDialog() {
     let vhost_info = await window.backendaiclient.vfolder.list_hosts();
     this.vhosts = vhost_info.allowed;
