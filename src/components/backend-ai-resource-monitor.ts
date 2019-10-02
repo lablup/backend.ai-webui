@@ -442,14 +442,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
-  _initSessions() {
-    let fields = ["sess_id"];
-    window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
-      .then(res => {
-        this.sessions_list = res.compute_session_list.items.map(e => e.sess_id);
-      })
-  }
-
   _initAliases() {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
@@ -536,7 +528,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, false));
         }
       }
-      this._initSessions();
+      // Reload number of sessions
+      let fields = ["sess_id"];
+      window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
+        .then(res => {
+          this.sessions_list = res.compute_session_list.items.map(e => e.sess_id);
+        });
+
       this._initAliases();
       this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
@@ -572,7 +570,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       this._refreshResourceTemplate('refresh-resource-policy');
-      this._refreshResourceValues();
+      this._refreshImageList();
+      this._updateGPUMode();
+      this.updateMetric('refresh resource values');
     }).catch((err) => {
       console.log(err);
       this.metadata_updating = false;
@@ -584,12 +584,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.notification.show(true);
       }
     });
-  }
-
-  _refreshResourceValues() {
-    this._refreshImageList();
-    this._updateGPUMode();
-    this.updateMetric('refresh resource values');
   }
 
   async _launchSessionDialog() {
@@ -1120,9 +1114,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
+  // Get available / total resources from manager
   aggregateResource(from: string = '') {
     //console.log('aggregate resource called - ', from);
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse(from);
       }, true);
