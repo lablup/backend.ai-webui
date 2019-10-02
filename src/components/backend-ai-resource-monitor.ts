@@ -416,7 +416,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.notification = window.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
-      if (this.activeConnected && this.metadata_updating === false) {
+      if (this.active && this.metadata_updating === false) {
         this.metadata_updating = true;
         this.aggregateResource('resource-refreshed');
         this.metadata_updating = false;
@@ -462,7 +462,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     this.scaling_group = e.target.value;
     console.log(this.scaling_group);
-    if (this.activeConnected && this.metadata_updating === false) {
+    if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
       if (forceUpdate === true) {
         console.log('force update called');
@@ -480,7 +480,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (!this.active) {
       return;
     }
-    this.run_after_connection(this._updatePageVariables());
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._updatePageVariables();
+      }, true);
+    } else {
+      this._updatePageVariables();
+    }
+    //this.run_after_connection(this._updatePageVariables());
   }
 
   async _updatePageVariables() {
@@ -1070,6 +1077,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
       ['cpu_slot', 'mem_slot', 'gpu_slot', 'fgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
+          if (Number(total_slot[slot]) < Number(used_slot[slot])) { // Modify maximum resources when user have infinite resource
+            total_slot[slot] = used_slot[slot];
+          }
           if (total_slot[slot] != 0) {
             used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
           } else {
@@ -1546,7 +1556,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap">
               <span class="gauge-label">${this.used_sg_slot.mem_slot}/${this.total_sg_slot.mem_slot}GB</span>
-              <paper-progress id="mem-usage-bar" class="start-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+              <paper-progress id="mem-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.mem_slot}"></paper-progress>
               <paper-progress id="mem-usage-bar-2" class="end-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
               <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
             </div>
