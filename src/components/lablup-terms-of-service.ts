@@ -160,6 +160,7 @@ export default class LablupTermsOfService extends LitElement {
         console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.message);
+          this.notification.detail = err.message;
           this.notification.show(true);
         }
       });

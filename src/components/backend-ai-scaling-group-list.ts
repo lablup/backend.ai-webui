@@ -242,6 +242,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           return window.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
         } else {
           this.notification.text = PainKiller.relieve(res.msg);
+          this.notification.detail = res.msg;
           this.notification.show();
 
           return Promise.reject(res.msg);
@@ -255,6 +256,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           this.shadowRoot.querySelector("#scaling-group-description").value = "";
         } else {
           this.notification.text = PainKiller.relieve(res.msg);
+          this.notification.detail = res.msg;
         }
         this._hideDialogById("#create-scaling-group-dialog");
         this.notification.show();
