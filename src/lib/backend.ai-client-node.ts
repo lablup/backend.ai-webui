@@ -810,8 +810,6 @@ class ResourcePreset {
    * };
    */
   add(name = null, input) {
-    let fields = ['name',
-      'resource_slots'];
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: CreateResourcePresetInput!) {` +
         `  create_resource_preset(name: $name, props: $input) {` +
@@ -838,8 +836,6 @@ class ResourcePreset {
    * };
    */
   mutate(name = null, input) {
-    let fields = ['name',
-      'resource_slots'];
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
         `  modify_resource_preset(name: $name, props: $input) {` +
@@ -849,6 +845,27 @@ class ResourcePreset {
       let v = {
         'name': name,
         'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return Promise.resolve(false);
+    }
+  }
+
+  /**
+   * delete specified resource preset with given name.
+   *
+   * @param {string} name - resource preset name to delete.
+   */
+  delete(name = null) {
+    if (this.client.is_admin === true && name !== null) {
+      let q = `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
+        `  delete_resource_preset(name: $name) {` +
+        `    ok msg ` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': name
       };
       return this.client.gql(q, v);
     } else {
