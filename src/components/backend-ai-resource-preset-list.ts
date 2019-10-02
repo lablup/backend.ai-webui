@@ -64,71 +64,71 @@ class BackendAiResourcePresetList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-          vaadin-grid {
-              border: 0;
-              font-size: 14px;
-              height: calc(100vh - 265px);
-          }
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 265px);
+        }
 
-          paper-dropdown-menu {
-          }
+        paper-dropdown-menu {
+        }
 
-          paper-item {
-              height: 30px;
-              --paper-item-min-height: 30px;
-          }
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
 
-          wl-button > wl-icon {
-              --icon-size: 24px;
-              padding: 0;
-          }
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
 
-          wl-icon {
-              --icon-size: 16px;
-              padding: 0;
-          }
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
 
-          vaadin-item {
-              font-size: 13px;
-              font-weight: 100;
-          }
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
 
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          div.configuration {
-              width: 70px !important;
-          }
+        div.configuration {
+          width: 70px !important;
+        }
 
-          div.configuration wl-icon {
-              padding-right: 5px;
-          }
+        div.configuration wl-icon {
+          padding-right: 5px;
+        }
 
-          wl-button.create-button {
-              width: 335px;
-              --button-bg: white;
-              --button-bg-hover: var(--paper-yellow-100);
-              --button-bg-active: var(--paper-yellow-600);
-          }
+        wl-button.create-button {
+          width: 335px;
+          --button-bg: white;
+          --button-bg-hover: var(--paper-yellow-100);
+          --button-bg-active: var(--paper-yellow-600);
+        }
 
-          wl-button {
-              --button-bg: var(--paper-yellow-50);
-              --button-bg-hover: var(--paper-yellow-100);
-              --button-bg-active: var(--paper-yellow-600);
-          }
+        wl-button {
+          --button-bg: var(--paper-yellow-50);
+          --button-bg-hover: var(--paper-yellow-100);
+          --button-bg-active: var(--paper-yellow-600);
+        }
 
-          wl-button#create-policy-button {
-              width: 100%;
-              box-sizing: border-box;
-              margin-top: 15px;
-          }
+        wl-button#create-policy-button {
+          width: 100%;
+          box-sizing: border-box;
+          margin-top: 15px;
+        }
 
-          wl-card {
-              margin: 0;
-          }
+        wl-card {
+          margin: 0;
+        }
       `];
   }
 
