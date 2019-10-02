@@ -461,8 +461,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     this.scaling_group = e.target.value;
     if (this.active) {
-      let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
-      scaling_group_selection_box.firstChild.value = this.scaling_group;
+      if (this.direction === 'vertical') {
+        let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
+        scaling_group_selection_box.firstChild.value = this.scaling_group;
+      }
       this.shadowRoot.querySelector('#scaling-groups').value = this.scaling_group;
 
       if (forceUpdate === true) {
