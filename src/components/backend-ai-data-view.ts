@@ -1013,7 +1013,7 @@ export default class BackendAIData extends BackendAIPage {
     let vhost_info = await window.backendaiclient.vfolder.list_hosts();
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
-    if (this.allowed_folder_type.includes('groups')) {
+    if (this.allowed_folder_type.includes('group')) {
       const group_info = await window.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
