@@ -1101,7 +1101,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
         if (slot in remaining_slot) {
           if (remaining_slot[slot] === 'Infinity') {
-            remaining_slot[slot] = total_slot[slot];
+            remaining_slot[slot] = remaining_sg_slot[slot];
           }
         }
       });
