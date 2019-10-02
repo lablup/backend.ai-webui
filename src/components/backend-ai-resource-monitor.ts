@@ -1113,7 +1113,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         remaining_slot['concurrency'] = this.concurrency_max - this.concurrency_used;
       }
       this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
-      this.available_slot = remaining_slot;
+      this.available_slot = remaining_sg_slot;
       this.used_slot_percent = used_slot_percent;
       this.used_sg_slot_percent = used_sg_slot_percent;
       this.aggregate_updating = false;
