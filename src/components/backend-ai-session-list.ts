@@ -469,6 +469,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -616,6 +617,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.message);
+          this.notification.detail = err.message;
           this.notification.show(true);
         }
       });
@@ -647,6 +649,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -944,6 +947,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });

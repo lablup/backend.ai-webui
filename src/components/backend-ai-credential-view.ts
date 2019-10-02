@@ -246,6 +246,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -306,6 +307,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-keypair-dialog').hide();
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -383,6 +385,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -486,6 +489,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });

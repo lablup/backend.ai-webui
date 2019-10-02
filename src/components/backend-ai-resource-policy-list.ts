@@ -473,6 +473,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -552,6 +553,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-policy-dialog').hide();
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -566,6 +568,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
