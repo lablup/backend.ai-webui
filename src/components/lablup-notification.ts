@@ -6,6 +6,7 @@
 import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/snackbar';
 import 'weightless/button';
+import 'weightless/icon';
 
 @customElement("lablup-notification")
 export default class LablupNotification extends LitElement {
@@ -113,7 +114,7 @@ export default class LablupNotification extends LitElement {
       button.setAttribute('slot', "action");
       button.setAttribute('flat', "");
       button.addEventListener('click', this._hideNotification.bind(this));
-      button.innerHTML = "Close";
+      button.innerHTML = "<wl-icon>close</wl-icon>";
       notification.appendChild(button);
     }
     notification.setAttribute('backdrop', '');
