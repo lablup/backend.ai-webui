@@ -20,17 +20,17 @@ interface Window {
 }
 
 class ClientConfig {
-	public _apiVersionMajor: string;
-	public _apiVersion: string;
-	public _hashType: string;
-	public _endpoint: string;
-	public _endpointHost: string;
-	public _accessKey: string;
-	public _secretKey: string;
-	public _userId: string;
-	public _password: string;
-	public _proxyURL: string;
-	public _connectionMode: string;
+  public _apiVersionMajor: string;
+  public _apiVersion: string;
+  public _hashType: string;
+  public _endpoint: string;
+  public _endpointHost: string;
+  public _accessKey: string;
+  public _secretKey: string;
+  public _userId: string;
+  public _password: string;
+  public _proxyURL: string;
+  public _connectionMode: string;
 
   /**
    * The client Configuration object.
@@ -131,33 +131,33 @@ class ClientConfig {
 }
 
 class Client {
-	public code: any;
-	public kernelId: any;
-	public kernelType: any;
-	public clientVersion: any;
-	public agentSignature: any;
-	public _config: any;
-	public _managerVersion: any;
-	public _apiVersion: any;
-	public is_admin: any;
-	public is_superadmin: any;
-	public kernelPrefix: any;
-	public resourcePreset: any;
-	public vfolder: any;
-	public agent: any;
-	public keypair: any;
-	public image: any;
-	public utils: any;
-	public computeSession: any;
-	public resourcePolicy: any;
-	public user: any;
-	public group: any;
-	public domain: any;
-	public resources: any;
-	public maintenance: any;
-	public scalingGroup: any;
-	public registry: any;
-	public _features: any;
+  public code: any;
+  public kernelId: any;
+  public kernelType: any;
+  public clientVersion: any;
+  public agentSignature: any;
+  public _config: any;
+  public _managerVersion: any;
+  public _apiVersion: any;
+  public is_admin: any;
+  public is_superadmin: any;
+  public kernelPrefix: any;
+  public resourcePreset: any;
+  public vfolder: any;
+  public agent: any;
+  public keypair: any;
+  public image: any;
+  public utils: any;
+  public computeSession: any;
+  public resourcePolicy: any;
+  public user: any;
+  public group: any;
+  public domain: any;
+  public resources: any;
+  public maintenance: any;
+  public scalingGroup: any;
+  public registry: any;
+  public _features: any;
   public ready: boolean = false;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
@@ -202,12 +202,13 @@ class Client {
     this.registry = new Registry(this);
     this.domain = new Domain(this);
 
-    this._features= {}; // feature support list
+    this._features = {}; // feature support list
 
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
   }
+
   /**
    * Return the server-side manager version.
    */
@@ -652,7 +653,7 @@ class Client {
       //console.log(queryString.startsWith('/server') ===true);
       if (queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
         uri = this._config.endpoint + queryString;
-      } else  { // Force request to use Public when session mode is enabled
+      } else { // Force request to use Public when session mode is enabled
         uri = this._config.endpoint + '/func' + queryString;
       }
     } else {
@@ -771,8 +772,8 @@ class Client {
 }
 
 class ResourcePreset {
-	public client: any;
-	public urlPrefix: any;
+  public client: any;
+  public urlPrefix: any;
 
   /**
    * Resource Preset API wrapper.
@@ -875,9 +876,9 @@ class ResourcePreset {
 }
 
 class VFolder {
-	public client: any;
-	public name: any;
-	public urlPrefix: any;
+  public client: any;
+  public name: any;
+  public urlPrefix: any;
 
   /**
    * The Virtual Folder API wrapper.
@@ -899,6 +900,7 @@ class VFolder {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/allowed_types`, null);
     return this.client._wrapWithPromise(rqst);
   }
+
   /**
    * Create a Virtual folder on specific host.
    *
@@ -1148,7 +1150,7 @@ class VFolder {
 }
 
 class Agent {
-	public client: any;
+  public client: any;
 
   /**
    * Agent API wrapper.
@@ -1180,8 +1182,8 @@ class Agent {
 }
 
 class Keypair {
-	public client: any;
-	public name: any;
+  public client: any;
+  public name: any;
 
   /**
    * Keypair API wrapper.
@@ -1363,7 +1365,7 @@ class Keypair {
 
 
 class ResourcePolicy {
-	public client: any;
+  public client: any;
 
   /**
    * The Resource Policy  API wrapper.
@@ -1493,7 +1495,7 @@ class ResourcePolicy {
 }
 
 class ContainerImage {
-	public client: any;
+  public client: any;
 
   /**
    * The Container image API wrapper.
@@ -1547,7 +1549,10 @@ class ContainerImage {
     image = image.replace("/", "%2F");
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {
-        const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`, "value": input[slot_type][key]});
+        const rqst = this.client.newSignedRequest("POST", "/config/set", {
+          "key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`,
+          "value": input[slot_type][key]
+        });
         promiseArray.push(this.client._wrapWithPromise(rqst));
       })
     });
@@ -1566,7 +1571,10 @@ class ContainerImage {
   modifyLabel(registry, image, tag, key, value) {
     image = image.replace("/", "%2F");
     tag = tag.replace("/", "%2F");
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {"key": `images/${registry}/${image}/${tag}/labels/${key}`, "value": value});
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {
+      "key": `images/${registry}/${image}/${tag}/labels/${key}`,
+      "value": value
+    });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1610,13 +1618,16 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   get(registry, image, tag) {
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true});
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {
+      "key": `images/${registry}/${image}/${tag}/resource/`,
+      "prefix": true
+    });
     return this.client._wrapWithPromise(rqst);
   }
 }
 
 class ComputeSession {
-	public client: any;
+  public client: any;
 
   /**
    * The Computate session API wrapper.
@@ -1665,9 +1676,9 @@ class ComputeSession {
 }
 
 class Resources {
-	public client: any;
-	public resources: any;
-	public agents: any;
+  public client: any;
+  public resources: any;
+  public agents: any;
 
   constructor(client) {
     this.client = client;
@@ -1775,7 +1786,7 @@ class Resources {
 }
 
 class Group {
-	public client: any;
+  public client: any;
 
   /**
    * The group API wrapper.
@@ -1785,6 +1796,7 @@ class Group {
   constructor(client) {
     this.client = client;
   }
+
   /**
    * List registred groups.
    * @param {string} domain_name - domain name of group
@@ -1810,8 +1822,10 @@ class Group {
         q = `query($domain_name: String, $is_active:Boolean) {` +
           `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(" ")} }` +
           '}';
-        v = {'is_active': is_active,
-           'domain_name': domain_name};
+        v = {
+          'is_active': is_active,
+          'domain_name': domain_name
+        };
       }
     } else {
       q = `query {` +
@@ -1824,7 +1838,7 @@ class Group {
 }
 
 class Domain {
-	public client: any;
+  public client: any;
 
   /**
    * The domain API wrapper.
@@ -1834,11 +1848,12 @@ class Domain {
   constructor(client) {
     this.client = client;
   }
+
   /**
    * Get domain information.
    * @param {string} domain_name - domain name of group
    * @param {array} fields - fields to query.  Default fields are: ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-         'allowed_docker_registries', 'integration_id', 'scaling_groups']
+   'allowed_docker_registries', 'integration_id', 'scaling_groups']
    * {
    *   'name': String,          // Group name.
    *   'description': String,   // Description for group.
@@ -1853,8 +1868,8 @@ class Domain {
    * };
    */
   get(domain_name = false,
-       fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-         'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
+      fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+        'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
     let q, v;
     if (domain_name !== false) {
       q = `query($name: String) {` +
@@ -1865,10 +1880,10 @@ class Domain {
     }
   }
 
-  list(fields = [ 'name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id' ]) {
+  list(fields = ['name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id']) {
     let q = `query {` +
-            ` domains { ${fields.join(" ")} }` +
-            `}`;
+      ` domains { ${fields.join(" ")} }` +
+      `}`;
     let v = {};
 
     return this.client.gql(q, v);
@@ -1876,8 +1891,8 @@ class Domain {
 }
 
 class Maintenance {
-	public client: any;
-	public urlPrefix: any;
+  public client: any;
+  public urlPrefix: any;
 
   /**
    * The Maintenance API wrapper.
@@ -1888,6 +1903,7 @@ class Maintenance {
     this.client = client;
     this.urlPrefix = '/resource';
   }
+
   /**
    * Rescan image from repository
    * @param {string} registry - registry. default is ''
@@ -1927,7 +1943,7 @@ class Maintenance {
 }
 
 class User {
-	public client: any;
+  public client: any;
 
   /**
    * The user API wrapper.
@@ -2100,7 +2116,7 @@ class User {
 
 
 class ScalingGroup {
-	public client: any;
+  public client: any;
 
   /**
    * The Scaling Group API wrapper.
@@ -2124,7 +2140,7 @@ class ScalingGroup {
     }
   }
 
-  list(group='default') {
+  list(group = 'default') {
     const queryString = `/scaling-groups?group=${this.client.current_group}`;
     const rqst = this.client.newSignedRequest("GET", queryString, null);
     return this.client._wrapWithPromise(rqst);
@@ -2136,7 +2152,7 @@ class ScalingGroup {
    * @param {string} name - Scaling group name
    * @param {string} description - Scaling group description
    */
-  create(name, description="") {
+  create(name, description = "") {
     const input = {
       description,
       is_active: true,
@@ -2147,10 +2163,10 @@ class ScalingGroup {
     };
     // if (this.client.is_admin === true) {
     let q = `mutation($name: String!, $input: ScalingGroupInput!) {` +
-    `  create_scaling_group(name: $name, props: $input) {` +
-    `    ok msg` +
-    `  }` +
-    `}`;
+      `  create_scaling_group(name: $name, props: $input) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
     let v = {
       name,
       input
@@ -2169,10 +2185,10 @@ class ScalingGroup {
    */
   associateWithDomain(domain, scaling_group) {
     let q = `mutation($domain: String!, $scaling_group: String!) {` +
-            `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
-            `    ok msg` +
-            `  }` +
-            `}`;
+      `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
     let v = {
       domain,
       scaling_group
@@ -2197,10 +2213,10 @@ class ScalingGroup {
    */
   modify(name, input) {
     let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
-            `  modify_scaling_group(name: $name, props: $input) {` +
-            `    ok msg` +
-            `  }` +
-            `}`;
+      `  modify_scaling_group(name: $name, props: $input) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
     let v = {
       name,
       input
@@ -2216,10 +2232,10 @@ class ScalingGroup {
    */
   delete(name) {
     let q = `mutation($name: String!) {` +
-            `  delete_scaling_group(name: $name) {` +
-            `    ok msg` +
-            `  }` +
-            `}`;
+      `  delete_scaling_group(name: $name) {` +
+      `    ok msg` +
+      `  }` +
+      `}`;
     let v = {
       name
     };
@@ -2229,7 +2245,7 @@ class ScalingGroup {
 }
 
 class Registry {
-	public client: any;
+  public client: any;
 
   constructor(client) {
     this.client = client;
@@ -2246,13 +2262,16 @@ class Registry {
   }
 
   delete(key) {
-    const rqst = this.client.newSignedRequest("POST", "/config/delete", {"key": `config/docker/registry/${key}`, "prefix": true});
+    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
+      "key": `config/docker/registry/${key}`,
+      "prefix": true
+    });
     return this.client._wrapWithPromise(rqst);
   }
 }
 
 class utils {
-	public client: any;
+  public client: any;
 
   constructor(client) {
     this.client = client;
