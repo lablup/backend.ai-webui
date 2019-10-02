@@ -179,6 +179,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
                       @click="${(e) => this._launchResourcePresetDialog(e)}">
                        <wl-icon>settings</wl-icon>
                     </wl-button>
+                    <wl-button class="fg red controls-running" fab flat inverted
+                      @click="${(e) => this._launchDeleteResourcePresetDialog(e)}">
+                       <wl-icon>delete</wl-icon>
+                    </wl-button>
               ` : html``}
             </div>
       `, root
@@ -397,6 +401,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _launchResourcePresetDialog(e) {
+    this.updateCurrentPresetToDialog(e);
+    this.shadowRoot.querySelector('#modify-template-dialog').show();
+  }
+
+  _launchDeleteResourcePresetDialog(e) {
     this.updateCurrentPresetToDialog(e);
     this.shadowRoot.querySelector('#modify-template-dialog').show();
   }
