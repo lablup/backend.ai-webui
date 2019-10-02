@@ -352,6 +352,12 @@ export default class BackendAILogin extends LitElement {
   }
 
   _showSignupDialog() {
+    this.api_endpoint = this.api_endpoint.trim();
+    if (this.api_endpoint === '') {
+      this.notification.text = 'API Endpoint is empty. Please specify API endpoint to signup.';
+      this.notification.show();
+      return;
+    }
     (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
     //this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
     (this.shadowRoot.querySelector('#signup-dialog') as any).open();
@@ -415,6 +421,11 @@ export default class BackendAILogin extends LitElement {
   _login() {
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
+    if (this.api_endpoint === '') {
+      this.notification.text = 'API Endpoint is empty. Please specify API endpoint to login.';
+      this.notification.show();
+      return;
+    }
     this.notification.text = 'Connecting...';
     this.notification.show();
     if (this.connection_mode === 'SESSION') {
