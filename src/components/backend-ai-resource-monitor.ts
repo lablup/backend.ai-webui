@@ -569,7 +569,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
-      this._refreshResourceTemplate('refresh-resource-policy');
+      //this._refreshResourceTemplate('refresh-resource-policy');
       this._refreshImageList();
       this._updateGPUMode();
       this.updateMetric('refresh resource values');
@@ -1124,48 +1124,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this._aggregateResourceUse(from);
     }
-  }
-
-  _refreshResourceTemplate(from = '') {
-    let param: any;
-    if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
-      let scaling_group = 'default';
-      if (this.scaling_group !== '') {
-        scaling_group = this.scaling_group;
-      } else {
-        scaling_group = this.scaling_groups[0]['name'];
-      }
-      param = {
-        'group': window.backendaiclient.current_group,
-        'scaling_group': scaling_group
-      };
-    } else {
-      param = {
-        'group': window.backendaiclient.current_group
-      };
-    }
-    console.log('check resource preset from : refresh resource template, ', from);
-    window.backendaiclient.resourcePreset.check(param).then((response) => {
-      if (response.presets) {
-        let presets = response.presets;
-        let available_presets: any = [];
-        presets.forEach((item) => {
-          if (item.allocatable === true) {
-            if ('cuda.shares' in item.resource_slots) {
-              item.gpu = item.resource_slots['cuda.shares'];
-            } else if ('cuda.device' in item) {
-              item.gpu = item.resource_slots['cuda.device'];
-            } else {
-              item.gpu = 0;
-            }
-            item.cpu = item.resource_slots.cpu;
-            item.mem = window.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
-            available_presets.push(item);
-          }
-        });
-        this.resource_templates = available_presets;
-      }
-    });
   }
 
   async updateMetric(from: string = '') {
