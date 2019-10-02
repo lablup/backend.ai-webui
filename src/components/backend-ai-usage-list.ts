@@ -182,7 +182,7 @@ export default class BackendAIUsageList extends BackendAIPage {
         </wl-select>
       </div>
       <div class="layout vertical center flex wrap">
-      ${this.collection != {} ?  
+      ${this.collection != {} ?
       Object.keys(this._map).map((key, idx) =>
         html`
           <div class="layout horizontal center flex" style="width:100%;">

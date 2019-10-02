@@ -201,7 +201,7 @@ export default class BackendAIUserList extends BackendAIPage {
       let users = response.users;
       //Object.keys(users).map((objectKey, index) => {
       //var user = users[objectKey];
-        // Blank for the next impl.
+      // Blank for the next impl.
       //});
       this.users = users;
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);

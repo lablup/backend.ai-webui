@@ -173,6 +173,7 @@ export default class LablupNotification extends LitElement {
     };
     this.newDesktopNotification = new Notification(title, options);
   }
+
   gc() {
     if (this.notifications.length > 0) {
       let opened_notifications = this.notifications.filter(noti => noti.open === true);

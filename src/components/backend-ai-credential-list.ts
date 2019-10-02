@@ -67,80 +67,80 @@ export default class BackendAICredentialList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          vaadin-grid {
-              border: 0;
-              font-size: 14px;
-              height: calc(100vh - 300px);
-          }
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 300px);
+        }
 
-          paper-item {
-              height: 30px;
-              --paper-item-min-height: 30px;
-          }
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
 
-          wl-button > wl-icon {
-              --icon-size: 24px;
-              padding: 0;
-          }
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
 
-          wl-icon {
-              --icon-size: 16px;
-              padding: 0;
-          }
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
 
-          wl-card h4 {
-              font-size: 14px;
-              padding: 5px 15px 5px 12px;
-              margin: 0 0 10px 0;
-              display: block;
-              border-bottom: 1px solid #DDD;
-          }
+        wl-card h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          border-bottom: 1px solid #DDD;
+        }
 
-          vaadin-item {
-              font-size: 13px;
-              font-weight: 100;
-          }
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
 
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          div.configuration {
-              width: 70px !important;
-          }
+        div.configuration {
+          width: 70px !important;
+        }
 
-          div.configuration wl-icon {
-              padding-right: 5px;
-          }
+        div.configuration wl-icon {
+          padding-right: 5px;
+        }
 
-          wl-button.fab {
-              --button-bg: var(--paper-light-green-600);
-              --button-bg-hover: var(--paper-green-600);
-              --button-bg-active: var(--paper-green-900);
-              color: var(--paper-green-900);
-          }
+        wl-button.fab {
+          --button-bg: var(--paper-light-green-600);
+          --button-bg-hover: var(--paper-green-600);
+          --button-bg-active: var(--paper-green-900);
+          color: var(--paper-green-900);
+        }
 
-          .gutterBottom {
-              margin-bottom: 20px;
-          }
+        .gutterBottom {
+          margin-bottom: 20px;
+        }
 
-          #keypair-modify-save {
-              width: 100%;
-              box-sizing: border-box;
-              --button-bg: var(--paper-light-green-50);
-              --button-bg-hover: var(--paper-green-100);
-              --button-bg-active: var(--paper-green-600);
-          }
+        #keypair-modify-save {
+          width: 100%;
+          box-sizing: border-box;
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+        }
 
-          #policy-list {
-              width: 100%;
-          }
+        #policy-list {
+          width: 100%;
+        }
 
-          wl-label {
-              --label-color: black;
-          }
+        wl-label {
+          --label-color: black;
+        }
 
       `];
   }
