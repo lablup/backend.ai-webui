@@ -263,6 +263,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       })
       .catch(err => {
         this.notification.text = PainKiller.relieve(err);
+        this.notification.detail = err;
         this._hideDialogById("#create-scaling-group-dialog");
         this.notification.show(true);
       })
@@ -291,6 +292,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           this._refreshList();
         } else {
           this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
+          this.notification.detail = modify_scaling_group.msg;
         }
         this._hideDialogById("#modify-scaling-group-dialog");
         this.notification.show();
@@ -315,6 +317,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           this.shadowRoot.querySelector("#delete-scaling-group").value = "";
         } else {
           this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
+          this.notification.detail = delete_scaling_group.msg;
         }
 
         this._hideDialogById("#delete-scaling-group-dialog");

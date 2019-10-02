@@ -176,6 +176,7 @@ export default class BackendAISummary extends BackendAIPage {
       this.jobs = [];
       this.sessions = [];
       this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
+      this.notification.detail = err;
       this.notification.show(true);
     });
   }

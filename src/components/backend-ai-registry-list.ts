@@ -213,6 +213,7 @@ class BackendAIRegistryList extends BackendAIPage {
           this.indicator.set(50, 'Registry update failed.');
           this.indicator.end(1000);
           this.notification.text = PainKiller.relieve(rescan_images.msg);
+          this.notification.detail = rescan_images.msg;
           this.notification.show();
         }
       }).catch(err => {
