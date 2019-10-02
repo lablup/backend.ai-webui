@@ -120,35 +120,6 @@ function moveTo(url) {
   window.location.href = url;
 }
 
-function lablupRequest(successHandler, errorHandler, finalHandler) {
-  // Simplify ajax request, especially with help omitting error handling.
-  // Usage: global 'requestBot' is assumed to be exist.
-  //   - Set requestBot parameters (e.g. body, method, etc)
-  //   - Define 'successHandler', 'errorHandler', and 'finalHandler'.
-  //   - Call 'lablupRequest' with those handlers as parameters.
-  if (requestBot.loading) {
-    setNotification("Handling previous request...");
-    return;
-  }
-  const req = requestBot.generateRequest();
-  if (!successHandler) successHandler = () => {
-  };
-  if (!errorHandler) {
-    errorHandler = (err) => {
-      if (req.response && req.response.error_msg) {
-        setNotification(req.response.error_msg);
-      } else {
-        setNotification(err);
-      }
-    }
-  }
-  if (!finalHandler) finalHandler = () => {
-  };
-  req.completes.then(successHandler)
-    .catch(errorHandler)
-    .finally(finalHandler);
-}
-
 function toggleDisplayElement(e) {
   var o = document.getElementById(e);
   if (o.style.display == '' || o.style.display == undefined || o.style.display != 'block') {

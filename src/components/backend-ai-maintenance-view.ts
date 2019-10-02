@@ -108,7 +108,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
@@ -205,6 +204,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
       this.indicator.end(1000);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -228,6 +228,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
       this.indicator.end(1000);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });

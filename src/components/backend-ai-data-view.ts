@@ -35,7 +35,7 @@ import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 
-import './lablup-notification';
+
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -56,6 +56,7 @@ export default class BackendAIData extends BackendAIPage {
   public uploadFiles: any;
   public vhost: any;
   public vhosts: any;
+  public allowedGroups: any;
   public uploadFilesExist: any;
   public _boundIndexRenderer: any;
   public _boundTypeRenderer: any;
@@ -90,6 +91,7 @@ export default class BackendAIData extends BackendAIPage {
     this.uploadFiles = [];
     this.vhost = '';
     this.vhosts = [];
+    this.allowedGroups = [];
     this.uploadFilesExist = false;
     this.allowed_folder_type = [];
     this._boundIndexRenderer = this.indexRenderer.bind(this);
@@ -141,6 +143,9 @@ export default class BackendAIData extends BackendAIPage {
         type: String
       },
       vhosts: {
+        type: Array
+      },
+      allowedGroups: {
         type: Array
       },
       invitees: {
@@ -310,12 +315,12 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: #222;
-          --tab-color-active-hover: #222;
-          --tab-color-active-filled: #ccc;
+          --tab-color: #666666;
+          --tab-color-hover: #222222;
+          --tab-color-hover-filled: #222222;
+          --tab-color-active: #222222;
+          --tab-color-active-hover: #222222;
+          --tab-color-active-filled: #cccccc;
           --tab-bg-active: var(--paper-orange-50);
           --tab-bg-filled: var(--paper-orange-50);
           --tab-bg-active-hover: var(--paper-orange-100);
@@ -331,10 +336,10 @@ export default class BackendAIData extends BackendAIPage {
         wl-dialog wl-textfield,
         wl-dialog wl-select {
           --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
+          --input-color-disabled: #222222;
+          --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
+          --input-border-style-disabled: 1px solid #cccccc;
         }
 
         #textfields wl-textfield,
@@ -378,7 +383,6 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="horizontal center flex layout tab">
@@ -459,12 +463,12 @@ export default class BackendAIData extends BackendAIPage {
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-group" label="Group">
                 <paper-listbox slot="dropdown-content" selected="0">
-                ${window.backendaiclient.groups.map(item => html`
-                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+                ${this.allowedGroups.map(item => html`
+                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
                 `)}
                 </paper-listbox>
               </paper-dropdown-menu>
-            </div>            
+            </div>
             ` : html``}
             <br/>
             <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
@@ -838,7 +842,7 @@ export default class BackendAIData extends BackendAIPage {
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
 
-          ${rowData.item.is_owner && rowData.item.type == 'user' 
+          ${rowData.item.is_owner && rowData.item.type == 'user'
         ? html`
               <paper-icon-button
                 class="fg blue controls-running"
@@ -963,11 +967,16 @@ export default class BackendAIData extends BackendAIPage {
     });
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
+
+    document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
   }
 
   _refreshFolderList() {
     this.indicator.show();
-    let l = window.backendaiclient.vfolder.list();
+    let groupId = null;
+    groupId = window.backendaiclient.current_group_id();
+    console.log(groupId);
+    let l = window.backendaiclient.vfolder.list(groupId);
     l.then((value) => {
       this.indicator.hide();
       this.folders = value;
@@ -1001,14 +1010,14 @@ export default class BackendAIData extends BackendAIPage {
     }
   }
 
-  _countObject(obj) {
-    return Object.keys(obj).length;
-  }
-
   async _addFolderDialog() {
     let vhost_info = await window.backendaiclient.vfolder.list_hosts();
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
+    if (this.allowed_folder_type.includes('group')) {
+      const group_info = await window.backendaiclient.group.list();
+      this.allowedGroups = group_info.groups;
+    }
     this.openDialog('add-folder-dialog');
   }
 
@@ -1071,6 +1080,7 @@ export default class BackendAIData extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -1094,6 +1104,7 @@ export default class BackendAIData extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -1126,6 +1137,7 @@ export default class BackendAIData extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });

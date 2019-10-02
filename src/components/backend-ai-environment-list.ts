@@ -18,7 +18,7 @@ import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
-import './lablup-notification';
+import './backend-ai-indicator';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -36,12 +36,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Array}) allowed_registries = Array();
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
+  @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
   @property({type: Array}) servicePorts = Array();
   @property({type: Number}) selectedIndex = 0;
   @property({type: Boolean}) _gpu_disabled = false;
   @property({type: Boolean}) _fgpu_disabled = false;
   @property({type: Object}) alias = Object();
+  @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) indicator = Object();
+  @property({type: Object}) installImageDialog = Object();
+  @property({type: String}) installImageName = '';
 
   constructor() {
     super();
@@ -79,9 +83,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
 
         wl-button {
-          --button-bg: var(--paper-yellow-50);
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
+          --button-bg: var(--paper-orange-50);
+          --button-bg-hover: var(--paper-orange-100);
+          --button-bg-active: var(--paper-orange-600);
+          --button-color: #242424;
+          color: var(--paper-orange-900);
         }
 
         wl-dialog {
@@ -191,6 +197,29 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this.notification.show();
         this._hideDialogById("#modify-image-dialog");
       })
+  }
+
+  openInstallImageDialog(index) {
+    this.selectedIndex = index;
+    let chosenImage = this.images[this.selectedIndex];
+    this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
+    this.installImageDialog.show();
+  }
+
+  _installImage() {
+    this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
+    this.notification.show();
+    this.installImageDialog.hide();
+    this.indicator.start('indeterminate');
+    this.indicator.set(10, 'Downloading...');
+    window.backendaiclient.image.install(this.installImageName).then((response) => {
+      this.indicator.set(100, 'Install finished.');
+      this.indicator.end(1000);
+      this._getImages();
+    }).catch(err => {
+      this.indicator.set(100, 'Problem occurred during installation.');
+      this.indicator.end(1000);
+    });
   }
 
   requirementsRenderer(root, column?, rowData?) {
@@ -335,25 +364,27 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     )
   }
 
+  installRenderer(root, column, rowData) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
+          <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.installed}" ?disabled="${rowData.item.installed}" @click="${(e) => {
+        this.openInstallImageDialog(rowData.index)
+      }}"></wl-checkbox>
+        </div>
+      `, root);
+  }
+
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-        <vaadin-grid-column width="40px" flex-grow="0" text-align="center">
+        <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
           <template class="header">
             <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
-          </template>
-          <template>
-            <div "layout horizontal center center-justified"  style="margin:0; padding:0;">
-              <template is="dom-if" if="[[item.installed]]">
-                <wl-checkbox style="--checkbox-size:12px;" checked></wl-checkbox>
-              </template>
-              <template is="dom-if" if="[[!item.installed]]">
-                <wl-checkbox style="--checkbox-size:12px;"></wl-checkbox>
-              </template>
-            </div>
           </template>
         </vaadin-grid-column>
 
@@ -562,6 +593,17 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </wl-button>
         </div>
       </wl-dialog>
+      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <p>You are about to install the image <span style="color:blue;">${this.installImageName}</span>.</p>
+            <p>This process requires significant download time. Do you want to proceed?</p>
+         </div>
+         <div slot="footer">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>
+         </div>
+      </wl-dialog>
     `;
   }
 
@@ -624,8 +666,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = this.shadowRoot.querySelector('#notification');
+    this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.notification = window.lablupNotification;
+    this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
     if (window.backendaiclient === undefined || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
@@ -643,11 +687,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _getImages() {
-    this.indicator.show();
+    this.loadingIndicator.show();
 
     window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return window.backendaiclient.image.list();
+      return window.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
     }).then((response) => {
       let images = response.images;
       let domainImages: any = [];
@@ -704,7 +748,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       //let sorted_images = {};
       //image_keys.sort();
       this.images = domainImages;
-      this.indicator.hide();
+      this.loadingIndicator.hide();
     });
   }
 
@@ -746,6 +790,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'scala': 'Scala',
       'base': 'Base',
       'cntk': 'CNTK',
+      'h2o': 'H2O.AI',
       'digits': 'DIGITS',
       'py3': 'Python 3',
       'py2': 'Python 2',
@@ -753,6 +798,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'py35': 'Python 3.5',
       'py36': 'Python 3.6',
       'py37': 'Python 3.7',
+      'py38': 'Python 3.8',
       'ubuntu16.04': 'Ubuntu 16.04',
       'ubuntu18.04': 'Ubuntu 18.04',
       'anaconda2018.12': 'Anaconda 2018.12',

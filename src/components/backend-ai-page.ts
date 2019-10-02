@@ -20,6 +20,14 @@ export class BackendAIPage extends LitElement {
     return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null && window.backendaiclient.ready === true;
   }
 
+  get connected() {
+    return typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null && window.backendaiclient.ready === true;
+  }
+
+  public run_after_connection = (fn: any) => {
+    fn;
+  };
+
   public _viewStateChanged(param: Boolean): void;
 
   _viewStateChanged(param) {

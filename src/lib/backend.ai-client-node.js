@@ -369,7 +369,7 @@ class Client {
      * @param {object} resources - Per-session resource
      */
     createIfNotExists(kernelType, sessionId, resources = {}) {
-        if (sessionId === undefined)
+        if (typeof sessionId === 'undefined' || sessionId === null)
             sessionId = this.generateSessionId();
         let params = {
             "lang": kernelType,
@@ -720,8 +720,6 @@ class ResourcePreset {
      * };
      */
     add(name = null, input) {
-        let fields = ['name',
-            'resource_slots'];
         if (this.client.is_admin === true && name !== null) {
             let q = `mutation($name: String!, $input: CreateResourcePresetInput!) {` +
                 `  create_resource_preset(name: $name, props: $input) {` +
@@ -748,8 +746,6 @@ class ResourcePreset {
      * };
      */
     mutate(name = null, input) {
-        let fields = ['name',
-            'resource_slots'];
         if (this.client.is_admin === true && name !== null) {
             let q = `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
                 `  modify_resource_preset(name: $name, props: $input) {` +
@@ -759,6 +755,27 @@ class ResourcePreset {
             let v = {
                 'name': name,
                 'input': input
+            };
+            return this.client.gql(q, v);
+        }
+        else {
+            return Promise.resolve(false);
+        }
+    }
+    /**
+     * delete specified resource preset with given name.
+     *
+     * @param {string} name - resource preset name to delete.
+     */
+    delete(name = null) {
+        if (this.client.is_admin === true && name !== null) {
+            let q = `mutation($name: String!) {` +
+                `  delete_resource_preset(name: $name) {` +
+                `    ok msg ` +
+                `  }` +
+                `}`;
+            let v = {
+                'name': name
             };
             return this.client.gql(q, v);
         }
@@ -815,8 +832,14 @@ class VFolder {
     /**
      * List Virtual folders that requested accessKey has permission to.
      */
-    list() {
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
+    list(groupId = null) {
+        let reqUrl = this.urlPrefix;
+        if (groupId) {
+            const params = { group_id: groupId };
+            const q = querystring.stringify(params);
+            reqUrl += `?${q}`;
+        }
+        let rqst = this.client.newSignedRequest('GET', reqUrl, null);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1367,10 +1390,18 @@ class ContainerImage {
     list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
         let q, v;
         if (this.client.supports('system-images')) {
-            q = `query($installed:Boolean) {` +
-                `  images(is_installed:$installed) { ${fields.join(" ")} }` +
-                '}';
-            v = { 'installed': installed_only, 'is_operation': system_images };
+            if (installed_only === true) {
+                q = `query($installed:Boolean) {` +
+                    `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+                    '}';
+                v = { 'installed': installed_only, 'is_operation': system_images };
+            }
+            else {
+                q = `query {` +
+                    `  images { ${fields.join(" ")} }` +
+                    '}';
+                v = { 'is_operation': system_images };
+            }
         }
         else {
             q = `query {` +
@@ -1393,7 +1424,10 @@ class ContainerImage {
         image = image.replace("/", "%2F");
         Object.keys(input).forEach(slot_type => {
             Object.keys(input[slot_type]).forEach(key => {
-                const rqst = this.client.newSignedRequest("POST", "/config/set", { "key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`, "value": input[slot_type][key] });
+                const rqst = this.client.newSignedRequest("POST", "/config/set", {
+                    "key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`,
+                    "value": input[slot_type][key]
+                });
                 promiseArray.push(this.client._wrapWithPromise(rqst));
             });
         });
@@ -1411,8 +1445,42 @@ class ContainerImage {
     modifyLabel(registry, image, tag, key, value) {
         image = image.replace("/", "%2F");
         tag = tag.replace("/", "%2F");
-        const rqst = this.client.newSignedRequest("POST", "/config/set", { "key": `images/${registry}/${image}/${tag}/labels/${key}`, "value": value });
+        const rqst = this.client.newSignedRequest("POST", "/config/set", {
+            "key": `images/${registry}/${image}/${tag}/labels/${key}`,
+            "value": value
+        });
         return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * install specific container images from registry
+     *
+     * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+     * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
+     */
+    install(name, registry = 'index.docker.io') {
+        if (registry != 'index.docker.io') {
+            registry = registry + '/';
+        }
+        else {
+            registry = '';
+        }
+        let sessionId = this.client.generateSessionId();
+        return this.client.createIfNotExists(registry + name, sessionId, {
+            'cpu': '1', 'mem': '512m',
+        }).then((response) => {
+            return this.client.destroyKernel(sessionId);
+        }).catch(err => {
+            throw err;
+        });
+    }
+    /**
+     * uninstall specific container images from registry (TO BE IMPLEMENTED)
+     *
+     * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+     * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
+     */
+    uninstall(name, registry = 'index.docker.io') {
+        return false;
     }
     /**
      * Get image label information.
@@ -1422,7 +1490,10 @@ class ContainerImage {
      * @param {string} tag - tag to get.
      */
     get(registry, image, tag) {
-        const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": `images/${registry}/${image}/${tag}/resource/`, "prefix": true });
+        const rqst = this.client.newSignedRequest("POST", "/config/get", {
+            "key": `images/${registry}/${image}/${tag}/resource/`,
+            "prefix": true
+        });
         return this.client._wrapWithPromise(rqst);
     }
 }
@@ -1443,13 +1514,16 @@ class ComputeSession {
      * @param {string} accessKey - access key that is used to start compute sessions.
      * @param {number} limit - limit number of query items.
      * @param {number} offset - offset for item query. Useful for pagination.
+     * @param {string} group - project group id to query. Default returns sessions from all groups.
      */
-    async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = null, limit = 30, offset = 0) {
+    async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
         if (accessKey === '')
             accessKey = null;
+        if (group === '')
+            group = null;
         let q, v;
-        q = `query($limit:Int!, $offset:Int!, $ak:String, $status:String) {
-      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, status:$status) {
+        q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
         items { ${fields.join(" ")}}
         total_count
       }
@@ -1461,6 +1535,9 @@ class ComputeSession {
         };
         if (accessKey != null) {
             v['ak'] = accessKey;
+        }
+        if (group != null) {
+            v['group_id'] = group;
         }
         return this.client.gql(q, v);
     }
@@ -1599,8 +1676,10 @@ class Group {
                 q = `query($domain_name: String, $is_active:Boolean) {` +
                     `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(" ")} }` +
                     '}';
-                v = { 'is_active': is_active,
-                    'domain_name': domain_name };
+                v = {
+                    'is_active': is_active,
+                    'domain_name': domain_name
+                };
             }
         }
         else {
@@ -1625,7 +1704,7 @@ class Domain {
      * Get domain information.
      * @param {string} domain_name - domain name of group
      * @param {array} fields - fields to query.  Default fields are: ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-           'allowed_docker_registries', 'integration_id', 'scaling_groups']
+     'allowed_docker_registries', 'integration_id', 'scaling_groups']
      * {
      *   'name': String,          // Group name.
      *   'description': String,   // Description for group.
@@ -1836,7 +1915,7 @@ class User {
      */
     modify(email = null, input) {
         let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
-        if (this.client.is_admin === true) {
+        if (this.client.is_superadmin === true) {
             let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
                 `  modify_user(email: $email, props: $input) {` +
                 `    ok msg` +
@@ -1858,7 +1937,7 @@ class User {
      * @param {string} email - E-mail address as user id to delete.
      */
     delete(email) {
-        if (this.client.is_admin === true) {
+        if (this.client.is_superadmin === true) {
             let q = `mutation($email: String!) {` +
                 `  delete_user(email: $email) {` +
                 `    ok msg` +
@@ -2005,7 +2084,10 @@ class Registry {
         return this.client._wrapWithPromise(rqst);
     }
     delete(key) {
-        const rqst = this.client.newSignedRequest("POST", "/config/delete", { "key": `config/docker/registry/${key}`, "prefix": true });
+        const rqst = this.client.newSignedRequest("POST", "/config/delete", {
+            "key": `config/docker/registry/${key}`,
+            "prefix": true
+        });
         return this.client._wrapWithPromise(rqst);
     }
 }

@@ -28,7 +28,7 @@ import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
-import './lablup-notification';
+
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -242,6 +242,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           return window.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
         } else {
           this.notification.text = PainKiller.relieve(res.msg);
+          this.notification.detail = res.msg;
           this.notification.show();
 
           return Promise.reject(res.msg);
@@ -255,12 +256,14 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           this.shadowRoot.querySelector("#scaling-group-description").value = "";
         } else {
           this.notification.text = PainKiller.relieve(res.msg);
+          this.notification.detail = res.msg;
         }
         this._hideDialogById("#create-scaling-group-dialog");
         this.notification.show();
       })
       .catch(err => {
         this.notification.text = PainKiller.relieve(err);
+        this.notification.detail = err;
         this._hideDialogById("#create-scaling-group-dialog");
         this.notification.show(true);
       })
@@ -289,6 +292,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           this._refreshList();
         } else {
           this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
+          this.notification.detail = modify_scaling_group.msg;
         }
         this._hideDialogById("#modify-scaling-group-dialog");
         this.notification.show();
@@ -313,6 +317,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           this.shadowRoot.querySelector("#delete-scaling-group").value = "";
         } else {
           this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
+          this.notification.detail = delete_scaling_group.msg;
         }
 
         this._hideDialogById("#delete-scaling-group-dialog");
@@ -331,7 +336,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   render() {
     // languate=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <h4 class="horizontal flex center center-justified layout">
         <span>Scaling Groups</span>
         <span class="flex"></span>

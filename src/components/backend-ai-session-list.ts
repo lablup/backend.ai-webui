@@ -29,7 +29,6 @@ import 'weightless/title';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator';
-import './lablup-notification';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -162,7 +161,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         #work-area {
           width: 100%;
           height: calc(100vh - 120px);
-          background-color: #222;
+          background-color: #222222;
           color: #efefef;
         }
 
@@ -240,6 +239,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
+
+    document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
   }
 
   async _viewStateChanged(active) {
@@ -248,7 +249,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = window.backendaiclient.is_admin;
         this._connectionMode = window.backendaiclient._config._connectionMode;
@@ -376,7 +377,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
     }
-    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey).then((response) => {
+    let group_id = window.backendaiclient.current_group_id();
+    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, 50, 0, group_id).then((response) => {
       this.loadingIndicator.hide();
       let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
@@ -447,7 +449,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
-          console.log("refresh!!");
+          //console.log("refresh!!");
           var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
           document.dispatchEvent(event);
         }
@@ -467,6 +469,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -480,49 +483,49 @@ export default class BackendAiSessionList extends BackendAIPage {
   _getKernelInfo(lang) {
     const kernel_alias = {
       'python': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Python', 'color': 'blue'}],
       'python-intel': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
         {'tag': 'Intel MKL', 'color': 'green'}],
       'python-ff': [
-        {'category': 'Env', 'tag': 'Lablup Research', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'Lablup Research', 'color': 'blue'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'}],
       'python-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'}],
       'ngc-digits': [
-        {'category': 'Env', 'tag': 'DIGITS', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'DIGITS', 'color': 'blue'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'ngc-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
         {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
       'julia': [
-        {'category': 'Env', 'tag': 'Julia', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Julia', 'color': 'blue'}],
       'r': [
-        {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
       'r-base': [
-        {'category': 'Env', 'tag': 'R', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
       'c': [
-        {'category': 'Env', 'tag': 'C', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'C', 'color': 'blue'}],
       'cpp': [
-        {'category': 'Env', 'tag': 'C++', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'C++', 'color': 'blue'}],
       'rust': [
-        {'category': 'Env', 'tag': 'Rust', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Rust', 'color': 'blue'}],
       'octave': [
-        {'category': 'Env', 'tag': 'Octave', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Octave', 'color': 'blue'}],
       'swift': [
-        {'category': 'Env', 'tag': 'Swift', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'Swift', 'color': 'blue'}],
       'h2o': [
-        {'category': 'Env', 'tag': 'H2O', 'color': 'yellow'}],
+        {'category': 'Env', 'tag': 'H2O', 'color': 'blue'}],
       'sftp': [
-        {'category': 'Env', 'tag': 'SFTP', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'SFTP', 'color': 'blue'},
         {'tag': 'Backend.AI', 'color': 'green'}],
       'lablup-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'yellow'},
+        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
         {'tag': 'Cloudia', 'color': 'green'}],
     };
     let tags: any = [];
@@ -588,7 +591,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         throw body;
       }
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
     return body;
   }
@@ -614,6 +617,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.message);
+          this.notification.detail = err.message;
           this.notification.show(true);
         }
       });
@@ -645,6 +649,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -942,6 +947,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -978,7 +984,7 @@ ${item.map(item => {
       })}
                 `) : html``}
         ${rowData.item.additional_req ? html`
-          <lablup-shields app="" color="blue" description="${rowData.item.additional_req}"></lablup-shields>        
+          <lablup-shields app="" color="green" description="${rowData.item.additional_req}"></lablup-shields>
           ` : html``}
         </div>`, root
     );
@@ -1064,7 +1070,6 @@ ${item.map(item => {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">

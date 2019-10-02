@@ -17,7 +17,6 @@ import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
-import './lablup-notification';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -43,67 +42,67 @@ export default class BackendAIAgentList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-          vaadin-grid {
-              border: 0;
-              font-size: 14px;
-              height: calc(100vh - 200px);
-          }
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 200px);
+        }
 
-          paper-item {
-              height: 30px;
-              --paper-item-min-height: 30px;
-          }
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
 
-          wl-button > wl-icon {
-              --icon-size: 24px;
-              padding: 0;
-          }
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
 
-          wl-icon {
-              --icon-size: 16px;
-              padding: 0;
-          }
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
 
-          iron-icon {
-              width: 16px;
-              height: 16px;
-              min-width: 16px;
-              min-height: 16px;
-              padding: 0;
-          }
+        iron-icon {
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+          min-height: 16px;
+          padding: 0;
+        }
 
-          paper-icon-button {
-              --paper-icon-button: {
-                  width: 25px;
-                  height: 25px;
-                  min-width: 25px;
-                  min-height: 25px;
-                  padding: 3px;
-                  margin-right: 5px;
-              };
-          }
+        paper-icon-button {
+          --paper-icon-button: {
+            width: 25px;
+            height: 25px;
+            min-width: 25px;
+            min-height: 25px;
+            padding: 3px;
+            margin-right: 5px;
+          };
+        }
 
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          vaadin-progress-bar {
-              width: 100px;
-              height: 6px;
-          }
+        vaadin-progress-bar {
+          width: 100px;
+          height: 6px;
+        }
 
-          paper-progress {
-              width: 100px;
-              border-radius: 3px;
-              --paper-progress-height: 10px;
-              --paper-progress-active-color: #3677EB;
-              --paper-progress-secondary-color: #98BE5A;
-              --paper-progress-transition-duration: 0.08s;
-              --paper-progress-transition-timing-function: ease;
-              --paper-progress-transition-delay: 0s;
-          }
+        paper-progress {
+          width: 100px;
+          border-radius: 3px;
+          --paper-progress-height: 10px;
+          --paper-progress-active-color: #3677eb;
+          --paper-progress-secondary-color: #98be5a;
+          --paper-progress-transition-duration: 0.08s;
+          --paper-progress-transition-timing-function: ease;
+          --paper-progress-transition-delay: 0s;
+        }
       `];
   }
 
@@ -203,6 +202,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     }).catch(err => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -310,7 +310,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable>

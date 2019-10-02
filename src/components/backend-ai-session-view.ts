@@ -12,7 +12,7 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
-import './lablup-notification';
+
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -58,12 +58,12 @@ export default class BackendAiSessionView extends BackendAIPage {
         }
 
         wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: #222;
-          --tab-color-active-hover: #222;
-          --tab-color-active-filled: #ccc;
+          --tab-color: #666666;
+          --tab-color-hover: #222222;
+          --tab-color-hover-filled: #222222;
+          --tab-color-active: #222222;
+          --tab-color-active-hover: #222222;
+          --tab-color-active-filled: #cccccc;
           --tab-bg-active: var(--paper-red-50);
           --tab-bg-filled: var(--paper-red-50);
           --tab-bg-active-hover: var(--paper-red-100);
@@ -109,7 +109,6 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <wl-card class="item">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>

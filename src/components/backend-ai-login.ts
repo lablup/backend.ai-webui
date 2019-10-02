@@ -12,7 +12,7 @@ import 'weightless/dialog';
 import 'weightless/card';
 import 'weightless/textfield';
 
-import './lablup-notification';
+
 import '../plastics/lablup-shields/lablup-shields';
 
 import './backend-ai-signup-hanati';
@@ -201,6 +201,7 @@ export default class BackendAILogin extends LitElement {
         if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
             this.notification.text = PainKiller.relieve(err.message);
+            this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Plugin loading failed.');
           }
@@ -352,6 +353,12 @@ export default class BackendAILogin extends LitElement {
   }
 
   _showSignupDialog() {
+    this.api_endpoint = this.api_endpoint.trim();
+    if (this.api_endpoint === '') {
+      this.notification.text = 'API Endpoint is empty. Please specify API endpoint to signup.';
+      this.notification.show();
+      return;
+    }
     (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
     //this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
     (this.shadowRoot.querySelector('#signup-dialog') as any).open();
@@ -401,6 +408,7 @@ export default class BackendAILogin extends LitElement {
         console.log(err);
         if (err.message !== undefined) {
           this.notification.text = PainKiller.relieve(err.message);
+          this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. Check your information and try again.');
         }
@@ -415,6 +423,11 @@ export default class BackendAILogin extends LitElement {
   _login() {
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
+    if (this.api_endpoint === '') {
+      this.notification.text = 'API Endpoint is empty. Please specify API endpoint to login.';
+      this.notification.show();
+      return;
+    }
     this.notification.text = 'Connecting...';
     this.notification.show();
     if (this.connection_mode === 'SESSION') {
@@ -453,6 +466,7 @@ export default class BackendAILogin extends LitElement {
           console.log(err);
           if (err.message !== undefined) {
             this.notification.text = PainKiller.relieve(err.message);
+            this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
@@ -501,6 +515,7 @@ export default class BackendAILogin extends LitElement {
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
           this.notification.text = PainKiller.relieve(err.message);
+          this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
@@ -524,7 +539,7 @@ export default class BackendAILogin extends LitElement {
       let resource_policy = response['keypair'].resource_policy;
       window.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
-      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name}"];
+      let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name, id}"];
       let q = `query { user { ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
       return window.backendaiclient.gql(q, v);
@@ -538,6 +553,11 @@ export default class BackendAILogin extends LitElement {
         window.backendaiclient.groups = groups.map((item) => {
           return item.name;
         });
+        let groupMap = Object();
+        groups.forEach(function (element) {
+          groupMap[element.name] = element.id;
+        });
+        window.backendaiclient.groupIds = groupMap;
       } else {
         window.backendaiclient.groups = ['default'];
       }
@@ -545,6 +565,9 @@ export default class BackendAILogin extends LitElement {
       this.domain_name = response['user'].domain_name;
       window.backendaiclient.email = this.email;
       window.backendaiclient.current_group = window.backendaiclient.groups[0];
+      window.backendaiclient.current_group_id = () => {
+        return window.backendaiclient.groupIds[window.backendaiclient.current_group];
+      };
       window.backendaiclient.is_admin = false;
       window.backendaiclient.is_superadmin = false;
 
@@ -567,6 +590,7 @@ export default class BackendAILogin extends LitElement {
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
           this.notification.text = PainKiller.relieve(err.message);
+          this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
@@ -612,6 +636,7 @@ export default class BackendAILogin extends LitElement {
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
           this.notification.text = PainKiller.relieve(err.message);
+          this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
@@ -721,7 +746,6 @@ export default class BackendAILogin extends LitElement {
         </wl-card>
         ` : html``}
       </wl-dialog>
-      <lablup-notification id="notification"></lablup-notification>
       <backend-ai-signup-hanati id="signup-dialog"></backend-ai-signup-hanati>
     `;
   }

@@ -26,7 +26,6 @@ import 'weightless/dialog';
 import 'weightless/icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-notification';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
@@ -40,6 +39,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: Boolean}) active = false;
   @property({type: Boolean}) gpu_allocatable = false;
   @property({type: String}) condition = '';
+  @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
   @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
   @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
@@ -58,63 +58,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
     super();
   }
 
-  static get is() {
-    return 'backend-ai-resource-preset-list';
-  }
-
-  static get properties() {
-    return {
-      keypairs: {
-        type: Object
-      },
-      resourcePresets: {
-        type: Object
-      },
-      keypairInfo: {
-        type: Object
-      },
-      is_admin: {
-        type: Boolean
-      },
-      notification: {
-        type: Object
-      },
-      active: {
-        type: Boolean
-      },
-      cpu_metric: {
-        type: Array
-      },
-      ram_metric: {
-        type: Array
-      },
-      gpu_metric: {
-        type: Array
-      },
-      fgpu_metric: {
-        type: Array
-      },
-      rate_metric: {
-        type: Array
-      },
-      concurrency_metric: {
-        type: Array
-      },
-      container_per_session_metric: {
-        type: Array
-      },
-      idle_timeout_metric: {
-        type: Array
-      },
-      vfolder_capacity_metric: {
-        type: Array
-      },
-      vfolder_count_metric: {
-        type: Array
-      }
-    };
-  }
-
   static get styles() {
     return [
       BackendAiStyles,
@@ -122,71 +65,71 @@ class BackendAiResourcePresetList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-          vaadin-grid {
-              border: 0;
-              font-size: 14px;
-              height: calc(100vh - 265px);
-          }
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 265px);
+        }
 
-          paper-dropdown-menu {
-          }
+        paper-dropdown-menu {
+        }
 
-          paper-item {
-              height: 30px;
-              --paper-item-min-height: 30px;
-          }
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
 
-          wl-button > wl-icon {
-              --icon-size: 24px;
-              padding: 0;
-          }
+        wl-button > wl-icon {
+          --icon-size: 24px;
+          padding: 0;
+        }
 
-          wl-icon {
-              --icon-size: 16px;
-              padding: 0;
-          }
+        wl-icon {
+          --icon-size: 16px;
+          padding: 0;
+        }
 
-          vaadin-item {
-              font-size: 13px;
-              font-weight: 100;
-          }
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
 
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          div.configuration {
-              width: 70px !important;
-          }
+        div.configuration {
+          width: 70px !important;
+        }
 
-          div.configuration wl-icon {
-              padding-right: 5px;
-          }
+        div.configuration wl-icon {
+          padding-right: 5px;
+        }
 
-          wl-button.create-button {
-              width: 335px;
-              --button-bg: white;
-              --button-bg-hover: var(--paper-yellow-100);
-              --button-bg-active: var(--paper-yellow-600);
-          }
+        wl-button.create-button {
+          width: 335px;
+          --button-bg: white;
+          --button-bg-hover: var(--paper-yellow-100);
+          --button-bg-active: var(--paper-yellow-600);
+        }
 
-          wl-button {
-              --button-bg: var(--paper-yellow-50);
-              --button-bg-hover: var(--paper-yellow-100);
-              --button-bg-active: var(--paper-yellow-600);
-          }
+        wl-button {
+          --button-bg: var(--paper-yellow-50);
+          --button-bg-hover: var(--paper-yellow-100);
+          --button-bg-active: var(--paper-yellow-600);
+        }
 
-          wl-button#create-policy-button {
-              width: 100%;
-              box-sizing: border-box;
-              margin-top: 15px;
-          }
+        wl-button#create-policy-button {
+          width: 100%;
+          box-sizing: border-box;
+          margin-top: 15px;
+        }
 
-          wl-card {
-              margin: 0;
-          }
+        wl-card {
+          margin: 0;
+        }
       `];
   }
 
@@ -237,6 +180,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
                       @click="${(e) => this._launchResourcePresetDialog(e)}">
                        <wl-icon>settings</wl-icon>
                     </wl-button>
+                    <wl-button class="fg red controls-running" fab flat inverted
+                      @click="${(e) => this._launchDeleteResourcePresetDialog(e)}">
+                       <wl-icon>delete</wl-icon>
+                    </wl-button>
               ` : html``}
             </div>
       `, root
@@ -270,7 +217,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </wl-button>
         </h4>
         <div>
-          <lablup-notification id="notification"></lablup-notification>
           <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
 
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
@@ -422,6 +368,16 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </form>
         </wl-card>
       </wl-dialog>
+      <wl-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <p>You are about to delete ${this.presetName} preset. This action cannot be undone. Do you want to proceed?</p>
+         </div>
+         <div slot="footer">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">Okay</wl-button>
+         </div>
+      </wl-dialog>
     `;
   }
 
@@ -460,12 +416,34 @@ class BackendAiResourcePresetList extends BackendAIPage {
     this.shadowRoot.querySelector('#modify-template-dialog').show();
   }
 
+  _launchDeleteResourcePresetDialog(e) {
+    const controls = e.target.closest('#controls');
+    const preset_name = controls['preset-name'];
+    console.log(preset_name);
+    this.presetName = preset_name;
+    this.shadowRoot.querySelector('#delete-resource-preset-dialog').show();
+  }
+
+  _deleteResourcePresetWithCheck(e) {
+    window.backendaiclient.resourcePreset.delete(this.presetName).then(response => {
+      this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
+      this.notification.text = "Resource preset is successfully deleted.";
+      this.notification.show();
+      this._refreshTemplateData();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
+        this.notification.show(true);
+      }
+    });
+  }
+
   updateCurrentPresetToDialog(e) {
     const controls = e.target.closest('#controls');
     const preset_name = controls['preset-name'];
-
-    console.log(preset_name);
-
     let resourcePresets = window.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
     console.log(resourcePreset);
@@ -493,6 +471,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -541,6 +520,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -555,6 +535,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });

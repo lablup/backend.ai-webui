@@ -10,7 +10,6 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
-import './lablup-notification';
 import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6';
@@ -307,7 +306,6 @@ export default class BackendAiSignup extends LitElement {
           </div>
         </wl-card>
       </wl-dialog>
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>
     `;
   }

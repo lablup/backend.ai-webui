@@ -23,7 +23,7 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-import './lablup-notification';
+
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
@@ -51,6 +51,9 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) indicator;
   @property({type: Object}) keypairs;
+  @property({type: Object}) signoutUserDialog = Object();
+  @property({type: String}) signoutUserName = '';
+  @property({type: Object}) notification = Object();
 
   constructor() {
     super();
@@ -163,6 +166,7 @@ export default class BackendAIUserList extends BackendAIPage {
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
+    this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
   }
 
   async _viewStateChanged(active) {
@@ -197,7 +201,7 @@ export default class BackendAIUserList extends BackendAIPage {
       let users = response.users;
       //Object.keys(users).map((objectKey, index) => {
       //var user = users[objectKey];
-        // Blank for the next impl.
+      // Blank for the next impl.
       //});
       this.users = users;
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
@@ -205,6 +209,7 @@ export default class BackendAIUserList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -239,9 +244,32 @@ export default class BackendAIUserList extends BackendAIPage {
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     }
+  }
+
+  _signoutUserDialog(e) {
+    const controls = e.target.closest('#controls');
+    const user_id = controls['user-id'];
+    this.signoutUserName = user_id;
+    this.signoutUserDialog.show();
+  }
+
+  _signoutUser() {
+    window.backendaiclient.user.delete(this.signoutUserName).then(response => {
+      this.notification.text = PainKiller.relieve('Signout finished.');
+    }).catch((err) => {   // Signout failed
+      console.log(err);
+      if (err.message !== undefined) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
+      } else {
+        this.notification.text = PainKiller.relieve('Signout failed. Check your permission and try again.');
+      }
+      this.notification.show();
+    });
   }
 
   async _getUserData(user_id) {
@@ -255,55 +283,6 @@ export default class BackendAIUserList extends BackendAIPage {
 
   _isActive() {
     return this.condition === 'active';
-  }
-
-  _deleteKey(e) {
-    const controls = e.target.closest('#controls');
-    const accessKey = controls['access-key'];
-    window.backendaiclient.keypair.delete(accessKey).then(response => {
-      this.refresh();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show(true);
-      }
-    });
-  }
-
-  _revokeKey(e) {
-    this._mutateKey(e, false);
-  }
-
-  _reuseKey(e) {
-    this._mutateKey(e, true);
-  }
-
-  _mutateKey(e, is_active) {
-    const controls = e.target.closest('#controls');
-    const accessKey = controls['access-key'];
-    let original = this.keypairs.find(this._findKeyItem, accessKey);
-    let input = {
-      'is_active': is_active,
-      'is_admin': original.is_admin,
-      'resource_policy': original.resource_policy,
-      'rate_limit': original.rate_limit,
-      'concurrency_limit': original.concurrency_limit,
-    };
-    window.backendaiclient.keypair.mutate(accessKey, input).then((response) => {
-      let event = new CustomEvent("backend-ai-credential-refresh", {"detail": this});
-      document.dispatchEvent(event);
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
-        this.notification.show(true);
-      }
-    });
-  }
-
-  _findKeyItem(element) {
-    return element.access_key = this;
   }
 
   _elapsed(start, end) {
@@ -360,16 +339,9 @@ export default class BackendAIUserList extends BackendAIPage {
                 @click="${(e) => this._editUserDetail(e)}"
               ></paper-icon-button>
 
-              ${this.isAdmin && this._isActive() && rowData.item.is_admin ? html`
-                    <paper-icon-button class="fg blue controls-running" icon="delete"
-                                       @click="${(e) => this._revokeKey(e)}"></paper-icon-button>
+              ${window.backendaiclient.is_superadmin && this._isActive() ? html`
                     <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                       @click="${(e) => this._deleteKey(e)}"></paper-icon-button>
-              ` : html``}
-
-              ${this._isActive() ? html`
-                  <paper-icon-button class="fg blue controls-running" icon="icons:redo"
-                                     on-tap="_reuseKey"></paper-icon-button>
+                                       @click="${(e) => this._signoutUserDialog(e)}"></paper-icon-button>
               ` : html``}
             </div>
       `, root
@@ -392,9 +364,8 @@ export default class BackendAIUserList extends BackendAIPage {
       need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
 
     if (password !== confirm) {
-      this.shadowRoot.querySelector("#notification").text = "Password and Confirmation do not match.";
-      this.shadowRoot.querySelector("#notification").show();
-
+      this.notification.text = "Password and Confirmation do not match.";
+      this.notification.show();
       return;
     }
     let input: any = Object();
@@ -420,8 +391,8 @@ export default class BackendAIUserList extends BackendAIPage {
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
 
-      this.shadowRoot.querySelector("#notification").text = "No Changes Made";
-      this.shadowRoot.querySelector("#notification").show();
+      this.notification.text = "No Changes Made";
+      this.notification.show();
 
       return;
     }
@@ -431,19 +402,19 @@ export default class BackendAIUserList extends BackendAIPage {
         if (res.modify_user.ok) {
           this.shadowRoot.querySelector("#user-info-dialog").hide();
 
-          this.shadowRoot.querySelector("#notification").text = "Successfully Modified";
+          this.notification.text = "Successfully Modified";
           this.userInfo = {...this.userInfo, ...input, password: null};
           this._refreshUserData();
           this.shadowRoot.querySelector("#password").value = "";
           this.shadowRoot.querySelector("#confirm").value = "";
         } else {
-          this.shadowRoot.querySelector("#notification").text = `Error: ${res.modify_user.msg}`;
+          this.notification.text = `Error: ${res.modify_user.msg}`;
 
           this.shadowRoot.querySelector("#username").value = this.userInfo.username;
           this.shadowRoot.querySelector("#description").value = this.userInfo.description;
         }
 
-        this.shadowRoot.querySelector("#notification").show();
+        this.notification.show();
       })
 
   }
@@ -451,7 +422,6 @@ export default class BackendAIUserList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="User list"
                    id="user-grid" .items="${this.users}">
@@ -473,6 +443,16 @@ export default class BackendAIUserList extends BackendAIPage {
         <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
+      <wl-dialog id="signout-user-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>. Do you want to proceed?</p>
+         </div>
+         <div slot="footer">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${() => this._signoutUser()}">Okay</wl-button>
+         </div>
+      </wl-dialog>
       <wl-dialog id="user-info-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">

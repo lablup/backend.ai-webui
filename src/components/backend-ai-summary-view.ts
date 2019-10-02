@@ -13,7 +13,7 @@ import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
 
-import './lablup-notification';
+
 import './lablup-activity-panel';
 import './backend-ai-chart';
 import './backend-ai-resource-monitor';
@@ -94,7 +94,7 @@ export default class BackendAISummary extends BackendAIPage {
           width: 190px;
           border-radius: 0;
           --paper-progress-height: 5px;
-          --paper-progress-active-color: #3677EB;
+          --paper-progress-active-color: #3677eb;
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
@@ -103,13 +103,13 @@ export default class BackendAISummary extends BackendAIPage {
         paper-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
-          --paper-progress-active-color: #3677EB;
+          --paper-progress-active-color: #3677eb;
         }
 
         paper-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
-          --paper-progress-active-color: #98BE5A;
+          --paper-progress-active-color: #98be5a;
         }
 
         wl-button[class*="green"] {
@@ -125,9 +125,9 @@ export default class BackendAISummary extends BackendAIPage {
         }
 
         .invitation_folder_name {
-          font-size:13px;
+          font-size: 13px;
         }
-        `
+      `
     ];
   }
 
@@ -176,6 +176,7 @@ export default class BackendAISummary extends BackendAIPage {
       this.jobs = [];
       this.sessions = [];
       this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
+      this.notification.detail = err;
       this.notification.show(true);
     });
   }
@@ -219,6 +220,7 @@ export default class BackendAISummary extends BackendAIPage {
     }).catch(err => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       }
     });
@@ -361,12 +363,13 @@ export default class BackendAISummary extends BackendAIPage {
     }
     window.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
-        this.notification.text = response.msg;
+        this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations();
       })
       .catch(err => {
         this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
         this.notification.show(true);
       })
   }
@@ -377,7 +380,7 @@ export default class BackendAISummary extends BackendAIPage {
     }
     window.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
-        this.notification.text = res.msg;
+        this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations();
       })
@@ -386,7 +389,6 @@ export default class BackendAISummary extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-notification id="notification"></lablup-notification>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">Statistics</h3>
