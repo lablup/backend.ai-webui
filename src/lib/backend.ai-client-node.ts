@@ -930,8 +930,14 @@ class VFolder {
   /**
    * List Virtual folders that requested accessKey has permission to.
    */
-  list() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}`, null);
+  list(groupId = null) {
+    let reqUrl = this.urlPrefix;
+    if (groupId) {
+      const params = {group_id: groupId};
+      const q = querystring.stringify(params);
+      reqUrl += `?${q}`;
+    }
+    let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
   }
 

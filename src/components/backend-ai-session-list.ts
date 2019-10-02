@@ -239,6 +239,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
+
+    document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
   }
 
   async _viewStateChanged(active) {
@@ -978,7 +980,7 @@ ${item.map(item => {
       })}
                 `) : html``}
         ${rowData.item.additional_req ? html`
-          <lablup-shields app="" color="green" description="${rowData.item.additional_req}"></lablup-shields>        
+          <lablup-shields app="" color="green" description="${rowData.item.additional_req}"></lablup-shields>
           ` : html``}
         </div>`, root
     );
