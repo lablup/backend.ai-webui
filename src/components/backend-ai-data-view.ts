@@ -315,12 +315,12 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: #222;
-          --tab-color-active-hover: #222;
-          --tab-color-active-filled: #ccc;
+          --tab-color: #666666;
+          --tab-color-hover: #222222;
+          --tab-color-hover-filled: #222222;
+          --tab-color-active: #222222;
+          --tab-color-active-hover: #222222;
+          --tab-color-active-filled: #cccccc;
           --tab-bg-active: var(--paper-orange-50);
           --tab-bg-filled: var(--paper-orange-50);
           --tab-bg-active-hover: var(--paper-orange-100);
@@ -336,10 +336,10 @@ export default class BackendAIData extends BackendAIPage {
         wl-dialog wl-textfield,
         wl-dialog wl-select {
           --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
+          --input-color-disabled: #222222;
+          --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
+          --input-border-style-disabled: 1px solid #cccccc;
         }
 
         #textfields wl-textfield,
@@ -975,7 +975,7 @@ export default class BackendAIData extends BackendAIPage {
     this.indicator.show();
     let groupId = null;
     groupId = window.backendaiclient.current_group_id();
-    console.log(groupId)
+    console.log(groupId);
     let l = window.backendaiclient.vfolder.list(groupId);
     l.then((value) => {
       this.indicator.hide();

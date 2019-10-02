@@ -118,89 +118,89 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronPositioning,
       // language=CSS
       css`
-          .drawer-menu,
-          paper-listbox.sidebar,
-          .drawer-menu footer,
-          #sidebar-navbar-footer {
-              background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
-          }
+        .drawer-menu,
+        paper-listbox.sidebar,
+        .drawer-menu footer,
+        #sidebar-navbar-footer {
+          background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
+        }
 
-          #portrait-bar .bar {
-              background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
-          }
+        #portrait-bar .bar {
+          background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
+        }
 
-          #app-body {
-              --mdc-drawer-width: 190px;
-              --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
-              --mdc-drawer-border-left: 0;
-              --mdc-drawer-border-right: 0;
-          }
+        #app-body {
+          --mdc-drawer-width: 190px;
+          --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
+          --mdc-drawer-border-left: 0;
+          --mdc-drawer-border-right: 0;
+        }
 
-          app-drawer-layout:not([narrow]) [drawer-toggle] {
-              display: none;
-          }
+        app-drawer-layout:not([narrow]) [drawer-toggle] {
+          display: none;
+        }
 
-          .page {
-              display: none;
-          }
+        .page {
+          display: none;
+        }
 
-          .page[active] {
-              display: block;
-          }
+        .page[active] {
+          display: block;
+        }
 
+        wl-progress-spinner {
+          --progress-spinner-size: 48px;
+          --progress-spinner-stroke-width: 12px;
+          width: 48px;
+          height: 48px;
+          position: fixed;
+          top: calc(50vh - 24px);
+        }
+
+        @media screen and (max-width: 899px) {
           wl-progress-spinner {
-              --progress-spinner-size: 48px;
-              --progress-spinner-stroke-width: 12px;
-              width: 48px;
-              height: 48px;
-              position: fixed;
-              top: calc(50vh - 24px);
+            left: calc(50% - 24px);
           }
+        }
 
-          @media screen and (max-width: 899px) {
-              wl-progress-spinner {
-                  left: calc(50% - 24px);
-              }
+        @media screen and (min-width: 900px) {
+          wl-progress-spinner {
+            left: calc(50% + 71px);
           }
+        }
 
-          @media screen and (min-width: 900px) {
-              wl-progress-spinner {
-                  left: calc(50% + 71px);
-              }
-          }
+        .draggable {
+          -webkit-user-select: none !important;
+          -webkit-app-region: drag !important;
+        }
 
-          .draggable {
-              -webkit-user-select: none !important;
-              -webkit-app-region: drag !important;
-          }
+        .drawer-menu footer {
+          width: 190px;
+        }
 
-          .drawer-menu footer {
-              width: 190px;
-          }
+        mwc-tab {
+          color: #ffffff;
+        }
 
-          mwc-tab {
-              color: #ffffff;
-          }
+        .mdc-drawer {
+          width: 190px !important;
+        }
 
-          .mdc-drawer {
-              width: 190px !important;
-          }
+        wl-select {
+          --input-bg: transparent;
+          --input-color: rgb(221, 221, 221);
+          --input-color-disabled: rgb(221, 221, 221);
+          --input-label-color: rgb(221, 221, 221);
+          --input-label-font-size: 10px;
+          --input-padding-left-right: 20px;
+          --input-border-style: 0;
+          --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+        }
 
-          wl-select {
-              --input-bg: transparent;
-              --input-color: rgb(221, 221, 221);
-              --input-color-disabled: rgb(221, 221, 221);
-              --input-label-color: rgb(221, 221, 221);
-              --input-label-font-size: 10px;
-              --input-padding-left-right: 20px;
-              --input-border-style: 0;
-              --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          }
-
-          paper-item {
-              font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-              font-weight: 400;
-          }
+        paper-item {
+          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          font-weight: 400;
+        }
       `];
   }
 

@@ -94,7 +94,7 @@ export default class BackendAISummary extends BackendAIPage {
           width: 190px;
           border-radius: 0;
           --paper-progress-height: 5px;
-          --paper-progress-active-color: #3677EB;
+          --paper-progress-active-color: #3677eb;
           --paper-progress-transition-duration: 0.08s;
           --paper-progress-transition-timing-function: ease;
           --paper-progress-transition-delay: 0s;
@@ -103,13 +103,13 @@ export default class BackendAISummary extends BackendAIPage {
         paper-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
-          --paper-progress-active-color: #3677EB;
+          --paper-progress-active-color: #3677eb;
         }
 
         paper-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
-          --paper-progress-active-color: #98BE5A;
+          --paper-progress-active-color: #98be5a;
         }
 
         wl-button[class*="green"] {
@@ -125,9 +125,9 @@ export default class BackendAISummary extends BackendAIPage {
         }
 
         .invitation_folder_name {
-          font-size:13px;
+          font-size: 13px;
         }
-        `
+      `
     ];
   }
 

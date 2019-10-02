@@ -161,7 +161,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         #work-area {
           width: 100%;
           height: calc(100vh - 120px);
-          background-color: #222;
+          background-color: #222222;
           color: #efefef;
         }
 
