@@ -104,14 +104,27 @@ export default class LablupNotification extends LitElement {
   }
 
   _moreNotification(e) {
-    const noti = e.target.closest('wl-snackbar');
+    const notification = e.target.closest('wl-snackbar');
     const button = e.target.closest('wl-button');
-    if (noti.querySelector('div') !== null) {
-      noti.querySelector('div').style.display = 'block';
+    notification.setAttribute('hideDelay', '86400');
+    if (notification.querySelector('div') !== null) {
+      notification.querySelector('div').style.display = 'block';
     }
     button.style.display = 'none';
+    if (notification.querySelector('wl-button') === null) {
+      this._createCloseButton(notification);
+    }
   }
 
+  _createCloseButton(notification) {
+    let button = document.createElement('wl-button');
+    button.setAttribute('slot', "action");
+    button.setAttribute('flat', "");
+    button.setAttribute('fab', "");
+    button.addEventListener('click', this._hideNotification.bind(this));
+    button.innerHTML = "<wl-icon>close</wl-icon>";
+    notification.appendChild(button);
+  }
   async show(persistent: boolean = false, message: string = '') {
     this.gc();
     let notification = document.createElement('wl-snackbar');
@@ -125,7 +138,7 @@ export default class LablupNotification extends LitElement {
       notification.innerHTML = '<span style="overflow-x:hidden">' + message + '</span>';
       this.text = message;
     }
-    if (this.detail != '' && persistent) {
+    if (this.detail != '') {
       let more_button = document.createElement('wl-button');
       more_button.setAttribute('slot', "action");
       more_button.setAttribute('flat', "");
@@ -139,13 +152,7 @@ export default class LablupNotification extends LitElement {
       notification.setAttribute('hideDelay', '3000');
     } else {
       notification.setAttribute('hideDelay', '86400');
-      let button = document.createElement('wl-button');
-      button.setAttribute('slot', "action");
-      button.setAttribute('flat', "");
-      button.setAttribute('fab', "");
-      button.addEventListener('click', this._hideNotification.bind(this));
-      button.innerHTML = "<wl-icon>close</wl-icon>";
-      notification.appendChild(button);
+      this._createCloseButton(notification);
     }
     notification.setAttribute('backdrop', '');
     notification.style.bottom = (20 + 55 * this.step) + 'px';
