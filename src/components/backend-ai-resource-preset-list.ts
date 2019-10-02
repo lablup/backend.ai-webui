@@ -39,6 +39,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: Boolean}) active = false;
   @property({type: Boolean}) gpu_allocatable = false;
   @property({type: String}) condition = '';
+  @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
   @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
   @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
@@ -367,6 +368,16 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </form>
         </wl-card>
       </wl-dialog>
+      <wl-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <div slot="content">
+            <p>You are about to delete ${this.presetName} preset. This action cannot be undone. Do you want to proceed?</p>
+         </div>
+         <div slot="footer">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">Okay</wl-button>
+         </div>
+      </wl-dialog>
     `;
   }
 
@@ -406,16 +417,32 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _launchDeleteResourcePresetDialog(e) {
-    this.updateCurrentPresetToDialog(e);
-    this.shadowRoot.querySelector('#modify-template-dialog').show();
+    const controls = e.target.closest('#controls');
+    const preset_name = controls['preset-name'];
+    console.log(preset_name);
+    this.presetName = preset_name;
+    this.shadowRoot.querySelector('#delete-resource-preset-dialog').show();
+  }
+
+  _deleteResourcePresetWithCheck(e) {
+    window.backendaiclient.resourcePreset.delete(this.presetName).then(response => {
+      this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
+      this.notification.text = "Resource preset is successfully deleted.";
+      this.notification.show();
+      this._refreshTemplateData();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.show(true);
+      }
+    });
   }
 
   updateCurrentPresetToDialog(e) {
     const controls = e.target.closest('#controls');
     const preset_name = controls['preset-name'];
-
-    console.log(preset_name);
-
     let resourcePresets = window.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
     console.log(resourcePreset);
