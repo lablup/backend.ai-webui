@@ -419,7 +419,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-    this.shadowRoot.querySelector('#scaling-groups').addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, false));
 
     this.notification = window.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -531,6 +530,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             //scaling_select.updateOptions();
             scaling_group_selection_box.appendChild(scaling_select);
           }
+          let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
+          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, false));
         }
       }
       // Reload number of sessions
@@ -1643,6 +1644,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
               <div class="horizontal center layout">
+                ${this.enable_scaling_group ? html`
                 <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
@@ -1653,6 +1655,7 @@ ${this.scaling_groups.map(item =>
     }
                   </paper-listbox>
                 </paper-dropdown-menu>
+                ` : html``}
               </div>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
