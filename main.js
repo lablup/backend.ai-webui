@@ -28,7 +28,7 @@ let mainContent;
 let devtools;
 let manager = new ProxyManager();
 
-var mainIndex = 'build/electron-app/index-tab.html';
+var mainIndex = 'build/electron-app/app.html';
 let mainURL;
 
 // Modules to control application life and create native browser window
