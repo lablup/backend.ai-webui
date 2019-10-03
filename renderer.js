@@ -3,6 +3,8 @@ const TabGroup = require("electron-tabs");
 const { ipcRenderer } = require('electron');
 const url = require('url');
 const path = require('path');
+let windowWidth = 1280;
+let windowHeight = 970;
 
 mainIndex = 'build/electron-app/app/index.html';
 const electronPath = path.join(__dirname, 'build/electron-app');
@@ -23,6 +25,7 @@ let tab1 = tabGroup.addTab({
     active: true,
     webviewAttributes: {
       nodeintegration: false,
+      allowpopups: true,
       //preload: path.join(electronPath, 'preload.js'),
     }
 });
@@ -31,39 +34,38 @@ mainView.addEventListener('dom-ready', () =>{
   mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'"');
   mainView.openDevTools();
   let mainViewEvent = mainView.getWebContents();
+  console.log(mainViewEvent);
   mainViewEvent.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, tab1);
+    event.preventDefault();
+    console.log('new window requested');
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
 });
 //mainView.openDevTools();
 console.log(mainView);
 //console.log(tab1.webContents);
 
-function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {
-  event.preventDefault();
+function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures) {
   Object.assign(options, {
-    frame: true,
-    show: false,
+    title:'new tab',
+    visible: true,
     backgroundColor: '#EFEFEF',
     //parent: win,
-    titleBarStyle: '',
-    width: windowWidth,
-    height: windowHeight,
-    closable: true
-  });
-  Object.assign(options.webPreferences, {
-    preload: '',
-    isBrowserView: false,
-    javascript: true
+    url: url,
+    closable: true,
+    webviewAttributes: {
+      allowpopups: true,
+    }
   });
   if (frameName === 'modal') {
     options.modal = true;
   }
   let newTab = tabGroup.addTab(options);
   newTab.once('ready-to-show', () => {
+    //newTab.webview.loadURL(url);
+    console.log(newTab);
     newTab.show()
   });
-  newTab.webview.loadURL(url);
   //event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
   //  newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
   //});
