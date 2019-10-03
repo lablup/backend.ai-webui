@@ -4,6 +4,8 @@ const url = require('url');
 const path = require('path');
 
 mainIndex = 'build/electron-app/app/index.html';
+const electronPath = path.join(__dirname, 'build/electron-app');
+
 mainURL = url.format({
   pathname: path.join(mainIndex),
   protocol: 'file',
@@ -17,12 +19,18 @@ let tab1 = tabGroup.addTab({
     src: mainURL,
     visible: true,
     closable: false,
-    active: true
+    active: true,
+    webviewAttributes: {
+      nodeintegration: false,
+      preload: path.join(electronPath, 'preload.js'),
+    }
 });
 let mainView = tab1.webview;
 console.log(mainView);
+console.log(tab1.webContents);
 
-tab1.webview.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+let mainViewEvent = mainView.getWebContents();
+mainViewEvent.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
   newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, tab1);
 });
 

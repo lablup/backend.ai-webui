@@ -3,7 +3,8 @@ global.appRoot = window.appRoot = __dirname;
 
 process.once('loaded', () => {
   ipcRenderer.on('proxy-ready', (event, proxy_url) => {
-    window.__local_proxy = proxy_url;
+    //window.__local_proxy = proxy_url;
+    global.__local_proxy = window.__local_proxy = proxy_url;
   });
 
   ipcRenderer.on('app-close-window', _ => {

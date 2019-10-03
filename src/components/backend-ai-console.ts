@@ -69,7 +69,6 @@ declare global {
     lablupNotification: any;
     process: any;
   }
-
   interface ai {
     backend: any;
   }

@@ -709,7 +709,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       param['access_key'] = window.backendaiclient._config.accessKey;
       param['secret_key'] = window.backendaiclient._config.secretKey;
     }
-    if (window.isElectron && window.__local_proxy === undefined) {
+    if (window.isElectron && typeof window.__local_proxy === 'undefined') {
       this.shadowRoot.querySelector('#indicator').end();
       this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
       this.notification.show();
