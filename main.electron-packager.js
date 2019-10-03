@@ -18,7 +18,7 @@ const es6Path = npjoin(__dirname, 'app');
 const electronPath = npjoin(__dirname);
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
+  {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
 ]);
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -33,7 +33,7 @@ var mainIndex = 'app.html';
 let mainURL;
 
 // Modules to control application life and create native browser window
-app.once('ready', function() {
+app.once('ready', function () {
   var template;
   if (process.platform === 'darwin') {
     template = [
@@ -48,10 +48,13 @@ app.once('ready', function() {
             }
           },
           {
-            label: 'App version ' + versions.package +' (rev.' + versions.revision + ')',
+            label: 'App version ' + versions.package + ' (rev.' + versions.revision + ')',
             click: function () {
-              clipboard.writeText(versions.package +' (rev.' + versions.revision + ')');
-              const response = dialog.showMessageBox({type:'info', message:'Version information is copied to clipboard.'});
+              clipboard.writeText(versions.package + ' (rev.' + versions.revision + ')');
+              const response = dialog.showMessageBox({
+                type: 'info',
+                message: 'Version information is copied to clipboard.'
+              });
             }
           },
           {
@@ -59,7 +62,7 @@ app.once('ready', function() {
           },
           {
             label: 'Login',
-            click: function() {
+            click: function () {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
                 pathname: path.join(mainIndex),
                 protocol: 'file',
@@ -82,7 +85,7 @@ app.once('ready', function() {
             click: function () {
               mainContent.reloadIgnoringCache();
             }
-          },          {
+          }, {
             type: 'separator'
           },
           {
@@ -112,7 +115,7 @@ app.once('ready', function() {
           {
             label: 'Quit',
             accelerator: 'Command+Q',
-            click: function() {
+            click: function () {
               app.quit();
             }
           },
@@ -162,7 +165,7 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomIn()');
@@ -172,7 +175,7 @@ app.once('ready', function() {
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomOut()');
@@ -182,7 +185,7 @@ app.once('ready', function() {
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript(
@@ -193,7 +196,7 @@ app.once('ready', function() {
           {
             label: 'Toggle Full Screen',
             accelerator: 'Ctrl+Command+F',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
@@ -229,7 +232,7 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'Learn More',
-            click: function() {
+            click: function () {
               shell.openExternal('https://www.backend.ai/');
             }
           }
@@ -243,7 +246,7 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'Login',
-            click: function() {
+            click: function () {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
                 pathname: path.join(mainIndex),
                 protocol: 'file',
@@ -269,10 +272,10 @@ app.once('ready', function() {
           },
           {
             type: 'separator'
-          },          {
+          }, {
             label: '&Close',
             accelerator: 'Ctrl+W',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.close();
@@ -287,7 +290,7 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Ctrl+=',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomIn()');
@@ -297,7 +300,7 @@ app.once('ready', function() {
           {
             label: 'Zoom Out',
             accelerator: 'Ctrl+-',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomOut()');
@@ -307,7 +310,7 @@ app.once('ready', function() {
           {
             label: 'Actual Size',
             accelerator: 'Ctrl+0',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript(
@@ -318,7 +321,7 @@ app.once('ready', function() {
           {
             label: 'Toggle &Full Screen',
             accelerator: 'F11',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
@@ -332,7 +335,7 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'Learn More',
-            click: function() {
+            click: function () {
               shell.openExternal('https://www.backend.ai/');
             }
           }
@@ -345,7 +348,7 @@ app.once('ready', function() {
   Menu.setApplicationMenu(appmenu);
 });
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
   devtools = null;
 
@@ -357,7 +360,8 @@ function createWindow () {
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
-      nodeIntegration: false,
+      nodeIntegration: true,
+      webviewTag: true,
       preload: path.join(BASE_DIR, 'preload.js'),
       devTools: false
     }
@@ -385,7 +389,7 @@ function createWindow () {
     mainContent = mainWindow.webContents;
     //devtools = new BrowserWindow();
     //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-    //mainWindow.webContents.openDevTools({ mode: 'detach' });
+    //mainWindow.webContents.openDevTools({mode: 'detach'});
   });
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
@@ -430,7 +434,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   Object.assign(options, {
     frame: true,
     show: false,
-    backgroundColor: '#EFEFEF',
+    backgroundColor: '#efefef',
     //parent: win,
     titleBarStyle: '',
     width: windowWidth,
@@ -450,7 +454,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
     event.newGuest.show()
   });
   event.newGuest.loadURL(url);
-  event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
+  event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
   });
   event.newGuest.on('close', (e) => {
@@ -462,14 +466,16 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
     const url = request.url.substr(7);    /* all urls start with 'file://' */
-    callback({ path: path.normalize(`${BASE_DIR}/${url}`)});
+    callback({path: path.normalize(`${BASE_DIR}/${url}`)});
   }, (err) => {
     if (err) console.error('Failed to register protocol');
   });
   protocol.registerBufferProtocol('es6', (req, cb) => {
     nfs.readFile(
       npjoin(es6Path, req.url.replace('es6://', '')),
-      (e, b) => { cb({ mimeType: 'text/javascript', data: b }) }
+      (e, b) => {
+        cb({mimeType: 'text/javascript', data: b})
+      }
     )
   });
   createWindow()
@@ -492,8 +498,8 @@ app.on('activate', function () {
 });
 app.on('certificate-error', function (event, webContents, url, error,
                                       certificate, callback) {
-      event.preventDefault();
-      callback(true);
+  event.preventDefault();
+  callback(true);
 });
 
 // Let windows without node integration

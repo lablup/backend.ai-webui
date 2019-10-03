@@ -410,6 +410,8 @@ function createWindow () {
           slashes: true
         });
       }
+          console.log(mainURL);
+
       mainWindow.loadURL(mainURL);
     });
   }

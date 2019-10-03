@@ -1,4 +1,4 @@
-EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --asar --ignore="\.git(ignore|modules)" --out=app
+EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
@@ -67,8 +67,8 @@ mac: dep
 	rm -rf ./app/backend.ai-console-macos
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos;
 	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js ./app/backend.ai-console-macos/backend.ai-console.app ./app/backend.ai-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
-	mv ./app/backend.ai-$(BUILD_DATE).dmg ./app/backend.ai-$(BUILD_DATE)-$(site).dmg
+	#./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js ./app/backend.ai-console-macos/backend.ai-console.app ./app/backend.ai-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	#mv ./app/backend.ai-$(BUILD_DATE).dmg ./app/backend.ai-$(BUILD_DATE)-$(site).dmg
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico

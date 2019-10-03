@@ -7,7 +7,8 @@ let windowWidth = 1280;
 let windowHeight = 970;
 
 mainIndex = 'build/electron-app/app/index.html';
-const electronPath = path.join(__dirname, 'build/electron-app');
+//mainIndex = 'app/index.html';
+
 
 mainURL = url.format({
   pathname: path.join(mainIndex),
@@ -29,7 +30,6 @@ let tab1 = tabGroup.addTab({
       autosize: true,
       blinkfeatures: '',
       webpreferences:"nativeWindowOpen=true"
-      //preload: path.join(electronPath, 'preload.js'),
     }
 });
 let mainView = tab1.webview;
