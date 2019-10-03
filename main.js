@@ -23,10 +23,12 @@ protocol.registerSchemesAsPrivileged([
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let mainContent;
+let tabsWindow;
+
 let devtools;
 let manager = new ProxyManager();
 
-var mainIndex = 'build/electron-app/app/index.html';
+var mainIndex = 'build/electron-app/index-tab.html';
 let mainURL;
 
 // Modules to control application life and create native browser window
@@ -377,7 +379,7 @@ function createWindow () {
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
-      nodeIntegration: false,
+      nodeIntegration: true,
       preload: path.join(BASE_DIR, 'preload.js'),
       devTools: true
     }

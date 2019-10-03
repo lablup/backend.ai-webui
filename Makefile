@@ -33,6 +33,7 @@ dep:
 	mkdir -p build/electron-app
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
+	cp index-tab.html ./build/electron-app/index-tab.html
 	cp -Rp build/rollup build/electron-app/app
 	cp -Rp build/rollup/resources build/electron-app
 	cp -Rp build/rollup/manifest build/electron-app
@@ -43,6 +44,8 @@ dep:
 	mkdir -p ./build/electron-app/node_modules/markty-toml
 	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
 	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
+	mkdir -p ./build/electron-app/node_modules/electron-tabs
+	cp -Rp ./node_modules/electron-tabs ./build/electron-app/node_modules
 	cp ./preload.js ./build/electron-app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
