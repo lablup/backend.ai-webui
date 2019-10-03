@@ -35,7 +35,7 @@ let tab1 = tabGroup.addTab({
 let mainView = tab1.webview;
 mainView.addEventListener('dom-ready', () =>{
   mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'";');
-  mainView.openDevTools();
+  //mainView.openDevTools();
   let mainViewContents = mainView.getWebContents();
   mainView.addEventListener('will-navigate', ({url}) => {
     console.log('navigate to', url);
@@ -49,6 +49,7 @@ mainView.addEventListener('dom-ready', () =>{
 
 function newTabWindow(event, url, frameName, disposition, options) {
   Object.assign(options, {
+    title: "Preparing...",
     visible: true,
     backgroundColor: '#EFEFEF',
     closable: true,
@@ -79,13 +80,5 @@ function newTabWindow(event, url, frameName, disposition, options) {
     });
   });
 
-  //event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
-  //  newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
-  //});
-  //event.newGuest.on('close', (e) => {
-  //  let c = BrowserWindow.getFocusedWindow();
-   // c.destroy();
-  //});
   return false;
 }
-//mainView.loadURL(mainURL);
