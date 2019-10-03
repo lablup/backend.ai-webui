@@ -1,5 +1,6 @@
 
 const TabGroup = require("electron-tabs");
+const { ipcRenderer } = require('electron');
 const url = require('url');
 const path = require('path');
 
@@ -22,17 +23,21 @@ let tab1 = tabGroup.addTab({
     active: true,
     webviewAttributes: {
       nodeintegration: false,
-      preload: path.join(electronPath, 'preload.js'),
+      //preload: path.join(electronPath, 'preload.js'),
     }
 });
 let mainView = tab1.webview;
-console.log(mainView);
-console.log(tab1.webContents);
-
-let mainViewEvent = mainView.getWebContents();
-mainViewEvent.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-  newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, tab1);
+mainView.addEventListener('dom-ready', () =>{
+  mainView.openDevTools();
+  let mainViewEvent = mainView.getWebContents();
+  console.log(window.__local_proxy);
+  mainViewEvent.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, tab1);
+  });
 });
+//mainView.openDevTools();
+console.log(mainView);
+//console.log(tab1.webContents);
 
 function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {
   event.preventDefault();
