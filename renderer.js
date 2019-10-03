@@ -36,17 +36,17 @@ let mainView = tab1.webview;
 mainView.addEventListener('dom-ready', () =>{
   mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'";');
   mainView.openDevTools();
-  let mainViewEvent = mainView.getWebContents();
-  console.log(mainViewEvent);
-  mainViewEvent.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+  let mainViewContents = mainView.getWebContents();
+  console.log(mainViewContents);
+  mainViewContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     console.log('new window requested');
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
+    newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
 });
 console.log(mainView);
 //console.log(tab1.webContents);
 
-function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures) {
+function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
   event.preventDefault();
   Object.assign(options, {
     visible: true,
@@ -70,12 +70,15 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   console.log(url);
   let newTab = tabGroup.addTab(options);
   //newTab.webview.loadURL(url);
-
+  newTab.webview.addEventListener('page-title-updated', () => {
+    const newTitle = newTab.webview.getTitle();
+    newTab.setTitle(newTitle);
+  });
   newTab.webview.addEventListener('dom-ready', () => {
     console.log('added');
     let newTabContents = newTab.webview.getWebContents();
     newTabContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
-      newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
+      newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
     });
   });
 

@@ -450,7 +450,7 @@ function createWindow () {
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    //newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
   });
 }
 
