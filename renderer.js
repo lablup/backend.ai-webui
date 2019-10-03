@@ -28,9 +28,9 @@ let tab1 = tabGroup.addTab({
 });
 let mainView = tab1.webview;
 mainView.addEventListener('dom-ready', () =>{
+  mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'"');
   mainView.openDevTools();
   let mainViewEvent = mainView.getWebContents();
-  console.log(window.__local_proxy);
   mainViewEvent.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, tab1);
   });
