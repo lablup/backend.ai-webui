@@ -15,6 +15,8 @@ let windowHeight = 970;
 const nfs = require('fs');
 const npjoin = require('path').join;
 const es6Path = npjoin(__dirname, 'build/electron-app/app');
+const electronPath = npjoin(__dirname, 'build/electron-app');
+
 protocol.registerSchemesAsPrivileged([
   { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
 ]);
@@ -23,12 +25,10 @@ protocol.registerSchemesAsPrivileged([
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let mainContent;
-let tabsWindow;
-
 let devtools;
 let manager = new ProxyManager();
 
-var mainIndex = 'index-tab.html';
+var mainIndex = 'build/electron-app/index-tab.html';
 let mainURL;
 
 // Modules to control application life and create native browser window
@@ -381,7 +381,7 @@ function createWindow () {
       nativeWindowOpen: true,
       nodeIntegration: true,
       webviewTag: true,
-      preload: path.join(BASE_DIR, 'preload.js'),
+      preload: path.join(electronPath, 'preload.js'),
       devTools: true
     }
   });

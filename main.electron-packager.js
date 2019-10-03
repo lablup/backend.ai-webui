@@ -15,6 +15,8 @@ let windowHeight = 970;
 const nfs = require('fs');
 const npjoin = require('path').join;
 const es6Path = npjoin(__dirname, 'app');
+const electronPath = npjoin(__dirname);
+
 protocol.registerSchemesAsPrivileged([
   { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
 ]);

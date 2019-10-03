@@ -33,6 +33,7 @@ dep:
 	mkdir -p build/electron-app
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
+	cp ./renderer.js ./build/electron-app/renderer.js
 	cp index-tab.html ./build/electron-app/index-tab.html
 	cp -Rp build/rollup build/electron-app/app
 	cp -Rp build/rollup/resources build/electron-app
