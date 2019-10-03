@@ -489,14 +489,6 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   });
 }
 
-app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
-  if (contents.getType() === 'webview') {
-    contents.on('new-window', function (newWindowEvent, url) {
-      newWindowEvent.preventDefault();
-    });
-  }
-});
-
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
     const url = request.url.substr(7);    /* all urls start with 'file://' */
@@ -539,6 +531,11 @@ app.on('certificate-error', function(event, webContents, url, error,
 });
 // Let windows without node integration
 app.on('web-contents-created', (event, contents) => {
+  if (contents.getType() === 'webview') {
+    contents.on('new-window', function (newWindowEvent, url) {
+      newWindowEvent.preventDefault();
+    });
+  }
   contents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if unused or verify their location is legitimate
     delete webPreferences.preload;
@@ -546,10 +543,5 @@ app.on('web-contents-created', (event, contents) => {
 
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
-
-    // Verify URL being loaded
-    //if (!params.src.startsWith('https://yourapp.com/')) {
-    //  event.preventDefault()
-    //}
-  })
+  });
 });

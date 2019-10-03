@@ -28,7 +28,8 @@ let mainContent;
 let devtools;
 let manager = new ProxyManager();
 
-var mainIndex = 'app/index.html';
+var mainIndex = 'app.html';
+
 let mainURL;
 
 // Modules to control application life and create native browser window
@@ -495,18 +496,18 @@ app.on('certificate-error', function (event, webContents, url, error,
       callback(true);
 });
 
+// Let windows without node integration
 app.on('web-contents-created', (event, contents) => {
+  if (contents.getType() === 'webview') {
+    contents.on('new-window', function (newWindowEvent, url) {
+      newWindowEvent.preventDefault();
+    });
+  }
   contents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if unused or verify their location is legitimate
     delete webPreferences.preload;
     delete webPreferences.preloadURL;
-
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
-
-    // Verify URL being loaded
-    //if (!params.src.startsWith('https://yourapp.com/')) {
-    //  event.preventDefault()
-    //}
-  })
+  });
 });
