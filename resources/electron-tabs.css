@@ -1,12 +1,15 @@
 .etabs-tabgroup {
     width: 100%;
     height: 32px;
+    padding-left:150px;
     background-color: #ccc;
     cursor: default;
     font: caption;
     font-size: 14px;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-user-select: none !important;
+    -webkit-app-region: drag !important;
 }
 
 .etabs-tabs {

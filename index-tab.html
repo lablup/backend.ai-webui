@@ -18,7 +18,9 @@
 <div class="etabs-views"></div>
 
 <script>
-  require('./renderer.js');
+  const { join } = require('path');
+  // appRoot is parsed from preload.
+  require(join(appRoot, 'renderer.js'));
 </script>
 </body>
 </html>

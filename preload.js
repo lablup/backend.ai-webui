@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+global.appRoot = window.appRoot = __dirname;
 
 process.once('loaded', () => {
   ipcRenderer.on('proxy-ready', (event, proxy_url) => {
