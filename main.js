@@ -489,6 +489,14 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   });
 }
 
+app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
+  if (contents.getType() === 'webview') {
+    contents.on('new-window', function (newWindowEvent, url) {
+      newWindowEvent.preventDefault();
+    });
+  }
+});
+
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
     const url = request.url.substr(7);    /* all urls start with 'file://' */

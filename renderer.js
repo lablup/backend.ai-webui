@@ -28,7 +28,7 @@ let tab1 = tabGroup.addTab({
       allowpopups: 'on',
       autosize: true,
       blinkfeatures: '',
-      webpreferences:"nativeWindowOpen=yes"
+      webpreferences:"nativeWindowOpen=true"
       //preload: path.join(electronPath, 'preload.js'),
     }
 });
@@ -37,21 +37,20 @@ mainView.addEventListener('dom-ready', () =>{
   mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'";');
   mainView.openDevTools();
   let mainViewContents = mainView.getWebContents();
-  console.log(mainViewContents);
-  mainViewContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    console.log('new window requested');
-    newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+  mainView.addEventListener('will-navigate', ({url}) => {
+    console.log('navigate to', url);
+  });
+
+  mainViewContents.on('new-window', (event, url, frameName, disposition, options) => {
+    event.preventDefault();
+    newTabWindow(event, url, frameName, disposition, options);
   });
 });
-console.log(mainView);
-//console.log(tab1.webContents);
 
-function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
-  event.preventDefault();
+function newTabWindow(event, url, frameName, disposition, options) {
   Object.assign(options, {
     visible: true,
     backgroundColor: '#EFEFEF',
-    //parent: win,
     closable: true,
     src: url,
     width: windowWidth,
@@ -61,24 +60,22 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
       allowpopups: 'on',
       autosize: true,
       blinkfeatures: '',
-      webpreferences:"nativeWindowOpen=yes"
+      webpreferences:"nativeWindowOpen=true"
     }
   });
   if (frameName === 'modal') {
     options.modal = true;
   }
-  console.log(url);
   let newTab = tabGroup.addTab(options);
-  //newTab.webview.loadURL(url);
   newTab.webview.addEventListener('page-title-updated', () => {
     const newTitle = newTab.webview.getTitle();
     newTab.setTitle(newTitle);
   });
   newTab.webview.addEventListener('dom-ready', () => {
-    console.log('added');
     let newTabContents = newTab.webview.getWebContents();
-    newTabContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
-      newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+    newTabContents.on('new-window',(event, url, frameName, disposition, options) => {
+      event.preventDefault();
+      newTabWindow(event, url, frameName, disposition, options);
     });
   });
 
@@ -89,5 +86,6 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   //  let c = BrowserWindow.getFocusedWindow();
    // c.destroy();
   //});
+  return false;
 }
 //mainView.loadURL(mainURL);
