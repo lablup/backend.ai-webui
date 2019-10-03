@@ -455,6 +455,7 @@ function createWindow () {
 }
 
 function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {
+  console.log('popup from main thread');
   event.preventDefault();
   Object.assign(options, {
     frame: true,

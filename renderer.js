@@ -46,25 +46,32 @@ console.log(mainView);
 //console.log(tab1.webContents);
 
 function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures) {
+    event.preventDefault();
   Object.assign(options, {
-    title:'new tab',
     visible: true,
     backgroundColor: '#EFEFEF',
     //parent: win,
-    url: url,
     closable: true,
+    width: windowWidth,
+    height: windowHeight,
     webviewAttributes: {
       allowpopups: true,
+      autosize: true,
     }
   });
   if (frameName === 'modal') {
     options.modal = true;
   }
+  console.log(url);
+
   let newTab = tabGroup.addTab(options);
+  newTab.webview.addEventListener('dom-ready', () => {
+    newTab.webview.loadURL(url);
+  });
   newTab.once('ready-to-show', () => {
     //newTab.webview.loadURL(url);
     console.log(newTab);
-    newTab.show()
+    //newTab.show()
   });
   //event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
   //  newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
@@ -75,14 +82,3 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   //});
 }
 //mainView.loadURL(mainURL);
-
-let tab2 = tabGroup.addTab({
-    title: "Local File",
-    src: "./local.html",
-    visible: true,
-    // If the page needs to access Node.js modules, be sure to
-    // enable the nodeintegration
-    webviewAttributes: {
-        nodeintegration: true
-    }
-});
