@@ -6,9 +6,8 @@ const path = require('path');
 let windowWidth = 1280;
 let windowHeight = 970;
 
-mainIndex = 'build/electron-app/app/index.html';
-//mainIndex = 'app/index.html';
-
+//mainIndex = 'build/electron-app/app/index.html';
+mainIndex = 'app/index.html';
 
 mainURL = url.format({
   pathname: path.join(mainIndex),

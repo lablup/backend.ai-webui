@@ -1,4 +1,4 @@
-EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --ignore="\.git(ignore|modules)" --out=app
+EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --asar --overwrite --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
@@ -43,9 +43,9 @@ dep:
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	mkdir -p ./build/electron-app/node_modules/markty
 	mkdir -p ./build/electron-app/node_modules/markty-toml
+	mkdir -p ./build/electron-app/node_modules/electron-tabs
 	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
 	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
-	mkdir -p ./build/electron-app/node_modules/electron-tabs
 	cp -Rp ./node_modules/electron-tabs ./build/electron-app/node_modules
 	cp ./preload.js ./build/electron-app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
