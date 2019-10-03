@@ -13,7 +13,8 @@ mainURL = url.format({
 });
 
 // 2. Define the instance of the tab group (container)
-let tabGroup = new TabGroup({
+let tabGroup = new TabGroup();
+//let tabGroup = new TabGroup({
     // If you want a new button that appends a new tab, include:
     //newTab: {
     //    title: 'New Tab',
@@ -26,7 +27,7 @@ let tabGroup = new TabGroup({
         //    nodeintegration: true
         //}
     //}
-});
+//});
 
 // 3. Add a tab from a website
 let tab1 = tabGroup.addTab({
@@ -34,11 +35,12 @@ let tab1 = tabGroup.addTab({
     src: mainURL,
     visible: true,
     closable: false,
-    active: true,
-    webviewAttributes: {
-        nodeintegration: false
-    }
+    active: true
 });
+console.log(tab1);
+//let mainView = tab1.webview;
+//mainView.loadURL(mainURL);
+
 
 // 4. Add a new tab that contains a local HTML file
 let tab2 = tabGroup.addTab({

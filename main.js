@@ -380,6 +380,7 @@ function createWindow () {
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: true,
+      webviewTag: true,
       preload: path.join(BASE_DIR, 'preload.js'),
       devTools: true
     }
