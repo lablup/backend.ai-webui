@@ -32,7 +32,8 @@ dep:
 	rm -rf build/electron-app
 	mkdir -p build/electron-app
 	cp ./package.json ./build/electron-app/package.json
-	cp ./main.electron-packager.js ./build/electron-app/main.js
+	cp ./main.js ./build/electron-app/main.js
+	sed -i -E 's/process.env.serveMode = "dev"/process.env.serveMode = "production"/g' ./build/electron-app/main.js
 	cp ./app-renderer.js ./build/electron-app/app-renderer.js
 	cp ./src/app/app.html ./build/electron-app/app.html
 	cp -Rp build/rollup build/electron-app/app

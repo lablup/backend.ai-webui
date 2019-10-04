@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window / Local tester file
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
-process.env.serveMode = 'dev';
+process.env.serveMode = "dev";
 process.env.liveDebugMode = false;
 const url = require('url');
 const path = require('path');
