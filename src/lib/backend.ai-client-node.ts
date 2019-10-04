@@ -477,6 +477,21 @@ class Client {
       if (resources['domain']) {
         params['domain'] = resources['domain'];
       }
+      if (resources['enqueueOnly']) {
+        params['enqueueOnly'] = resources['enqueueOnly'];
+      }
+      if (resources['maxWaitSeconds']) {
+        params['maxWaitSeconds'] = resources['maxWaitSeconds'];
+      }
+      if (resources['reuseIfExists']) {
+        params['reuseIfExists'] = resources['reuseIfExists'];
+      }
+      if (resources['startupCommand']) {
+        params['startupCommand'] = resources['startupCommand'];
+      }
+      if (resources['owner_access_key']) {
+        params['owner_access_key'] = resources['owner_access_key'];
+      }
       //params['config'] = {};
       params['config'] = {resources: config};
       if (resources['mounts']) {
