@@ -665,6 +665,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['group_name'] = window.backendaiclient.current_group;
       config['domain'] = window.backendaiclient._config.domainName;
       config['scaling_group'] = this.scaling_group;
+      config['maxWaitSeconds'] = 5;
     }
     config['cpu'] = this.cpu_request;
     if (this.gpu_mode == 'fgpu') {
