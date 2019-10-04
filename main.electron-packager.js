@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
+process.env.serveMode = 'production';
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
@@ -8,7 +9,6 @@ const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
 const versions = require('./app/version');
 process.env.liveDebugMode = false;
-process.env.serveMode = 'production';
 let windowWidth = 1280;
 let windowHeight = 970;
 

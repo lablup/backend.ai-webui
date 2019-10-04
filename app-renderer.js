@@ -5,8 +5,6 @@ const url = require('url');
 const path = require('path');
 let windowWidth = 1280;
 let windowHeight = 970;
-console.log(remote.process.env.serveMode);
-
 if (remote.process.env.serveMode == 'dev') {
   mainIndex = 'build/electron-app/app/index.html';
 } else {

@@ -1,22 +1,28 @@
 // Modules to control application life and create native browser window / Local tester file
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
+process.env.serveMode = 'dev';
+process.env.liveDebugMode = false;
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
-const BASE_DIR = __dirname;
-const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
-const versions = require('./version');
-process.env.liveDebugMode = false;
-process.env.serveMode = 'dev';
-let windowWidth = 1280;
-let windowHeight = 970;
-
-// ES6 module loader with custom protocol
 const nfs = require('fs');
 const npjoin = require('path').join;
-const es6Path = npjoin(__dirname, 'build/electron-app/app');
-const electronPath = npjoin(__dirname, 'build/electron-app');
+const BASE_DIR = __dirname;
+let ProxyManager, versions, es6Path, electronPath;
+if (process.env.serveMode == 'dev') {
+  ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
+  versions = require('./version');
+  es6Path = npjoin(__dirname, 'build/electron-app/app');  // ES6 module loader with custom protocol
+  electronPath = npjoin(__dirname, 'build/electron-app');
+} else {
+  ProxyManager = require('./app/wsproxy/wsproxy.js');
+  versions = require('./app/version');
+  es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
+  electronPath = npjoin(__dirname);
+}
+let windowWidth = 1280;
+let windowHeight = 970;
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
