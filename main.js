@@ -9,23 +9,25 @@ const toml = require('markty-toml');
 const nfs = require('fs');
 const npjoin = require('path').join;
 const BASE_DIR = __dirname;
-let ProxyManager, versions, es6Path, electronPath;
+let ProxyManager, versions, es6Path, electronPath, mainIndex;
 if (process.env.serveMode == 'dev') {
   ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
   versions = require('./version');
   es6Path = npjoin(__dirname, 'build/electron-app/app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname, 'build/electron-app');
+  mainIndex = 'build/electron-app/app.html';
 } else {
   ProxyManager = require('./app/wsproxy/wsproxy.js');
   versions = require('./app/version');
   es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
+  mainIndex = 'app.html';
 }
 let windowWidth = 1280;
 let windowHeight = 970;
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
+  {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
 ]);
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -34,12 +36,10 @@ let mainWindow;
 let mainContent;
 let devtools;
 let manager = new ProxyManager();
-
-var mainIndex = 'build/electron-app/app.html';
 let mainURL;
 
 // Modules to control application life and create native browser window
-app.once('ready', function() {
+app.once('ready', function () {
   var template;
   if (process.platform === 'darwin') {
     template = [
@@ -54,10 +54,13 @@ app.once('ready', function() {
             }
           },
           {
-            label: 'App version ' + versions.package +' (rev.' + versions.revision + ')',
+            label: 'App version ' + versions.package + ' (rev.' + versions.revision + ')',
             click: function () {
-              clipboard.writeText(versions.package +' (rev.' + versions.revision + ')');
-              const response = dialog.showMessageBox({type:'info', message:'Version information is copied to clipboard.'});
+              clipboard.writeText(versions.package + ' (rev.' + versions.revision + ')');
+              const response = dialog.showMessageBox({
+                type: 'info',
+                message: 'Version information is copied to clipboard.'
+              });
             }
           },
           {
@@ -65,7 +68,7 @@ app.once('ready', function() {
           },
           {
             label: 'Login',
-            click: function() {
+            click: function () {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
                 pathname: path.join(mainIndex),
                 protocol: 'file',
@@ -119,7 +122,7 @@ app.once('ready', function() {
           {
             label: 'Quit',
             accelerator: 'Command+Q',
-            click: function() {
+            click: function () {
               app.quit();
             }
           },
@@ -169,7 +172,7 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomIn()');
@@ -179,7 +182,7 @@ app.once('ready', function() {
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomOut()');
@@ -189,7 +192,7 @@ app.once('ready', function() {
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript(
@@ -200,20 +203,10 @@ app.once('ready', function() {
           {
             label: 'Toggle Full Screen',
             accelerator: 'Ctrl+Command+F',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-              }
-            }
-          },
-          {
-            label: 'Toggle Developer Tools',
-            accelerator: 'Alt+Command+I',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
               }
             }
           },
@@ -245,8 +238,8 @@ app.once('ready', function() {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
-            click: function() {
+            label: 'Backend.AI Webpage',
+            click: function () {
               shell.openExternal('https://www.backend.ai/');
             }
           }
@@ -260,7 +253,7 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'Login',
-            click: function() {
+            click: function () {
               mainWindow.loadURL(url.format({ // Load HTML into new Window
                 pathname: path.join(mainIndex),
                 protocol: 'file',
@@ -290,7 +283,7 @@ app.once('ready', function() {
           {
             label: '&Close',
             accelerator: 'Ctrl+W',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.close();
@@ -305,7 +298,7 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Ctrl+=',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomIn()');
@@ -315,7 +308,7 @@ app.once('ready', function() {
           {
             label: 'Zoom Out',
             accelerator: 'Ctrl+-',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomOut()');
@@ -325,7 +318,7 @@ app.once('ready', function() {
           {
             label: 'Actual Size',
             accelerator: 'Ctrl+0',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript(
@@ -336,20 +329,10 @@ app.once('ready', function() {
           {
             label: 'Toggle &Full Screen',
             accelerator: 'F11',
-            click: function() {
+            click: function () {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-              }
-            }
-          },
-          {
-            label: 'Toggle &Developer Tools',
-            accelerator: 'Alt+Ctrl+I',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
               }
             }
           },
@@ -359,8 +342,8 @@ app.once('ready', function() {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
-            click: function() {
+            label: 'Backend.AI Webpage',
+            click: function () {
               shell.openExternal('https://www.backend.ai/');
             }
           }
@@ -374,7 +357,7 @@ app.once('ready', function() {
 });
 
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
   devtools = null;
 
@@ -402,12 +385,15 @@ function createWindow () {
     }));
   } else {
     // Load HTML into new Window (file-based serving)
-    nfs.readFile('build/electron-app/app/config.toml', 'utf-8', (err, data) => {
+    nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       if (err) {
         console.log('No configuration file found.');
         return;
       }
       let config = toml(data);
+      if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      }
       if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
         mainURL = config.server.consoleServerURL;
       } else {
@@ -417,15 +403,15 @@ function createWindow () {
           slashes: true
         });
       }
-          console.log(mainURL);
-
       mainWindow.loadURL(mainURL);
     });
   }
   mainContent = mainWindow.webContents;
-  devtools = new BrowserWindow();
-  mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-  mainWindow.webContents.openDevTools({ mode: 'detach' });
+  if (process.env.liveDebugMode === true) {
+    devtools = new BrowserWindow();
+    mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+    mainWindow.webContents.openDevTools({mode: 'detach'});
+  }
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
     if (mainWindow) {
@@ -469,7 +455,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   Object.assign(options, {
     frame: true,
     show: false,
-    backgroundColor: '#EFEFEF',
+    backgroundColor: '#efefef',
     //parent: win,
     titleBarStyle: '',
     width: windowWidth,
@@ -489,7 +475,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
     event.newGuest.show()
   });
   event.newGuest.loadURL(url);
-  event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
+  event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
   });
   event.newGuest.on('close', (e) => {
@@ -502,7 +488,7 @@ app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
     const url = request.url.substr(7);    /* all urls start with 'file://' */
     const extension = url.split('.').pop();
-    let options = { path: path.normalize(`${BASE_DIR}/${url}`)};
+    let options = {path: path.normalize(`${BASE_DIR}/${url}`)};
     callback(options);
   }, (err) => {
     if (err) console.error('Failed to register protocol');
@@ -511,7 +497,9 @@ app.on('ready', () => {
   protocol.registerBufferProtocol('es6', (req, cb) => {
     nfs.readFile(
       npjoin(es6Path, req.url.replace('es6://', '')),
-      (e, b) => { cb({ mimeType: 'text/javascript', data: b }) }
+      (e, b) => {
+        cb({mimeType: 'text/javascript', data: b})
+      }
     )
   });
   createWindow()
@@ -533,10 +521,10 @@ app.on('activate', function () {
     createWindow();
   }
 });
-app.on('certificate-error', function(event, webContents, url, error,
-  certificate, callback) {
-      event.preventDefault();
-      callback(true);
+app.on('certificate-error', function (event, webContents, url, error,
+                                      certificate, callback) {
+  event.preventDefault();
+  callback(true);
 });
 // Let windows without node integration
 app.on('web-contents-created', (event, contents) => {
