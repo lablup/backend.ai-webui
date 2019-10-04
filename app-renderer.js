@@ -9,6 +9,10 @@ if (remote.process.env.serveMode == 'dev') {
   mainIndex = 'app/index.html';
 }
 
+if (remote.process.env.siteDescription != '') {
+  document.querySelector('#description').innerHTML = remote.process.env.siteDescription;
+}
+
 mainURL = url.format({
   pathname: path.join(mainIndex),
   protocol: 'file',

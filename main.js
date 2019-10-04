@@ -403,6 +403,11 @@ function createWindow() {
           slashes: true
         });
       }
+      if ('general' in config && 'siteDescription' in config.general) {
+        process.env.siteDescription = config.general.siteDescription;
+      } else {
+        process.env.siteDescription = '';
+      }
       mainWindow.loadURL(mainURL);
     });
   }
