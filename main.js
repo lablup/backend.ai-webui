@@ -8,6 +8,7 @@ const BASE_DIR = __dirname;
 const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
 const versions = require('./version');
 process.env.liveDebugMode = false;
+process.env.serveMode = 'dev';
 let windowWidth = 1280;
 let windowHeight = 970;
 

@@ -8,6 +8,7 @@ const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
 const versions = require('./app/version');
 process.env.liveDebugMode = false;
+process.env.serveMode = 'production';
 let windowWidth = 1280;
 let windowHeight = 970;
 

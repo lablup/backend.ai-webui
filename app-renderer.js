@@ -1,13 +1,17 @@
 
 const TabGroup = require("electron-tabs");
-const { ipcRenderer } = require('electron');
+const { remote, ipcRenderer } = require('electron');
 const url = require('url');
 const path = require('path');
 let windowWidth = 1280;
 let windowHeight = 970;
+console.log(remote.process.env.serveMode);
 
-//mainIndex = 'build/electron-app/app/index.html';
-mainIndex = 'app/index.html';
+if (remote.process.env.serveMode == 'dev') {
+  mainIndex = 'build/electron-app/app/index.html';
+} else {
+  mainIndex = 'app/index.html';
+}
 
 mainURL = url.format({
   pathname: path.join(mainIndex),
