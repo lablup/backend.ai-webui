@@ -25,6 +25,7 @@ if (process.env.serveMode == 'dev') {
 }
 let windowWidth = 1280;
 let windowHeight = 970;
+let debugMode = true;
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
@@ -49,8 +50,8 @@ app.once('ready', function () {
           {
             label: 'About Backend.AI Console',
             click: function () {
-              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
-                '    document.dispatchEvent(event);');
+              let scr = `window.runScriptOnMainTab();`;
+              mainContent.executeJavaScript('window.showSplash();');
             }
           },
           {
@@ -412,7 +413,7 @@ function createWindow() {
     });
   }
   mainContent = mainWindow.webContents;
-  if (process.env.liveDebugMode === true) {
+  if (debugMode === true) {
     devtools = new BrowserWindow();
     mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
     mainWindow.webContents.openDevTools({mode: 'detach'});
