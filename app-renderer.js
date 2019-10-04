@@ -3,11 +3,9 @@ const TabGroup = require("electron-tabs");
 const { remote, ipcRenderer } = require('electron');
 const url = require('url');
 const path = require('path');
-let windowWidth = 1280;
-let windowHeight = 970;
 if (remote.process.env.serveMode == 'dev') {
   mainIndex = 'build/electron-app/app/index.html';
-} else {
+} else { // Production
   mainIndex = 'app/index.html';
 }
 
@@ -19,7 +17,7 @@ mainURL = url.format({
 
 let tabGroup = new TabGroup();
 
-let tab1 = tabGroup.addTab({
+let mainAppTab = tabGroup.addTab({
     title: "Backend.AI",
     src: mainURL,
     visible: true,
@@ -33,7 +31,12 @@ let tab1 = tabGroup.addTab({
       webpreferences:"nativeWindowOpen=true"
     }
 });
-let mainView = tab1.webview;
+mainAppTab.webview.addEventListener('page-title-updated', () => {
+  const newTitle = mainAppTab.webview.getTitle();
+  mainAppTab.setTitle(newTitle);
+});
+
+let mainView = mainAppTab.webview;
 mainView.addEventListener('dom-ready', () =>{
   mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'";');
   //mainView.openDevTools();
@@ -55,8 +58,6 @@ function newTabWindow(event, url, frameName, disposition, options) {
     backgroundColor: '#EFEFEF',
     closable: true,
     src: url,
-    width: windowWidth,
-    height: windowHeight,
     webviewAttributes: {
       nodeintegration: false,
       allowpopups: 'on',
