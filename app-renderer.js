@@ -88,11 +88,8 @@ function newTabWindow(event, url, frameName, disposition, options) {
 
   return false;
 }
+
 function showSplash() {
-  //let code = 'console.log(document);let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});console.log(event);console.log("test");document.dispatchEvent(event);';
-  //console.log(mainView);
-  //console.log(code);
-  //mainView.executeJavaScript(code);
   mainView.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
    '    document.dispatchEvent(event);');
 }
