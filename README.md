@@ -254,6 +254,7 @@ $ make all # build win64/macos/linux app
 $ make win
 ```
 Note: Building Windows x86-64 on other than Windows requires Wine > 3.0
+Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows package. From macOS 10.15+, wine 32x is not supported.
 
 #### macOS version
 
