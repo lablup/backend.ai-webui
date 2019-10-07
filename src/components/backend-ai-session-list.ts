@@ -352,7 +352,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
       case "running":
-        status = ["RUNNING", "RESTARTING", "TERMINATING"];
+        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING"];
         break;
       case "finished":
         status = ["TERMINATED", "CANCELLED"]; //TERMINATED, CANCELLED

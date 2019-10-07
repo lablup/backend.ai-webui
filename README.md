@@ -254,6 +254,7 @@ $ make all # build win64/macos/linux app
 $ make win
 ```
 Note: Building Windows x86-64 on other than Windows requires Wine > 3.0
+Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows package. From macOS 10.15+, wine 32x is not supported.
 
 #### macOS version
 
@@ -272,6 +273,8 @@ $ make linux
 Note: this command only works on macOS, because packaging uses `ditto`, that supports both PKZIP and compressed CPIO format.
 
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
+
+Note: Requires electron-installer-dmg to make disk image. It requires Python 2+ to build binary for package.
 
 ```
 $ make pack
