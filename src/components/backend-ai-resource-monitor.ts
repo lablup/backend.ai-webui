@@ -1199,6 +1199,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         'max': 1,
         'preferred': 0.125
       };
+      //console.log(currentResource);
+      this.gpu_metric = {
+        'min': 0,
+        'max': 0
+      };
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
           let cpu_metric = {...item};
@@ -1260,7 +1265,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'fgpu') {
           let fgpu_metric = {...item};
-          fgpu_metric.min = parseInt(fgpu_metric.min);
+          fgpu_metric.min = parseFloat(fgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseFloat(fgpu_metric.max) !== 0 && fgpu_metric.max !== 'Infinity' && fgpu_metric.max !== NaN) {
               fgpu_metric.max = Math.min(parseFloat(fgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['fgpu_slot']);
@@ -1344,6 +1349,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
       });
+      console.log(this.gpu_metric);
       // Shared memory setting
       shmem_metric.max = this.mem_metric.max;
       shmem_metric.min = 0.0625; // 64m
