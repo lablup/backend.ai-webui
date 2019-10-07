@@ -724,7 +724,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       },
       uri: this._getProxyURL() + 'conf'
     };
-    this.shadowRoot.querySelector('#indicator').set(20, 'Setting up proxy fot the app...');
+    this.shadowRoot.querySelector('#indicator').set(20, 'Setting up proxy for the app...');
     try {
       let response = await this.sendRequest(rqst);
       if (response === undefined) {
