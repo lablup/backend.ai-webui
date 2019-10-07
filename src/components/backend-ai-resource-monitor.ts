@@ -52,7 +52,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'TensorFlow (Swift)': 'swift-tensorflow',
     'Lablup ResearchEnv.': 'python-ff',
     'Python': 'python',
-    'Python (MKL)': 'python-intel',
+    'Python (Intel)': 'python-intel',
+    'TensorFlow (Intel)': 'intel-tensorflow',
     'PyTorch': 'python-pytorch',
     'Chainer': 'chainer',
     'R': 'r-base',
@@ -74,7 +75,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'TensorFlow (Swift)': [],
     'Lablup ResearchEnv.': [],
     'Python': [],
-    'Python (MKL)': ['Intel MKL'],
+    'Python (Intel)': ['Intel'],
+    'TensorFlow (Intel)': ['Intel'],
     'PyTorch': [],
     'Chainer': [],
     'R': [],
@@ -781,11 +783,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'ngc-digits': 'DIGITS (NGC)',
       'ngc-pytorch': 'PyTorch (NGC)',
       'ngc-tensorflow': 'TensorFlow (NGC)',
+      'python-intel': 'Python (Intel)',
+      'intel-tensorflow': 'TensorFlow (Intel)',
       'nodejs': 'Node.js',
       'octave': 'Octave',
       'php': 'PHP',
       'python': 'Python',
-      'python-intel': 'Python (Intel)',
       'python-ff': 'Lablup ResearchEnv.',
       'python-cntk': 'CNTK',
       'python-pytorch': 'PyTorch',
@@ -1349,7 +1352,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
       });
-      console.log(this.gpu_metric);
+      //console.log(this.gpu_metric);
       // Shared memory setting
       shmem_metric.max = this.mem_metric.max;
       shmem_metric.min = 0.0625; // 64m
@@ -1375,7 +1378,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
         if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
           for (var i = 0; i < this.resource_templates.length; i++) {
-            console.log(parseFloat(this.resource_templates[i].gpu));
+            //console.log(parseFloat(this.resource_templates[i].gpu));
             if (parseFloat(this.resource_templates[i].gpu) > 0) {
               this.resource_templates.splice(i, 1);
               i--;
@@ -1387,7 +1390,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = false;
         this.shadowRoot.querySelector('#gpu-resource').value = this.gpu_metric.max;
       }
-      console.log(this.resource_templates);
       // Refresh with resource template
       if (this.resource_templates !== [] && this.resource_templates.length > 0) {
         let resource = this.resource_templates[0];
