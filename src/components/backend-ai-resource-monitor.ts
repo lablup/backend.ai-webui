@@ -1369,15 +1369,25 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shmem_metric = shmem_metric;
 
       // GPU metric
-      if (this.gpu_metric.min == 0 && this.gpu_metric.max == 0) {
+      if (this.gpu_metric.min == 0 && this.gpu_metric.max == 0) { // GPU is disabled (by image,too)
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
+        if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
+          for (var i = 0; i < this.resource_templates.length; i++) {
+            console.log(parseFloat(this.resource_templates[i].gpu));
+            if (parseFloat(this.resource_templates[i].gpu) > 0) {
+              this.resource_templates.splice(i, 1);
+              i--;
+            }
+          }
+        }
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = false;
         this.shadowRoot.querySelector('#gpu-resource').value = this.gpu_metric.max;
       }
+      console.log(this.resource_templates);
       // Refresh with resource template
       if (this.resource_templates !== [] && this.resource_templates.length > 0) {
         let resource = this.resource_templates[0];
