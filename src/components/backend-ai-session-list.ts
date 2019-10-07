@@ -486,26 +486,29 @@ export default class BackendAiSessionList extends BackendAIPage {
         {'category': 'Env', 'tag': 'Python', 'color': 'blue'}],
       'python-intel': [
         {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
-        {'tag': 'Intel', 'color': 'blue'}],
+        {'tag': 'Intel MKL', 'color': 'green'}],
       'python-ff': [
         {'category': 'Env', 'tag': 'Lablup Research', 'color': 'blue'},
-        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
         {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'}],
-      'intel-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-        {'tag': 'Intel', 'color': 'blue'}],
       'python-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'}],
       'ngc-digits': [
         {'category': 'Env', 'tag': 'DIGITS', 'color': 'blue'},
-        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
         {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
       'ngc-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
+      'intel-tensorflow': [
+        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
+        {'tag': 'Intel', 'color': 'blue'}],
+      'intel-python': [
+        {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
+        {'tag': 'Intel', 'color': 'blue'}],
       'julia': [
         {'category': 'Env', 'tag': 'Julia', 'color': 'blue'}],
       'r': [
