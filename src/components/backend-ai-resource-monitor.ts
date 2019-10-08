@@ -16,7 +16,6 @@ import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-icon-button';
-
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/card';
@@ -46,54 +45,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) supports = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
-  @property({type: Object}) aliases = {
-    'TensorFlow': 'python-tensorflow',
-    'TensorFlow (Julia)': 'julia-tensorflow',
-    'TensorFlow (Swift)': 'swift-tensorflow',
-    'Lablup ResearchEnv.': 'python-ff',
-    'Python': 'python',
-    'Python (Intel MKL)': 'python-intel',
-    'Python (Intel)': 'intel-python',
-    'TensorFlow (Intel)': 'intel-tensorflow',
-    'PyTorch': 'python-pytorch',
-    'Chainer': 'chainer',
-    'R': 'r-base',
-    'Julia': 'julia',
-    'Lua': 'lua',
-    'RAPID (NGC)': 'ngc-rapid',
-    'DIGITS (NGC)': 'ngc-digits',
-    'PyTorch (NGC)': 'ngc-pytorch',
-    'TensorFlow (NGC)': 'ngc-tensorflow',
-    'PyTorch (Cloudia)': 'lablup-pytorch',
-    'Neural Network Intelligence': 'nni',
-    'H2O': 'h2o',
-    'SFTP': 'sftp',
-    'SSH': 'ssh',
-  };
-  @property({type: Object}) tags = {
-    'TensorFlow': [],
-    'TensorFlow (Julia)': [],
-    'TensorFlow (Swift)': [],
-    'Lablup ResearchEnv.': [],
-    'Python': [],
-    'Python (Intel MKL)': ['Intel MKL'],
-    'Python (Intel)': ['Intel'],
-    'TensorFlow (Intel)': ['Intel'],
-    'PyTorch': [],
-    'Chainer': [],
-    'R': [],
-    'Julia': [],
-    'Lua': [],
-    'RAPID (NGC)': ['Nvidia GPU Cloud'],
-    'DIGITS (NGC)': ['Nvidia GPU Cloud'],
-    'PyTorch (NGC)': ['Nvidia GPU Cloud'],
-    'TensorFlow (NGC)': ['Nvidia GPU Cloud'],
-    'PyTorch (Cloudia)': ['Cloudia'],
-    'Neural Network Intelligence': ['Microsoft'],
-    'H2O': ['h2o.ai'],
-    'SFTP': ['backend.ai'],
-    'SSH': ['backend.ai'],
-  };
+  @property({type: Object}) aliases = Object();
+  @property({type: Object}) tags = Object();
+  @property({type: Object}) humanizedNames = Object();
   @property({type: Array}) versions;
   @property({type: Array}) languages;
   @property({type: String}) gpu_mode;
@@ -425,6 +379,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   firstUpdated() {
+    fetch('resources/image_metadata.json').then(
+      response => response.json()
+    ).then(
+      json => {
+        this.aliases = json.aliases;
+        this.tags = json.tags;
+        this.humanizedNames = json.humanizedNames;
+      }
+    );
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
 
@@ -773,45 +736,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _guessHumanizedNames(kernelName) {
-    const candidate = {
-      'cpp': 'C++',
-      'gcc': 'C',
-      'go': 'Go',
-      'haskell': 'Haskell',
-      'java': 'Java',
-      'julia': 'Julia',
-      'lua': 'Lua',
-      'ngc-rapid': 'RAPID (NGC)',
-      'ngc-digits': 'DIGITS (NGC)',
-      'ngc-pytorch': 'PyTorch (NGC)',
-      'ngc-tensorflow': 'TensorFlow (NGC)',
-      'python-intel': 'Python (Intel MKL)',
-      'intel-python': 'Python (Intel)',
-      'intel-tensorflow': 'TensorFlow (Intel)',
-      'nodejs': 'Node.js',
-      'octave': 'Octave',
-      'php': 'PHP',
-      'python': 'Python',
-      'python-ff': 'Lablup ResearchEnv.',
-      'python-cntk': 'CNTK',
-      'python-pytorch': 'PyTorch',
-      'python-tensorflow': 'TensorFlow',
-      'julia-tensorflow': 'TensorFlow (Julia)',
-      'swift-tensorflow': 'TensorFlow (Swift)',
-      'r-base': 'R',
-      'rust': 'Rust',
-      'scala': 'Scala',
-      'scheme': 'Scheme',
-      'lablup-pytorch': 'PyTorch (Cloudia)',
-      'nni': 'Neural Network Intelligence',
-      'h2o': 'H2O.ai',
-      'sftp': 'SFTP',
-      'ssh': 'SSH',
-    };
+    const candidate = this.humanizedNames;
+    let imageName = '';
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
     Object.keys(candidate).forEach((item, index) => {
-      if (kernelName.endsWith(item) && item.length < matchedString.length) {
+      let specs = kernelName.split('/');
+      if (specs.length == 2) {
+        imageName = specs[1];
+      } else {
+        imageName = specs[2];
+      }
+      if (imageName === item) {
+        humanizedName = candidate[item];
+        matchedString = item;
+      } else if (imageName === '' && kernelName.endsWith(item) && item.length < matchedString.length) {
         humanizedName = candidate[item];
         matchedString = item;
       }
