@@ -65,9 +65,10 @@ body {
   display: none;
   position: relative;
   color: #333333;
-  height: 37px;
+  height: 38px;
   padding: 10px 8px 0;
-  border: 1px solid #aaaaaa;
+  border-left: 1px solid #aaaaaa;
+  border-top: 0;
   border-bottom: 0;
   border-left: 0;
   background: linear-gradient(to bottom, rgba(234, 234, 234, 1) 0%, rgba(204, 204, 204, 1) 100%);
@@ -176,8 +177,5 @@ body {
 .etabs-views {
   border-top: 0;
   height: calc(100vh - 48px);
-}
-
-.etab-view {
-
+  width: 100%;
 }

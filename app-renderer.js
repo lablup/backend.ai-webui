@@ -20,7 +20,7 @@ mainURL = url.format({
 
 let openPageURL = '';
 let openPageEvent = {};
-let defaultWebPreferences = "allowRunningInsecureContent=true,javascript=true,nodeIntegration=no,nativeWindowOpen=yes,scrollBounce=true";
+let defaultWebPreferences = "allowRunningInsecureContent=true,webviewTag=true,javascript=true,nodeIntegration=no,nativeWindowOpen=yes";
 
 let tabGroup = new TabGroup();
 let mainAppTab = tabGroup.addTab({
@@ -154,6 +154,10 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   });
   event.newGuest.addEventListener('will-navigate', (e) => {
     console.log('navigate to 333', e);
+  });
+  event.newGuest.addEventListener('page-favicon-updated', (e) => {
+    console.log('favicon', e.favicons[0]);
+    tab.setIcon(e.favicons[0]);
   });
   //event.newGuest = tab.webview.getWebContents();
   //event.newGuest = newTab.webview.getWebContents();
