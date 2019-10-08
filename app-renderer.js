@@ -93,12 +93,12 @@ mainWebView.addEventListener('dom-ready', (e) => {
   });
 
   mainWebViewWebContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    event.preventDefault();
     newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
 });
 
 function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
+  event.preventDefault();
   console.log('------- requested URL:', url);
   const ev = event;
   //openPageEvent = event;
@@ -137,7 +137,7 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     tab.setTitle(newTitle);
   });
   tab.on("webview-ready", (tab) => {
-    tab.show(true);
+    //tab.show(true);
     //console.log('webview ready', tab);
     //event.newGuest = tab.webview.getWebContents();
     //console.log('new guest: ', event.newGuest);
@@ -148,11 +148,10 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     //if (openPageURL != '') {
       e.target.openDevTools();
       let newTabContents = e.target.getWebContents();
-      let newURL = openPageURL;
-      openPageURL = '';
+      //let newURL = openPageURL;
+      //openPageURL = '';
       //e.target.loadURL(newURL);
       newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-        event.preventDefault();
         newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
       });
       //openPageEvent.newGuest = newTabContents.webContents;
