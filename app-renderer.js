@@ -103,24 +103,30 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   const ev = event;
   //openPageEvent = event;
   //console.log('event log:', ev);
-  if (url == 'about:blank#blocked') {
-    url = undefined;//'about:blank';
+  if (url === 'about:blank#blocked') {
+    url = '';//'about:blank';
   }
   openPageURL = url;
   //Object.assign(options, {
   let local_options = {
     title: "Loading...",
     frame: true,
-    visible: false,
+    visible: true,
     backgroundColor: '#efefef',
     closable: true,
-    src: url,
     webviewAttributes: {
       allowpopups: true,
       webpreferences: defaultWebPreferences
     },
     ready: loadURLonTab
   };
+  if (url !== '') {
+    local_options['src'] = url;
+  } else {
+    local_options['src'] = "";
+
+  }
+  console.log(local_options);
   //);
   let tab = tabGroup.addTab(local_options);
   console.log(tab);
