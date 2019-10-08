@@ -48,7 +48,7 @@ app.once('ready', function () {
         label: 'Backend.AI',
         submenu: [
           {
-            label: 'About Backend.AI Console',
+            label: 'About Backend.AI App',
             click: function () {
               let scr = `window.runScriptOnMainTab();`;
               mainContent.executeJavaScript('window.showSplash();');
@@ -482,7 +482,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   });
   event.newGuest.loadURL(url);
   event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
   event.newGuest.on('close', (e) => {
     let c = BrowserWindow.getFocusedWindow();

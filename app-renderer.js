@@ -3,13 +3,13 @@ const TabGroup = require("electron-tabs");
 const { remote, ipcRenderer } = require('electron');
 const url = require('url');
 const path = require('path');
-if (remote.process.env.serveMode == 'dev') {
+if (remote.process.env.serveMode === 'dev') {
   mainIndex = 'build/electron-app/app/index.html';
 } else { // Production
   mainIndex = 'app/index.html';
 }
 
-if (remote.process.env.siteDescription != '') {
+if (remote.process.env.siteDescription !== '') {
   document.querySelector('#description').innerHTML = remote.process.env.siteDescription;
 }
 
@@ -20,7 +20,7 @@ mainURL = url.format({
 });
 
 let tabGroup = new TabGroup();
-
+let openPageURL = '';
 let mainAppTab = tabGroup.addTab({
     title: "Backend.AI",
     src: mainURL,
@@ -56,8 +56,11 @@ mainView.addEventListener('dom-ready', () =>{
 });
 
 function newTabWindow(event, url, frameName, disposition, options) {
+  console.log('requested URL:', url);
+  openPageURL = url;
   Object.assign(options, {
     title: "Preparing...",
+    frame: true,
     visible: true,
     backgroundColor: '#EFEFEF',
     closable: true,
@@ -67,8 +70,10 @@ function newTabWindow(event, url, frameName, disposition, options) {
       allowpopups: 'on',
       autosize: true,
       blinkfeatures: '',
-      webpreferences:"nativeWindowOpen=true"
-    }
+      //webviewTag: true,
+      webpreferences: "allowRunningInsecureContent,preload='',isBrowserView=false,javascript=true,nativeWindowOpen=true"
+    },
+    ready: loadURLonTab
   });
   if (frameName === 'modal') {
     options.modal = true;
@@ -78,17 +83,25 @@ function newTabWindow(event, url, frameName, disposition, options) {
     const newTitle = newTab.webview.getTitle();
     newTab.setTitle(newTitle);
   });
-  newTab.webview.addEventListener('dom-ready', () => {
-    let newTabContents = newTab.webview.getWebContents();
-    newTabContents.on('new-window',(event, url, frameName, disposition, options) => {
-      event.preventDefault();
-      newTabWindow(event, url, frameName, disposition, options);
-    });
+  newTab.webview.addEventListener('dom-ready', (e) => {
+    console.log(e);
+    if (openPageURL !== '') {
+      let newTabContents = newTab.webview.getWebContents();
+      let newURL = openPageURL;
+      openPageURL = '';
+      newTab.webview.loadURL(newURL);
+      newTabContents.on('new-window', (event, url, frameName, disposition, options) => {
+        event.preventDefault();
+        newTabWindow(event, url, frameName, disposition, options);
+      });
+    }
   });
-
-  return false;
+  return true;
 }
 
+function loadURLonTab(tab) {
+  //console.log("tab opened:", tab);
+}
 function showSplash() {
   mainView.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
    '    document.dispatchEvent(event);');
