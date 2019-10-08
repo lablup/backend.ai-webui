@@ -543,7 +543,7 @@ app.on('web-contents-created', (event, contents) => {
     // Strip away preload scripts if unused or verify their location is legitimate
     delete webPreferences.preload;
     delete webPreferences.preloadURL;
-
+    console.log(event);
     // Disable Node.js integration
     //webPreferences.nodeIntegration = false;
   });

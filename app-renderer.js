@@ -21,7 +21,7 @@ mainURL = url.format({
 
 let tabGroup = new TabGroup();
 let openPageURL = '';
-let defaultWebPreferences = "allowRunningInsecureContent=true,isBrowserView=false,javascript=true,nativeWindowOpen=true,webviewTag=true";
+let defaultWebPreferences = "allowRunningInsecureContent=true,isBrowserView=false,javascript=true,nativeWindowOpen=yes,scrollBounce=true";
 
 let mainAppTab = tabGroup.addTab({
     title: "Backend.AI",
@@ -55,13 +55,13 @@ mainView.addEventListener('dom-ready', (e) =>{
     console.log('navigate to', url);
   });
 
-  mainViewContents.on('new-window', (event, url, frameName, disposition, options) => {
+  mainViewContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     event.preventDefault();
-    newTabWindow(event, url, frameName, disposition, options);
+    return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
 });
 
-function newTabWindow(event, url, frameName, disposition, options) {
+function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
   console.log('requested URL:', url);
   openPageURL = url;
   Object.assign(options, {
@@ -91,6 +91,8 @@ function newTabWindow(event, url, frameName, disposition, options) {
   newTab.on("webview-ready", (tab) =>{
     tab.show(true);
     console.log('webview ready', tab);
+    event.newGuest = tab.webview.getWebContents();
+    console.log('new guest: ', event.newGuest);
   });
   newTab.webview.addEventListener('dom-ready', (e) => {
     console.log("new tab", e);
@@ -100,13 +102,15 @@ function newTabWindow(event, url, frameName, disposition, options) {
       //let newURL = openPageURL;
       //openPageURL = '';
       //e.target.loadURL(newURL);
-      newTabContents.on('new-window', (event, url, frameName, disposition, options) => {
+      newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
         event.preventDefault();
-        newTabWindow(event, url, frameName, disposition, options);
+        return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
       });
     }
   });
-  return true;
+  //event.newGuest = newTab.webview.getWebContents();
+  //console.log("New window: ", newTab.webview);
+  //return newTab.webview;
 }
 
 function loadURLonTab(tab) {
