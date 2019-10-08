@@ -76,6 +76,7 @@ body {
   font-size: 14px;
   background-color: #cccccc;
   cursor: default;
+  vertical-align: middle;
 }
 
 /* Dragula */
@@ -178,4 +179,5 @@ body {
   border-top: 0;
   height: calc(100vh - 48px);
   width: 100%;
+  position: relative;
 }

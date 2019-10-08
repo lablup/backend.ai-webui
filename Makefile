@@ -36,6 +36,8 @@ dep:
 	sed -i -E 's/process.env.serveMode = "dev"/process.env.serveMode = "production"/g' ./build/electron-app/main.js
 	cp ./app-renderer.js ./build/electron-app/app-renderer.js
 	cp ./src/app/app.html ./build/electron-app/app.html
+	cp ./src/app/tab.js ./build/electron-app/tab.js
+	cp -Rp resources build/rollup
 	cp -Rp build/rollup build/electron-app/app
 	cp -Rp build/rollup/resources build/electron-app
 	cp -Rp build/rollup/manifest build/electron-app

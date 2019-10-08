@@ -450,9 +450,9 @@ function createWindow() {
     devtools = null;
   });
 
-  mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
-  });
+  //mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+  //  newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
+  //});
 }
 
 function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {

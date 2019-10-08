@@ -1,11 +1,14 @@
-const TabGroup = require("electron-tabs");
+//const TabGroup = require("electron-tabs");
 const {remote, ipcRenderer} = require('electron');
 const url = require('url');
 const path = require('path');
+let TabGroup;
 if (remote.process.env.serveMode === 'dev') {
   mainIndex = 'build/electron-app/app/index.html';
+  TabGroup = require("./tab");
 } else { // Production
   mainIndex = 'app/index.html';
+  TabGroup = require("./tab");
 }
 
 if (remote.process.env.siteDescription !== '') {
@@ -20,7 +23,7 @@ mainURL = url.format({
 
 let openPageURL = '';
 let openPageEvent = {};
-let defaultWebPreferences = "allowRunningInsecureContent=true,webviewTag=true,javascript=true,nodeIntegration=no,nativeWindowOpen=yes";
+let defaultWebPreferences = "allowRunningInsecureContent=true,preload='',webviewTag=true,javascript=true,nodeIntegration=no,nativeWindowOpen=yes";
 
 let tabGroup = new TabGroup();
 let mainAppTab = tabGroup.addTab({
@@ -100,11 +103,12 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   const ev = event;
   //openPageEvent = event;
   //console.log('event log:', ev);
+  if (url == 'about:blank#blocked') {
+    url = undefined;//'about:blank';
+  }
   openPageURL = url;
   //Object.assign(options, {
-  console.log("frame name: ", frameName);
-
-  let optionss = {
+  let local_options = {
     title: "Loading...",
     frame: true,
     visible: false,
@@ -116,11 +120,13 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
       webpreferences: defaultWebPreferences
     },
     ready: loadURLonTab
-  };//);
-  console.log(options);
-  let tab = tabGroup.addTab(optionss);
-  event.newGuest = tab.webview;
-  event.newGuest.addEventListener('page-title-updated', (e) => {
+  };
+  //);
+  let tab = tabGroup.addTab(local_options);
+  console.log(tab);
+  const newTabWebView = tab.webview;
+  console.log("new tab webview:", newTabWebView);
+  newTabWebView.addEventListener('page-title-updated', (e) => {
     const newTitle = e.target.getTitle();
     tab.setTitle(newTitle);
   });
@@ -130,10 +136,10 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     //event.newGuest = tab.webview.getWebContents();
     //console.log('new guest: ', event.newGuest);
   });
-  event.newGuest.addEventListener('dom-ready', (e) => {
+  newTabWebView.addEventListener('dom-ready', (e) => {
     //console.log('from event,', ev);
     //console.log("new tab", e);
-    if (openPageURL != '') {
+    //if (openPageURL != '') {
       e.target.openDevTools();
       let newTabContents = e.target.getWebContents();
       let newURL = openPageURL;
@@ -147,18 +153,19 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
       //console.log('window? ', openPageEvent.newGuest.window);
       //console.log('window22? ', openPageEvent.newGuest);
       //ev.newGuest = newTabContents;
-    }
+    //}
   });
-  event.newGuest.addEventListener('did-navigate', (e) => {
+  newTabWebView.addEventListener('did-navigate', (e) => {
     console.log('navigate to 222', e);
   });
-  event.newGuest.addEventListener('will-navigate', (e) => {
+  newTabWebView.addEventListener('will-navigate', (e) => {
     console.log('navigate to 333', e);
   });
-  event.newGuest.addEventListener('page-favicon-updated', (e) => {
+  newTabWebView.addEventListener('page-favicon-updated', (e) => {
     console.log('favicon', e.favicons[0]);
     tab.setIcon(e.favicons[0]);
   });
+  event.newGuest = newTabWebView;
   //event.newGuest = tab.webview.getWebContents();
   //event.newGuest = newTab.webview.getWebContents();
   //console.log("New window: ", newTab.webview);
