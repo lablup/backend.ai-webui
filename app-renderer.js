@@ -21,10 +21,12 @@ mainURL = url.format({
 
 let tabGroup = new TabGroup();
 let openPageURL = '';
+let defaultWebPreferences = "allowRunningInsecureContent=true,isBrowserView=false,javascript=true,nativeWindowOpen=true,webviewTag=true";
+
 let mainAppTab = tabGroup.addTab({
     title: "Backend.AI",
     src: mainURL,
-    visible: true,
+    visible: false,
     closable: false,
     active: true,
     webviewAttributes: {
@@ -32,7 +34,7 @@ let mainAppTab = tabGroup.addTab({
       allowpopups: 'on',
       autosize: true,
       blinkfeatures: '',
-      webpreferences: "allowRunningInsecureContent,preload='',isBrowserView=false,javascript=true,nativeWindowOpen=true"
+      webpreferences: defaultWebPreferences
     }
 });
 mainAppTab.webview.addEventListener('page-title-updated', () => {
@@ -40,8 +42,12 @@ mainAppTab.webview.addEventListener('page-title-updated', () => {
   mainAppTab.setTitle(newTitle);
 });
 
+mainAppTab.on("webview-ready", (tab) =>{
+  tab.show();
+});
+
 let mainView = mainAppTab.webview;
-mainView.addEventListener('dom-ready', () =>{
+mainView.addEventListener('dom-ready', (e) =>{
   mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'";');
   mainView.openDevTools();
   let mainViewContents = mainView.getWebContents();
@@ -61,16 +67,16 @@ function newTabWindow(event, url, frameName, disposition, options) {
   Object.assign(options, {
     title: "Loading...",
     frame: true,
-    visible: true,
+    visible: false,
     backgroundColor: '#EFEFEF',
     closable: true,
     src: url,
     webviewAttributes: {
       //nodeintegration: false,
-      allowpopups: 'on',
+      allowpopups: true,
       autosize: true,
       //webviewTag: true,
-      webpreferences: "allowRunningInsecureContent,preload='',isBrowserView=false,javascript=true,nativeWindowOpen=true"
+      webpreferences: defaultWebPreferences
     },
     ready: loadURLonTab
   });
@@ -82,10 +88,9 @@ function newTabWindow(event, url, frameName, disposition, options) {
     const newTitle = e.target.getTitle();
     newTab.setTitle(newTitle);
   });
-  newTab.on("webview-ready", (e) =>{
-    console.log('webview ready', e);
-    //e.webview.loadURL(openPageURL);
-    //openPageURL = '';
+  newTab.on("webview-ready", (tab) =>{
+    tab.show(true);
+    console.log('webview ready', tab);
   });
   newTab.webview.addEventListener('dom-ready', (e) => {
     console.log("new tab", e);
