@@ -265,73 +265,13 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _initializeAppTemplate() {
-    this.appTemplate = {
-      'jupyter':
-        [{
-          'name': 'jupyter',
-          'title': 'Jupyter Notebook',
-          'redirect': "&redirect=/tree",
-          'src': './resources/icons/jupyter.png'
-        }],
-      'jupyterextension':
-        [{
-          'name': 'jupyter',
-          'title': 'Jupyter Extension',
-          'redirect': "&redirect=/nbextensions",
-          'src': './resources/icons/jupyter.png',
-          'icon': 'vaadin:clipboard-pulse'
-        }],
-      'jupyterlab':
-        [{
-          'name': 'jupyterlab',
-          'title': 'JupyterLab',
-          'redirect': "&redirect=/lab",
-          'src': './resources/icons/jupyterlab.png',
-          'icon': 'vaadin:flask'
-        }],
-      'tensorboard':
-        [{
-          'name': 'tensorboard',
-          'title': 'TensorBoard',
-          'redirect': "&redirect=/",
-          'src': './resources/icons/tensorflow.png'
-        }],
-      'digits':
-        [{
-          'name': 'digits',
-          'title': 'DIGITS',
-          'redirect': "&redirect=/",
-          'src': './resources/icons/nvidia.png'
-        }],
-      'h2o-dai':
-        [{
-          'name': 'h2o-dai',
-          'title': 'H2O driverless AI',
-          'redirect': "",
-          'src': './resources/icons/h2o.png'
-        }],
-      'vscode':
-        [{
-          'name': 'vscode',
-          'title': 'Visual Studio Code',
-          'redirect': "",
-          'src': './resources/icons/vscode.svg'
-        }],
-      'nniboard':
-        [{
-          'name': 'nniboard',
-          'title': 'NNI Board',
-          'redirect': "",
-          'src': './resources/icons/nni.png'
-        }],
-      'sftp':
-        [{
-          'name': 'sftp',
-          'title': 'SFTP',
-          'redirect': "",
-          'src': './resources/icons/sftp.png'
-        }],
-    };
+    fetch('resources/app_template.json').then(
+      response => response.json()
+    ).then(
+      json => {
+        this.appTemplate = json.appTemplate;
+      }
+    );
   }
 
   refreshList(refresh = true, repeat = true) {
@@ -362,7 +302,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
         break;
       default:
-        status = ["RUNNING"];
+        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING"];
     }
     if (window.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
