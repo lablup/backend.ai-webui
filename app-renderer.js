@@ -58,12 +58,13 @@ mainView.addEventListener('dom-ready', (e) =>{
 
   mainViewContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     event.preventDefault();
-    return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+    newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
 });
 
 function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
   console.log('------- requested URL:', url);
+  const ev = event;
   openPageURL = url;
   Object.assign(options, {
     title: "Loading...",
@@ -96,6 +97,7 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     //console.log('new guest: ', event.newGuest);
   });
   newTab.webview.addEventListener('dom-ready', (e) => {
+    console.log('from event,', ev);
     console.log("new tab", e);
     e.target.openDevTools();
     //if (openPageURL !== '') {
@@ -105,12 +107,14 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
       //e.target.loadURL(newURL);
       newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
         event.preventDefault();
-        return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+        newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
       });
     //}
+    console.log("access?,", ev.webview);
+    ev.newGuest = newTabContents;
   });
   //event.newGuest = tab.webview.getWebContents();
-  event.newGuest = newTab.webview.getWebContents();
+  //event.newGuest = newTab.webview.getWebContents();
   //console.log("New window: ", newTab.webview);
   //return newTab.webview;
 }
