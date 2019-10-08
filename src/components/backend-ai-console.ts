@@ -448,6 +448,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.menuTitle = 'LOGIN REQUIRED';
           this.sidebarMenu.selected = 0;
       }
+      document.title = "Backend.AI - " + this.menuTitle;
     }
   }
 
