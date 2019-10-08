@@ -52,7 +52,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'TensorFlow (Swift)': 'swift-tensorflow',
     'Lablup ResearchEnv.': 'python-ff',
     'Python': 'python',
-    'Python (MKL)': 'python-intel',
+    'Python (Intel MKL)': 'python-intel',
+    'Python (Intel)': 'intel-python',
+    'TensorFlow (Intel)': 'intel-tensorflow',
     'PyTorch': 'python-pytorch',
     'Chainer': 'chainer',
     'R': 'r-base',
@@ -74,16 +76,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'TensorFlow (Swift)': [],
     'Lablup ResearchEnv.': [],
     'Python': [],
-    'Python (MKL)': ['Intel MKL'],
+    'Python (Intel MKL)': ['Intel MKL'],
+    'Python (Intel)': ['Intel'],
+    'TensorFlow (Intel)': ['Intel'],
     'PyTorch': [],
     'Chainer': [],
     'R': [],
     'Julia': [],
     'Lua': [],
-    'RAPID (NGC)': ['NVidia GPU Cloud'],
-    'DIGITS (NGC)': ['NVidia GPU Cloud'],
-    'PyTorch (NGC)': ['NVidia GPU Cloud'],
-    'TensorFlow (NGC)': ['NVidia GPU Cloud'],
+    'RAPID (NGC)': ['Nvidia GPU Cloud'],
+    'DIGITS (NGC)': ['Nvidia GPU Cloud'],
+    'PyTorch (NGC)': ['Nvidia GPU Cloud'],
+    'TensorFlow (NGC)': ['Nvidia GPU Cloud'],
     'PyTorch (Cloudia)': ['Cloudia'],
     'Neural Network Intelligence': ['Microsoft'],
     'H2O': ['h2o.ai'],
@@ -781,11 +785,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'ngc-digits': 'DIGITS (NGC)',
       'ngc-pytorch': 'PyTorch (NGC)',
       'ngc-tensorflow': 'TensorFlow (NGC)',
+      'python-intel': 'Python (Intel MKL)',
+      'intel-python': 'Python (Intel)',
+      'intel-tensorflow': 'TensorFlow (Intel)',
       'nodejs': 'Node.js',
       'octave': 'Octave',
       'php': 'PHP',
       'python': 'Python',
-      'python-intel': 'Python (Intel)',
       'python-ff': 'Lablup ResearchEnv.',
       'python-cntk': 'CNTK',
       'python-pytorch': 'PyTorch',
@@ -1199,6 +1205,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         'max': 1,
         'preferred': 0.125
       };
+      //console.log(currentResource);
+      this.gpu_metric = {
+        'min': 0,
+        'max': 0
+      };
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
           let cpu_metric = {...item};
@@ -1260,7 +1271,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'fgpu') {
           let fgpu_metric = {...item};
-          fgpu_metric.min = parseInt(fgpu_metric.min);
+          fgpu_metric.min = parseFloat(fgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseFloat(fgpu_metric.max) !== 0 && fgpu_metric.max !== 'Infinity' && fgpu_metric.max !== NaN) {
               fgpu_metric.max = Math.min(parseFloat(fgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['fgpu_slot']);
@@ -1344,6 +1355,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
       });
+      //console.log(this.gpu_metric);
       // Shared memory setting
       shmem_metric.max = this.mem_metric.max;
       shmem_metric.min = 0.0625; // 64m
@@ -1363,10 +1375,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shmem_metric = shmem_metric;
 
       // GPU metric
-      if (this.gpu_metric.min == 0 && this.gpu_metric.max == 0) {
+      if (this.gpu_metric.min == 0 && this.gpu_metric.max == 0) { // GPU is disabled (by image,too)
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
+        if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
+          for (var i = 0; i < this.resource_templates.length; i++) {
+            //console.log(parseFloat(this.resource_templates[i].gpu));
+            if (parseFloat(this.resource_templates[i].gpu) > 0) {
+              this.resource_templates.splice(i, 1);
+              i--;
+            }
+          }
+        }
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = false;

@@ -489,20 +489,26 @@ export default class BackendAiSessionList extends BackendAIPage {
         {'tag': 'Intel MKL', 'color': 'green'}],
       'python-ff': [
         {'category': 'Env', 'tag': 'Lablup Research', 'color': 'blue'},
-        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
       'python-tensorflow': [
         {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'}],
       'python-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'}],
       'ngc-digits': [
         {'category': 'Env', 'tag': 'DIGITS', 'color': 'blue'},
-        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
       'ngc-tensorflow': [
         {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
       'ngc-pytorch': [
         {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-        {'tag': 'NVidia GPU Cloud', 'color': 'green'}],
+        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
+      'intel-tensorflow': [
+        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
+        {'tag': 'Intel', 'color': 'blue'}],
+      'intel-python': [
+        {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
+        {'tag': 'Intel', 'color': 'blue'}],
       'julia': [
         {'category': 'Env', 'tag': 'Julia', 'color': 'blue'}],
       'r': [
@@ -725,7 +731,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       },
       uri: this._getProxyURL() + 'conf'
     };
-    this.shadowRoot.querySelector('#indicator').set(20, 'Setting up proxy fot the app...');
+    this.shadowRoot.querySelector('#indicator').set(20, 'Setting up proxy for the app...');
     try {
       let response = await this.sendRequest(rqst);
       if (response === undefined) {
