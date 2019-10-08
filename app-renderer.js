@@ -23,7 +23,7 @@ mainURL = url.format({
 
 let openPageURL = '';
 let openPageEvent = {};
-let defaultWebPreferences = "allowRunningInsecureContent=true,preload='',webviewTag=true,javascript=true,nodeIntegration=no,nativeWindowOpen=yes";
+let defaultWebPreferences = "allowRunningInsecureContent=true,webviewTag=true,javascript=true,nodeIntegration=no,nativeWindowOpen=yes";
 
 let tabGroup = new TabGroup();
 let mainAppTab = tabGroup.addTab({
@@ -75,7 +75,7 @@ mainAppTab.webview.addEventListener('page-title-updated', () => {
     default:
       bgColor = '#cccccc';
   }
-  document.querySelector(".etabs-tab:first-child").style.backgroundColor = bgColor;
+  document.querySelector(".etabs-tab:first-child").style.background = bgColor;
   document.querySelector(".etabs-tab:first-child").style.color = '#efefef';
 });
 
