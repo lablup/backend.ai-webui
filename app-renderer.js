@@ -23,7 +23,7 @@ mainURL = url.format({
 
 let openPageURL = '';
 let openPageEvent = {};
-let defaultWebPreferences = "allowRunningInsecureContent=true,webviewTag=true,javascript=true,nodeIntegration=no,nativeWindowOpen=yes";
+let defaultWebPreferences = "allowRunningInsecureContent=true,nativeWindowOpen=yes";
 
 let tabGroup = new TabGroup();
 let mainAppTab = tabGroup.addTab({
@@ -103,9 +103,9 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   const ev = event;
   //openPageEvent = event;
   //console.log('event log:', ev);
-  if (url === 'about:blank#blocked') {
-    url = '';//'about:blank';
-  }
+  //if (url === 'about:blank#blocked') {
+  //  url = '';//'about:blank';
+  // }
   openPageURL = url;
   //Object.assign(options, {
   let local_options = {
