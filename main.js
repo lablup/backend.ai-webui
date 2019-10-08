@@ -537,14 +537,74 @@ app.on('web-contents-created', (event, contents) => {
   if (contents.getType() === 'webview') {
     contents.on('new-window', function (newWindowEvent, url) {
       newWindowEvent.preventDefault();
+      console.log("is it a blocking call?,", url);
+      console.log(newWindowEvent);
     });
   }
   contents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if unused or verify their location is legitimate
     delete webPreferences.preload;
     delete webPreferences.preloadURL;
-    console.log(event);
+    //console.log(event);
     // Disable Node.js integration
     //webPreferences.nodeIntegration = false;
   });
 });
+
+
+function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
+  console.log('------- requested URL:', url);
+  const ev = event;
+  openPageURL = url;
+  Object.assign(options, {
+    title: "Loading...",
+    frame: true,
+    visible: false,
+    backgroundColor: '#efefef',
+    closable: true,
+    src: url,
+    webviewAttributes: {
+      //nodeintegration: false,
+      allowpopups: true,
+      autosize: false,
+      //webviewTag: true,
+      webpreferences: defaultWebPreferences
+    },
+    ready: loadURLonTab
+  });
+  if (frameName === 'modal') {
+    options.modal = true;
+  }
+  let newTab = tabGroup.addTab(options);
+  newTab.webview.addEventListener('page-title-updated', (e) => {
+    const newTitle = e.target.getTitle();
+    newTab.setTitle(newTitle);
+  });
+  newTab.on("webview-ready", (tab) => {
+    tab.show(true);
+    console.log('webview ready', tab);
+    //event.newGuest = tab.webview.getWebContents();
+    //console.log('new guest: ', event.newGuest);
+  });
+  newTab.webview.addEventListener('dom-ready', (e) => {
+    console.log('from event,', ev);
+    console.log("new tab", e);
+    e.target.openDevTools();
+    //if (openPageURL !== '') {
+    let newTabContents = e.target.getWebContents();
+    //let newURL = openPageURL;
+    //openPageURL = '';
+    //e.target.loadURL(newURL);
+    newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+      event.preventDefault();
+      newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+    });
+    //}
+    console.log("access?,", ev.webview);
+    ev.newGuest = newTabContents;
+  });
+  //event.newGuest = tab.webview.getWebContents();
+  //event.newGuest = newTab.webview.getWebContents();
+  //console.log("New window: ", newTab.webview);
+  //return newTab.webview;
+}
