@@ -451,7 +451,7 @@ function createWindow () {
   });
 }
 
-function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {
+function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures) {
   event.preventDefault();
   Object.assign(options, {
     frame: true,
@@ -477,7 +477,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   });
   event.newGuest.loadURL(url);
   event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
   event.newGuest.on('close', (e) => {
     let c = BrowserWindow.getFocusedWindow();
