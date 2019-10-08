@@ -22,7 +22,7 @@ mainURL = url.format({
 let tabGroup = new TabGroup();
 let openPageURL = '';
 let openPageEvent = {};
-let defaultWebPreferences = "allowRunningInsecureContent=true,isBrowserView=false,javascript=true,nativeWindowOpen=true,scrollBounce=true";
+let defaultWebPreferences = "allowRunningInsecureContent=true,isBrowserView=false,javascript=true,nativeWindowOpen=yes,scrollBounce=true";
 
 let mainAppTab = tabGroup.addTab({
     title: "Backend.AI",
@@ -37,25 +37,60 @@ let mainAppTab = tabGroup.addTab({
 });
 mainAppTab.webview.addEventListener('page-title-updated', () => {
   const newTitle = mainAppTab.webview.getTitle();
+  let bgColor;
   mainAppTab.setTitle(newTitle);
-  //document.querySelector(".etabs-tab:first-child").style.backgroundColor = '#2e7d32';
-  //document.querySelector(".etabs-tab:first-child").style.color = '#efefef';
+  switch (newTitle) {
+    case 'Backend.AI - Summary':
+      bgColor = '#2e7d32';
+      break;
+    case 'Backend.AI - Sessions':
+      bgColor = '#c62828';
+      break;
+    case 'Backend.AI - Experiments':
+      bgColor = '#0277bd';
+      break;
+    case 'Backend.AI - Storage':
+      bgColor = '#ef6c00';
+      break;
+    case 'Backend.AI - Statistics':
+      bgColor = '#00838f';
+      break;
+    case 'Backend.AI - User Credentials & Policies':
+      bgColor = '#9e9d24';
+      break;
+    case 'Backend.AI - Environments & Presets':
+      bgColor = '#f9a825';
+      break;
+    case 'Backend.AI - Computation Resources':
+      bgColor = '#0277bd';
+      break;
+    case 'Backend.AI - Settings':
+      bgColor = '#2e7d32';
+      break;
+    case 'Backend.AI - Maintenance':
+      bgColor = '#ad1457';
+      break;
+    default:
+      bgColor = '#cccccc';
+  }
+  document.querySelector(".etabs-tab:first-child").style.backgroundColor = bgColor;
+  document.querySelector(".etabs-tab:first-child").style.color = '#efefef';
 });
 
 mainAppTab.on("webview-ready", (tab) =>{
   tab.show();
 });
 
-let mainView = mainAppTab.webview;
-mainView.addEventListener('dom-ready', (e) =>{
-  mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'";');
-  mainView.openDevTools();
-  let mainViewWebContents = mainView.getWebContents();
-  mainView.addEventListener('will-navigate', ({url}) => {
+let mainWebView = mainAppTab.webview;
+mainWebView.addEventListener('dom-ready', (e) => {
+  mainWebView.executeJavaScript('window.__local_proxy="' + window.__local_proxy + '";');
+  mainWebView.openDevTools();
+  let mainWebViewWebContents = mainWebView.getWebContents();
+  mainWebView.addEventListener('will-navigate', ({url}) => {
     console.log('navigate to', url);
   });
 
-  mainViewWebContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+  mainWebViewWebContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     event.preventDefault();
     newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
@@ -128,7 +163,7 @@ function loadURLonTab(tab) {
   //console.log("tab opened:", tab);
 }
 function showSplash() {
-  mainView.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
+  mainWebView.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
    '    document.dispatchEvent(event);');
 }
 window.showSplash = showSplash;
