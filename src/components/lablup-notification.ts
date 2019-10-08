@@ -167,7 +167,7 @@ export default class LablupNotification extends LitElement {
     this.notifications.push(notification);
     await this.updateComplete;
     notification.show();
-    this._spawnDesktopNotification(this.text, '', '');
+    this._spawnDesktopNotification("Backend.AI", this.text, '');
   }
 
   _spawnDesktopNotification(title, body, icon) {
