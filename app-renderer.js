@@ -32,7 +32,7 @@ let mainAppTab = tabGroup.addTab({
     webviewAttributes: {
       //nodeintegration: false,
       allowpopups: 'on',
-      autosize: true,
+      autosize: false,
       blinkfeatures: '',
       webpreferences: defaultWebPreferences
     }
@@ -63,7 +63,7 @@ mainView.addEventListener('dom-ready', (e) =>{
 });
 
 function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
-  console.log('requested URL:', url);
+  console.log('------- requested URL:', url);
   openPageURL = url;
   Object.assign(options, {
     title: "Loading...",
@@ -75,7 +75,7 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     webviewAttributes: {
       //nodeintegration: false,
       allowpopups: true,
-      autosize: true,
+      autosize: false,
       //webviewTag: true,
       webpreferences: defaultWebPreferences
     },
@@ -92,13 +92,13 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   newTab.on("webview-ready", (tab) =>{
     tab.show(true);
     console.log('webview ready', tab);
-    event.newGuest = tab.webview.getWebContents();
-    console.log('new guest: ', event.newGuest);
+    //event.newGuest = tab.webview.getWebContents();
+    //console.log('new guest: ', event.newGuest);
   });
   newTab.webview.addEventListener('dom-ready', (e) => {
     console.log("new tab", e);
     e.target.openDevTools();
-    if (openPageURL !== '') {
+    //if (openPageURL !== '') {
       let newTabContents = e.target.getWebContents();
       //let newURL = openPageURL;
       //openPageURL = '';
@@ -107,9 +107,10 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
         event.preventDefault();
         return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
       });
-    }
+    //}
   });
-  //event.newGuest = newTab.webview.getWebContents();
+  //event.newGuest = tab.webview.getWebContents();
+  event.newGuest = newTab.webview.getWebContents();
   //console.log("New window: ", newTab.webview);
   //return newTab.webview;
 }

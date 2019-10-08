@@ -239,6 +239,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
+      console.log(document.body.clientWidth, document.body.clientHeight);
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     })
   }
