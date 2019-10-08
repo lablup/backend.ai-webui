@@ -65,7 +65,7 @@ body {
   display: none;
   position: relative;
   color: #333333;
-  height: 37px;
+  height: 38px;
   padding: 10px 8px 0;
   border: 1px solid #aaaaaa;
   border-bottom: 0;
@@ -83,6 +83,7 @@ body {
 }
 
 .etabs-tab:first-child {
+  border-top: 0;
   border-left: none;
 }
 

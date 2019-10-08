@@ -40,6 +40,7 @@ let mainAppTab = tabGroup.addTab({
 mainAppTab.webview.addEventListener('page-title-updated', () => {
   const newTitle = mainAppTab.webview.getTitle();
   mainAppTab.setTitle(newTitle);
+  document.querySelector(".etabs-tab:first-child").style.backgroundColor = '#FFFFFF';
 });
 
 mainAppTab.on("webview-ready", (tab) =>{
