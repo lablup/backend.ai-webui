@@ -482,7 +482,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   });
   event.newGuest.loadURL(url);
   event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event);
   });
   event.newGuest.on('close', (e) => {
     let c = BrowserWindow.getFocusedWindow();
@@ -545,6 +545,6 @@ app.on('web-contents-created', (event, contents) => {
     delete webPreferences.preloadURL;
 
     // Disable Node.js integration
-    webPreferences.nodeIntegration = false;
+    //webPreferences.nodeIntegration = false;
   });
 });

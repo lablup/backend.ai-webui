@@ -28,11 +28,11 @@ let mainAppTab = tabGroup.addTab({
     closable: false,
     active: true,
     webviewAttributes: {
-      nodeintegration: false,
+      //nodeintegration: false,
       allowpopups: 'on',
       autosize: true,
       blinkfeatures: '',
-      webpreferences:"nativeWindowOpen=true"
+      webpreferences: "allowRunningInsecureContent,preload='',isBrowserView=false,javascript=true,nativeWindowOpen=true"
     }
 });
 mainAppTab.webview.addEventListener('page-title-updated', () => {
@@ -43,7 +43,7 @@ mainAppTab.webview.addEventListener('page-title-updated', () => {
 let mainView = mainAppTab.webview;
 mainView.addEventListener('dom-ready', () =>{
   mainView.executeJavaScript('window.__local_proxy="'+window.__local_proxy+'";');
-  //mainView.openDevTools();
+  mainView.openDevTools();
   let mainViewContents = mainView.getWebContents();
   mainView.addEventListener('will-navigate', ({url}) => {
     console.log('navigate to', url);
@@ -59,17 +59,16 @@ function newTabWindow(event, url, frameName, disposition, options) {
   console.log('requested URL:', url);
   openPageURL = url;
   Object.assign(options, {
-    title: "Preparing...",
+    title: "Loading...",
     frame: true,
     visible: true,
     backgroundColor: '#EFEFEF',
     closable: true,
     src: url,
     webviewAttributes: {
-      nodeintegration: false,
+      //nodeintegration: false,
       allowpopups: 'on',
       autosize: true,
-      blinkfeatures: '',
       //webviewTag: true,
       webpreferences: "allowRunningInsecureContent,preload='',isBrowserView=false,javascript=true,nativeWindowOpen=true"
     },
@@ -79,17 +78,23 @@ function newTabWindow(event, url, frameName, disposition, options) {
     options.modal = true;
   }
   let newTab = tabGroup.addTab(options);
-  newTab.webview.addEventListener('page-title-updated', () => {
-    const newTitle = newTab.webview.getTitle();
+  newTab.webview.addEventListener('page-title-updated', (e) => {
+    const newTitle = e.target.getTitle();
     newTab.setTitle(newTitle);
   });
+  newTab.on("webview-ready", (e) =>{
+    console.log('webview ready', e);
+    //e.webview.loadURL(openPageURL);
+    //openPageURL = '';
+  });
   newTab.webview.addEventListener('dom-ready', (e) => {
-    console.log(e);
+    console.log("new tab", e);
+    e.target.openDevTools();
     if (openPageURL !== '') {
-      let newTabContents = newTab.webview.getWebContents();
-      let newURL = openPageURL;
-      openPageURL = '';
-      newTab.webview.loadURL(newURL);
+      let newTabContents = e.target.getWebContents();
+      //let newURL = openPageURL;
+      //openPageURL = '';
+      //e.target.loadURL(newURL);
       newTabContents.on('new-window', (event, url, frameName, disposition, options) => {
         event.preventDefault();
         newTabWindow(event, url, frameName, disposition, options);
