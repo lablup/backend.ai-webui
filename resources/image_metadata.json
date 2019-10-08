@@ -1,0 +1,109 @@
+{
+  "aliases": {
+    "Lablup ResearchEnv.": "python-ff",
+    "TensorFlow": "python-tensorflow",
+    "TensorFlow (Julia)": "julia-tensorflow",
+    "TensorFlow (Swift)": "swift-tensorflow",
+    "Python": "python",
+    "Python (Intel MKL)": "python-intel",
+    "Python (Intel)": "intel-python",
+    "TensorFlow (Intel)": "intel-tensorflow",
+    "PyTorch": "python-pytorch",
+    "Chainer": "chainer",
+    "R": "r-base",
+    "Julia": "julia",
+    "Lua": "lua",
+    "RAPID (NGC)": "ngc-rapid",
+    "DIGITS (NGC)": "ngc-digits",
+    "PyTorch (NGC)": "ngc-pytorch",
+    "TensorFlow (NGC)": "ngc-tensorflow",
+    "PyTorch (Cloudia)": "lablup-pytorch",
+    "Neural Network Intelligence": "nni",
+    "H2O": "h2o",
+    "SFTP": "sftp",
+    "SSH": "ssh"
+  },
+  "tags": {
+    "TensorFlow": [],
+    "TensorFlow (Julia)": [],
+    "TensorFlow (Swift)": [],
+    "Lablup ResearchEnv.": [],
+    "Python": [],
+    "Python (Intel MKL)": [
+      "Intel MKL"
+    ],
+    "Python (Intel)": [
+      "Intel"
+    ],
+    "TensorFlow (Intel)": [
+      "Intel"
+    ],
+    "PyTorch": [],
+    "Chainer": [],
+    "R": [],
+    "Julia": [],
+    "Lua": [],
+    "RAPID (NGC)": [
+      "Nvidia GPU Cloud"
+    ],
+    "DIGITS (NGC)": [
+      "Nvidia GPU Cloud"
+    ],
+    "PyTorch (NGC)": [
+      "Nvidia GPU Cloud"
+    ],
+    "TensorFlow (NGC)": [
+      "Nvidia GPU Cloud"
+    ],
+    "PyTorch (Cloudia)": [
+      "Cloudia"
+    ],
+    "Neural Network Intelligence": [
+      "Microsoft"
+    ],
+    "H2O": [
+      "h2o.ai"
+    ],
+    "SFTP": [
+      "backend.ai"
+    ],
+    "SSH": [
+      "backend.ai"
+    ]
+  },
+  "humanizedNames": {
+    "cpp": "C++",
+    "gcc": "C",
+    "go": "Go",
+    "haskell": "Haskell",
+    "java": "Java",
+    "julia": "Julia",
+    "lua": "Lua",
+    "ngc-rapid": "RAPID (NGC)",
+    "ngc-digits": "DIGITS (NGC)",
+    "ngc-pytorch": "PyTorch (NGC)",
+    "ngc-tensorflow": "TensorFlow (NGC)",
+    "python-intel": "Python (Intel MKL)",
+    "intel-python": "Python (Intel)",
+    "intel-tensorflow": "TensorFlow (Intel)",
+    "nodejs": "Node.js",
+    "octave": "Octave",
+    "php": "PHP",
+    "python": "Python",
+    "python-ff": "Lablup ResearchEnv.",
+    "python-cntk": "CNTK",
+    "python-pytorch": "PyTorch",
+    "python-tensorflow": "TensorFlow",
+    "julia-tensorflow": "TensorFlow (Julia)",
+    "swift-tensorflow": "TensorFlow (Swift)",
+    "r-base": "R",
+    "rust": "Rust",
+    "scala": "Scala",
+    "scheme": "Scheme",
+    "lablup-pytorch": "PyTorch (Cloudia)",
+    "nni": "Neural Network Intelligence",
+    "h2o": "H2O.ai",
+    "sftp": "SFTP",
+    "ssh": "SSH"
+  }
+}
