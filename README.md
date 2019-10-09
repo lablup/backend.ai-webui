@@ -29,6 +29,7 @@ Backend.AI console focuses to
 ## Management Features
  * Keypair management
     * Allocate resource limitation for keys
+    * Add / remove resource policies
  * Kernel managements
     * List supported kernels
      * Add kernels
