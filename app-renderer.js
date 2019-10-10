@@ -23,7 +23,7 @@ mainURL = url.format({
 
 let openPageURL = '';
 let openPageEvent = {};
-let defaultWebPreferences = "allowRunningInsecureContent=true,nativeWindowOpen=yes";
+let defaultWebPreferences = "allowRunningInsecureContent,nativeWindowOpen=yes";
 
 let tabGroup = new TabGroup();
 let mainAppTab = tabGroup.addTab({
@@ -34,6 +34,7 @@ let mainAppTab = tabGroup.addTab({
   active: true,
   webviewAttributes: {
     allowpopups: 'on',
+    nativewindowopen: 'yes',
     webpreferences: defaultWebPreferences
   }
 });
@@ -93,7 +94,7 @@ mainWebView.addEventListener('dom-ready', (e) => {
   });
 
   mainWebViewWebContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+    return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
 });
 
@@ -103,9 +104,9 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   const ev = event;
   //openPageEvent = event;
   //console.log('event log:', ev);
-  //if (url === 'about:blank#blocked') {
-  //  url = '';//'about:blank';
-  // }
+  if (url === 'about:blank#blocked') {
+    url = window.__local_proxy;//'about:blank';
+   }
   openPageURL = url;
   //Object.assign(options, {
   let local_options = {
@@ -116,6 +117,7 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     closable: true,
     webviewAttributes: {
       allowpopups: true,
+      nativewindowopen: 'yes',
       webpreferences: defaultWebPreferences
     },
     ready: loadURLonTab
@@ -146,13 +148,21 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     //console.log('from event,', ev);
     //console.log("new tab", e);
     //if (openPageURL != '') {
+
       e.target.openDevTools();
       let newTabContents = e.target.getWebContents();
       //let newURL = openPageURL;
       //openPageURL = '';
       //e.target.loadURL(newURL);
+    //e.target.executeJavaScript(`
+    //  window.open = function backendAIOpenWindow(url, frameName) {
+    //    return originalWindowOpen(url, frameName, 'FEATURES_STRING');
+    //  }
+    //`);
+
+
       newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-        newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+        return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
       });
       //openPageEvent.newGuest = newTabContents.webContents;
       //console.log('window? ', openPageEvent.newGuest.window);
@@ -170,11 +180,13 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     console.log('favicon', e.favicons[0]);
     tab.setIcon(e.favicons[0]);
   });
-  event.newGuest = newTabWebView;
+  console.log(newTabWebView);
+  event.newGuest = 'asdasdasd';//newTabWebView;
+  event.newGuest.ABC = 3;
   //event.newGuest = tab.webview.getWebContents();
   //event.newGuest = newTab.webview.getWebContents();
   //console.log("New window: ", newTab.webview);
-  //return newTab.webview;
+  return newTabWebView;
 }
 
 function loadURLonTab(tab) {

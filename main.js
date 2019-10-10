@@ -450,9 +450,10 @@ function createWindow() {
     devtools = null;
   });
 
-  //mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-  //  newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
-  //});
+  mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+    console.log('---------------------------------------------------------------');
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
+  });
 }
 
 function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {
@@ -482,6 +483,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   });
   event.newGuest.loadURL(url);
   event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+    console.log('---------------------------------------------------------------');
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event);
   });
   event.newGuest.on('close', (e) => {
@@ -545,6 +547,7 @@ app.on('web-contents-created', (event, contents) => {
     // Strip away preload scripts if unused or verify their location is legitimate
     delete webPreferences.preload;
     delete webPreferences.preloadURL;
+    webPreferences.nativeWindowOpen = true;
     //console.log(event);
     // Disable Node.js integration
     //webPreferences.nodeIntegration = false;
