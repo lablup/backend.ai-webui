@@ -94,22 +94,24 @@ mainWebView.addEventListener('dom-ready', (e) => {
   });
 
   mainWebViewWebContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+    newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
 });
 
 function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
+  let guestInstanceId = options && options.webPreferences && options.webPreferences.guestInstanceId;
+  console.log(guestInstanceId);
   event.preventDefault();
   console.log('------- requested URL:', url);
   const ev = event;
   //openPageEvent = event;
   //console.log('event log:', ev);
-  if (url === 'about:blank#blocked') {
-    url = window.__local_proxy;//'about:blank';
-   }
+  //if (url === 'about:blank#blocked') {
+  //  url = window.__local_proxy;//'about:blank';
+  // }
   openPageURL = url;
-  //Object.assign(options, {
-  let local_options = {
+  Object.assign(options, {
+  //let local_options = {
     title: "Loading...",
     frame: true,
     visible: true,
@@ -121,16 +123,16 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
       webpreferences: defaultWebPreferences
     },
     ready: loadURLonTab
-  };
+  });
   if (url !== '') {
-    local_options['src'] = url;
+    options['src'] = url;
   } else {
-    local_options['src'] = "";
-
+    options['src'] = "";
   }
-  console.log(local_options);
+  options.webviewAttributes['data-guest-instance-id'] = guestInstanceId;
+  console.log(options);
   //);
-  let tab = tabGroup.addTab(local_options);
+  let tab = tabGroup.addTab(options);
   console.log(tab);
   const newTabWebView = tab.webview;
   console.log("new tab webview:", newTabWebView);
@@ -169,6 +171,11 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
       //console.log('window22? ', openPageEvent.newGuest);
       //ev.newGuest = newTabContents;
     //}
+  });
+  newTabWebView.addEventListener('did-finish-load', () => {
+    //console.log('load finished', guestInstanceId);
+    //newTabWebView.setAttribute('data-guest-instance-id',guestInstanceId);
+    console.log(newTabWebView);
   });
   newTabWebView.addEventListener('did-navigate', (e) => {
     console.log('navigate to 222', e);
