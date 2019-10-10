@@ -68,11 +68,7 @@
     "browserify": "^16.5.0",
     "buffer": "^5.4.3",
     "cors": "^2.8.5",
-<<<<<<< HEAD
-    "electron": "^6.0.11",
-=======
     "electron": "^6.0.12",
->>>>>>> master
     "electron-installer-dmg": "^3.0.0",
     "electron-packager": "^14.0.6",
     "es-dev-server": "^1.18.3",
