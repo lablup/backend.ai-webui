@@ -19,6 +19,7 @@ import '@material/mwc-icon-button';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/card';
+import 'weightless/checkbox';
 import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/icon';
@@ -106,6 +107,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
   /* Parameters required to launch a session on behalf of other user */
+  @property({type: String}) ownerDomain;
   @property({type: Array}) ownerGroups;
   @property({type: Array}) ownerScalingGroups;
 
@@ -380,6 +382,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.metric_updating = false;
     this.metadata_updating = false;
     /* Parameters required to launch a session on behalf of other user */
+    this.ownerDomain = '';
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
   }
@@ -640,6 +643,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['domain'] = window.backendaiclient._config.domainName;
       config['scaling_group'] = this.scaling_group;
       config['maxWaitSeconds'] = 5;
+      if (this.shadowRoot.querySelector('#owner-enable').checked) {
+        config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+        config['domain'] = this.ownerDomain;
+        config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
+        config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').value;
+        if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
+          this.notification.text = 'Not enough ownership information';
+          this.notification.show();
+        }
+      }
     }
     config['cpu'] = this.cpu_request;
     if (this.gpu_mode == 'fgpu') {
@@ -1493,7 +1506,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return;
     }
     const email = kpInfo.keypair.user_id;
-    const userInfo = await window.backendaiclient.user.get(email, ['groups {id name}']);
+    const userInfo = await window.backendaiclient.user.get(email, ['domain_name', 'groups {id name}']);
+    this.ownerDomain = userInfo.user.domain_name;
     this.ownerGroups = userInfo.user.groups;
     if (this.ownerGroups) {
       this.shadowRoot.querySelector('#owner-group paper-listbox').selected = this.ownerGroups[0].name;
@@ -1776,7 +1790,7 @@ ${this.resource_templates.map(item => html`
                       `)}
                     </paper-listbox>
                   </paper-dropdown-menu>
-                  <paper-dropdown-menu id="owner-scaling-group" label="Owner scaling group">
+                  <paper-dropdown-menu id="owner-scaling-group" label="Owner resource group">
                     <paper-listbox slot="dropdown-content" selected="0">
                       ${this.ownerScalingGroups.map(item => html`
                         <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
@@ -1784,6 +1798,10 @@ ${this.resource_templates.map(item => html`
                     </paper-listbox>
                   </paper-dropdown-menu>
                 </div>
+                <wl-label>
+                  <wl-checkbox id="owner-enable"></wl-checkbox>
+                  Launch session on behalf of the access key
+                </wl-label>
               </div>
             </wl-expansion>
 
