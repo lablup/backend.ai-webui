@@ -105,6 +105,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
+  /* Parameters required to launch a session on behalf of other user */
+  @property({type: Array}) ownerGroups;
+  @property({type: Array}) ownerScalingGroups;
 
   constructor() {
     super();
@@ -376,6 +379,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
+    /* Parameters required to launch a session on behalf of other user */
+    this.ownerGroups = [];
+    this.ownerScalingGroups = [];
   }
 
   firstUpdated() {
@@ -390,6 +396,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
+    this.shadowRoot.querySelector('#owner-group').addEventListener('selected-item-label-changed', this._fetchSessionOwnerScalingGroups.bind(this));
 
     this.notification = window.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -1470,6 +1477,43 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return false;
   }
 
+  async _fetchSessionOwnerGroups() {
+    const accessKey = this.shadowRoot.querySelector('#owner-accesskey').value;
+    if (!accessKey) {
+      this.notification.text = 'Enter access key';
+      this.notification.show();
+      this.ownerGroups = [];
+      return;
+    }
+    const kpInfo = await window.backendaiclient.keypair.info(accessKey, ['user_id']);
+    if (!kpInfo.keypair || !kpInfo.keypair.user_id) {
+      this.notification.text = 'No access key information';
+      this.notification.show();
+      this.ownerGroups = [];
+      return;
+    }
+    const email = kpInfo.keypair.user_id;
+    const userInfo = await window.backendaiclient.user.get(email, ['groups {id name}']);
+    this.ownerGroups = userInfo.user.groups;
+    if (this.ownerGroups) {
+      this.shadowRoot.querySelector('#owner-group paper-listbox').selected = this.ownerGroups[0].name;
+    }
+  }
+
+  async _fetchSessionOwnerScalingGroups() {
+    const group = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+    if (!group) {
+      this.ownerScalingGroups = [];
+      return;
+    }
+    const sgroupInfo = await window.backendaiclient.scalingGroup.list(group);
+    this.ownerScalingGroups = sgroupInfo.scaling_groups;
+    console.log()
+    if (this.ownerScalingGroups) {
+      this.shadowRoot.querySelector('#owner-scaling-group paper-listbox').selected = 0;
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1708,6 +1752,37 @@ ${this.resource_templates.map(item => html`
                                 pin snaps editable step=1
                                 min="1" max="${this.concurrency_limit}" value="${this.session_request}"></paper-slider>
                   <span class="caption">#</span>
+                </div>
+              </div>
+            </wl-expansion>
+
+            <wl-expansion name="ownership">
+              <span slot="title">Ownership</span>
+              <span slot="description">Set session owner</span>
+              <div class="vertical layout">
+                <div class="horizontal center layout">
+                  <paper-input id="owner-accesskey" class="flex" value=""
+                    label="Owner Access Key" size="40"></paper-input>
+                  <mwc-icon-button icon="refresh" class="blue"
+                    @click="${() => this._fetchSessionOwnerGroups()}">
+                  </mwc-icon-button>
+                </div>
+                <div class="horizontal center layout">
+                  <paper-dropdown-menu id="owner-group" label="Owner group" horizontal-align="left">
+                    <paper-listbox slot="dropdown-content" attr-for-selected="id"
+                                  selected="${this.default_language}">
+                      ${this.ownerGroups.map(item => html`
+                        <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+                      `)}
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+                  <paper-dropdown-menu id="owner-scaling-group" label="Owner scaling group">
+                    <paper-listbox slot="dropdown-content" selected="0">
+                      ${this.ownerScalingGroups.map(item => html`
+                        <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+                      `)}
+                    </paper-listbox>
+                  </paper-dropdown-menu>
                 </div>
               </div>
             </wl-expansion>
