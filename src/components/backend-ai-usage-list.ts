@@ -192,7 +192,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           </div>
           <backend-ai-chart
             width="1000"
-            height="150"
+            height="180"
             elevation="1"
             type="line"
             idx=${idx}

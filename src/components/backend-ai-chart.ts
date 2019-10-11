@@ -37,6 +37,11 @@ const ByteConverter = {
   }
 };
 
+const capitalize = (s) => {
+  if (typeof s !== 'string') return '';
+  return s.charAt(0).toUpperCase() + s.slice(1)
+};
+
 @customElement("backend-ai-chart")
 export default class BackendAIChart extends LitElement {
   public shadowRoot: any; // ShadowRoot
@@ -178,9 +183,10 @@ export default class BackendAIChart extends LitElement {
    * To resolve this issue, the code must follow the lowest unit among the arrays.
    */
   scaleData() {
+    console.log('scale data');
     const converted = this.collection.data.map(e => ByteConverter.scale(e));
     this.collection.data = converted.map(e => e.data);
-    this.collection.unit_hint = converted[0].unit;
+    this.collection.unit_hint = {"B": 'Bytes', "KB": 'KBytes', "MB": 'MB', "GB": 'GB', "TB": 'TB'}[converted[0].unit];
   }
 
   render() {
@@ -442,6 +448,7 @@ export default class BackendAIChart extends LitElement {
     const margin = {top: 50, right: 50, bottom: 50, left: 50},
       graphWidth = this.width - margin.left - margin.right,
       graphHeight = this.height - margin.top - margin.bottom;
+    console.log(this.collection.unit_hint);
 
     if (this.collection.unit_hint === "bytes") this.scaleData();
 
@@ -564,15 +571,16 @@ export default class BackendAIChart extends LitElement {
     //   .style("font-size": "15px")
     //   .text(this.collection.axisTitle.y);
 
+    // Unit on y axis
     g
       .append("text")
       .attr(
         "transform",
-        "translate(0, -5)"
+        "translate(0, -15)"
       )
       .style("text-anchor", "middle")
-      .style("font-size", 5)
-      .text(this.collection.unit_hint);
+      .style("font-size", 15)
+      .text(capitalize(this.collection.unit_hint));
 
     // actual line graph
     g
