@@ -166,6 +166,7 @@ export default class BackendAISummary extends BackendAIPage {
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.indicator.hide();
       this.jobs = response;
+      console.log(response.compute_session_list.total_count);
       this.sessions = response.compute_session_list.total_count;
       if (this.active === true) {
         setTimeout(() => {
@@ -174,7 +175,7 @@ export default class BackendAISummary extends BackendAIPage {
       }
     }).catch(err => {
       this.jobs = [];
-      this.sessions = [];
+      this.sessions = 0;
       this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
       this.notification.detail = err;
       this.notification.show(true);
@@ -409,7 +410,7 @@ export default class BackendAISummary extends BackendAIPage {
                     <span>Connected nodes</span>
                   </div>` : html``}
                 <div class="vertical layout center">
-                  <div class="big indicator">${this._countObject(this.sessions)}</div>
+                  <div class="big indicator">${this.sessions}</div>
                   <span>Active sessions</span>
                 </div>
               </div>
