@@ -101,15 +101,11 @@ export default class BackendAIStatisticsView extends BackendAIPage {
           <h3 class="tab horizontal center layout">
             <wl-tab-group>
               <wl-tab value="usage" checked @click="${e => this._showTab(e.target)}">Usage</wl-tab>
-              <wl-tab value="insight" disabled @click="${e => this._showTab(e.target)}">Insight</wl-tab>
             </wl-tab-group>
           </h3>
           <div class="horizontal wrap layout">
             <div id="usage-stat" class="tab-content">
               <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
-            </div>
-            <div id="insight-stat" class="tab-content" style="display: none;">
-              <div></div>
             </div>
           </div>
         </wl-card>
