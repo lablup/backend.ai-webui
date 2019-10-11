@@ -1991,7 +1991,9 @@ class ScalingGroup {
         }
     }
     list(group = 'default') {
-        const queryString = `/scaling-groups?group=${this.client.current_group}`;
+        if (!group)
+            group = this.client.current_group;
+        const queryString = `/scaling-groups?group=${group}`;
         const rqst = this.client.newSignedRequest("GET", queryString, null);
         return this.client._wrapWithPromise(rqst);
     }
