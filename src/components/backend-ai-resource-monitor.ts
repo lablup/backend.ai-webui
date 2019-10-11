@@ -594,6 +594,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
       }
+
+      if (!window.backendaiclient.is_admin) {
+        const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+        ownershipPanel.parentElement.removeChild(ownershipPanel);
+      }
+
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
