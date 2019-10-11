@@ -1556,7 +1556,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div class="vertical start-justified layout">
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
-          <span style="margin-right:5px;">Current Scaling Group (${this.scaling_group})</span>
+          <span style="margin-right:5px;">Current Resource Group (${this.scaling_group})</span>
         </div>
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
@@ -1605,7 +1605,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
+                <paper-dropdown-menu id="scaling-groups" label="Resource Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
       html`
