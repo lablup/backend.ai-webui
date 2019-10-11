@@ -483,7 +483,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
             }
             let scaling_select = document.createElement('wl-select');
-            scaling_select.label = "Scaling Group";
+            scaling_select.label = "Resource Group";
             scaling_select.name = 'scaling-group-select';
             scaling_select.id = 'scaling-group-select';
             scaling_select.value = this.scaling_group;
@@ -491,7 +491,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
-            opt.innerHTML = 'Select Scaling Group';
+            opt.innerHTML = 'Select Resource Group';
             scaling_select.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');

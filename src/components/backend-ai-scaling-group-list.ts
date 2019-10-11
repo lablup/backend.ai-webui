@@ -230,7 +230,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       domain = this.shadowRoot.querySelector("#scaling-group-domain").value;
 
     if (scalingGroup === "") {
-      this.notification.text = "Enter valid scaling group name";
+      this.notification.text = "Enter valid Resource group name";
       this.notification.show();
       this._hideDialogById("#create-scaling-group-dialog");
       return;
@@ -250,7 +250,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       })
       .then(({associate_scaling_group_with_domain: res}) => {
         if (res.ok) {
-          this.notification.text = "Scaling group succesfully created";
+          this.notification.text = "Resource group succesfully created";
           this._refreshList();
           this.shadowRoot.querySelector("#scaling-group-name").value = "";
           this.shadowRoot.querySelector("#scaling-group-description").value = "";
@@ -288,7 +288,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     window.backendaiclient.scalingGroup.modify(name, input)
       .then(({modify_scaling_group}) => {
         if (modify_scaling_group.ok) {
-          this.notification.text = "Scaling group successfully modified";
+          this.notification.text = "Resource group successfully modified";
           this._refreshList();
         } else {
           this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
@@ -303,7 +303,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const name = this.scalingGroups[this.selectedIndex].name;
 
     if (this.shadowRoot.querySelector("#delete-scaling-group").value !== name) {
-      this.notification.text = "Scaling group name does not match!";
+      this.notification.text = "Resource group name does not match!";
       this._hideDialogById("#delete-scaling-group-dialog");
       this.notification.show();
       return;
@@ -312,7 +312,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     window.backendaiclient.scalingGroup.delete(name)
       .then(({delete_scaling_group}) => {
         if (delete_scaling_group.ok) {
-          this.notification.text = "Scaling group successfully deleted";
+          this.notification.text = "Resource group successfully deleted";
           this._refreshList();
           this.shadowRoot.querySelector("#delete-scaling-group").value = "";
         } else {
@@ -337,7 +337,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     // languate=HTML
     return html`
       <h4 class="horizontal flex center center-justified layout">
-        <span>Scaling Groups</span>
+        <span>Resource groups</span>
         <span class="flex"></span>
         <wl-button
           class="fg blue"
@@ -390,7 +390,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       <wl-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create Scaling Group</span>
+            <span>Create Resource Group</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click=${e => this._hideDialog(e)}>
               <wl-icon>close</wl-icon>
@@ -401,7 +401,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               <wl-textfield
                 type="text"
                 id="scaling-group-name"
-                label="Scaling Group Name"
+                label="Resource Group Name"
               ></wl-textfield>
               <wl-textarea
                 name="description"
@@ -424,7 +424,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                 <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
                   @click="${this._createScalingGroup}">
                   <wl-icon>add</wl-icon>
-                  Create Scaling Group
+                  Create resource group
                 </wl-button>
               </div>
             </fieldset>
@@ -434,7 +434,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       <wl-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Modify Scaling Group</span>
+            <span>Modify resource group</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click="${e => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -476,7 +476,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           <wl-textfield
             id="delete-scaling-group"
             type="text"
-            label="Type Scaling Group name to delete"
+            label="Type resource group name to delete"
           ></wl-textfield>
           <wl-button
             class="fg red delete"
