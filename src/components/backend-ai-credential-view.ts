@@ -199,7 +199,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       }, true);
     });
 
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         if (window.backendaiclient.is_admin !== true) {
           this.disablePage();

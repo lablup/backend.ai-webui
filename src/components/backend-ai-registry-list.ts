@@ -124,7 +124,7 @@ class BackendAIRegistryList extends BackendAIPage {
     }
 
     // If disconnected
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
     } else { // already connected

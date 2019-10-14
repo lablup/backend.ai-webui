@@ -24,9 +24,13 @@ const ByteConverter = {
     return ["B", "KB", "MB", "GB", "TB"][Math.floor(this.log1024(bytes))];
   },
 
-  scale: function (data) {
-    const minUnit = this.readableUnit(d3.min(data, d => d.y));
-
+  scale: function (data, targetUnit = '') {
+    let minUnit;
+    if (targetUnit === '') {
+      minUnit = this.readableUnit(d3.min(data, d => d.y));
+    } else {
+      minUnit = 'MB';
+    }
     return {
       data: data.map(e => ({
         ...e,
@@ -37,6 +41,11 @@ const ByteConverter = {
   }
 };
 
+const capitalize = (s) => {
+  if (typeof s !== 'string') return '';
+  return s.charAt(0).toUpperCase() + s.slice(1)
+};
+
 @customElement("backend-ai-chart")
 export default class BackendAIChart extends LitElement {
   public shadowRoot: any; // ShadowRoot
@@ -45,6 +54,7 @@ export default class BackendAIChart extends LitElement {
   @property({type: String}) message = '';
   @property({type: Number}) width = 300;
   @property({type: Number}) height = 300;
+  @property({type: Boolean}) autoRescale = true;
   @property({type: Number}) idx;
   @property({type: Number}) graphWidth;
   @property({type: Number}) graphHeight;
@@ -104,57 +114,57 @@ export default class BackendAIChart extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-          wl-card {
-              display: block;
-              background: white;
-              box-sizing: border-box;
-              margin: 15px 0px;
-              padding: 0;
-              border-radius: 5px;
-          }
+        wl-card {
+          display: block;
+          background: white;
+          box-sizing: border-box;
+          margin: 15px 0px;
+          padding: 0;
+          border-radius: 5px;
+        }
 
-          wl-card > div {
-              font-size: 12px;
-          }
+        wl-card > div {
+          font-size: 12px;
+        }
 
-          #chart-canvas {
-              margin: auto 10px;
-          }
+        #chart-canvas {
+          margin: auto 10px;
+        }
 
-          .line {
-              fill: none;
-              stroke-width: 1;
-          }
+        .line {
+          fill: none;
+          stroke-width: 1;
+        }
 
-          .axisGray line {
-              stroke: #646464;
-          }
+        .axisGray line {
+          stroke: #646464;
+        }
 
-          .axisGray path {
-              stroke: #646464;
-          }
+        .axisGray path {
+          stroke: #646464;
+        }
 
-          .textGray text {
-              fill: #8c8c8c;
-          }
+        .textGray text {
+          fill: #8c8c8c;
+        }
 
-          text.normalize {
-              font-size: 11px;
-          }
+        text.normalize {
+          font-size: 11px;
+        }
 
-          text.title {
-              font-size: 15px;
-          }
+        text.title {
+          font-size: 15px;
+        }
 
-          .x.axis {
-              font-size: 14px;
-          }
+        .x.axis {
+          font-size: 14px;
+        }
 
-          text.tooltip-x,
-          text.tooltip-y {
-              font-size: 10px;
-              fill: #37474f;
-          }
+        text.tooltip-x,
+        text.tooltip-y {
+          font-size: 10px;
+          fill: #37474f;
+        }
       `
     ];
   }
@@ -178,9 +188,10 @@ export default class BackendAIChart extends LitElement {
    * To resolve this issue, the code must follow the lowest unit among the arrays.
    */
   scaleData() {
-    const converted = this.collection.data.map(e => ByteConverter.scale(e));
+    console.log('scale data');
+    const converted = this.collection.data.map(e => ByteConverter.scale(e, 'MB'));
     this.collection.data = converted.map(e => e.data);
-    this.collection.unit_hint = converted[0].unit;
+    this.collection.unit_hint = {"B": 'Bytes', "KB": 'KBytes', "MB": 'MB', "GB": 'GB', "TB": 'TB'}[converted[0].unit];
   }
 
   render() {
@@ -436,6 +447,17 @@ export default class BackendAIChart extends LitElement {
               .attr("width", w);
           })
       });
+    let tickFormat = d3.timeFormat("%b %d %H:%M");
+    g.selectAll('g.x.axis g text').each(function (this: any, d) {
+      var el = d3.select(this);
+      var words = tickFormat(d).toString().split(' ');
+      el.text('');
+      for (var i = 0; i < words.length; i++) {
+        var tspan = el.append('tspan').text(words[i]);
+        if (i > 0)
+          tspan.attr('x', 0).attr('dy', '15');
+      }
+    });
   }
 
   toolbox() {
@@ -461,10 +483,15 @@ export default class BackendAIChart extends LitElement {
       .scaleLinear()
       .domain([d3.min(data.map(datum => d3.min(datum, d => d.y))), d3.max(data.map(datum => d3.max(datum, d => d.y)))])
       .range([graphHeight, 0]);
-
+    let yAxisTickFormat;
+    if (["Bytes", "MB", "count"].includes(this.collection.unit_hint)) {
+      yAxisTickFormat = "d";
+    } else {
+      yAxisTickFormat = ".1f";
+    }
     const yAxis = d3
       .axisLeft(yScale)
-      .ticks(5, ".2f");
+      .ticks(5, yAxisTickFormat);
 
     const line = d3
       .line()
@@ -541,9 +568,10 @@ export default class BackendAIChart extends LitElement {
       .append("text")
       .attr(
         "transform",
-        `translate(${graphWidth / 2}, ${graphHeight + margin.bottom - 15})`
+        `translate(${graphWidth + 40}, ${graphHeight + margin.bottom - 45})`
       )
-      .style("text-anchor", "middle")
+      .style("text-anchor", "end")
+      .style("font-size", 15)
       .attr("class", "normalize")
       .text(this.collection.axisTitle.x);
 
@@ -564,15 +592,16 @@ export default class BackendAIChart extends LitElement {
     //   .style("font-size": "15px")
     //   .text(this.collection.axisTitle.y);
 
+    // Unit on y axis
     g
       .append("text")
       .attr(
         "transform",
-        "translate(0, -5)"
+        "translate(0, -15)"
       )
       .style("text-anchor", "middle")
-      .style("font-size", 5)
-      .text(this.collection.unit_hint);
+      .style("font-size", 15)
+      .text(capitalize(this.collection.unit_hint));
 
     // actual line graph
     g
@@ -733,7 +762,6 @@ export default class BackendAIChart extends LitElement {
           })
 
       })
-
   }
 
 }

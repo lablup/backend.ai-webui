@@ -40,8 +40,9 @@ export default class BackendAIUsageList extends BackendAIPage {
       "length": 4 * 24 * 7
     }
   };
-  @property({type: Object}) collection = {};
+  @property({type: Object}) collection = Object();
   @property({type: String}) period = '1D';
+  @property({type: Boolean}) updating = false;
   public data: any;
 
   constructor() {
@@ -60,19 +61,14 @@ export default class BackendAIUsageList extends BackendAIPage {
       css`
         wl-select {
           --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
+          --input-color-disabled: #222222;
+          --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
+          --input-border-style-disabled: 1px solid #cccccc;
         }
 
-        h3 {
-            display: block;
-            font-weight: 100;
-            width: 100%;
-            padding: 5px 15px;
-            text-align: left;
-            border-top: 1px solid #ccc;
+        wl-card {
+          --card-elevation: 0;
         }
       `
     ]
@@ -95,29 +91,54 @@ export default class BackendAIUsageList extends BackendAIPage {
 
   async _menuChanged(active) {
     await this.updateComplete;
-
     if (active === false) {
       this.shadowRoot.querySelectorAll("backend-ai-chart").forEach(e => {
         e.wipe();
       });
       return;
     }
+    this.init();
+  }
 
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+  firstUpdated() {
+    //this.init();
+  }
+
+  init() {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener("backend-ai-connected", () => {
-        this.init();
+        if (this.updating) {
+          return;
+        }
+        this.updating = true;
+        this.readUserStat()
+          .then(res => {
+            this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {
+              chart.init()
+            });
+            this.updating = false;
+          }).catch(e => {
+          this.updating = false;
+        });
       }, true);
     } else {
-      this.init()
+      if (this.updating) {
+        return;
+      }
+      this.updating = true;
+      this.readUserStat()
         .then(res => {
           this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {
             chart.init()
           });
-        })
+          this.updating = false;
+        }).catch(e => {
+        this.updating = false;
+      });
     }
   }
 
-  init() {
+  readUserStat() {
     return window.backendaiclient.resources.user_stats()
       .then(res => {
         const {period, templates} = this;
@@ -140,9 +161,11 @@ export default class BackendAIUsageList extends BackendAIPage {
           }
 
         });
+        console.log(collection);
         this.collection = collection;
         return this.updateComplete;
-      })
+      }).catch(e => {
+      });
   }
 
   pulldownChange(e) {
@@ -173,33 +196,37 @@ export default class BackendAIUsageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="layout horizontal end-justified flex">
-      <div class="flex"></div>
-        <wl-select label="Select Period" style="width: 130px" @input=${this.pulldownChange}>
-          <option value disabled>Select Period</option>
-          <option value="1D" selected>1 Day</option>
-          <option value="1W">1 Week</option>
-        </wl-select>
-      </div>
-      <div class="layout vertical center flex wrap">
-      ${this.collection != {} ?
+      <wl-card elevation="0">
+        <h3 class="horizontal center layout">
+          <wl-select label="Select Period" style="width: 130px;" @input=${this.pulldownChange}>
+            <option value disabled>Select Period</option>
+            <option value="1D" selected>1 Day</option>
+            <option value="1W">1 Week</option>
+          </wl-select>
+          <span class="flex"></span>
+        </h3>
+        ${Object.keys(this.collection).length > 0 ?
       Object.keys(this._map).map((key, idx) =>
         html`
-          <div class="layout horizontal center flex" style="width:100%;">
-              <h3>${this._map[key]}</h3>
-              <span></span>
-              <span class="flex"></span>
-          </div>
-          <backend-ai-chart
-            width="1000"
-            height="150"
-            elevation="1"
-            type="line"
-            idx=${idx}
-            .collection=${this.collection[this.period][key]}
-          ></backend-ai-chart>
-          `) : html``}
-      </div>
+          <wl-card>
+            <h3 class="horizontal center layout">
+              <span>${this._map[key]}</span>
+              <span class="flex"></span>            
+            </h3>
+            </div>
+            <div style="width:100%;min-height:180px;">
+              <backend-ai-chart
+                width="1000"
+                height="180"
+                elevation="1"
+                type="line"
+                idx=${idx}
+                .collection=${this.collection[this.period][key]}
+              ></backend-ai-chart>
+            </div>
+          </wl-card>
+            `) : html``}
+      </wl-card>
     `;
   }
 }
