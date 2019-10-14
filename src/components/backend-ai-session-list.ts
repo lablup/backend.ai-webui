@@ -640,7 +640,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   async _open_wsproxy(kernelId, app = 'jupyter') {
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       return false;
     }
 
@@ -701,11 +701,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (appName === undefined || appName === null) {
       return;
     }
+    //if (appName === 'sshd') { // Special case. Built-in SSH / SFTP support
+    //  this._hideAppLauncher();
+    //  return this._openSSHDialog();
+    //}
+
     if (urlPostfix === undefined || urlPostfix === null) {
       urlPostfix = '';
     }
 
-    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+    if (typeof window.backendaiwsproxy === "undefined" || window.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(kernelId, appName)
@@ -744,27 +749,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _runJupyterTerminal(e) {
-    const controller = e.target;
-    const controls = controller.closest('#controls');
-    const kernelId = controls['kernel-id'];
-    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-      this.shadowRoot.querySelector('#indicator').start();
-      this._open_wsproxy(kernelId, 'jupyter')
-        .then((response) => {
-          if (response.url) {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
-            setTimeout(() => {
-              window.open(response.url + "&redirect=/terminals/1", '_blank');
-              this.shadowRoot.querySelector('#indicator').end();
-              console.log("Jupyter terminal proxy loaded: ");
-              console.log(kernelId);
-            }, 1000);
-          }
-        });
-    }
-  }
-
   // Single session closing
   _openTerminateSessionDialog(e) {
     const controller = e.target;
@@ -776,6 +760,15 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog.show();
   }
 
+  _openSSHDialog(e) {
+    let dialog = this.shadowRoot.querySelector('#ssh-dialog');
+    //dialog.setAttribute('kernel-id', kernelId);
+    //dialog.setAttribute('access-key', accessKey);
+    //dialog.positionTarget = e.target;
+
+    this.shadowRoot.querySelector('#ssh-dialog').show();
+
+  }
   _terminateSession(e) {
     const controls = e.target.closest('#controls');
     const kernelId = controls['kernel-id'];
@@ -1170,6 +1163,21 @@ ${item.map(item => {
             </div>
           `)}
            </div>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling
+                    style="padding:0;">
+        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
+          <h4 class="horizontal center layout" style="font-weight:bold">
+            <span>SSH / SFTP connection</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h4>
+          <div style="padding:15px;" class="horizontal layout wrap center center-justified">
+          <h5>Connect SSH / SFTP</h5> 
+          </div>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>

@@ -307,7 +307,7 @@ export default class BackendAISummary extends BackendAIPage {
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     this._init_resource_values();
     this.requestUpdate();
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
