@@ -768,9 +768,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog.show();
   }
 
-  _openSSHDialog(port) {
+  _openSSHDialog() {
     let dialog = this.shadowRoot.querySelector('#ssh-dialog');
-    this.shadowRoot.querySelector('#ssh-dialog').show();
+    dialog.show();
 
   }
   _terminateSession(e) {

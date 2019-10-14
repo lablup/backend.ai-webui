@@ -40,7 +40,7 @@ export default class BackendAIUsageList extends BackendAIPage {
       "length": 4 * 24 * 7
     }
   };
-  @property({type: Object}) collection = {};
+  @property({type: Object}) collection = Object();
   @property({type: String}) period = '1D';
   @property({type: Boolean}) updating = false;
   public data: any;
@@ -166,6 +166,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           }
 
         });
+        console.log(collection);
         this.collection = collection;
         return this.updateComplete;
       }).catch(e => {
@@ -209,7 +210,7 @@ export default class BackendAIUsageList extends BackendAIPage {
         </wl-select>
       </div>
       <div class="layout vertical center flex wrap">
-      ${this.collection != {} ?
+      ${Object.keys(this.collection).length > 0 ?
       Object.keys(this._map).map((key, idx) =>
         html`
           <div class="layout horizontal center flex" style="width:100%;">
