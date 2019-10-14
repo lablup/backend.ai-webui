@@ -68,12 +68,12 @@ export default class BackendAIUsageList extends BackendAIPage {
         }
 
         h3 {
-            display: block;
-            font-weight: 100;
-            width: 100%;
-            padding: 5px 15px;
-            text-align: left;
-            border-top: 1px solid #ccc;
+          display: block;
+          font-weight: 100;
+          width: 100%;
+          padding: 5px 15px;
+          text-align: left;
+          border-top: 1px solid #ccc;
         }
       `
     ]
