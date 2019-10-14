@@ -24,9 +24,13 @@ const ByteConverter = {
     return ["B", "KB", "MB", "GB", "TB"][Math.floor(this.log1024(bytes))];
   },
 
-  scale: function (data) {
-    const minUnit = this.readableUnit(d3.min(data, d => d.y));
-
+  scale: function (data, targetUnit = '') {
+    let minUnit;
+    if (targetUnit === '') {
+      minUnit = this.readableUnit(d3.min(data, d => d.y));
+    } else {
+      minUnit = 'MB';
+    }
     return {
       data: data.map(e => ({
         ...e,
@@ -50,6 +54,7 @@ export default class BackendAIChart extends LitElement {
   @property({type: String}) message = '';
   @property({type: Number}) width = 300;
   @property({type: Number}) height = 300;
+  @property({type: Boolean}) autoRescale = true;
   @property({type: Number}) idx;
   @property({type: Number}) graphWidth;
   @property({type: Number}) graphHeight;
@@ -184,7 +189,7 @@ export default class BackendAIChart extends LitElement {
    */
   scaleData() {
     console.log('scale data');
-    const converted = this.collection.data.map(e => ByteConverter.scale(e));
+    const converted = this.collection.data.map(e => ByteConverter.scale(e, 'MB'));
     this.collection.data = converted.map(e => e.data);
     this.collection.unit_hint = {"B": 'Bytes', "KB": 'KBytes', "MB": 'MB', "GB": 'GB', "TB": 'TB'}[converted[0].unit];
   }
@@ -479,7 +484,7 @@ export default class BackendAIChart extends LitElement {
       .domain([d3.min(data.map(datum => d3.min(datum, d => d.y))), d3.max(data.map(datum => d3.max(datum, d => d.y)))])
       .range([graphHeight, 0]);
     let yAxisTickFormat;
-    if (["Bytes", "count"].includes(this.collection.unit_hint)) {
+    if (["Bytes", "MB", "count"].includes(this.collection.unit_hint)) {
       yAxisTickFormat = "d";
     } else {
       yAxisTickFormat = ".1f";

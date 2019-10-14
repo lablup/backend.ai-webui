@@ -42,6 +42,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   };
   @property({type: Object}) collection = {};
   @property({type: String}) period = '1D';
+  @property({type: Boolean}) updating = false;
   public data: any;
 
   constructor() {
@@ -95,49 +96,54 @@ export default class BackendAIUsageList extends BackendAIPage {
 
   async _menuChanged(active) {
     await this.updateComplete;
-
     if (active === false) {
       this.shadowRoot.querySelectorAll("backend-ai-chart").forEach(e => {
         e.wipe();
       });
       return;
     }
-
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener("backend-ai-connected", () => {
-        this.init();
-      }, true);
-    } else {
-      this.init()
-        .then(res => {
-          this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {
-            chart.init()
-          });
-        })
-    }
+    this.init();
   }
 
   firstUpdated() {
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    //this.init();
+  }
+
+  init() {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener("backend-ai-connected", () => {
-        this.init()
+        if (this.updating) {
+          return;
+        }
+        this.updating = true;
+        this.readUserStat()
           .then(res => {
             this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {
               chart.init()
             });
-          })
+            this.updating = false;
+          }).catch(e => {
+          this.updating = false;
+        });
       }, true);
     } else {
-      this.init()
+      if (this.updating) {
+        return;
+      }
+      this.updating = true;
+      this.readUserStat()
         .then(res => {
           this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {
             chart.init()
           });
-        })
+          this.updating = false;
+        }).catch(e => {
+        this.updating = false;
+      });
     }
   }
 
-  init() {
+  readUserStat() {
     return window.backendaiclient.resources.user_stats()
       .then(res => {
         const {period, templates} = this;
@@ -162,7 +168,8 @@ export default class BackendAIUsageList extends BackendAIPage {
         });
         this.collection = collection;
         return this.updateComplete;
-      })
+      }).catch(e => {
+      });
   }
 
   pulldownChange(e) {
