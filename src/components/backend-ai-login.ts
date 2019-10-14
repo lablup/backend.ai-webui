@@ -106,6 +106,7 @@ export default class BackendAILogin extends LitElement {
 
         wl-textfield {
           --input-font-family: 'Quicksand', sans-serif;
+          --input-color-disabled: #424242;
         }
 
         #login-panel {

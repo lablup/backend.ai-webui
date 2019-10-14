@@ -670,7 +670,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = window.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
-    if (window.backendaiclient === undefined || window.backendaiclient === null) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
