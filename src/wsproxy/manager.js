@@ -153,7 +153,12 @@ class Manager extends EventEmitter {
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
       } else if (app == 'sshd') {
         console.log(port);
-        res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"});
+        res.send({
+          "code": 200,
+          "proxy": proxy_target,
+          "port": port,
+          "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
+        });
       } else {
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
       }
@@ -179,12 +184,6 @@ class Manager extends EventEmitter {
     this.app.get('/sftp', (req, res) => {
       let port = req.query.port;
       let url =  "sftp://upload@127.0.0.1:" + port;
-      res.send(htmldeco("Connect with your own SFTP", "host: 127.0.0.1<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"));
-    });
-
-    this.app.get('/sshd', (req, res) => {
-      let port = req.query.port;
-      let url = "sftp://upload@127.0.0.1:" + port;
       res.send(htmldeco("Connect with your own SFTP", "host: 127.0.0.1<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"));
     });
 

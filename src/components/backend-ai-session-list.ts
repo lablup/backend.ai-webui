@@ -71,6 +71,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     'creation-failed': 'red',
     'self-terminated': 'green'
   };
+  @property({type: Number}) sshPort = 0;
 
   constructor() {
     super();
@@ -141,6 +142,10 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         #app-dialog {
+          --dialog-width: 330px;
+        }
+
+        #ssh-dialog {
           --dialog-width: 330px;
         }
 
@@ -715,7 +720,11 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(kernelId, appName)
         .then((response) => {
-          if (response.url) {
+          if (appName === 'sshd') {
+            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.sshPort = response.port;
+            this._openSSHDialog();
+          } else if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
               window.open(response.url + urlPostfix, '_blank');
@@ -760,12 +769,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog.show();
   }
 
-  _openSSHDialog(e) {
+  _openSSHDialog(port) {
     let dialog = this.shadowRoot.querySelector('#ssh-dialog');
-    //dialog.setAttribute('kernel-id', kernelId);
-    //dialog.setAttribute('access-key', accessKey);
-    //dialog.positionTarget = e.target;
-
     this.shadowRoot.querySelector('#ssh-dialog').show();
 
   }
@@ -1175,9 +1180,13 @@ ${item.map(item => {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h4>
-          <div style="padding:15px;" class="horizontal layout wrap center center-justified">
-          <h5>Connect SSH / SFTP</h5> 
-          </div>
+          <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
+          <section class="vertical layout wrap start start-justified">
+            <h4>Connection information</h4>
+            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
+            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
+            <div><span>Port:</span> ${this.sshPort}</div>
+          </section>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
