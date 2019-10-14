@@ -156,7 +156,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshKeyData();
         this.isAdmin = window.backendaiclient.is_admin;
