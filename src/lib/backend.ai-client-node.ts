@@ -942,6 +942,7 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
+
   /**
    * List Virtual folders that requested accessKey has permission to.
    */
