@@ -719,6 +719,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           if (appName === 'sshd') {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             this.sshPort = response.port;
+            this._readSSHKey();
             this._openSSHDialog();
             setTimeout(() => {
               this.shadowRoot.querySelector('#indicator').end();
@@ -734,6 +735,9 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
         });
     }
+  }
+
+  async _readSSHKey() {
   }
 
   _runTerminal(e) {
@@ -1185,6 +1189,7 @@ ${item.map(item => {
             <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
+            <div><span style="color:green;">You need a SSH key file located at /home/work/id_container</span></div>
           </section>
         </wl-card>
       </wl-dialog>
