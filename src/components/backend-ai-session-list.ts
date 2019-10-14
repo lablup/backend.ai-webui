@@ -618,9 +618,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.appSupportList = [];
     appServices.forEach((elm) => {
       if (elm in this.appTemplate) {
-        this.appTemplate[elm].forEach((app) => {
-          this.appSupportList.push(app);
-        });
+        if (elm !== 'sshd' || (elm === 'sshd' && window.isElectron)) {
+          this.appTemplate[elm].forEach((app) => {
+            this.appSupportList.push(app);
+          });
+        }
       } else {
         if (!['ttyd', 'ipython'].includes(elm)) { // They are default apps from Backend.AI agent.
           this.appSupportList.push({
