@@ -73,6 +73,14 @@
         "redirect": "",
         "src": "./resources/icons/sftp.png"
       }
+    ],
+    "sshd": [
+      {
+        "name": "sshd",
+        "title": "SSH / SFTP",
+        "redirect": "",
+        "src": "./resources/icons/sftp.png"
+      }
     ]
   }
 }

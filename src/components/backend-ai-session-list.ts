@@ -71,6 +71,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     'creation-failed': 'red',
     'self-terminated': 'green'
   };
+  @property({type: Number}) sshPort = 0;
 
   constructor() {
     super();
@@ -141,6 +142,10 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         #app-dialog {
+          --dialog-width: 330px;
+        }
+
+        #ssh-dialog {
           --dialog-width: 330px;
         }
 
@@ -640,7 +645,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   async _open_wsproxy(kernelId, app = 'jupyter') {
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       return false;
     }
 
@@ -701,16 +706,25 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (appName === undefined || appName === null) {
       return;
     }
+
     if (urlPostfix === undefined || urlPostfix === null) {
       urlPostfix = '';
     }
 
-    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+    if (typeof window.backendaiwsproxy === "undefined" || window.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(kernelId, appName)
         .then((response) => {
-          if (response.url) {
+          if (appName === 'sshd') {
+            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.sshPort = response.port;
+            this._readSSHKey();
+            this._openSSHDialog();
+            setTimeout(() => {
+              this.shadowRoot.querySelector('#indicator').end();
+            }, 1000);
+          } else if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
               window.open(response.url + urlPostfix, '_blank');
@@ -721,6 +735,9 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
         });
     }
+  }
+
+  async _readSSHKey() {
   }
 
   _runTerminal(e) {
@@ -744,27 +761,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _runJupyterTerminal(e) {
-    const controller = e.target;
-    const controls = controller.closest('#controls');
-    const kernelId = controls['kernel-id'];
-    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
-      this.shadowRoot.querySelector('#indicator').start();
-      this._open_wsproxy(kernelId, 'jupyter')
-        .then((response) => {
-          if (response.url) {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
-            setTimeout(() => {
-              window.open(response.url + "&redirect=/terminals/1", '_blank');
-              this.shadowRoot.querySelector('#indicator').end();
-              console.log("Jupyter terminal proxy loaded: ");
-              console.log(kernelId);
-            }, 1000);
-          }
-        });
-    }
-  }
-
   // Single session closing
   _openTerminateSessionDialog(e) {
     const controller = e.target;
@@ -776,6 +772,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog.show();
   }
 
+  _openSSHDialog() {
+    let dialog = this.shadowRoot.querySelector('#ssh-dialog');
+    dialog.show();
+
+  }
   _terminateSession(e) {
     const controls = e.target.closest('#controls');
     const kernelId = controls['kernel-id'];
@@ -1170,6 +1171,26 @@ ${item.map(item => {
             </div>
           `)}
            </div>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling
+                    style="padding:0;">
+        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
+          <h4 class="horizontal center layout" style="font-weight:bold">
+            <span>SSH / SFTP connection</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h4>
+          <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
+          <section class="vertical layout wrap start start-justified">
+            <h4>Connection information</h4>
+            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
+            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
+            <div><span>Port:</span> ${this.sshPort}</div>
+            <div><span style="color:green;">You need a SSH key file located at /home/work/id_container</span></div>
+          </section>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>

@@ -582,7 +582,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _launchSessionDialog() {
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
     } else {
@@ -1471,7 +1471,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   selectDefaultLanguage() {
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._selectDefaultLanguage();
       }, true);
