@@ -706,10 +706,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (appName === undefined || appName === null) {
       return;
     }
-    //if (appName === 'sshd') { // Special case. Built-in SSH / SFTP support
-    //  this._hideAppLauncher();
-    //  return this._openSSHDialog();
-    //}
 
     if (urlPostfix === undefined || urlPostfix === null) {
       urlPostfix = '';
@@ -724,6 +720,9 @@ export default class BackendAiSessionList extends BackendAIPage {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             this.sshPort = response.port;
             this._openSSHDialog();
+            setTimeout(() => {
+              this.shadowRoot.querySelector('#indicator').end();
+            }, 1000);
           } else if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
