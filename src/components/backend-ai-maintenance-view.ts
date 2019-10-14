@@ -170,7 +170,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     this.notification = window.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#indicator');
 
-    if (window.backendaiclient === undefined || window.backendaiclient === null) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
     } else { // already connected

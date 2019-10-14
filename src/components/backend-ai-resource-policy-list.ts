@@ -395,7 +395,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshPolicyData();
         this.is_admin = window.backendaiclient.is_admin;
