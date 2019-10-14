@@ -107,9 +107,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
   /* Parameters required to launch a session on behalf of other user */
-  @property({type: String}) ownerDomain;
-  @property({type: Array}) ownerGroups;
-  @property({type: Array}) ownerScalingGroups;
+  @property({type: Boolean}) ownerFeatureInitialized = false;
+  @property({type: String}) ownerDomain = '';
+  @property({type: Array}) ownerGroups = [];
+  @property({type: Array}) ownerScalingGroups = [];
 
   constructor() {
     super();
@@ -382,6 +383,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.metric_updating = false;
     this.metadata_updating = false;
     /* Parameters required to launch a session on behalf of other user */
+    this.ownerFeatureInitialized = false;
     this.ownerDomain = '';
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
@@ -399,7 +401,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-    this.shadowRoot.querySelector('#owner-group').addEventListener('selected-item-label-changed', this._fetchSessionOwnerScalingGroups.bind(this));
 
     this.notification = window.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -1497,6 +1498,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _fetchSessionOwnerGroups() {
+    if (!this.ownerFeatureInitialized) {
+      this.shadowRoot.querySelector('#owner-group').addEventListener('selected-item-label-changed', this._fetchSessionOwnerScalingGroups.bind(this));
+      this.ownerFeatureInitialized = true;
+    }
     const accessKey = this.shadowRoot.querySelector('#owner-accesskey').value;
     if (!accessKey) {
       this.notification.text = 'Enter access key';
