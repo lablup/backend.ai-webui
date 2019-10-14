@@ -61,23 +61,14 @@ export default class BackendAIUsageList extends BackendAIPage {
       css`
         wl-select {
           --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
+          --input-color-disabled: #222222;
+          --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
+          --input-border-style-disabled: 1px solid #cccccc;
         }
 
-        h3 {
-          display: block;
-          font-weight: 100;
-          width: 100%;
-          padding: 5px 15px;
-          text-align: left;
-          border-top: 1px solid #ccc;
-        }
-
-        .usage {
-          height: calc(100vh - 230px);
+        wl-card {
+          --card-elevation: 0;
         }
       `
     ]
@@ -205,22 +196,23 @@ export default class BackendAIUsageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div>
-        <div class="layout horizontal end-justified" style="min-height:55px;">
-          <div class="flex"></div>
+      <wl-card elevation="0">
+        <h3 class="horizontal center layout">
           <wl-select label="Select Period" style="width: 130px;" @input=${this.pulldownChange}>
             <option value disabled>Select Period</option>
             <option value="1D" selected>1 Day</option>
             <option value="1W">1 Week</option>
           </wl-select>
-        </div>
-        <div class="layout vertical center flex">
+          <span class="flex"></span>
+        </h3>
         ${Object.keys(this.collection).length > 0 ?
       Object.keys(this._map).map((key, idx) =>
         html`
-            <div class="layout horizontal center flex" style="width:100%;">
-              <h3>${this._map[key]}</h3>
-              <span class="flex"></span>
+          <wl-card>
+            <h3 class="horizontal center layout">
+              <span>${this._map[key]}</span>
+              <span class="flex"></span>            
+            </h3>
             </div>
             <div style="width:100%;min-height:180px;">
               <backend-ai-chart
@@ -232,9 +224,9 @@ export default class BackendAIUsageList extends BackendAIPage {
                 .collection=${this.collection[this.period][key]}
               ></backend-ai-chart>
             </div>
+          </wl-card>
             `) : html``}
-        </div>
-      </div>
+      </wl-card>
     `;
   }
 }
