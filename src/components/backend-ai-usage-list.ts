@@ -75,6 +75,10 @@ export default class BackendAIUsageList extends BackendAIPage {
           text-align: left;
           border-top: 1px solid #ccc;
         }
+
+        .usage {
+          height: calc(100vh - 230px);
+        }
       `
     ]
   }
@@ -201,32 +205,35 @@ export default class BackendAIUsageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="layout horizontal end-justified flex">
-      <div class="flex"></div>
-        <wl-select label="Select Period" style="width: 130px" @input=${this.pulldownChange}>
-          <option value disabled>Select Period</option>
-          <option value="1D" selected>1 Day</option>
-          <option value="1W">1 Week</option>
-        </wl-select>
-      </div>
-      <div class="layout vertical center flex wrap">
-      ${Object.keys(this.collection).length > 0 ?
+      <div>
+        <div class="layout horizontal end-justified" style="min-height:55px;">
+          <div class="flex"></div>
+          <wl-select label="Select Period" style="width: 130px;" @input=${this.pulldownChange}>
+            <option value disabled>Select Period</option>
+            <option value="1D" selected>1 Day</option>
+            <option value="1W">1 Week</option>
+          </wl-select>
+        </div>
+        <div class="layout vertical center flex">
+        ${Object.keys(this.collection).length > 0 ?
       Object.keys(this._map).map((key, idx) =>
         html`
-          <div class="layout horizontal center flex" style="width:100%;">
+            <div class="layout horizontal center flex" style="width:100%;">
               <h3>${this._map[key]}</h3>
-              <span></span>
               <span class="flex"></span>
-          </div>
-          <backend-ai-chart
-            width="1000"
-            height="180"
-            elevation="1"
-            type="line"
-            idx=${idx}
-            .collection=${this.collection[this.period][key]}
-          ></backend-ai-chart>
-          `) : html``}
+            </div>
+            <div style="width:100%;min-height:180px;">
+              <backend-ai-chart
+                width="1000"
+                height="180"
+                elevation="1"
+                type="line"
+                idx=${idx}
+                .collection=${this.collection[this.period][key]}
+              ></backend-ai-chart>
+            </div>
+            `) : html``}
+        </div>
       </div>
     `;
   }
