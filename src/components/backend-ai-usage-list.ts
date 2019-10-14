@@ -117,6 +117,26 @@ export default class BackendAIUsageList extends BackendAIPage {
     }
   }
 
+  firstUpdated() {
+    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener("backend-ai-connected", () => {
+        this.init()
+          .then(res => {
+            this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {
+              chart.init()
+            });
+          })
+      }, true);
+    } else {
+      this.init()
+        .then(res => {
+          this.shadowRoot.querySelectorAll('backend-ai-chart').forEach(chart => {
+            chart.init()
+          });
+        })
+    }
+  }
+
   init() {
     return window.backendaiclient.resources.user_stats()
       .then(res => {
