@@ -296,6 +296,7 @@ export const BackendAiStyles =
 
       #app-navbar-footer {
           position: fixed;
+        display: none;
           right: 0;
           bottom: 0;
           left: 0;
