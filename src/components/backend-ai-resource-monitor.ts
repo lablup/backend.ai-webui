@@ -109,8 +109,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   /* Parameters required to launch a session on behalf of other user */
   @property({type: Boolean}) ownerFeatureInitialized = false;
   @property({type: String}) ownerDomain = '';
-  @property({type: Array}) ownerGroups = [];
-  @property({type: Array}) ownerScalingGroups = [];
+  //@property({type: Array}) ownerGroups = [];
+  //@property({type: Array}) ownerScalingGroups = [];
+  public ownerGroups: { name: string }[] = [];
+  public ownerScalingGroups: { name: string }[] = [];
 
   constructor() {
     super();
