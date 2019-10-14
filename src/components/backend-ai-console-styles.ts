@@ -283,15 +283,11 @@ export const BackendAiStyles =
       }
 
       #sidebar-navbar-footer {
-          position: fixed;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          left: 0;
-          right: 0;
+        position: absolute;
+        right: 0;
+        left: 0;
           bottom: 0 !important; /* Workaround to prevent miscalculated height */
           text-align: center;
-          width: 100%;
           height: 45px;
           border-top: 1px solid #eee;
           background-color: var(--general-navbar-footer-background-color);
