@@ -138,11 +138,11 @@ class Manager extends EventEmitter {
           assigned = true;
           break;
         } catch (err) {
-          //if port in use 
+          //if port in use
           console.log(err);
           console.log("Port in use");
-          //or just retry 
-        };
+          //or just retry
+        }
       }
       if(!assigned) {
         res.send({"code": 500});
@@ -151,6 +151,14 @@ class Manager extends EventEmitter {
       if(app == 'sftp') {
         console.log(port);
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
+      } else if (app == 'sshd') {
+        console.log(port);
+        res.send({
+          "code": 200,
+          "proxy": proxy_target,
+          "port": port,
+          "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
+        });
       } else {
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
       }
@@ -189,7 +197,7 @@ class Manager extends EventEmitter {
   start() {
     return new Promise((resolve) => {
       this.listener = this.app.listen(this.port, this.listen_ip, () => {
-        console.log(`Listening on port ${this.listener.address().port}!`)
+        console.log(`Listening on port ${this.listener.address().port}!`);
         this.port = this.listener.address().port;
         this.baseURL = "http://" + this.proxyBaseHost + ":" + this.port;
         resolve(this.listener.address().port);
