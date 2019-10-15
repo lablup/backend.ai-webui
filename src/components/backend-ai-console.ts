@@ -228,12 +228,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
-      if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
         this.loginPanel.login();
       }
     }).catch(err => {
       console.log("Initialization failed.");
-      if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
@@ -622,7 +622,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.10.1.191010</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.10.3.191014</small>
               </address>
             </div>
         </div>

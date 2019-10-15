@@ -19,6 +19,7 @@ import '@material/mwc-icon-button';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/card';
+import 'weightless/checkbox';
 import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/icon';
@@ -105,10 +106,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
+  /* Parameters required to launch a session on behalf of other user */
+  @property({type: Boolean}) ownerFeatureInitialized = false;
+  @property({type: String}) ownerDomain = '';
+  @property({type: Array}) ownerGroups;
+  @property({type: Array}) ownerScalingGroups;
 
   constructor() {
     super();
     this.active = false;
+    this.ownerGroups = [];
+    this.ownerScalingGroups = [];
     this.init_resource();
   }
 
@@ -376,6 +384,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
+    /* Parameters required to launch a session on behalf of other user */
+    this.ownerFeatureInitialized = false;
+    this.ownerDomain = '';
+    this.ownerGroups = [];
+    this.ownerScalingGroups = [];
   }
 
   firstUpdated() {
@@ -483,7 +496,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
             }
             let scaling_select = document.createElement('wl-select');
-            scaling_select.label = "Scaling Group";
+            scaling_select.label = "Resource Group";
             scaling_select.name = 'scaling-group-select';
             scaling_select.id = 'scaling-group-select';
             scaling_select.value = this.scaling_group;
@@ -491,7 +504,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
-            opt.innerHTML = 'Select Scaling Group';
+            opt.innerHTML = 'Select Resource Group';
             scaling_select.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');
@@ -571,7 +584,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _launchSessionDialog() {
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
     } else {
@@ -584,6 +597,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
       }
+
+      if (!window.backendaiclient.is_admin) {
+        const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+        ownershipPanel.parentElement.removeChild(ownershipPanel);
+      }
+
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -633,6 +652,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['domain'] = window.backendaiclient._config.domainName;
       config['scaling_group'] = this.scaling_group;
       config['maxWaitSeconds'] = 5;
+      const ownerEnable = this.shadowRoot.querySelector('#owner-enable');
+      if (ownerEnable && ownerEnable.checked) {
+        config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+        config['domain'] = this.ownerDomain;
+        config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
+        config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').value;
+        if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
+          this.notification.text = 'Not enough ownership information';
+          this.notification.show();
+        }
+      }
     }
     config['cpu'] = this.cpu_request;
     if (this.gpu_mode == 'fgpu') {
@@ -1444,7 +1474,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   selectDefaultLanguage() {
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._selectDefaultLanguage();
       }, true);
@@ -1468,6 +1498,48 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _selectDefaultVersion(version) {
     return false;
+  }
+
+  async _fetchSessionOwnerGroups() {
+    if (!this.ownerFeatureInitialized) {
+      this.shadowRoot.querySelector('#owner-group').addEventListener('selected-item-label-changed', this._fetchSessionOwnerScalingGroups.bind(this));
+      this.ownerFeatureInitialized = true;
+    }
+    const accessKey = this.shadowRoot.querySelector('#owner-accesskey').value;
+    if (!accessKey) {
+      this.notification.text = 'Enter access key';
+      this.notification.show();
+      this.ownerGroups = [];
+      return;
+    }
+    const kpInfo = await window.backendaiclient.keypair.info(accessKey, ['user_id']);
+    if (!kpInfo.keypair || !kpInfo.keypair.user_id) {
+      this.notification.text = 'No access key information';
+      this.notification.show();
+      this.ownerGroups = [];
+      return;
+    }
+    const email = kpInfo.keypair.user_id;
+    const userInfo = await window.backendaiclient.user.get(email, ['domain_name', 'groups {id name}']);
+    this.ownerDomain = userInfo.user.domain_name;
+    this.ownerGroups = userInfo.user.groups;
+    if (this.ownerGroups) {
+      this.shadowRoot.querySelector('#owner-group paper-listbox').selected = this.ownerGroups[0].name;
+    }
+  }
+
+  async _fetchSessionOwnerScalingGroups() {
+    const group = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+    if (!group) {
+      this.ownerScalingGroups = [];
+      return;
+    }
+    const sgroupInfo = await window.backendaiclient.scalingGroup.list(group);
+    this.ownerScalingGroups = sgroupInfo.scaling_groups;
+    console.log()
+    if (this.ownerScalingGroups) {
+      this.shadowRoot.querySelector('#owner-scaling-group paper-listbox').selected = 0;
+    }
   }
 
   render() {
@@ -1556,7 +1628,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div class="vertical start-justified layout">
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
-          <span style="margin-right:5px;">Current Scaling Group (${this.scaling_group})</span>
+          <span style="margin-right:5px;">Current Resource Group (${this.scaling_group})</span>
         </div>
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
@@ -1605,7 +1677,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                <paper-dropdown-menu id="scaling-groups" label="Scaling Group" horizontal-align="left">
+                <paper-dropdown-menu id="scaling-groups" label="Resource Group" horizontal-align="left">
                   <paper-listbox selected="0" slot="dropdown-content">
 ${this.scaling_groups.map(item =>
       html`
@@ -1709,6 +1781,41 @@ ${this.resource_templates.map(item => html`
                                 min="1" max="${this.concurrency_limit}" value="${this.session_request}"></paper-slider>
                   <span class="caption">#</span>
                 </div>
+              </div>
+            </wl-expansion>
+
+            <wl-expansion name="ownership">
+              <span slot="title">Ownership</span>
+              <span slot="description">Set session owner</span>
+              <div class="vertical layout">
+                <div class="horizontal center layout">
+                  <paper-input id="owner-accesskey" class="flex" value=""
+                    label="Owner Access Key" size="40"></paper-input>
+                  <mwc-icon-button icon="refresh" class="blue"
+                    @click="${() => this._fetchSessionOwnerGroups()}">
+                  </mwc-icon-button>
+                </div>
+                <div class="horizontal center layout">
+                  <paper-dropdown-menu id="owner-group" label="Owner group" horizontal-align="left">
+                    <paper-listbox slot="dropdown-content" attr-for-selected="id"
+                                  selected="${this.default_language}">
+                      ${this.ownerGroups.map(item => html`
+                        <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+                      `)}
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+                  <paper-dropdown-menu id="owner-scaling-group" label="Owner resource group">
+                    <paper-listbox slot="dropdown-content" selected="0">
+                      ${this.ownerScalingGroups.map(item => html`
+                        <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+                      `)}
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+                </div>
+                <wl-label>
+                  <wl-checkbox id="owner-enable"></wl-checkbox>
+                  Launch session on behalf of the access key
+                </wl-label>
               </div>
             </wl-expansion>
 

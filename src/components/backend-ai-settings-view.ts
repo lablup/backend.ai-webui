@@ -234,7 +234,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   firstUpdated() {
-    if (window.backendaiclient === undefined || window.backendaiclient === null) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
     } else { // already connected

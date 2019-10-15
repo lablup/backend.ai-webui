@@ -26,7 +26,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 @customElement("backend-ai-summary-view")
 export default class BackendAISummary extends BackendAIPage {
   @property({type: String}) condition = 'running';
-  @property({type: Object}) sessions = Object();
+  @property({type: Number}) sessions = 0;
   @property({type: Object}) jobs = Object();
   @property({type: Number}) agents = 0;
   @property({type: Boolean}) is_admin = false;
@@ -166,6 +166,7 @@ export default class BackendAISummary extends BackendAIPage {
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.indicator.hide();
       this.jobs = response;
+      console.log(response.compute_session_list.total_count);
       this.sessions = response.compute_session_list.total_count;
       if (this.active === true) {
         setTimeout(() => {
@@ -174,7 +175,7 @@ export default class BackendAISummary extends BackendAIPage {
       }
     }).catch(err => {
       this.jobs = [];
-      this.sessions = [];
+      this.sessions = 0;
       this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
       this.notification.detail = err;
       this.notification.show(true);
@@ -306,7 +307,7 @@ export default class BackendAISummary extends BackendAIPage {
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     this._init_resource_values();
     this.requestUpdate();
-    if (window.backendaiclient === undefined || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this.authenticated = true;
@@ -409,7 +410,7 @@ export default class BackendAISummary extends BackendAIPage {
                     <span>Connected nodes</span>
                   </div>` : html``}
                 <div class="vertical layout center">
-                  <div class="big indicator">${this._countObject(this.sessions)}</div>
+                  <div class="big indicator">${this.sessions}</div>
                   <span>Active sessions</span>
                 </div>
               </div>
