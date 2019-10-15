@@ -11,7 +11,6 @@ import 'weightless/dialog';
 import 'weightless/card';
 import 'weightless/textfield';
 
-
 import '../plastics/lablup-shields/lablup-shields';
 
 import './backend-ai-signup';
