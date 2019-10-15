@@ -473,6 +473,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       } else if (window.isElectron) {
         this.user_id = '';
         this.domain = '';
+        localStorage.clear();
         this._page = 'summary';
         window.history.pushState({}, '', '/summary');
         store.dispatch(navigate(decodeURIComponent('/')));
