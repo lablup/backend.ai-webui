@@ -975,7 +975,6 @@ export default class BackendAIData extends BackendAIPage {
     this.indicator.show();
     let groupId = null;
     groupId = window.backendaiclient.current_group_id();
-    console.log(groupId);
     let l = window.backendaiclient.vfolder.list(groupId);
     l.then((value) => {
       this.indicator.hide();
