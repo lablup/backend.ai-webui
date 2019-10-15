@@ -652,7 +652,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['domain'] = window.backendaiclient._config.domainName;
       config['scaling_group'] = this.scaling_group;
       config['maxWaitSeconds'] = 5;
-      if (this.shadowRoot.querySelector('#owner-enable').checked) {
+      const ownerEnable = this.shadowRoot.querySelector('#owner-enable');
+      if (ownerEnable && ownerEnable.checked) {
         config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
         config['domain'] = this.ownerDomain;
         config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;

@@ -684,7 +684,7 @@ export default class BackendAILogin extends LitElement {
                            label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
               <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"
                            label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="email" name="user_id" id="id_user_id" maxlength="30" style="display:none;"
+              <wl-textfield type="email" name="user_id" id="id_user_id" maxlength="50" style="display:none;"
                            label="E-mail" value="${this.user_id}" @keyup="${this._submitIfEnter}"></wl-textfield>
               <wl-textfield type="password" name="password" id="id_password" style="display:none;"
                            label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></wl-textfield>
