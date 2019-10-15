@@ -862,7 +862,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _updateVirtualFolderList() {
-    let l = window.backendaiclient.vfolder.list();
+    let l = window.backendaiclient.vfolder.list(window.backendaiclient.current_group_id());
     l.then((value) => {
       this.vfolders = value;
     });
