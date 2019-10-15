@@ -5,7 +5,6 @@
 
 import {css, customElement, html, LitElement, property} from "lit-element";
 
-import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
@@ -313,24 +312,24 @@ export default class BackendAILogin extends LitElement {
       this.api_key = '';
     }
     if (secret_key != null) {
-      this.secret_key = JSON.parse(secret_key);
+      this.secret_key = secret_key;
     } else {
       this.secret_key = '';
     }
     if (user_id != null) {
-      this.user_id = JSON.parse(user_id);
+      this.user_id = user_id;
     } else {
       this.user_id = '';
     }
     if (password != null) {
-      this.password = JSON.parse(password);
+      this.password = password;
     } else {
       this.password = '';
     }
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
       if (api_endpoint != null) {
-        this.api_endpoint = JSON.parse(api_endpoint);
+        this.api_endpoint = api_endpoint;
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
@@ -585,6 +584,11 @@ export default class BackendAILogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
+      localStorage.setItem('backendaiconsole.api_key', this.api_key);
+      localStorage.setItem('backendaiconsole.secret_key', this.secret_key);
+      localStorage.setItem('backendaiconsole.user_id', this.user_id);
+      localStorage.setItem('backendaiconsole.password', this.password);
+      localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
       //this.notification.text = 'Connected.';
       //this.notification.show();
     }).catch((err) => {   // Connection failed
@@ -631,8 +635,13 @@ export default class BackendAILogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-      this.notification.text = 'Connected.';
-      this.notification.show();
+      localStorage.setItem('backendaiconsole.api_key', this.api_key);
+      localStorage.setItem('backendaiconsole.secret_key', this.secret_key);
+      localStorage.setItem('backendaiconsole.user_id', this.user_id);
+      localStorage.setItem('backendaiconsole.password', this.password);
+      localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
+      //this.notification.text = 'Connected.';
+      //this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
@@ -654,15 +663,6 @@ export default class BackendAILogin extends LitElement {
   render() {
     // language=HTML
     return html`
-      <app-localstorage-document key="backendaiconsole.email" data="${this.email}"></app-localstorage-document>
-      <app-localstorage-document id="storage" key="backendaiconsole.api_key"
-                                 data="${this.api_key}"></app-localstorage-document>
-      <app-localstorage-document key="backendaiconsole.secret_key" data="${this.secret_key}"></app-localstorage-document>
-      <app-localstorage-document id="storage" key="backendaiconsole.user_id"
-                                 data="${this.user_id}"></app-localstorage-document>
-      <app-localstorage-document key="backendaiconsole.password" data="${this.password}"></app-localstorage-document>
-      <app-localstorage-document key="backendaiconsole.api_endpoint"
-                                 data="${this.api_endpoint}"></app-localstorage-document>
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
