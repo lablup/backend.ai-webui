@@ -342,7 +342,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           // Readable text
           sessions[objectKey].cpu_used_time = this._automaticScaledTime(sessions[objectKey].cpu_used);
-          sessions[objectKey].cpu_used_sec = this._msecToSec(sessions[objectKey].cpu_used);
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           sessions[objectKey].io_read_bytes_mb = this._byteToMB(sessions[objectKey].io_read_bytes);
