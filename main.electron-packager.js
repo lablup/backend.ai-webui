@@ -452,7 +452,9 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   });
   event.newGuest.on('close', (e) => {
     let c = BrowserWindow.getFocusedWindow();
-    c.destroy();
+    if (c !== null) {
+      c.destroy();
+    }
   });
 }
 
