@@ -341,6 +341,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           // Readable text
+          sessions[objectKey].cpu_used_time = this._automaticScaledTime(sessions[objectKey].cpu_used);
           sessions[objectKey].cpu_used_sec = this._msecToSec(sessions[objectKey].cpu_used);
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
@@ -503,6 +504,27 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _MBToGB(value) {
     return value / 1024;
+  }
+
+  _automaticScaledTime(value: number) { // number: msec.
+    let result = Object();
+    let unitText = ['D', 'H', 'M', 'S'];
+    let unitLength = [(1000 * 60 * 60 * 24), (1000 * 60 * 60), (1000 * 60), 1000];
+
+    for (let i = 0; i < unitLength.length; i++) {
+      if (Math.floor(value / unitLength[i]) > 0) {
+        result[unitText[i]] = Math.floor(value / unitLength[i]);
+        value = value % unitLength[i];
+      }
+    }
+    if (Object.keys(result).length === 0) { // only prints msec. when time is shorter than 1sec.
+      if (value > 0) {
+        result = {'MS': value};
+      } else { // No data.
+        result = {'NODATA': 1};
+      }
+    }
+    return result;
   }
 
   _msecToSec(value) {
@@ -780,6 +802,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     dialog.show();
 
   }
+
   _terminateSession(e) {
     const controls = e.target.closest('#controls');
     const kernelId = controls['kernel-id'];
@@ -977,18 +1000,51 @@ ${item.map(item => {
     render(
       html`
         <div class="layout horizontal center flex">
-          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+          <iron-icon class="fg blue" icon="hardware:developer-board" style="margin-right:3px;"></iron-icon>
+          ${rowData.item.cpu_used_time.D ? html`
+          <div class="vertical center-justified center layout">
+            <span style="font-size:11px">${rowData.item.cpu_used_time.D}</span>
+            <span class="indicator">day</span>
+          </div>` : html``}
+          ${rowData.item.cpu_used_time.H ? html`
+          <div class="vertical center-justified center layout">
+            <span style="font-size:11px">${rowData.item.cpu_used_time.H}</span>
+            <span class="indicator">hour</span>
+          </div>` : html``}
+          ${rowData.item.cpu_used_time.M ? html`
           <div class="vertical start layout">
-            <span>${rowData.item.cpu_used_sec}</span>
+            <span style="font-size:11px">${rowData.item.cpu_used_time.M}</span>
+            <span class="indicator">min.</span>
+          </div>` : html``}
+          ${rowData.item.cpu_used_time.S ? html`
+          <div class="vertical start layout">
+            <span style="font-size:11px">${rowData.item.cpu_used_time.S}</span>
             <span class="indicator">sec.</span>
-          </div>
-          <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
+          </div>` : html``}
+          ${rowData.item.cpu_used_time.MS ? html`
           <div class="vertical start layout">
-            <span style="font-size:8px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
-            <span style="font-size:8px">${rowData.item.io_write_bytes_mb}<span class="indicator">MB</span></span>
+            <span style="font-size:11px">${rowData.item.cpu_used_time.MS}</span>
+            <span class="indicator">msec.</span>
+          </div>` : html``}
+          ${rowData.item.cpu_used_time.NODATA ? html`
+          <div class="vertical start layout">
+            <span style="font-size:11px">No data</span>
+          </div>` : html``}
+        </div>
+        <div class="layout horizontal center flex">
+          <iron-icon class="fg blue" icon="hardware:device-hub" style="margin-right:3px;"></iron-icon>
+          <div class="vertical start layout">
+            <span style="font-size:9px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
+            <span class="indicator">READ</span>
           </div>
-        </div>`, root);
+          <div class="vertical start layout">
+            <span style="font-size:8px">${rowData.item.io_write_bytes_mb}<span class="indicator">MB</span></span>
+            <span class="indicator">WRITE</span>
+          </div>
+        </div>`, root
+    );
   }
+
   _toggleCheckbox(object) {
     let exist = this._selected_items.findIndex(x => x.sess_id == object.sess_id);
     if (exist === -1) {
