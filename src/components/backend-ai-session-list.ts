@@ -50,6 +50,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) appTemplate = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
@@ -972,6 +973,22 @@ ${item.map(item => {
     );
   }
 
+  usageRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div class="layout horizontal center flex">
+          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+          <div class="vertical start layout">
+            <span>${rowData.item.cpu_used_sec}</span>
+            <span class="indicator">sec.</span>
+          </div>
+          <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
+          <div class="vertical start layout">
+            <span style="font-size:8px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
+            <span style="font-size:8px">${rowData.item.io_write_bytes_mb}<span class="indicator">MB</span></span>
+          </div>
+        </div>`, root);
+  }
   _toggleCheckbox(object) {
     let exist = this._selected_items.findIndex(x => x.sess_id == object.sess_id);
     if (exist === -1) {
@@ -1104,21 +1121,7 @@ ${item.map(item => {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="Usage">
-          <template>
-            <div class="layout horizontal center flex">
-              <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
-              <div class="vertical start layout">
-                <span>[[item.cpu_used_sec]]</span>
-                <span class="indicator">sec.</span>
-              </div>
-              <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-              <div class="vertical start layout">
-                <span style="font-size:8px">[[item.io_read_bytes_mb]]<span class="indicator">MB</span></span>
-                <span style="font-size:8px">[[item.io_write_bytes_mb]]<span class="indicator">MB</span></span>
-              </div>
-            </div>
-          </template>
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="Usage" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="Starts" path="created_at">
           <template>
