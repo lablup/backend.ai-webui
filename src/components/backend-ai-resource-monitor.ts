@@ -434,6 +434,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
+    if (document.body.clientWidth < 1200) {
+      this.resourceGauge.style.display = 'none';
+    }
     this.notification = window.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
@@ -452,11 +455,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
     this.shadowRoot.querySelector('#use-gpu-checkbox').addEventListener('change', () => {
       if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked === true) {
-        if (this.gpu_metric.min === this.gpu_metric.max) {
-          this.shadowRoot.querySelector('#gpu-resource').disabled = true
-        } else {
-          this.shadowRoot.querySelector('#gpu-resource').disabled = false;
-        }
+        this.shadowRoot.querySelector('#gpu-resource').disabled = this.gpu_metric.min === this.gpu_metric.max;
       } else {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
