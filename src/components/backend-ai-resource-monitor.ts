@@ -106,6 +106,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
+  @property({type: Object}) resourceGauge = Object();
   /* Parameters required to launch a session on behalf of other user */
   @property({type: Boolean}) ownerFeatureInitialized = false;
   @property({type: String}) ownerDomain = '';
@@ -213,6 +214,47 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         div.caption {
           font-size: 12px;
           width: 100px;
+        }
+
+        #resource-gauges.horizontal {
+          position: absolute;
+          top: 48px;
+          z-index: 100;
+          left: 160px;
+          width: 420px;
+          height: 48px;
+          color: #ffffff;
+          background-color: transparent;
+        }
+
+        @media screen and (max-width: 749px) {
+          #resource-gauge-toggle.horizontal {
+            display: flex;
+          }
+
+          #resource-gauge-toggle.vertical {
+            display: none;
+          }
+
+          #resource-gauges.horizontal {
+            display: none;
+          }
+
+          #resource-gauges.vertical {
+            display: flex;
+          }
+
+        }
+
+        @media screen and (min-width: 750px) {
+          #resource-gauge-toggle {
+            display: none;
+          }
+
+          #resource-gauges.horizontal,
+          #resource-gauges.vertical {
+            display: flex;
+          }
         }
 
         div.resource-type {
@@ -403,7 +445,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-
+    this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
+    if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
+      this.resourceGauge.style.display = 'none';
+    }
     this.notification = window.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
@@ -422,15 +467,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
     this.shadowRoot.querySelector('#use-gpu-checkbox').addEventListener('change', () => {
       if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked === true) {
-        if (this.gpu_metric.min === this.gpu_metric.max) {
-          this.shadowRoot.querySelector('#gpu-resource').disabled = true
-        } else {
-          this.shadowRoot.querySelector('#gpu-resource').disabled = false;
-        }
+        this.shadowRoot.querySelector('#gpu-resource').disabled = this.gpu_metric.min === this.gpu_metric.max;
       } else {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        if (!window.backendaiclient.is_admin) {
+          const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+          ownershipPanel.style.display = 'none';
+        }
+      }, true);
+    } else {
+      if (!window.backendaiclient.is_admin) {
+        const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+        ownershipPanel.style.display = 'none';
+      }
+    }
   }
 
   _initAliases() {
@@ -440,10 +494,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
+    console.log(this.scaling_group);
+    console.log(e.target.value);
+
     if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
     }
     this.scaling_group = e.target.value;
+    console.log(this.active);
     if (this.active) {
       if (this.direction === 'vertical') {
         let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
@@ -487,6 +545,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (this.scaling_group === '') {
           //console.log(window.backendaiclient.current_group);
           let sgs = await window.backendaiclient.scalingGroup.list();
+          console.log(sgs);
           this.scaling_groups = sgs.scaling_groups;
           if (this.direction === 'vertical') {
             this.scaling_group = this.scaling_groups[0].name;
@@ -596,11 +655,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
-      }
-
-      if (!window.backendaiclient.is_admin) {
-        const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
-        ownershipPanel.parentElement.removeChild(ownershipPanel);
       }
 
       this.shadowRoot.querySelector('#new-session-dialog').show();
@@ -862,7 +916,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _updateVirtualFolderList() {
-    let l = window.backendaiclient.vfolder.list();
+    let l = window.backendaiclient.vfolder.list(window.backendaiclient.current_group_id());
     l.then((value) => {
       this.vfolders = value;
     });
@@ -1536,9 +1590,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     const sgroupInfo = await window.backendaiclient.scalingGroup.list(group);
     this.ownerScalingGroups = sgroupInfo.scaling_groups;
-    console.log()
+    console.log();
     if (this.ownerScalingGroups) {
       this.shadowRoot.querySelector('#owner-scaling-group paper-listbox').selected = 0;
+    }
+  }
+
+  _toggleResourceGauge() {
+    if (this.resourceGauge.style.display == '' || this.resourceGauge.style.display == 'flex' || this.resourceGauge.style.display == 'block') {
+      this.resourceGauge.style.display = 'none';
+    } else {
+      if (document.body.clientWidth < 750) {
+        this.resourceGauge.style.left = '20px';
+        this.resourceGauge.style.right = '20px';
+        this.resourceGauge.style.backgroundColor = 'var(--paper-red-800)';
+      } else {
+        this.resourceGauge.style.backgroundColor = 'transparent';
+      }
+      this.resourceGauge.style.display = 'flex';
     }
   }
 
@@ -1550,7 +1619,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       </div>
       ` : html``}
       <div class="layout horizontal">
-        <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
+        <mwc-icon-button id="resource-gauge-toggle" icon="assessment" class="fg blue ${this.direction}"
+          @click="${() => this._toggleResourceGauge()}">
+          Close
+        </mwc-icon-button>
+        <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
@@ -1605,8 +1678,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
             </div>
@@ -1623,6 +1696,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             Start
           </wl-button>
         </div>
+        <div class="flex"></div>
       </div>
       ${this.enable_scaling_group && this.direction === 'vertical' ? html`
       <div class="vertical start-justified layout">

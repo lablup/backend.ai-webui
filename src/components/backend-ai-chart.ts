@@ -188,7 +188,6 @@ export default class BackendAIChart extends LitElement {
    * To resolve this issue, the code must follow the lowest unit among the arrays.
    */
   scaleData() {
-    console.log('scale data');
     const converted = this.collection.data.map(e => ByteConverter.scale(e, 'MB'));
     this.collection.data = converted.map(e => e.data);
     this.collection.unit_hint = {"B": 'Bytes', "KB": 'KBytes', "MB": 'MB', "GB": 'GB', "TB": 'TB'}[converted[0].unit];

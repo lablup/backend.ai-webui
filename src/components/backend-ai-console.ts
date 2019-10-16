@@ -468,7 +468,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
       }
       if (performClose === true) {
         // Do nothing. this window will be closed.
