@@ -106,6 +106,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
+  @property({type: Object}) resourceGauge = Object();
   /* Parameters required to launch a session on behalf of other user */
   @property({type: Boolean}) ownerFeatureInitialized = false;
   @property({type: String}) ownerDomain = '';
@@ -213,6 +214,26 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         div.caption {
           font-size: 12px;
           width: 100px;
+        }
+
+        @media screen and (max-width: 1199px) {
+          #resource-gauge-toggle {
+            display: flex;
+          }
+
+          #resource-gauges {
+            display: none;
+          }
+        }
+
+        @media screen and (min-width: 1200px) {
+          #resource-gauge-toggle {
+            display: none;
+          }
+
+          #resource-gauges {
+            display: flex;
+          }
         }
 
         div.resource-type {
@@ -403,7 +424,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
-
+    this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     this.notification = window.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     document.addEventListener('backend-ai-resource-refreshed', () => {
@@ -1542,6 +1563,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _toggleResourceGauge() {
+    if (this.resourceGauge.style.display == '' || this.resourceGauge.style.display == 'flex') {
+      this.resourceGauge.style.display = 'none';
+    } else {
+      this.resourceGauge.style.display = 'flex';
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1550,7 +1579,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       </div>
       ` : html``}
       <div class="layout horizontal">
-        <div class="layout ${this.direction} resources wrap" style="align-items: flex-start">
+        <mwc-icon-button id="resource-gauge-toggle" icon="assessment" class="fg blue"
+          @click="${() => this._toggleResourceGauge()}">
+          Close
+        </mwc-icon-button>
+        <div id="resource-gauges" class="layout ${this.direction} resources wrap" style="align-items: flex-start">
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
