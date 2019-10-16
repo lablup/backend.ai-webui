@@ -465,13 +465,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         if (!window.backendaiclient.is_admin) {
           const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
-          ownershipPanel.parentElement.removeChild(ownershipPanel);
+          ownershipPanel.style.display = 'none';
         }
       }, true);
     } else {
       if (!window.backendaiclient.is_admin) {
         const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
-        ownershipPanel.parentElement.removeChild(ownershipPanel);
+        ownershipPanel.style.display = 'none';
       }
     }
   }
@@ -536,7 +536,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
             // Detached from template to support live-update after creating new group (will need it)
             if (scaling_group_selection_box.hasChildNodes()) {
-              scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
+              scaling_group_selection_box.style.display = 'none';
             }
             let scaling_select = document.createElement('wl-select');
             scaling_select.label = "Resource Group";
