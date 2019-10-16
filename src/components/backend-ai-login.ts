@@ -316,10 +316,10 @@ export default class BackendAILogin extends LitElement {
     return str.replace(/^\|+|\|+$/g, '');
   }
   login() {
-    let api_key: any = localStorage.getItem('backendaiconsole.api_key');
-    let secret_key: any = localStorage.getItem('backendaiconsole.secret_key');
-    let user_id: any = localStorage.getItem('backendaiconsole.user_id');
-    let password: any = localStorage.getItem('backendaiconsole.password');
+    let api_key: any = localStorage.getItem('backendaiconsole.login.api_key');
+    let secret_key: any = localStorage.getItem('backendaiconsole.login.secret_key');
+    let user_id: any = localStorage.getItem('backendaiconsole.login.user_id');
+    let password: any = localStorage.getItem('backendaiconsole.login.password');
     if (api_key != null) {
       this.api_key = api_key.replace(/^\"+|\"+$/g, '');
     } else {
@@ -598,10 +598,7 @@ export default class BackendAILogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-      localStorage.setItem('backendaiconsole.api_key', this.api_key);
-      localStorage.setItem('backendaiconsole.secret_key', this.secret_key);
-      localStorage.setItem('backendaiconsole.user_id', this.user_id);
-      localStorage.setItem('backendaiconsole.password', this.password);
+      this._saveLoginInfo();
       localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
       //this.notification.text = 'Connected.';
       //this.notification.show();
@@ -649,10 +646,7 @@ export default class BackendAILogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-      localStorage.setItem('backendaiconsole.api_key', this.api_key);
-      localStorage.setItem('backendaiconsole.secret_key', this.secret_key);
-      localStorage.setItem('backendaiconsole.user_id', this.user_id);
-      localStorage.setItem('backendaiconsole.password', this.password);
+      this._saveLoginInfo();
       localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
       //this.notification.text = 'Connected.';
       //this.notification.show();
@@ -674,6 +668,12 @@ export default class BackendAILogin extends LitElement {
     });
   }
 
+  async _saveLoginInfo() {
+    localStorage.setItem('backendaiconsole.login.api_key', this.api_key);
+    localStorage.setItem('backendaiconsole.login.secret_key', this.secret_key);
+    localStorage.setItem('backendaiconsole.login.user_id', this.user_id);
+    localStorage.setItem('backendaiconsole.login.password', this.password);
+  }
   render() {
     // language=HTML
     return html`
