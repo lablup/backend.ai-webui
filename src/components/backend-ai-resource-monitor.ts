@@ -434,7 +434,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    if (document.body.clientWidth < 1200) {
+    if (document.body.clientWidth < 1200 && this.direction == 'horizontal') {
       this.resourceGauge.style.display = 'none';
     }
     this.notification = window.lablupNotification;
@@ -482,10 +482,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
+    console.log(this.scaling_group);
+    console.log(e.target.value);
+
     if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
     }
     this.scaling_group = e.target.value;
+    console.log(this.active);
     if (this.active) {
       if (this.direction === 'vertical') {
         let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
@@ -529,13 +533,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (this.scaling_group === '') {
           //console.log(window.backendaiclient.current_group);
           let sgs = await window.backendaiclient.scalingGroup.list();
+          console.log(sgs);
           this.scaling_groups = sgs.scaling_groups;
           if (this.direction === 'vertical') {
             this.scaling_group = this.scaling_groups[0].name;
             let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
             // Detached from template to support live-update after creating new group (will need it)
             if (scaling_group_selection_box.hasChildNodes()) {
-              scaling_group_selection_box.style.display = 'none';
+              scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
             }
             let scaling_select = document.createElement('wl-select');
             scaling_select.label = "Resource Group";
@@ -1583,7 +1588,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.resourceGauge.style.display == '' || this.resourceGauge.style.display == 'flex') {
       this.resourceGauge.style.display = 'none';
     } else {
-      this.resourceGauge.style.display = 'flex';
+      if (document.body.clientWidth < 1200) {
+        this.resourceGauge.style.position = 'absolute';
+        this.resourceGauge.style.display = 'block';
+        this.resourceGauge.style.top = '40px';
+      } else {
+        this.resourceGauge.style.display = 'flex';
+      }
     }
   }
 
