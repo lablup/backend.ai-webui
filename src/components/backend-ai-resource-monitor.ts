@@ -216,7 +216,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 100px;
         }
 
-        @media screen and (max-width: 1199px) {
+        #resource-gauges.horizontal {
+          position: absolute;
+          top: 48px;
+          z-index: 100;
+          left: 160px;
+          width: 420px;
+          height: 48px;
+          color: #ffffff;
+          background-color: transparent;
+        }
+
+        @media screen and (max-width: 749px) {
           #resource-gauge-toggle.horizontal {
             display: flex;
           }
@@ -235,7 +246,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         }
 
-        @media screen and (min-width: 1200px) {
+        @media screen and (min-width: 750px) {
           #resource-gauge-toggle {
             display: none;
           }
@@ -435,7 +446,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    if (document.body.clientWidth < 1200 && this.direction == 'horizontal') {
+    if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
       this.resourceGauge.style.display = 'none';
     }
     this.notification = window.lablupNotification;
@@ -1589,16 +1600,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.resourceGauge.style.display == '' || this.resourceGauge.style.display == 'flex' || this.resourceGauge.style.display == 'block') {
       this.resourceGauge.style.display = 'none';
     } else {
-      if (document.body.clientWidth < 1200) {
-        this.resourceGauge.style.position = 'absolute';
-        this.resourceGauge.style.display = 'block';
-        this.resourceGauge.style.top = '160px';
-        this.resourceGauge.style.right = '170px';
-        this.resourceGauge.style.backgroundColor = '#ffffff';
-
+      if (document.body.clientWidth < 750) {
+        this.resourceGauge.style.left = '20px';
+        this.resourceGauge.style.right = '20px';
+        this.resourceGauge.style.backgroundColor = 'var(--paper-red-800)';
       } else {
-        this.resourceGauge.style.display = 'flex';
+        this.resourceGauge.style.backgroundColor = 'transparent';
       }
+      this.resourceGauge.style.display = 'flex';
     }
   }
 
@@ -1614,7 +1623,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           @click="${() => this._toggleResourceGauge()}">
           Close
         </mwc-icon-button>
-        <div id="resource-gauges" class="layout ${this.direction} resources wrap" style="align-items: flex-start">
+        <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
@@ -1687,6 +1696,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             Start
           </wl-button>
         </div>
+        <div class="flex"></div>
       </div>
       ${this.enable_scaling_group && this.direction === 'vertical' ? html`
       <div class="vertical start-justified layout">
