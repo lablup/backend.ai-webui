@@ -11,7 +11,6 @@ import 'weightless/dialog';
 import 'weightless/card';
 import 'weightless/textfield';
 
-
 import '../plastics/lablup-shields/lablup-shields';
 
 import './backend-ai-signup-hanati';
@@ -169,8 +168,10 @@ export default class BackendAILogin extends LitElement {
     if (this.change_signin_support === true) {
       if (this.connection_mode == 'SESSION') {
         this.connection_mode = 'API';
+        localStorage.setItem('backendaiconsole.connection_mode', 'API');
       } else {
         this.connection_mode = 'SESSION';
+        localStorage.setItem('backendaiconsole.connection_mode', 'SESSION');
       }
       this.refreshPanel();
       this.requestUpdate();
@@ -261,13 +262,23 @@ export default class BackendAILogin extends LitElement {
     } else {
       this.default_session_environment = config.general.defaultSessionEnvironment;
     }
-    if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
-      this.connection_mode = 'API';
-    } else {
-      if (config.general.connectionMode.toUpperCase() === 'SESSION') {
+    let connection_mode: string = localStorage.getItem('backendaiconsole.connection_mode');
+    if (connection_mode !== null) {
+      if (connection_mode === 'SESSION') {
         this.connection_mode = 'SESSION';
       } else {
         this.connection_mode = 'API';
+      }
+    } else {
+      if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
+        this.connection_mode = 'API';
+        localStorage.setItem('backendaiconsole.connection_mode', 'API');
+      } else {
+        if (config.general.connectionMode.toUpperCase() === 'SESSION') {
+          this.connection_mode = 'SESSION';
+        } else {
+          this.connection_mode = 'API';
+        }
       }
     }
     this.refreshPanel();
@@ -301,35 +312,38 @@ export default class BackendAILogin extends LitElement {
     (this.shadowRoot.querySelector('#block-panel') as any).hide();
   }
 
+  _trimChar(str, char) {
+    return str.replace(/^\|+|\|+$/g, '');
+  }
   login() {
-    let api_key: any = localStorage.getItem('backendaiconsole.api_key');
-    let secret_key: any = localStorage.getItem('backendaiconsole.secret_key');
-    let user_id: any = localStorage.getItem('backendaiconsole.user_id');
-    let password: any = localStorage.getItem('backendaiconsole.password');
+    let api_key: any = localStorage.getItem('backendaiconsole.login.api_key');
+    let secret_key: any = localStorage.getItem('backendaiconsole.login.secret_key');
+    let user_id: any = localStorage.getItem('backendaiconsole.login.user_id');
+    let password: any = localStorage.getItem('backendaiconsole.login.password');
     if (api_key != null) {
-      this.api_key = api_key;
+      this.api_key = api_key.replace(/^\"+|\"+$/g, '');
     } else {
       this.api_key = '';
     }
     if (secret_key != null) {
-      this.secret_key = secret_key;
+      this.secret_key = secret_key.replace(/^\"+|\"+$/g, '');
     } else {
       this.secret_key = '';
     }
     if (user_id != null) {
-      this.user_id = user_id;
+      this.user_id = user_id.replace(/^\"+|\"+$/g, '');
     } else {
       this.user_id = '';
     }
     if (password != null) {
-      this.password = password;
+      this.password = password.replace(/^\"+|\"+$/g, '');
     } else {
       this.password = '';
     }
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
       if (api_endpoint != null) {
-        this.api_endpoint = api_endpoint;
+        this.api_endpoint = api_endpoint.replace(/^\"+|\"+$/g, '');
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
@@ -584,10 +598,7 @@ export default class BackendAILogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-      localStorage.setItem('backendaiconsole.api_key', this.api_key);
-      localStorage.setItem('backendaiconsole.secret_key', this.secret_key);
-      localStorage.setItem('backendaiconsole.user_id', this.user_id);
-      localStorage.setItem('backendaiconsole.password', this.password);
+      this._saveLoginInfo();
       localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
       //this.notification.text = 'Connected.';
       //this.notification.show();
@@ -635,10 +646,7 @@ export default class BackendAILogin extends LitElement {
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
-      localStorage.setItem('backendaiconsole.api_key', this.api_key);
-      localStorage.setItem('backendaiconsole.secret_key', this.secret_key);
-      localStorage.setItem('backendaiconsole.user_id', this.user_id);
-      localStorage.setItem('backendaiconsole.password', this.password);
+      this._saveLoginInfo();
       localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
       //this.notification.text = 'Connected.';
       //this.notification.show();
@@ -660,6 +668,12 @@ export default class BackendAILogin extends LitElement {
     });
   }
 
+  async _saveLoginInfo() {
+    localStorage.setItem('backendaiconsole.login.api_key', this.api_key);
+    localStorage.setItem('backendaiconsole.login.secret_key', this.secret_key);
+    localStorage.setItem('backendaiconsole.login.user_id', this.user_id);
+    localStorage.setItem('backendaiconsole.login.password', this.password);
+  }
   render() {
     // language=HTML
     return html`
