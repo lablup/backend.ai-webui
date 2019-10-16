@@ -1536,7 +1536,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     const sgroupInfo = await window.backendaiclient.scalingGroup.list(group);
     this.ownerScalingGroups = sgroupInfo.scaling_groups;
-    console.log()
+    console.log();
     if (this.ownerScalingGroups) {
       this.shadowRoot.querySelector('#owner-scaling-group paper-listbox').selected = 0;
     }
@@ -1605,8 +1605,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified wrap" style="margin-right:5px;">
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
             </div>
