@@ -161,7 +161,6 @@ export default class BackendAIUsageList extends BackendAIPage {
           }
 
         });
-        console.log(collection);
         this.collection = collection;
         return this.updateComplete;
       }).catch(e => {
