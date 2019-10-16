@@ -240,7 +240,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             display: none;
           }
 
-          #resource-gauges {
+          #resource-gauges.horizontal,
+          #resource-gauges.vertical {
             display: flex;
           }
         }
@@ -1585,13 +1586,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _toggleResourceGauge() {
-    if (this.resourceGauge.style.display == '' || this.resourceGauge.style.display == 'flex') {
+    if (this.resourceGauge.style.display == '' || this.resourceGauge.style.display == 'flex' || this.resourceGauge.style.display == 'block') {
       this.resourceGauge.style.display = 'none';
     } else {
       if (document.body.clientWidth < 1200) {
         this.resourceGauge.style.position = 'absolute';
         this.resourceGauge.style.display = 'block';
-        this.resourceGauge.style.top = '40px';
+        this.resourceGauge.style.top = '160px';
+        this.resourceGauge.style.right = '170px';
+        this.resourceGauge.style.backgroundColor = '#ffffff';
+
       } else {
         this.resourceGauge.style.display = 'flex';
       }
