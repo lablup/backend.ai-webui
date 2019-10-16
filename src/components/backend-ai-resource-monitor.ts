@@ -217,7 +217,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         @media screen and (max-width: 1199px) {
-          #resource-gauge-toggle {
+          #resource-gauge-toggle { 
             display: flex;
           }
 
@@ -452,6 +452,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        if (!window.backendaiclient.is_admin) {
+          const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+          ownershipPanel.parentElement.removeChild(ownershipPanel);
+        }
+      }, true);
+    } else {
+      if (!window.backendaiclient.is_admin) {
+        const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+        ownershipPanel.parentElement.removeChild(ownershipPanel);
+      }
+    }
   }
 
   _initAliases() {
@@ -617,11 +630,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
-      }
-
-      if (!window.backendaiclient.is_admin) {
-        const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
-        ownershipPanel.parentElement.removeChild(ownershipPanel);
       }
 
       this.shadowRoot.querySelector('#new-session-dialog').show();
