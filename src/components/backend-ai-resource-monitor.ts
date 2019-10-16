@@ -217,13 +217,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         @media screen and (max-width: 1199px) {
-          #resource-gauge-toggle { 
+          #resource-gauge-toggle.horizontal {
             display: flex;
           }
 
-          #resource-gauges {
+          #resource-gauge-toggle.vertical {
             display: none;
           }
+
+          #resource-gauges.horizontal {
+            display: none;
+          }
+
+          #resource-gauges.vertical {
+            display: flex;
+          }
+
         }
 
         @media screen and (min-width: 1200px) {
@@ -1587,7 +1596,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       </div>
       ` : html``}
       <div class="layout horizontal">
-        <mwc-icon-button id="resource-gauge-toggle" icon="assessment" class="fg blue"
+        <mwc-icon-button id="resource-gauge-toggle" icon="assessment" class="fg blue ${this.direction}"
           @click="${() => this._toggleResourceGauge()}">
           Close
         </mwc-icon-button>
