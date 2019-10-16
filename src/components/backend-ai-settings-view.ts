@@ -176,7 +176,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="rocm-gpu-support-switch" checked disabled></wl-switch>
+                      <wl-switch id="rocm-gpu-support-switch" disabled></wl-switch>
                     </div>
                 </div>
             </div>
