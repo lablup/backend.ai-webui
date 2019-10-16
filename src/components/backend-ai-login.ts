@@ -300,13 +300,16 @@ export default class BackendAILogin extends LitElement {
     (this.shadowRoot.querySelector('#block-panel') as any).hide();
   }
 
+  _trimChar(str, char) {
+    return str.replace(/^\|+|\|+$/g, '');
+  }
   login() {
     let api_key: any = localStorage.getItem('backendaiconsole.api_key');
     let secret_key: any = localStorage.getItem('backendaiconsole.secret_key');
     let user_id: any = localStorage.getItem('backendaiconsole.user_id');
     let password: any = localStorage.getItem('backendaiconsole.password');
     if (api_key != null) {
-      this.api_key = api_key;
+      this.api_key = api_key.replace(/^\"+|\"+$/g, '');
     } else {
       this.api_key = '';
     }
@@ -316,19 +319,19 @@ export default class BackendAILogin extends LitElement {
       this.secret_key = '';
     }
     if (user_id != null) {
-      this.user_id = user_id;
+      this.user_id = user_id.replace(/^\"+|\"+$/g, '');
     } else {
       this.user_id = '';
     }
     if (password != null) {
-      this.password = password;
+      this.password = password.replace(/^\"+|\"+$/g, '');
     } else {
       this.password = '';
     }
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
       if (api_endpoint != null) {
-        this.api_endpoint = api_endpoint;
+        this.api_endpoint = api_endpoint.replace(/^\"+|\"+$/g, '');
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
