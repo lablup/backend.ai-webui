@@ -7,7 +7,6 @@ import {css, customElement, html, property, LitElement} from "lit-element";
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-input/paper-input';
-import '@polymer/app-storage/app-localstorage/app-localstorage-document';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
