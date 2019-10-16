@@ -168,8 +168,10 @@ export default class BackendAILogin extends LitElement {
     if (this.change_signin_support === true) {
       if (this.connection_mode == 'SESSION') {
         this.connection_mode = 'API';
+        localStorage.setItem('backendaiconsole.connection_mode', 'API');
       } else {
         this.connection_mode = 'SESSION';
+        localStorage.setItem('backendaiconsole.connection_mode', 'SESSION');
       }
       this.refreshPanel();
       this.requestUpdate();
@@ -260,13 +262,23 @@ export default class BackendAILogin extends LitElement {
     } else {
       this.default_session_environment = config.general.defaultSessionEnvironment;
     }
-    if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
-      this.connection_mode = 'API';
-    } else {
-      if (config.general.connectionMode.toUpperCase() === 'SESSION') {
+    let connection_mode: string = localStorage.getItem('backendaiconsole.connection_mode');
+    if (connection_mode !== null) {
+      if (connection_mode === 'SESSION') {
         this.connection_mode = 'SESSION';
       } else {
         this.connection_mode = 'API';
+      }
+    } else {
+      if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
+        this.connection_mode = 'API';
+        localStorage.setItem('backendaiconsole.connection_mode', 'API');
+      } else {
+        if (config.general.connectionMode.toUpperCase() === 'SESSION') {
+          this.connection_mode = 'SESSION';
+        } else {
+          this.connection_mode = 'API';
+        }
       }
     }
     this.refreshPanel();
@@ -314,7 +326,7 @@ export default class BackendAILogin extends LitElement {
       this.api_key = '';
     }
     if (secret_key != null) {
-      this.secret_key = secret_key;
+      this.secret_key = secret_key.replace(/^\"+|\"+$/g, '');
     } else {
       this.secret_key = '';
     }
