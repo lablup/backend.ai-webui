@@ -262,7 +262,7 @@ export default class BackendAILogin extends LitElement {
     } else {
       this.default_session_environment = config.general.defaultSessionEnvironment;
     }
-    let connection_mode: string = localStorage.getItem('backendaiconsole.connection_mode');
+    let connection_mode: string | null = localStorage.getItem('backendaiconsole.connection_mode');
     if (connection_mode !== null) {
       if (connection_mode === 'SESSION') {
         this.connection_mode = 'SESSION';
