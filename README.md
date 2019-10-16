@@ -16,6 +16,7 @@ Backend.AI console focuses to
     * Terminal for each session
  * Experiments
     * Manages container stream
+    * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
     * Upload  / download files
