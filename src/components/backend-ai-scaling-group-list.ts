@@ -141,6 +141,16 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     // If disconnected
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        window.backendaiclient.scalingGroup.list_all()
+          .then(res => {
+            this.scalingGroups = res.scaling_groups;
+          });
+
+        window.backendaiclient.domain.list()
+          .then(({domains}) => {
+            this.domains = domains;
+            this.requestUpdate(); // without this render is called beforehands, so update is required
+          })
       }, true);
     } else { // already connected
       window.backendaiclient.scalingGroup.list_all()
@@ -326,7 +336,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
-    window.backendaiclient.scalingGroup.list()
+    window.backendaiclient.scalingGroup.list_all()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         this.requestUpdate(); // without this render is called beforehands, so update is required
