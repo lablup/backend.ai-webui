@@ -29,7 +29,6 @@ let manager = new ProxyManager();
 var mainIndex = 'build/electron-app/app/index.html';
 let mainURL;
 
-// Modules to control application life and create native browser window
 app.once('ready', function() {
   var template;
   if (process.platform === 'darwin') {
