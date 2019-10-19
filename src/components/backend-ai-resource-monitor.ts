@@ -543,9 +543,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
       if (this.enable_scaling_group === true) {
         if (this.scaling_group === '') {
-          //console.log(window.backendaiclient.current_group);
-          let sgs = await window.backendaiclient.scalingGroup.list();
-          console.log(sgs);
+          const currentGroup = window.backendaiclient.current_group || null;
+          let sgs = await window.backendaiclient.scalingGroup.list(currentGroup);
           this.scaling_groups = sgs.scaling_groups;
           if (this.direction === 'vertical') {
             this.scaling_group = this.scaling_groups[0].name;
