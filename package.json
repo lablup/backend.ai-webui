@@ -91,7 +91,7 @@
     "web-animations-js": "^2.3.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9",
-    "ws": "^7.1.2"
+    "ws": "^7.2.0"
   },
   "vaadin": {
     "disableUsageStatistics": true
