@@ -74,6 +74,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     'self-terminated': 'green'
   };
   @property({type: Number}) sshPort = 0;
+  @property({type: Number}) vncPort = 0;
 
   constructor() {
     super();
@@ -1205,6 +1206,23 @@ ${item.map(item => {
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <div><span style="color:green;">You need a SSH key file located at /home/work/id_container</span></div>
+          </section>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="vnc-dialog" fixed backdrop blockscrolling
+                    style="padding:0;">
+        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
+          <h4 class="horizontal center layout" style="font-weight:bold">
+            <span>VNC connection</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h4>
+          <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
+          <section class="vertical layout wrap start start-justified">
+            <h4>Connection information</h4>
+            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
           </section>
         </wl-card>
       </wl-dialog>
