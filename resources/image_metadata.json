@@ -12,6 +12,7 @@
     "PyTorch": "python-pytorch",
     "Chainer": "chainer",
     "Chainer (Python)": "python-chainer",
+    "Caffe (Python)": "python-caffe",
     "R": "r-base",
     "Julia": "julia",
     "Lua": "lua",
@@ -138,6 +139,7 @@
     "python-ff": "Lablup Research Platform",
     "python-cntk": "CNTK",
     "python-pytorch": "PyTorch",
+    "python-caffe": "Caffe (Python)",
     "python-tensorflow": "TensorFlow",
     "python-chainer": "Chainer (Python)",
     "julia-tensorflow": "TensorFlow (Julia)",
@@ -210,6 +212,13 @@
       {
         "category": "Env",
         "tag": "Chainer",
+        "color": "blue"
+      }
+    ],
+    "python-caffe": [
+      {
+        "category": "Env",
+        "tag": "Caffe",
         "color": "blue"
       }
     ],
@@ -428,8 +437,12 @@
     "afni": [
       {
         "category": "Env",
-        "tag": "NeuroDebian",
+        "tag": "AFNI",
         "color": "blue"
+      },
+      {
+        "tag": "NeuroDebian",
+        "color": "yellow"
       }
     ],
     "sftp": [
