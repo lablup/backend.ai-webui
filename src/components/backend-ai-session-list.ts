@@ -704,6 +704,14 @@ export default class BackendAiSessionList extends BackendAIPage {
             setTimeout(() => {
               this.shadowRoot.querySelector('#indicator').end();
             }, 1000);
+          } else if (appName === 'vnc') {
+            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.vncPort = response.port;
+            this._openVNCDialog();
+            setTimeout(() => {
+              this.shadowRoot.querySelector('#indicator').end();
+            }, 1000);
+
           } else if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
@@ -755,7 +763,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   _openSSHDialog() {
     let dialog = this.shadowRoot.querySelector('#ssh-dialog');
     dialog.show();
+  }
 
+  _openVNCDialog() {
+    let dialog = this.shadowRoot.querySelector('#vnc-dialog');
+    dialog.show();
   }
 
   _terminateSession(e) {
