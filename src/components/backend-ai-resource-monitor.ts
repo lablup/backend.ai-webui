@@ -1677,17 +1677,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-          <div class="layout horizontal center-justified monitor">
+          <div class="layout horizontal center-justified monitor" style="margin-left:5px;">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
             </div>
-            <div class="layout vertical start-justified wrap short-indicator" style="margin-left: 0; margin-right: auto">
+            <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
               <paper-progress class="short full-bar" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
             </div>
           </div>
-          <div class="flex"></div>
         </div>
         <div class="layout vertical" style="align-self: center;">
           <wl-button class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
