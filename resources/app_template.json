@@ -66,6 +66,14 @@
         "src": "./resources/icons/nni.png"
       }
     ],
+    "spectravis": [
+      {
+        "name": "spectravis",
+        "title": "SpectraVIS",
+        "redirect": "",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
     "sftp": [
       {
         "name": "sftp",
