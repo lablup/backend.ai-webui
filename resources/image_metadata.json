@@ -1,6 +1,7 @@
 {
   "aliases": {
-    "Lablup ResearchEnv.": "python-ff",
+    "Lablup Research Platform": "python-ff",
+    "ML Workspace": "ml-workspace",
     "TensorFlow": "python-tensorflow",
     "TensorFlow (Julia)": "julia-tensorflow",
     "TensorFlow (Swift)": "swift-tensorflow",
@@ -36,10 +37,12 @@
     "SSH": "ssh"
   },
   "tags": {
+    "Lablup Research Platform": [],
+    "ML Workspace": [],
     "TensorFlow": [],
     "TensorFlow (Julia)": [],
     "TensorFlow (Swift)": [],
-    "Lablup ResearchEnv.": [],
+    "Lablup Workspace": [],
     "Python": [],
     "Python (Intel MKL)": [
       "Intel MKL"
@@ -105,6 +108,7 @@
     "java": "Java",
     "julia": "Julia",
     "lua": "Lua",
+    "ml-workspace": "ML Workspace",
     "ngc-rapids": "RAPID (NGC)",
     "ngc-digits": "DIGITS (NGC)",
     "ngc-pytorch": "PyTorch (NGC)",
@@ -116,7 +120,7 @@
     "octave": "Octave",
     "php": "PHP",
     "python": "Python",
-    "python-ff": "Lablup ResearchEnv.",
+    "python-ff": "Lablup Research Platform",
     "python-cntk": "CNTK",
     "python-pytorch": "PyTorch",
     "python-tensorflow": "TensorFlow",
@@ -157,12 +161,19 @@
     'python-ff': [
       {
         'category': 'Env',
-        'tag': 'Lablup Research',
+        'tag': 'Lablup Research Platform',
         'color': 'blue'
       },
       {
         'tag': 'Nvidia GPU Cloud',
         'color': 'green'
+      }
+    ],
+    'ml-workspace': [
+      {
+        'category': 'Env',
+        'tag': 'ML Workspace',
+        'color': 'blue'
       }
     ],
     'python-tensorflow': [
