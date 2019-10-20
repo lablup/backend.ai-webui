@@ -20,6 +20,7 @@
     "PyTorch (Cloudia)": "lablup-pytorch",
     "Neural Network Intelligence": "nni",
     "H2O": "h2o",
+    "SpectraVis": "spectravis",
     "SFTP": "sftp",
     "SSH": "ssh"
   },
@@ -64,6 +65,7 @@
     "H2O": [
       "h2o.ai"
     ],
+    "SpectraVis": [],
     "SFTP": [
       "backend.ai"
     ],
@@ -103,6 +105,7 @@
     "lablup-pytorch": "PyTorch (Cloudia)",
     "nni": "Neural Network Intelligence",
     "h2o": "H2O.ai",
+    "spectravis": "SpectraVis",
     "sftp": "SFTP",
     "ssh": "SSH"
   },
@@ -152,11 +155,18 @@
       {'category': 'Env', 'tag': 'Swift', 'color': 'blue'}],
     'h2o': [
       {'category': 'Env', 'tag': 'H2O', 'color': 'blue'}],
+    'spectravis': [
+      {
+        'category': 'Env',
+        'tag': 'SpectraVis',
+        'color': 'blue'
+      }
+    ],
     'sftp': [
       {'category': 'Env', 'tag': 'SFTP', 'color': 'blue'},
       {'tag': 'Backend.AI', 'color': 'green'}],
     'lablup-pytorch': [
       {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-      {'tag': 'Cloudia', 'color': 'green'}],
+      {'tag': 'Cloudia', 'color': 'green'}]
   }
 }
