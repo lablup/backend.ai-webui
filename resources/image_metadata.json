@@ -28,6 +28,7 @@
     "Caffe 2 (NGC)": "ngc-caffe2",
     "Caffe 3 (NGC)": "ngc-caffe3",
     "NVCaffe (NGC)": "ngc-nvcaffe",
+    "MXNet (NGC)": "ngc-mxnet",
     "MATLAB (NGC)": "ngc-matlab",
     "PyTorch (Cloudia)": "lablup-pytorch",
     "Neural Network Intelligence": "nni",
@@ -119,6 +120,10 @@
     "ngc-digits": "DIGITS (NGC)",
     "ngc-pytorch": "PyTorch (NGC)",
     "ngc-tensorflow": "TensorFlow (NGC)",
+    "ngc-caffe2": "Caffe 2 (NGC)",
+    "ngc-caffe3": "Caffe 3 (NGC)",
+    "ngc-nvcaffe": "NVCaffe (NGC)",
+    "ngc-mxnet": "MXNet (NGC)",
     "ngc-matlab": "MATLAB (NGC)",
     "python-intel": "Python (Intel MKL)",
     "intel-python": "Python (Intel)",
@@ -271,6 +276,17 @@
       {
         "category": "Env",
         "tag": "Caffe",
+        "color": "blue"
+      },
+      {
+        "tag": "Nvidia GPU Cloud",
+        "color": "green"
+      }
+    ],
+    "ngc-mxnet": [
+      {
+        "category": "Env",
+        "tag": "Amazon MXNet",
         "color": "blue"
       },
       {
