@@ -34,6 +34,7 @@
     "H2O": "h2o",
     "SpectraVis": "spectravis",
     "NeuroDebian": "neurodebian",
+    "AFNI": "afni",
     "SFTP": "sftp",
     "SSH": "ssh"
   },
@@ -95,6 +96,7 @@
     "H2O": [
       "h2o.ai"
     ],
+    "AFNI": [],
     "SpectraVis": [],
     "NeuroDebian": [],
     "SFTP": [
@@ -141,6 +143,7 @@
     "h2o": "H2O.ai",
     "spectravis": "SpectraVis",
     "neurodebian": "NeuroDebian",
+    "afni": "AFNI",
     "sftp": "SFTP",
     "ssh": "SSH"
   },
@@ -400,6 +403,13 @@
       {
         "category": "Env",
         "tag": "Debian",
+        "color": "blue"
+      }
+    ],
+    "afni": [
+      {
+        "category": "Env",
+        "tag": "NeuroDebian",
         "color": "blue"
       }
     ],
