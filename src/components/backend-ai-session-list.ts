@@ -65,6 +65,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Boolean}) enableScalingGroup = false;
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) refreshTimer = Object();
+  @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) statusColorTable = {
     'idle-timeout': 'green',
     'user-requested': 'green',
@@ -237,6 +238,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this._initializeAppTemplate();
     this.refreshTimer = null;
+    fetch('resources/image_metadata.json').then(
+      response => response.json()
+    ).then(
+      json => {
+        this.kernel_labels = json.labels;
+      }
+    );
     if (!window.backendaiclient ||
       !window.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
@@ -427,64 +435,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _getKernelInfo(lang) {
-    const kernel_alias = {
-      'python': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'blue'}],
-      'python-intel': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
-        {'tag': 'Intel MKL', 'color': 'green'}],
-      'python-ff': [
-        {'category': 'Env', 'tag': 'Lablup Research', 'color': 'blue'},
-        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
-      'python-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'}],
-      'python-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'}],
-      'ngc-digits': [
-        {'category': 'Env', 'tag': 'DIGITS', 'color': 'blue'},
-        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
-      'ngc-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
-      'ngc-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
-      'intel-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-        {'tag': 'Intel', 'color': 'blue'}],
-      'intel-python': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
-        {'tag': 'Intel', 'color': 'blue'}],
-      'julia': [
-        {'category': 'Env', 'tag': 'Julia', 'color': 'blue'}],
-      'r': [
-        {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
-      'r-base': [
-        {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
-      'c': [
-        {'category': 'Env', 'tag': 'C', 'color': 'blue'}],
-      'cpp': [
-        {'category': 'Env', 'tag': 'C++', 'color': 'blue'}],
-      'rust': [
-        {'category': 'Env', 'tag': 'Rust', 'color': 'blue'}],
-      'octave': [
-        {'category': 'Env', 'tag': 'Octave', 'color': 'blue'}],
-      'swift': [
-        {'category': 'Env', 'tag': 'Swift', 'color': 'blue'}],
-      'h2o': [
-        {'category': 'Env', 'tag': 'H2O', 'color': 'blue'}],
-      'sftp': [
-        {'category': 'Env', 'tag': 'SFTP', 'color': 'blue'},
-        {'tag': 'Backend.AI', 'color': 'green'}],
-      'lablup-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-        {'tag': 'Cloudia', 'color': 'green'}],
-    };
     let tags: any = [];
     if (lang === undefined) return [];
     let name = lang.split('/')[2].split(':')[0];
-    if (name in kernel_alias) {
-      tags.push(kernel_alias[name]);
+    if (name in this.kernel_labels) {
+      tags.push(this.kernel_labels[name]);
     } else {
       tags.push([
         {'category': 'Env', 'tag': lang, 'color': 'green'}
