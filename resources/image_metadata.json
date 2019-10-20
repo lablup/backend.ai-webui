@@ -111,50 +111,166 @@
   },
   "labels": {
     'python': [
-      {'category': 'Env', 'tag': 'Python', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'Python',
+        'color': 'blue'
+      }
+    ],
     'python-intel': [
-      {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
-      {'tag': 'Intel MKL', 'color': 'green'}],
+      {
+        'category': 'Env',
+        'tag': 'Python',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Intel MKL',
+        'color': 'green'
+      }
+    ],
     'python-ff': [
-      {'category': 'Env', 'tag': 'Lablup Research', 'color': 'blue'},
-      {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
+      {
+        'category': 'Env',
+        'tag': 'Lablup Research',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Nvidia GPU Cloud',
+        'color': 'green'
+      }
+    ],
     'python-tensorflow': [
-      {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'TensorFlow',
+        'color': 'blue'
+      }
+    ],
     'python-pytorch': [
-      {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'PyTorch',
+        'color': 'blue'
+      }
+    ],
     'ngc-digits': [
-      {'category': 'Env', 'tag': 'DIGITS', 'color': 'blue'},
-      {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
+      {
+        'category': 'Env',
+        'tag': 'DIGITS',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Nvidia GPU Cloud',
+        'color': 'green'
+      }
+    ],
     'ngc-tensorflow': [
-      {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-      {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
+      {
+        'category': 'Env',
+        'tag': 'TensorFlow',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Nvidia GPU Cloud',
+        'color': 'green'
+      }
+    ],
     'ngc-pytorch': [
-      {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-      {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
+      {
+        'category': 'Env',
+        'tag': 'PyTorch',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Nvidia GPU Cloud',
+        'color': 'green'
+      }
+    ],
     'intel-tensorflow': [
-      {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-      {'tag': 'Intel', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'TensorFlow',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Intel',
+        'color': 'blue'
+      }
+    ],
     'intel-python': [
-      {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
-      {'tag': 'Intel', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'Python',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Intel',
+        'color': 'blue'
+      }
+    ],
     'julia': [
-      {'category': 'Env', 'tag': 'Julia', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'Julia',
+        'color': 'blue'
+      }
+    ],
     'r': [
-      {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'R',
+        'color': 'blue'
+      }
+    ],
     'r-base': [
-      {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'R',
+        'color': 'blue'
+      }
+    ],
     'c': [
-      {'category': 'Env', 'tag': 'C', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'C',
+        'color': 'blue'
+      }
+    ],
     'cpp': [
-      {'category': 'Env', 'tag': 'C++', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'C++',
+        'color': 'blue'
+      }
+    ],
     'rust': [
-      {'category': 'Env', 'tag': 'Rust', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'Rust',
+        'color': 'blue'
+      }
+    ],
     'octave': [
-      {'category': 'Env', 'tag': 'Octave', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'Octave',
+        'color': 'blue'
+      }
+    ],
     'swift': [
-      {'category': 'Env', 'tag': 'Swift', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'Swift',
+        'color': 'blue'
+      }
+    ],
     'h2o': [
-      {'category': 'Env', 'tag': 'H2O', 'color': 'blue'}],
+      {
+        'category': 'Env',
+        'tag': 'H2O',
+        'color': 'blue'
+      }
+    ],
     'spectravis': [
       {
         'category': 'Env',
@@ -163,10 +279,26 @@
       }
     ],
     'sftp': [
-      {'category': 'Env', 'tag': 'SFTP', 'color': 'blue'},
-      {'tag': 'Backend.AI', 'color': 'green'}],
+      {
+        'category': 'Env',
+        'tag': 'SFTP',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Backend.AI',
+        'color': 'green'
+      }
+    ],
     'lablup-pytorch': [
-      {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-      {'tag': 'Cloudia', 'color': 'green'}]
+      {
+        'category': 'Env',
+        'tag': 'PyTorch',
+        'color': 'blue'
+      },
+      {
+        'tag': 'Cloudia',
+        'color': 'green'
+      }
+    ]
   }
 }
