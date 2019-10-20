@@ -159,6 +159,14 @@ class Manager extends EventEmitter {
           "port": port,
           "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
         });
+      } else if (app == 'vnc') {
+        console.log(port);
+        res.send({
+          "code": 200,
+          "proxy": proxy_target,
+          "port": port,
+          "url": this.baseURL + "/vnc?port=" + port + "&dummy=1"
+        });
       } else {
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
       }
