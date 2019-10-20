@@ -14,6 +14,12 @@
     "R": "r-base",
     "Julia": "julia",
     "Lua": "lua",
+    "Octave": "octave",
+    "PHP": "php",
+    "C++": "cpp",
+    "C": "gcc",
+    "Scala": "scala",
+    "Haskell": "haskell",
     "RAPID (NGC)": "ngc-rapids",
     "DIGITS (NGC)": "ngc-digits",
     "PyTorch (NGC)": "ngc-pytorch",
@@ -50,6 +56,8 @@
     "R": [],
     "Julia": [],
     "Lua": [],
+    "Scala": [],
+    "Haskell": [],
     "RAPID (NGC)": [
       "Nvidia GPU Cloud"
     ],
@@ -175,6 +183,13 @@
       {
         'category': 'Env',
         'tag': 'Chainer',
+        'color': 'blue'
+      }
+    ],
+    'julia-tensorflow': [
+      {
+        'category': 'Env',
+        'tag': 'TensorFlow',
         'color': 'blue'
       }
     ],
@@ -312,6 +327,20 @@
       {
         'category': 'Env',
         'tag': 'Octave',
+        'color': 'blue'
+      }
+    ],
+    'php': [
+      {
+        'category': 'Env',
+        'tag': 'PHP',
+        'color': 'blue'
+      }
+    ],
+    'scala': [
+      {
+        'category': 'Env',
+        'tag': 'Scala',
         'color': 'blue'
       }
     ],
