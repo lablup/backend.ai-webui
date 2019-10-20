@@ -85,6 +85,9 @@
     "NVCaffe (NGC)": [
       "Nvidia GPU Cloud"
     ],
+    "MXNet (NGC)": [
+      "Nvidia GPU Cloud"
+    ],
     "MATLAB (NGC)": [
       "Nvidia GPU Cloud"
     ],
