@@ -31,6 +31,7 @@
     "NVCaffe (NGC)": "ngc-nvcaffe",
     "MXNet (NGC)": "ngc-mxnet",
     "MATLAB (NGC)": "ngc-matlab",
+    "MATLAB": "matlab",
     "PyTorch (Cloudia)": "lablup-pytorch",
     "Neural Network Intelligence": "nni",
     "H2O": "h2o",
@@ -92,6 +93,9 @@
     "MATLAB (NGC)": [
       "Nvidia GPU Cloud"
     ],
+    "MATLAB": [
+      "Mathworks"
+    ],
     "PyTorch (Cloudia)": [
       "Cloudia"
     ],
@@ -129,6 +133,7 @@
     "ngc-nvcaffe": "NVCaffe (NGC)",
     "ngc-mxnet": "MXNet (NGC)",
     "ngc-matlab": "MATLAB (NGC)",
+    "matlab": "MATLAB",
     "python-intel": "Python (Intel MKL)",
     "intel-python": "Python (Intel)",
     "intel-tensorflow": "TensorFlow (Intel)",
@@ -319,6 +324,17 @@
       {
         "tag": "Nvidia GPU Cloud",
         "color": "green"
+      }
+    ],
+    "matlab": [
+      {
+        "category": "Env",
+        "tag": "MATLAB",
+        "color": "blue"
+      },
+      {
+        "tag": "Mathworks",
+        "color": "blue"
       }
     ],
     "intel-tensorflow": [
