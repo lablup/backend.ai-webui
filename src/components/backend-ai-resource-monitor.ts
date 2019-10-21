@@ -261,7 +261,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           font-size: 14px;
           width: 50px;
         }
-
+        .horizontal .monitor.session {
+          margin-left: 5px;
+        }
         .gauge-name {
           font-size: 10px;
         }
@@ -1677,7 +1679,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-          <div class="layout horizontal center-justified monitor" style="margin-left:5px;">
+          <div class="layout horizontal center-justified monitor session">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
