@@ -74,6 +74,14 @@
         "src": "./resources/icons/default_app.svg"
       }
     ],
+    "vnc-web": [
+      {
+        "name": "vnc",
+        "title": "VNC (Web)",
+        "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
     "matlab": [
       {
         "name": "matlab",
