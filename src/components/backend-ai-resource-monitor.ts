@@ -474,19 +474,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        if (!window.backendaiclient.is_admin) {
-          const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
-          ownershipPanel.style.display = 'none';
-        }
-      }, true);
-    } else {
-      if (!window.backendaiclient.is_admin) {
-        const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
-        ownershipPanel.style.display = 'none';
-      }
-    }
   }
 
   _initAliases() {
@@ -658,6 +645,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
       }
 
+      // Set display property of ownership panel.
+      const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+      if (window.backendaiclient.is_admin) {
+        ownershipPanel.style.display = 'block';
+      } else {
+        ownershipPanel.style.display = 'none';
+      }
+
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -707,8 +702,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['domain'] = window.backendaiclient._config.domainName;
       config['scaling_group'] = this.scaling_group;
       config['maxWaitSeconds'] = 5;
-      const ownerEnable = this.shadowRoot.querySelector('#owner-enable');
-      if (ownerEnable && ownerEnable.checked) {
+      const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+      if (ownerEnabled && ownerEnabled.checked) {
         config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
         config['domain'] = this.ownerDomain;
         config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
@@ -1887,7 +1882,7 @@ ${this.resource_templates.map(item => html`
                   </paper-dropdown-menu>
                 </div>
                 <wl-label>
-                  <wl-checkbox id="owner-enable"></wl-checkbox>
+                  <wl-checkbox id="owner-enabled"></wl-checkbox>
                   Launch session on behalf of the access key
                 </wl-label>
               </div>
