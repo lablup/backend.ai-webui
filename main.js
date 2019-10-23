@@ -39,8 +39,7 @@ let devtools;
 let manager = new ProxyManager();
 let mainURL;
 
-// Modules to control application life and create native browser window
-app.once('ready', function () {
+app.once('ready', function() {
   var template;
   if (process.platform === 'darwin') {
     template = [

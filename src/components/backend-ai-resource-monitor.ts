@@ -261,7 +261,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           font-size: 14px;
           width: 50px;
         }
-
+        .horizontal .monitor.session {
+          margin-left: 5px;
+        }
         .gauge-name {
           font-size: 10px;
         }
@@ -543,9 +545,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
       if (this.enable_scaling_group === true) {
         if (this.scaling_group === '') {
-          //console.log(window.backendaiclient.current_group);
-          let sgs = await window.backendaiclient.scalingGroup.list();
-          console.log(sgs);
+          const currentGroup = window.backendaiclient.current_group || null;
+          let sgs = await window.backendaiclient.scalingGroup.list(currentGroup);
           this.scaling_groups = sgs.scaling_groups;
           if (this.direction === 'vertical') {
             this.scaling_group = this.scaling_groups[0].name;
@@ -1678,17 +1679,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-          <div class="layout horizontal center-justified monitor">
+          <div class="layout horizontal center-justified monitor session">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
               <span class="gauge-name">Session</span>
             </div>
-            <div class="layout vertical start-justified wrap short-indicator" style="margin-left: 0; margin-right: auto">
+            <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
               <paper-progress class="short full-bar" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
             </div>
           </div>
-          <div class="flex"></div>
         </div>
         <div class="layout vertical" style="align-self: center;">
           <wl-button class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">

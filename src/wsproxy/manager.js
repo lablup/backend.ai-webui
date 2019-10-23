@@ -92,8 +92,8 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:kernelId/add', async (req, res) =>{
-      if (!this._config){
+    this.app.get('/proxy/local/:kernelId/add', async (req, res) => {
+      if (!this._config) {
         res.send({"code": 401});
         return;
       }
@@ -120,7 +120,7 @@ class Manager extends EventEmitter {
       //////
       //
       let gateway;
-      if(this._config.mode == "SESSION") {
+      if (this._config.mode == "SESSION") {
         gateway = new SGateway(this._config);
       } else {
         gateway = new Gateway(this.aiclient._config);
@@ -131,7 +131,7 @@ class Manager extends EventEmitter {
       let port = undefined;
       let assigned = false;
       let maxtry = 5;
-      for(let i=0;i < maxtry; i++) {
+      for (let i = 0; i < maxtry; i++) {
         try {
           await gateway.start_proxy(kernelId, app, ip, port);
           port = gateway.getPort();
@@ -144,11 +144,11 @@ class Manager extends EventEmitter {
           //or just retry
         }
       }
-      if(!assigned) {
+      if (!assigned) {
         res.send({"code": 500});
       }
       let proxy_target = "http://localhost:" + port;
-      if(app == 'sftp') {
+      if (app == 'sftp') {
         console.log(port);
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
       } else if (app == 'sshd') {
@@ -158,6 +158,14 @@ class Manager extends EventEmitter {
           "proxy": proxy_target,
           "port": port,
           "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
+        });
+      } else if (app == 'vnc') {
+        console.log(port);
+        res.send({
+          "code": 200,
+          "proxy": proxy_target,
+          "port": port,
+          "url": this.baseURL + "/vnc?port=" + port + "&dummy=1"
         });
       } else {
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
@@ -190,6 +198,8 @@ class Manager extends EventEmitter {
     this.app.get('/redirect', (req, res) => {
       let port = req.query.port;
       let path = req.query.redirect || "";
+      path.replace("<proxy-host>", this.listen_ip);
+      path.replace("<port-number>", port);
       res.redirect("http://" + this.listen_ip + ":" + port + path)
     });
   }
