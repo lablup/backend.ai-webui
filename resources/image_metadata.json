@@ -70,6 +70,12 @@
     "Lua": [],
     "Scala": [],
     "Haskell": [],
+    "Go": [],
+    "Rust": [],
+    "Scheme": [],
+    "Java": [
+      "OpenJDK"
+    ],
     "RAPID (NGC)": [
       "Nvidia GPU Cloud"
     ],
