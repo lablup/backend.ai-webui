@@ -32,25 +32,13 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 
 @customElement("backend-ai-resource-preset-list")
 class BackendAiResourcePresetList extends BackendAIPage {
-  @property({type: Array}) keypairs = {};
   @property({type: Array}) resourcePolicy = {};
-  @property({type: Array}) keypairInfo = {};
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: Boolean}) gpu_allocatable = false;
   @property({type: String}) condition = '';
   @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
-  @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
-  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
-  @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-  @property({type: Array}) fgpu_metric = [0, 0.2, 0.3, 0.5, 1, 2, 3, 4, 8, 16, "Unlimited"];
-  @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
-  @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
-  @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
-  @property({type: Array}) idle_timeout_metric = [60, 600, 900, 1800, 3600, 43200, 86400, 604800, 1209600];
-  @property({type: Array}) vfolder_capacity_metric = [1, 2, 5, 10, 20, 50, 100, 200, 1000];
-  @property({type: Array}) vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
 
@@ -247,7 +235,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <h3 class="horizontal center layout">
             <span>Modify resource preset</span>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+            <wl-button class="fg orange" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
@@ -255,40 +243,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <fieldset>
               <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
                           auto-validate required
-                          pattern="[a-zA-Z0-9]*"
-                          error-message="Policy name only accepts letters and numbers"></paper-input>
+                          pattern="[a-zA-Z0-9_-]*"
+                          error-message="Policy name only accepts letters, numbers, underscore, and dash"></paper-input>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="cpu-resource" label="CPU" vertical-align="middle">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.cpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="ram-resource" label="RAM (GB)" vertical-align="middle">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.ram_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <paper-input id="cpu-resource" type="number" label="CPU"
+                    min="1" value="1"></paper-input>
+                <paper-input id="ram-resource" type="number" label="RAM (GB)"
+                    min="1" value="1"></paper-input>
               </div>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable} vertical-align="bottom" vertical-offset="-90">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.gpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable} vertical-align="bottom" vertical-offset="-90">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.fgpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <paper-input id="gpu-resource" type="number" label="GPU"
+                    min="0" value="0" ?disabled=${!this.gpu_allocatable}></paper-input>
+                <paper-input id="fgpu-resource" type="number" label="fGPU"
+                    min="0" value="0" ?disabled=${!this.gpu_allocatable}></paper-input>
               </div>
               <br/><br/>
               <wl-button class="fg orange create-button" outlined type="button"
@@ -318,41 +286,21 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 label="Preset Name"
                 auto-validate
                 required
-                pattern="[a-zA-Z0-9\.\-\_]*"
+                pattern="[a-zA-Z0-9-_]*"
                 error-message="Policy name only accepts letters and numbers"
               ></paper-input>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="create-cpu-resource" label="CPU" vertical-align="middle">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.cpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="create-ram-resource" label="RAM (GB)" vertical-align="middle">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.ram_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <paper-input id="create-cpu-resource" type="number" label="CPU"
+                    min="1" value="1"></paper-input>
+                <paper-input id="create-ram-resource" type="number" label="RAM (GB)"
+                    min="1" value="1"></paper-input>
               </div>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="create-gpu-resource" label="GPU" ?disabled=${!this.gpu_allocatable} vertical-align="bottom" vertical-offset="-90">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.gpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="create-fgpu-resource" label="fGPU" ?disabled=${!this.gpu_allocatable} vertical-align="bottom" vertical-offset="-90">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.fgpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <paper-input id="create-gpu-resource" type="number" label="GPU"
+                    min="0" value="0" ?disabled=${!this.gpu_allocatable}></paper-input>
+                <paper-input id="create-fgpu-resource" type="number" label="fGPU"
+                    min="0" value="0" ?disabled=${!this.gpu_allocatable}></paper-input>
               </div>
               <wl-button
                 class="fg orange create-button"
@@ -374,8 +322,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <p>You are about to delete ${this.presetName} preset. This action cannot be undone. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button class="ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">Okay</wl-button>
+            <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">Okay</wl-button>
          </div>
       </wl-dialog>
     `;
@@ -419,7 +367,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   _launchDeleteResourcePresetDialog(e) {
     const controls = e.target.closest('#controls');
     const preset_name = controls['preset-name'];
-    console.log(preset_name);
     this.presetName = preset_name;
     this.shadowRoot.querySelector('#delete-resource-preset-dialog').show();
   }
@@ -446,8 +393,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const preset_name = controls['preset-name'];
     let resourcePresets = window.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
-    console.log(resourcePreset);
-    console.log(resourcePreset.resource_slots['cuda.device']);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
     this.shadowRoot.querySelector('#id_preset_name').value = preset_name;
     this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
