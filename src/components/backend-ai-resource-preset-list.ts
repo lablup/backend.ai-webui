@@ -36,6 +36,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: Boolean}) gpu_allocatable = false;
+  @property({type: String}) gpuAllocationMode = 'device';
   @property({type: String}) condition = '';
   @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
@@ -243,7 +244,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <fieldset>
               <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
                           auto-validate required
-                          pattern="[a-zA-Z0-9_-]*"
+                          pattern="[a-zA-Z0-9_-]+"
+                          disabled
                           error-message="Policy name only accepts letters, numbers, underscore, and dash"></paper-input>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
@@ -254,9 +256,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 <paper-input id="gpu-resource" type="number" label="GPU"
-                    min="0" value="0" ?disabled=${!this.gpu_allocatable}></paper-input>
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></paper-input>
                 <paper-input id="fgpu-resource" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${!this.gpu_allocatable}></paper-input>
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></paper-input>
               </div>
               <br/><br/>
               <wl-button class="fg orange create-button" outlined type="button"
@@ -286,7 +288,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 label="Preset Name"
                 auto-validate
                 required
-                pattern="[a-zA-Z0-9-_]*"
+                pattern="[a-zA-Z0-9-_]+"
                 error-message="Policy name only accepts letters and numbers"
               ></paper-input>
               <h4>Resource Preset</h4>
@@ -298,9 +300,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 <paper-input id="create-gpu-resource" type="number" label="GPU"
-                    min="0" value="0" ?disabled=${!this.gpu_allocatable}></paper-input>
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></paper-input>
                 <paper-input id="create-fgpu-resource" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${!this.gpu_allocatable}></paper-input>
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></paper-input>
               </div>
               <wl-button
                 class="fg orange create-button"
@@ -349,6 +351,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
       window.backendaiclient.getResourceSlots()
         .then(res => {
           this.gpu_allocatable = (Object.keys(res).length !== 2);
+          if (Object.keys(res).includes('cuda.shares')) {
+            this.gpuAllocationMode = 'fractional';
+          } else {
+            this.gpuAllocationMode = 'device';
+          }
         })
     }
   }
@@ -454,6 +461,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   _modifyResourceTemplate() {
     let name = this.shadowRoot.querySelector('#id_preset_name').value;
+    if (!name) {
+      this.notification.text = 'No preset name';
+      this.notification.show();
+      return;
+    }
     let input = this._readResourcePresetInput();
     window.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#modify-template-dialog').hide();
@@ -526,6 +538,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
       mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g'),
       gpu_resource = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value),
       fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
+    if (!preset_name) {
+      this.notification.text = 'No preset name';
+      this.notification.show();
+      return;
+    }
 
     let resource_slots = {cpu, mem};
     if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
