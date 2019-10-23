@@ -22,6 +22,7 @@
     "C": "gcc",
     "Scala": "scala",
     "Haskell": "haskell",
+    "Go": "go",
     "RAPID (NGC)": "ngc-rapids",
     "DIGITS (NGC)": "ngc-digits",
     "PyTorch (NGC)": "ngc-pytorch",
