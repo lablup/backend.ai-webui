@@ -1266,21 +1266,21 @@ class Keypair {
           `  }` +
           `}`;
       } else {
-        q = `query($user_id: String!, $is_active: Boolean) {` +
-          `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+        q = `query($email: String!, $is_active: Boolean) {` +
+          `  keypairs(email: $email, is_active: $is_active) {` +
           `    ${fields.join(" ")}` +
           `  }` +
           `}`;
       }
     } else {
-      q = `query($user_id: String!, $is_active: Boolean) {` +
-        `  keypairs(user_id: $user_id, is_active: $is_active) {` +
+      q = `query($email: String!, $is_active: Boolean) {` +
+        `  keypairs(email: $email, is_active: $is_active) {` +
         `    ${fields.join(" ")}` +
         `  }` +
         `}`;
     }
     let v = {
-      'user_id': userId || this.client.email,
+      'email': userId || this.client.email,
       'is_active': isActive,
     };
     return this.client.gql(q, v);
