@@ -1,0 +1,13 @@
+maintenance:
+  - scripts/**/*
+
+UI / UX:
+  - resources/fonts/*
+  - resources/icons/*
+  - resources/*.css
+  - src/plastics/**/*
+  - 
+library / SDK:
+  - resources/lib/**/*
+  - resources/wsproxy/**/*
+
