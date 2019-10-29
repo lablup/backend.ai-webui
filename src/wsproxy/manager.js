@@ -100,53 +100,41 @@ class Manager extends EventEmitter {
       let kernelId = req.params["kernelId"];
       let app = req.query.app || "jupyter";
       let p = kernelId + "|" + app;
-      //TODO: reset or remove duplicate
-      //
-      /////
-      /*
-      let proxy;
-      if(this._config.mode == "SESSION") {
-        proxy = new CProxy(this._config);
-      } else {
-        proxy = new Proxy(this.aiclient._config);
-      }
-      this.getPort().then((port) => {
-        let proxy_url = this.proxyBaseURL + ":" + port;
-        proxy.start_proxy(kernelId, app, this.listen_ip, port, proxy_url);
-        this.proxies[p] = proxy;
-        res.send({"code": 200, "proxy": proxy.base_url, "url": this.baseURL + "/redirect?port=" + port});
-      });
-      */
-      //////
-      //
       let gateway;
-      if (this._config.mode == "SESSION") {
-        gateway = new SGateway(this._config);
-      } else {
-        gateway = new Gateway(this.aiclient._config);
-      }
-      this.proxies[p] = gateway;
-
       let ip = "127.0.0.1"; //FIXME: Update needed
       let port = undefined;
-      let assigned = false;
-      let maxtry = 5;
-      for (let i = 0; i < maxtry; i++) {
-        try {
-          await gateway.start_proxy(kernelId, app, ip, port);
+      if(this.proxies.hasOwnProperty(p)) {
+          gateway = this.proxies[p];
           port = gateway.getPort();
-          assigned = true;
-          break;
-        } catch (err) {
-          //if port in use
-          console.log(err);
-          console.log("Port in use");
-          //or just retry
+      } else {
+        if (this._config.mode == "SESSION") {
+          gateway = new SGateway(this._config);
+        } else {
+          gateway = new Gateway(this.aiclient._config);
+        }
+        this.proxies[p] = gateway;
+
+        let assigned = false;
+        let maxtry = 5;
+        for (let i = 0; i < maxtry; i++) {
+          try {
+            await gateway.start_proxy(kernelId, app, ip, port);
+            port = gateway.getPort();
+            assigned = true;
+            break;
+          } catch (err) {
+            //if port in use
+            console.log(err);
+            console.log("Port in use");
+            //or just retry
+          }
+        }
+        if (!assigned) {
+          res.send({"code": 500});
+          return;
         }
       }
-      if (!assigned) {
-        res.send({"code": 500});
-      }
+
       let proxy_target = "http://localhost:" + port;
       if (app == 'sftp') {
         console.log(port);
