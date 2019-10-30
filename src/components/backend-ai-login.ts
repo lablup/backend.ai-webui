@@ -409,14 +409,10 @@ export default class BackendAILogin extends LitElement {
     let user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
     let password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
     this.client.signout(user_id, password).then(response => {
-      if (response === false) {
-        throw {"message": "Signout failed. Check information and manager status."};
-      } else {
-        this.notification.text = 'Signout finished.';
-        this.notification.show();
-        let event = new CustomEvent("backend-ai-logout", {"detail": ""});
-        document.dispatchEvent(event);
-      }
+      this.notification.text = 'Signout finished.';
+      this.notification.show();
+      let event = new CustomEvent("backend-ai-logout", {"detail": ""});
+      document.dispatchEvent(event);
     }).catch((err) => {   // Signout failed
       this.free();
       if (this.signoutPanel.open !== true) {
