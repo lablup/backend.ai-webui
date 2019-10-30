@@ -110,12 +110,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   /* Parameters required to launch a session on behalf of other user */
   @property({type: Boolean}) ownerFeatureInitialized = false;
   @property({type: String}) ownerDomain = '';
+  @property({type: Array}) ownerKeypairs;
   @property({type: Array}) ownerGroups;
   @property({type: Array}) ownerScalingGroups;
 
   constructor() {
     super();
     this.active = false;
+    this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
     this.init_resource();
@@ -431,6 +433,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     /* Parameters required to launch a session on behalf of other user */
     this.ownerFeatureInitialized = false;
     this.ownerDomain = '';
+    this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
   }
@@ -474,19 +477,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        if (!window.backendaiclient.is_admin) {
-          const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
-          ownershipPanel.style.display = 'none';
-        }
-      }, true);
-    } else {
-      if (!window.backendaiclient.is_admin) {
-        const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
-        ownershipPanel.style.display = 'none';
-      }
-    }
   }
 
   _initAliases() {
@@ -658,6 +648,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
       }
 
+      // Set display property of ownership panel.
+      const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+      if (window.backendaiclient.is_admin) {
+        ownershipPanel.style.display = 'block';
+      } else {
+        ownershipPanel.style.display = 'none';
+      }
+
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -707,15 +705,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['domain'] = window.backendaiclient._config.domainName;
       config['scaling_group'] = this.scaling_group;
       config['maxWaitSeconds'] = 5;
-      const ownerEnable = this.shadowRoot.querySelector('#owner-enable');
-      if (ownerEnable && ownerEnable.checked) {
+      const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+      if (ownerEnabled && ownerEnabled.checked) {
         config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
         config['domain'] = this.ownerDomain;
         config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
-        config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').value;
+        config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').selectedItemLabel;
         if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
           this.notification.text = 'Not enough ownership information';
           this.notification.show();
+          return;
         }
       }
     }
@@ -1560,21 +1559,29 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#owner-group').addEventListener('selected-item-label-changed', this._fetchSessionOwnerScalingGroups.bind(this));
       this.ownerFeatureInitialized = true;
     }
-    const accessKey = this.shadowRoot.querySelector('#owner-accesskey').value;
-    if (!accessKey) {
-      this.notification.text = 'Enter access key';
+    const ownerEmail = this.shadowRoot.querySelector('#owner-email');
+    const email = ownerEmail.value;
+    if (!ownerEmail.validate()) {
+      this.notification.text = 'Invalid email address';
       this.notification.show();
+      this.ownerKeypairs = [];
       this.ownerGroups = [];
       return;
     }
-    const kpInfo = await window.backendaiclient.keypair.info(accessKey, ['user_id']);
-    if (!kpInfo.keypair || !kpInfo.keypair.user_id) {
-      this.notification.text = 'No access key information';
+
+    /* Fetch keypair */
+    const keypairs = await window.backendaiclient.keypair.list(email, ['access_key']);
+    this.ownerKeypairs = keypairs.keypairs;
+   if (this.ownerKeypairs.length < 1) {
+      this.notification.text = 'No active keypair';
       this.notification.show();
+      this.ownerKeypairs = [];
       this.ownerGroups = [];
       return;
     }
-    const email = kpInfo.keypair.user_id;
+    this.shadowRoot.querySelector('#owner-accesskey paper-listbox').selected = this.ownerKeypairs[0].access_key;
+
+    /* Fetch domain / group information */
     const userInfo = await window.backendaiclient.user.get(email, ['domain_name', 'groups {id name}']);
     this.ownerDomain = userInfo.user.domain_name;
     this.ownerGroups = userInfo.user.groups;
@@ -1591,7 +1598,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     const sgroupInfo = await window.backendaiclient.scalingGroup.list(group);
     this.ownerScalingGroups = sgroupInfo.scaling_groups;
-    console.log();
     if (this.ownerScalingGroups) {
       this.shadowRoot.querySelector('#owner-scaling-group paper-listbox').selected = 0;
     }
@@ -1863,12 +1869,20 @@ ${this.resource_templates.map(item => html`
               <span slot="description">Set session owner</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
-                  <paper-input id="owner-accesskey" class="flex" value=""
-                    label="Owner Access Key" size="40"></paper-input>
+                  <paper-input id="owner-email" class="flex" value=""
+                    pattern="^.+@.+\..+$"
+                    label="Owner Email" size="40"></paper-input>
                   <mwc-icon-button icon="refresh" class="blue"
                     @click="${() => this._fetchSessionOwnerGroups()}">
                   </mwc-icon-button>
                 </div>
+                <paper-dropdown-menu id="owner-accesskey" label="Owner access key">
+                  <paper-listbox slot="dropdown-content" attr-for-selected="id">
+                    ${this.ownerKeypairs.map(item => html`
+                      <paper-item id="${item.access_key}" label="${item.access_key}">${item.access_key}</paper-item>
+                    `)}
+                  </paper-listbox>
+                </paper-dropdown-menu>
                 <div class="horizontal center layout">
                   <paper-dropdown-menu id="owner-group" label="Owner group" horizontal-align="left">
                     <paper-listbox slot="dropdown-content" attr-for-selected="id"
@@ -1887,7 +1901,7 @@ ${this.resource_templates.map(item => html`
                   </paper-dropdown-menu>
                 </div>
                 <wl-label>
-                  <wl-checkbox id="owner-enable"></wl-checkbox>
+                  <wl-checkbox id="owner-enabled"></wl-checkbox>
                   Launch session on behalf of the access key
                 </wl-label>
               </div>
