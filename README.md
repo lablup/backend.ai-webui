@@ -14,8 +14,10 @@ Backend.AI console focuses to
     * Set default resources for runs
     * Choose and run environment-supported apps
     * Terminal for each session
+    * Fully-featured VSCode editor and environments (WIP)
  * Experiments
     * Manages container stream
+    * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
     * Upload  / download files

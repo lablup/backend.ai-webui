@@ -66,6 +66,38 @@
         "src": "./resources/icons/nni.png"
       }
     ],
+    "vnc": [
+      {
+        "name": "vnc",
+        "title": "VNC",
+        "redirect": "",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "vnc-web": [
+      {
+        "name": "vnc",
+        "title": "VNC (Web)",
+        "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "matlab": [
+      {
+        "name": "matlab",
+        "title": "MATLAB",
+        "redirect": "",
+        "src": "./resources/icons/matlab.png"
+      }
+    ],
+    "spectravis": [
+      {
+        "name": "spectravis",
+        "title": "SpectraVIS",
+        "redirect": "",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
     "sftp": [
       {
         "name": "sftp",

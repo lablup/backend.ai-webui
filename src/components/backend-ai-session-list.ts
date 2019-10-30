@@ -65,6 +65,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Boolean}) enableScalingGroup = false;
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) refreshTimer = Object();
+  @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) statusColorTable = {
     'idle-timeout': 'green',
     'user-requested': 'green',
@@ -73,6 +74,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     'self-terminated': 'green'
   };
   @property({type: Number}) sshPort = 0;
+  @property({type: Number}) vncPort = 0;
 
   constructor() {
     super();
@@ -237,6 +239,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this._initializeAppTemplate();
     this.refreshTimer = null;
+    fetch('resources/image_metadata.json').then(
+      response => response.json()
+    ).then(
+      json => {
+        this.kernel_labels = json.labels;
+      }
+    );
     if (!window.backendaiclient ||
       !window.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
@@ -427,64 +436,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _getKernelInfo(lang) {
-    const kernel_alias = {
-      'python': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'blue'}],
-      'python-intel': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
-        {'tag': 'Intel MKL', 'color': 'green'}],
-      'python-ff': [
-        {'category': 'Env', 'tag': 'Lablup Research', 'color': 'blue'},
-        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
-      'python-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'}],
-      'python-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'}],
-      'ngc-digits': [
-        {'category': 'Env', 'tag': 'DIGITS', 'color': 'blue'},
-        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
-      'ngc-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
-      'ngc-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-        {'tag': 'Nvidia GPU Cloud', 'color': 'green'}],
-      'intel-tensorflow': [
-        {'category': 'Env', 'tag': 'TensorFlow', 'color': 'blue'},
-        {'tag': 'Intel', 'color': 'blue'}],
-      'intel-python': [
-        {'category': 'Env', 'tag': 'Python', 'color': 'blue'},
-        {'tag': 'Intel', 'color': 'blue'}],
-      'julia': [
-        {'category': 'Env', 'tag': 'Julia', 'color': 'blue'}],
-      'r': [
-        {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
-      'r-base': [
-        {'category': 'Env', 'tag': 'R', 'color': 'blue'}],
-      'c': [
-        {'category': 'Env', 'tag': 'C', 'color': 'blue'}],
-      'cpp': [
-        {'category': 'Env', 'tag': 'C++', 'color': 'blue'}],
-      'rust': [
-        {'category': 'Env', 'tag': 'Rust', 'color': 'blue'}],
-      'octave': [
-        {'category': 'Env', 'tag': 'Octave', 'color': 'blue'}],
-      'swift': [
-        {'category': 'Env', 'tag': 'Swift', 'color': 'blue'}],
-      'h2o': [
-        {'category': 'Env', 'tag': 'H2O', 'color': 'blue'}],
-      'sftp': [
-        {'category': 'Env', 'tag': 'SFTP', 'color': 'blue'},
-        {'tag': 'Backend.AI', 'color': 'green'}],
-      'lablup-pytorch': [
-        {'category': 'Env', 'tag': 'PyTorch', 'color': 'blue'},
-        {'tag': 'Cloudia', 'color': 'green'}],
-    };
     let tags: any = [];
     if (lang === undefined) return [];
     let name = lang.split('/')[2].split(':')[0];
-    if (name in kernel_alias) {
-      tags.push(kernel_alias[name]);
+    if (name in this.kernel_labels) {
+      tags.push(this.kernel_labels[name]);
     } else {
       tags.push([
         {'category': 'Env', 'tag': lang, 'color': 'green'}
@@ -748,6 +704,14 @@ export default class BackendAiSessionList extends BackendAIPage {
             setTimeout(() => {
               this.shadowRoot.querySelector('#indicator').end();
             }, 1000);
+          } else if (appName === 'vnc') {
+            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.vncPort = response.port;
+            this._openVNCDialog();
+            setTimeout(() => {
+              this.shadowRoot.querySelector('#indicator').end();
+            }, 1000);
+
           } else if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
@@ -799,7 +763,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   _openSSHDialog() {
     let dialog = this.shadowRoot.querySelector('#ssh-dialog');
     dialog.show();
+  }
 
+  _openVNCDialog() {
+    let dialog = this.shadowRoot.querySelector('#vnc-dialog');
+    dialog.show();
   }
 
   _terminateSession(e) {
@@ -1250,6 +1218,23 @@ ${item.map(item => {
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <div><span style="color:green;">You need a SSH key file located at /home/work/id_container</span></div>
+          </section>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="vnc-dialog" fixed backdrop blockscrolling
+                    style="padding:0;">
+        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
+          <h4 class="horizontal center layout" style="font-weight:bold">
+            <span>VNC connection</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h4>
+          <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
+          <section class="vertical layout wrap start start-justified">
+            <h4>Connection information</h4>
+            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
           </section>
         </wl-card>
       </wl-dialog>

@@ -25,11 +25,10 @@ let mainWindow;
 let mainContent;
 let devtools;
 let manager = new ProxyManager();
-
+// reference to the app directory. It will merge into local test / electron app version
 var mainIndex = 'build/electron-app/app/index.html';
 let mainURL;
 
-// Modules to control application life and create native browser window
 app.once('ready', function() {
   var template;
   if (process.platform === 'darwin') {

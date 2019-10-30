@@ -315,6 +315,7 @@ export default class BackendAILogin extends LitElement {
   _trimChar(str, char) {
     return str.replace(/^\|+|\|+$/g, '');
   }
+
   login() {
     let api_key: any = localStorage.getItem('backendaiconsole.login.api_key');
     let secret_key: any = localStorage.getItem('backendaiconsole.login.secret_key');
@@ -674,6 +675,7 @@ export default class BackendAILogin extends LitElement {
     localStorage.setItem('backendaiconsole.login.user_id', this.user_id);
     localStorage.setItem('backendaiconsole.login.password', this.password);
   }
+
   render() {
     // language=HTML
     return html`
