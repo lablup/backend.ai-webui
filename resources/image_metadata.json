@@ -20,7 +20,7 @@
     "PHP": "php",
     "C++": "cpp",
     "C": "gcc",
-    "FORTRAN": "gfortran",
+    "FORTRAN": "fortran-caf",
     "Scala": "scala",
     "Haskell": "haskell",
     "Go": "go",
@@ -67,6 +67,7 @@
     "Chainer": [],
     "Chainer (Python)": [],
     "R": [],
+    "FORTRAN": [],
     "Julia": [],
     "Lua": [],
     "Scala": [],
@@ -133,6 +134,7 @@
     "haskell": "Haskell",
     "java": "Java",
     "julia": "Julia",
+    "fortran-caf": "FORTRAN",
     "lua": "Lua",
     "ml-workspace": "ML Workspace",
     "ngc-rapids": "RAPID (NGC)",
@@ -430,6 +432,13 @@
       {
         "category": "Env",
         "tag": "Scala",
+        "color": "blue"
+      }
+    ],
+    "fortran-caf": [
+      {
+        "category": "Env",
+        "tag": "FORTRAN",
         "color": "blue"
       }
     ],
