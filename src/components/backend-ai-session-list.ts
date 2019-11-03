@@ -66,13 +66,17 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
-  @property({type: Object}) statusColorTable = {
+  @property({type: Proxy}) statusColorTable = new Proxy({
     'idle-timeout': 'green',
     'user-requested': 'green',
     'failed-to-start': 'red',
     'creation-failed': 'red',
     'self-terminated': 'green'
-  };
+  }, {
+    get: (obj, prop) => {
+      return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
+    }
+  });
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
 
@@ -1076,7 +1080,7 @@ ${item.map(item => {
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
-        ${this.condition == 'running' ? html`         
+        ${this.condition == 'running' ? html`
         <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
         </vaadin-grid-column>
         ` : html``}
