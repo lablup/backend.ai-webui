@@ -75,7 +75,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }, {
     get: (obj, prop) => {
       return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
-    };
+    }
   });
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
