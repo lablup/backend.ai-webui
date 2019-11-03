@@ -20,6 +20,7 @@
     "PHP": "php",
     "C++": "cpp",
     "C": "gcc",
+    "FORTRAN": "gfortran",
     "Scala": "scala",
     "Haskell": "haskell",
     "Go": "go",
