@@ -28,6 +28,7 @@ export default class LablupTermsOfService extends LitElement {
   @property({type: String}) title = '';
   @property({type: Boolean}) show = false;
   @property({type: Boolean}) approved = false;
+  @property({type: Boolean}) block = false;
   @property({type: Object}) notification;
   @property({type: Object}) approveCheckbox = Object();
   @property({type: Object}) dialog = Object();
@@ -95,6 +96,9 @@ export default class LablupTermsOfService extends LitElement {
   firstUpdated() {
     this.notification = window.lablupNotification;
     this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
+    if (this.block) {
+      this.dialog.backdrop = true;
+    }
     //this.approveCheckbox = this.shadowRoot.querySelector('#approve-terms-of-service');
     //this.approveCheckbox.addEventListener('iron-change', this._changeApproved.bind(this));
     if (this.show) {
@@ -146,7 +150,6 @@ export default class LablupTermsOfService extends LitElement {
         body: JSON.stringify({'mode': 'dialog'})
       };
       this.sendRequest(rqst).then((response) => {
-        console.log(response);
         if (typeof response !== 'undefined') {
           this.tosContent = response;
           //this.approveCheckbox.style.display = 'block';

@@ -507,6 +507,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  showTOSAgreement() {
+    if (this.TOSdialog.show === false) {
+      this.TOSdialog.tosContent = "";
+      this.TOSdialog.title = "Terms of Service";
+      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
+      this.TOSdialog.open();
+    }
+  }
+
+  showPPAgreement() {
+    if (this.TOSdialog.show === false) {
+      this.TOSdialog.tosContent = "";
+      this.TOSdialog.title = "Privacy Policy";
+      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
+      this.TOSdialog.open();
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -604,9 +622,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <footer>
               <div class="terms-of-use" style="margin-bottom:50px;">
                 <small style="font-size:11px;">
-                  <a href="https://cloud.backend.ai/@lablupinc/terms-of-service-payment">Terms of Service</a>
-                  ·
-                  <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
+                  <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
+                  ·                   
+                  <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">Privacy Policy</a>
                   ·
                   <a @click="${() => {
       this.splash.show()
@@ -663,7 +681,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-login id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
-      <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>
+      <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
     `;
   }
 
