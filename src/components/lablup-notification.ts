@@ -132,11 +132,13 @@ export default class LablupNotification extends LitElement {
       notification.innerHTML = '<span style="overflow-x:hidden">' + this.text + '</span>';
       if (this.detail != '') {
         notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
-        this.detail = '';
       }
     } else {
       notification.innerHTML = '<span style="overflow-x:hidden">' + message + '</span>';
       this.text = message;
+      if (this.detail != '') {
+        notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
+      }
     }
     if (this.detail != '') {
       let more_button = document.createElement('wl-button');
