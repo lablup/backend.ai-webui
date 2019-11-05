@@ -219,7 +219,7 @@ export default class BackendAISummary extends BackendAIPage {
       }
     }).catch(err => {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -368,7 +368,7 @@ export default class BackendAISummary extends BackendAIPage {
         this._refreshInvitations();
       })
       .catch(err => {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       })

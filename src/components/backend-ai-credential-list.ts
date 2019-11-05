@@ -232,7 +232,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -248,7 +248,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       this.shadowRoot.querySelector('#keypair-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -267,7 +267,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       this.shadowRoot.querySelector('#keypair-modify-dialog').show();
     } catch (err) {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -296,7 +296,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -328,7 +328,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
