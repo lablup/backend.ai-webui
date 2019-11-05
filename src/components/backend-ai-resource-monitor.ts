@@ -623,7 +623,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       console.log(err);
       this.metadata_updating = false;
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       } else if (err && err.title) {
@@ -779,7 +779,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.metadata_updating = false;
       console.log(err);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       } else if (err && err.title) {
@@ -1159,7 +1159,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }).catch(err => {
       this.aggregate_updating = false;
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -1487,7 +1487,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }).catch((err) => {
       this.metadata_updating = false;
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }

@@ -201,7 +201,7 @@ export default class BackendAILogin extends LitElement {
       }).catch((err) => {   // Connection failed
         if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
-            this.notification.text = PainKiller.relieve(err.message);
+            this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Plugin loading failed.');
@@ -418,7 +418,7 @@ export default class BackendAILogin extends LitElement {
       if (this.signoutPanel.open !== true) {
         console.log(err);
         if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. Check your information and try again.');
@@ -476,7 +476,7 @@ export default class BackendAILogin extends LitElement {
         if (this.loginPanel.open !== true) {
           console.log(err);
           if (err.message !== undefined) {
-            this.notification.text = PainKiller.relieve(err.message);
+            this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
@@ -525,7 +525,7 @@ export default class BackendAILogin extends LitElement {
       console.log(err);
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
@@ -602,7 +602,7 @@ export default class BackendAILogin extends LitElement {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
@@ -650,7 +650,7 @@ export default class BackendAILogin extends LitElement {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
