@@ -598,6 +598,7 @@ export default class BackendAILogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
+      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       window.backendaiclient.ready = true;
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
@@ -644,6 +645,7 @@ export default class BackendAILogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = 'default';
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
+      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       return window.backendaiclient.getManagerVersion();
     }).then(response => {
       window.backendaiclient.ready = true;
