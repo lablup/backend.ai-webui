@@ -278,6 +278,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .resources.horizontal .monitor.session {
           margin-left: 5px;
         }
+
         .gauge-name {
           font-size: 10px;
         }
@@ -1173,6 +1174,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
       let used_slot_percent = {};
       let used_sg_slot_percent = {};
+      let used_pj_slot_percent = {};
 
       ['cpu_slot', 'mem_slot', 'gpu_slot', 'fgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
@@ -1188,6 +1190,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             used_sg_slot_percent[slot] = (used_sg_slot[slot] / total_sg_slot[slot]) * 100.0;
           } else {
             used_sg_slot_percent[slot] = 0;
+          }
+          if (total_pj_slot[slot] != 0) {
+            used_pj_slot_percent[slot] = (used_pj_slot[slot] / total_pj_slot[slot]) * 100.0;
+          } else {
+            used_pj_slot_percent[slot] = 0;
           }
         } else {
         }
@@ -1626,7 +1633,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     /* Fetch keypair */
     const keypairs = await window.backendaiclient.keypair.list(email, ['access_key']);
     this.ownerKeypairs = keypairs.keypairs;
-   if (this.ownerKeypairs.length < 1) {
+    if (this.ownerKeypairs.length < 1) {
       this.notification.text = 'No active keypair';
       this.notification.show();
       this.ownerKeypairs = [];
@@ -1772,7 +1779,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       </div>
 ` : html``}
       ${this.direction === 'vertical' ? html`
-<hr />
+      <hr />
       <div class="vertical start-justified layout">
           <div class="flex"></div>
         <div class="layout horizontal center-justified monitor">
@@ -1782,17 +1789,28 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </div>
           <div class="layout vertical start-justified wrap short-indicator">
             <div class="layout horizontal">
+              <span style="width:35px; margin-left:5px; margin-right:5px;">CPU</span>              
               <paper-progress id="cpu-project-usage-bar" class="start-bar project-bar" value="${this.used_pj_slot_percent.cpu_slot}"></paper-progress>
-              <span class="gauge-label" style="margin-left:5px;">${this.used_pj_slot.cpu_slot}/${this.total_pj_slot.cpu_slot}</span>              
+              <span style="margin-left:5px;">${this.used_pj_slot.cpu_slot}/${this.total_pj_slot.cpu_slot === Infinity ? '∞' : this.total_pj_slot.cpu_slot}</span>              
             </div>            
             <div class="layout horizontal">
+              <span style="width:35px;margin-left:5px; margin-right:5px;">RAM</span>              
               <paper-progress id="mem-project-usage-bar" class="middle-bar project-bar" value="${this.used_pj_slot_percent.mem_slot}"></paper-progress>
-              <span class="gauge-label" style="margin-left:5px;">${this.used_pj_slot.mem_slot}/${this.total_pj_slot.mem_slot}</span>              
+              <span style="margin-left:5px;">${this.used_pj_slot.mem_slot}/${this.total_pj_slot.mem_slot === Infinity ? '∞' : this.total_pj_slot.mem_slot}</span>              
             </div>            
+            ${this.total_pj_slot.gpu_slot ? html`
             <div class="layout horizontal">
+              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>              
+              <paper-progress id="gpu-project-usage-bar" class="end-bar project-bar" value="${this.used_pj_slot_percent.gpu_slot}"></paper-progress>
+              <span style="margin-left:5px;">${this.used_pj_slot.gpu_slot}/${this.total_pj_slot.gpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.gpu_slot}</span>              
+            </div>` : html``}
+            ${this.total_pj_slot.fgpu_slot ? html`
+            <div class="layout horizontal">
+              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>              
               <paper-progress id="gpu-project-usage-bar" class="end-bar project-bar" value="${this.used_pj_slot_percent.fgpu_slot}"></paper-progress>
-              <span class="gauge-label" style="margin-left:5px;">${this.used_pj_slot.fgpu_slot}/${this.total_pj_slot.fgpu_slot}</span>              
-            </div>
+              <span style="margin-left:5px;">${this.used_pj_slot.fgpu_slot}/${this.total_pj_slot.fgpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.fgpu_slot}</span>              
+            </div>` : html``}
+
           </div>
           <div class="flex"></div>
         </div>
