@@ -70,6 +70,7 @@ export default class BackendAILogin extends LitElement {
   @property({type: Boolean}) signup_support = false;
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
+  @property({type: Boolean}) allow_project_resource_monitor = false;
 
   constructor() {
     super();
@@ -201,7 +202,7 @@ export default class BackendAILogin extends LitElement {
       }).catch((err) => {   // Connection failed
         if (this.loginPanel.open !== true) {
           if (err.message !== undefined) {
-            this.notification.text = PainKiller.relieve(err.message);
+            this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Plugin loading failed.');
@@ -230,6 +231,12 @@ export default class BackendAILogin extends LitElement {
     } else {
       this.change_signin_support = true;
     }
+    if (typeof config.general === "undefined" || typeof config.general.allowProjectResourceMonitor === "undefined" || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor == false) {
+      this.allow_project_resource_monitor = false;
+    } else {
+      this.allow_project_resource_monitor = true;
+    }
+
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
@@ -418,7 +425,7 @@ export default class BackendAILogin extends LitElement {
       if (this.signoutPanel.open !== true) {
         console.log(err);
         if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. Check your information and try again.');
@@ -476,7 +483,7 @@ export default class BackendAILogin extends LitElement {
         if (this.loginPanel.open !== true) {
           console.log(err);
           if (err.message !== undefined) {
-            this.notification.text = PainKiller.relieve(err.message);
+            this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
@@ -525,7 +532,7 @@ export default class BackendAILogin extends LitElement {
       console.log(err);
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
@@ -591,6 +598,7 @@ export default class BackendAILogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
+      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       window.backendaiclient.ready = true;
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
@@ -602,7 +610,7 @@ export default class BackendAILogin extends LitElement {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
@@ -637,6 +645,7 @@ export default class BackendAILogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = 'default';
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
+      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       return window.backendaiclient.getManagerVersion();
     }).then(response => {
       window.backendaiclient.ready = true;
@@ -650,7 +659,7 @@ export default class BackendAILogin extends LitElement {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');

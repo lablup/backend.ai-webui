@@ -388,7 +388,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -422,7 +422,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -476,7 +476,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -491,7 +491,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }

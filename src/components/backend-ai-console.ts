@@ -30,6 +30,7 @@ import 'weightless/progress-spinner';
 
 import './backend-ai-splash';
 import './lablup-notification';
+import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -104,6 +105,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) mainToolbar;
   @property({type: Object}) drawerToggleButton;
   @property({type: Object}) sidebarMenu;
+  @property({type: Object}) TOSdialog = Object();
 
   constructor() {
     super();
@@ -213,6 +215,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
     this.splash = this.shadowRoot.querySelector('#about-panel');
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
+    this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
     if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
@@ -504,6 +507,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  showTOSAgreement() {
+    if (this.TOSdialog.show === false) {
+      this.TOSdialog.tosContent = "";
+      this.TOSdialog.title = "Terms of Service";
+      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
+      this.TOSdialog.open();
+    }
+  }
+
+  showPPAgreement() {
+    if (this.TOSdialog.show === false) {
+      this.TOSdialog.tosContent = "";
+      this.TOSdialog.title = "Privacy Policy";
+      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
+      this.TOSdialog.open();
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -601,9 +622,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <footer>
               <div class="terms-of-use" style="margin-bottom:50px;">
                 <small style="font-size:11px;">
-                  <a href="https://cloud.backend.ai/@lablupinc/terms-of-service-payment">Terms of Service</a>
-                  ·
-                  <a href="https://cloud.backend.ai/@lablupinc/privacy-policy">Privacy Policy</a>
+                  <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
+                  ·                   
+                  <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">Privacy Policy</a>
                   ·
                   <a @click="${() => {
       this.splash.show()
@@ -620,7 +641,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.11.0.191104</small>
+                <small class="sidebar-footer" style="font-size:9px;">19.11.0.191105</small>
               </address>
             </div>
         </div>
@@ -660,6 +681,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-login id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
+      <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
     `;
   }
 

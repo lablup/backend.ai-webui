@@ -208,7 +208,7 @@ export default class BackendAIUserList extends BackendAIPage {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -243,7 +243,7 @@ export default class BackendAIUserList extends BackendAIPage {
       this.shadowRoot.querySelector('#user-info-dialog').show();
     } catch (err) {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -263,7 +263,7 @@ export default class BackendAIUserList extends BackendAIPage {
     }).catch((err) => {   // Signout failed
       console.log(err);
       if (err.message !== undefined) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
       } else {
         this.notification.text = PainKiller.relieve('Signout failed. Check your permission and try again.');

@@ -203,7 +203,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
       this.indicator.set(50, 'Rescan failed.');
       this.indicator.end(1000);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }
@@ -227,7 +227,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
       this.indicator.set(50, 'Recalculation failed.');
       this.indicator.end(1000);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);
       }

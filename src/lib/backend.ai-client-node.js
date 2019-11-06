@@ -154,6 +154,7 @@ class Client {
      */
     async _wrapWithPromise(rqst, rawFile = false) {
         let errorType = Client.ERR_REQUEST;
+        let errorTitle = '';
         let errorMsg;
         let resp, body;
         try {
@@ -175,7 +176,9 @@ class Client {
             }
             else if (rawFile === false && (contentType.startsWith('application/json') ||
                 contentType.startsWith('application/problem+json'))) {
-                body = await resp.json();
+                body = await resp.json(); // Formatted error message from manager
+                errorType = body.type;
+                errorTitle = body.title;
             }
             else if (rawFile === false && contentType.startsWith('text/')) {
                 body = await resp.text();
@@ -196,25 +199,41 @@ class Client {
         catch (err) {
             let error_message;
             if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
-                error_message = err.title;
+                error_message = err.title; // formatted message
             }
             else {
                 error_message = err;
             }
             switch (errorType) {
                 case Client.ERR_REQUEST:
+                    errorType = 'https://api.backend.ai/probs/client-request-error';
+                    errorTitle = error_message;
                     errorMsg = `sending request has failed: ${error_message}`;
                     break;
                 case Client.ERR_RESPONSE:
+                    errorType = 'https://api.backend.ai/probs/client-response-error';
+                    errorTitle = error_message;
                     errorMsg = `reading response has failed: ${error_message}`;
                     break;
                 case Client.ERR_SERVER:
+                    errorType = 'https://api.backend.ai/probs/server-error';
+                    errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
                     errorMsg = 'server responded failure: '
                         + `${resp.status} ${resp.statusText} - ${body.title}`;
                     break;
+                default:
+                    if (errorType === '') {
+                        errorType = Client.ERR_UNKNOWN;
+                    }
+                    if (errorTitle === '') {
+                        errorTitle = body.title;
+                    }
+                    errorMsg = 'server responded failure: '
+                        + `${resp.status} ${resp.statusText} - ${body.title}`;
             }
             throw {
                 type: errorType,
+                title: errorTitle,
                 message: errorMsg,
             };
         }
@@ -2203,6 +2222,12 @@ Object.defineProperty(Client, 'ERR_RESPONSE', {
 });
 Object.defineProperty(Client, 'ERR_REQUEST', {
     value: 2,
+    writable: false,
+    enumerable: true,
+    configurable: false
+});
+Object.defineProperty(Client, 'ERR_UNKNOWN', {
+    value: 99,
     writable: false,
     enumerable: true,
     configurable: false
