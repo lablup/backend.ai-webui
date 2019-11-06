@@ -263,7 +263,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           font-size: 14px;
           width: 50px;
         }
-        .horizontal .monitor.session {
+
+        .resources.horizontal .monitor.session {
           margin-left: 5px;
         }
         .gauge-name {
