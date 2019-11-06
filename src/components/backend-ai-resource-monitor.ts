@@ -1778,7 +1778,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
 ` : html``}
-      ${this.direction === 'vertical' && this.total_pj_slot.cpu_slot != 0 ? html`
+      ${this.direction === 'vertical' && window.backendaiclient._config.allow_project_resource_monitor === true && this.total_pj_slot.cpu_slot != 0 ? html`
       <hr />
       <div class="vertical start-justified layout">
           <div class="flex"></div>
