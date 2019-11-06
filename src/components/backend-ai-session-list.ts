@@ -703,7 +703,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           if (appName === 'sshd') {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             this.sshPort = response.port;
-            this._readSSHKey();
+            this._readSSHKey(kernelId);
             this._openSSHDialog();
             setTimeout(() => {
               this.shadowRoot.querySelector('#indicator').end();
@@ -729,7 +729,17 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  async _readSSHKey() {
+  async _readSSHKey(kernelId) {
+    const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
+    const file = '/home/work/id_container';
+    const blob = await window.backendaiclient.download_single(kernelId, file);
+    // TODO: This blob has additional leading letters in front of key texts.
+    //       Manually trim those letters.
+    const rawText = await blob.text();
+    const index = rawText.indexOf('-----');
+    const trimmedBlob = await blob.slice(index, blob.size, blob.type);
+    downloadLinkEl.href = window.URL.createObjectURL(trimmedBlob);
+    downloadLinkEl.download = 'id_container';
   }
 
   _runTerminal(e) {
@@ -1205,7 +1215,7 @@ ${item.map(item => {
            </div>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling
+      <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling persistent
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h4 class="horizontal center layout" style="font-weight:bold">
@@ -1221,7 +1231,7 @@ ${item.map(item => {
             <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
-            <div><span style="color:green;">You need a SSH key file located at /home/work/id_container</span></div>
+            <div><a id="sshkey-download-link" href="">Download SSH key file (id_container)</a></div>
           </section>
         </wl-card>
       </wl-dialog>
