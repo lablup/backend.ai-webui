@@ -1694,6 +1694,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
               <paper-progress class="short full-bar" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+              <span class="gauge-label">&nbsp;</span>
             </div>
           </div>
         </div>
