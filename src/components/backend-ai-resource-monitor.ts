@@ -116,6 +116,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) ownerKeypairs;
   @property({type: Array}) ownerGroups;
   @property({type: Array}) ownerScalingGroups;
+  @property({type: Boolean}) project_resource_monitor = false;
 
   constructor() {
     super();
@@ -502,8 +503,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
-    console.log(this.scaling_group);
-    console.log(e.target.value);
 
     if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
@@ -537,9 +536,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.project_resource_monitor = window.backendaiclient._config.allow_project_resource_monitor;
         this._updatePageVariables();
       }, true);
     } else {
+      this.project_resource_monitor = window.backendaiclient._config.allow_project_resource_monitor;
       this._updatePageVariables();
     }
     //this.run_after_connection(this._updatePageVariables());
@@ -1778,7 +1779,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
 ` : html``}
-      ${this.direction === 'vertical' && window.backendaiclient._config.allow_project_resource_monitor === true && this.total_pj_slot.cpu_slot != 0 ? html`
+      ${this.direction === 'vertical' && this.project_resource_monitor === true && this.total_pj_slot.cpu_slot != 0 ? html`
       <hr />
       <div class="vertical start-justified layout">
           <div class="flex"></div>
