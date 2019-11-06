@@ -70,6 +70,7 @@ export default class BackendAILogin extends LitElement {
   @property({type: Boolean}) signup_support = false;
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
+  @property({type: Boolean}) allow_project_resource_monitor = false;
 
   constructor() {
     super();
@@ -230,6 +231,12 @@ export default class BackendAILogin extends LitElement {
     } else {
       this.change_signin_support = true;
     }
+    if (typeof config.general === "undefined" || typeof config.general.allowProjectResourceMonitor === "undefined" || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor == false) {
+      this.allow_project_resource_monitor = false;
+    } else {
+      this.allow_project_resource_monitor = true;
+    }
+
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {

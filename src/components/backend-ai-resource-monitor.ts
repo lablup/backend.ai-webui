@@ -1778,7 +1778,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
 ` : html``}
-      ${this.direction === 'vertical' ? html`
+      ${this.direction === 'vertical' && this.total_pj_slot.cpu_slot != 0 ? html`
       <hr />
       <div class="vertical start-justified layout">
           <div class="flex"></div>
@@ -1810,7 +1810,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <paper-progress id="gpu-project-usage-bar" class="end-bar project-bar" value="${this.used_pj_slot_percent.fgpu_slot}"></paper-progress>
               <span style="margin-left:5px;">${this.used_pj_slot.fgpu_slot}/${this.total_pj_slot.fgpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.fgpu_slot}</span>              
             </div>` : html``}
-
           </div>
           <div class="flex"></div>
         </div>
