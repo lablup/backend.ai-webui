@@ -911,6 +911,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+
+    if (dialog.id === 'ssh-dialog') {
+      const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
+      window.URL.revokeObjectURL(downloadLinkEl.href);
+    }
   }
 
   _updateFilterAccessKey(e) {
@@ -1216,7 +1221,7 @@ ${item.map(item => {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling persistent
-                    style="padding:0;">
+                 style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h4 class="horizontal center layout" style="font-weight:bold">
             <span>SSH / SFTP connection</span>
