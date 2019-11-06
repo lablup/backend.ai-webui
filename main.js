@@ -26,6 +26,7 @@ if (process.env.serveMode == 'dev') {
 let windowWidth = 1280;
 let windowHeight = 970;
 let debugMode = true;
+let tabStore = [];
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
@@ -477,15 +478,18 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
     options.modal = true;
   }
   //event.newGuest = new BrowserWindow(options);
-  event.newGuest = new BrowserView(options);
-  mainWindow.addBrowserView(event.newGuest);
-  event.newGuest.setBounds({ x: 0, y: 50, width: windowWidth, height: windowHeight - 50 });
-  event.newGuest.setAutoResize({width: true, height: true});
-  console.log(event.newGuest);
-
+  let tabView;
+  tabView = new BrowserView(options);
+  mainWindow.addBrowserView(tabView);
+  tabView.setBounds({ x: 0, y: 50, width: windowWidth, height: windowHeight - 50 });
+  tabView.setAutoResize({width: true, height: true});
+  console.log(tabView);
+  console.log(tabStore);
+  event.newGuest = tabView;
   event.newGuest.once('ready-to-show', () => {
     event.newGuest.show()
   });
+  console.log(url);
   event.newGuest.webContents.loadURL(url);
   event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     console.log('---------------------------------------------------------------');
@@ -497,6 +501,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
       c.destroy();
     }
   });
+  tabStore.push(tabView);
 }
 
 app.on('ready', () => {
