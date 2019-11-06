@@ -181,9 +181,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --paper-progress-transition-delay: 0s;
         }
 
+        paper-progress.project-bar {
+          --paper-progress-height: 15px;
+        }
+
         paper-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
+          --paper-progress-active-color: #3677eb;
+        }
+
+        paper-progress.middle-bar {
           --paper-progress-active-color: #3677eb;
         }
 
@@ -1718,7 +1726,33 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
 ` : html``}
-
+      ${this.direction === 'vertical' ? html`
+<hr />
+      <div class="vertical start-justified layout">
+          <div class="flex"></div>
+        <div class="layout horizontal center-justified monitor">
+          <div class="layout vertical center center-justified" style="margin-right:5px;">
+            <iron-icon class="fg blue" icon="icons:group-work"></iron-icon>
+            <span class="gauge-name">Project</span>
+          </div>
+          <div class="layout vertical start-justified wrap short-indicator">
+            <div class="layout horizontal">
+              <paper-progress id="cpu-project-usage-bar" class="start-bar project-bar" value="${this.used_sg_slot_percent.fgpu_slot}"></paper-progress>
+              <span class="gauge-label" style="margin-left:5px;">${this.used_sg_slot.fgpu_slot}/${this.total_sg_slot.fgpu_slot}</span>              
+            </div>            
+            <div class="layout horizontal">
+              <paper-progress id="mem-project-usage-bar" class="middle-bar project-bar" value="${this.used_sg_slot_percent.fgpu_slot}"></paper-progress>
+              <span class="gauge-label" style="margin-left:5px;">${this.used_sg_slot.fgpu_slot}/${this.total_sg_slot.fgpu_slot}</span>              
+            </div>            
+            <div class="layout horizontal">
+              <paper-progress id="gpu-project-usage-bar" class="end-bar project-bar" value="${this.used_sg_slot_percent.fgpu_slot}"></paper-progress>
+              <span class="gauge-label" style="margin-left:5px;">${this.used_sg_slot.fgpu_slot}/${this.total_sg_slot.fgpu_slot}</span>              
+            </div>
+          </div>
+          <div class="flex"></div>
+        </div>
+      </div>
+` : html``}
       <wl-dialog id="new-session-dialog"
                     fixed backdrop blockscrolling persistent
                     style="padding:0;">
