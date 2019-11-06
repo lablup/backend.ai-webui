@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window / Local tester file
-const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
+const {app, Menu, shell, BrowserWindow, BrowserView, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
 process.env.serveMode = "dev";
 process.env.liveDebugMode = false;
@@ -448,7 +448,7 @@ function createWindow() {
     mainContent = null;
     devtools = null;
   });
-
+  console.log("qweqeqweqweqwe");
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     console.log('---------------------------------------------------------------');
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
@@ -476,11 +476,17 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   if (frameName === 'modal') {
     options.modal = true;
   }
-  event.newGuest = new BrowserWindow(options);
+  //event.newGuest = new BrowserWindow(options);
+  event.newGuest = new BrowserView(options);
+  mainWindow.addBrowserView(event.newGuest);
+  event.newGuest.setBounds({ x: 0, y: 50, width: windowWidth, height: windowHeight - 50 });
+  event.newGuest.setAutoResize({width: true, height: true});
+  console.log(event.newGuest);
+
   event.newGuest.once('ready-to-show', () => {
     event.newGuest.show()
   });
-  event.newGuest.loadURL(url);
+  event.newGuest.webContents.loadURL(url);
   event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     console.log('---------------------------------------------------------------');
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event);
@@ -538,13 +544,18 @@ app.on('certificate-error', function (event, webContents, url, error,
 // Let windows without node integration
 app.on('web-contents-created', (event, contents) => {
   if (contents.getType() === 'webview') {
+    contents.on('new-window', function (e, url, frameName, disposition, options, additionalFeatures) {
+      newPopupWindow(e, url, frameName, disposition, options, additionalFeatures, event);
+    });
+  }
+  /*if (contents.getType() === 'webview') {
     contents.on('new-window', function (newWindowEvent, url) {
       newWindowEvent.preventDefault();
       console.log("is it a blocking call?,", url);
       console.log(newWindowEvent);
       newWindowEvent.newGuest = newWindowEvent.sender;
     });
-  }
+  }*/
   contents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if unused or verify their location is legitimate
     delete webPreferences.preload;

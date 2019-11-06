@@ -93,9 +93,10 @@ mainWebView.addEventListener('dom-ready', (e) => {
     console.log('navigate to', url);
   });
 
-  mainWebViewWebContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
-  });
+  // Test browserwindow instead of tab.
+  //mainWebViewWebContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+  //  newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+  //});
 });
 
 function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
