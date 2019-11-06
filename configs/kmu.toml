@@ -6,6 +6,7 @@ siteDescription = "Kookmin MBA"
 connectionMode = "API"
 signupSupport = false
 allowSignout = false
+allowProjectResourceMonitor = false
 
 [wsproxy]
 #proxyURL = "https://web.kmu-bigdata.onpremise.backend.ai:8443/"

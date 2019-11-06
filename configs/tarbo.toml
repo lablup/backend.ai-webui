@@ -6,6 +6,7 @@ siteDescription = "AI Square"
 connectionMode = "SESSION"
 signupSupport = false
 allowSignout = false
+allowProjectResourceMonitor = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"

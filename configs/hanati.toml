@@ -7,6 +7,7 @@ connectionMode = "SESSION"
 allowChangeSigninMode = false
 allowSignout = true
 signupSupport = true
+allowProjectResourceMonitor = true
 
 [wsproxy]
 proxyListenIP = "0.0.0.0"
