@@ -5,6 +5,7 @@ defaultSessionEnvironment = "index.docker.io/lablup/ngc-tensorflow"
 connectionMode = "API"
 signupSupport = false
 allowSignout = false
+allowProjectResourceMonitor = true
 
 [wsproxy]
 #proxyBaseURL =
