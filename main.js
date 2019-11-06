@@ -542,6 +542,7 @@ app.on('web-contents-created', (event, contents) => {
       newWindowEvent.preventDefault();
       console.log("is it a blocking call?,", url);
       console.log(newWindowEvent);
+      newWindowEvent.newGuest = newWindowEvent.sender;
     });
   }
   contents.on('will-attach-webview', (event, webPreferences, params) => {
