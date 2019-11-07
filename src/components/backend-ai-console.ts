@@ -408,6 +408,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.sidebarMenu.selected = 1;
           this.updateTitleColor('var(--paper-red-800)', '#efefef');
           break;
+        case 'pipeline':
+          this.menuTitle = 'Pipeline';
+          this.sidebarMenu.selected = 2;
+          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+          break;
         case 'experiment':
           this.menuTitle = 'Experiments';
           this.sidebarMenu.selected = 2;
@@ -415,37 +420,37 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           break;
         case 'data':
           this.menuTitle = 'Storage';
-          this.sidebarMenu.selected = 2;
+          this.sidebarMenu.selected = 3;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
         case 'statistics':
           this.menuTitle = 'Statistics';
-          this.sidebarMenu.selected = 3;
+          this.sidebarMenu.selected = 4;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
-          this.sidebarMenu.selected = 5;
+          this.sidebarMenu.selected = 6;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments & Presets';
-          this.sidebarMenu.selected = 6;
+          this.sidebarMenu.selected = 7;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          this.sidebarMenu.selected = 7;
+          this.sidebarMenu.selected = 8;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
-          this.sidebarMenu.selected = 8;
+          this.sidebarMenu.selected = 9;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'maintenance':
           this.menuTitle = 'Maintenance';
-          this.sidebarMenu.selected = 9;
+          this.sidebarMenu.selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
         default:
@@ -561,11 +566,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   Sessions
                 </paper-item>
               </a>
-              ${false ? html`
-              <paper-item disabled>
-                <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
-                Experiments
-              </paper-item>` : html``}
+              ${true ? html`
+              <a ?selected="${this._page === 'pipeline'}" href="/pipeline" tabindex="-1" role="menuitem">
+                <paper-item link>
+                  <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
+                  Pipeline
+                </paper-item>
+              </a>` : html``}
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
@@ -662,6 +669,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <div id="app-page">
                 <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
                 <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
+                <backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-pipeline-view>
                 <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
                 <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-credential-view>
                 <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-agent-view>
