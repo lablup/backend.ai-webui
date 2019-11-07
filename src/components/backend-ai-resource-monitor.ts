@@ -1105,8 +1105,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if ('mem' in project_resource_using) {
         used_pj_slot['mem_slot'] = parseFloat(window.backendaiclient.utils.changeBinaryUnit(project_resource_using['mem'], 'g'));
       } else {
-        used_pj_slot['mem_slot'] = 0.;
-        o;
+        used_pj_slot['mem_slot'] = 0.0;
       }
       used_pj_slot['mem_slot'] = used_pj_slot['mem_slot'].toFixed(2);
 
