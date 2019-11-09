@@ -15,7 +15,8 @@ Backend.AI console focuses to
     * Choose and run environment-supported apps
     * Terminal for each session
     * Fully-featured VSCode editor and environments (WIP)
- * Experiments
+ * Pipeline
+    * Experiments (with SACRED)
     * Manages container stream
     * Checks queue and scheduled jobs
  * Storage management
