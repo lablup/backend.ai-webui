@@ -15,7 +15,8 @@ Backend.AI console focuses to
     * Choose and run environment-supported apps
     * Terminal for each session
     * Fully-featured VSCode editor and environments (WIP)
- * Experiments
+ * Pipeline
+    * Experiments (with SACRED)
     * Manages container stream
     * Checks queue and scheduled jobs
  * Storage management
@@ -171,7 +172,7 @@ Make sure that you compile the console.
 $ make compile
 ```
 
-#### HTTP server
+#### HTTP server (with nginx)
 Good for develop phase. Not recommended for production environment.
 
 ```
@@ -180,7 +181,7 @@ $ docker-compose up console    // for testing
 $ docker-compose up -d console // as a daemon
 ```
 
-#### HTTPS with SSL
+#### HTTPS with SSL (with nginx)
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
