@@ -633,6 +633,24 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
+  download(sessionId, files) {
+    let params = {
+      'files': files
+    };
+    const q = querystring.stringify(params);
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download?${q}`, null);
+    return this._wrapWithPromise(rqst, true);
+  }
+
+  download_single(sessionId, file) {
+    let params = {
+      'file': file
+    };
+    const q = querystring.stringify(params);
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
+    return this._wrapWithPromise(rqst, true);
+  }
+
   mangleUserAgentSignature() {
     let uaSig = this.clientVersion
       + (this.agentSignature ? ('; ' + this.agentSignature) : '');
