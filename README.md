@@ -52,6 +52,9 @@ Backend.AI console focuses to
     * Support userid / password login
 
 ## Setup Guide
+### Baked versions
+`backend.ai-console` production version is also served as `backend.ai-app` and refered by `backend.ai-console-server` as submodule. If you use `backend.ai-console-server`, you are using latest stable release of `backend.ai-console`.
+
 ### Configuration
 
 Backend.AI Console uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
