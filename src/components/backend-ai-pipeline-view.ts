@@ -19,9 +19,8 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
+import Sortable from 'sortablejs';
 import '@vaadin/vaadin-dialog/vaadin-dialog';
-import './backend-ai-session-list';
-import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
@@ -39,6 +38,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-session-list';
+import './backend-ai-dropdown-menu';
 
 @customElement("backend-ai-pipeline-view")
 export default class BackendAIPipelineView extends BackendAIPage {
@@ -74,9 +75,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
   public vgpu_metric: any;
   public $: any;
 
-  private pipelineComponents: any[];
   private scalingGroup: string;
   private allowedScalingGroups: any[];
+  private pipelineComponents: any[];
+  private pipelineSortable: object;
 
   constructor() {
     super();
@@ -411,6 +413,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
+    this._makeSortablePipelineComponents();
   }
 
   _showTab(tab) {
@@ -425,6 +428,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _makeSortablePipelineComponents() {
+    const el = this.shadowRoot.querySelector('#pipeline-component-list');
+    this.pipelineSortable = Sortable.create(el);
   }
 
   render() {
