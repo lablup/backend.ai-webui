@@ -40,6 +40,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-session-list';
 import './backend-ai-dropdown-menu';
+import './lablup-codemirror';
 
 @customElement("backend-ai-pipeline-view")
 export default class BackendAIPipelineView extends BackendAIPage {
@@ -75,10 +76,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
   public vgpu_metric: any;
   public $: any;
 
-  private scalingGroup: string;
+  // private scalingGroup: string;
   private allowedScalingGroups: any[];
   private pipelineComponents: any[];
-  private pipelineSortable: object;
+  // private pipelineSortable: object;
 
   constructor() {
     super();
@@ -132,12 +133,13 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.concurrency_max = 0;
     this._status = 'inactive';
 
-    this.scalingGroup = '';
+    // this.scalingGroup = '';
     this.allowedScalingGroups = [];
     this.pipelineComponents = [
       {
         'title': 'Backend.AI Data Uploader',
         'description': 'Backend.AI data uploader helps users uploading the data to experiment store',
+        'code': 'import tensorflow as tf\nprint(tf.__version__)',
         'cpu': 1,
         'mem': 1,
         'gpu': 0
@@ -145,6 +147,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       {
         'title': 'Facet',
         'description': 'Facets contains two robust visualizations to aid in understanding and analyzing',
+        'code': 'print("Facet")',
         'cpu': 1,
         'mem': 1,
         'gpu': 0
@@ -152,12 +155,14 @@ export default class BackendAIPipelineView extends BackendAIPage {
       {
         'title': 'TensorFlow',
         'description': 'TensorFlow is an end-to-end open source platform for machine learning',
+        'code': 'print("TensorFlow")',
         'cpu': 4,
         'mem': 16,
         'gpu': 1.5
       },
       {
         'title': 'TensorFlow Validate',
+        'code': 'print("TensorFlow Validate")',
         'description': 'TensorFlow is an end-to-end open source platform for machine learning',
         'cpu': 4,
         'mem': 16,
@@ -166,11 +171,13 @@ export default class BackendAIPipelineView extends BackendAIPage {
       {
         'title': 'TensorFlow Serving',
         'description': 'TensorFlow is an end-to-end open source platform for machine learning',
+        'code': 'print("TensorFlow Serving")',
         'cpu': 1,
         'mem': 1,
         'gpu': 0
       },
     ];
+    // this.pipelineSortable = {};
   }
 
   static get is() {
@@ -408,6 +415,13 @@ export default class BackendAIPipelineView extends BackendAIPage {
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
         }
+
+        #codemirror-dialog {
+          --dialog-min-width: calc(100vw - 200px);
+          --dialog-max-width: calc(100vw - 200px);
+          --dialog-min-height: calc(100vh - 100px);
+          --dialog-max-height: calc(100vh - 100px);
+        }
       `];
   }
 
@@ -424,15 +438,28 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
-  }
-
   _makeSortablePipelineComponents() {
     const el = this.shadowRoot.querySelector('#pipeline-component-list');
-    this.pipelineSortable = Sortable.create(el);
+    // this.pipelineSortable = Sortable.create(el);
+    Sortable.create(el);
+  }
+
+  _editCode(pipelineComponent) {
+    console.log(pipelineComponent)
+    const editor = this.shadowRoot.querySelector('#codemirror-editor');
+    editor.setValue(pipelineComponent.code);
+    const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
+    dialog.querySelector('div[slot="header"]').textContent = pipelineComponent.title;
+    dialog.show();
+  }
+
+  _hideCodeDialog() {
+    const codemirrorEl = this.shadowRoot.querySelector('#codemirror-dialog');
+    codemirrorEl.hide();
+  }
+
+  _runComponentCode() {
+    console.log('# _runComponentCode');
   }
 
   render() {
@@ -527,7 +554,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
                     <div slot="after">
                       <div class="horizontal layout">
-                        <div class="layout vertical center center-justified flex" style="width:50px;">
+                        <div class="layout horizontal center" style="width:100px;">
+                            <paper-icon-button class="fg black" icon="vaadin:edit" @click="${(e) => this._editCode(item)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
                         </div>
                         <div class="layout vertical start flex" style="width:80px!important;">
@@ -550,7 +578,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                       </div>
                     </div>
                     <wl-title level="4" style="margin: 0">${item.title}</wl-title>
-                    <div style="font-size:11px;max-width:450px;">${item.description}</div>
+                    <div style="font-size:11px;max-width:400px;">${item.description}</div>
                   </wl-list-item>
                 `)}
               </div>
@@ -569,7 +597,17 @@ export default class BackendAIPipelineView extends BackendAIPage {
         </div>
       </wl-card>
 
-`;
+      <wl-dialog id="codemirror-dialog" fixed backdrop scrollable blockScrolling persistent>
+        <div slot="header"></div>
+        <div slot="content">
+          <lablup-codemirror id="codemirror-editor"></lablup-codemirror>
+        </div>
+        <div slot="footer">
+          <wl-button inverted flat id="discard-code" @click="${this._hideCodeDialog}">Cancel</wl-button>
+          <wl-button id="save-code" disabled>Save</wl-button>
+        </div>
+      </wl-dialog>
+    `;
   }
 }
 declare global {
