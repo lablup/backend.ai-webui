@@ -1204,6 +1204,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
       });
+      this.used_pj_slot_percent = used_pj_slot_percent;
       if (this.concurrency_max === 0) {
         used_slot_percent['concurrency'] = 0;
         remaining_slot['concurrency'] = this.concurrency_max;
@@ -1789,26 +1790,26 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </div>
           <div class="layout vertical start-justified wrap short-indicator">
             <div class="layout horizontal">
-              <span style="width:35px; margin-left:5px; margin-right:5px;">CPU</span>              
+              <span style="width:35px; margin-left:5px; margin-right:5px;">CPU</span>
               <paper-progress id="cpu-project-usage-bar" class="start-bar project-bar" value="${this.used_pj_slot_percent.cpu_slot}"></paper-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.cpu_slot}/${this.total_pj_slot.cpu_slot === Infinity ? '∞' : this.total_pj_slot.cpu_slot}</span>              
-            </div>            
+              <span style="margin-left:5px;">${this.used_pj_slot.cpu_slot}/${this.total_pj_slot.cpu_slot === Infinity ? '∞' : this.total_pj_slot.cpu_slot}</span>
+            </div>
             <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">RAM</span>              
+              <span style="width:35px;margin-left:5px; margin-right:5px;">RAM</span>
               <paper-progress id="mem-project-usage-bar" class="middle-bar project-bar" value="${this.used_pj_slot_percent.mem_slot}"></paper-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.mem_slot}/${this.total_pj_slot.mem_slot === Infinity ? '∞' : this.total_pj_slot.mem_slot}</span>              
-            </div>            
+              <span style="margin-left:5px;">${this.used_pj_slot.mem_slot}/${this.total_pj_slot.mem_slot === Infinity ? '∞' : this.total_pj_slot.mem_slot}</span>
+            </div>
             ${this.total_pj_slot.gpu_slot ? html`
             <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>              
+              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
               <paper-progress id="gpu-project-usage-bar" class="end-bar project-bar" value="${this.used_pj_slot_percent.gpu_slot}"></paper-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.gpu_slot}/${this.total_pj_slot.gpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.gpu_slot}</span>              
+              <span style="margin-left:5px;">${this.used_pj_slot.gpu_slot}/${this.total_pj_slot.gpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.gpu_slot}</span>
             </div>` : html``}
             ${this.total_pj_slot.fgpu_slot ? html`
             <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>              
+              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
               <paper-progress id="gpu-project-usage-bar" class="end-bar project-bar" value="${this.used_pj_slot_percent.fgpu_slot}"></paper-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.fgpu_slot}/${this.total_pj_slot.fgpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.fgpu_slot}</span>              
+              <span style="margin-left:5px;">${this.used_pj_slot.fgpu_slot}/${this.total_pj_slot.fgpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.fgpu_slot}</span>
             </div>` : html``}
           </div>
           <div class="flex"></div>
