@@ -7,7 +7,7 @@ Backend.AI console focuses to
  * Provide both administration and user mode
  * Serve as desktop app and web service
  * Versatile devices ready such as mobile, tablet and desktop.
- * Built-in websocket proxy app for apps
+ * Built-in websocket proxy feature for apps
 
 ## User Features
  * Session management
@@ -52,6 +52,9 @@ Backend.AI console focuses to
     * Support userid / password login
 
 ## Setup Guide
+### Baked versions
+`backend.ai-console` production version is also served as `backend.ai-app` and refered by `backend.ai-console-server` as submodule. If you use `backend.ai-console-server`, you are using latest stable release of `backend.ai-console`.
+
 ### Configuration
 
 Backend.AI Console uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
@@ -212,6 +215,21 @@ Check your image name is `backendai-console_console` or `backendai-console_conso
 $ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 $ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
+### Building with console-server
+
+If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.
+
+To download and deploy console from pre-built source, do the following in `backend.ai-console-server` repository:
+
+```console
+git submodule init
+git submodule update
+cd src/ai/backend/console/static
+git checkout master
+git fetch
+git pull
+```
+
 
 ### Running websocket proxy with node.js
 
