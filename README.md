@@ -217,6 +217,19 @@ $ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx
 ```
 ### Building with console-server
 
+If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.
+
+To download and deploy console from pre-built source, do the following in `backend.ai-console-server` repository:
+
+```console
+git submodule init
+git submodule update
+cd src/ai/backend/console/static
+git checkout master
+git fetch
+git pull
+```
+
 
 ### Running websocket proxy with node.js
 
