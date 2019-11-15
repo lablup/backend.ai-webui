@@ -287,18 +287,48 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
-  _fetchPipelineFolders() {
+  async _fetchPipelineFolders() {
     this.indicator.show();
-    window.backendaiclient.vfolder.list()
-        .then((folders) => {
-          const pipelines: Array<object> = [];
-          folders.forEach((folder) => {
-            if (folder.name.startsWith('pipeline-')) pipelines.push(folder);
+    try {
+      const folders = await window.backendaiclient.vfolder.list();
+      const pipelines: Array<object> = [];
+      const downloadJobs: Array<object> = [];
+      folders.forEach((folder) => {
+        if (folder.name.startsWith('pipeline-')) {
+          const job = this._downloadPipelineConfig(folder.name)
+              .then((resp) => {
+                folder.config = resp;
+                pipelines.push(folder);
+              })
+              .catch((err) => {
+                if (err && err.message) {
+                  this.notification.text = PainKiller.relieve(err.title);
+                  this.notification.detail = err.message;
+                  this.notification.show(true);
+                }
+              });
+          downloadJobs.push(job);
+        }
+      });
+      Promise.all(downloadJobs)
+          .then(() => {
+            this.pipelineFolderList = pipelines;
+            this.indicator.hide();
+          })
+          .catch((err) => {
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true);
+            }
+            this.indicator.hide();
           });
-          this.pipelineFolderList = pipelines;
-          // TODO: read pipeline configs
-          this.indicator.hide();
-        });
+    } catch (err) {
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true);
+      this.indicator.hide();
+    }
   }
 
   updateLanguage() {
@@ -569,9 +599,14 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
   }
 
-  async _openPipelineUpdateDialog(vfinfo) {
+  async _openPipelineUpdateDialog() {
+    if (!this.pipelineFolderName) {
+      this.notification.text = 'No pipeline selected';
+      this.notification.show();
+      return;
+    }
     this._fetchResourceGroup();
-    const config = await this._downloadPipelineConfig(vfinfo.name);
+    const config = await this._downloadPipelineConfig(this.pipelineFolderName);
     this.pipelineCreatMode = 'update';
     window.backendaiclient.vfolder.list_hosts()
         .then((resp) => {
@@ -596,7 +631,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
     dialog.querySelector('#pipeline-title').value = config.title || '';
     dialog.querySelector('#pipeline-description').value = config.description || '';
-    if (config.environment) dialog.querySelector('#pipeline-environment').value = config.environment;
+    if (config.environment) dialog.querySelector('#pipeline-environment').value = this.aliases[config.environment];
     if (config.version) dialog.querySelector('#pipeline-environment-tag').value = config.version;
     if (config.scaling_group) dialog.querySelector('#pipeline-scaling-group').value = config.scaling_group;
     if (config.folder_host) dialog.querySelector('#pipeline-folder-host').value = config.folder_host;
@@ -688,6 +723,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
             <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
+          <wl-button class="fg blue button" id="edit-pipeline" outlined
+              @click="${this._openPipelineUpdateDialog}">
+            <wl-icon>edit</wl-icon>
+            Edit pipeline
+          </wl-button>
+          <span style="width:5px;"></span>
           <wl-button class="fg blue button" id="add-experiment" outlined
               @click="${this._openPipelineCreateDialog}">
             <wl-icon>add</wl-icon>
@@ -703,8 +744,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     ?active="${item.name === this.pipelineFolderName}"
                     folder-id="${item.id}" folder-name="${item.name}" folder-host="${item.host}">
                   <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
-                  <wl-title level="4" style="margin: 0">${item.name}</wl-title>
-                  <span style="font-size: 11px;">Test experiment</span>
+                  <wl-title level="4" style="margin: 0">${item.config.title}</wl-title>
+                  <span style="font-size: 11px;">${item.config.description}</span>
                 </wl-list-item>
               `)}
               ${this.pipelineFolderList.length < 1 ? html`<wl-list-itemj>No pipeline.</wl-list-itemj>` : ''}
@@ -738,7 +779,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     <span>Scaling group: ${this.pipelineConfig.scaling_group}</span>
                   ` : ''}
                   ${this.pipelineConfig.folder_host ? html`
-                    <span>Folder host: ${this.pipelineConfig.folder_host}</span>
+                    <span>Folder: ${this.pipelineFolderName} (${this.pipelineConfig.folder_host})</span>
                   ` : ''}
                 </div>
                 <div class="layout horizontal center">
