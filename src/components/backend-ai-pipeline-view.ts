@@ -270,10 +270,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.pipelineFolderName = '';
         this._fetchPipelineFolders();
         this._makeSortablePipelineComponents();
       }, true);
     } else {
+      this.pipelineFolderName = '';
       this._fetchPipelineFolders();
       this._makeSortablePipelineComponents();
     }
@@ -502,7 +504,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   _selectPipeline(e) {
-    const itemEl = e.target.closest('.pipeline-item');
+    let itemEl;
+    if (typeof e === 'string') {
+      itemEl = this.shadowRoot.querySelector(`.pipeline-item[folder-name="${e}"]`)
+    } else {
+      itemEl = e.target.closest('.pipeline-item');
+    }
     this.pipelineFolderName = itemEl.getAttribute('folder-name');
     this._downloadPipelineConfig(this.pipelineFolderName)
         .then((resp) => {
@@ -563,7 +570,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const version = this.shadowRoot.querySelector('#pipeline-environment-tag').value;
     const scaling_group = this.shadowRoot.querySelector('#pipeline-scaling-group').value;
     const folder_host = this.shadowRoot.querySelector('#pipeline-folder-host').value;
-    const folder_name = `pipeline-${window.backendaiclient.slugify(title)}-${window.backendaiclient.generateSessionId(8, true)}`;
+    const slugged_title = `pipeline-${window.backendaiclient.slugify(title)}-${window.backendaiclient.generateSessionId(8, true)}`;
     if (!title || !environment || !version || !scaling_group || !folder_host) {
       this.notification.text = 'Fill all input fields';
       this.notification.show();
@@ -574,13 +581,13 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
     this.indicator.show();
     if (this.pipelineCreatMode === 'create') {
-      window.backendaiclient.vfolder.create(folder_name, folder_host)
+      window.backendaiclient.vfolder.create(slugged_title, folder_host)
           .then((resp) => {
             this.notification.text = 'Pipeline created';
             this.notification.show();
+            this._uploadPipelineConfig(slugged_title, configObj);
+            this._uploadPipelineComponents(slugged_title, []);
             this._fetchPipelineFolders();
-            this._uploadPipelineConfig(folder_name, configObj);
-            this._uploadPipelineComponents(folder_name, []);
             this._hidePipelineCreateDialog();
             this.indicator.hide();
           })
@@ -593,8 +600,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
             this.indicator.hide();
           });
     } else {
-      this._uploadPipelineConfig(folder_name, configObj);
+      this._uploadPipelineConfig(this.pipelineFolderName, configObj);
       this._hidePipelineCreateDialog();
+      this._fetchPipelineFolders();
+      this._selectPipeline(this.pipelineFolderName);
       this.indicator.hide();
     }
   }
@@ -631,7 +640,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
     dialog.querySelector('#pipeline-title').value = config.title || '';
     dialog.querySelector('#pipeline-description').value = config.description || '';
-    if (config.environment) dialog.querySelector('#pipeline-environment').value = this.aliases[config.environment];
+    if (config.environment) dialog.querySelector('#pipeline-environment paper-listbox').selected = config.environment;
     if (config.version) dialog.querySelector('#pipeline-environment-tag').value = config.version;
     if (config.scaling_group) dialog.querySelector('#pipeline-scaling-group').value = config.scaling_group;
     if (config.folder_host) dialog.querySelector('#pipeline-folder-host').value = config.folder_host;
@@ -835,7 +844,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         </div>
       </wl-card>
 
-      <wl-dialog id="pipeline-create-dialog" fixed blockscrolling backdrop persistent>
+      <wl-dialog id="pipeline-create-dialog" fixed blockscrolling backdrop>
         <div slot="header">${this.pipelineCreatMode === 'create' ? 'Create' : 'Update'} pipeline config</div>
         <div slot="content">
           <wl-textfield id="pipeline-title" label="Pipeline title" maxLength="30"></wl-textfield>
