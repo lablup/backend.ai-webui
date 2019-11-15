@@ -728,12 +728,25 @@ class Client {
         let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
         return k2;
     }
-    generateSessionId() {
+    generateSessionId(length = 8, nosuffix = false) {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < 8; i++)
+        for (var i = 0; i < length; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
-        return text + "-jsSDK";
+        return nosuffix ? text : text + "-jsSDK";
+    }
+    slugify(text) {
+        const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;';
+        const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------';
+        const p = new RegExp(a.split('').join('|'), 'g');
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-') // Replace spaces with -
+            .replace(p, c => b.charAt(a.indexOf(c))) // Replace special chars
+            .replace(/&/g, '-and-') // Replace & with 'and'
+            .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+            .replace(/\-\-+/g, '-') // Replace multiple - with single -
+            .replace(/^-+/, '') // Trim - from start of text
+            .replace(/-+$/, ''); // Trim - from end of text
     }
 }
 class ResourcePreset {

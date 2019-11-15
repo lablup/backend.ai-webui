@@ -406,6 +406,11 @@ export const BackendAiStyles =
       border-radius: 2px;
     }
 
+    wl-textfield {
+      --input-font-family: var(--general-font-family);
+      --input-color-disabled: #424242;
+    }
+
     #content > wl-card {
       max-width: var(--general-content-container-width, 980px);
     }

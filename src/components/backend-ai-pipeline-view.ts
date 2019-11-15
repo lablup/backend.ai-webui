@@ -30,6 +30,7 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
+import 'weightless/textfield';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -38,9 +39,11 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-session-list';
 import './backend-ai-dropdown-menu';
 import './lablup-codemirror';
+import './lablup-loading-indicator';
 
 @customElement("backend-ai-pipeline-view")
 export default class BackendAIPipelineView extends BackendAIPage {
@@ -76,8 +79,13 @@ export default class BackendAIPipelineView extends BackendAIPage {
   public vgpu_metric: any;
   public $: any;
 
+  public indicator: any;
+
   // private scalingGroup: string;
   private allowedScalingGroups: any[];
+  private vhost: string;
+  private vhosts: string[];
+  private pipelineList: any[];
   private pipelineComponents: any[];
   // private pipelineSortable: object;
 
@@ -135,6 +143,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
     // this.scalingGroup = '';
     this.allowedScalingGroups = [];
+    this.vhost = '';
+    this.vhosts = [];
+    this.pipelineList = [];
     this.pipelineComponents = [
       {
         'title': 'Backend.AI Data Uploader',
@@ -186,90 +197,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   static get properties() {
     return {
-      active: {
-        type: Boolean
-      },
-      supports: {
-        type: Object
-      },
-      resourceLimits: {
-        type: Object
-      },
-      userResourceLimit: {
-        type: Object
-      },
-      aliases: {
-        type: Object
-      },
-      versions: {
-        type: Array
-      },
-      languages: {
-        type: Array
-      },
-      gpu_mode: {
-        type: String
-      },
-      gpu_step: {
-        type: Number
-      },
-      cpu_metric: {
-        type: Object
-      },
-      mem_metric: {
-        type: Object
-      },
-      gpu_metric: {
-        type: Object
-      },
-      tpu_metric: {
-        type: Object
-      },
-      images: {
-        type: Object
-      },
-      defaultResourcePolicy: {
-        type: String
-      },
-      total_slot: {
-        type: Object
-      },
-      used_slot: {
-        type: Object
-      },
-      available_slot: {
-        type: Object
-      },
-      concurrency_used: {
-        type: Number
-      },
-      concurrency_max: {
-        type: Number
-      },
-      vfolders: {
-        type: Array
-      },
-      resource_info: {
-        type: Object
-      },
-      used_slot_percent: {
-        type: Object
-      },
-      resource_templates: {
-        type: Array
-      },
-      default_language: {
-        type: String
-      },
-      launch_ready: {
-        type: Boolean
-      },
-      _status: {
-        type: Boolean
-      },
-      notification: {
-        type: Object
-      }
+      pipelineList: Array,
+      pipelineComponent: Array,
+      vhost: String,
+      vhosts: Array,
     }
   }
 
@@ -288,96 +219,14 @@ export default class BackendAIPipelineView extends BackendAIPage {
           font-weight: 100;
         }
 
-        paper-slider {
-          width: 285px;
-          --paper-slider-input: {
-            width: 70px;
-          };
-          --paper-slider-height: 3px;
-        }
-
-        paper-slider.mem {
-          --paper-slider-knob-color: var(--paper-orange-400);
-          --paper-slider-active-color: var(--paper-orange-400);
-        }
-
-        paper-slider.cpu {
-          --paper-slider-knob-color: var(--paper-light-green-400);
-          --paper-slider-active-color: var(--paper-light-green-400);
-        }
-
-        paper-slider.gpu {
-          --paper-slider-knob-color: var(--paper-cyan-400);
-          --paper-slider-active-color: var(--paper-cyan-400);
-        }
-
-        paper-progress {
-          width: 100px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677eb;
-          --paper-progress-secondary-color: #98be5a;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
-
-        .short-indicator paper-progress {
-          width: 50px;
-        }
-
-        .short-indicator .gauge-label {
-          width: 80px;
-        }
-
-        .custom {
-          color: var(--paper-red-800);
-        }
-
-        span.caption {
-          width: 30px;
-          padding-left: 10px;
-        }
-
-        div.caption {
-          width: 100px;
-        }
-
-        .gauge-name {
-          font-size: 10px;
-        }
-
-        .gauge-label {
-          width: 120px;
-          font-weight: 300;
-          font-size: 12px;
+        wl-card h3.tab {
+          padding-top: 0;
+          padding-bottom: 0;
+          padding-left: 0;
         }
 
         .indicator {
           font-family: monospace;
-        }
-
-        .resource-button {
-          height: 140px;
-          width: 120px;
-          margin: 5px;
-          padding: 0;
-          font-size: 14px;
-        }
-
-        .resource-button h4 {
-          padding: 5px 0;
-          margin: 0;
-          font-weight: 400;
-        }
-
-        .resource-button ul {
-          padding: 0;
-          list-style-type: none;
-        }
-
-        backend-ai-dropdown-menu {
-          width: 100%;
         }
 
         wl-button.button {
@@ -393,27 +242,18 @@ export default class BackendAIPipelineView extends BackendAIPage {
           --button-bg-active: var(--paper-blue-600);
         }
 
-        wl-button.resource-button {
-          --button-bg: white;
-          --button-bg-active: var(--paper-blue-600);
-          --button-bg-hover: var(--paper-blue-600);
-          --button-bg-active-flat: var(--paper-blue-50);
-          --button-color: #8899aa;
-          --button-color-active: blue;
-          --button-color-hover: blue;
+        #exp-sidebar {
+          weight: 300px;
+          border-right: 1px solid #ccc;
+          height: calc(100vh - 235px);
         }
 
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
+        .sidebar-item {
+          width: 300px;
         }
 
-        wl-expansion {
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-margin-open: 0;
+        #pipeline-create-dialog {
+          --dialog-min-width: 400px;
         }
 
         #codemirror-dialog {
@@ -427,7 +267,91 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+
+    this._fetchPipelineFolders();
     this._makeSortablePipelineComponents();
+  }
+
+  async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._fetchPipelineFolders();
+        this._makeSortablePipelineComponents();
+      }, true);
+    } else {
+      this._fetchPipelineFolders();
+      this._makeSortablePipelineComponents();
+    }
+  }
+
+  _fetchPipelineFolders() {
+    this.indicator.show();
+    window.backendaiclient.vfolder.list()
+        .then((folders) => {
+          const pipelines: Array<object> = [];
+          folders.forEach((folder) => {
+            if (folder.name.startsWith('pipeline-')) pipelines.push(folder);
+          });
+          this.pipelineList = pipelines;
+          this.indicator.hide();
+        });
+  }
+
+  _openPipelineCreateDialog() {
+    window.backendaiclient.vfolder.list_hosts()
+        .then((resp) => {
+          const listbox = this.shadowRoot.querySelector('#folder-host paper-listbox');
+          this.vhosts = resp.allowed.slice();
+          this.vhost = resp.default;
+          listbox.selected = this.vhost;
+        })
+        .catch((err) => {
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true);
+          }
+        });
+    this.shadowRoot.querySelector('#pipeline-create-dialog').show();
+  }
+
+  _hidePipelineCreateDialog() {
+    const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
+    dialog.hide();
+  }
+
+  _createPipeline() {
+    const pipelineName = this.shadowRoot.querySelector('#pipeline-name').value;
+    // const pipelineDescription = this.shadowRoot.querySelector('#pipeline-description').value;
+    const vhost = this.shadowRoot.querySelector('#folder-host').value;
+    const vfname = `pipeline-${window.backendaiclient.slugify(pipelineName)}-${window.backendaiclient.generateSessionId(8, true)}`;
+    if (!pipelineName || !vhost) {
+      this.notification.text = 'Name and folder host should not be empty';
+      this.notification.show();
+      return;
+    }
+    this.indicator.show();
+    window.backendaiclient.vfolder.create(vfname, vhost)
+        .then((resp) => {
+          this.notification.text = 'Pipeline created';
+          this.notification.show();
+          this._fetchPipelineFolders();
+          this._hidePipelineCreateDialog();
+          this.indicator.hide();
+        })
+        .catch((err) => {
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true);
+          }
+          this.indicator.hide();
+        });
   }
 
   _showTab(tab) {
@@ -445,7 +369,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   _editCode(pipelineComponent) {
-    console.log(pipelineComponent)
     const editor = this.shadowRoot.querySelector('#codemirror-editor');
     editor.setValue(pipelineComponent.code);
     const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
@@ -473,46 +396,39 @@ export default class BackendAIPipelineView extends BackendAIPage {
             <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
-          <wl-button class="fg blue button" id="add-experiment" outlined>
-           <wl-icon>add</wl-icon>
+          <wl-button class="fg blue button" id="add-experiment" outlined
+              @click="${this._openPipelineCreateDialog}">
+            <wl-icon>add</wl-icon>
             Add pipeline
           </wl-button>
         </h3>
         <div id="exp-lists" class="tab-content" style="margin:0;padding:0;height:calc(100vh - 235px);">
           <div class="horizontal wrap layout" style="margin:0;padding:0;">
-            <div style="weight: 300px;border-right:1px solid #ccc;height:calc(100vh - 235px);">
-              <wl-list-item active style="width:300px;">
-                <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
-                <span slot="after">5<br/><span style="font-size:9px">components</span></span>
-                <wl-title level="4" style="margin: 0">Test experiment</wl-title>
-                <span style="font-size: 11px;">Test experiment</span>
-              </wl-list-item>
-              <wl-list-item style="width:300px;">
-                <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
-                  <span slot="after">4<br/><span style="font-size:9px">components</span></span>
-                  <wl-title level="4" style="margin: 0">Fashion MNIST</wl-title>
-                  <span style="font-size: 11px;">Fashion MNIST serving test</span>
-              </wl-list-item>
-              <wl-list-item style="width:300px;">
-                <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
-                  <span slot="after">4<br/><span style="font-size:9px">components</span></span>
-                  <wl-title level="4" style="margin: 0">Test experiment2</wl-title>
-                  <span style="font-size: 11px;">Test experiment2</span>
-              </wl-list-item>
+            <div id="exp-sidebar">
+              <h4>Pipeline</h4>
+              ${this.pipelineList.map((item) => html`
+                <wl-list-item class="sidebar-item">
+                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <span slot="after">5<br/><span style="font-size:9px">components</span></span>
+                  <wl-title level="4" style="margin: 0">${item.name}</wl-title>
+                  <span style="font-size: 11px;">Test experiment</span>
+                </wl-list-item>
+              `)}
+              ${this.pipelineList.length < 1 ? html`<div style="margin-left:1em;">No pipeline.</span>` : ''}
               <h4>Templates</h4>
-              <wl-list-item style="width:300px;">
+              <wl-list-item class="sidebar-item">
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
                   <span slot="after">5<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Example Experiment (TensorFlow)</wl-title>
                   <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
               </wl-list-item>
-              <wl-list-item style="width:300px;">
+              <wl-list-item class="sidebar-item">
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Example Experiment (PyTorch)</wl-title>
                   <span style="font-size: 11px;">Basic experiment example using Pytorch</span>
               </wl-list-item>
-              <wl-list-item style="width:300px;">
+              <wl-list-item class="sidebar-item">
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Facet data cleaner</wl-title>
@@ -555,7 +471,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     <div slot="after">
                       <div class="horizontal layout">
                         <div class="layout horizontal center" style="width:100px;">
-                            <paper-icon-button class="fg black" icon="vaadin:edit" @click="${(e) => this._editCode(item)}"></paper-icon-button>
+                            <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._editCode(item)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
                         </div>
                         <div class="layout vertical start flex" style="width:80px!important;">
@@ -597,6 +513,25 @@ export default class BackendAIPipelineView extends BackendAIPage {
         </div>
       </wl-card>
 
+      <wl-dialog id="pipeline-create-dialog" fixed blockscrolling backdrop persistent>
+        <div slot="header">Create new pipeline</div>
+        <div slot="content">
+          <wl-textfield id="pipeline-name" label="Pipeline title" maxLength="30"></wl-textfield>
+          <wl-textfield id="pipeline-description" label="Pipeline description" maxLength="300"></wl-textfield>
+          <paper-dropdown-menu id="folder-host" label="Folder host" style="width:100%">
+            <paper-listbox slot="dropdown-content" attr-for-selected='label'>
+              ${this.vhosts.map(item => html`
+                <paper-item label="${item}">${item}</paper-item>
+              `)}
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+        <div slot="footer">
+          <wl-button inverted flat id="" @click="${this._hidePipelineCreateDialog}">Cancel</wl-button>
+          <wl-button type="submit" id="create-pipeline-button" @click="${this._createPipeline}">Create</wl-button>
+        </div>
+      </wl-dialog>
+
       <wl-dialog id="codemirror-dialog" fixed backdrop scrollable blockScrolling persistent>
         <div slot="header"></div>
         <div slot="content">
@@ -607,9 +542,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
           <wl-button id="save-code" disabled>Save</wl-button>
         </div>
       </wl-dialog>
+
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
     `;
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     "backend-ai-pipeline-view": BackendAIPipelineView;
