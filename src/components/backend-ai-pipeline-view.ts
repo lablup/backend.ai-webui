@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
@@ -81,13 +81,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   public indicator: any;
 
-  // private scalingGroup: string;
-  private allowedScalingGroups: any[];
-  private vhost: string;
-  private vhosts: string[];
-  private pipelineList: any[];
-  private pipelineComponents: any[];
-  // private pipelineSortable: object;
+  // @property({type: String}) scalingGroup = '';
+  @property({type: Array}) allowedScalingGroups = Array();
+  @property({type: String}) vhost = '';
+  @property({type: Array}) vhosts = Array();
+  @property({type: Array}) pipelineList = Array();
+  @property({type: Array}) pipelineComponents = Array();
 
   constructor() {
     super();
@@ -141,11 +140,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.concurrency_max = 0;
     this._status = 'inactive';
 
-    // this.scalingGroup = '';
-    this.allowedScalingGroups = [];
-    this.vhost = '';
-    this.vhosts = [];
-    this.pipelineList = [];
     this.pipelineComponents = [
       {
         'title': 'Backend.AI Data Uploader',
@@ -193,15 +187,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   static get is() {
     return 'backend-ai-pipeline-view';
-  }
-
-  static get properties() {
-    return {
-      pipelineList: Array,
-      pipelineComponent: Array,
-      vhost: String,
-      vhosts: Array,
-    }
   }
 
   static get styles() {
