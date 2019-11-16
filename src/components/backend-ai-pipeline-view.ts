@@ -98,6 +98,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   @property({type: String}) pipelineFolderName = '';
   @property({type: Object}) pipelineConfig = Object();
   @property({type: Array}) pipelineComponents = Array();
+  @property({type: Number}) selectedComponentIndex = -1;
 
   constructor() {
     super();
@@ -641,6 +642,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.notification.show();
       return;
     }
+    this.componentCreateMode = 'create';
     this._fillComponentAddDialogFields(null);
     this.shadowRoot.querySelector('#component-add-dialog').show();
   }
@@ -675,7 +677,17 @@ export default class BackendAIPipelineView extends BackendAIPage {
     if (!gpu) gpu = 0;
 
     const cinfo = {title, description, path: sluggedPath, cpu, mem, gpu};
-    this.pipelineComponents.push(cinfo);
+    if (this.componentCreateMode === 'create') {
+      this.pipelineComponents.push(cinfo);
+    } else {
+      if (this.selectedComponentIndex < 0) {
+        this.notification.text = 'Invalid component';
+        this.notification.show();
+        return;
+      }
+      this.pipelineComponents[this.selectedComponentIndex] = cinfo;
+      this.selectedComponentIndex = -1;
+    }
     this.indicator.show();
     await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
     const components = await this._downloadPipelineComponents(this.pipelineFolderName);
@@ -684,20 +696,22 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.indicator.hide();
   }
 
-  _openComponentUpdateDialog() {
-    // this._fillComponentAddDialogFields();
+  _openComponentUpdateDialog(info, idx) {
+    this.componentCreateMode = 'update';
+    this.selectedComponentIndex = idx;
+    this._fillComponentAddDialogFields(info);
     this.shadowRoot.querySelector('#component-add-dialog').show();
   }
 
-  _fillComponentAddDialogFields(params) {
-    if (!params) params = {};
+  _fillComponentAddDialogFields(info) {
+    if (!info) info = {};
     const dialog = this.shadowRoot.querySelector('#component-add-dialog');
-    dialog.querySelector('#component-title').value = params.title || '';
-    dialog.querySelector('#component-description').value = params.description || '';
-    dialog.querySelector('#component-path').value = params.path || '';
-    dialog.querySelector('#component-cpu').value = params.cpu || '1';
-    dialog.querySelector('#component-mem').value = params.mem || '1';
-    dialog.querySelector('#component-gpu').value = params.gpu || '0';
+    dialog.querySelector('#component-title').value = info.title || '';
+    dialog.querySelector('#component-description').value = info.description || '';
+    dialog.querySelector('#component-path').value = info.path || '';
+    dialog.querySelector('#component-cpu').value = info.cpu || '1';
+    dialog.querySelector('#component-mem').value = info.mem || '1';
+    dialog.querySelector('#component-gpu').value = info.gpu || '0';
   }
 
   async _uploadPipelineComponents(folder_name, cinfo) {
@@ -828,13 +842,14 @@ export default class BackendAIPipelineView extends BackendAIPage {
                 </div>
               </div>
               <div id="pipeline-component-list">
-                ${this.pipelineComponents.map((item) => html`
+                ${this.pipelineComponents.map((item, idx) => html`
                   <wl-list-item style="width:calc(100%-55px); height:80px">
                     <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
                     <div slot="after">
                       <div class="horizontal layout">
                         <div class="layout horizontal center" style="width:100px;">
-                            <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._editCode(item)}"></paper-icon-button>
+                            <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></paper-icon-button>
+                            <paper-icon-button class="fg black" icon="vaadin:code" @click="${() => this._editCode(item)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
                         </div>
                         <div class="layout vertical start flex" style="width:80px!important;">
