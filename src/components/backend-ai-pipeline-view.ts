@@ -70,47 +70,29 @@ import './lablup-loading-indicator';
 
 @customElement("backend-ai-pipeline-view")
 export default class BackendAIPipelineView extends BackendAIPage {
-  public resourceLimits: any;
-  public userResourceLimit: any;
-  public gpu_mode: any;
-  public gpu_step: any;
-  public cpu_metric: any;
-  public mem_metric: any;
-  public gpu_metric: any;
-  public tpu_metric: any;
-  public images: any;
-  public defaultResourcePolicy: any;
-  public total_slot: any;
-  public used_slot: any;
-  public available_slot: any;
-  public resource_info: any;
-  public used_slot_percent: any;
-  public resource_templates: any;
-  public vfolders: any;
-  public launch_ready: any;
-  public concurrency_used: any;
-  public concurrency_max: any;
-  public _status: any;
-  public notification: any;
   public shadowRoot: any;
+  public notification: any;
   public updateComplete: any;
-  public vgpu_metric: any;
   public $: any;
 
   public indicator: any;
 
   @property({type: Object}) supports = Object();
   @property({type: Object}) aliases = Object();
+  @property({type: Object}) images = Object();
   @property({type: Object}) tags = Object();
   @property({type: Object}) humanizedNames = Object();
   @property({type: Array}) versions = Array();
   @property({type: Array}) languages = Array();
   @property({type: String}) defaultLanguage = '';
+  @property({type: Object}) resourceLimits = Object();
   @property({type: String}) scalingGroup = '';
   @property({type: Array}) scalingGroups = Array();
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = Array();
-  @property({type: String}) pipelineCreatMode = 'create';
+  @property({type: String}) _status = 'inactive';
+  @property({type: String}) pipelineCreateMode = 'create';
+  @property({type: String}) componentCreateMode = 'create';
   @property({type: Array}) pipelineFolderList = Array();
   /* Properties for selected pipeline */
   @property({type: String}) pipelineFolderName = '';
@@ -122,8 +104,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
     setPassiveTouchGestures(true);
     this.active = false;
     this.supports = {};
-    this.resourceLimits = {};
-    this.userResourceLimit = {};
     this.aliases = {
       'TensorFlow': 'python-tensorflow',
       'Lablup ResearchEnv.': 'python-ff',
@@ -136,38 +116,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     };
     this.versions = [];
     this.languages = [];
-    this.gpu_mode = 'no';
-    this.gpu_step = 0.05;
-    this.cpu_metric = {
-      'min': '1',
-      'max': '1'
-    };
-    this.mem_metric = {
-      'min': '1',
-      'max': '1'
-    };
-    this.gpu_metric = {
-      'min': '0',
-      'max': '0'
-    };
-    this.tpu_metric = {
-      'min': '1',
-      'max': '1'
-    };
-    this.images = {};
-    this.defaultResourcePolicy = 'UNLIMITED';
-    this.total_slot = {};
-    this.used_slot = {};
-    this.available_slot = {};
-    this.resource_info = {};
-    this.used_slot_percent = {};
-    this.resource_templates = [];
-    this.vfolders = [];
     this.defaultLanguage = '';
-    this.launch_ready = false;
-    this.concurrency_used = 0;
-    this.concurrency_max = 0;
-    this._status = 'inactive';
 
     this.pipelineConfig = {
       title: '',
@@ -177,7 +126,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
       scaling_group: '',
       folder_host: '',
     }
-    this.pipelineComponents = [];
     // this.pipelineSortable = {};
   }
 
@@ -270,12 +218,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.pipelineFolderName = '';
+        this._initPipelinePage();
         this._fetchPipelineFolders();
         this._makeSortablePipelineComponents();
       }, true);
     } else {
-      this.pipelineFolderName = '';
+      this._initPipelinePage();
       this._fetchPipelineFolders();
       this._makeSortablePipelineComponents();
     }
@@ -287,6 +235,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+  }
+
+  _initPipelinePage() {
+    this.pipelineFolderName = '';
+    this.pipelineConfig = {};
+    this.pipelineComponents = [];
   }
 
   async _fetchPipelineFolders() {
@@ -539,8 +493,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
   _openPipelineCreateDialog() {
     this.selectDefaultLanguage();
     this._fetchResourceGroup();
-    this._fillCreateDialogFields(null);
-    this.pipelineCreatMode = 'create';
+    this._fillPipelineCreateDialogFields(null);
+    this.pipelineCreateMode = 'create';
     window.backendaiclient.vfolder.list_hosts()
         .then((resp) => {
           const listbox = this.shadowRoot.querySelector('#pipeline-folder-host paper-listbox');
@@ -563,7 +517,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     dialog.hide();
   }
 
-  _createPipeline() {
+  async _createPipeline() {
     const title = this.shadowRoot.querySelector('#pipeline-title').value;
     const description = this.shadowRoot.querySelector('#pipeline-description').value;
     const environment = this.shadowRoot.querySelector('#pipeline-environment').selectedItem.id;
@@ -580,31 +534,40 @@ export default class BackendAIPipelineView extends BackendAIPage {
       title, description, environment, version, scaling_group, folder_host
     }
     this.indicator.show();
-    if (this.pipelineCreatMode === 'create') {
-      window.backendaiclient.vfolder.create(slugged_title, folder_host)
-          .then((resp) => {
-            this.notification.text = 'Pipeline created';
-            this.notification.show();
-            this._uploadPipelineConfig(slugged_title, configObj);
-            this._uploadPipelineComponents(slugged_title, []);
-            this._fetchPipelineFolders();
-            this._hidePipelineCreateDialog();
-            this.indicator.hide();
-          })
-          .catch((err) => {
-            if (err && err.message) {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-              this.notification.show(true);
-            }
-            this.indicator.hide();
-          });
+    if (this.pipelineCreateMode === 'create') {
+      try {
+        await window.backendaiclient.vfolder.create(slugged_title,folder_host);
+        const uploadPipelineTask = this._uploadPipelineConfig(slugged_title, configObj);
+        const uploadComponentsTask = this._uploadPipelineComponents(slugged_title, []);
+        const fetchFoldersTask = this._fetchPipelineFolders();
+        await Promise.all([uploadPipelineTask, uploadComponentsTask, fetchFoldersTask]);
+        this._hidePipelineCreateDialog();
+        this.indicator.hide();
+        this.notification.text = 'Pipeline created';
+        this.notification.show();
+      } catch (err) {
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
+        }
+        this.indicator.hide();
+      }
     } else {
-      this._uploadPipelineConfig(this.pipelineFolderName, configObj);
-      this._hidePipelineCreateDialog();
-      this._fetchPipelineFolders();
-      this._selectPipeline(this.pipelineFolderName);
-      this.indicator.hide();
+      try {
+        await this._uploadPipelineConfig(this.pipelineFolderName, configObj);
+        await this._fetchPipelineFolders();
+        this._hidePipelineCreateDialog();
+        this._selectPipeline(this.pipelineFolderName);
+        this.indicator.hide();
+      } catch (err) {
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
+        }
+        this.indicator.hide();
+      }
     }
   }
 
@@ -616,7 +579,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
     this._fetchResourceGroup();
     const config = await this._downloadPipelineConfig(this.pipelineFolderName);
-    this.pipelineCreatMode = 'update';
+    this.pipelineCreateMode = 'update';
     window.backendaiclient.vfolder.list_hosts()
         .then((resp) => {
           const listbox = this.shadowRoot.querySelector('#pipeline-folder-host paper-listbox');
@@ -631,11 +594,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
             this.notification.show(true);
           }
         });
-    this._fillCreateDialogFields(config);
+    this._fillPipelineCreateDialogFields(config);
     this.shadowRoot.querySelector('#pipeline-create-dialog').show();
   }
 
-  _fillCreateDialogFields(config) {
+  _fillPipelineCreateDialogFields(config) {
     if (!config) config = {};
     const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
     dialog.querySelector('#pipeline-title').value = config.title || '';
@@ -670,6 +633,71 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.notification.detail = err.message;
       this.notification.show(true);
     }
+  }
+
+  _openComponentAddDialog() {
+    if (!this.pipelineFolderName) {
+      this.notification.text = 'No pipline selected';
+      this.notification.show();
+      return;
+    }
+    this._fillComponentAddDialogFields(null);
+    this.shadowRoot.querySelector('#component-add-dialog').show();
+  }
+
+  _hideComponentAddDialog() {
+    this.shadowRoot.querySelector('#component-add-dialog').hide();
+  }
+
+  async _addComponent() {
+    const title = this.shadowRoot.querySelector('#component-title').value;
+    const description = this.shadowRoot.querySelector('#component-description').value;
+    const path = this.shadowRoot.querySelector('#component-path').value;
+    if (!title || !path) {
+      this.notification.text = 'Title and path are required';
+      this.notification.show();
+      return;
+    }
+    const sluggedPath = window.backendaiclient.slugify(path);
+    let cpu = this.shadowRoot.querySelector('#component-cpu').value;
+    let mem = this.shadowRoot.querySelector('#component-mem').value;
+    let gpu = this.shadowRoot.querySelector('#component-gpu').value;
+    if (cpu < 1) {
+      this.notification.text = 'CPU should be at least 1';
+      this.notification.show();
+      return;
+    }
+    if (mem < 0.1) {
+      this.notification.text = 'Memory should be at least 0.1 GiB';
+      this.notification.show();
+      return;
+    }
+    if (!gpu) gpu = 0;
+
+    const cinfo = {title, description, path: sluggedPath, cpu, mem, gpu};
+    this.pipelineComponents.push(cinfo);
+    this.indicator.show();
+    await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
+    const components = await this._downloadPipelineComponents(this.pipelineFolderName);
+    this.pipelineComponents = components;
+    this._hideComponentAddDialog();
+    this.indicator.hide();
+  }
+
+  _openComponentUpdateDialog() {
+    // this._fillComponentAddDialogFields();
+    this.shadowRoot.querySelector('#component-add-dialog').show();
+  }
+
+  _fillComponentAddDialogFields(params) {
+    if (!params) params = {};
+    const dialog = this.shadowRoot.querySelector('#component-add-dialog');
+    dialog.querySelector('#component-title').value = params.title || '';
+    dialog.querySelector('#component-description').value = params.description || '';
+    dialog.querySelector('#component-path').value = params.path || '';
+    dialog.querySelector('#component-cpu').value = params.cpu || '1';
+    dialog.querySelector('#component-mem').value = params.mem || '1';
+    dialog.querySelector('#component-gpu').value = params.gpu || '0';
   }
 
   async _uploadPipelineComponents(folder_name, cinfo) {
@@ -792,13 +820,14 @@ export default class BackendAIPipelineView extends BackendAIPage {
                   ` : ''}
                 </div>
                 <div class="layout horizontal center">
-                  <wl-button class="fg blue button" id="add-component" outlined>
+                  <wl-button class="fg blue button" id="add-component" outlined
+                      @click="${this._openComponentAddDialog}">
                     <wl-icon>add</wl-icon>
                     Add component
                   </wl-button>
                 </div>
               </div>
-              <wl-list-item id="pipeline-component-list">
+              <div id="pipeline-component-list">
                 ${this.pipelineComponents.map((item) => html`
                   <wl-list-item style="width:calc(100%-55px); height:80px">
                     <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
@@ -829,6 +858,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     </div>
                     <wl-title level="4" style="margin: 0">${item.title}</wl-title>
                     <div style="font-size:11px;max-width:400px;">${item.description}</div>
+                    <div style="font-size:11px;max-width:400px;">${item.path}</div>
                   </wl-list-item>
                 `)}
                 ${this.pipelineComponents.length < 1 ? html`<wl-list-item>No components.</wl-list-item>` : ''}
@@ -845,7 +875,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       </wl-card>
 
       <wl-dialog id="pipeline-create-dialog" fixed blockscrolling backdrop>
-        <div slot="header">${this.pipelineCreatMode === 'create' ? 'Create' : 'Update'} pipeline config</div>
+        <div slot="header">${this.pipelineCreateMode === 'create' ? 'Create' : 'Update'} pipeline config</div>
         <div slot="content">
           <wl-textfield id="pipeline-title" label="Pipeline title" maxLength="30"></wl-textfield>
           <wl-textfield id="pipeline-description" label="Pipeline description" maxLength="200"></wl-textfield>
@@ -890,7 +920,28 @@ export default class BackendAIPipelineView extends BackendAIPage {
         <div slot="footer">
           <wl-button inverted flat id="" @click="${this._hidePipelineCreateDialog}">Cancel</wl-button>
           <wl-button type="submit" id="create-pipeline-button" @click="${this._createPipeline}">
-            ${this.pipelineCreatMode === 'create' ? 'Create' : 'Update'}
+            ${this.pipelineCreateMode === 'create' ? 'Create' : 'Update'}
+          </wl-button>
+        </div>
+      </wl-dialog>
+
+      <wl-dialog id="component-add-dialog" fixed blockscrolling backdrop>
+        <div slot="header">${this.componentCreateMode === 'create' ? 'Add' : 'Update'} component</div>
+        <div slot="content">
+          <wl-textfield id="component-title" label="Component title" maxLength="30"></wl-textfield>
+          <wl-textfield id="component-description" label="Component description" maxLength="200"></wl-textfield>
+          <wl-textfield id="component-path" label="Component path in fololde"
+              placeHolder="001-load-and-process-data" maxLength="300"></wl-textfield>
+          <div class="layout horizontal">
+            <wl-textfield id="component-cpu" label="CPU" type="number" value="1" min="1"></wl-textfield>
+            <wl-textfield id="component-mem" label="Memory (GiB)" type="number" value="1" min="0"></wl-textfield>
+            <wl-textfield id="component-gpu" label="GPU" type="number" value="0" min="0"></wl-textfield>
+          </div>
+        </div>
+        <div slot="footer">
+          <wl-button inverted flat id="" @click="${this._hideComponentAddDialog}">Cancel</wl-button>
+          <wl-button type="submit" id="add-component-button" @click="${this._addComponent}">
+            ${this.componentCreateMode === 'create' ? 'Add' : 'Update'}
           </wl-button>
         </div>
       </wl-dialog>
