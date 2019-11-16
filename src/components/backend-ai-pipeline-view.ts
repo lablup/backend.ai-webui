@@ -690,8 +690,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
     this.indicator.show();
     await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
-    const components = await this._downloadPipelineComponents(this.pipelineFolderName);
-    this.pipelineComponents = components;
+    this.pipelineComponents = this.pipelineComponents.slice();
     this._hideComponentAddDialog();
     this.indicator.hide();
   }
@@ -701,6 +700,27 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.selectedComponentIndex = idx;
     this._fillComponentAddDialogFields(info);
     this.shadowRoot.querySelector('#component-add-dialog').show();
+  }
+
+  _openComponentDeleteDialog(idx) {
+    this.selectedComponentIndex = idx;
+    this.shadowRoot.querySelector('#component-delete-dialog').show();
+  }
+
+  _hideComponentDeleteDialog() {
+    this.shadowRoot.querySelector('#component-delete-dialog').hide();
+  }
+
+  _deleteComponent() {
+    if (this.selectedComponentIndex < 0) {
+      this.notification.text = 'Invalid component';
+      this.notification.show();
+      return;
+    }
+    this.pipelineComponents.splice(this.selectedComponentIndex, 1);
+    this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
+    this.pipelineComponents = this.pipelineComponents.slice();
+    this.shadowRoot.querySelector('#component-delete-dialog').hide();
   }
 
   _fillComponentAddDialogFields(info) {
@@ -801,19 +821,19 @@ export default class BackendAIPipelineView extends BackendAIPage {
               `)}
               ${this.pipelineFolderList.length < 1 ? html`<wl-list-itemj>No pipeline.</wl-list-itemj>` : ''}
               <h4>Templates</h4>
-              <wl-list-item class="sidebar-item">
+              <wl-list-item class="sidebar-item" disabled>
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
                   <span slot="after">5<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Example Experiment (TensorFlow)</wl-title>
                   <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
               </wl-list-item>
-              <wl-list-item class="sidebar-item">
+              <wl-list-item class="sidebar-item" disabled>
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Example Experiment (PyTorch)</wl-title>
                   <span style="font-size: 11px;">Basic experiment example using Pytorch</span>
               </wl-list-item>
-              <wl-list-item class="sidebar-item">
+              <wl-list-item class="sidebar-item" disabled>
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Facet data cleaner</wl-title>
@@ -847,10 +867,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
                     <div slot="after">
                       <div class="horizontal layout">
-                        <div class="layout horizontal center" style="width:100px;">
-                            <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></paper-icon-button>
+                        <div class="layout horizontal center" style="width:150px;">
                             <paper-icon-button class="fg black" icon="vaadin:code" @click="${() => this._editCode(item)}"></paper-icon-button>
-                            <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                            <paper-icon-button class="fg black" icon="vaadin:play"></paper-icon-button>
+                            <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></paper-icon-button>
+                            <paper-icon-button class="fg black" icon="vaadin:trash" @click="${() => this._openComponentDeleteDialog(idx)}"></paper-icon-button>
                         </div>
                         <div class="layout vertical start flex" style="width:80px!important;">
                           <div class="layout horizontal configuration">
@@ -945,7 +966,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         <div slot="content">
           <wl-textfield id="component-title" label="Component title" maxLength="30"></wl-textfield>
           <wl-textfield id="component-description" label="Component description" maxLength="200"></wl-textfield>
-          <wl-textfield id="component-path" label="Component path in fololde"
+          <wl-textfield id="component-path" label="Component path in folder"
               placeHolder="001-load-and-process-data" maxLength="300"></wl-textfield>
           <div class="layout horizontal">
             <wl-textfield id="component-cpu" label="CPU" type="number" value="1" min="1"></wl-textfield>
@@ -970,6 +991,18 @@ export default class BackendAIPipelineView extends BackendAIPage {
           <wl-button inverted flat id="discard-code" @click="${this._hideCodeDialog}">Cancel</wl-button>
           <wl-button id="save-code" disabled>Save</wl-button>
         </div>
+      </wl-dialog>
+
+      <wl-dialog id="component-delete-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Delete this component?</wl-title>
+         <div slot="content">
+            <p>This action cannot be undone. Do you want to proceed?</p>
+         </div>
+         <div slot="footer">
+            <wl-button class="cancel" inverted flat @click="${this._hideComponentDeleteDialog}">
+              Cancel</wl-button>
+            <wl-button class="ok" @click="${this._deleteComponent}">Delete</wl-button>
+         </div>
       </wl-dialog>
 
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
