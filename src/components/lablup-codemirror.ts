@@ -53,7 +53,7 @@ export default class LablupCodemirror extends LitElement {
   }
 
   getValue() {
-    this.editor.getValue();
+    return this.editor.getValue();
   }
 
   setValue(val) {

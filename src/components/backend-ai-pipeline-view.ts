@@ -16,8 +16,8 @@
   /home/work/components.json  # stores whole pipeline components
     - title
     - description
-    - component_path  # eg) /home/work/001-load-data/
-                      # code is assumed to be stored in `main.py` inside `component_path`
+    - path  # eg) /home/work/001-load-data/
+            # code is assumed to be stored in `main.py` inside `path`
     - cpu
     - mem
     - gpu
@@ -191,6 +191,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
           --dialog-max-width: calc(100vw - 200px);
           --dialog-min-height: calc(100vh - 100px);
           --dialog-max-height: calc(100vh - 100px);
+        }
+
+        #codemirror-dialog wl-button {
+          margin-left: 5px;
         }
       `];
   }
@@ -611,7 +615,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   async _uploadPipelineConfig(folder_name, configObj) {
-    const vfpath = 'pipeline/config.json';
+    const vfpath = 'config.json';
     const blob = new Blob([JSON.stringify(configObj, null, 2)], {type: 'application/json'});
     window.backendaiclient.vfolder.upload(vfpath, blob, folder_name)
         .then((resp) => {
@@ -624,7 +628,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   async _downloadPipelineConfig(folder_name) {
-    const vfpath = 'pipeline/config.json';
+    const vfpath = 'config.json';
     try {
       const configBlob = await window.backendaiclient.vfolder.download(vfpath, folder_name);
       const config = JSON.parse(await configBlob.text());
@@ -638,7 +642,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   _openComponentAddDialog() {
     if (!this.pipelineFolderName) {
-      this.notification.text = 'No pipline selected';
+      this.notification.text = 'No pipeline selected';
       this.notification.show();
       return;
     }
@@ -735,7 +739,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   async _uploadPipelineComponents(folder_name, cinfo) {
-    const vfpath = 'pipeline/components.json';
+    const vfpath = 'components.json';
     const blob = new Blob([JSON.stringify(cinfo, null, 2)], {type: 'application/json'});
     window.backendaiclient.vfolder.upload(vfpath, blob, folder_name)
         .then((resp) => {
@@ -748,7 +752,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   async _downloadPipelineComponents(folder_name) {
-    const vfpath = 'pipeline/components.json';
+    const vfpath = 'components.json';
     try {
       const configBlob = await window.backendaiclient.vfolder.download(vfpath, folder_name);
       const config = JSON.parse(await configBlob.text());
@@ -766,17 +770,80 @@ export default class BackendAIPipelineView extends BackendAIPage {
     Sortable.create(el);
   }
 
-  _editCode(pipelineComponent) {
-    const editor = this.shadowRoot.querySelector('#codemirror-editor');
-    editor.setValue(pipelineComponent.code);
+  async _ensureComponentFolder(component) {
+    const folder = `${component.path}`;
+    try {
+      await window.backendaiclient.vfolder.mkdir(folder, this.pipelineFolderName);
+    } catch (err) {
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true);
+    }
+  }
+
+  async _ensureComponentMainCode(component) {
+    await this._ensureComponentFolder(component);
+    const filepath = `${component.path}/main.py`; // TODO: hard-coded file name
+    try {
+      const blob = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName);
+      return await blob.text();
+    } catch (err) {
+      if (err.title && err.title.split(' ')[0] === '404') {
+        // Code file not found. upload empty code.
+        const blob = new Blob([''], {type: 'plain/text'});
+        await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);)
+        return '';
+      } else {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true);
+      }
+    }
+  }
+
+  async _editCode(idx) {
+    if (idx < 0) {
+      this.notification.text = 'Invalid component';
+      this.notification.show();
+      return;
+    }
+    this.indicator.show();
+    this.selectedComponentIndex = idx;
+    const component = this.pipelineComponents[idx];
+    const code = await this._ensureComponentMainCode(component);
     const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
-    dialog.querySelector('div[slot="header"]').textContent = pipelineComponent.title;
+    const editor = this.shadowRoot.querySelector('#codemirror-editor');
+    editor.setValue(code);
+    dialog.querySelector('div[slot="header"]').textContent = component.title;
     dialog.show();
+    this.indicator.hide();
+  }
+
+  async _saveCode() {
+    if (this.selectedComponentIndex < 0) {
+      this.notification.text = 'Invalid component';
+      this.notification.show();
+      return;
+    }
+    this.indicator.show();
+    const component = this.pipelineComponents[this.selectedComponentIndex];
+    const filepath = `${component.path}/main.py`; // TODO: hard-coded file name
+    const editor = this.shadowRoot.querySelector('#codemirror-editor');
+    const code = editor.getValue();
+    const blob = new Blob([code], {type: 'plain/text'});
+    await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);)
+    this.indicator.hide();
   }
 
   _hideCodeDialog() {
+    this.selectedComponentIndex = -1;
     const codemirrorEl = this.shadowRoot.querySelector('#codemirror-dialog');
     codemirrorEl.hide();
+  }
+
+  async _saveCodeAndCloseDialog() {
+    await this._saveCode();
+    this._hideCodeDialog();
   }
 
   _runComponentCode() {
@@ -819,7 +886,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                   <span style="font-size: 11px;">${item.config.description}</span>
                 </wl-list-item>
               `)}
-              ${this.pipelineFolderList.length < 1 ? html`<wl-list-itemj>No pipeline.</wl-list-itemj>` : ''}
+              ${this.pipelineFolderList.length < 1 ? html`<wl-list-item>No pipeline.</wl-list-item>` : ''}
               <h4>Templates</h4>
               <wl-list-item class="sidebar-item" disabled>
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
@@ -868,7 +935,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     <div slot="after">
                       <div class="horizontal layout">
                         <div class="layout horizontal center" style="width:150px;">
-                            <paper-icon-button class="fg black" icon="vaadin:code" @click="${() => this._editCode(item)}"></paper-icon-button>
+                            <paper-icon-button class="fg black" icon="vaadin:code" @click="${() => this._editCode(idx)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:play"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:trash" @click="${() => this._openComponentDeleteDialog(idx)}"></paper-icon-button>
@@ -988,13 +1055,14 @@ export default class BackendAIPipelineView extends BackendAIPage {
           <lablup-codemirror id="codemirror-editor"></lablup-codemirror>
         </div>
         <div slot="footer">
-          <wl-button inverted flat id="discard-code" @click="${this._hideCodeDialog}">Cancel</wl-button>
-          <wl-button id="save-code" disabled>Save</wl-button>
+          <wl-button inverted flat id="discard-code" @click="${this._hideCodeDialog}">Close without save</wl-button>
+          <wl-button id="save-code-and-close" @click="${this._saveCodeAndCloseDialog}">Save and close</wl-button>
+          <wl-button id="save-code" @click="${this._saveCode}">Save</wl-button>
         </div>
       </wl-dialog>
 
       <wl-dialog id="component-delete-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Delete this component?</wl-title>
+         <wl-title level="3" slot="header">Delete component?</wl-title>
          <div slot="content">
             <p>This action cannot be undone. Do you want to proceed?</p>
          </div>
