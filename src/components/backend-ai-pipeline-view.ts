@@ -21,6 +21,7 @@
     - cpu
     - mem
     - gpu
+    - executed
   /home/work/001-load-data/      # root path for each pipeline component
   /home/work/002-validate-data/
   ...
@@ -680,7 +681,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
     if (!gpu) gpu = 0;
 
-    const cinfo = {title, description, path: sluggedPath, cpu, mem, gpu};
+    const cinfo = {
+      title, description, path: sluggedPath,
+      cpu, mem, gpu,
+      executed: false
+    };
     if (this.componentCreateMode === 'create') {
       this.pipelineComponents.push(cinfo);
     } else {
@@ -791,7 +796,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       if (err.title && err.title.split(' ')[0] === '404') {
         // Code file not found. upload empty code.
         const blob = new Blob([''], {type: 'plain/text'});
-        await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);)
+        await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
         return '';
       } else {
         this.notification.text = PainKiller.relieve(err.title);
@@ -831,7 +836,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const editor = this.shadowRoot.querySelector('#codemirror-editor');
     const code = editor.getValue();
     const blob = new Blob([code], {type: 'plain/text'});
-    await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);)
+    await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
+    this.pipelineComponents[this.selectedComponentIndex].executed = false;
+    this.pipelineComponents = this.pipelineComponents.slice();
     this.indicator.hide();
   }
 
@@ -846,8 +853,97 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this._hideCodeDialog();
   }
 
-  _runComponentCode() {
-    console.log('# _runComponentCode');
+  async _runComponentCode(idx) {
+    if (idx < 0) {
+      this.notification.text = 'Invalid component';
+      this.notification.show();
+      return;
+    }
+    for (let i = 0; i < idx; i++) {
+      const comp = this.pipelineComponents[i];
+      if (!comp.executed) {
+        this.notification.text = 'Run previous component(s) first';
+        this.notification.show();
+        return;
+      }
+    }
+    this.indicator.show();
+    const pipeline = this.pipelineConfig;
+    const component = this.pipelineComponents[idx];
+    const image = `${pipeline.environment}:${pipeline.version}`;
+    let opts = {
+      domain: window.backendaiclient._config.domainName,
+      group_name: window.backendaiclient.current_group,
+      maxWaitSeconds: 5,
+      mounts: [this.pipelineFolderName],
+      scaling_group: component.scaling_group,
+      cpu: component.cpu,
+      mem: component.mem + 'g', // memeory in GiB
+      fgpu: component.gpu,
+    }
+    let code = await this._ensureComponentMainCode(component);
+    let mode = 'query';
+    let runId = null;
+    try {
+      const kernel = await window.backendaiclient.createKernel(image, undefined, opts);
+      console.log('---kernel creation')
+      console.log(kernel)
+      console.log('---execution')
+      while (true) {
+        const result = await window.backendaiclient.execute(
+          kernel.kernelId,
+          runId,
+          mode,
+          code,
+          opts,
+        );
+        console.log(result)
+        runId = result.result.runId;
+        opts = result.result.opts;
+        const output = result.result.console || [];
+        for (let i = 0; i < output.length; i++) {
+          if (output[0] === 'stdout') {
+            console.log(output[1]);
+          } else if (output[0] === 'stderr') {
+            console.error(output[1]);
+          }
+        }
+        if (result.result.status === 'finished') {
+          break;
+        } else {
+          mode = 'continue';
+          code = '';
+        }
+      }
+      const logs = await window.backendaiclient.getLogs(kernel.kernelId);
+      console.log('---logs')
+      console.log(logs)
+      const filepath = `${component.path}/logs.txt`;
+      const blob = new Blob([logs.result.logs], {type: 'plain/text'});
+      await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
+      await window.backendaiclient.destroy(kernel.kernelId);
+
+      component.executed = true;
+      this.pipelineComponents[idx] = component;
+      await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
+      this.pipelineComponents = this.pipelineComponents.slice();
+      this.notification.text = `Pipeline component ${idx + 1} executed`;
+      this.notification.show();
+    } catch (err) {
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true);
+    }
+    this.indicator.hide();
+  }
+
+  async _runPipeline() {
+    for (let i = 0; i < this.pipelineComponents.length; i++) {
+      console.log('- pipeline' + i)
+      await this._runComponentCode(i);
+    }
+    this.notification.text = 'Executed all pipeline components';
+    this.notification.show();
   }
 
   render() {
@@ -936,7 +1032,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                       <div class="horizontal layout">
                         <div class="layout horizontal center" style="width:150px;">
                             <paper-icon-button class="fg black" icon="vaadin:code" @click="${() => this._editCode(idx)}"></paper-icon-button>
-                            <paper-icon-button class="fg black" icon="vaadin:play"></paper-icon-button>
+                            <paper-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="vaadin:play" @click="${() => this._runComponentCode(idx)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:trash" @click="${() => this._openComponentDeleteDialog(idx)}"></paper-icon-button>
                         </div>
@@ -964,7 +1060,16 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     <div style="font-size:11px;max-width:400px;">${item.path}</div>
                   </wl-list-item>
                 `)}
-                ${this.pipelineComponents.length < 1 ? html`<wl-list-item>No components.</wl-list-item>` : ''}
+                <div class="layout vertical">
+                  ${this.pipelineComponents.length < 1 ? html`
+                    <wl-list-item>No components.</wl-list-item>
+                  ` : html`
+                    <wl-button class="fg blue button" id="run-pipeline-button" outlined
+                        @click="${this._runPipeline}" style="margin: 0 1em">
+                      Run pipeline
+                    </wl-button>
+                  `}
+                </div>
               </div>
             </div>
           </div>
