@@ -98,8 +98,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
   /* Properties for selected pipeline */
   @property({type: String}) pipelineFolderName = '';
   @property({type: Object}) pipelineConfig = Object();
+  @property({type: Object}) pipelineSortable = Object();
   @property({type: Array}) pipelineComponents = Array();
   @property({type: Number}) selectedComponentIndex = -1;
+
+  @property({type: Object}) _dragSource = Object();
+  @property({type: Object}) _dragTarget = Object();
 
   constructor() {
     super();
@@ -128,7 +132,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
       scaling_group: '',
       folder_host: '',
     }
-    // this.pipelineSortable = {};
   }
 
   static get styles() {
@@ -223,15 +226,15 @@ export default class BackendAIPipelineView extends BackendAIPage {
       return;
     }
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
+      document.addEventListener('backend-ai-connected', async () => {
         this._initPipelinePage();
-        this._fetchPipelineFolders();
-        this._makeSortablePipelineComponents();
+        await this._fetchPipelineFolders();
+        await this._makeSortablePipelineComponents();
       }, true);
     } else {
       this._initPipelinePage();
-      this._fetchPipelineFolders();
-      this._makeSortablePipelineComponents();
+      await this._fetchPipelineFolders();
+      await this._makeSortablePipelineComponents();
     }
   }
 
@@ -471,7 +474,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       itemEl = e.target.closest('.pipeline-item');
     }
     this.pipelineFolderName = itemEl.getAttribute('folder-name');
-    this._downloadPipelineConfig(this.pipelineFolderName)
+    const configJob = this._downloadPipelineConfig(this.pipelineFolderName)
         .then((resp) => {
           this.pipelineConfig = resp;
         })
@@ -482,8 +485,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
             this.notification.show(true);
           }
         });
-    this._downloadPipelineComponents(this.pipelineFolderName)
+    const componentJob = this._downloadPipelineComponents(this.pipelineFolderName)
         .then((resp) => {
+          this.pipelineComponents = [];
           this.pipelineComponents = resp;
         })
         .catch((err) => {
@@ -493,7 +497,19 @@ export default class BackendAIPipelineView extends BackendAIPage {
             this.notification.show(true);
           }
         });
-    itemEl.active = true;
+    Promise.all([configJob, componentJob])
+        .then(() => {
+          this._makeSortablePipelineComponents();
+          itemEl.active = true;
+        })
+        .catch((err) => {
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true);
+          }
+          this.indicator.hide();
+        });
   }
 
   _openPipelineCreateDialog() {
@@ -746,33 +762,61 @@ export default class BackendAIPipelineView extends BackendAIPage {
   async _uploadPipelineComponents(folder_name, cinfo) {
     const vfpath = 'components.json';
     const blob = new Blob([JSON.stringify(cinfo, null, 2)], {type: 'application/json'});
+    this.indicator.show();
     window.backendaiclient.vfolder.upload(vfpath, blob, folder_name)
         .then((resp) => {
+          this.indicator.hide();
         })
         .catch((err) => {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
+          this.indicator.hide();
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
         });
   }
 
   async _downloadPipelineComponents(folder_name) {
     const vfpath = 'components.json';
     try {
+      this.indicator.show();
       const configBlob = await window.backendaiclient.vfolder.download(vfpath, folder_name);
       const config = JSON.parse(await configBlob.text());
+      this.indicator.hide();
       return config;
     } catch (err) {
+      this.indicator.hide();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true);
     }
   }
 
-  _makeSortablePipelineComponents() {
+  async _makeSortablePipelineComponents() {
+    if (this.pipelineSortable && this.pipelineSortable.destroy) {
+      await this.pipelineSortable.destroy();
+    }
     const el = this.shadowRoot.querySelector('#pipeline-component-list');
-    // this.pipelineSortable = Sortable.create(el);
-    Sortable.create(el);
+    this.pipelineSortable = Sortable.create(el, {
+      sort: true,
+      animation: 150,
+      onMove: (evt) => {
+        // evt.related.style.backgroundColor = 'red';
+        this._dragSource = evt.dragged;
+        this._dragTarget = evt.related;
+        return false;
+      },
+      onEnd: (evt) => {
+        if (!this._dragSource.dataset || !this._dragTarget.dataset) return;
+        const srcIdx = this._dragSource.dataset.id
+        const targetIdx = this._dragTarget.dataset.id
+        const src = this.pipelineComponents[srcIdx];
+        this.pipelineComponents.splice(srcIdx, 1);
+        this.pipelineComponents.splice(targetIdx, 0, src);
+        this.pipelineComponents = this.pipelineComponents.slice();
+        this._dragSource = Object();
+        this._dragTarget = Object();
+      }
+    });
   }
 
   async _ensureComponentFolder(component) {
@@ -853,7 +897,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this._hideCodeDialog();
   }
 
-  async _runComponentCode(idx) {
+  async _runComponent(idx) {
     if (idx < 0) {
       this.notification.text = 'Invalid component';
       this.notification.show();
@@ -937,10 +981,15 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.indicator.hide();
   }
 
+  async _savePipeline() {
+    await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
+    this.notification.text = 'Saved pipeline components structure';
+    this.notification.show();
+  }
+
   async _runPipeline() {
     for (let i = 0; i < this.pipelineComponents.length; i++) {
-      console.log('- pipeline' + i)
-      await this._runComponentCode(i);
+      await this._runComponent(i);
     }
     this.notification.text = 'Executed all pipeline components';
     this.notification.show();
@@ -1026,13 +1075,13 @@ export default class BackendAIPipelineView extends BackendAIPage {
               </div>
               <div id="pipeline-component-list">
                 ${this.pipelineComponents.map((item, idx) => html`
-                  <wl-list-item style="width:calc(100%-55px); height:80px">
+                  <wl-list-item data-id="${idx}" style="width:calc(100%-55px); height:80px">
                     <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
                     <div slot="after">
                       <div class="horizontal layout">
                         <div class="layout horizontal center" style="width:150px;">
                             <paper-icon-button class="fg black" icon="vaadin:code" @click="${() => this._editCode(idx)}"></paper-icon-button>
-                            <paper-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="vaadin:play" @click="${() => this._runComponentCode(idx)}"></paper-icon-button>
+                            <paper-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="vaadin:play" @click="${() => this._runComponent(idx)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></paper-icon-button>
                             <paper-icon-button class="fg black" icon="vaadin:trash" @click="${() => this._openComponentDeleteDialog(idx)}"></paper-icon-button>
                         </div>
@@ -1061,10 +1110,14 @@ export default class BackendAIPipelineView extends BackendAIPage {
                   </wl-list-item>
                 `)}
               </div>
-              <div class="layout vertical">
+              <div class="layout horizontal end-justified">
                 ${this.pipelineComponents.length < 1 ? html`
                   <wl-list-item>No components.</wl-list-item>
                 ` : html`
+                  <wl-button class="fg blue button" id="save-pipeline-button" outlined
+                      @click="${this._savePipeline}" style="margin: 0 1em">
+                    Save pipeline components
+                  </wl-button>
                   <wl-button class="fg blue button" id="run-pipeline-button" outlined
                       @click="${this._runPipeline}" style="margin: 0 1em">
                     Run pipeline
