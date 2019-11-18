@@ -1060,16 +1060,16 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     <div style="font-size:11px;max-width:400px;">${item.path}</div>
                   </wl-list-item>
                 `)}
-                <div class="layout vertical">
-                  ${this.pipelineComponents.length < 1 ? html`
-                    <wl-list-item>No components.</wl-list-item>
-                  ` : html`
-                    <wl-button class="fg blue button" id="run-pipeline-button" outlined
-                        @click="${this._runPipeline}" style="margin: 0 1em">
-                      Run pipeline
-                    </wl-button>
-                  `}
-                </div>
+              </div>
+              <div class="layout vertical">
+                ${this.pipelineComponents.length < 1 ? html`
+                  <wl-list-item>No components.</wl-list-item>
+                ` : html`
+                  <wl-button class="fg blue button" id="run-pipeline-button" outlined
+                      @click="${this._runPipeline}" style="margin: 0 1em">
+                    Run pipeline
+                  </wl-button>
+                `}
               </div>
             </div>
           </div>
