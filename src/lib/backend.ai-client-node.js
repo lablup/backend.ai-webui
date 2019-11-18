@@ -426,6 +426,9 @@ class Client {
             if (resources['domain']) {
                 params['domain'] = resources['domain'];
             }
+            if (resources['type']) {
+                params['type'] = resources['type'];
+            }
             if (resources['enqueueOnly']) {
                 params['enqueueOnly'] = resources['enqueueOnly'];
             }
@@ -471,7 +474,7 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     /**
-     * Obtain the session information by given sessionId.
+     * Obtain the session container logs by given sessionId.
      *
      * @param {string} sessionId - the sessionId given when created
      */
@@ -480,6 +483,16 @@ class Client {
         if (ownerKey != null) {
             queryString = `${queryString}?owner_access_key=${ownerKey}`;
         }
+        let rqst = this.newSignedRequest('GET', queryString, null);
+        return this._wrapWithPromise(rqst);
+    }
+    /**
+     * Obtain the batch session (task) logs by given sessionId.
+     *
+     * @param {string} sessionId - the sessionId given when created
+     */
+    getTaskLogs(sessionId) {
+        const queryString = `${this.kernelPrefix}/_/logs?kernel_id=${sessionId}`;
         let rqst = this.newSignedRequest('GET', queryString, null);
         return this._wrapWithPromise(rqst);
     }

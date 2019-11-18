@@ -883,6 +883,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
     this.pipelineComponents[this.selectedComponentIndex].executed = false;
     this.pipelineComponents = this.pipelineComponents.slice();
+    await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
     this.indicator.hide();
   }
 
@@ -918,6 +919,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
     let opts = {
       domain: window.backendaiclient._config.domainName,
       group_name: window.backendaiclient.current_group,
+      type: 'batch',
+      startupCommand: `python /home/work/${this.pipelineFolderName}/${component.path}/main.py`,
       maxWaitSeconds: 5,
       mounts: [this.pipelineFolderName],
       scaling_group: component.scaling_group,
@@ -1036,20 +1039,20 @@ export default class BackendAIPipelineView extends BackendAIPage {
               <wl-list-item class="sidebar-item" disabled>
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
                   <span slot="after">5<br/><span style="font-size:9px">components</span></span>
-                  <wl-title level="4" style="margin: 0">Example Experiment (TensorFlow)</wl-title>
+                  <wl-title level="4" style="margin: 0">MNIST (PyTorch)</wl-title>
+                  <span style="font-size: 11px;">Basic experiment example using PyTorch</span>
+              </wl-list-item>
+              <wl-list-item class="sidebar-item" disabled>
+                <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                  <wl-title level="4" style="margin: 0">Fashion MNIST (TensorFlow)</wl-title>
                   <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
               </wl-list-item>
               <wl-list-item class="sidebar-item" disabled>
                 <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
-                  <wl-title level="4" style="margin: 0">Example Experiment (PyTorch)</wl-title>
-                  <span style="font-size: 11px;">Basic experiment example using Pytorch</span>
-              </wl-list-item>
-              <wl-list-item class="sidebar-item" disabled>
-                <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
-                  <span slot="after">4<br/><span style="font-size:9px">components</span></span>
-                  <wl-title level="4" style="margin: 0">Facet data cleaner</wl-title>
-                  <span style="font-size: 11px;">Data preprocessing using Facet</span>
+                  <wl-title level="4" style="margin: 0">Chicago Taxi (TensorFlow)</wl-title>
+                  <span style="font-size: 11px;">Basic example for Pipeline</span>
               </wl-list-item>
             </div>
             <div class="layout vertical flex">
