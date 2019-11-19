@@ -17,7 +17,7 @@ Backend.AI console focuses to
     * Fully-featured VSCode editor and environments (WIP)
  * Pipeline
     * Experiments (with SACRED)
-    * Manages container stream
+    * Manages container streams
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
@@ -70,6 +70,8 @@ siteDescription = "[Site description placeholder. It will be at the bottom of 'B
 connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
 signupSupport = false # Enable / disable signup feature support. Manager plugin is required.
+allowSignout = false # Let users signout from service. Signup plugin is required.
+allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]
