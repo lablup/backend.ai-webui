@@ -69,7 +69,7 @@ export default class LablupCodemirror extends LitElement {
       CodemirrorThemeMonokai,
       css`
       .CodeMirror {
-        font-size: 15px;
+        /* font-size: 15px; */
       }
       `,
     ];
