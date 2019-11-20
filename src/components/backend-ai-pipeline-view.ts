@@ -898,6 +898,43 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this._hideCodeDialog();
   }
 
+  _subscribeKernelEventStream(sessionId, idx, component, kernelId) {
+    const url = window.backendaiclient._config.endpoint + `/func/stream/kernel/_/events?sessionId=${sessionId}`;
+    const sse = new EventSource(url, {withCredentials: true});
+    sse.addEventListener('kernel_pulling', (e) => {
+      this.notification.text = `Pulling kernel image. This may take several minutes...`;
+      this.notification.show();
+    });
+    sse.addEventListener('kernel_started', (e) => {
+      const data = JSON.parse((<any>e).data);
+      this.notification.text = `Kernel started (${data.sessionId}). Running component...`;
+      this.notification.show();
+    });
+    sse.addEventListener('kernel_terminated', async (e) => {
+      const data = JSON.parse((<any>e).data);
+
+      // Mark component executed.
+      component.executed = true;
+      this.pipelineComponents[idx] = component;
+      await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
+      this.pipelineComponents = this.pipelineComponents.slice();
+
+      // Store execution logs in the component folder for convenience.
+      const logs = await window.backendaiclient.getTaskLogs(kernelId);
+      console.log(logs.substring(1, 2000)); // for debugging
+      const filepath = `${component.path}/execution_logs.txt`;
+      const blob = new Blob([logs], {type: 'plain/text'});
+      await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
+
+      // Final handling.
+      sse.close();
+      this.notification.text = `Kernel terminated (${data.sessionId})`;
+      this.notification.show();
+      this.indicator.hide();
+    });
+    return sse;
+  }
+
   async _runComponent(idx) {
     if (idx < 0) {
       this.notification.text = 'Invalid component';
@@ -912,7 +949,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
         return;
       }
     }
-    this.indicator.show();
+
+    /* Prepare execution context */
     const pipeline = this.pipelineConfig;
     const component = this.pipelineComponents[idx];
     const image = `${pipeline.environment}:${pipeline.version}`;
@@ -920,7 +958,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
       domain: window.backendaiclient._config.domainName,
       group_name: window.backendaiclient.current_group,
       type: 'batch',
-      startupCommand: `python /home/work/${this.pipelineFolderName}/${component.path}/main.py`,
+      enqueueOnly: true,
+      startupCommand: `
+        cd /home/work/${this.pipelineFolderName}/;
+        python /home/work/${this.pipelineFolderName}/${component.path}/main.py
+      `,
       maxWaitSeconds: 5,
       mounts: [this.pipelineFolderName],
       scaling_group: component.scaling_group,
@@ -928,60 +970,24 @@ export default class BackendAIPipelineView extends BackendAIPage {
       mem: component.mem + 'g', // memeory in GiB
       fgpu: component.gpu,
     }
-    let code = await this._ensureComponentMainCode(component);
-    let mode = 'query';
-    let runId = null;
+    let sse; // EventSource object for kernel stream
+
+    /* Start batch session and monitor events. */
+    this.indicator.show();
+    await this._ensureComponentMainCode(component);
     try {
       const kernel = await window.backendaiclient.createKernel(image, undefined, opts);
-      console.log('---kernel creation')
-      console.log(kernel)
-      console.log('---execution')
-      while (true) {
-        const result = await window.backendaiclient.execute(
-          kernel.kernelId,
-          runId,
-          mode,
-          code,
-          opts,
-        );
-        console.log(result)
-        runId = result.result.runId;
-        opts = result.result.opts;
-        const output = result.result.console || [];
-        for (let i = 0; i < output.length; i++) {
-          if (output[0] === 'stdout') {
-            console.log(output[1]);
-          } else if (output[0] === 'stderr') {
-            console.error(output[1]);
-          }
-        }
-        if (result.result.status === 'finished') {
-          break;
-        } else {
-          mode = 'continue';
-          code = '';
-        }
-      }
-      const logs = await window.backendaiclient.getLogs(kernel.kernelId);
-      console.log('---logs')
-      console.log(logs)
-      const filepath = `${component.path}/logs.txt`;
-      const blob = new Blob([logs.result.logs], {type: 'plain/text'});
-      await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
-      await window.backendaiclient.destroy(kernel.kernelId);
-
-      component.executed = true;
-      this.pipelineComponents[idx] = component;
-      await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
-      this.pipelineComponents = this.pipelineComponents.slice();
-      this.notification.text = `Pipeline component ${idx + 1} executed`;
-      this.notification.show();
+      const sessionId = kernel.kernelId;
+      const kinfo = await window.backendaiclient.computeSession.get(sessionId, ['id']);
+      const kernelId = kinfo.compute_session.id;
+      sse = this._subscribeKernelEventStream(sessionId, idx, component, kernelId);
     } catch (err) {
+      if (sse) sse.close();
+      this.indicator.hide();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true);
     }
-    this.indicator.hide();
   }
 
   async _savePipeline() {
@@ -994,8 +1000,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
     for (let i = 0; i < this.pipelineComponents.length; i++) {
       await this._runComponent(i);
     }
-    this.notification.text = 'Executed all pipeline components';
-    this.notification.show();
   }
 
   render() {
