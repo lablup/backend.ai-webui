@@ -48,7 +48,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
-  @property({type: Object}) humanizedNames = Object();
+  @property({type: Object}) imageNames = Object();
   @property({type: Array}) versions;
   @property({type: Array}) languages;
   @property({type: String}) gpu_mode;
@@ -462,7 +462,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       json => {
         this.aliases = json.aliases;
         this.tags = json.tags;
-        this.humanizedNames = json.humanizedNames;
+        this.imageNames = json.imageNames;
       }
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
@@ -837,7 +837,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _guessHumanizedNames(kernelName) {
-    const candidate = this.humanizedNames;
+    const candidate = this.imageNames;
     let imageName = '';
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
