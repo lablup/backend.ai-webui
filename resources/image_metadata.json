@@ -49,86 +49,81 @@
     "ssh": "SSH"
   },
   "tags": {
-    "Lablup Research Platform": [],
-    "ML Workspace": [],
-    "TensorFlow": [],
-    "TensorFlow (Julia)": [],
-    "TensorFlow (Swift)": [],
-    "Lablup Workspace": [],
-    "Python": [],
-    "Python (Intel MKL)": [
+    "python-ff": [],
+    "python-mlworkspace": [],
+    "python-tensorflow": [],
+    "julia-tensorflow": [],
+    "swift-tensorflow": [],
+    "python": [],
+    "intel-python": [
       "Intel MKL"
     ],
-    "Python (Intel)": [
+    "intel-tensorflow": [
       "Intel"
     ],
-    "TensorFlow (Intel)": [
-      "Intel"
-    ],
-    "TensorFlow Extended": [
+    "python-tfx": [
       "TFX"
     ],
-    "PyTorch": [],
-    "Chainer": [],
-    "Chainer (Python)": [],
-    "R": [],
-    "FORTRAN": [],
-    "Julia": [],
-    "Lua": [],
-    "Scala": [],
-    "Haskell": [],
-    "Go": [],
-    "Rust": [],
-    "Scheme": [],
-    "Java": [
+    "python-pytorch": [],
+    "python-chainer": [],
+    "r-base": [],
+    "fortran-caf": [],
+    "julia": [],
+    "lua": [],
+    "scala": [],
+    "haskell": [],
+    "go": [],
+    "rust": [],
+    "scheme": [],
+    "java": [
       "OpenJDK"
     ],
-    "RAPID (NGC)": [
+    "ngc-rapids": [
       "Nvidia GPU Cloud"
     ],
-    "DIGITS (NGC)": [
+    "ngc-digits": [
       "Nvidia GPU Cloud"
     ],
-    "PyTorch (NGC)": [
+    "ngc-pytorch": [
       "Nvidia GPU Cloud"
     ],
-    "TensorFlow (NGC)": [
+    "ngc-tensorflow": [
       "Nvidia GPU Cloud"
     ],
-    "Caffe 2 (NGC)": [
+    "ngc-caffe2": [
       "Nvidia GPU Cloud"
     ],
-    "Caffe 3 (NGC)": [
+    "ngc-caffe3": [
       "Nvidia GPU Cloud"
     ],
-    "NVCaffe (NGC)": [
+    "ngc-nvcaffe": [
       "Nvidia GPU Cloud"
     ],
-    "MXNet (NGC)": [
+    "ngc-mxnet": [
       "Nvidia GPU Cloud"
     ],
-    "MATLAB (NGC)": [
+    "ngc-matlab": [
       "Nvidia GPU Cloud"
     ],
-    "MATLAB": [
+    "matlab": [
       "Mathworks"
     ],
-    "PyTorch (Cloudia)": [
+    "lablup-pytorch": [
       "Cloudia"
     ],
-    "Neural Network Intelligence": [
+    "nni": [
       "Microsoft"
     ],
-    "H2O": [
+    "h2o": [
       "h2o.ai"
     ],
-    "AFNI": [],
-    "SpectraVis": [],
-    "NeuroDebian": [],
-    "SFTP": [
+    "afni": [],
+    "spectravis": [],
+    "neurodebian": [],
+    "sftp": [
       "backend.ai"
     ],
-    "SSH": [
+    "ssh": [
       "backend.ai"
     ]
   },
