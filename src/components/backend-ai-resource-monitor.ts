@@ -460,7 +460,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       response => response.json()
     ).then(
       json => {
-        this.aliases = json.aliases;
+        this.aliases = json.imageNames;
         this.tags = json.tags;
         this.imageNames = json.imageNames;
       }
