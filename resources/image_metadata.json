@@ -64,6 +64,9 @@
     "TensorFlow (Intel)": [
       "Intel"
     ],
+    "TensorFlow Extended": [
+      "TFX"
+    ],
     "PyTorch": [],
     "Chainer": [],
     "Chainer (Python)": [],
@@ -160,6 +163,7 @@
     "python-pytorch": "PyTorch",
     "python-caffe": "Caffe (Python)",
     "python-tensorflow": "TensorFlow",
+    "python-tfx": "TensorFlow Extended",
     "python-chainer": "Chainer (Python)",
     "julia-tensorflow": "TensorFlow (Julia)",
     "swift-tensorflow": "TensorFlow (Swift)",
@@ -214,6 +218,13 @@
       }
     ],
     "python-tensorflow": [
+      {
+        "category": "Env",
+        "tag": "TensorFlow",
+        "color": "blue"
+      }
+    ],
+    "python-tfx": [
       {
         "category": "Env",
         "tag": "TensorFlow",
