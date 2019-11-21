@@ -5,6 +5,7 @@
     "TensorFlow": "python-tensorflow",
     "TensorFlow (Julia)": "julia-tensorflow",
     "TensorFlow (Swift)": "swift-tensorflow",
+    "TensorFlow Extended": "python-tfx",
     "Python": "python",
     "Python (Intel MKL)": "python-intel",
     "Python (Intel)": "intel-python",
