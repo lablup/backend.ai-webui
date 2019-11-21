@@ -14,6 +14,7 @@
     - scaling_group
     - folder_host
   /home/work/components.json  # stores whole pipeline components
+    - id
     - title
     - description
     - path  # eg) /home/work/001-load-data/
@@ -101,6 +102,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   @property({type: Object}) pipelineSortable = Object();
   @property({type: Array}) pipelineComponents = Array();
   @property({type: Number}) selectedComponentIndex = -1;
+  @property({type: Array}) componentsToBeRun = Array();
 
   @property({type: Object}) _dragSource = Object();
   @property({type: Object}) _dragTarget = Object();
@@ -673,6 +675,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   async _addComponent() {
+    const id = `pipeline-${window.backendaiclient.generateSessionId(8, true)}`;
     const title = this.shadowRoot.querySelector('#component-title').value;
     const description = this.shadowRoot.querySelector('#component-description').value;
     const path = this.shadowRoot.querySelector('#component-path').value;
@@ -698,7 +701,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     if (!gpu) gpu = 0;
 
     const cinfo = {
-      title, description, path: sluggedPath,
+      id, title, description, path: sluggedPath,
       cpu, mem, gpu,
       executed: false
     };
@@ -921,7 +924,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
       // Store execution logs in the component folder for convenience.
       const logs = await window.backendaiclient.getTaskLogs(kernelId);
-      console.log(logs.substring(1, 2000)); // for debugging
+      console.log(logs.substring(0, 4000)); // for debugging
       const filepath = `${component.path}/execution_logs.txt`;
       const blob = new Blob([logs], {type: 'plain/text'});
       await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
@@ -931,7 +934,21 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.notification.text = `Kernel terminated (${data.sessionId})`;
       this.notification.show();
       this.indicator.hide();
+
+      // If there are further components to be run (eg. whole pipeline is ran),
+      // run next component from the job queue.
+      if (this.componentsToBeRun.length > 0) {
+        const nextId = this.componentsToBeRun.shift();
+        const allComponentIds = this.pipelineComponents.map((c) => c.id);
+        const cidx = allComponentIds.indexOf(nextId);
+        if (cidx < 0) {
+          this.componentsToBeRun = [];
+        } else {
+          this._runComponent(cidx);
+        }
+      }
     });
+
     return sse;
   }
 
@@ -997,9 +1014,19 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   async _runPipeline() {
-    for (let i = 0; i < this.pipelineComponents.length; i++) {
-      await this._runComponent(i);
-    }
+    // Mark all components not executed
+    this.pipelineComponents.forEach((component, i) => {
+      component.executed = false;
+      this.pipelineComponents[i] = component;
+    });
+    await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
+
+    // Push all components in job queue and initiate the first run
+    const allComponentIds = this.pipelineComponents.map((c) => c.id);
+    this.componentsToBeRun = allComponentIds;
+    this.componentsToBeRun.shift();
+    console.log(this.componentsToBeRun)
+    await this._runComponent(0); // run the first component
   }
 
   render() {
@@ -1177,7 +1204,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
               </paper-listbox>
             </paper-dropdown-menu>
             <paper-dropdown-menu id="pipeline-folder-host" label="Folder host">
-              <paper-listbox slot="dropdown-content" attr-for-selected='label'>
+              <paper-listbox slot="dropdown-content" attr-for-selected="label">
                 ${this.vhosts.map(item => html`
                   <paper-item label="${item}">${item}</paper-item>
                 `)}
