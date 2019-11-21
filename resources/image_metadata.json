@@ -1,6 +1,9 @@
 {
   "imageInfo": {
     "python": {
+      "name": "Python",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -10,6 +13,9 @@
       ]
     },
     "python-intel": {
+      "name": "Python (Intel)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -23,7 +29,10 @@
       ]
     },
     "python-ff": {
-      "label": [
+     "name": "Lablup Workspace",
+      "description": "",
+      "tags": [],
+     "label": [
         {
           "category": "Env",
           "tag": "Lablup Research Platform",
@@ -36,6 +45,9 @@
       ]
     },
     "ml-workspace": {
+      "name": "ML Workspace",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -45,6 +57,9 @@
       ]
     },
     "python-tensorflow": {
+      "name": "TensorFlow",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -54,6 +69,9 @@
       ]
     },
     "python-tfx": {
+      "name": "TensorFlow Extended",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -63,6 +81,9 @@
       ]
     },
     "python-pytorch": {
+      "name": "PyTorch",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -72,6 +93,9 @@
       ]
     },
     "python-chainer": {
+      "name": "Chainer",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -81,6 +105,9 @@
       ]
     },
     "python-caffe": {
+      "name": "Caffe",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -90,6 +117,9 @@
       ]
     },
     "julia-tensorflow": {
+      "name": "TensorFlow (Julia)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -99,6 +129,9 @@
       ]
     },
     "ngc-digits": {
+      "name": "DIGITS (NGC)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -112,6 +145,9 @@
       ]
     },
     "ngc-tensorflow": {
+      "name": "TensorFlow (NGC)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -125,6 +161,9 @@
       ]
     },
     "ngc-pytorch": {
+      "name": "PyTorch (NGC)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -138,6 +177,9 @@
       ]
     },
     "ngc-caffe2": {
+      "name": "Caffe 2 (NGC)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -151,6 +193,9 @@
       ]
     },
     "ngc-caffe3": {
+      "name": "Caffe 3 (NGC)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -164,6 +209,9 @@
       ]
     },
     "ngc-nvcaffe": {
+      "name": "NVCaffe (NGC)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -177,6 +225,9 @@
       ]
     },
     "ngc-mxnet": {
+      "name": "MXNet (NGC)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -190,6 +241,9 @@
       ]
     },
     "ngc-matlab": {
+      "name": "MATLAB (NGC)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -207,6 +261,9 @@
       ]
     },
     "matlab": {
+      "name": "MATLAB",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -220,6 +277,9 @@
       ]
     },
     "intel-tensorflow": {
+      "name": "TensorFlow (Intel MKL)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -233,6 +293,9 @@
       ]
     },
     "intel-python": {
+      "name": "Python (Intel MKL)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -246,6 +309,9 @@
       ]
     },
     "julia": {
+      "name": "Julia",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -255,6 +321,9 @@
       ]
     },
     "r": {
+      "name": "R (legacy)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -264,6 +333,9 @@
       ]
     },
     "r-base": {
+      "name": "R",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -273,6 +345,9 @@
       ]
     },
     "c": {
+      "name": "C",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -282,6 +357,9 @@
       ]
     },
     "cpp": {
+      "name": "C++",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -291,6 +369,9 @@
       ]
     },
     "rust": {
+      "name": "Rust",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -300,6 +381,9 @@
       ]
     },
     "octave": {
+      "name": "Octave",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -309,6 +393,9 @@
       ]
     },
     "php": {
+      "name": "PHP",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -318,6 +405,9 @@
       ]
     },
     "scala": {
+      "name": "Scala",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -327,6 +417,9 @@
       ]
     },
     "fortran-caf": {
+      "name": "FORTRAN",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -336,6 +429,9 @@
       ]
     },
     "swift": {
+      "name": "Swift",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -345,6 +441,9 @@
       ]
     },
     "h2o": {
+      "name": "H2O.ai",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -354,6 +453,9 @@
       ]
     },
     "spectravis": {
+      "name": "SpectraVis",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -363,6 +465,9 @@
       ]
     },
     "neurodebian": {
+      "name": "NeuroDebian",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -372,6 +477,9 @@
       ]
     },
     "afni": {
+      "name": "AFNI",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -385,6 +493,9 @@
       ]
     },
     "sftp": {
+      "name": "SFTP",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
@@ -398,6 +509,9 @@
       ]
     },
     "lablup-pytorch": {
+      "name": "PyTorch (Cloudia)",
+      "description": "",
+      "tags": [],
       "label": [
         {
           "category": "Env",
