@@ -1,4 +1,416 @@
 {
+  "imageInfo": {
+    "python": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Python",
+          "color": "blue"
+        }
+      ]
+    },
+    "python-intel": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Python",
+          "color": "blue"
+        },
+        {
+          "tag": "Intel MKL",
+          "color": "green"
+        }
+      ]
+    },
+    "python-ff": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Lablup Research Platform",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ml-workspace": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "ML Workspace",
+          "color": "blue"
+        }
+      ]
+    },
+    "python-tensorflow": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "TensorFlow",
+          "color": "blue"
+        }
+      ]
+    },
+    "python-tfx": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "TensorFlow",
+          "color": "blue"
+        }
+      ]
+    },
+    "python-pytorch": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "PyTorch",
+          "color": "blue"
+        }
+      ]
+    },
+    "python-chainer": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Chainer",
+          "color": "blue"
+        }
+      ]
+    },
+    "python-caffe": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Caffe",
+          "color": "blue"
+        }
+      ]
+    },
+    "julia-tensorflow": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "TensorFlow",
+          "color": "blue"
+        }
+      ]
+    },
+    "ngc-digits": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "DIGITS",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ngc-tensorflow": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "TensorFlow",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ngc-pytorch": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "PyTorch",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ngc-caffe2": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Caffe2",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ngc-caffe3": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Caffe3",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ngc-nvcaffe": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Caffe",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ngc-mxnet": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Amazon MXNet",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ngc-matlab": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "MATLAB",
+          "color": "blue"
+        },
+        {
+          "tag": "Mathworks",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "matlab": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "MATLAB",
+          "color": "blue"
+        },
+        {
+          "tag": "Mathworks",
+          "color": "blue"
+        }
+      ]
+    },
+    "intel-tensorflow": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "TensorFlow",
+          "color": "blue"
+        },
+        {
+          "tag": "Intel",
+          "color": "blue"
+        }
+      ]
+    },
+    "intel-python": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Python",
+          "color": "blue"
+        },
+        {
+          "tag": "Intel",
+          "color": "blue"
+        }
+      ]
+    },
+    "julia": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Julia",
+          "color": "blue"
+        }
+      ]
+    },
+    "r": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "R",
+          "color": "blue"
+        }
+      ]
+    },
+    "r-base": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "R",
+          "color": "blue"
+        }
+      ]
+    },
+    "c": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "C",
+          "color": "blue"
+        }
+      ]
+    },
+    "cpp": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "C++",
+          "color": "blue"
+        }
+      ]
+    },
+    "rust": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Rust",
+          "color": "blue"
+        }
+      ]
+    },
+    "octave": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Octave",
+          "color": "blue"
+        }
+      ]
+    },
+    "php": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "PHP",
+          "color": "blue"
+        }
+      ]
+    },
+    "scala": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Scala",
+          "color": "blue"
+        }
+      ]
+    },
+    "fortran-caf": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "FORTRAN",
+          "color": "blue"
+        }
+      ]
+    },
+    "swift": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Swift",
+          "color": "blue"
+        }
+      ]
+    },
+    "h2o": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "H2O",
+          "color": "blue"
+        }
+      ]
+    },
+    "spectravis": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "SpectraVis",
+          "color": "blue"
+        }
+      ]
+    },
+    "neurodebian": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Debian",
+          "color": "blue"
+        }
+      ]
+    },
+    "afni": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "AFNI",
+          "color": "blue"
+        },
+        {
+          "tag": "NeuroDebian",
+          "color": "yellow"
+        }
+      ]
+    },
+    "sftp": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "SFTP",
+          "color": "blue"
+        },
+        {
+          "tag": "Backend.AI",
+          "color": "green"
+        }
+      ]
+    },
+    "lablup-pytorch": {
+      "label": [
+        {
+          "category": "Env",
+          "tag": "PyTorch",
+          "color": "blue"
+        },
+        {
+          "tag": "Cloudia",
+          "color": "green"
+        }
+      ]
+    }
+  },
   "imageNames": {
     "cpp": "C++",
     "gcc": "C",
