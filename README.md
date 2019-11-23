@@ -17,7 +17,7 @@ Backend.AI console focuses to
     * Fully-featured VSCode editor and environments (WIP)
  * Pipeline
     * Experiments (with SACRED)
-    * Manages container streams
+    * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
