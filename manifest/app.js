@@ -16,23 +16,6 @@ function notificationDialog(message) {
   dialog.open();
 }
 
-function warnInputForm(response) {
-  if (!response.error_msg) {
-    for (var key in response) {
-      if (document.getElementById("id_" + key) != undefined) {
-        if (document.getElementById("id_" + key).errorMessage == undefined) {
-          document.getElementById("id_" + key).errorMessage = '';
-        }
-        for (var message in response[key]) {
-          document.getElementById("id_" + key).errorMessage = response[key][message].message;
-          document.getElementById("id_" + key).invalid = true;
-        }
-      }
-    }
-  }
-  return true;
-}
-
 function sendData(id) {
   document.getElementById(id).submit();
 }
