@@ -1,15 +1,3 @@
-function toggleSpinner() {
-  var spinner = document.querySelector('#lablup-loading-spinner');
-  spinner.active = !spinner.active;
-}
-
-function confirmJSAction(js, message) {
-  var dialog = document.querySelector('#confirmDialog');
-  dialog.querySelector('#confirmDialog-message').innerHTML = message;
-  dialog.querySelector('#confirmDialog-confirm').setAttribute('onclick', js);
-  dialog.open();
-}
-
 function notificationDialog(message) {
   var dialog = document.querySelector('#notificationDialog');
   dialog.querySelector('#notificationDialog-message').innerHTML = message;
