@@ -218,6 +218,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.shadowRoot.querySelector('#pipeline-environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
     this._refreshImageList();
 
+    const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
+    dialog.addEventListener('didShow', () => {
+      this.shadowRoot.querySelector('#codemirror-editor').refresh();
+    })
+
     this.notification = window.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
   }
@@ -1025,7 +1030,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const allComponentIds = this.pipelineComponents.map((c) => c.id);
     this.componentsToBeRun = allComponentIds;
     this.componentsToBeRun.shift();
-    console.log(this.componentsToBeRun)
     await this._runComponent(0); // run the first component
   }
 
