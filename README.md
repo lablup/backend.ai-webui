@@ -23,7 +23,7 @@ Backend.AI console focuses to
     * Create / delete folders
     * Upload  / download files
     * SFTP server (backend.ai SFTP image needed)
-    * Share folders 
+    * Share folders with friends / groups 
  * Statistics
     * User resource statistics
     * Session statistics
