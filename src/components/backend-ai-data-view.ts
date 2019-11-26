@@ -35,7 +35,6 @@ import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 
-
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -569,7 +568,6 @@ export default class BackendAIData extends BackendAIPage {
               New Folder
             </wl-button>
           </div>
-
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
           ${this.uploadFilesExist ? html`
@@ -593,7 +591,10 @@ export default class BackendAIData extends BackendAIPage {
                   <span>[[item.name]]</span>
                   <template is="dom-if" if="[[!item.complete]]">
                     <div>
-                      <vaadin-progress-bar indeterminate value="0"></vaadin-progress-bar>
+                      <vaadin-progress-bar value="[[item.progress]]"></vaadin-progress-bar>
+                    </div>
+                    <div>
+                      <span>[[item.caption]]</span>
                     </div>
                   </template>
                 </vaadin-item>
@@ -1232,6 +1233,7 @@ export default class BackendAIData extends BackendAIPage {
           console.log('File size limit (< 1 MiB)');
         } else {
           file.progress = 0;
+          file.caption = '';
           file.error = false;
           file.complete = false;
           temp.push(file);
@@ -1266,6 +1268,7 @@ export default class BackendAIData extends BackendAIPage {
 
       file.id = text;
       file.progress = 0;
+      file.caption = '';
       file.error = false;
       file.complete = false;
       this.uploadFiles.push(file);
@@ -1280,20 +1283,51 @@ export default class BackendAIData extends BackendAIPage {
 
   fileUpload(fileObj) {
     this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
-    const fd = new FormData();
-    const explorer = this.explorer;
-    const path = explorer.breadcrumb.concat(fileObj.name).join("/");
-    fd.append("src", fileObj, path);
-    let job = window.backendaiclient.vfolder.uploadFormData(fd, explorer.id);
-    job.then(resp => {
-      this._clearExplorer();
-      this.uploadFiles[this.uploadFiles.indexOf(fileObj)].complete = true;
-      this.uploadFiles = this.uploadFiles.slice();
-      setTimeout(() => {
-        this.uploadFiles.splice(this.uploadFiles.indexOf(fileObj), 1);
-        this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
-        this.uploadFiles = this.uploadFiles.slice();
-      }, 1000);
+    const path = this.explorer.breadcrumb.concat(fileObj.name).join("/");
+    let job = window.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
+    job.then(url => {
+      const start_date = new Date();
+      const upload = new window.tus.Upload(fileObj, {
+        retryDelays: [0, 3000, 5000, 10000, 20000],
+        uploadUrl: url,
+        chunkSize: 15728640, // 15MB
+        metadata: {
+          filename: path,
+          filetype: fileObj.type
+        },
+        onError: function(error) {
+          console.log("Failed because: " + error)
+        },
+        onProgress: (bytesUploaded, bytesTotal) => {
+          const now = new Date();
+          const speed = (bytesUploaded / (1024 * 1024) / ((now - start_date) / 1000)).toFixed(1) + "MB/s";
+          const estimated_seconds = Math.floor((bytesTotal - bytesUploaded) / (bytesUploaded / (now - start_date) * 1000 ));
+          let estimated_time_left = "Less than 10 seconds";
+          if (estimated_seconds >= 86400)  {
+            estimated_time_left = "More than a day";
+          } else if (estimated_seconds > 10) {
+            const hour = Math.floor(estimated_seconds/3600);
+            const min = Math.floor((estimated_seconds % 3600)/60);
+            const sec = estimated_seconds % 60;
+            estimated_time_left = `${hour}:${min}:${sec}`;
+          }
+          const percentage = (bytesUploaded / bytesTotal * 100).toFixed(1)
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].progress = bytesUploaded / bytesTotal;
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
+          this.uploadFiles = this.uploadFiles.slice();
+        },
+        onSuccess: () => {
+          this._clearExplorer();
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].complete = true;
+          this.uploadFiles = this.uploadFiles.slice();
+          setTimeout(() => {
+            this.uploadFiles.splice(this.uploadFiles.indexOf(fileObj), 1);
+            this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
+            this.uploadFiles = this.uploadFiles.slice();
+          }, 1000);
+        }
+      });
+      upload.start();
     });
   }
 
