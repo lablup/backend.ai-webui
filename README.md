@@ -17,13 +17,13 @@ Backend.AI console focuses to
     * Fully-featured VSCode editor and environments (WIP)
  * Pipeline
     * Experiments (with SACRED)
-    * Manages container streams
+    * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
     * Upload  / download files
     * SFTP server (backend.ai SFTP image needed)
-    * Share folders 
+    * Share folders with friends / groups 
  * Statistics
     * User resource statistics
     * Session statistics
