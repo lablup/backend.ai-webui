@@ -48,7 +48,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
-  @property({type: Object}) humanizedNames = Object();
+  @property({type: Object}) imageInfo = Object();
+  @property({type: Object}) imageNames = Object();
   @property({type: Array}) versions;
   @property({type: Array}) languages;
   @property({type: String}) gpu_mode;
@@ -460,9 +461,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       response => response.json()
     ).then(
       json => {
-        this.aliases = json.aliases;
-        this.tags = json.tags;
-        this.humanizedNames = json.humanizedNames;
+        this.imageInfo = json.imageInfo;
+        //console.log(this.imageInfo);
+        for (let key in this.imageInfo) {
+          this.tags[key] = [];
+          if ("name" in this.imageInfo[key]) {
+            this.aliases[key] = this.imageInfo[key].name;
+            this.imageNames[key] = this.imageInfo[key].name;
+          }
+          if ("label" in this.imageInfo[key]) {
+            this.imageInfo[key].label.forEach((item)=>{
+              if (!("category" in item)) {
+                this.tags[key].push(item.tag);
+              }
+            });
+          }
+        }
       }
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
@@ -837,7 +851,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _guessHumanizedNames(kernelName) {
-    const candidate = this.humanizedNames;
+    const candidate = this.imageNames;
     let imageName = '';
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
@@ -893,8 +907,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         basename = kernelName;
       }
       let tags: string[] = [];
-      if (alias in this.tags) {
-        tags = tags.concat(this.tags[alias]);
+      if (kernelName in this.tags) {
+        tags = tags.concat(this.tags[kernelName]);
       }
       if (prefix != '') {
         tags.push(prefix);
