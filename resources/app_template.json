@@ -1,0 +1,118 @@
+{
+  "appTemplate": {
+    "jupyter": [
+      {
+        "name": "jupyter",
+        "title": "Jupyter Notebook",
+        "redirect": "&redirect=/tree",
+        "src": "./resources/icons/jupyter.png"
+      }
+    ],
+    "jupyterextension": [
+      {
+        "name": "jupyter",
+        "title": "Jupyter Extension",
+        "redirect": "&redirect=/nbextensions",
+        "src": "./resources/icons/jupyter.png",
+        "icon": "vaadin:clipboard-pulse"
+      }
+    ],
+    "jupyterlab": [
+      {
+        "name": "jupyterlab",
+        "title": "JupyterLab",
+        "redirect": "&redirect=/lab",
+        "src": "./resources/icons/jupyterlab.png",
+        "icon": "vaadin:flask"
+      }
+    ],
+    "tensorboard": [
+      {
+        "name": "tensorboard",
+        "title": "TensorBoard",
+        "redirect": "&redirect=/",
+        "src": "./resources/icons/tensorflow.png"
+      }
+    ],
+    "digits": [
+      {
+        "name": "digits",
+        "title": "DIGITS",
+        "redirect": "&redirect=/",
+        "src": "./resources/icons/nvidia.png"
+      }
+    ],
+    "h2o-dai": [
+      {
+        "name": "h2o-dai",
+        "title": "H2O driverless AI",
+        "redirect": "",
+        "src": "./resources/icons/h2o.png"
+      }
+    ],
+    "vscode": [
+      {
+        "name": "vscode",
+        "title": "Visual Studio Code",
+        "redirect": "",
+        "src": "./resources/icons/vscode.svg"
+      }
+    ],
+    "nniboard": [
+      {
+        "name": "nniboard",
+        "title": "NNI Board",
+        "redirect": "",
+        "src": "./resources/icons/nni.png"
+      }
+    ],
+    "vnc": [
+      {
+        "name": "vnc",
+        "title": "VNC",
+        "redirect": "",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "vnc-web": [
+      {
+        "name": "vnc",
+        "title": "VNC (Web)",
+        "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "matlab": [
+      {
+        "name": "matlab",
+        "title": "MATLAB",
+        "redirect": "",
+        "src": "./resources/icons/matlab.png"
+      }
+    ],
+    "spectravis": [
+      {
+        "name": "spectravis",
+        "title": "SpectraVIS",
+        "redirect": "",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "sftp": [
+      {
+        "name": "sftp",
+        "title": "SFTP",
+        "redirect": "",
+        "src": "./resources/icons/sftp.png"
+      }
+    ],
+    "sshd": [
+      {
+        "name": "sshd",
+        "title": "SSH / SFTP",
+        "redirect": "",
+        "src": "./resources/icons/sftp.png"
+      }
+    ]
+  }
+}
