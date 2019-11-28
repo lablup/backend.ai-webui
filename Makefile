@@ -1,63 +1,85 @@
-EP = electron-packager ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --ignore="\.git(ignore|modules)" --out=app
+EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --asar --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
-BUILD_VERSION := $(shell grep version package.json | cut -c 15- | rev | cut -c 3- | rev)
+BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
+REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
+site := $(or $(site),default)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
-test:
-	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
-	mkdir -p build/electron-app/wsproxy
-	cp -Rp build/unbundle build/electron-app/app
-	rsync -av --progress ./wsproxy/ ./build/electron-app/wsproxy --exclude node_modules
-	cp ./wsproxy/package.json build/electron-app/package.json
-	cd build/electron-app; npm install --only=prod
-	cp ./main.electron-packager.js ./build/electron-app/main.js
 test_web:
-	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js serve --npm --port 9080
+	npm run server:d
 test_electron:
-	electron .
+	./node_modules/electron/cli.js .
 proxy:
 	node ./src/wsproxy/local_proxy.js
+run_tests:
+	node ./node_modules/testcafe/bin/testcafe.js chrome tests
 versiontag:
+	echo '{ "package": "${BUILD_VERSION}", "build": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
 	sed -i -E 's/window.packageVersion = "\(.*\)"/window.packageVersion = "${BUILD_VERSION}"/g' index.html
 	sed -i -E 's/window.buildVersion = "\(.*\)"/window.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
-	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.js
+	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.ts
+compile_keepversion: 
+	npm run build
 compile: versiontag
-	node --max-old-space-size=2048 ./node_modules/polymer-cli/bin/polymer.js build
+	npm run build
+compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
-	cp -Rp ./resources ./build/bundle/
 all: dep mac win linux
 dep:
-	if [ ! -d "./build/bundle/" ];then \
+	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
+		make compile_wsproxy; \
 	fi
 	rm -rf build/electron-app
 	mkdir -p build/electron-app
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.electron-packager.js ./build/electron-app/main.js
-	cp -Rp build/bundle build/electron-app/app
-	cp ./config.ini ./build/electron-app/app/config.ini
+	cp -Rp build/rollup build/electron-app/app
+	cp -Rp build/rollup/resources build/electron-app
+	cp -Rp build/rollup/manifest build/electron-app
+	sed -i -E 's/\.\/dist\/components\/backend-ai-console.js/es6:\/\dist\/components\/backend-ai-console.js/g' build/electron-app/app/index.html
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
+	mkdir -p ./build/electron-app/node_modules/markty
+	mkdir -p ./build/electron-app/node_modules/markty-toml
+	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
+	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
 	cp ./preload.js ./build/electron-app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
 web:
-	if [ ! -d "./build/bundle/" ];then \
+	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 	fi
 	mkdir -p ./deploy/$(site)
 	cd deploy/$(site); rm -rf ./*; mkdir console
-	cp -Rp build/bundle/* deploy/$(site)/console
-	cp ./configs/$(site).ini deploy/$(site)/console/config.ini
+	cp -Rp build/rollup/* deploy/$(site)/console
+	cp ./configs/$(site).toml deploy/$(site)/console/config.toml
+	if [ -f "./configs/$(site).css" ];then \
+		cp ./configs/$(site).css deploy/$(site)/console/resources/custom.css; \
+	fi
 mac: dep
-	$(EP) --platform=darwin --icon=manifest/backend-ai.icns 
+	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
+	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
+	rm -rf ./app/backend.ai-console-macos
+	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos;
+	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
+	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js ./app/backend.ai-console-macos/backend.ai-console.app ./app/backend.ai-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	mv ./app/backend.ai-$(BUILD_DATE).dmg ./app/backend.ai-$(BUILD_DATE)-$(site).dmg
 win: dep
+	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
+	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
+	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
+	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-win32-x64-$(BUILD_DATE)-$(site).zip
 linux: dep
+	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico
+	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
+	mv ./app/backend.ai-console-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-console-linux-x64-$(BUILD_DATE)-$(site).zip
 build_docker: compile
 	docker build -t backend.ai-console:$(BUILD_DATE) .
 pack:
@@ -67,4 +89,4 @@ pack:
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
 clean:
 	cd app;	rm -rf ./backend*
-	cd build;rm -rf ./unbundle ./bundle ./electron-app
+	cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app

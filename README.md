@@ -5,92 +5,130 @@ Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin.
 Backend.AI console focuses to 
 
  * Provide both administration and user mode
- * Serve as app and web service
+ * Serve as desktop app and web service
  * Versatile devices ready such as mobile, tablet and desktop.
- * Built-in proxy app
+ * Built-in websocket proxy feature for apps
 
 ## User Features
  * Session management
     * Set default resources for runs
     * Choose and run environment-supported apps
- * Experiments
-    * Manages container stream
- * Virtual Folder management
+    * Terminal for each session
+    * Fully-featured VSCode editor and environments (WIP)
+ * Pipeline
+    * Experiments (with SACRED)
+    * Manages container streams with pipeline vfolders
+    * Checks queue and scheduled jobs
+ * Storage management
     * Create / delete folders
     * Upload  / download files
-    * Share folders (coming soon)
+    * SFTP server (backend.ai SFTP image needed)
+    * Share folders with friends / groups 
  * Statistics
     * User resource statistics
     * Session statistics
+    * Workload statistics
+    * Insight (working)
 
 ## Management Features
  * Keypair management
     * Allocate resource limitation for keys
+    * Add / remove resource policies
  * Kernel managements
     * List supported kernels
      * Add kernels
      * Refresh kernel list
      * Categorize repository
      * Add/update resource templates (under development)
+ * User management
+    * User creation / deletion
  * Manager settings
     * Add repository
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
- * Work with console server
+ * Work with console server (github/lablup/backend.ai-console-server)
     * Delegate login to console server
     * Support userid / password login
 
 ## Setup Guide
+### Baked versions
+`backend.ai-console` production version is also served as `backend.ai-app` and refered by `backend.ai-console-server` as submodule. If you use `backend.ai-console-server`, you are using latest stable release of `backend.ai-console`.
+
 ### Configuration
 
-Backend.AI Console uses `config.ini` located in app root directory. You can prepare many `config.ini.[POSTFIX]` in `configs` directory to switch various configurations.
+Backend.AI Console uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
 
-These are options in `config.ini`.
+These are options in `config.toml`.
 
 ```
 [general]
-apiEndpoint = [Default API Endpoint. If blank, user input field will be shown.]
-apiEndpointText = [Placeholder text instead of API endpoint input field.]
-defaultSessionEnvironment = [Default session kernel. If blank, alphabetically first kernel will be default.]
-siteDescription = [Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]
-connectionMode = [Connection mode. Default is API. Currenly supports API and SESSION]
+apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
+apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
+defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically first kernel will be default.]"
+siteDescription = "[Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]"
+connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
+allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
+signupSupport = false # Enable / disable signup feature support. Manager plugin is required.
+allowSignout = false # Let users signout from service. Signup plugin is required.
+allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
+debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
+
 [wsproxy]
-proxyURL = [Proxy URL]
-proxyBaseURL = [Base URL of websocket proxy,]
-proxyListenIP = [Websocket proxy configuration IP.]
+proxyURL = "[Proxy URL]"
+proxyBaseURL = "[Base URL of websocket proxy,]"
+proxyListenIP = "[Websocket proxy configuration IP.]"
+
+[server]
+consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
+                   # Uses websocket proxy in the app
+
 ```
 
+## Branches
+
+ * master : Development branch
+ * production : Latest release branch
+ * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
+ * tags/v[versions] : version tags. Each tag represents release versions.
+ 
 ## Development Guide
 
 Backend.AI console is built with  
  * `litelement` / `Polymer 3 `as webcomponent framework
- * `yarn` as package manager
- * `polymer-cli` as bundler
+ * `npm` as package manager
+ * `rollup` as bundler
  * `electron` as app shell
 
 ### Initializing
 
 ```
-$ yarn install
+$ npm i
 ```
 
 ### Developing / testing without bundling
 
 ```
-$ yarn run polymer # To run web server
-$ yarn run wsproxy # To run websocket proxy
+$ npm run server:d # To run dev. web server
+$ npm run build:d # To watch source changes
+$ npm run wsproxy # To run websocket proxy
 ```
 
 ### Electron testing
 
+#### Live testing
+
 Terminal 1:
 ```
-$ make test_web # To run test server
+$ npm run server:d # To run test server
+```
+OR
+```
+$ npm run server:p # To run compiled source
 ```
 Terminal 2:
 ```
-$ make test_electron # Run Electron as dev mode.
+$ npm run electron:d # Run Electron as dev mode.
 ```
 
 ## Serving Guide
@@ -101,7 +139,7 @@ $ make test_electron # Run Electron as dev mode.
 $ make compile
 ```
 
-Then bundled resource will be prepared in `build/bundle`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
+Then bundled resource will be prepared in `build/rollup`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
 
 ### Serving with nginx
 
@@ -131,19 +169,75 @@ server {
 }
 ```
 
-### Building docker image
+### Building docker image using docker-compose
 
+Make sure that you compile the console.
+
+```
+$ make compile
+```
+
+#### HTTP server (with nginx)
+Good for develop phase. Not recommended for production environment.
+
+```
+$ docker-compose build console // build only
+$ docker-compose up console    // for testing
+$ docker-compose up -d console // as a daemon
+```
+
+#### HTTPS with SSL (with nginx)
+Recommended for production.
+
+Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
+
+```
+$ docker-compose build console-ssl  // build only
+$ docker-compose up console-ssl     // for testing
+$ docker-compose up -d console-ssl  // as a daemon
+```
+
+#### Removing
+
+```
+$ docker-compose down
+```
+
+#### Manual image build
 ```
 $ make compile
 $ docker build -t backendai-console .
 ```
 
-### Running websocket proxy with node.js
+Testing / Running example
 
-This is only needed with pure ES6 dev. environment / browser. With `Electron`, websocket proxy automatically starts.
+Check your image name is `backendai-console_console` or `backendai-console_console-ssl`. Otherwise, change the image name in the script below.
 
 ```
-$ make compile
+$ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+$ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+```
+### Building with console-server
+
+If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.
+
+To download and deploy console from pre-built source, do the following in `backend.ai-console-server` repository:
+
+```console
+git submodule init
+git submodule update
+cd src/ai/backend/console/static
+git checkout master
+git fetch
+git pull
+```
+
+
+### Running websocket proxy with node.js
+
+This is only needed with pure ES6 dev. environment / browser. Websocket proxy is embedded in Electron and automatically starts.
+
+```
 $ npm run wsproxy
 ```
 
@@ -156,6 +250,7 @@ Note: Default setup will build `es6-bundled` version. If you want to use `es6-un
 ```
 $ make web site=[SITE CONFIG FILE POSTFIX]
 ```
+If no prefix is given, default configuration file will be used.
 
 Example:
 
@@ -163,7 +258,7 @@ Example:
 $ make web site=beta
 ```
 
-You can manually modify config.ini for your need.
+You can manually modify config.toml for your need.
 
 ## App Building Guide
 ### Building Electron App
@@ -171,6 +266,10 @@ You can manually modify config.ini for your need.
 Electron building is automated using `Makefile`.
 
 ```
+$ make clean  # clean prebuilt codes
+$ make mac # build macOS app
+$ make win # build win64 app
+$ make linux # build linux app
 $ make all # build win64/macos/linux app
 ```
 
@@ -179,6 +278,8 @@ $ make all # build win64/macos/linux app
 ```
 $ make win
 ```
+Note: Building Windows x86-64 on other than Windows requires Wine > 3.0
+Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows package. From macOS 10.15+, wine 32x is not supported.
 
 #### macOS version
 
@@ -193,7 +294,12 @@ $ make linux
 ```
 
 ### Packaging as zip files
+
 Note: this command only works on macOS, because packaging uses `ditto`, that supports both PKZIP and compressed CPIO format.
+
+Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
+
+Note: Requires electron-installer-dmg to make disk image. It requires Python 2+ to build binary for package.
 
 ```
 $ make pack
@@ -205,5 +311,5 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 
 ```
 $ make dep # Compile with app dependencies
-$ electron . 
+$ npm run electron:d  # OR, ./node_modules/electron/cli.js . 
 ```

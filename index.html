@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -9,9 +9,13 @@
   <link rel="icon" href="manifest/favicon.ico">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="resources/fonts/fonts.css">
+  <link rel="stylesheet" href="resources/custom.css">
   <base href="">
   <script src="manifest/app.js" async></script>
   <title>Backend.AI</title>
+  <script src="./src/lib/webcomponents-loader.js"></script>
+  <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
+
   <script>
     function isElectron() {
       // Renderer process
@@ -31,17 +35,22 @@
       }
       return false;
     }
+
+    function isIEEdge() {
+      return window.navigator.userAgent.match(/(MSIE|Trident|Edge)/);
+    }
+
     window.isElectron = isElectron();
     window.enableSW = false;
 
     window.process = {env: {NODE_ENV: 'production'}};
-    window.packageVersion = "19.06.1";
-    window.buildVersion = "190628.190636";
+    window.packageVersion = "19.11.3";
+    window.buildVersion = "191108.161150";
   </script>
   <style>
     body {
       margin: 0;
-      font-family: "Montserrat", Roboto, sans-serif;
+      font-family: 'Quicksand', Roboto, sans-serif;
       background-color: rgba(244, 245, 247, 1);
     }
 
@@ -51,11 +60,8 @@
       left: calc(50% - 170px);
       width: 340px;
       height: 300px;
-      border: 1px solid #aaa;
+      border: 1px solid #aaaaaa;
       border-radius: 4px;
-    }
-
-    .splash {
       background-color: #ffffff;
       box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.2);
     }
@@ -83,20 +89,20 @@
 
     .loading-message {
       position: absolute;
-      top: calc(50% + 100px);
-      left: calc(50% - 155px);
+      top: calc(50% + 108px);
+      left: calc(50% - 165px);
       width: 300px;
       text-align: center;
-      font-size: 18px;
+      font-size: 16px;
     }
 
     .sk-folding-cube {
       margin: 20px auto;
-      width: 20px;
-      height: 20px;
+      width: 15px;
+      height: 15px;
       position: absolute;
-      top: calc(50% + 100px);
-      left: calc(50% - 140px);
+      top: calc(50% + 110px);
+      left: calc(50% - 130px);
       margin: auto;
       -webkit-transform: rotateZ(45deg);
       transform: rotateZ(45deg);
@@ -119,7 +125,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #3E872D;
+      background-color: #3e872d;
       -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
       animation: sk-foldCubeAngle 2.4s infinite linear both;
       -webkit-transform-origin: 100% 100%;
@@ -192,39 +198,43 @@
         opacity: 0;
       }
     }
+
+    .copyright {
+      font-size: 12px;
+    }
   </style>
 </head>
 
 <body>
-<backend-ai-console id="console-shell" style="background-color:#222;">
+<backend-ai-console id="console-shell" style="background-color:#222222;">
   <div class="splash">
     <div class="splash-header">
-      <img src="manifest/backend.ai-brand.svg" style="height:60px;padding-top:20px;padding-left:20px;">
-      Backend.AI
+      <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;">
     </div>
     <div class="splash-information">
       <ul>
-        <li>Backend.AI <span id="version-detail" class="detail"></span></li>
+        <li>Backend.AI Console <span id="version-detail" class="detail"></span></li>
         <li><span id="license-detail"></span></li>
         <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
       </ul>
+      <ul>
+        <li>Powered by open-source software</li>
+        <li class="copyright">Copyright &copy; 2015-2019 Lablup Inc.</li>
+      </ul>
     </div>
-
     <div class="sk-folding-cube">
       <div class="sk-cube1 sk-cube"></div>
       <div class="sk-cube2 sk-cube"></div>
       <div class="sk-cube4 sk-cube"></div>
       <div class="sk-cube3 sk-cube"></div>
     </div>
-    <div class="loading-message">Loading components...</div>
+    <div id="loading-message" class="loading-message">Loading components...</div>
   </div>
 </backend-ai-console>
 <noscript>
-  <p>Could not render Backend.AI console. Check that JavaScript is enabled. (190518.3)</p>
+  <p>Could not render Backend.AI console. Check that JavaScript is enabled.</p>
 </noscript>
-<script src="./node_modules/web-animations-js/web-animations-next-lite.min.js"></script>
-<script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-<script src="./src/components/backend-ai-console.js" type="module"></script>
+<script src="./dist/components/backend-ai-console.js" type="module"></script>
 <script>
   document.getElementById('version-detail').innerText = window.packageVersion;
   document.getElementById('build-detail').innerText = ' Build ' + window.buildVersion;
@@ -234,43 +244,13 @@
   } else {
     document.getElementById('mode-detail').innerText = 'WebServer';
   }
-  if (window.enableSW === true) {
-    window.isUpdateAvailable = new Promise(function (resolve, reject) {
-      if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
-        window.addEventListener('load', function () {
-          navigator.serviceWorker.register('service-worker.js').then(registration => {
-            console.log('ServiceWorker registered with scope: ', registration.scope);
-            registration.onupdatefound = () => {
-              const installingWorker = registration.installing;
-              installingWorker.onstatechange = () => {
-                switch (installingWorker.state) {
-                  case 'installed':
-                    if (navigator.serviceWorker.controller) {
-                      // new update available
-                      resolve(true);
-                    } else {
-                      // no update available
-                      resolve(false);
-                    }
-                    break;
-                }
-              };
-            };
-          }).catch(function (err) {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-        });
-      }
-    });
-    window['isUpdateAvailable']
-      .then(isAvailable => {
-        if (isAvailable) {
-          document.addEventListener('backend-ai-connected', (e) => {
-            document.querySelector('#console-shell').showUpdateNotifier();
-          });
-          console.log('New console available. Please reload to update.');
-        }
-      });
+  if (isIEEdge()) {
+    alert('Internet Explorer/MS Edge is not supported. Please visit with modern browsers.');
+    document.getElementById('loading-message').innerText = 'Not supported browser.';
+    document.getElementById('loading-message').style.color = 'red';
+  }
+  if ('enableSW' in window && window.enableSW === true) {
+    // Service worker routine.
   }
 </script>
 </body>
