@@ -39,7 +39,7 @@ Backend.AI console focuses to
      * Add kernels
      * Refresh kernel list
      * Categorize repository
-     * Add/update resource templates (under development)
+     * Add/update resource templates 
  * User management
     * User creation / deletion
  * Manager settings
