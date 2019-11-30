@@ -22,9 +22,9 @@
     "update": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
-    "@material/mwc-drawer": "^0.10.0",
-    "@material/mwc-icon-button": "^0.10.0",
-    "@material/mwc-top-app-bar-fixed": "^0.10.0",
+    "@material/mwc-drawer": "^0.11.1",
+    "@material/mwc-icon-button": "^0.11.1",
+    "@material/mwc-top-app-bar-fixed": "^0.11.1",
     "@polymer/iron-dropdown": "^3.0.1",
     "@polymer/iron-icon": "^3.0.1",
     "@polymer/iron-icons": "^3.0.1",
@@ -70,7 +70,7 @@
     "electron-installer-dmg": "^3.0.0",
     "electron-packager": "^14.1.1",
     "electron-tabs": "^0.11.0",
-    "es-dev-server": "^1.26.1",
+    "es-dev-server": "^1.26.2",
     "eslint": "^6.7.1",
     "eslint-config-google": "^0.14.0",
     "express": "^4.17.1",
