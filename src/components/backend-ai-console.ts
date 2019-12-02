@@ -199,6 +199,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
         }
 
+        wl-dialog wl-textfield {
+          --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
+          --input-color-disabled: #222222;
+          --input-label-color-disabled: #222222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #cccccc;
+        }
+
         paper-item {
           font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           font-weight: 400;
@@ -422,13 +430,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.notification.text = 'Password updated';
       this.notification.show();
       this._hideUserPrefDialog();
+      this.shadowRoot.querySelector('#prefj-original-password').value = '';
+      this.shadowRoot.querySelector('#prefj-new-password').value = '';
+      this.shadowRoot.querySelector('#prefj-new-password2').value = '';
     }).catch((err) => {
       if (err && err.title) {
         this.notification.text = err.title;
         this.notification.detail = err.message;
         this.notification.show(true);
       }
-    })
+    });
   }
 
   updated(changedProps: any) {
