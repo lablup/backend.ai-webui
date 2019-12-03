@@ -48,6 +48,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: String}) filterAccessKey = '';
   @property({type: Array}) appSupportList = Array();
   @property({type: Object}) appTemplate = Object();
+  @property({type: Object}) imageInfo = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
@@ -247,7 +248,15 @@ export default class BackendAiSessionList extends BackendAIPage {
       response => response.json()
     ).then(
       json => {
-        this.kernel_labels = json.labels;
+        this.imageInfo = json.imageInfo;
+        for (let key in this.imageInfo) {
+          this.kernel_labels[key] = [];
+          if ("label" in this.imageInfo[key]) {
+            this.kernel_labels[key] = this.imageInfo[key].label;
+          } else {
+            this.kernel_labels[key] = [];
+          }
+        }
       }
     );
     if (!window.backendaiclient ||
