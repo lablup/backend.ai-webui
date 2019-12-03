@@ -29,8 +29,8 @@
       ]
     },
     "python-ff": {
-     "name": "Lablup Workspace",
-      "description": "",
+      "name": "Lablup Platform",
+      "description": "Lablup Research Platform is full-featured all-in-one research environment for machine learning and data science maintained by Lablup Inc.",
       "tags": [],
      "label": [
         {
@@ -46,7 +46,7 @@
     },
     "ml-workspace": {
       "name": "ML Workspace",
-      "description": "",
+      "description": "The ML workspace is an all-in-one web-based IDE specialized for machine learning and data science.",
       "tags": [],
       "label": [
         {
@@ -70,7 +70,7 @@
     },
     "python-tfx": {
       "name": "TensorFlow Extended",
-      "description": "",
+      "description": "TensorFlow Extended (TFX) is an end-to-end platform for deploying production ML pipelines.",
       "tags": [],
       "label": [
         {
@@ -106,7 +106,7 @@
     },
     "python-caffe": {
       "name": "Caffe",
-      "description": "",
+      "description": "Caffe is a deep learning framework made with expression, speed, and modularity in mind.",
       "tags": [],
       "label": [
         {
@@ -194,7 +194,7 @@
     },
     "ngc-caffe3": {
       "name": "Caffe 3 (NGC)",
-      "description": "This environment is integrated with Nvidia GPU Cloud.",
+      "description": "Caffe is a deep learning framework made with expression, speed, and modularity in mind. This environment is integrated with Nvidia GPU Cloud.",
       "tags": [],
       "label": [
         {
@@ -226,7 +226,7 @@
     },
     "ngc-mxnet": {
       "name": "MXNet (NGC)",
-      "description": "",
+      "description": "MXNet is an open source deep learning framework suited for flexible research prototyping and production. This environment is integrated with Nvidia GPU Cloud.",
       "tags": [],
       "label": [
         {
