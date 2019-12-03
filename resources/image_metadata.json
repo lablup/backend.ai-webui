@@ -310,7 +310,7 @@
     },
     "julia": {
       "name": "Julia",
-      "description": "",
+      "description": "Julia was designed from the beginning for high performance.",
       "tags": [],
       "label": [
         {
@@ -322,7 +322,7 @@
     },
     "r": {
       "name": "R (legacy)",
-      "description": "",
+      "description": "R is a free software environment for statistical computing and graphics.",
       "tags": [],
       "label": [
         {
@@ -334,7 +334,7 @@
     },
     "r-base": {
       "name": "R",
-      "description": "",
+      "description": "R is a free software environment for statistical computing and graphics.",
       "tags": [],
       "label": [
         {
@@ -346,7 +346,7 @@
     },
     "c": {
       "name": "C",
-      "description": "",
+      "description": "C is a procedural programming language.",
       "tags": [],
       "label": [
         {
