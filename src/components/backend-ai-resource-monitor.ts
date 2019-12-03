@@ -1704,7 +1704,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div class="layout horizontal">
         <mwc-icon-button id="resource-gauge-toggle" icon="assessment" class="fg blue ${this.direction}"
           @click="${() => this._toggleResourceGauge()}">
-          Close
         </mwc-icon-button>
         <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
           <div class="layout horizontal start-justified monitor">
@@ -1839,7 +1838,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="flex"></div>
             <mwc-icon-button icon="close" class="blue close-button"
               @click="${() => this._hideSessionDialog()}">
-              Close
             </mwc-icon-button>
           </h3>
           <form id="launch-session-form">
