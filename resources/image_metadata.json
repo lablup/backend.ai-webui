@@ -358,7 +358,7 @@
     },
     "cpp": {
       "name": "C++",
-      "description": "",
+      "description": "C++ is a cross-platform language that can be used to create high-performance applications.",
       "tags": [],
       "label": [
         {
@@ -370,7 +370,7 @@
     },
     "rust": {
       "name": "Rust",
-      "description": "",
+      "description": "Rust is a modern systems programming language focusing on safety, speed, and concurrency. It accomplishes these goals by being memory safe without using garbage collection.",
       "tags": [],
       "label": [
         {
@@ -381,8 +381,8 @@
       ]
     },
     "octave": {
-      "name": "Octave",
-      "description": "",
+      "name": "GNU Octave",
+      "description": "GNU Octave is an free scientific programming language that provides powerful mathematics-oriented syntax with built-in plotting and visualization tools.",
       "tags": [],
       "label": [
         {
@@ -394,7 +394,7 @@
     },
     "php": {
       "name": "PHP",
-      "description": "",
+      "description": "PHP is a general-purpose programming language originally designed for web development.",
       "tags": [],
       "label": [
         {
@@ -406,7 +406,7 @@
     },
     "scala": {
       "name": "Scala",
-      "description": "",
+      "description": "Scala is a general-purpose programming language providing support for functional programming and a strong static type system.",
       "tags": [],
       "label": [
         {
@@ -417,13 +417,13 @@
       ]
     },
     "fortran-caf": {
-      "name": "FORTRAN",
-      "description": "",
+      "name": "Fortran",
+      "description": "Fortran is a general-purpose, compiled imperative programming language that is especially suited to numeric computation and scientific computing.",
       "tags": [],
       "label": [
         {
           "category": "Env",
-          "tag": "FORTRAN",
+          "tag": "Fortran",
           "color": "blue"
         }
       ]
