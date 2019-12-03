@@ -454,7 +454,7 @@
     },
     "spectravis": {
       "name": "SpectraVis",
-      "description": "",
+      "description": "An interactive network visualization tool for exploring functional brain connectivity using d3.js.",
       "tags": [],
       "label": [
         {
@@ -466,7 +466,7 @@
     },
     "neurodebian": {
       "name": "NeuroDebian",
-      "description": "",
+      "description": "NeuroDebian provides a large collection of popular neuroscience research software for the Debian operating system as well as Ubuntu and other derivatives.",
       "tags": [],
       "label": [
         {
@@ -478,7 +478,7 @@
     },
     "afni": {
       "name": "AFNI",
-      "description": "",
+      "description": "AFNI (Analysis of Functional NeuroImages) is a leading software suite of C, Python, R programs and shell scripts primarily developed for the analysis and display of anatomical and functional MRI (FMRI) data.",
       "tags": [],
       "label": [
         {
