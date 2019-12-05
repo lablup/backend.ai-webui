@@ -207,7 +207,7 @@
       ]
     },
     "ngc-caffe3": {
-      "name": "Caffe 3 (NGC)",
+      "name": "Caffe (NGC, 3)",
       "description": "Caffe is a deep learning framework made with expression, speed, and modularity in mind. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
