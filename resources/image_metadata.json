@@ -531,7 +531,7 @@
     "sftp": {
       "name": "SFTP",
       "description": "",
-      "group": "General Toolkit",
+      "group": "Application",
       "tags": [],
       "label": [
         {
