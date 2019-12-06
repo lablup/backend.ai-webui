@@ -22,7 +22,7 @@ Backend.AI console focuses to
  * Storage management
     * Create / delete folders
     * Upload  / download files
-    * SFTP server (backend.ai SFTP image needed)
+    * Integrated SSH/SFTP server (app mode only)
     * Share folders with friends / groups 
  * Statistics
     * User resource statistics
@@ -31,15 +31,17 @@ Backend.AI console focuses to
     * Insight (working)
 
 ## Management Features
+
  * Keypair management
     * Allocate resource limitation for keys
-    * Add / remove resource policies
+    * Add / remove resource policies for keys
  * Kernel managements
     * List supported kernels
-     * Add kernels
+     * Add kernel
      * Refresh kernel list
      * Categorize repository
-     * Add/update resource templates (under development)
+     * Add/update resource templates 
+     * Add/remove docker registries
  * User management
     * User creation / deletion
  * Manager settings

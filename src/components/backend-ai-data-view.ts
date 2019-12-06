@@ -1302,7 +1302,7 @@ export default class BackendAIData extends BackendAIPage {
     let path = this.explorer.breadcrumb.concat(fn).join("/");
     let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
     job.then(res => {
-      const url = window.URL.createObjectURL(res);
+      const url = res.url;
       let a = document.createElement('a');
       a.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -1378,7 +1378,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   _isDownloadable(file) {
-    return file.size < 209715200
+    return true;
   }
 
   _hideDialog(e) {
