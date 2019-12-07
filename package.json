@@ -58,7 +58,7 @@
     "weightless": "^0.0.37"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
+    "@babel/core": "^7.7.5",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/plugin-proposal-decorators": "^7.7.4",
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
@@ -70,7 +70,7 @@
     "electron-installer-dmg": "^3.0.0",
     "electron-packager": "^14.1.1",
     "electron-tabs": "^0.11.0",
-    "es-dev-server": "^1.28.0",
+    "es-dev-server": "^1.28.2",
     "eslint": "^6.7.2",
     "eslint-config-google": "^0.14.0",
     "express": "^4.17.1",
@@ -87,7 +87,7 @@
     "testcafe": "^1.7.0",
     "tinyify": "^2.5.2",
     "tslib": "^1.10.0",
-    "typescript": "^3.7.2",
+    "typescript": "^3.7.3",
     "underscore": "^1.9.1",
     "web-animations-js": "^2.3.2",
     "webpack": "^4.41.2",
