@@ -107,6 +107,13 @@ Backend.AI console is built with
 ```
 $ npm i
 ```
+You must perform first-time compilation for testing. Some additional mandatory packages should be copied to proper location.
+
+```
+$ make dep
+```
+
+Now you are ready to test.
 
 ### Developing / testing without bundling
 
