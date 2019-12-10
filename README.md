@@ -113,7 +113,7 @@ You must perform first-time compilation for testing. Some additional mandatory p
 $ make dep
 ```
 
-Now you are ready to test.
+Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
 
 ### Developing / testing without bundling
 
