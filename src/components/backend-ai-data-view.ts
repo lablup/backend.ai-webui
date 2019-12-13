@@ -450,11 +450,11 @@ export default class BackendAIData extends BackendAIPage {
               </paper-dropdown-menu>
               <paper-dropdown-menu id="add-folder-type" label="Type">
                 <paper-listbox slot="dropdown-content" selected="0">
-                ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
-                  <paper-item label="group">Group</paper-item>
-                ` : html``}
                 ${this.allowed_folder_type.includes('user') ? html`
                   <paper-item label="user">User</paper-item>
+                ` : html``}
+                ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+                  <paper-item label="group">Group</paper-item>
                 ` : html``}
                 </paper-listbox>
               </paper-dropdown-menu>
