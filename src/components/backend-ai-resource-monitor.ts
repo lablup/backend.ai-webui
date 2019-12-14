@@ -936,6 +936,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
       this.updateMetric('update versions');
     }
+    const versionSelector = this.shadowRoot.querySelector('#version paper-listbox');
+    if (versionSelector) versionSelector.selected = 0;
   }
 
   generateSessionId() {
