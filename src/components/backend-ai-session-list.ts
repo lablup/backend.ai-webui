@@ -400,7 +400,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].baseversion = tags[0];
             sessions[objectKey].baseimage = tags[1];
             if (tags[2] !== undefined) {
-              sessions[objectKey].additional_req = tags[2].toUpperCase();
+              sessions[objectKey].additional_reqs = tags.slice(1, tags.length).map((tag) => tag.toUpperCase());
             }
           } else {
             sessions[objectKey].baseversion = sessions[objectKey].tag;
@@ -939,22 +939,31 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div class="layout vertical start">
-            <div>${rowData.item.sess_id}</div>
-              ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
-${item.map(item => {
-        if (item.category === 'Env' && rowData.item.baseversion !== undefined) {
-          item.category = item.tag;
-          item.tag = rowData.item.baseversion;
-        }
-        return html`
-            <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
-            `
-      })}
-                `) : html``}
-        ${rowData.item.additional_req ? html`
-          <lablup-shields app="" color="green" description="${rowData.item.additional_req}"></lablup-shields>
+          <div>${rowData.item.sess_id}</div>
+          ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
+            ${item.map(item => {
+              if (item.category === 'Env') {
+                item.category = item.tag;
+              }
+              if (rowData.item.baseversion) {
+                item.tag = rowData.item.baseversion;
+              }
+              return html`
+                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
+              `;
+            })}
+          `) : html``}
+          ${rowData.item.additional_reqs ? html`
+            <div class="layout horizontal center wrap">
+              ${rowData.item.additional_reqs.map((tag) => {
+                return html`
+                  <lablup-shields app="" color="green" description="${tag}"></lablup-shields>
+                `
+              })}
+            </div>
           ` : html``}
-        </div>`, root
+        </div>
+      `, root
     );
   }
 
