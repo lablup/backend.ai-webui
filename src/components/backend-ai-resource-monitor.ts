@@ -878,7 +878,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // this.languages.sort();
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
-    langs.sort();
+    //this.languages.sort((a, b) => (a.group > b.group) ? 1 : -1)
+    console.log(langs);
+    //langs.sort();
+    langs.sort((a, b) => (a.group > b.group) ? 1 : -1);
     this.languages = [];
     langs.forEach((item, index) => {
       if (!(Object.keys(this.aliases).includes(item))) {
