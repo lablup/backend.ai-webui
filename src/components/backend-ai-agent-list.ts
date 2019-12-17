@@ -17,7 +17,6 @@ import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
-
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
@@ -316,9 +315,11 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-          ${icon}
+        <div class="horizontal start-justified center layout">
+          <img src="/resources/icons/${icon}.png" style="width:32px;height:32px;"/>
           <lablup-shields app="${location}" color="${color}"
                           description="${platform}" ui="flat"></lablup-shields>
+        </div>
     `, root
     );
   }
