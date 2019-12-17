@@ -414,7 +414,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'data':
-          this.menuTitle = 'Storage';
+          this.menuTitle = 'Data & Storage';
           this.sidebarMenu.selected = 2;
           this.updateTitleColor('var(--paper-orange-800)', '#efefef');
           break;
@@ -569,7 +569,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
-                  Storage
+                  Data &amp; Storage
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
@@ -623,7 +623,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <div class="terms-of-use" style="margin-bottom:50px;">
                 <small style="font-size:11px;">
                   <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
-                  ·                   
+                  ·
                   <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">Privacy Policy</a>
                   ·
                   <a @click="${() => {
