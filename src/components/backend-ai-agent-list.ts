@@ -27,6 +27,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Array}) agents = Array();
   @property({type: Object}) notification = Object();
+  @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
@@ -267,6 +268,16 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div>${idx}</div>
       `,
       root
+    );
+  }
+
+  regionRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+            <div class="indicator">${rowData.item.addr}</div>
+            <div class="indicator">${rowData.item.region}</div>
+    `, root
     );
   }
 
