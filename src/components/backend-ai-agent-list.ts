@@ -272,11 +272,53 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   regionRenderer(root, column?, rowData?) {
+    let platform: string;
+    let location: string;
+    let color: string;
+    let icon: string;
+    let regionData = rowData.item.region.split('/');
+    if (regionData.length > 1) {
+      platform = regionData[0];
+      location = regionData[1];
+    } else {
+      platform = regionData[0];
+      location = "";
+    }
+    switch (platform) {
+      case "aws":
+        color = 'orange';
+        icon = 'aws';
+        break;
+      case "azure":
+        color = 'blue';
+        icon = 'azure';
+        break;
+      case "gcp":
+        color = 'lightblue';
+        icon = 'gcp';
+        break;
+      case "nbp":
+        color = 'green';
+        icon = 'nbp';
+        break;
+      case "openstack":
+        color = 'red';
+        icon = 'openstack';
+        break;
+      case "local":
+        color = 'yellow';
+        icon = 'local';
+        break;
+      default:
+        color = 'yellow';
+        icon = 'local';
+    }
     render(
       // language=HTML
       html`
-            <div class="indicator">${rowData.item.addr}</div>
-            <div class="indicator">${rowData.item.region}</div>
+          ${icon}
+          <lablup-shields app="${location}" color="${color}"
+                          description="${platform}" ui="flat"></lablup-shields>
     `, root
     );
   }
@@ -323,12 +365,15 @@ export default class BackendAIAgentList extends BackendAIPage {
     return html`
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable>
+        <vaadin-grid-column width="80px">
           <template class="header">Endpoint</template>
           <template>
             <div class="indicator">[[item.addr]]</div>
-            <div class="indicator">[[item.region]]</div>
           </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
+          <template class="header">Region</template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable .renderer="${this._boundContactDateRenderer}">
