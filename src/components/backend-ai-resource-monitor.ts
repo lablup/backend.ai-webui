@@ -878,7 +878,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // this.languages.sort();
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
-    langs.sort();
+    //this.languages.sort((a, b) => (a.group > b.group) ? 1 : -1)
+    console.log(langs);
+    //langs.sort();
+    //langs.sort((a, b) => (a.group > b.group) ? 1 : -1); TODO: fix this to rearrange kernels
     this.languages = [];
     langs.forEach((item, index) => {
       if (!(Object.keys(this.aliases).includes(item))) {
@@ -936,6 +939,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#version').value = this.versions[0];
       this.updateMetric('update versions');
     }
+    const versionSelector = this.shadowRoot.querySelector('#version paper-listbox');
+    if (versionSelector) versionSelector.selected = 0;
   }
 
   generateSessionId() {
