@@ -37,6 +37,7 @@ import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
+import tus from 'tus-js-client';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
@@ -1287,7 +1288,7 @@ export default class BackendAIData extends BackendAIPage {
     let job = window.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
     job.then(url => {
       const start_date = new Date();
-      const upload = new window.tus.Upload(fileObj, {
+      const upload = new tus.Upload(fileObj, {
         retryDelays: [0, 3000, 5000, 10000, 20000],
         uploadUrl: url,
         chunkSize: 15728640, // 15MB
@@ -1295,7 +1296,7 @@ export default class BackendAIData extends BackendAIPage {
           filename: path,
           filetype: fileObj.type
         },
-        onError: function(error) {
+        onError: function (error) {
           console.log("Failed because: " + error)
         },
         onProgress: (bytesUploaded, bytesTotal) => {
@@ -1311,7 +1312,7 @@ export default class BackendAIData extends BackendAIPage {
             const sec = estimated_seconds % 60;
             estimated_time_left = `${hour}:${min}:${sec}`;
           }
-          const percentage = (bytesUploaded / bytesTotal * 100).toFixed(1)
+          const percentage = (bytesUploaded / bytesTotal * 100).toFixed(1);
           this.uploadFiles[this.uploadFiles.indexOf(fileObj)].progress = bytesUploaded / bytesTotal;
           this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
           this.uploadFiles = this.uploadFiles.slice();
