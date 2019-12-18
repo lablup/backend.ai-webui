@@ -37,7 +37,7 @@ import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
-import tus from 'tus-js-client';
+import tus from '../lib/tus.min.js';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
@@ -1287,7 +1287,7 @@ export default class BackendAIData extends BackendAIPage {
     const path = this.explorer.breadcrumb.concat(fileObj.name).join("/");
     let job = window.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
     job.then(url => {
-      const start_date = new Date();
+      const start_date = new Date().getTime();
       const upload = new tus.Upload(fileObj, {
         retryDelays: [0, 3000, 5000, 10000, 20000],
         uploadUrl: url,
@@ -1300,15 +1300,15 @@ export default class BackendAIData extends BackendAIPage {
           console.log("Failed because: " + error)
         },
         onProgress: (bytesUploaded, bytesTotal) => {
-          const now = new Date();
-          const speed = (bytesUploaded / (1024 * 1024) / ((now - start_date) / 1000)).toFixed(1) + "MB/s";
-          const estimated_seconds = Math.floor((bytesTotal - bytesUploaded) / (bytesUploaded / (now - start_date) * 1000 ));
+          const now = new Date().getTime();
+          const speed: string = (bytesUploaded / (1024 * 1024) / ((now - start_date) / 1000)).toFixed(1) + "MB/s";
+          const estimated_seconds = Math.floor((bytesTotal - bytesUploaded) / (bytesUploaded / (now - start_date) * 1000));
           let estimated_time_left = "Less than 10 seconds";
-          if (estimated_seconds >= 86400)  {
+          if (estimated_seconds >= 86400) {
             estimated_time_left = "More than a day";
           } else if (estimated_seconds > 10) {
-            const hour = Math.floor(estimated_seconds/3600);
-            const min = Math.floor((estimated_seconds % 3600)/60);
+            const hour = Math.floor(estimated_seconds / 3600);
+            const min = Math.floor((estimated_seconds % 3600) / 60);
             const sec = estimated_seconds % 60;
             estimated_time_left = `${hour}:${min}:${sec}`;
           }
