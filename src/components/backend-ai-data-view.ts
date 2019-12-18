@@ -37,7 +37,7 @@ import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
-import tus from '../lib/tus.min.js';
+import tus from '../lib/tus';
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
