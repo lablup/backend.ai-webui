@@ -140,7 +140,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       case 'running':
         status = 'ALIVE';
         break;
-      case 'finished':
+      case 'terminated':
         status = 'TERMINATED';
         break;
       case 'archived':
