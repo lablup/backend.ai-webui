@@ -1876,7 +1876,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  selected="${this.default_language}">
                 ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
-                    <h5 style="padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled>${item.basename}</h5>` :
+                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled>${item.basename}</h5>` :
       html`
                       <paper-item id="${item.name}" label="${item.alias}">${item.basename}
                       ${item.tags ? item.tags.map(item => html`
