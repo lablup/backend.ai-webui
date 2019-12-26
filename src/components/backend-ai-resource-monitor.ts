@@ -696,7 +696,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     window.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
       if ('cuda.device' in results) {
-        this.gpu_mode = 'gpu';
+        this.gpu_mode = 'cuda.gpu';
         this.gpu_step = 1;
       }
       if ('cuda.shares' in results) {
@@ -1359,7 +1359,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.cpu_metric = cpu_metric;
         }
 
-        if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
+        if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.gpu') {
           let gpu_metric = {...item};
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
