@@ -191,6 +191,12 @@ export default class BackendAIAgentList extends BackendAIPage {
           if ('cuda.shares' in occupied_slots) {
             agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
           }
+          if ('rocm.device' in available_slots) {
+            agents[objectKey].gpu_slots = parseInt(available_slots['rocm.device']);
+          }
+          if ('rocm.device' in occupied_slots) {
+            agents[objectKey].used_gpu_slots = parseInt(occupied_slots['rocm.device']);
+          }
         });
       }
       this.agents = agents;
