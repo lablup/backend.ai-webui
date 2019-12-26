@@ -882,6 +882,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     console.log(langs);
     //langs.sort();
     //langs.sort((a, b) => (a.group > b.group) ? 1 : -1); TODO: fix this to rearrange kernels
+    // TODO: add category indicator between groups
     this.languages = [];
     langs.forEach((item, index) => {
       if (!(Object.keys(this.aliases).includes(item))) {
