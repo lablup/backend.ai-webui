@@ -700,7 +700,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.gpu_step = 1;
       }
       if ('cuda.shares' in results) {
-        this.gpu_mode = 'fgpu';
+        this.gpu_mode = 'cuda.fgpu';
         this.gpu_step = 0.05;
       }
     });
@@ -751,7 +751,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    if (this.gpu_mode == 'fgpu') {
+    if (this.gpu_mode == 'cuda.fgpu') {
       config['fgpu'] = this.gpu_request;
     } else {
       config['gpu'] = this.gpu_request;
@@ -767,7 +767,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
-      if (this.gpu_mode == 'fgpu') {
+      if (this.gpu_mode == 'cuda.fgpu') {
         config['fgpu'] = 0.0;
       } else {
         config['gpu'] = 0.0;
@@ -1387,7 +1387,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           this.gpu_metric = gpu_metric;
         }
-        if (item.key === 'cuda.shares' && this.gpu_mode === 'fgpu') {
+        if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.fgpu') {
           let fgpu_metric = {...item};
           fgpu_metric.min = parseFloat(fgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
