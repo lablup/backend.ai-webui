@@ -1646,6 +1646,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'default_session_environment' in window.backendaiclient._config &&
       window.backendaiclient._config.default_session_environment !== '') {
       this.default_language = window.backendaiclient._config.default_session_environment;
+    } else if (this.languages.length > 1) {
+      this.default_language = this.languages[1].name;
     } else if (this.languages.length !== 0) {
       this.default_language = this.languages[0].name;
     } else {
