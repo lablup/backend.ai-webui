@@ -881,6 +881,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (langs === undefined) return;
     langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
     // TODO: add category indicator between groups
+    let interCategory: string = '';
     this.languages = [];
     langs.forEach((item, index) => {
       if (!(Object.keys(this.aliases).includes(item))) {
@@ -914,6 +915,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       if (prefix != '') {
         tags.push(prefix);
+      }
+      if (interCategory !== this.supportImages[item]) {
+        //console.log(item);
+        //console.log(this.supportImages[item]);
       }
       this.languages.push({
         name: item,
@@ -1562,7 +1567,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supports[supportsKey] = [];
         }
         this.supports[supportsKey].push(item.tag);
-        this.supportImages[supportsKey] = item;
+        let imageName: string;
+        let specs: string[] = item.name.split('/');
+        if (specs.length == 2) {
+          imageName = specs[1];
+        } else {
+          imageName = specs[2];
+        }
+        this.supportImages[supportsKey] = this.imageInfo[imageName];
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
       });
       this._updateEnvironment();
