@@ -44,6 +44,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: String}) direction = "horizontal";
   @property({type: String}) location = '';
   @property({type: Object}) supports = Object();
+  @property({type: Object}) supportImages = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
@@ -878,10 +879,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // this.languages.sort();
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
-    //this.languages.sort((a, b) => (a.group > b.group) ? 1 : -1)
-    console.log(langs);
-    //langs.sort();
-    //langs.sort((a, b) => (a.group > b.group) ? 1 : -1); TODO: fix this to rearrange kernels
+    langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
     // TODO: add category indicator between groups
     this.languages = [];
     langs.forEach((item, index) => {
@@ -1556,6 +1554,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       this.images = images;
       this.supports = {};
+      this.supportImages = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
         const supportsKey = `${item.registry}/${item.name}`;
@@ -1563,6 +1562,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supports[supportsKey] = [];
         }
         this.supports[supportsKey].push(item.tag);
+        this.supportImages[supportsKey] = item;
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
       });
       this._updateEnvironment();
