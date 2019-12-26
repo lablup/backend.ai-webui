@@ -916,9 +916,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (prefix != '') {
         tags.push(prefix);
       }
-      if (interCategory !== this.supportImages[item]) {
+      if (interCategory !== this.supportImages[item].group) {
         //console.log(item);
-        //console.log(this.supportImages[item]);
+        this.languages.push({
+          name: "",
+          registry: "",
+          prefix: "",
+          kernelname: "",
+          alias: "",
+          basename: this.supportImages[item].group,
+          tags: [],
+          clickable: false
+        });
+        interCategory = this.supportImages[item].group;
       }
       this.languages.push({
         name: item,
@@ -1865,11 +1875,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                  selected="${this.default_language}">
                 ${this.languages.map(item => html`
-                    <paper-item id="${item.name}" label="${item.alias}">${item.basename}
-                    ${item.tags ? item.tags.map(item => html`
-                      <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                    `) : ''}
-                    </paper-item>
+                    ${item.clickable === false ? html`
+                    <h5 style="padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled>${item.basename}</h5>` :
+      html`
+                      <paper-item id="${item.name}" label="${item.alias}">${item.basename}
+                      ${item.tags ? item.tags.map(item => html`
+                        <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                      `) : ''}
+                      </paper-item>
+                    `}
                 `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
