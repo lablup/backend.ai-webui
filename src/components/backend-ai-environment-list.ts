@@ -170,6 +170,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const mem_idx = this._gpu_disabled ? (this._fgpu_disabled ? 1 : 2) : (this._fgpu_disabled ? 2 : 3);
     if (cpu !== resource_limits[0].min) input["cpu"] = {"min": cpu};
     if (mem !== resource_limits[mem_idx].min) input["mem"] = {"min": mem};
+    // TODO : let add options for ROCm devices
     if (!this._gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
     if (!this._fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
 
