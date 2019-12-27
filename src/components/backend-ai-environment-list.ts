@@ -178,6 +178,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     // TODO : let add options for ROCm devices
     if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
     if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
+    if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input["rocm.device"] = {"min": rocm_gpu};
+    if (!this._tpu_disabled && tpu !== resource_limits[4].min) input["tpu.device"] = {"min": tpu};
 
     const image = this.images[this.selectedIndex];
 
@@ -273,13 +275,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   _setPulldownDefaults(resource_limits) {
     this._cuda_gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
     this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
+    this._rocm_gpu_disabled = resource_limits.filter(e => e.key === "rocm_device").length === 0;
+    this._tpu_disabled = resource_limits.filter(e => e.key === "tpu_device").length === 0;
 
     this.shadowRoot.querySelector("#modify-image-cpu").value = resource_limits[0].min;
-    if (!this._cuda_gpu_disabled)
-      this.shadowRoot.querySelector("#modify-image-gpu").value = resource_limits[1].min;
-
-    if (!this._cuda_fgpu_disabled)
-      this.shadowRoot.querySelector("#modify-image-fgpu").value = resource_limits[2].min;
+    if (!this._cuda_gpu_disabled) {
+      this.shadowRoot.querySelector("#modify-image-cuda-gpu").value = resource_limits[1].min;
+    }
+    if (!this._cuda_fgpu_disabled) {
+      this.shadowRoot.querySelector("#modify-image-cuda-fgpu").value = resource_limits[2].min;
+    }
+    if (!this._rocm_gpu_disabled) {
+      this.shadowRoot.querySelector("#modify-image-rocm-gpu").value = resource_limits[3].min;
+    }
+    if (!this._tpu_disabled) {
+      this.shadowRoot.querySelector("#modify-image-tpu").value = resource_limits[4].min;
+    }
 
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
     this.shadowRoot.querySelector("#modify-image-mem").value = resource_limits[mem_idx].min;
