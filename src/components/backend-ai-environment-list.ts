@@ -174,7 +174,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     // TODO : index modification
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
     if (cpu !== resource_limits[0].min) input["cpu"] = {"min": cpu};
-    if (mem !== resource_limits[mem_idx].min) input["mem"] = {"min": mem};
+    let memory = this._symbolicUnit(mem);
+    if (memory !== resource_limits[mem_idx].min) input["mem"] = {"min": memory};
     // TODO : let add options for ROCm devices
     if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
     if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
@@ -293,7 +294,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
 
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
-    this.shadowRoot.querySelector("#modify-image-mem").value = resource_limits[mem_idx].min;
+    this.shadowRoot.querySelector("#modify-image-mem").value = this._addUnit(resource_limits[mem_idx].min);
   }
 
   _decodeServicePort() {
@@ -480,7 +481,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div style="display: flex; flex-direction: column;">
                 <div style="display: flex;">
                   <wl-select
-                    label="CPU"
+                    label="CPU Core"
                     id="modify-image-cpu"
                     style="flex: 1"
                   >
@@ -495,7 +496,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     id="modify-image-mem"
                     style="flex: 1"
                   >
-                    ${["64m", "128m", "256m", "512m", "1g", "2g", "4g", "8g", "16g", "32g", "256g", "512g"].map(item => html`
+                    ${["64MB", "128MB", "256MB", "512MB", "1GB", "2GB", "4GB", "8GB", "16GB", "32GB", "256GB", "512GB"].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
@@ -805,6 +806,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
     if (unit == 't') {
       return value.slice(0, -1) + 'TB';
+    }
+    return value;
+  }
+
+  _symbolicUnit(value) {
+    let unit = value.substr(-2);
+    if (unit == 'MB') {
+      return value.slice(0, -2) + 'm';
+    }
+    if (unit == 'GB') {
+      return value.slice(0, -2) + 'g';
+    }
+    if (unit == 'TB') {
+      return value.slice(0, -2) + 't';
     }
     return value;
   }
