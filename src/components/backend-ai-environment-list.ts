@@ -39,8 +39,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
   @property({type: Array}) servicePorts = Array();
   @property({type: Number}) selectedIndex = 0;
-  @property({type: Boolean}) _gpu_disabled = false;
-  @property({type: Boolean}) _fgpu_disabled = false;
+  @property({type: Boolean}) _cuda_gpu_disabled = false;
+  @property({type: Boolean}) _cuda_fgpu_disabled = false;
+  @property({type: Boolean}) _rocm_gpu_disabled = false;
+  @property({type: Boolean}) _tpu_disabled = false;
   @property({type: Object}) alias = Object();
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) indicator = Object();
@@ -160,19 +162,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   modifyImage() {
     const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
       mem = this.shadowRoot.querySelector("#modify-image-mem").value,
-      gpu = this.shadowRoot.querySelector("#modify-image-gpu").value,
-      fgpu = this.shadowRoot.querySelector("#modify-image-fgpu").value;
+      gpu = this.shadowRoot.querySelector("#modify-image-cuda-gpu").value,
+      fgpu = this.shadowRoot.querySelector("#modify-image-cuda-fgpu").value,
+      rocm_gpu = this.shadowRoot.querySelector("#modify-image-rocm-gpu").value,
+      tpu = this.shadowRoot.querySelector("#modify-image-tpu").value;
 
     const {resource_limits} = this.images[this.selectedIndex];
 
     let input = {};
 
-    const mem_idx = this._gpu_disabled ? (this._fgpu_disabled ? 1 : 2) : (this._fgpu_disabled ? 2 : 3);
+    // TODO : index modification
+    const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
     if (cpu !== resource_limits[0].min) input["cpu"] = {"min": cpu};
     if (mem !== resource_limits[mem_idx].min) input["mem"] = {"min": mem};
     // TODO : let add options for ROCm devices
-    if (!this._gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
-    if (!this._fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
+    if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
+    if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
 
     const image = this.images[this.selectedIndex];
 
@@ -266,17 +271,17 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _setPulldownDefaults(resource_limits) {
-    this._gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
-    this._fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
+    this._cuda_gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
+    this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
 
     this.shadowRoot.querySelector("#modify-image-cpu").value = resource_limits[0].min;
-    if (!this._gpu_disabled)
+    if (!this._cuda_gpu_disabled)
       this.shadowRoot.querySelector("#modify-image-gpu").value = resource_limits[1].min;
 
-    if (!this._fgpu_disabled)
+    if (!this._cuda_fgpu_disabled)
       this.shadowRoot.querySelector("#modify-image-fgpu").value = resource_limits[2].min;
 
-    const mem_idx = this._gpu_disabled ? (this._fgpu_disabled ? 1 : 2) : (this._fgpu_disabled ? 2 : 3);
+    const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
     this.shadowRoot.querySelector("#modify-image-mem").value = resource_limits[mem_idx].min;
   }
 
@@ -451,7 +456,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro">
+        <wl-card elevation="1" class="login-panel intro" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Modify Image</span>
             <div class="flex"></div>
@@ -479,7 +484,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     id="modify-image-mem"
                     style="flex: 1"
                   >
-                    ${["64m", "128m", "256m", "512m", "1g", "2g", "4g", "8g", "16g"].map(item => html`
+                    ${["64m", "128m", "256m", "512m", "1g", "2g", "4g", "8g", "16g", "32g", "256g", "512g"].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
@@ -488,10 +493,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 </div>
                 <div style="display: flex;">
                   <wl-select
-                    label="GPU"
-                    id="modify-image-gpu"
+                    label="CUDA GPU"
+                    id="modify-image-cuda-gpu"
                     style="flex: 1"
-                    ?disabled=${this._gpu_disabled}
+                    ?disabled=${this._cuda_gpu_disabled}
                   >
                     ${[0, 1, 2, 3, 4].map(item => html`
                       <option
@@ -500,12 +505,38 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     `)}
                   </wl-select>
                   <wl-select
-                    label="fGPU"
-                    id="modify-image-fgpu"
-                    ?disabled=${this._fgpu_disabled}
+                    label="CUDA fractional GPU"
+                    id="modify-image-cuda-fgpu"
+                    ?disabled=${this._cuda_fgpu_disabled}
                     style="flex: 1"
                   >
                     ${[0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
+                      <option
+                        value=${item}
+                      >${item}</option>
+                    `)}
+                  </wl-select>
+                </div>
+                <div style="display: flex;">
+                  <wl-select
+                    label="ROCm GPU"
+                    id="modify-image-rocm-gpu"
+                    style="flex: 1"
+                    ?disabled=${this._rocm_gpu_disabled}
+                  >
+                    ${[0, 1, 2, 3, 4].map(item => html`
+                      <option
+                        value=${item}
+                      >${item}</option>
+                    `)}
+                  </wl-select>
+                  <wl-select
+                    label="TPU"
+                    id="modify-image-tpu"
+                    ?disabled=${this._tpu_disabled}
+                    style="flex: 1"
+                  >
+                    ${[0, 1, 2].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
