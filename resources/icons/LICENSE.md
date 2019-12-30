@@ -8,3 +8,4 @@ Icon made by Freepik from www.flaticon.com
 
 file_type_*.svg from vscode-icon project ( https://github.com/vscode-icons/vscode-icons )
 
+ROCm.png , ROCm project icon is trademark of amd.com 
