@@ -6,3 +6,5 @@ The icons below are provided by uiconstock ( http://uiconstock.com/ ) under the 
 Icon made by Freepik from www.flaticon.com
  * azure.png
 
+file_type_*.svg from vscode-icon project ( https://github.com/vscode-icons/vscode-icons )
+
