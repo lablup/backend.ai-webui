@@ -225,8 +225,17 @@ export default class BackendAICredentialList extends BackendAIPage {
           if ('rocm.device' in keypair['total_resource_slots']) {
             keypair['total_resource_slots'].rocm_device = keypair['total_resource_slots']['rocm.device'];
           }
+
+          if (('rocm_device' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].rocm_device = '-';
+          }
           if ('tpu.device' in keypair['total_resource_slots']) {
             keypair['total_resource_slots'].rocm_device = keypair['total_resource_slots']['tpu.device'];
+          }
+          if (('tpu_device' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].tpu_device = '-';
           }
           ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device'].forEach((slot) => {
             keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
