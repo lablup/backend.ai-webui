@@ -963,6 +963,31 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
+     * Create a upload session for a file to Virtual folder.
+     *
+     * @param {string} path - Path to upload.
+     * @param {string} fs - File object to upload.
+     * @param {string} name - Virtual folder name.
+     */
+    async create_upload_session(path, fs, name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let body = {
+            'path': path,
+            'size': fs.size
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/create_upload_session`, body);
+        const res = await this.client._wrapWithPromise(rqst);
+        const token = res['token'];
+        let url = this.client._config.endpoint;
+        if (this.client._config.connectionMode === 'SESSION') {
+            url = url + '/func';
+        }
+        url = url + `${this.urlPrefix}/_/tus/upload/${token}`;
+        return url;
+    }
+    /**
      * Create directory in specific Virtual folder.
      *
      * @param {string} path - Directory path to create.
