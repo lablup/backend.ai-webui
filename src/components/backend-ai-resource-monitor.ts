@@ -1285,7 +1285,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
     let currentVersion = this.shadowRoot.querySelector('#version').value;
-    if (typeof selectedItem === 'undefined' || selectedItem === null) {
+    if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute("disabled")) {
       this.metric_updating = false;
       return;
     }
@@ -1304,6 +1304,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let kernel = selectedItem.id;
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
+      //console.log(currentResource);
       await this._updateVirtualFolderList();
       let available_slot = this.available_slot;
       if (!currentResource) {
@@ -1878,7 +1879,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  selected="${this.default_language}">
                 ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
-                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled>${item.basename}</h5>` :
+                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>` :
       html`
                       <paper-item id="${item.name}" label="${item.alias}">${item.basename}
                       ${item.tags ? item.tags.map(item => html`
