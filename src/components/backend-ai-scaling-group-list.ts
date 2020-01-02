@@ -40,10 +40,12 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Number}) selectedIndex = 0;
   @property({type: Array}) domains = Array();
   @property({type: Array}) scalingGroups = Array();
+  @property({type: Array}) schedulerTypes = Array();
 
   constructor() {
     super();
     this.active = false;
+    this.schedulerTypes = ['fifo', 'lifo', 'drf'];
   }
 
   static get properties() {
@@ -52,6 +54,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         type: Boolean
       },
       scalingGroups: {
+        type: Array
+      },
+      schedulerTypes: {
         type: Array
       },
       notification: {
@@ -280,17 +285,18 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   _modifyScalingGroup() {
     const description = this.shadowRoot.querySelector("#modify-scaling-group-description").value,
+      scheduler = this.shadowRoot.querySelector("#modify-scaling-group-scheduler").value,
       is_active = this.shadowRoot.querySelector("#modify-scaling-group-active").checked,
       name = this.scalingGroups[this.selectedIndex].name;
 
     let input = {};
     if (description !== this.scalingGroups[this.selectedIndex].description) input["description"] = description;
+    if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input["scheduler"] = scheduler;
     if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input["is_active"] = is_active;
 
     if (Object.keys(input).length === 0) {
       this.notification.text = "No changes made";
       this.notification.show();
-
       return;
     }
 
@@ -457,6 +463,13 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                 label="Description"
                 value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].description}
               ></wl-textarea>
+              <wl-select id="modify-scaling-group-scheduler" label="Select scheduler"
+                  value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
+                <option disabled>Select Scheduler</option>
+                ${this.schedulerTypes.map(sched => html`
+                  <option value="${sched}">${sched}</option>
+                `)}
+              </wl-select>
               <wl-label for="switch">
                 Active Status
               </wl-label>

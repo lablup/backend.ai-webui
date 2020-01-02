@@ -44,6 +44,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: String}) direction = "horizontal";
   @property({type: String}) location = '';
   @property({type: Object}) supports = Object();
+  @property({type: Object}) supportImages = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
@@ -878,10 +879,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // this.languages.sort();
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
-    //this.languages.sort((a, b) => (a.group > b.group) ? 1 : -1)
-    console.log(langs);
-    //langs.sort();
-    //langs.sort((a, b) => (a.group > b.group) ? 1 : -1); TODO: fix this to rearrange kernels
+    langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
+    // TODO: add category indicator between groups
+    let interCategory: string = '';
     this.languages = [];
     langs.forEach((item, index) => {
       if (!(Object.keys(this.aliases).includes(item))) {
@@ -915,6 +915,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       if (prefix != '') {
         tags.push(prefix);
+      }
+      if (interCategory !== this.supportImages[item].group) {
+        //console.log(item);
+        this.languages.push({
+          name: "",
+          registry: "",
+          prefix: "",
+          kernelname: "",
+          alias: "",
+          basename: this.supportImages[item].group,
+          tags: [],
+          clickable: false
+        });
+        interCategory = this.supportImages[item].group;
       }
       this.languages.push({
         name: item,
@@ -1271,7 +1285,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
     let currentVersion = this.shadowRoot.querySelector('#version').value;
-    if (typeof selectedItem === 'undefined' || selectedItem === null) {
+    if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute("disabled")) {
       this.metric_updating = false;
       return;
     }
@@ -1290,6 +1304,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let kernel = selectedItem.id;
       let kernelName = kernel + ':' + currentVersion;
       let currentResource = this.resourceLimits[kernelName];
+      //console.log(currentResource);
       await this._updateVirtualFolderList();
       let available_slot = this.available_slot;
       if (!currentResource) {
@@ -1555,6 +1570,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       this.images = images;
       this.supports = {};
+      this.supportImages = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
         const supportsKey = `${item.registry}/${item.name}`;
@@ -1562,6 +1578,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supports[supportsKey] = [];
         }
         this.supports[supportsKey].push(item.tag);
+        let imageName: string;
+        let specs: string[] = item.name.split('/');
+        if (specs.length == 2) {
+          imageName = specs[1];
+        } else {
+          imageName = specs[2];
+        }
+        this.supportImages[supportsKey] = this.imageInfo[imageName];
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
       });
       this._updateEnvironment();
@@ -1623,6 +1647,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'default_session_environment' in window.backendaiclient._config &&
       window.backendaiclient._config.default_session_environment !== '') {
       this.default_language = window.backendaiclient._config.default_session_environment;
+    } else if (this.languages.length > 1) {
+      this.default_language = this.languages[1].name;
     } else if (this.languages.length !== 0) {
       this.default_language = this.languages[0].name;
     } else {
@@ -1852,11 +1878,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                  selected="${this.default_language}">
                 ${this.languages.map(item => html`
-                    <paper-item id="${item.name}" label="${item.alias}">${item.basename}
-                    ${item.tags ? item.tags.map(item => html`
-                      <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                    `) : ''}
-                    </paper-item>
+                    ${item.clickable === false ? html`
+                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>` :
+      html`
+                      <paper-item id="${item.name}" label="${item.alias}">${item.basename}
+                      ${item.tags ? item.tags.map(item => html`
+                        <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                      `) : ''}
+                      </paper-item>
+                    `}
                 `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
