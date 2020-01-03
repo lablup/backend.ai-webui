@@ -21,7 +21,7 @@ Backend.AI console focuses to
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
-    * Upload  / download files
+    * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
     * Share folders with friends / groups 
  * Statistics
