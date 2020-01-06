@@ -68,7 +68,7 @@ export default class LablupSlider extends LitElement {
       ${this.editable ? html`<wl-textfield id="textfield" class="${this.id}" type="number"
           value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
           @change="${this.syncToSlider}">
-        
+
         </wl-textfield>` : html``}
       </div>
     `;
@@ -95,45 +95,18 @@ export default class LablupSlider extends LitElement {
   }
 
   syncToSlider() {
-    this.slider.value = this.textfield.value;
-    this.syncValue();
-  }
-
-  syncValue() {
-    this.clampByResource();
-    this.value = this.textfield.value;
-  }
-
-  clampByResource() {
     if (this.textfield.value > this.max) {
       this.textfield.value = this.max;
     }
     if (this.textfield.value < this.min) {
       this.textfield.value = this.min;
     }
+    this.slider.value = this.textfield.value;
+    this.syncValue();
+  }
 
-    // TO DO : get closest value of minimum steps for each resources
-    // e.g. shmem : 0.0025, gpu, mem : 0.05
-    let resources =['cpu', 'mem', 'shmem', 'gpu', 'session'].map(element =>  element + '-resource');
-
-    if (resources.indexOf(this.slider.className) >= 0) {
-       if (this.slider.className === 'cpu-resource' ||
-       this.slider.className === 'session') {
-        this.textfield.value = Math.floor(this.textfield.value);     
-      } else if (this.slider.className === 'shmem-resource') {
-        let rounded = Math.round(this.textfield.value / 0.0025) * 0.0025;
-        this.textfield.value = rounded.toFixed(4);
-        // console.log(rounded);
-
-       } else if (this.slider.className === 'mem-resource' || this.slider.className ==='gpu-resource') {
-        console.log(this.textfield.value);
-        let rounded = Math.round(this.textfield.value / 0.05) * 0.05;
-        this.textfield.value = rounded.toFixed(2);
-        // console.log(rounded);
-       }
-       
-    }
-
+  syncValue() {
+    this.value = this.textfield.value;
   }
 }
 
