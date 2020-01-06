@@ -28,6 +28,8 @@ import 'weightless/radio';
 import 'weightless/select';
 import 'weightless/slider';
 
+import './lablup-slider';
+
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 import '../plastics/lablup-shields/lablup-shields';

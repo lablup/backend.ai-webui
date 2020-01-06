@@ -25,7 +25,9 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) editable = null;
   @property({type: Boolean}) pin = null;
   @property({type: Boolean}) markers = null;
+  @property({type: Boolean}) disabled = null;
   @property({type: Object}) slider;
+  @property({type: Object}) textfield;
 
   static get styles() {
     return [
@@ -36,23 +38,38 @@ export default class LablupSlider extends LitElement {
       IronPositioning,
       // language=CSS
       css`
+        .mdc-text-field {
+          height: 25px;
+        }
+
+        mwc-textfield {
+          width: 55px;
+        }
       `];
   }
 
   render() {
     // language=HTML
     return html`
-      <mwc-slider id="slider" value="${this.value}" min="${this.min}" max="${this.max}"
-        step="${this.step}"
+      <div class="horizontal center layout">
+      <mwc-slider id="slider" value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
         ?pin="${this.pin}"
         ?markers="${this.markers}"
+        @change="${this.syncToText}"
       ></mwc-slider>
-      ${this.editable ? html`<mwc-textfield>${this.value}</mwc-textfield>` : html``}
+      ${this.editable ? html`<mwc-textfield id="textfield"
+          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+          @change="${this.syncToSlider}"
+         >${this.value}</mwc-textfield>` : html``}
+      </div>
     `;
   }
 
   firstUpdated() {
     this.slider = this.shadowRoot.querySelector('#slider');
+    if (this.editable) {
+      this.textfield = this.shadowRoot.querySelector('#textfield');
+    }
   }
 
   connectedCallback() {
@@ -61,6 +78,20 @@ export default class LablupSlider extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+  }
+
+  syncToText() {
+    this.textfield.value = this.slider.value;
+    this.syncValue();
+  }
+
+  syncToSlider() {
+    this.slider.value = this.textfield.value;
+    this.syncValue();
+  }
+
+  syncValue() {
+    this.value = this.textfield.value;
   }
 
 }
