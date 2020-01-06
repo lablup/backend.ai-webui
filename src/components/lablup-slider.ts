@@ -43,7 +43,7 @@ export default class LablupSlider extends LitElement {
         }
 
         mwc-textfield {
-          width: 55px;
+          width: var(--textfield-width, 100px);
         }
       `];
   }
