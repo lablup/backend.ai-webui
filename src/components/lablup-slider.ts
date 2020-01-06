@@ -10,6 +10,8 @@ import '@material/mwc-textfield';
 
 @customElement("lablup-slider")
 export default class LablupSlider extends LitElement {
+  public shadowRoot: any; // ShadowRoot
+
   @property({type: Number}) step = 0;
   @property({type: Number}) value = 0;
   @property({type: Number}) max = 0;
@@ -17,6 +19,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) editable = false;
   @property({type: Boolean}) pin = false;
   @property({type: Boolean}) markers = false;
+  @property({type: Object}) slider;
 
   static get styles() {
     return [
@@ -28,7 +31,7 @@ export default class LablupSlider extends LitElement {
   render() {
     // language=HTML
     return html`
-      <mwc-slider value="${this.value}" min="${this.min}" max="${this.max}"
+      <mwc-slider id="slider" value="${this.value}" min="${this.min}" max="${this.max}" ${this.step != 0 ? html`step="${this.step}"` : html``}
         ${this.pin ? `pin` : ``}
         ${this.markers ? `markers` : ``}
       ></mwc-slider>
@@ -37,6 +40,7 @@ export default class LablupSlider extends LitElement {
   }
 
   firstUpdated() {
+    this.slider = this.shadowRoot.querySelector('#slider');
   }
 
   connectedCallback() {
