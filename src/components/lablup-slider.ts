@@ -11,6 +11,9 @@ import '@material/mwc-slider';
 export default class LablupSlider extends LitElement {
   @property({type: Number}) step = 0;
   @property({type: Number}) value = 0;
+  @property({type: Number}) max = 0;
+  @property({type: Number}) min = 0;
+  @property({type: Boolean}) editable = false;
 
   static get styles() {
     return [
@@ -21,7 +24,10 @@ export default class LablupSlider extends LitElement {
 
   render() {
     // language=HTML
-    return html``;
+    return html`
+      <mwc-slider></mwc-slider>
+      ${this.editable ? html`` : html``}
+    `;
   }
 
   firstUpdated() {
