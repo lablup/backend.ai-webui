@@ -150,33 +150,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           font-weight: 100;
         }
 
-        paper-slider {
-          width: 285px !important;
-          --paper-slider-input: {
-            width: 120px !important;
-            min-width: 120px !important;
-          };
-          --paper-slider-height: 3px;
+        lablup-slider {
+          width: 245px !important;
+          --textfield-width: 50px;
+          --slider-width: 170px;
         }
 
-        .slider-input {
-          width: 100px;
+        lablup-slider.mem,
+        lablup-slider.shmem {
+          --slider-color: var(--paper-orange-400);
         }
 
-        paper-slider.mem,
-        paper-slider.shmem {
-          --paper-slider-knob-color: var(--paper-orange-400);
-          --paper-slider-active-color: var(--paper-orange-400);
+        lablup-slider.cpu {
+          --slider-color: var(--paper-light-green-400);
         }
 
-        paper-slider.cpu {
-          --paper-slider-knob-color: var(--paper-light-green-400);
-          --paper-slider-active-color: var(--paper-light-green-400);
-        }
-
-        paper-slider.gpu {
-          --paper-slider-knob-color: var(--paper-cyan-400);
-          --paper-slider-active-color: var(--paper-cyan-400);
+        lablup-slider.gpu {
+          --slider-color: var(--paper-cyan-400);
         }
 
         paper-progress {
@@ -277,7 +267,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         div.resource-type {
           font-size: 14px;
-          width: 50px;
+          width: 70px;
         }
 
         .resources.horizontal .monitor.session {
@@ -1972,41 +1962,41 @@ ${this.resource_templates.map(item => html`
               <span slot="description">Custom allocation</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
-                  <div class="resource-type" style="width:50px;">CPU</div>
-                  <paper-slider id="cpu-resource" class="cpu"
-                                pin snaps expand editable
+                  <div class="resource-type" style="width:70px;">CPU</div>
+                  <lablup-slider id="cpu-resource" class="cpu"
+                                pin snaps expand editable markers
                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                                value="${this.cpu_request}"></paper-slider>
+                                value="${this.cpu_request}"></lablup-slider>
                   <span class="caption">Core</span>
                 </div>
                 <div class="horizontal center layout">
-                  <div class="resource-type" style="width:50px;">RAM</div>
-                  <paper-slider id="mem-resource" class="mem"
-                                pin snaps step=0.05 editable
+                  <div class="resource-type" style="width:70px;">RAM</div>
+                  <lablup-slider id="mem-resource" class="mem"
+                                pin snaps step=0.05 editable markers
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                                value="${this.mem_request}"></paper-slider>
+                                value="${this.mem_request}"></lablup-slider>
                   <span class="caption">GB</span>
                 </div>
                 <div class="horizontal center layout">
-                  <div class="resource-type" style="width:50px;">Shared Memory</div>
-                  <paper-slider id="shmem-resource" class="mem"
-                                pin snaps step=0.0025 editable
+                  <div class="resource-type" style="width:70px;">Shared Memory</div>
+                  <lablup-slider id="shmem-resource" class="mem"
+                                pin snaps step=0.0025 editable markers
                                 min="0.0" max="${this.shmem_metric.max}"
-                                value="${this.shmem_request}"></paper-slider>
+                                value="${this.shmem_request}"></lablup-slider>
                   <span class="caption">GB</span>
                 </div>
                 <div class="horizontal center layout">
-                  <div class="resource-type" style="width:50px;">GPU</div>
-                  <paper-slider id="gpu-resource" class="gpu"
-                                pin snaps editable step="${this.gpu_step}"
-                                min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></paper-slider>
+                  <div class="resource-type" style="width:70px;">GPU</div>
+                  <lablup-slider id="gpu-resource" class="gpu"
+                                pin snaps editable markers step="${this.gpu_step}"
+                                min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
                   <span class="caption">GPU</span>
                 </div>
                 <div class="horizontal center layout">
-                  <div class="resource-type" style="width:50px;">Sessions</div>
-                  <paper-slider id="session-resource" class="session"
-                                pin snaps editable step=1
-                                min="1" max="${this.concurrency_limit}" value="${this.session_request}"></paper-slider>
+                  <div class="resource-type" style="width:70px;">Sessions</div>
+                  <lablup-slider id="session-resource" class="session"
+                                pin snaps editable markers step="1"
+                                min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
                   <span class="caption">#</span>
                 </div>
               </div>

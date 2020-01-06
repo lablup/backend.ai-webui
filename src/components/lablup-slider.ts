@@ -51,6 +51,7 @@ export default class LablupSlider extends LitElement {
 
         mwc-slider {
           width: var(--slider-width, 100px);
+          --mdc-theme-secondary: var(--slider-color, '#018786');
         }
       `];
   }
