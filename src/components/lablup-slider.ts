@@ -14,6 +14,8 @@ export default class LablupSlider extends LitElement {
   @property({type: Number}) max = 0;
   @property({type: Number}) min = 0;
   @property({type: Boolean}) editable = false;
+  @property({type: Boolean}) pin = false;
+  @property({type: Boolean}) markers = false;
 
   static get styles() {
     return [
@@ -25,7 +27,10 @@ export default class LablupSlider extends LitElement {
   render() {
     // language=HTML
     return html`
-      <mwc-slider></mwc-slider>
+      <mwc-slider value="${this.value}" min="${this.min}" max="${this.max}"
+        ${this.pin ? `pin` : ``}
+        ${this.markers ? `markers` : ``}
+      ></mwc-slider>
       ${this.editable ? html`` : html``}
     `;
   }
