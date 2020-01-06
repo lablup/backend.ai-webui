@@ -6,6 +6,8 @@
 import {css, customElement, html, LitElement, property} from "lit-element";
 import '@material/mwc-slider';
 import '@material/mwc-textfield';
+import 'weightless/textfield';
+
 import {
   IronFlex,
   IronFlexAlignment,
@@ -42,8 +44,13 @@ export default class LablupSlider extends LitElement {
           height: 25px;
         }
 
-        mwc-textfield {
+        wl-textfield {
           width: var(--textfield-width, 100px);
+          margin-left: 10px;
+        }
+
+        mwc-slider {
+          width: var(--slider-width, 100px);
         }
       `];
   }
@@ -57,10 +64,9 @@ export default class LablupSlider extends LitElement {
         ?markers="${this.markers}"
         @change="${this.syncToText}"
       ></mwc-slider>
-      ${this.editable ? html`<mwc-textfield id="textfield"
+      ${this.editable ? html`<wl-textfield id="textfield"
           value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
-          @change="${this.syncToSlider}"
-         >${this.value}</mwc-textfield>` : html``}
+          @change="${this.syncToSlider}"</wl-textfield>` : html``}
       </div>
     `;
   }
