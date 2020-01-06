@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, property} from "lit-element";
@@ -210,7 +210,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           <wl-card>
             <h3 class="horizontal center layout">
               <span>${this._map[key]}</span>
-              <span class="flex"></span>            
+              <span class="flex"></span>
             </h3>
             </div>
             <div style="width:100%;min-height:180px;">
