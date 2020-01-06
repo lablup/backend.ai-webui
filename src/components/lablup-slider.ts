@@ -6,6 +6,7 @@
 
 import {css, customElement, html, LitElement, property} from "lit-element";
 import '@material/mwc-slider';
+import '@material/mwc-textfield';
 
 @customElement("lablup-slider")
 export default class LablupSlider extends LitElement {
@@ -31,7 +32,7 @@ export default class LablupSlider extends LitElement {
         ${this.pin ? `pin` : ``}
         ${this.markers ? `markers` : ``}
       ></mwc-slider>
-      ${this.editable ? html`` : html``}
+      ${this.editable ? html`<mwc-textfield></mwc-textfield>` : html``}
     `;
   }
 
