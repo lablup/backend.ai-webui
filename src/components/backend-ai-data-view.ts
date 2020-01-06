@@ -102,6 +102,7 @@ export default class BackendAIData extends BackendAIPage {
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
+    this._uploadFlag = true;
   }
 
   static get properties() {
@@ -572,6 +573,9 @@ export default class BackendAIData extends BackendAIPage {
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
           ${this.uploadFilesExist ? html`
+          <wl-button outlined id="cancel_upload" @click="${(e) => this._cancelUpload(e)}">
+            <wl-icon>cancel</wl-icon> Stop uploading
+          </wl-button>
           <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
                        height-by-rows>
             <vaadin-grid-column width="100px" flex-grow="0">
@@ -1283,6 +1287,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   fileUpload(fileObj) {
+    this._uploadFlag = true;
     this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
     const path = this.explorer.breadcrumb.concat(fileObj.name).join("/");
     let job = window.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
@@ -1300,6 +1305,17 @@ export default class BackendAIData extends BackendAIPage {
           console.log("Failed because: " + error)
         },
         onProgress: (bytesUploaded, bytesTotal) => {
+          if(!this._uploadFlag) {
+            upload.abort();
+            this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption = `Canceling...`;
+            this.uploadFiles = this.uploadFiles.slice();
+            setTimeout(() => {
+              this.uploadFiles = [];
+              this.uploadFilesExist = false;
+            }, 1000);
+            return;
+          }
+
           const now = new Date().getTime();
           const speed: string = (bytesUploaded / (1024 * 1024) / ((now - start_date) / 1000)).toFixed(1) + "MB/s";
           const estimated_seconds = Math.floor((bytesTotal - bytesUploaded) / (bytesUploaded / (now - start_date) * 1000));
@@ -1330,6 +1346,10 @@ export default class BackendAIData extends BackendAIPage {
       });
       upload.start();
     });
+  }
+
+  _cancelUpload(e) {
+    this._uploadFlag = false;
   }
 
   _downloadFile(e) {
