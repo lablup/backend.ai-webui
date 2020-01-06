@@ -66,7 +66,7 @@ export default class LablupSlider extends LitElement {
         @change="${this.syncToText}"
       ></mwc-slider>
       ${this.editable ? html`<wl-textfield id="textfield" class="${this.id}" type="number"
-          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+          value="${this.value}" min="${this.min}" max="${this.max}"
           @change="${this.syncToSlider}">
 
         </wl-textfield>` : html``}
