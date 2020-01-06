@@ -21,7 +21,7 @@ Backend.AI console focuses to
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
-    * Upload  / download files
+    * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
     * Share folders with friends / groups 
  * Statistics
@@ -308,7 +308,7 @@ Note: this command only works on macOS, because packaging uses `ditto`, that sup
 
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
 
-Note: Requires electron-installer-dmg to make disk image. It requires Python 2+ to build binary for package.
+Note: Requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
 
 ```
 $ make pack
