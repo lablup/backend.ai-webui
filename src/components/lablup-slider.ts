@@ -107,6 +107,7 @@ export default class LablupSlider extends LitElement {
 
   syncValue() {
     this.value = this.textfield.value;
+    this.slider.layout();
   }
 }
 
