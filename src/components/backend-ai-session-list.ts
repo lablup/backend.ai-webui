@@ -386,7 +386,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].running = false;
           }
           if ('cuda.device' in occupied_slots) {
-            sessions[objectKey].gpu_slot = parseInt(occupied_slots['cuda.device']);
+            sessions[objectKey].cuda_gpu_slot = parseInt(occupied_slots['cuda.device']);
           }
           if ('cuda.shares' in occupied_slots) {
             //sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
@@ -1152,21 +1152,21 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <template is="dom-if" if="[[item.gpu_slot]]">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
-                  <span>[[item.gpu_slot]]</span>
+                <template is="dom-if" if="[[item.cuda_gpu_slot]]">
+                  <iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon>
+                  <span>[[item.cuda_gpu_slot]]</span>
                   <span class="indicator">GPU</span>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
                   <template is="dom-if" if="[[item.fgpu_slot]]">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon>
                     <span>[[item.fgpu_slot]]</span>
                     <span class="indicator">GPU</span>
                   </template>
                 </template>
-                <template is="dom-if" if="[[!item.gpu_slot]]">
+                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
                   <template is="dom-if" if="[[!item.fgpu_slot]]">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon>
                     <span>-</span>
                     <span class="indicator">GPU</span>
                   </template>

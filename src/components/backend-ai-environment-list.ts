@@ -252,10 +252,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
+                <iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon>
                 <span>${rowData.item.cuda_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
-                <span class="indicator">GPU</span>
+                <span class="indicator">CUDA GPU</span>
               </div>
             </div>
             ` : html``}
@@ -265,10 +265,31 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 <iron-icon class="fg green" icon="icons:apps"></iron-icon>
                 <span>${rowData.item.cuda_shares_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
-                <span class="indicator">fGPU</span>
+                <span class="indicator">CUDA fGPU</span>
               </div>
             </div>
             ` : html``}
+        ${rowData.item.rocm_device_limit_min ? html`
+           <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" src="resources/icons/ROCm.png"></iron-icon>
+                <span>${rowData.item.rocm_device_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
+                <span class="indicator">ROCm GPU</span>
+              </div>
+            </div>
+            ` : html``}
+        ${rowData.item.tpu_device_limit_min ? html`
+           <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
+                <span>${rowData.item.tpu_device_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
+                <span class="indicator">TPU</span>
+              </div>
+            </div>
+            ` : html``}
+
       `, root
     );
   }
@@ -778,6 +799,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             }
             if (resource.key == 'cuda.shares') {
               resource.key = 'cuda_shares';
+            }
+            if (resource.key == 'rocm.device') {
+              resource.key = 'rocm_device';
+            }
+            if (resource.key == 'tpu.device') {
+              resource.key = 'tpu_device';
             }
             image[resource.key + '_limit_min'] = this._addUnit(resource.min);
             image[resource.key + '_limit_max'] = this._addUnit(resource.max);
