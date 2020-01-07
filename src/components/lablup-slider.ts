@@ -49,6 +49,7 @@ export default class LablupSlider extends LitElement {
         }
 
         mwc-slider {
+          padding: 15px 0px 0px 0px;
           width: var(--slider-width, 100px);
           --mdc-theme-secondary: var(--slider-color, '#018786');
         }
@@ -94,6 +95,8 @@ export default class LablupSlider extends LitElement {
   }
 
   syncToSlider() {
+    let rounded = Math.round(this.textfield.value / this.step) * this.step;
+    this.textfield.value = rounded;
     if (this.textfield.value > this.max) {
       this.textfield.value = this.max;
     }
