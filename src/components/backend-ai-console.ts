@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 import {css, customElement, html, LitElement, property} from "lit-element";
 // PWA components
@@ -199,9 +199,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
         }
 
+        wl-dialog wl-textfield {
+          --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
+          --input-color-disabled: #222222;
+          --input-label-color-disabled: #222222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #cccccc;
+        }
+
         paper-item {
           font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           font-weight: 400;
+        }
+
+        a.email:hover {
+          color: #29b6f6;
         }
       `];
   }
@@ -382,6 +394,52 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this._page = 'summary';
       navigate(decodeURIComponent('/'));
     }
+  }
+
+  _openUserPrefDialog() {
+    const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
+    dialog.show();
+  }
+
+  _hideUserPrefDialog() {
+    this.shadowRoot.querySelector('#user-preference-dialog').hide();
+  }
+
+  _updateUserPassword() {
+    const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
+    const oldPassword = dialog.querySelector('#pref-original-password').value;
+    const newPassword = dialog.querySelector('#pref-new-password').value;
+    const newPassword2 = dialog.querySelector('#pref-new-password2').value;
+    if (!oldPassword) {
+      this.notification.text = 'Enter old password';
+      this.notification.show();
+      return;
+    }
+    if (!newPassword) {
+      this.notification.text = 'Enter new password';
+      this.notification.show();
+      return;
+    }
+    if (newPassword !== newPassword2) {
+      this.notification.text = 'Two new passwords do not match';
+      this.notification.show();
+      return;
+    }
+    const p = window.backendaiclient.updatePassword(oldPassword, newPassword, newPassword2);
+    p.then((resp) => {
+      this.notification.text = 'Password updated';
+      this.notification.show();
+      this._hideUserPrefDialog();
+      this.shadowRoot.querySelector('#prefj-original-password').value = '';
+      this.shadowRoot.querySelector('#prefj-new-password').value = '';
+      this.shadowRoot.querySelector('#prefj-new-password2').value = '';
+    }).catch((err) => {
+      if (err && err.title) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true);
+      }
+    });
   }
 
   updated(changedProps: any) {
@@ -648,7 +706,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">19.12.1.191204</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.01.0.200103</small>
               </address>
             </div>
         </div>
@@ -657,7 +715,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
             <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
             <div slot="actionItems" class="vertical end-justified flex layout">
-              <div style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</div>
+              <a class="email" style="margin-top:4px;font-size: 14px;text-align:right" @click="${this._openUserPrefDialog}">${this.user_id}</a>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
             <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button>
@@ -690,6 +748,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
+
+      <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">Change password</wl-title>
+         <div slot="content">
+            <wl-textfield id="pref-original-password" type="password" label="Original password" maxLength="30"></wl-textfield>
+            <wl-textfield id="pref-new-password" type="password" label="New password" maxLength="30"></wl-textfield>
+            <wl-textfield id="pref-new-password2" type="password" label="New password (again)" maxLength="30"></wl-textfield>
+         </div>
+         <div slot="footer">
+            <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">Cancel</wl-button>
+            <wl-button class="ok" @click="${this._updateUserPassword}">Update</wl-button>
+         </div>
+      </wl-dialog>
     `;
   }
 

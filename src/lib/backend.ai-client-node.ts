@@ -439,6 +439,20 @@ class Client {
   }
 
   /**
+   * Update user's password.
+   *
+   */
+  async updatePassword(oldPassword, newPassword, newPassword2) {
+    let body = {
+      'old_password': oldPassword,
+      'new_password': newPassword,
+      'new_password2': newPassword2
+    };
+    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Return the resource slots.
    */
   async getResourceSlots() {

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, property} from "lit-element";
@@ -140,7 +140,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       case 'running':
         status = 'ALIVE';
         break;
-      case 'finished':
+      case 'terminated':
         status = 'TERMINATED';
         break;
       case 'archived':

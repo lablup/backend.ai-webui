@@ -768,7 +768,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 name="user_password"
                 id="id_user_password"
                 label="Password"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
               >
               </wl-textfield>
               <wl-textfield

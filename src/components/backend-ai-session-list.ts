@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, property} from "lit-element";
@@ -320,7 +320,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
       case "running":
-        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING"];
+        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING", "PREPARING", "PULLING"];
         break;
       case "finished":
         status = ["TERMINATED", "CANCELLED"]; //TERMINATED, CANCELLED
@@ -330,7 +330,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
         break;
       default:
-        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING"];
+        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING", "PREPARING", "PULLING"];
     }
     if (window.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
