@@ -388,6 +388,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           if ('cuda.device' in occupied_slots) {
             sessions[objectKey].cuda_gpu_slot = parseInt(occupied_slots['cuda.device']);
           }
+          if ('rocm.device' in occupied_slots) {
+            sessions[objectKey].rocm_gpu_slot = parseInt(occupied_slots['rocm.device']);
+          }
+          if ('tpu.device' in occupied_slots) {
+            sessions[objectKey].tpu_slot = parseInt(occupied_slots['tpu.device']);
+          }
           if ('cuda.shares' in occupied_slots) {
             //sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
             sessions[objectKey].cuda_fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
@@ -1151,6 +1157,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               </div>
             </div>
             <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
               <div class="layout horizontal configuration">
                 <template is="dom-if" if="[[item.cuda_gpu_slot]]">
                   <iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon>
