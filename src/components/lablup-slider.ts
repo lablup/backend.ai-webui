@@ -14,6 +14,7 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 import {BackendAiStyles} from "./backend-ai-console-styles";
+import { style } from "@material/mwc-drawer/mwc-drawer-css";
 
 @customElement("lablup-slider")
 export default class LablupSlider extends LitElement {
@@ -60,7 +61,7 @@ export default class LablupSlider extends LitElement {
     // language=HTML
     return html`
       <div class="horizontal center layout">
-      <mwc-slider id="slider" class="${this.id}" value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+      <mwc-slider id="slider" class="${this.id}" value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}" 
         ?pin="${this.pin}"
         ?markers="${this.markers}"
         @change="${this.syncToText}"
@@ -79,6 +80,25 @@ export default class LablupSlider extends LitElement {
     if (this.editable) {
       this.textfield = this.shadowRoot.querySelector('#textfield');
     }
+    this.shadowRoot.querySelectorAll('#textfield').forEach(element => {
+      element.addEventListener("focusout", event => {
+        let rounded = Math.round(this.textfield.value / this.step) * this.step;
+        this.textfield.value = rounded.toFixed(((decimal_places: number) => {
+          if (Math.floor(decimal_places) === decimal_places) {
+            return 0;
+          }
+          return decimal_places.toString().split(".")[1].length || 0;
+          })(this.step));
+        
+        if (this.textfield.value > this.max) {
+          this.textfield.value = this.max;
+        }
+        if (this.textfield.value < this.min) {
+          this.textfield.value = this.min;
+        }
+      })
+
+    }, true);
   }
 
   connectedCallback() {
@@ -95,14 +115,6 @@ export default class LablupSlider extends LitElement {
   }
 
   syncToSlider() {
-    let rounded = Math.round(this.textfield.value / this.step) * this.step;
-    this.textfield.value = rounded;
-    if (this.textfield.value > this.max) {
-      this.textfield.value = this.max;
-    }
-    if (this.textfield.value < this.min) {
-      this.textfield.value = this.min;
-    }
     this.slider.value = this.textfield.value;
     this.syncValue();
   }
