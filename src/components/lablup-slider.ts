@@ -14,7 +14,6 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 import {BackendAiStyles} from "./backend-ai-console-styles";
-import { style } from "@material/mwc-drawer/mwc-drawer-css";
 
 @customElement("lablup-slider")
 export default class LablupSlider extends LitElement {
@@ -50,7 +49,6 @@ export default class LablupSlider extends LitElement {
         }
 
         mwc-slider {
-          padding: 15px 0px 0px 0px;
           width: var(--slider-width, 100px);
           --mdc-theme-secondary: var(--slider-color, '#018786');
         }
@@ -80,25 +78,6 @@ export default class LablupSlider extends LitElement {
     if (this.editable) {
       this.textfield = this.shadowRoot.querySelector('#textfield');
     }
-    this.shadowRoot.querySelectorAll('#textfield').forEach(element => {
-      element.addEventListener("focusout", event => {
-        let rounded = Math.round(this.textfield.value / this.step) * this.step;
-        this.textfield.value = rounded.toFixed(((decimal_places: number) => {
-          if (Math.floor(decimal_places) === decimal_places) {
-            return 0;
-          }
-          return decimal_places.toString().split(".")[1].length || 0;
-          })(this.step));
-        
-        if (this.textfield.value > this.max) {
-          this.textfield.value = this.max;
-        }
-        if (this.textfield.value < this.min) {
-          this.textfield.value = this.min;
-        }
-      })
-
-    }, true);
   }
 
   connectedCallback() {
@@ -116,6 +95,19 @@ export default class LablupSlider extends LitElement {
 
   syncToSlider() {
     this.slider.value = this.textfield.value;
+    let rounded = Math.round(this.textfield.value / this.step) * this.step;
+    this.textfield.value = rounded.toFixed(((decimal_places: number) => {
+      if (Math.floor(decimal_places) === decimal_places) {
+        return 0;
+      }
+      return decimal_places.toString().split(".")[1].length || 0;
+      })(this.step));
+    if (this.textfield.value > this.max) {
+      this.textfield.value = this.max;
+    }
+    if (this.textfield.value < this.min) {
+      this.textfield.value = this.min;
+    }
     this.syncValue();
   }
 
