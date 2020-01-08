@@ -58,6 +58,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Boolean}) refreshing = false;
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) is_superadmin = false;
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) _grid = Object();
   @property({type: Object}) notification = Object();
@@ -280,12 +281,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = window.backendaiclient.is_admin;
+        this.is_superadmin = window.backendaiclient.is_superadmin;
         this._connectionMode = window.backendaiclient._config._connectionMode;
         this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
         this._refreshJobData();
       }, true);
     } else { // already connected
       this.is_admin = window.backendaiclient.is_admin;
+      this.is_superadmin = window.backendaiclient.is_superadmin;
       this._connectionMode = window.backendaiclient._config._connectionMode;
       this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
       this._refreshJobData();
@@ -1200,7 +1203,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-        ${window.backendaiclient.is_superadmin ? html`
+        ${this.is_superadmin ? html`
           <vaadin-grid-column auto-width flex-grow="0" resizable header="Agent">
             <template>
               <div class="layout vertical">
