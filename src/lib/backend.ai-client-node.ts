@@ -202,6 +202,7 @@ class Client {
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
     this.registry = new Registry(this);
+    this.setting = new Setting(this);
     this.domain = new Domain(this);
 
     this._features = {}; // feature support list
@@ -2348,25 +2349,52 @@ class Registry {
 
 class Setting {
   public client: any;
-
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
   constructor(client) {
     this.client = client;
   }
-
+  /**
+   * List settings
+   *
+   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   */
   list(prefix = "") {
     const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": prefix, "prefix": true});
     return this.client._wrapWithPromise(rqst);
   }
-
+  /**
+   * Get settings
+   *
+   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   */
+  get(key) {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": key, "prefix": false});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Add a setting
+   *
+   * @param {string} key - key to add.
+   * @param {string} value - value to add.
+   */
   add(key, value) {
     const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
     return this.client._wrapWithPromise(rqst);
   }
-
-  delete(key) {
+  /**
+   * Delete a setting
+   *
+   * @param {string} key - key to delete
+   * @param {boolean} prefix - prefix to delete. if prefix is true, this command will delete every settings starting with the key.
+   */
+  delete(key, prefix = false) {
     const rqst = this.client.newSignedRequest("POST", "/config/delete", {
       "key": `${key}`,
-      "prefix": false
+      "prefix": prefix
     });
     return this.client._wrapWithPromise(rqst);
   }

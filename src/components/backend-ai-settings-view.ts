@@ -223,7 +223,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
-    window.backendaiclient.registry.list().then((response)=>{
+    window.backendaiclient.setting.list('config/').then((response)=>{
       console.log(response);
 
     });
