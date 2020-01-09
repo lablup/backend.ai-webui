@@ -224,7 +224,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
-    window.backendaiclient.setting.get('config/docker/image/auto_pull').then((response)=>{
+    window.backendaiclient.setting.get('docker/image/auto_pull').then((response)=>{
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
         this.options['automatic_image_update'] = true;
       } else if (result === 'tag' || result === 'none') {
@@ -250,17 +250,15 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
   toggleImageUpdate(e) {
     if (e.target.checked === false) {
-      window.backendaiclient.setting.set('config/docker/image/auto_pull', 'none').then((response)=>{
+      window.backendaiclient.setting.set('docker/image/auto_pull', 'none').then((response)=>{
         console.log(response);
       });
     } else {
-      window.backendaiclient.setting.set('config/docker/image/auto_pull', 'digest').then((response)=>{
+      window.backendaiclient.setting.set('docker/image/auto_pull', 'digest').then((response)=>{
         console.log(response);
       });
     }
-    console.log(e.target.checked);
   }
-
 }
 
 declare global {

@@ -2164,6 +2164,7 @@ class Setting {
      */
     constructor(client) {
         this.client = client;
+        this.config = null;
     }
     /**
      * List settings
@@ -2171,6 +2172,7 @@ class Setting {
      * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
      */
     list(prefix = "") {
+        prefix = `config/${prefix}`;
         const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": prefix, "prefix": true });
         return this.client._wrapWithPromise(rqst);
     }
@@ -2180,7 +2182,19 @@ class Setting {
      * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
      */
     get(key) {
+        key = `config/${key}`;
         const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": key, "prefix": false });
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Set a setting
+     *
+     * @param {string} key - key to add.
+     * @param {string} value - value to add.
+     */
+    set(key, value) {
+        key = `config/${key}`;
+        const rqst = this.client.newSignedRequest("POST", "/config/set", { key, value });
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -2190,6 +2204,7 @@ class Setting {
      * @param {string} value - value to add.
      */
     add(key, value) {
+        key = `config/${key}`;
         const rqst = this.client.newSignedRequest("POST", "/config/set", { key, value });
         return this.client._wrapWithPromise(rqst);
     }
@@ -2200,6 +2215,7 @@ class Setting {
      * @param {boolean} prefix - prefix to delete. if prefix is true, this command will delete every settings starting with the key.
      */
     delete(key, prefix = false) {
+        key = `config/${key}`;
         const rqst = this.client.newSignedRequest("POST", "/config/delete", {
             "key": `${key}`,
             "prefix": prefix
