@@ -157,6 +157,7 @@ class Client {
   public maintenance: Maintenance;
   public scalingGroup: ScalingGroup;
   public registry: Registry;
+  public setting: Setting;
   public _features: any;
   public ready: boolean = false;
   static ERR_REQUEST: any;
@@ -2331,7 +2332,8 @@ class Registry {
   }
 
   add(key, value) {
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    let regkey = `config/docker/registry/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {regkey, value});
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -2339,6 +2341,32 @@ class Registry {
     const rqst = this.client.newSignedRequest("POST", "/config/delete", {
       "key": `config/docker/registry/${key}`,
       "prefix": true
+    });
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+class Setting {
+  public client: any;
+
+  constructor(client) {
+    this.client = client;
+  }
+
+  list(prefix = "") {
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": prefix, "prefix": true});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  add(key, value) {
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  delete(key) {
+    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
+      "key": `${key}`,
+      "prefix": false
     });
     return this.client._wrapWithPromise(rqst);
   }

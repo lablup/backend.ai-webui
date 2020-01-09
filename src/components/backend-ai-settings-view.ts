@@ -156,6 +156,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div class="vertical center-justified layout setting-desc">
                         <div>CUDA GPU support</div>
                         <div class="description">NVidia CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.
+                        ${this.options['cuda_fgpu'] ? html`<br />Disabled because system uses Fractional GPU plugin`:html``}
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
@@ -200,29 +201,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         <wl-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></wl-switch>
                     </div>
                 </div>
-                <div class="horizontal layout wrap setting-item">
-                    <div class="vertical center-justified layout setting-desc">
-                        <div>Precise Statistics</div>
-                        <div class="description">Use precise statistics module. Requires Backend.AI 19.06 or above. <br/>
-                        </div>
-                    </div>
-                    <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="precise-statistics-switch" disabled></wl-switch>
-                    </div>
-                </div>
-                <div class="horizontal layout wrap setting-item">
-                    <div class="vertical center-justified layout setting-desc">
-                        <div>Detailed Logging</div>
-                        <div class="description">Use detailed logging module. Requires Backend.AI 19.06 or above.<br/>
-                        </div>
-                    </div>
-                    <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="detailed-logging-switch" disabled></wl-switch>
-                    </div>
-                </div>
             </div>
-
-
         </wl-card>
     `;
   }
@@ -244,6 +223,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
+    window.backendaiclient.registry.list().then((response)=>{
+      console.log(response);
+
+    });
     window.backendaiclient.getResourceSlots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
@@ -257,9 +240,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
       if ('tpu.device' in response) {
         this.options['tpu'] = true;
       }
-      this.update();
+      this.update(this.options);
     });
   }
+
 
 }
 
