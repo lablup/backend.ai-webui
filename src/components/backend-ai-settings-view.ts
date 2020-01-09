@@ -6,8 +6,6 @@
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
   IronFlex,
@@ -25,10 +23,16 @@ import 'weightless/switch';
 @customElement("backend-ai-settings-view")
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
+  @property({type: Boolean}) options = Object();
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
+    this.options = {
+      cuda_gpu: false,
+      cuda_fgpu: false,
+      rocm_gpu: false,
+      tpu: false
+    }
   }
 
   static get is() {
@@ -155,18 +159,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="cuda-gpu-support-switch" checked disabled></wl-switch>
+                        <wl-switch id="cuda-gpu-support-switch" ?checked="${this.options['cuda_gpu']}" disabled></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
                     <div class="vertical center-justified layout setting-desc">
                         <div>ROCm GPU support</div>
                         <div class="description">AMD ROCm GPU support. <br/>Requires Backend.AI ROCm Plugin. <br/>
-                            Requires Backend.AI 19.09 beta or above.
+                            Requires Backend.AI 19.12 or above.
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <wl-switch id="rocm-gpu-support-switch" disabled></wl-switch>
+                      <wl-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></wl-switch>
                     </div>
                 </div>
             </div>
@@ -182,7 +186,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="fractional-gpu-switch" checked disabled></wl-switch>
+                        <wl-switch id="fractional-gpu-switch" ?checked="${this.options['cuda_fgpu']}" disabled></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
@@ -193,7 +197,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="tpu-switch" disabled></wl-switch>
+                        <wl-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
@@ -226,21 +230,37 @@ export default class BackendAiSettingsView extends BackendAIPage {
   firstUpdated() {
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
+        this.updateSettings();
       }, true);
     } else { // already connected
+      this.updateSettings();
     }
   }
 
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-
     }
   }
 
-  _indexFrom1(index) {
-    return index + 1;
+  updateSettings() {
+    window.backendaiclient.getResourceSlots().then((response) => {
+      if ('cuda.device' in response) {
+        this.options['cuda_gpu'] = true;
+      }
+      if ('cuda.shares' in response) {
+        this.options['cuda_fgpu'] = true;
+      }
+      if ('rocm.device' in response) {
+        this.options['rocm_gpu'] = true;
+      }
+      if ('tpu.device' in response) {
+        this.options['tpu'] = true;
+      }
+      this.update();
+    });
   }
+
 }
 
 declare global {
