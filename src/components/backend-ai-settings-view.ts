@@ -107,7 +107,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="allow-image-update-switch" @change="${this.toggleImageUpdate}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
+                        <wl-switch id="allow-image-update-switch" @change="${(e)=>this.toggleImageUpdate(e)}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
