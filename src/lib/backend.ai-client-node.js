@@ -2166,12 +2166,21 @@ class Setting {
         this.client = client;
     }
     /**
-     * Get settings
+     * List settings
      *
      * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
      */
     list(prefix = "") {
         const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": prefix, "prefix": true });
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Get settings
+     *
+     * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+     */
+    get(key) {
+        const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": key, "prefix": false });
         return this.client._wrapWithPromise(rqst);
     }
     /**
