@@ -24,6 +24,8 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
+import 'weightless/checkbox';
+import 'weightless/label';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -40,10 +42,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
-  @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
-  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
-  @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-  @property({type: Array}) fgpu_metric = [0, 0.2, 0.3, 0.5, 1, 2, 3, 4, 8, 16, "Unlimited"];
   @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
   @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
   @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
@@ -106,6 +104,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           font-size: 9px;
           margin-right: 5px;
         }
+        
+        span.caption {
+          font-size: 11px;
+          width: 30px;
+        }
 
         div.configuration {
           width: 70px !important;
@@ -113,6 +116,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
         div.configuration iron-icon {
           padding-right: 5px;
+        }
+        
+        div.resource-type {
+          width: 35px;
+          font-size: 13px;
+          font-weight : 500;
         }
 
         wl-button.create-button {
@@ -138,6 +147,33 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
         }
+
+        wl-label {
+          margin: 0px 0px 0px 5px;
+          min-width: 60px;
+          font-size: 10px;
+          --label-font-family	: Roboto, Noto, sans-serif;
+        }
+
+        wl-list-item {
+          margin: 10px 10px 20px 10px;
+        }
+
+        wl-textfield {
+          width: 30px;
+          --input-padding-top-bottom : 0px;
+          --input-font-family	: Roboto, Noto, sans-serif;
+        }
+
+        wl-checkbox {
+          --checkbox-size : 10px;
+          --checkbox-border-radius : 3px;
+          --checkbox-bg-checked	: var(--paper-green-800);
+          --checkbox-checkmark-stroke-color : var(--paper-lime-100);
+          --checkbox-color-checked : var(--paper-green-800);
+          }
+        }
+
       `];
   }
 
@@ -212,36 +248,54 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                            error-message="Policy name only accepts letters and numbers"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="cpu-resource" label="CPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.cpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.ram_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="gpu-resource" label="GPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.gpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="fgpu-resource" label="fgpu">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.fgpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <wl-list-item style="width:100%;">
+                  <div class="horizontal center layout">
+                    <div class="resource-type">CPU</div>
+                    <wl-textfield id="cpu-resource" type="number"></wl-textfield>
+                    <span class="caption">Core</span>
+                      <wl-label>
+                        <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}"></wl-checkbox>
+                        Unlimited
+                      </wl-label>
+                  </div>
+                </wl-list-item>
+                <wl-list-item style="width:100%;">
+                  <div class="horizontal center layout">
+                    <div class="resource-type">RAM</div>
+                    <wl-textfield id="ram-resource" type="number"></wl-textfield>
+                    <span class="caption">GB</span>
+                    <wl-label>
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                </wl-list-item>
               </div>
-              <h4>Sessions</h4>
+              <div class="horizontal center layout">
+                <wl-list-item style="width:100%;">
+                  <div class="horizontal center layout">
+                    <div class="resource-type">GPU</div>
+                    <wl-textfield id="gpu-resource" type="number"></wl-textfield>
+                    <span class="caption">GB</span>
+                    <wl-label>
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                </wl-list-item>
+                <wl-list-item style="width:100%;">
+                  <div class="horizontal center layout">
+                    <div class="resource-type">fGPU</div>
+                    <wl-textfield id="fgpu-resource" type="number"></wl-textfield>
+                    <span class="caption">GB</span>
+                    <wl-label>
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                </wl-list-item>
+              </div>
+                <h4>Sessions</h4>
               <div class="horizontal center layout">
                 <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
                   <paper-listbox slot="dropdown-content" selected="0">
@@ -523,6 +577,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
     let vfolder_capacity_limit = this.shadowRoot.querySelector('#vfolder-capacity-limit').value;
     let idle_timeout = this.shadowRoot.querySelector('#idle-timeout').value;
+    console.log(cpu_resource);
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
@@ -572,6 +627,14 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         this.notification.show(true);
       }
     });
+  }
+
+  _toggleCheckbox(e) {
+    const checkEl = e.target;
+    const checked = checkEl.checked;
+    const wlTextEl = checkEl.closest('wl-list-item').querySelector('wl-textfield');
+    wlTextEl.disabled = checked;
+    // console.log(e.target['checked']);
   }
 
   _markIfUnlimited(value) {
