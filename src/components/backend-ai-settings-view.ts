@@ -28,6 +28,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   constructor() {
     super();
     this.options = {
+      automatic_image_update: false,
       cuda_gpu: false,
       cuda_fgpu: false,
       rocm_gpu: false,
@@ -106,7 +107,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="allow-image-update-switch" disabled></wl-switch>
+                        <wl-switch id="allow-image-update-switch" @change="${this.toggleImageUpdate}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
@@ -223,10 +224,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
-    window.backendaiclient.setting.list('config/').then((response)=>{
-      console.log(response);
-
-    });
+    window.backendaiclient.setting.get('config/docker/image/auto_pull').then((response)=>{
+      if (response['result'] === null || response['result'] === 'digest') { // digest mode
+        this.options['automatic_image_update'] = true;
+      } else if (result === 'tag' || result === 'none') {
+        this.options['automatic_image_update'] = false;
+      }
+      this.update(this.options);
+     });
     window.backendaiclient.getResourceSlots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
@@ -243,7 +248,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
       this.update(this.options);
     });
   }
-
+  toggleImageUpdate(e) {
+    if (e.target.checked === false) {
+      window.backendaiclient.setting.set('config/docker/image/auto_pull', 'none').then((response)=>{
+        console.log(response);
+      });
+    } else {
+      window.backendaiclient.setting.set('config/docker/image/auto_pull', 'digest').then((response)=>{
+        console.log(response);
+      });
+    }
+    console.log(e.target.checked);
+  }
 
 }
 

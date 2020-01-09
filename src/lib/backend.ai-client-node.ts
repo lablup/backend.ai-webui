@@ -2349,6 +2349,7 @@ class Registry {
 
 class Setting {
   public client: any;
+  public config: any;
   /**
    * Setting API wrapper.
    *
@@ -2356,6 +2357,7 @@ class Setting {
    */
   constructor(client) {
     this.client = client;
+    this.config = null;
   }
   /**
    * List settings
@@ -2373,6 +2375,16 @@ class Setting {
    */
   get(key) {
     const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": key, "prefix": false});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Set a setting
+   *
+   * @param {string} key - key to add.
+   * @param {string} value - value to add.
+   */
+  set(key, value) {
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
     return this.client._wrapWithPromise(rqst);
   }
   /**
