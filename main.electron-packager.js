@@ -259,7 +259,7 @@ app.once('ready', function() {
           {
             label: 'Zoom Out',
             accelerator: 'CmdOrCtrl+-',
-            role: 'zomeout'
+            role: 'zoomout'
           },
           {
             label: 'Actual Size',
