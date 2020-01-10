@@ -18,6 +18,7 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) message = '';
   @property({type: Object}) indicator;
   @property({type: Array}) notifications = Array();
+  @property({type: Array}) notificationstore = Array();
   @property({type: Boolean}) active = true;
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
@@ -127,19 +128,29 @@ export default class LablupNotification extends LitElement {
   }
   async show(persistent: boolean = false, message: string = '') {
     this.gc();
+    let notification_message: string;
+    let notification_detail: string;
     let notification = document.createElement('wl-snackbar');
     if (message === '') {
       notification.innerHTML = '<span style="overflow-x:hidden">' + this.text + '</span>';
       if (this.detail != '') {
         notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
       }
+      notification_message = this.text;
+      notification_detail = this.detail;
     } else {
       notification.innerHTML = '<span style="overflow-x:hidden">' + message + '</span>';
       this.text = message;
       if (this.detail != '') {
         notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
       }
+      notification_message = message;
+      notification_detail = this.detail;
     }
+    this.notificationstore.push({
+      message: notification_message;
+    notification_detail;
+  })
     if (this.detail != '') {
       let more_button = document.createElement('wl-button');
       more_button.setAttribute('slot', "action");
@@ -187,6 +198,9 @@ export default class LablupNotification extends LitElement {
     if (this.notifications.length > 0) {
       let opened_notifications = this.notifications.filter(noti => noti.open === true);
       this.notifications = opened_notifications;
+    }
+    if (this.notificationstore.length > 5000) {
+      this.notificationstore = this.notificationstore.slice(1, 5000);
     }
     this.step = this.notifications.length;
   }
