@@ -223,7 +223,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else if ('cuda.device' in this.installImageResource) {
       this.installImageResource['gpu'] = this.installImageResource['cuda.device'];
     }
-    console.log(this.installImageResource);
+    // Add 256m to run the image.
+    if (this.installImageResource['mem'].endsWith('g')) {
+      this.installImageResource['mem'] = this.installImageResource['mem'].replace('g', '.5g');
+    } else if (this.installImageResource['mem'].endsWith('m')) {
+      this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
+    }
     window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
