@@ -33,7 +33,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       cuda_gpu: false,
       cuda_fgpu: false,
       rocm_gpu: false,
-      tpu: false
+      tpu: false,
+      scheduler: 'fifo'
     }
   }
 
@@ -50,35 +51,35 @@ export default class BackendAiSettingsView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          div.description,
-          span.description {
-              font-size: 11px;
-              margin-top: 5px;
-              margin-right: 5px;
-          }
+        div.description,
+        span.description {
+          font-size: 11px;
+          margin-top: 5px;
+          margin-right: 5px;
+        }
 
-          .setting-item {
-              margin: 15px 10px;
-              width: 340px;
-          }
+        .setting-item {
+          margin: 15px 10px;
+          width: 340px;
+        }
 
-          .setting-desc {
-              width: 300px;
-          }
+        .setting-desc {
+          width: 300px;
+        }
 
-          .setting-button {
-              width: 35px;
-          }
+        .setting-button {
+          width: 35px;
+        }
 
-          wl-card > div {
-              padding: 15px;
-          }
+        wl-card > div {
+          padding: 15px;
+        }
       `];
   }
 
@@ -108,7 +109,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="allow-image-update-switch" @change="${(e)=>this.toggleImageUpdate(e)}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
+                        <wl-switch id="allow-image-update-switch" @change="${(e) => this.toggleImageUpdate(e)}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
@@ -161,7 +162,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div class="vertical center-justified layout setting-desc">
                         <div>CUDA GPU support</div>
                         <div class="description">NVidia CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.
-                        ${this.options['cuda_fgpu'] ? html`<br />Disabled because system uses Fractional GPU plugin`:html``}
+                        ${this.options['cuda_fgpu'] ? html`<br />Disabled because system uses Fractional GPU plugin` : html``}
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
@@ -187,7 +188,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                     <wl-select name="scheduler-switch" id="scheduler-switch" required>
+                     <wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
                         <option value="fifo" ?selected="${this.options['scheduler'] === "fifo"}">FIFO</option>
                         <option value="lifo" ?selected="${this.options['scheduler'] === "lifo"}">LIFO</option>
                         <option value="drf" ?selected="${this.options['scheduler'] === "drf"}">DRF</option>
@@ -243,14 +244,24 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
-    window.backendaiclient.setting.get('docker/image/auto_pull').then((response)=>{
+
+
+    window.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
         this.options['automatic_image_update'] = true;
       } else if (response['result'] === 'tag' || response['result'] === 'none') {
         this.options['automatic_image_update'] = false;
       }
       this.update(this.options);
-     });
+    });
+    window.backendaiclient.setting.get('plugins/scheduler').then((response) => {
+      if (response['result'] === null || response['result'] === 'fifo') { // digest mode
+        this.options['scheduler'] = 'fifo';
+      } else {
+        this.options['scheduler'] = response['result'];
+      }
+      this.update(this.options);
+    });
     window.backendaiclient.getResourceSlots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
@@ -267,13 +278,22 @@ export default class BackendAiSettingsView extends BackendAIPage {
       this.update(this.options);
     });
   }
+
   toggleImageUpdate(e) {
     if (e.target.checked === false) {
-      window.backendaiclient.setting.set('docker/image/auto_pull', 'none').then((response)=>{
+      window.backendaiclient.setting.set('docker/image/auto_pull', 'none').then((response) => {
         console.log(response);
       });
     } else {
-      window.backendaiclient.setting.set('docker/image/auto_pull', 'digest').then((response)=>{
+      window.backendaiclient.setting.set('docker/image/auto_pull', 'digest').then((response) => {
+        console.log(response);
+      });
+    }
+  }
+
+  changeScheduler(e) {
+    if (['fifo', 'lifo', 'drf'].includes(e.target.value)) {
+      window.backendaiclient.setting.set('plugins/scheduler', e.target.value).then((response) => {
         console.log(response);
       });
     }
