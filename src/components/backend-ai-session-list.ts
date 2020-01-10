@@ -58,6 +58,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Boolean}) refreshing = false;
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) is_superadmin = false;
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) _grid = Object();
   @property({type: Object}) notification = Object();
@@ -280,12 +281,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = window.backendaiclient.is_admin;
+        this.is_superadmin = window.backendaiclient.is_superadmin;
         this._connectionMode = window.backendaiclient._config._connectionMode;
         this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
         this._refreshJobData();
       }, true);
     } else { // already connected
       this.is_admin = window.backendaiclient.is_admin;
+      this.is_superadmin = window.backendaiclient.is_superadmin;
       this._connectionMode = window.backendaiclient._config._connectionMode;
       this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
       this._refreshJobData();
@@ -344,6 +347,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
+    }
+    if (window.backendaiclient.is_superadmin) {
+      fields.push("agent");
     }
     let group_id = window.backendaiclient.current_group_id();
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, 50, 0, group_id).then((response) => {
@@ -1183,7 +1189,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="Usage" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="Starts" path="created_at">
+        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="Starts" path="created_at">
           <template>
             <div class="layout vertical">
               <span>[[item.created_at_hr]]</span>
@@ -1197,6 +1203,15 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
+        ${this.is_superadmin ? html`
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="Agent">
+            <template>
+              <div class="layout vertical">
+                <span>[[item.agent]]</span>
+              </div>
+            </template>
+          </vaadin-grid-column>
+            ` : html``}
       </vaadin-grid>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-dialog id="work-dialog" fixed blockscrolling scrollable

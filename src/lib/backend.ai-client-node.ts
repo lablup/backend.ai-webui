@@ -157,6 +157,7 @@ class Client {
   public maintenance: Maintenance;
   public scalingGroup: ScalingGroup;
   public registry: Registry;
+  public setting: Setting;
   public _features: any;
   public ready: boolean = false;
   static ERR_REQUEST: any;
@@ -201,6 +202,7 @@ class Client {
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
     this.registry = new Registry(this);
+    this.setting = new Setting(this);
     this.domain = new Domain(this);
 
     this._features = {}; // feature support list
@@ -1389,7 +1391,7 @@ class Keypair {
       'concurrency_limit',
       'rate_limit'
     ];
-    if (accessKey !== null || accessKey !== '') {
+    if (accessKey !== null && accessKey !== '') {
       fields = fields.concat(['access_key', 'secret_key']);
     }
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
@@ -1398,7 +1400,7 @@ class Keypair {
       `  }` +
       `}`;
     let v;
-    if (accessKey !== null || accessKey !== '') {
+    if (accessKey !== null && accessKey !== '') {
       v = {
         'user_id': userId,
         'input': {
@@ -2380,7 +2382,8 @@ class Registry {
   }
 
   add(key, value) {
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    let regkey = `config/docker/registry/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {regkey, value});
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -2388,6 +2391,65 @@ class Registry {
     const rqst = this.client.newSignedRequest("POST", "/config/delete", {
       "key": `config/docker/registry/${key}`,
       "prefix": true
+    });
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+class Setting {
+  public client: any;
+  public config: any;
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+    this.config = null;
+  }
+  /**
+   * List settings
+   *
+   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   */
+  list(prefix = "") {
+    prefix = `config/${prefix}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": prefix, "prefix": true});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Get settings
+   *
+   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   */
+  get(key) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": key, "prefix": false});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Set a setting
+   *
+   * @param {string} key - key to add.
+   * @param {string} value - value to add.
+   */
+  set(key, value) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Delete a setting
+   *
+   * @param {string} key - key to delete
+   * @param {boolean} prefix - prefix to delete. if prefix is true, this command will delete every settings starting with the key.
+   */
+  delete(key, prefix = false) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
+      "key": `${key}`,
+      "prefix": prefix
     });
     return this.client._wrapWithPromise(rqst);
   }
