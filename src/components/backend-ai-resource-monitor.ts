@@ -487,7 +487,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.metadata_updating = false;
       }
     });
-    gpu_resource.addEventListener('value-change', () => {
+    gpu_resource.addEventListener('value-changed', () => {
       if (gpu_resource.value > 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
       } else {

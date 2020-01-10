@@ -59,16 +59,18 @@ export default class LablupSlider extends LitElement {
     // language=HTML
     return html`
       <div class="horizontal center layout">
-      <mwc-slider id="slider" class="${this.id}" value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}" 
-        ?pin="${this.pin}"
-        ?markers="${this.markers}"
-        @change="${this.syncToText}"
-      ></mwc-slider>
-      ${this.editable ? html`<wl-textfield id="textfield" class="${this.id}" type="number"
+      <mwc-slider id="slider" class="${this.id}" value="${this.value}"
+          min="${this.min}" max="${this.max}" step="${this.step}"
+          ?pin="${this.pin}"
+          ?markers="${this.markers}"
+          @change="${this.syncToText}">
+      </mwc-slider>
+      ${this.editable ? html`
+        <wl-textfield id="textfield" class="${this.id}" type="number"
           value="${this.value}" min="${this.min}" max="${this.max}"
           @change="${this.syncToSlider}">
-
-        </wl-textfield>` : html``}
+        </wl-textfield>
+      ` : html``}
       </div>
     `;
   }
@@ -88,13 +90,22 @@ export default class LablupSlider extends LitElement {
     super.disconnectedCallback();
   }
 
+  updated(changedProperties) {
+    changedProperties.forEach((oldVal, propName) => {
+      if (propName === 'value') {
+        this.slider.layout();
+        const event = new CustomEvent('value-changed', {'detail': {}});
+        this.dispatchEvent(event);
+      }
+    });
+  }
+
   syncToText() {
-    this.textfield.value = this.slider.value;
-    this.syncValue();
+    this.value = this.slider.value;
+    // updated function will be automatically called.
   }
 
   syncToSlider() {
-    this.slider.value = this.textfield.value;
     let rounded = Math.round(this.textfield.value / this.step) * this.step;
     this.textfield.value = rounded.toFixed(((decimal_places: number) => {
       if (Math.floor(decimal_places) === decimal_places) {
@@ -108,12 +119,8 @@ export default class LablupSlider extends LitElement {
     if (this.textfield.value < this.min) {
       this.textfield.value = this.min;
     }
-    this.syncValue();
-  }
-
-  syncValue() {
     this.value = this.textfield.value;
-    this.slider.layout();
+    // updated function will be automatically called.
   }
 }
 
