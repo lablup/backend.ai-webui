@@ -67,7 +67,7 @@ export default class LablupSlider extends LitElement {
       </mwc-slider>
       ${this.editable ? html`
         <wl-textfield id="textfield" class="${this.id}" type="number"
-          value="${this.value}" min="${this.min}" max="${this.max}"
+          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
           @change="${this.syncToSlider}">
         </wl-textfield>
       ` : html``}
@@ -80,6 +80,17 @@ export default class LablupSlider extends LitElement {
     if (this.editable) {
       this.textfield = this.shadowRoot.querySelector('#textfield');
     }
+
+    // wl-textfield does not provide step property. The default step for number input
+    // is 1, so float numbers will invalidate the wl-textfield, which is a problem.
+    // So, we manually set the step property of wl-textfield's input field here.
+    const textfields = this.shadowRoot.querySelectorAll('wl-textfield');
+    setTimeout(() => {
+      textfields.forEach((el) => {
+        const step = el.getAttribute('step');
+        el.$formElement.step = step;
+      });
+    }, 100)
   }
 
   connectedCallback() {
