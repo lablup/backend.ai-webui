@@ -46,7 +46,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
-  @property({type: Object}) installImageResource = Object;
+  @property({type: Object}) installImageResource = Object();
 
   constructor() {
     super();
