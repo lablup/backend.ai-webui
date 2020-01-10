@@ -501,6 +501,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
+    this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
+      element.onKeyDown = (e) => {
+        let enterKey = 13;
+        if (e.keyCode === enterKey) {
+          e.stopPropagation();
+        }
+      }
+    });
   }
 
   _initAliases() {
@@ -677,6 +685,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (window.backendaiclient.is_admin) {
         ownershipPanel.style.display = 'block';
       } else {
+
+
         ownershipPanel.style.display = 'none';
       }
 

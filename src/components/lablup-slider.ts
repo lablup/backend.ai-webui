@@ -44,6 +44,7 @@ export default class LablupSlider extends LitElement {
         }
 
         wl-textfield {
+          --input-state-color-invalid :  var(--input-state-color-inactive,hsl(var(--shade-400,var(--shade-hue,200),var(--shade-saturation,4%),var(--shade-lightness,65%))));
           width: var(--textfield-min-width, 65px);
           margin-left: 10px;
         }
