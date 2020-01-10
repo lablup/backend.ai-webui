@@ -19,6 +19,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
 import 'weightless/card';
 import 'weightless/switch';
+import 'weightless/select';
 
 @customElement("backend-ai-settings-view")
 export default class BackendAiSettingsView extends BackendAIPage {
@@ -131,6 +132,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                 </div>
             </div>
+            <div class="horizontal wrap layout" style="background-color:#FFFBE7;padding: 5px 15px;">
+              Note: The settings below are automatically applied depending on the installation environment and status.
+            </div>
             <h3 class="horizontal center layout">
                 <span>Scaling</span>
                 <span class="flex"></span>
@@ -173,6 +177,21 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                     <div class="vertical center-justified layout setting-button">
                       <wl-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></wl-switch>
+                    </div>
+                </div>
+                <div class="horizontal layout wrap setting-item">
+                    <div class="vertical center-justified layout setting-desc">
+                        <div>Scheduler</div>
+                        <div class="description">Job scheduler.<br/>
+                            Requires Backend.AI 19.12 or above.
+                        </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                     <wl-select name="scheduler-switch" id="scheduler-switch" required>
+                        <option value="fifo" ?selected="${this.options['scheduler'] === "fifo"}">FIFO</option>
+                        <option value="lifo" ?selected="${this.options['scheduler'] === "lifo"}">LIFO</option>
+                        <option value="drf" ?selected="${this.options['scheduler'] === "drf"}">DRF</option>
+                     </wl-select>
                     </div>
                 </div>
             </div>
@@ -227,7 +246,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     window.backendaiclient.setting.get('docker/image/auto_pull').then((response)=>{
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
         this.options['automatic_image_update'] = true;
-      } else if (result === 'tag' || result === 'none') {
+      } else if (response['result'] === 'tag' || response['result'] === 'none') {
         this.options['automatic_image_update'] = false;
       }
       this.update(this.options);
