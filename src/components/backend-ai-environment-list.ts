@@ -220,6 +220,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
       this.installImageResource['gpu'] = 0;
       this.installImageResource['fgpu'] = this.installImageResource['cuda.shares'];
+    } else if ('cuda.device' in this.installImageResource) {
+      this.installImageResource['gpu'] = this.installImageResource['cuda.device'];
     }
     console.log(this.installImageResource);
     window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
@@ -680,7 +682,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = window.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
