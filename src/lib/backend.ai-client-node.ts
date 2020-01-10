@@ -1668,7 +1668,7 @@ class ContainerImage {
     }
     let sessionId = this.client.generateSessionId();
     return this.client.createIfNotExists(registry + name, sessionId, {
-      'cpu': '1', 'mem': '512m',
+      'cpu': '1', 'mem': '1g',
     }).then((response) => {
       return this.client.destroyKernel(sessionId);
     }).catch(err => {
