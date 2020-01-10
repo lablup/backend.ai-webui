@@ -484,7 +484,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         case 'usersettings':
           this.menuTitle = 'User Settings';
           this.sidebarMenu.selected = 4;
-          this.updateTitleColor('var(--paper-green-800)', '#efefef');
+          this.updateTitleColor('var(--paper-teal-800)', '#efefef');
           break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
@@ -643,7 +643,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               </a>
               <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon class="fg green" icon="icons:settings"></iron-icon>
+                  <iron-icon class="fg teal" icon="icons:settings"></iron-icon>
                   Settings
                   <span class="flex"></span>
                 </paper-item>
