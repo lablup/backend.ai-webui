@@ -41,7 +41,8 @@ export default class BackendAIPainKiller {
           return this.regexTable[regex];
         }
       }
-      return 'Problem found during process.';
+      return msg;
+      //return 'Problem found during process.';
     }
   }
 };
