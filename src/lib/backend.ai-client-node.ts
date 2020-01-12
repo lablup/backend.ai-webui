@@ -1,9 +1,9 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v19.07.2)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.01.0)
 ====================================================================
 
-(C) Copyright 2016-2019 Lablup Inc.
+(C) Copyright 2016-2020 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -29,7 +29,7 @@ class ClientConfig {
   public _secretKey: string;
   public _userId: string;
   public _password: string;
-  public _proxyURL: string;
+  public _proxyURL: any;
   public _connectionMode: string;
 
   /**
@@ -132,13 +132,14 @@ class ClientConfig {
 
 class Client {
   public code: any;
-  public kernelId: string | null;
+  public sessionId: string | null;
   public kernelType: any;
   public clientVersion: string;
   public agentSignature: any;
   public _config: any;
   public _managerVersion: any;
   public _apiVersion: any;
+  public _apiVersionMajor: any;
   public is_admin: boolean;
   public is_superadmin: boolean;
   public kernelPrefix: any;
@@ -173,7 +174,7 @@ class Client {
    */
   constructor(config, agentSignature) {
     this.code = null;
-    this.kernelId = null;
+    this.sessionId = null;
     this.kernelType = null;
     this.clientVersion = '19.09.0';
     this.agentSignature = agentSignature;
@@ -184,6 +185,7 @@ class Client {
     }
     this._managerVersion = null;
     this._apiVersion = null;
+    this._apiVersionMajor = null;
     this.is_admin = false;
     this.is_superadmin = false;
     this.kernelPrefix = '/kernel';
@@ -324,6 +326,11 @@ class Client {
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
+      this._apiVersionMajor = v.version.substr(0, 2);
+      this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+      if (this._apiVersionMajor[1] > 4) {
+        this.kernelPrefix = '/session';
+      }
     }
     return this._managerVersion;
   }
@@ -563,6 +570,7 @@ class Client {
    * Obtain the session information by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
+   * @param {string | null} ownerKey - owner key to access
    */
   getLogs(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
@@ -629,16 +637,16 @@ class Client {
     return this.createIfNotExists(kernelType, sessionId, resources);
   }
 
-  destroyKernel(kernelId, ownerKey = null) {
-    return this.destroy(kernelId, ownerKey);
+  destroyKernel(sessionId, ownerKey = null) {
+    return this.destroy(sessionId, ownerKey);
   }
 
-  refreshKernel(kernelId, ownerKey = null) {
-    return this.restart(kernelId, ownerKey);
+  refreshKernel(sessionId, ownerKey = null) {
+    return this.restart(sessionId, ownerKey);
   }
 
-  runCode(code, kernelId, runId, mode) {
-    return this.execute(kernelId, runId, mode, code, {});
+  runCode(code, sessionId, runId, mode) {
+    return this.execute(sessionId, runId, mode, code, {});
   }
 
   upload(sessionId, path, fs) {
