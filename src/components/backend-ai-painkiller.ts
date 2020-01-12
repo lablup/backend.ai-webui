@@ -41,8 +41,7 @@ export default class BackendAIPainKiller {
           return this.regexTable[regex];
         }
       }
-      return msg;
-      //return 'Problem found during process.';
+      return msg; // Bypass message. It will log on log panel
     }
   }
 };
