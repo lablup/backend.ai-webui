@@ -364,21 +364,6 @@ class Client {
     return fields;
   }
 
-  _updateResultCompatibilityByAPIVersion(body) {
-    const v4_replacements = {
-      'sess_id': 'session_name'
-    };
-    if (this._apiVersionMajor[1] < 5) { // For V3/V4 API compatibility
-      Object.keys(v4_replacements).forEach(key => {
-        let index = body.indexOf(key);
-        if (index !== -1) {
-          body[index] = replacements[key];
-        }
-      });
-    }
-    return fields;
-  }
-
   _updateSupportList() {
     if (this.isAPIVersionCompatibleWith('v4.20190601')) {
       this._features['scaling-group'] = true;
