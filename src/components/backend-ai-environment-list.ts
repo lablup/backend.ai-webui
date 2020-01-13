@@ -46,6 +46,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
+  @property({type: Object}) installImageResource = Object();
 
   constructor() {
     super();
@@ -203,6 +204,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.selectedIndex = index;
     let chosenImage = this.images[this.selectedIndex];
     this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
+    this.installImageResource = {};
+    chosenImage['resource_limits'].forEach(elm => {
+      this.installImageResource[elm['key'].replace("_", ".")] = elm.min;
+    });
     this.installImageDialog.show();
   }
 
@@ -212,7 +217,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.hide();
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Downloading...');
-    window.backendaiclient.image.install(this.installImageName).then((response) => {
+    if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
+      this.installImageResource['gpu'] = 0;
+      this.installImageResource['fgpu'] = this.installImageResource['cuda.shares'];
+    } else if ('cuda.device' in this.installImageResource) {
+      this.installImageResource['gpu'] = this.installImageResource['cuda.device'];
+    }
+    // Add 256m to run the image.
+    if (this.installImageResource['mem'].endsWith('g')) {
+      this.installImageResource['mem'] = this.installImageResource['mem'].replace('g', '.5g');
+    } else if (this.installImageResource['mem'].endsWith('m')) {
+      this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
+    }
+    window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
       this._getImages();
@@ -670,7 +687,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = window.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
