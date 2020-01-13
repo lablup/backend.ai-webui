@@ -318,6 +318,13 @@ class Client {
   }
 
   /**
+   * Get API major version
+   */
+  get APIMajorVersion() {
+    return this._apiVersionMajor;
+  }
+
+  /**
    * Get the server-side manager version.
    */
   async getManagerVersion() {
@@ -326,9 +333,9 @@ class Client {
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
-      this._apiVersionMajor = v.version.substr(0, 2);
+      this._apiVersionMajor = v.version.substr(1, 2);
       this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
-      if (this._apiVersionMajor[1] > 4) {
+      if (this._apiVersionMajor > 4) {
         this.kernelPrefix = '/session';
       }
     }
@@ -353,7 +360,7 @@ class Client {
     const v4_replacements = {
       'session_name': 'sess_id'
     };
-    if (this._apiVersionMajor[1] < 5) { // For V3/V4 API compatibility
+    if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
       Object.keys(v4_replacements).forEach(key => {
         let index = fields.indexOf(key);
         if (index !== -1) {

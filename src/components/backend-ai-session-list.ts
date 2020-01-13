@@ -46,6 +46,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Array}) compute_sessions = Array();
   @property({type: Array}) terminationQueue = Array();
   @property({type: String}) filterAccessKey = '';
+  @property({type: String}) sessionNameField = 'session_name';
   @property({type: Array}) appSupportList = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
@@ -280,6 +281,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     // If disconnected
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        if (window.backendaiclient.APIMajorVersion < 5) {
+          this.sessionNameField = 'sess_id';
+        }
         this.is_admin = window.backendaiclient.is_admin;
         this.is_superadmin = window.backendaiclient.is_superadmin;
         this._connectionMode = window.backendaiclient._config._connectionMode;
@@ -287,6 +291,9 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._refreshJobData();
       }, true);
     } else { // already connected
+      if (window.backendaiclient.APIMajorVersion < 5) {
+        this.sessionNameField = 'sess_id';
+      }
       this.is_admin = window.backendaiclient.is_admin;
       this.is_superadmin = window.backendaiclient.is_superadmin;
       this._connectionMode = window.backendaiclient._config._connectionMode;
@@ -339,7 +346,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       status = status.join(',');
     }
     let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
+      "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -359,7 +366,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         let previous_sessions = this.compute_sessions;
         let previous_session_keys: any = [];
         Object.keys(previous_sessions).map((objectKey, index) => {
-          previous_session_keys.push(previous_sessions[objectKey].sess_id);
+          previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
         });
         Object.keys(sessions).map((objectKey, index) => {
           let session = sessions[objectKey];
@@ -411,7 +418,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           } else {
             sessions[objectKey].baseversion = sessions[objectKey].tag;
           }
-          if (this._selected_items.includes(sessions[objectKey].sess_id)) {
+          if (this._selected_items.includes(sessions[objectKey][this.sessionNameField])) {
             sessions[objectKey].checked = true;
           } else {
             sessions[objectKey].checked = false;
@@ -858,7 +865,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.notification.show();
 
     let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item.sess_id, item.access_key);
+      return this._terminateKernel(item[this.sessionNameField], item.access_key);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then(response => {
@@ -881,7 +888,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.notification.show();
 
     let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item.sess_id, item.access_key);
+      return this._terminateKernel(item[this.sessionNameField], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then(response => {
       this._selected_items = [];
@@ -945,16 +952,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div class="layout vertical start">
-          <div>${rowData.item.sess_id}</div>
+          <div>${rowData.item[this.sessionNameField]}</div>
           ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
             ${item.map(item => {
-              if (item.category === 'Env') {
-                item.category = item.tag;
-              }
-              if (rowData.item.baseversion) {
-                item.tag = rowData.item.baseversion;
-              }
-              return html`
+        if (item.category === 'Env') {
+          item.category = item.tag;
+        }
+        if (rowData.item.baseversion) {
+          item.tag = rowData.item.baseversion;
+        }
+        return html`
                 <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
               `;
             })}
@@ -977,7 +984,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
-             .session-name="${rowData.item.sess_id}"
+             .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}">
@@ -1056,7 +1063,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _toggleCheckbox(object) {
-    let exist = this._selected_items.findIndex(x => x.sess_id == object.sess_id);
+    let exist = this._selected_items.findIndex(x => x[this.sessionNameField] == object[this.sessionNameField]);
     if (exist === -1) {
       this._selected_items.push(object)
     } else {
