@@ -27,6 +27,7 @@ import './lablup-codemirror';
 @customElement("backend-ai-usersettings-view")
 export default class BackendAiUserSettingsView extends BackendAIPage {
   public indicator: any;
+  public lastSavedBootstrapScript: string = '';
 
   @property({type: Object}) images = Object();
   @property({type: Boolean}) options = Object();
@@ -198,7 +199,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     // Fetch user's bootstrap code.
     const fields = ['bootstrap_script'];
     return window.backendaiclient.user.list(true, fields).then((response) => {
-      return response.users.bootstrap_script || '';
+      const script =  response.users.bootstrap_script || '';
+      this.lastSavedBootstrapScript = script;
+      return script;
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -211,10 +214,15 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
 
   async _saveBootstrapScript() {
     // TODO: uncomment when bootstrap_script field is added in the server
-    // this.indicator.show();
     // const editor = this.shadowRoot.querySelector('#codemirror-editor');
     // const code = editor.getValue();
     // const input: Object = {bootstrap_script: code};
+    // if (this.lastSavedBootstrapScript === code) {
+    //   this.notification.text = 'No changes';
+    //   this.notification.show();
+    //   return;
+    // }
+    // this.indicator.show();
     // window.backendaiclient.user.modify(window.backendaiclient.email, input)
     //   .then(res => {
     //     if (res.modify_user.ok) {
@@ -225,7 +233,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     //     this.notification.show();
     //     this.indicator.hide();
     //   })
-    this.notification.text = 'Not implemented yet'
+
+    this.notification.text = 'Not implemented yet';
     this.notification.show();
   }
 
