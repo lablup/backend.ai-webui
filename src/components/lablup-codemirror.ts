@@ -9,6 +9,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 import {CodemirrorStyle} from '../lib/codemirror/lib/codemirror.css.js';
 import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css.js';
 import '../lib/codemirror/mode/python/python.js';
+import '../lib/codemirror/mode/shell/shell.js';
 
 declare const window: any;
 
@@ -18,12 +19,13 @@ export default class LablupCodemirror extends LitElement {
   public shadowRoot: any; // ShadowRoot
   public editor: any;
 
-  @property({type: Object}) config = {};
+  @property({type: Object}) config = Object();
+  @property({type: String}) mode = 'python';
 
   constructor() {
     super();
     this.config = {
-      mode: 'python',
+      mode: this.mode,
       theme: 'monokai',
       tabSize: 2,
       indentUnit: 2,
@@ -44,6 +46,7 @@ export default class LablupCodemirror extends LitElement {
 
   _initEditor() {
     const textarea: HTMLTextAreaElement = this.shadowRoot.querySelector('textarea') as HTMLTextAreaElement;
+    this.config.mode = this.mode;
     this.editor = window.CodeMirror.fromTextArea(textarea, this.config);
     this.refresh();
   }
