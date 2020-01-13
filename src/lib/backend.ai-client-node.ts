@@ -349,6 +349,21 @@ class Client {
     }
   }
 
+  _updateFieldCompatibilityByAPIVersion(fields) {
+    const v4_replacements = {
+      'session_name': 'sess_id'
+    };
+    if (this._apiVersionMajor[1] < 5) { // For V3/V4 API compatibility
+      Object.keys(v4_replacements).forEach(key => {
+        let index = fields.indexOf(key);
+        if (index !== -1) {
+          fields[index] = replacements[key];
+        }
+      });
+    }
+    return fields;
+  }
+
   _updateSupportList() {
     if (this.isAPIVersionCompatibleWith('v4.20190601')) {
       this._features['scaling-group'] = true;
@@ -1727,17 +1742,18 @@ class ComputeSession {
   /**
    * list compute sessions with specific conditions.
    *
-   * @param {array} fields - fields to query. Default fields are: ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"]
+   * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
    * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
-  async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+  async list(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
              status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
     if (accessKey === '') accessKey = null;
     if (group === '') group = null;
+    fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {

@@ -544,11 +544,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     return body;
   }
 
-  _terminateApp(sessionId) {
+  _terminateApp(sessionName) {
     let accessKey = window.backendaiclient._config.accessKey;
     let rqst = {
       method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionId
+      uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -556,7 +556,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           let rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionId + '/delete'
+            uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName + '/delete'
           };
           return this.sendRequest(rqst);
         }
@@ -583,14 +583,14 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _showLogs(e) {
     const controls = e.target.closest('#controls');
-    const sessionId = controls['session-id'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
 
-    window.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
+    window.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
-        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionId}`;
+        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName}`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || 'No logs.';
         this.shadowRoot.querySelector('#work-dialog').show();
       }, 100);
@@ -609,7 +609,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _showAppLauncher(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const sessionId = controls['session-id'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
     this.appSupportList = [];
@@ -632,7 +632,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
     });
     let dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.setAttribute('session-id', sessionId);
+    dialog.setAttribute('session-name', sessionName);
     dialog.setAttribute('access-key', accessKey);
     dialog.positionTarget = e.target;
 
@@ -643,7 +643,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
-  async _open_wsproxy(sessionId, app = 'jupyter') {
+  async _open_wsproxy(sessionName, app = 'jupyter') {
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       return false;
     }
@@ -688,7 +688,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       let rqst_proxy = {
         method: 'GET',
         app: app,
-        uri: this._getProxyURL() + 'proxy/' + token + "/" + sessionId + "/add?app=" + app
+        uri: this._getProxyURL() + 'proxy/' + token + "/" + sessionName + "/add?app=" + app
       };
       return await this.sendRequest(rqst_proxy);
     } catch (err) {
@@ -699,7 +699,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _runApp(e) {
     const controller = e.target;
     let controls = controller.closest('#app-dialog');
-    let sessionId = controls.getAttribute('session-id');
+    let sessionName = controls.getAttribute('session-name');
     let urlPostfix = controller['url-postfix'];
     let appName = controller['app-name'];
     if (appName === undefined || appName === null) {
@@ -713,12 +713,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (typeof window.backendaiwsproxy === "undefined" || window.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.shadowRoot.querySelector('#indicator').start();
-      this._open_wsproxy(sessionId, appName)
+      this._open_wsproxy(sessionName, appName)
         .then((response) => {
           if (appName === 'sshd') {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             this.sshPort = response.port;
-            this._readSSHKey(sessionId);
+            this._readSSHKey(sessionName);
             this._openSSHDialog();
             setTimeout(() => {
               this.shadowRoot.querySelector('#indicator').end();
@@ -737,17 +737,17 @@ export default class BackendAiSessionList extends BackendAIPage {
               window.open(response.url + urlPostfix, '_blank');
               this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
-              console.log(sessionId);
+              console.log(sessionName);
             }, 1000);
           }
         });
     }
   }
 
-  async _readSSHKey(sessionId) {
+  async _readSSHKey(sessionName) {
     const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
     const file = '/home/work/id_container';
-    const blob = await window.backendaiclient.download_single(sessionId, file);
+    const blob = await window.backendaiclient.download_single(sessionName, file);
     // TODO: This blob has additional leading letters in front of key texts.
     //       Manually trim those letters.
     const rawText = await blob.text();
@@ -760,10 +760,10 @@ export default class BackendAiSessionList extends BackendAIPage {
   _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const sessionId = controls['session-id'];
+    const sessionName = controls['session-name'];
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.shadowRoot.querySelector('#indicator').start();
-      this._open_wsproxy(sessionId, 'ttyd')
+      this._open_wsproxy(sessionName, 'ttyd')
         .then((response) => {
           if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
@@ -771,7 +771,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               window.open(response.url, '_blank');
               this.shadowRoot.querySelector('#indicator').end();
               console.log("Terminal proxy loaded: ");
-              console.log(sessionId);
+              console.log(sessionName);
             }, 1000);
           }
         });
@@ -782,9 +782,9 @@ export default class BackendAiSessionList extends BackendAIPage {
   _openTerminateSessionDialog(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const sessionId = controls['session-id'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
-    this.terminateSessionDialog.sessionId = sessionId;
+    this.terminateSessionDialog.sessionName = sessionName;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
   }
@@ -801,28 +801,28 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _terminateSession(e) {
     const controls = e.target.closest('#controls');
-    const sessionId = controls['session-id'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
 
-    if (this.terminationQueue.includes(sessionId)) {
+    if (this.terminationQueue.includes(sessionName)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
     this.notification.text = 'Terminating session...';
     this.notification.show();
-    return this._terminateKernel(sessionId, accessKey);
+    return this._terminateKernel(sessionName, accessKey);
   }
 
   _terminateSessionWithCheck(e) {
-    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionName)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
     this.notification.text = 'Terminating session...';
     this.notification.show();
-    return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey).then(response => {
+    return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey).then(response => {
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -899,10 +899,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   // General closing
 
-  async _terminateKernel(sessionId, accessKey) {
-    this.terminationQueue.push(sessionId);
-    return this._terminateApp(sessionId).then(() => {
-      window.backendaiclient.destroyKernel(sessionId, accessKey).then((req) => {
+  async _terminateKernel(sessionName, accessKey) {
+    this.terminationQueue.push(sessionName);
+    return this._terminateApp(sessionName).then(() => {
+      window.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
         setTimeout(() => {
           this.terminationQueue = [];
           this.refreshList(true, false);
@@ -977,7 +977,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
-             .session-id="${rowData.item.sess_id}"
+             .session-name="${rowData.item.sess_id}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}">
