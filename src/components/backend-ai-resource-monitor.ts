@@ -607,10 +607,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
       }
       // Reload number of sessions
-      let fields = ["session_name"];
+      let fields = ["created_at"];
       window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
         .then(res => {
-          this.sessions_list = res.compute_session_list.items.map(e => e.sess_id);
+          this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
         });
 
       this._initAliases();
