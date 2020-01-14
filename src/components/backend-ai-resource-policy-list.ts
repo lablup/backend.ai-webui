@@ -457,7 +457,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots.gpu;
     this.shadowRoot.querySelector('#fgpu-resource').value = resourcePolicy.total_resource_slots.fgpu;
     this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
-    
+
     this.shadowRoot.querySelector('#concurrency-limit').value = resourcePolicy.max_concurrent_sessions;
     this.shadowRoot.querySelector('#container-per-session-limit').value = resourcePolicy.max_containers_per_session;
     this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
@@ -638,10 +638,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _toggleCheckbox(e) {
     const checkEl = e.target;
-    console.log(checkEl);
     const checked = checkEl.checked;
     const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
-    console.log(wlTextEl);
     wlTextEl.disabled = checked;
   }
 
