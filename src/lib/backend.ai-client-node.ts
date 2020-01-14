@@ -41,8 +41,8 @@ class ClientConfig {
    * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
    */
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
-    // fixed configs with this implementation
-    this._apiVersionMajor = 'v4';
+    // default configs.
+    this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
     this._hashType = 'sha256';
     if (endpoint === undefined || endpoint === null)
@@ -322,6 +322,14 @@ class Client {
    */
   get APIMajorVersion() {
     return this._apiVersionMajor;
+  }
+
+  /**
+   * Force API major version
+   */
+  set APIMajorVersion(value) {
+    this._apiVersionMajor = value;
+    this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
   }
 
   /**

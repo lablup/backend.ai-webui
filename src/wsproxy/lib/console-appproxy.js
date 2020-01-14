@@ -28,7 +28,11 @@ module.exports = (proxy = class Proxy {
     this._resolve = undefined;
     this.tcpServer = net.createServer();
     this._env = env;
-    this.sessionPrefix = 'kernel'; // `kernel` for v4, `session` for v5 and later.
+    if (env._apiVersionMajor > 4) {
+      this.sessionPrefix = 'session'; // `kernel` for v4, `session` for v5 and later.
+    } else {
+      this.sessionPrefix = 'kernel'; // `kernel` for v4, `session` for v5 and later.
+    }
   }
 
   get_header(queryString) {

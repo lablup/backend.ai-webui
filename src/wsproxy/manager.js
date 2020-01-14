@@ -51,7 +51,13 @@ class Manager extends EventEmitter {
         "created": Date.now(),
         "endpoint": req.body.endpoint
       };
-      if(req.body.mode && req.body.mode == "SESSION") {
+      // Receive API version from console. Initialization timing is different so we use API information from requester.
+      if (req.body.api_version) {
+        cf['_apiVersionMajor'] = req.body.api_version;
+      } else {
+        cf['_apiVersionMajor'] = 4;
+      }
+      if (req.body.mode && req.body.mode == "SESSION") {
         cf['mode'] = "SESSION";
         cf['session'] = req.body.session;
         cf['endpoint'] = cf['endpoint'] + "/func";
@@ -65,6 +71,7 @@ class Manager extends EventEmitter {
           req.body.endpoint,
         );
         this.aiclient = new ai.backend.Client(config);
+        this.aiclient.APIMajorVersion = cf['_apiVersionMajor'];
       }
       this._config = cf;
 
