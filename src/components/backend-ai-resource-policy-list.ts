@@ -42,13 +42,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
-  @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
-  @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
-  @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
-  @property({type: Array}) idle_timeout_metric = [60, 600, 900, 1800, 3600, 43200, 86400, 604800, 1209600];
-  @property({type: Array}) vfolder_capacity_metric = [1, 2, 5, 10, 20, 50, 100, 200, 1000];
-  @property({type: Array}) vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
-  @property({type: Array}) allowed_vfolder_hosts = [];
+  @property({type: Object}) unlimited_resource_status = {
+    cpu : Boolean,
+    mem : Boolean,
+    cuda_device : Boolean,
+    cuda_shares : Boolean
+  };
+  @property({type: Boolean}) unlimited_container_per_session = false;
+  @property({type: Boolean}) unlimited_idle_timeout = false;
+  @property({type: Boolean}) unlimited_concurrency = false;
+  @property({type: Array}) allowed_vfolder_hosts = [] as any;
   @property({type: String}) default_vfolder_host = '';
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
@@ -104,11 +107,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           font-size: 9px;
           margin-right: 5px;
         }
-        
-        span.caption {
-          font-size: 11px;
-          width: 30px;
-        }
 
         div.configuration {
           width: 70px !important;
@@ -116,12 +114,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
         div.configuration iron-icon {
           padding-right: 5px;
-        }
-        
-        div.resource-type {
-          width: 35px;
-          font-size: 13px;
-          font-weight : 500;
         }
 
         wl-button.create-button {
@@ -149,25 +141,33 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         }
 
         wl-label {
-          margin: 0px 0px 0px 5px;
+          width: 100%;
           min-width: 60px;
-          font-size: 10px;
+          font-size: 11px;
           --label-font-family	: Roboto, Noto, sans-serif;
         }
 
+        wl-label.folders {
+          margin: 3px 0px 7px 0px;
+        }
+
+        wl-label.unlimited {
+          margin: 4px 0px 0px 0px;
+        }
+
         wl-list-item {
-          margin: 10px 10px 20px 10px;
+          width: 100%;
         }
 
         wl-textfield {
-          width: 30px;
+          width: 100%;
           --input-padding-top-bottom : 0px;
           --input-font-family	: Roboto, Noto, sans-serif;
         }
 
         wl-checkbox {
           --checkbox-size : 10px;
-          --checkbox-border-radius : 3px;
+          --checkbox-border-radius : 2px;
           --checkbox-bg-checked	: var(--paper-green-800);
           --checkbox-checkmark-stroke-color : var(--paper-lime-100);
           --checkbox-color-checked : var(--paper-green-800);
@@ -245,106 +245,88 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
                            required
-                           error-message="Policy name only accepts letters and numbers"></paper-input>
+                           error-message="Policy name only accepts letters and numbers" style="width:100%;"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
-                <wl-list-item style="width:100%;">
-                  <div class="horizontal center layout">
-                    <div class="resource-type">CPU</div>
-                    <wl-textfield id="cpu-resource" type="number"></wl-textfield>
-                    <span class="caption">Core</span>
-                      <wl-label>
-                        <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}"></wl-checkbox>
+                  <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 0px;">
+                    <wl-label>CPU</wl-label>
+                    <wl-textfield id="cpu-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_resource_status['cpu']}"></wl-textfield>
+                      <wl-label class="unlimited">
+                        <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_resource_status['cpu']}"></wl-checkbox>
                         Unlimited
                       </wl-label>
                   </div>
-                </wl-list-item>
-                <wl-list-item style="width:100%;">
-                  <div class="horizontal center layout">
-                    <div class="resource-type">RAM</div>
-                    <wl-textfield id="ram-resource" type="number"></wl-textfield>
-                    <span class="caption">GB</span>
-                    <wl-label>
-                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}"></wl-checkbox>
+                  <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 10px;">
+                    <wl-label>RAM(GB)</wl-label>
+                    <wl-textfield id="ram-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_resource_status['mem']}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_resource_status['mem']}"></wl-checkbox>
                       Unlimited
                     </wl-label>
                   </div>
-                </wl-list-item>
-              </div>
-              <div class="horizontal center layout">
-                <wl-list-item style="width:100%;">
-                  <div class="horizontal center layout">
-                    <div class="resource-type">GPU</div>
-                    <wl-textfield id="gpu-resource" type="number"></wl-textfield>
-                    <span class="caption">GB</span>
-                    <wl-label>
-                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}"></wl-checkbox>
+                  <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 10px;">
+                    <wl-label>GPU</wl-label>
+                    <wl-textfield id="gpu-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_resource_status['cuda_device']}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_resource_status['cuda_device']}"></wl-checkbox>
                       Unlimited
                     </wl-label>
                   </div>
-                </wl-list-item>
-                <wl-list-item style="width:100%;">
-                  <div class="horizontal center layout">
-                    <div class="resource-type">fGPU</div>
-                    <wl-textfield id="fgpu-resource" type="number"></wl-textfield>
-                    <span class="caption">GB</span>
-                    <wl-label>
-                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}"></wl-checkbox>
+                  <div class="vertical layout" style="width:75px; margin: 0px 0px 0px 10px;">
+                    <wl-label>fgpu</wl-label>
+                    <wl-textfield id="fgpu-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_resource_status['cuda_shares']}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_resource_status['cuda_shares']}"></wl-checkbox>
                       Unlimited
                     </wl-label>
                   </div>
-                </wl-list-item>
               </div>
                 <h4>Sessions</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.container_per_session_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="idle-timeout" label="Idle timeout (sec.)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.idle_timeout_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-
-              <div class="horizontal center layout">
-                <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.concurrency_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <div class="vertical left layout" style="width: 110px;">
+                    <wl-label>Container per session</wl-label>
+                    <wl-textfield id="container-per-session-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_container_per_session}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_container_per_session}"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
+                    <wl-label>Idle timeout (sec.)</wl-label>
+                    <wl-textfield id="idle-timeout" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_idle_timeout}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_idle_timeout}"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical left layout" style="width: 110px;"> 
+                      <wl-label>Concurrent Jobs</wl-label>
+                      <wl-textfield id="concurrency-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_concurrency}"></wl-textfield>
+                      <wl-label class="unlimited">
+                        <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_concurrency}"></wl-checkbox>
+                        Unlimited
+                      </wl-label>
+                  </div>
               </div>
               <h4>Folders</h4>
               <div class="horizontal center layout">
+                <div class="vertical layout" style="width: 110px;">
                 <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
                   <paper-listbox slot="dropdown-content" selected="0">
                     ${this.allowed_vfolder_hosts.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
+                      <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
                     `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-capacity-limit" label="Capacity (GB)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.vfolder_capacity_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-count-limit" label="Max.#">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.vfolder_count_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                </div>
+                <div class="vertical layout" style="width: 110px; margin: 0px 15px;">
+                  <wl-label class="folders">Capacity</wl-label>
+                  <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
+                </div>
+                <div class="vertical layout" style="width: 110px;">
+                  <wl-label class="folders">Max.#</wl-label>
+                  <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
+                </div>
               </div>
 
               <br/><br/>
@@ -472,16 +454,41 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
     this.shadowRoot.querySelector('#cpu-resource').value = resourcePolicy.total_resource_slots.cpu;
-    this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots['cuda_device'];
-    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePolicy.total_resource_slots['cuda_shares'];
+    this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots.gpu;
+    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePolicy.total_resource_slots.fgpu;
     this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
-
+    
     this.shadowRoot.querySelector('#concurrency-limit').value = resourcePolicy.max_concurrent_sessions;
     this.shadowRoot.querySelector('#container-per-session-limit').value = resourcePolicy.max_containers_per_session;
     this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
     this.shadowRoot.querySelector('#vfolder-capacity-limit').value = resourcePolicy.max_vfolder_size;
     this.shadowRoot.querySelector('#idle-timeout').value = resourcePolicy.idle_timeout;
     this.shadowRoot.querySelector('#allowed_vfolder-hosts').value = resourcePolicy.allowed_vfolder_hosts[0]; /* TODO: multiple vfolder hosts */
+
+    Object.keys(resourcePolicy.total_resource_slots).map( (resource_name) => {
+      if (resourcePolicy.total_resource_slots[resource_name] === 'Unlimited') {
+        this.unlimited_resource_status[resource_name] = true;
+      } else {
+        this.unlimited_resource_status[resource_name] = false;
+      }
+    });
+
+    if (resourcePolicy.max_concurrent_sessions === 0) {
+      this.unlimited_concurrency = true;
+    } else {
+      this.unlimited_concurrency = false;
+    }
+    if (resourcePolicy.max_containers_per_session === 0) {
+      this.unlimited_container_per_session = true;
+    } else {
+      this.unlimited_container_per_session = false;
+    }
+    if (resourcePolicy.idle_timeout === 0) {
+      this.unlimited_idle_timeout = true;
+    } else {
+      this.unlimited_idle_timeout = false;
+    }
+    
   }
 
   _refreshPolicyData() {
@@ -542,48 +549,48 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _readResourcePolicyInput() {
-    let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
-    let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
-    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
-    let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
+
+    let total_resource_slots = {};
+    let cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
+    let ram_resource = this.shadowRoot.querySelector('#ram-resource');
+    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+    let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
     let vfolder_hosts: Array<object> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
-    if (cpu_resource === "Unlimited") {
-      cpu_resource = "Infinity";
+    if (!cpu_resource.disabled || cpu_resource.value !== '') {
+      total_resource_slots['cpu'] = cpu_resource.value;
     }
-    if (ram_resource === "Unlimited") {
-      ram_resource = "Infinity";
-    } else {
-      ram_resource = ram_resource + 'g';
+    if (!ram_resource.disabled || ram_resource.value !== '') {
+      total_resource_slots['mem'] = ram_resource.value + 'g';
+    } 
+    if (!gpu_resource.disabled || gpu_resource.value !== '') {
+      total_resource_slots['cuda.device'] = parseInt(gpu_resource.value).toString();
+    } 
+    if (!fgpu_resource.disabled || fgpu_resource.value !== '') {
+      total_resource_slots['cuda.shares'] = parseFloat(fgpu_resource.value).toString();
+    } 
+    let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
+    let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
+    let idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
+
+    if (concurrency_limit.disabled || concurrency_limit.value === '') {
+      concurrency_limit.value = 0;
     }
-    if (gpu_resource === "Unlimited") {
-      gpu_resource = "Infinity";
-    } else {
-      gpu_resource = parseInt(gpu_resource).toString();
+    if (containers_per_session_limit.disabled || containers_per_session_limit.value === '') {
+      concurrency_limit.value = 0;
     }
-    if (fgpu_resource === "Unlimited") {
-      fgpu_resource = "Infinity";
-    } else {
-      fgpu_resource = parseFloat(fgpu_resource).toString();
+    if (idle_timeout.disabled || idle_timeout.value === '') {
+      idle_timeout.value = 0;
     }
-    let total_resource_slots = {
-      "cpu": cpu_resource,
-      "mem": ram_resource,
-      "cuda.device": gpu_resource,
-      "cuda.shares": fgpu_resource
-    };
-    let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit').value;
-    let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit').value;
+
     let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
     let vfolder_capacity_limit = this.shadowRoot.querySelector('#vfolder-capacity-limit').value;
-    let idle_timeout = this.shadowRoot.querySelector('#idle-timeout').value;
-    console.log(cpu_resource);
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': concurrency_limit,
-      'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': parseInt(idle_timeout),
+      'max_concurrent_sessions': parseInt(concurrency_limit.value),
+      'max_containers_per_session': parseInt(containers_per_session_limit.value),
+      'idle_timeout': parseInt(idle_timeout.value),
       'max_vfolder_count': vfolder_count_limit,
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
@@ -631,10 +638,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _toggleCheckbox(e) {
     const checkEl = e.target;
+    console.log(checkEl);
     const checked = checkEl.checked;
-    const wlTextEl = checkEl.closest('wl-list-item').querySelector('wl-textfield');
+    const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
+    console.log(wlTextEl);
     wlTextEl.disabled = checked;
-    // console.log(e.target['checked']);
+  }
+
+  _validateResourceInput(e) {
+    const resource_name = e.target.closest('wl-textfield');
+    if (resource_name.value < 0) {
+      resource_name.value = 0;
+    }
   }
 
   _markIfUnlimited(value) {
