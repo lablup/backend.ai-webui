@@ -28,6 +28,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     this._running = false;
     this._resolve = undefined;
     this.tcpServer = net.createServer();
+    this.sessionPrefix = 'kernel'; // `kernel` for v4, `session` for v5 and later.
   }
 
   get_header(queryString) {
@@ -62,7 +63,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
   }
 
   _conn(sessionName, app) {
-    let queryString = '/stream/kernel/' + sessionName + "/httpproxy?app=" + app;
+    let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
     let hdrs = () => {
       return this.get_header(queryString);
     };
