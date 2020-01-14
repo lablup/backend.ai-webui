@@ -79,27 +79,27 @@ class Manager extends EventEmitter {
       res.send(rtn);
     });
 
-    this.app.get('/proxy/local/:kernelId', (req, res) => {
-      let kernelId = req.params["kernelId"];
-      if (!this._config){
+    this.app.get('/proxy/local/:sessionName', (req, res) => {
+      let sessionName = req.params["sessionName"];
+      if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      if (kernelId in this.proxies) {
+      if (sessionName in this.proxies) {
         res.send({"code": 200});
       } else {
         res.send({"code": 404});
       }
     });
 
-    this.app.get('/proxy/local/:kernelId/add', async (req, res) => {
+    this.app.get('/proxy/local/:sessionName/add', async (req, res) => {
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      let kernelId = req.params["kernelId"];
+      let sessionName = req.params["sessionName"];
       let app = req.query.app || "jupyter";
-      let p = kernelId + "|" + app;
+      let p = sessionName + "|" + app;
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       let port = undefined;
@@ -118,7 +118,7 @@ class Manager extends EventEmitter {
         let maxtry = 5;
         for (let i = 0; i < maxtry; i++) {
           try {
-            await gateway.start_proxy(kernelId, app, ip, port);
+            await gateway.start_proxy(sessionName, app, ip, port);
             port = gateway.getPort();
             assigned = true;
             break;
@@ -160,18 +160,18 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:kernelId/delete', (req, res) => {
+    this.app.get('/proxy/local/:sessionName/delete', (req, res) => {
       //find all and kill
 
-      let kernelId = req.params["kernelId"];
-      if (!this._config){
+      let sessionName = req.params["sessionName"];
+      if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      if (kernelId in this.proxies) {
-        this.proxies[kernelId].stop_proxy();
+      if (sessionName in this.proxies) {
+        this.proxies[sessionName].stop_proxy();
         res.send({"code": 200});
-        delete this.proxies[kernelId];
+        delete this.proxies[sessionName];
       } else {
         res.send({"code": 404});
       }
