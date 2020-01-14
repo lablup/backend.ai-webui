@@ -22,8 +22,8 @@ class ClientConfig {
      * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
      */
     constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
-        // fixed configs with this implementation
-        this._apiVersionMajor = 'v4';
+        // default configs.
+        this._apiVersionMajor = '4';
         this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
         this._hashType = 'sha256';
         if (endpoint === undefined || endpoint === null)
@@ -239,42 +239,45 @@ class Client {
                 message: errorMsg,
             };
         }
-      return body;
+        return body;
     }
-
-  /**
-   * Return the server-side API version.
-   */
-  getServerVersion() {
-    let rqst = this.newPublicRequest('GET', '/', null, '');
-    return this._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Get API major version
-   */
-  get APIMajorVersion() {
-    return this._apiVersionMajor;
-  }
-
-  /**
-   * Get the server-side manager version.
-   */
-  async getManagerVersion() {
-    if (this._managerVersion === null) {
-      let v = await this.getServerVersion();
-      this._managerVersion = v.manager;
-      this._apiVersion = v.version;
-      this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
-      this._apiVersionMajor = v.version.substr(1, 2);
-      this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
-      if (this._apiVersionMajor > 4) {
-        this.kernelPrefix = '/session';
-      }
+    /**
+     * Return the server-side API version.
+     */
+    getServerVersion() {
+        let rqst = this.newPublicRequest('GET', '/', null, '');
+        return this._wrapWithPromise(rqst);
+    }
+    /**
+     * Get API major version
+     */
+    get APIMajorVersion() {
+        return this._apiVersionMajor;
+    }
+    /**
+     * Force API major version
+     */
+    set APIMajorVersion(value) {
+        this._apiVersionMajor = value;
+        this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+    }
+    /**
+     * Get the server-side manager version.
+     */
+    async getManagerVersion() {
+        if (this._managerVersion === null) {
+            let v = await this.getServerVersion();
+            this._managerVersion = v.manager;
+            this._apiVersion = v.version;
+            this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
+            this._apiVersionMajor = v.version.substr(1, 2);
+            this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+            if (this._apiVersionMajor > 4) {
+                this.kernelPrefix = '/session';
+            }
         }
         return this._managerVersion;
     }
-
     /**
      * Check compatibility of current manager
      */
@@ -293,14 +296,14 @@ class Client {
         const v4_replacements = {
             'session_name': 'sess_id'
         };
-      if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
-        Object.keys(v4_replacements).forEach(key => {
-          let index = fields.indexOf(key);
-          if (index !== -1) {
-            fields[index] = v4_replacements[key];
-          }
-        });
-      }
+        if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
+            Object.keys(v4_replacements).forEach(key => {
+                let index = fields.indexOf(key);
+                if (index !== -1) {
+                    fields[index] = v4_replacements[key];
+                }
+            });
+        }
         return fields;
     }
     _updateSupportList() {
@@ -1253,7 +1256,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
+  
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [
