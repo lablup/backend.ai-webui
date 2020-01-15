@@ -42,15 +42,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
-  @property({type: Object}) unlimited_resource_status = {
-    cpu : Boolean,
-    mem : Boolean,
-    cuda_device : Boolean,
-    cuda_shares : Boolean
-  };
-  @property({type: Boolean}) unlimited_container_per_session = false;
-  @property({type: Boolean}) unlimited_idle_timeout = false;
-  @property({type: Boolean}) unlimited_concurrency = false;
   @property({type: Array}) allowed_vfolder_hosts = [] as any;
   @property({type: String}) default_vfolder_host = '';
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
@@ -250,33 +241,37 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 0px;">
                     <wl-label>CPU</wl-label>
-                    <wl-textfield id="cpu-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_resource_status['cpu']}"></wl-textfield>
+                    <wl-textfield id="cpu-resource" type="number"
+                    @change="${(e) =>this._validateResourceInput(e)}"
+                    ></wl-textfield>
                       <wl-label class="unlimited">
-                        <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_resource_status['cpu']}"></wl-checkbox>
+                        <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;"
+                        ></wl-checkbox>
                         Unlimited
                       </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 10px;">
                     <wl-label>RAM(GB)</wl-label>
-                    <wl-textfield id="ram-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_resource_status['mem']}"></wl-textfield>
+                    <wl-textfield id="ram-resource" type="number" 
+                    @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_resource_status['mem']}"></wl-checkbox>
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                       Unlimited
                     </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 10px;">
                     <wl-label>GPU</wl-label>
-                    <wl-textfield id="gpu-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_resource_status['cuda_device']}"></wl-textfield>
+                    <wl-textfield id="gpu-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_resource_status['cuda_device']}"></wl-checkbox>
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                       Unlimited
                     </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin: 0px 0px 0px 10px;">
-                    <wl-label>fgpu</wl-label>
-                    <wl-textfield id="fgpu-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_resource_status['cuda_shares']}"></wl-textfield>
+                    <wl-label>fGPU</wl-label>
+                    <wl-textfield id="fgpu-resource" type="number" @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_resource_status['cuda_shares']}"></wl-checkbox>
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                       Unlimited
                     </wl-label>
                   </div>
@@ -285,25 +280,25 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               <div class="horizontal center layout">
                 <div class="vertical left layout" style="width: 110px;">
                     <wl-label>Container per session</wl-label>
-                    <wl-textfield id="container-per-session-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_container_per_session}"></wl-textfield>
+                    <wl-textfield id="container-per-session-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_container_per_session}"></wl-checkbox>
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                       Unlimited
                     </wl-label>
                   </div>
                   <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
                     <wl-label>Idle timeout (sec.)</wl-label>
-                    <wl-textfield id="idle-timeout" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_idle_timeout}"></wl-textfield>
+                    <wl-textfield id="idle-timeout" type="number" @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_idle_timeout}"></wl-checkbox>
+                      <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                       Unlimited
                     </wl-label>
                   </div>
                   <div class="vertical left layout" style="width: 110px;"> 
                       <wl-label>Concurrent Jobs</wl-label>
-                      <wl-textfield id="concurrency-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}" ?disabled="${this.unlimited_concurrency}"></wl-textfield>
+                      <wl-textfield id="concurrency-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
                       <wl-label class="unlimited">
-                        <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;" ?checked="${this.unlimited_concurrency}"></wl-checkbox>
+                        <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                         Unlimited
                       </wl-label>
                   </div>
@@ -335,7 +330,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                 <wl-icon>add</wl-icon>
                 Update
               </wl-button>
-
             </fieldset>
           </form>
         </wl-card>
@@ -453,42 +447,46 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
-    this.shadowRoot.querySelector('#cpu-resource').value = resourcePolicy.total_resource_slots.cpu;
-    this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots.gpu;
-    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePolicy.total_resource_slots.fgpu;
-    this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
 
-    this.shadowRoot.querySelector('#concurrency-limit').value = resourcePolicy.max_concurrent_sessions;
-    this.shadowRoot.querySelector('#container-per-session-limit').value = resourcePolicy.max_containers_per_session;
+    let unlimited_status = {
+      cpu_resource : Object,
+      ram_resource : Object,
+      gpu_resource : Object,
+      fgpu_resource : Object,
+      concurrency_limit : Object,
+      idle_timeout : Object,
+      container_per_session_limit : Object
+    };
+    unlimited_status.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
+    unlimited_status.ram_resource = this.shadowRoot.querySelector('#ram-resource');
+    unlimited_status.gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+    unlimited_status.fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
+    unlimited_status.concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
+    unlimited_status.idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
+    unlimited_status.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
+
+    unlimited_status.cpu_resource['value']= resourcePolicy.total_resource_slots['cpu'];
+    
+    unlimited_status.ram_resource['value']=
+    resourcePolicy.total_resource_slots['mem'];
+    
+    unlimited_status.gpu_resource['value']= resourcePolicy.total_resource_slots['cuda.device'];
+    
+    unlimited_status.fgpu_resource['value'] = resourcePolicy.total_resource_slots['cuda.shares'];
+    
+    unlimited_status.concurrency_limit['value'] = resourcePolicy.max_concurrent_sessions;
+    
+    unlimited_status.idle_timeout['value'] = resourcePolicy.idle_timeout;
+    
+    unlimited_status.container_per_session_limit['value'] = resourcePolicy.max_containers_per_session;
+
+    Object.keys(unlimited_status).map( (resource_name) => {
+      this._updateInputStatus(unlimited_status[resource_name]);
+    } );
+
     this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
     this.shadowRoot.querySelector('#vfolder-capacity-limit').value = resourcePolicy.max_vfolder_size;
-    this.shadowRoot.querySelector('#idle-timeout').value = resourcePolicy.idle_timeout;
     this.shadowRoot.querySelector('#allowed_vfolder-hosts').value = resourcePolicy.allowed_vfolder_hosts[0]; /* TODO: multiple vfolder hosts */
-
-    Object.keys(resourcePolicy.total_resource_slots).map( (resource_name) => {
-      if (resourcePolicy.total_resource_slots[resource_name] === 'Unlimited') {
-        this.unlimited_resource_status[resource_name] = true;
-      } else {
-        this.unlimited_resource_status[resource_name] = false;
-      }
-    });
-
-    if (resourcePolicy.max_concurrent_sessions === 0) {
-      this.unlimited_concurrency = true;
-    } else {
-      this.unlimited_concurrency = false;
-    }
-    if (resourcePolicy.max_containers_per_session === 0) {
-      this.unlimited_container_per_session = true;
-    } else {
-      this.unlimited_container_per_session = false;
-    }
-    if (resourcePolicy.idle_timeout === 0) {
-      this.unlimited_idle_timeout = true;
-    } else {
-      this.unlimited_idle_timeout = false;
-    }
-    
   }
 
   _refreshPolicyData() {
@@ -549,7 +547,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _readResourcePolicyInput() {
-
     let total_resource_slots = {};
     let cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
     let ram_resource = this.shadowRoot.querySelector('#ram-resource');
@@ -557,18 +554,27 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
     let vfolder_hosts: Array<object> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
-    if (!cpu_resource.disabled || cpu_resource.value !== '') {
-      total_resource_slots['cpu'] = cpu_resource.value;
+
+    try {
+      this._validateUserInput(total_resource_slots, 'cpu', cpu_resource);
+      this._validateUserInput(total_resource_slots, 'mem', ram_resource);
+      this._validateUserInput(total_resource_slots,'cuda.device', gpu_resource);
+      this._validateUserInput(total_resource_slots, 'cuda.shares', fgpu_resource);
+    } catch (err) {
+      throw err;
     }
-    if (!ram_resource.disabled || ram_resource.value !== '') {
-      total_resource_slots['mem'] = ram_resource.value + 'g';
-    } 
-    if (!gpu_resource.disabled || gpu_resource.value !== '') {
-      total_resource_slots['cuda.device'] = parseInt(gpu_resource.value).toString();
-    } 
-    if (!fgpu_resource.disabled || fgpu_resource.value !== '') {
-      total_resource_slots['cuda.shares'] = parseFloat(fgpu_resource.value).toString();
-    } 
+
+    total_resource_slots['cpu'] = cpu_resource.value;
+    total_resource_slots['mem'] = ram_resource.value + 'g';
+    total_resource_slots['cuda.device'] = parseInt(gpu_resource.value).toString();
+    total_resource_slots['cuda.shares'] = parseFloat(fgpu_resource.value).toString();
+
+    Object.keys(total_resource_slots).map((resource) => {
+      if (isNaN(parseFloat(total_resource_slots[resource]))) {
+        delete total_resource_slots[resource];
+      }
+    });
+
     let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
     let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
     let idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
@@ -600,25 +606,31 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _modifyResourcePolicy() {
     let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
-    let input = this._readResourcePolicyInput();
+    try {
+      let input = this._readResourcePolicyInput();
 
-    window.backendaiclient.resourcePolicy.mutate(name, input)
-      .then(({modify_keypair_resource_policy}) => {
-        if (modify_keypair_resource_policy.ok) {
+      window.backendaiclient.resourcePolicy.mutate(name, input)
+        .then(({modify_keypair_resource_policy}) => {
+          if (modify_keypair_resource_policy.ok) {
+            this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+            this.notification.text = "Resource policy successfully updated.";
+            this.notification.show();
+            this.refresh();
+          }
+        }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
           this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-          this.notification.text = "Resource policy successfully updated.";
-          this.notification.show();
-          this.refresh();
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
         }
-      }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      }
-    });
+      });
+    } catch (err) {
+      this.notification.text = err.message;
+      this.notification.show();
+    };
+
   }
 
   _deleteKey(e) {
@@ -641,12 +653,38 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const checked = checkEl.checked;
     const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
     wlTextEl.disabled = checked;
+    if (!wlTextEl.disabled) {
+      if (wlTextEl.value === '') {
+        wlTextEl.value = 0;
+      }
+    }
   }
 
   _validateResourceInput(e) {
     const resource_name = e.target.closest('wl-textfield');
     if (resource_name.value < 0) {
       resource_name.value = 0;
+    }
+  }
+
+  _validateUserInput(resource_slot : Object, resource_name : string, resource) {
+    if (!resource.disabled) {
+      if (resource.value === '') {
+        throw {"message": "Please input value or check unlimited box."};
+      }
+      resource_slot[resource_name] = resource.value;
+    }
+  }
+  
+  _updateInputStatus(resource) {
+    let textfield = resource;
+    let checkbox = textfield.closest('div').querySelector('wl-checkbox');
+    if (textfield.value ==='') {
+      textfield.disabled = true;
+      checkbox.checked = true;
+    } else {
+      textfield.disabled = false;
+      checkbox.checked = false;
     }
   }
 
