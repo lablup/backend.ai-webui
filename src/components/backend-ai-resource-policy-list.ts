@@ -42,6 +42,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
+  @property({type: Object}) cpu_resource = {};
+  @property({type: Object}) ram_resource = {};
+  @property({type: Object}) gpu_resource = {};
+  @property({type: Object}) fgpu_resource = {};
+  @property({type: Object}) concurrency_limit = {};
+  @property({type: Object}) idle_timeout = {};
+  @property({type: Object}) container_per_session_limit = {};
   @property({type: Array}) allowed_vfolder_hosts = [] as any;
   @property({type: String}) default_vfolder_host = '';
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
@@ -418,6 +425,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
+    this._getResourceInfo();
   }
 
   async _viewStateChanged(active) {
@@ -448,41 +456,23 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
 
-    let unlimited_status = {
-      cpu_resource : Object,
-      ram_resource : Object,
-      gpu_resource : Object,
-      fgpu_resource : Object,
-      concurrency_limit : Object,
-      idle_timeout : Object,
-      container_per_session_limit : Object
-    };
-    unlimited_status.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
-    unlimited_status.ram_resource = this.shadowRoot.querySelector('#ram-resource');
-    unlimited_status.gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-    unlimited_status.fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
-    unlimited_status.concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
-    unlimited_status.idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
-    unlimited_status.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
+    // this._getResourceInfo();
 
-    unlimited_status.cpu_resource['value']= resourcePolicy.total_resource_slots['cpu'];
-    
-    unlimited_status.ram_resource['value']=
-    resourcePolicy.total_resource_slots['mem'];
-    
-    unlimited_status.gpu_resource['value']= resourcePolicy.total_resource_slots['cuda.device'];
-    
-    unlimited_status.fgpu_resource['value'] = resourcePolicy.total_resource_slots['cuda.shares'];
-    
-    unlimited_status.concurrency_limit['value'] = resourcePolicy.max_concurrent_sessions;
-    
-    unlimited_status.idle_timeout['value'] = resourcePolicy.idle_timeout;
-    
-    unlimited_status.container_per_session_limit['value'] = resourcePolicy.max_containers_per_session;
+    this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
+    this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
+    this.gpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_device'];
+    this.fgpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_shares'];
+    this.concurrency_limit['value'] = resourcePolicy.max_concurrent_sessions;
+    this.idle_timeout['value'] = resourcePolicy.idle_timeout;
+    this.container_per_session_limit['value'] = resourcePolicy.max_containers_per_session;
 
-    Object.keys(unlimited_status).map( (resource_name) => {
-      this._updateInputStatus(unlimited_status[resource_name]);
-    } );
+    this._updateInputStatus(this.cpu_resource);
+    this._updateInputStatus(this.ram_resource);
+    this._updateInputStatus(this.gpu_resource);
+    this._updateInputStatus(this.fgpu_resource);
+    this._updateInputStatus(this.concurrency_limit);
+    this._updateInputStatus(this.idle_timeout);
+    this._updateInputStatus(this.container_per_session_limit);
 
     this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
     this.shadowRoot.querySelector('#vfolder-capacity-limit').value = resourcePolicy.max_vfolder_size;
@@ -548,26 +538,27 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _readResourcePolicyInput() {
     let total_resource_slots = {};
-    let cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
-    let ram_resource = this.shadowRoot.querySelector('#ram-resource');
-    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-    let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
     let vfolder_hosts: Array<object> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
 
+    // this._getResourceInfo();
+
     try {
-      this._validateUserInput(total_resource_slots, 'cpu', cpu_resource);
-      this._validateUserInput(total_resource_slots, 'mem', ram_resource);
-      this._validateUserInput(total_resource_slots,'cuda.device', gpu_resource);
-      this._validateUserInput(total_resource_slots, 'cuda.shares', fgpu_resource);
+      this._validateUserInput(this.cpu_resource);
+      this._validateUserInput(this.ram_resource);
+      this._validateUserInput(this.gpu_resource);
+      this._validateUserInput(this.fgpu_resource);
+      this._validateUserInput(this.concurrency_limit);
+      this._validateUserInput(this.idle_timeout);
+      this._validateUserInput(this.container_per_session_limit);
     } catch (err) {
       throw err;
     }
 
-    total_resource_slots['cpu'] = cpu_resource.value;
-    total_resource_slots['mem'] = ram_resource.value + 'g';
-    total_resource_slots['cuda.device'] = parseInt(gpu_resource.value).toString();
-    total_resource_slots['cuda.shares'] = parseFloat(fgpu_resource.value).toString();
+    total_resource_slots['cpu'] = this.cpu_resource['value'];
+    total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
+    total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
+    total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
@@ -575,28 +566,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       }
     });
 
-    let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
-    let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
-    let idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
-
-    if (concurrency_limit.disabled || concurrency_limit.value === '') {
-      concurrency_limit.value = 0;
-    }
-    if (containers_per_session_limit.disabled || containers_per_session_limit.value === '') {
-      concurrency_limit.value = 0;
-    }
-    if (idle_timeout.disabled || idle_timeout.value === '') {
-      idle_timeout.value = 0;
-    }
-
     let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
     let vfolder_capacity_limit = this.shadowRoot.querySelector('#vfolder-capacity-limit').value;
+
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': parseInt(concurrency_limit.value),
-      'max_containers_per_session': parseInt(containers_per_session_limit.value),
-      'idle_timeout': parseInt(idle_timeout.value),
+      'max_concurrent_sessions': parseInt(this.concurrency_limit['value']),
+      'max_containers_per_session': parseInt(this.container_per_session_limit['value']),
+      'idle_timeout': parseInt(this.idle_timeout['value']),
       'max_vfolder_count': vfolder_count_limit,
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
@@ -667,19 +645,21 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     }
   }
 
-  _validateUserInput(resource_slot : Object, resource_name : string, resource) {
-    if (!resource.disabled) {
+  _validateUserInput(resource) {
+    if (resource.disabled) {
+      resource.value = '';
+    }
+    else {
       if (resource.value === '') {
         throw {"message": "Please input value or check unlimited box."};
       }
-      resource_slot[resource_name] = resource.value;
     }
   }
   
   _updateInputStatus(resource) {
     let textfield = resource;
     let checkbox = textfield.closest('div').querySelector('wl-checkbox');
-    if (textfield.value ==='') {
+    if (textfield.value ==='' || textfield.value === "0" ) {
       textfield.disabled = true;
       checkbox.checked = true;
     } else {
@@ -689,13 +669,23 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _markIfUnlimited(value) {
-    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+    if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
     } else if (['NaN', NaN].includes(value)) {
       return '-';
     } else {
       return value;
     }
+  }
+
+  _getResourceInfo() {
+    this.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
+    this.ram_resource = this.shadowRoot.querySelector('#ram-resource');
+    this.gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+    this.fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
+    this.concurrency_limit =this.shadowRoot.querySelector('#concurrency-limit');
+    this.idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
+    this.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
   }
 }
 
