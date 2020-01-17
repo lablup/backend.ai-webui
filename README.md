@@ -45,7 +45,7 @@ Backend.AI console focuses to
  * User management
     * User creation / deletion
  * Manager settings
-    * Add repository
+    * Add /setting repository
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
