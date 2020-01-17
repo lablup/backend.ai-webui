@@ -26,7 +26,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) editable = null;
   @property({type: Boolean}) pin = null;
   @property({type: Boolean}) markers = null;
-  @property({type: Number}) marker_limit = 0;
+  @property({type: Number}) marker_limit = 50;
   @property({type: Boolean}) disabled = null;
   @property({type: Object}) slider;
   @property({type: Object}) textfield;
@@ -92,7 +92,8 @@ export default class LablupSlider extends LitElement {
         const step = el.getAttribute('step');
         el.$formElement.step = step;
       });
-    }, 100)
+    }, 100);
+    this.checkMarkerDisplay();
   }
 
   connectedCallback() {
@@ -109,6 +110,9 @@ export default class LablupSlider extends LitElement {
         this.slider.layout();
         const event = new CustomEvent('value-changed', {'detail': {}});
         this.dispatchEvent(event);
+      }
+      if (['min', 'max'].includes(propName)) {
+        this.checkMarkerDisplay();
       }
     });
   }
@@ -136,7 +140,7 @@ export default class LablupSlider extends LitElement {
     // updated function will be automatically called.
   }
 
-  disableMarkers() {
+  checkMarkerDisplay() {
     if (this.markers) {
       if (this.max - this.min > this.marker_limit) {
         this.slider.removeAttribute('markers');
