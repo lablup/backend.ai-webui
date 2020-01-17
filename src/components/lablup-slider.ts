@@ -26,6 +26,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) editable = null;
   @property({type: Boolean}) pin = null;
   @property({type: Boolean}) markers = null;
+  @property({type: Number}) marker_limit = 0;
   @property({type: Boolean}) disabled = null;
   @property({type: Object}) slider;
   @property({type: Object}) textfield;
@@ -133,6 +134,14 @@ export default class LablupSlider extends LitElement {
     }
     this.value = this.textfield.value;
     // updated function will be automatically called.
+  }
+
+  disableMarkers() {
+    if (this.markers) {
+      if (this.max - this.min > this.marker_limit) {
+        this.slider.removeAttribute('markers');
+      }
+    }
   }
 }
 

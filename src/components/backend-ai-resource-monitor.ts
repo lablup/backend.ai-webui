@@ -55,6 +55,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) imageNames = Object();
   @property({type: Array}) versions;
   @property({type: Array}) languages;
+  @property({type: Number}) marker_limit = 25;
   @property({type: String}) gpu_mode;
   @property({type: Number}) gpu_step = 0.05;
   @property({type: Object}) cpu_metric = {
@@ -505,7 +506,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       element.onKeyDown = (e) => {
         let enterKey = 13;
         if (e.keyCode === enterKey) {
-          e.stopPropagation();
+          e.preventDefault();
         }
       }
     });
@@ -1783,7 +1784,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-              <span class="gauge-name">GPU</span>
+              <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_sg_slot.fgpu_slot}/${this.total_sg_slot.fgpu_slot}</span>
@@ -1975,6 +1976,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">CPU</div>
                   <lablup-slider id="cpu-resource" class="cpu"
                                 pin snaps expand editable markers
+                                marker_limit="${this.marker_limit}"
                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                 value="${this.cpu_request}"></lablup-slider>
                   <span class="caption">Core</span>
@@ -1983,6 +1985,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">RAM</div>
                   <lablup-slider id="mem-resource" class="mem"
                                 pin snaps step=0.05 editable markers
+                                marker_limit="${this.marker_limit}"
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                 value="${this.mem_request}"></lablup-slider>
                   <span class="caption">GB</span>
@@ -1991,6 +1994,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">Shared Memory</div>
                   <lablup-slider id="shmem-resource" class="mem"
                                 pin snaps step=0.0025 editable markers
+                                marker_limit="${this.marker_limit}"
                                 min="0.0" max="${this.shmem_metric.max}"
                                 value="${this.shmem_request}"></lablup-slider>
                   <span class="caption">GB</span>
@@ -1999,6 +2003,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">GPU</div>
                   <lablup-slider id="gpu-resource" class="gpu"
                                 pin snaps editable markers step="${this.gpu_step}"
+                                marker_limit="${this.marker_limit}"
                                 min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
                   <span class="caption">GPU</span>
                 </div>
@@ -2006,6 +2011,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">Sessions</div>
                   <lablup-slider id="session-resource" class="session"
                                 pin snaps editable markers step="1"
+                                marker_limit="${this.marker_limit}"
                                 min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
                   <span class="caption">#</span>
                 </div>
