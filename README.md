@@ -85,6 +85,10 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
+[plugins]
+# Reserved to load plugins
+# login = "login-test.js"
+# sidebar = "sidebar-test.js"
 ```
 
 ## Branches
