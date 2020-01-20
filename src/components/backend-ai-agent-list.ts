@@ -304,6 +304,10 @@ export default class BackendAIAgentList extends BackendAIPage {
         color = 'red';
         icon = 'openstack';
         break;
+      case "dgx2":
+        color = 'green';
+        icon = 'dgx2';
+        break;
       case "local":
         color = 'yellow';
         icon = 'local';
