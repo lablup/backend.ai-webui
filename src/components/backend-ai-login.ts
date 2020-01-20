@@ -279,7 +279,7 @@ export default class BackendAILogin extends LitElement {
     } else {
       if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
         this.connection_mode = 'API';
-        localStorage.setItem('backendaiconsole.connection_mode', 'API');
+        //localStorage.setItem('backendaiconsole.connection_mode', 'API');
       } else {
         if (config.general.connectionMode.toUpperCase() === 'SESSION') {
           this.connection_mode = 'SESSION';

@@ -355,7 +355,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div id="controls" class="layout horizontal flex center" kernel-id="${rowData.item.sess_id}">
+        <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
           <paper-icon-button disabled class="fg" icon="assignment"></paper-icon-button>
           ${this._isRunning() ? html`
             <paper-icon-button disabled class="fg controls-running" icon="build"></paper-icon-button>

@@ -80,4 +80,4 @@ if [[ "$(docker images -q enterprise.docker.backend.ai/dist/backendai-console-bu
 fi
 
 show_info "Building Windows app..."
-docker run --rm --name backendai-console-builder -v ${PWD}:/root/backend.ai-console/app -it enterprise.docker.backend.ai/dist/backendai-console-builder /root/update-and-build.sh ${BRANCH}
+docker run --rm --name backendai-console-builder -v ${PWD}:/root/backend.ai-console/app -it enterprise.docker.backend.ai/dist/backendai-console-builder:latest /root/update-and-build.sh ${BRANCH}
