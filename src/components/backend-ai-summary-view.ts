@@ -162,7 +162,7 @@ export default class BackendAISummary extends BackendAIPage {
       default:
         status = 'RUNNING';
     }
-    let fields = ["sess_id"];
+    let fields = ["created_at"];
     window.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.indicator.hide();
       this.jobs = response;

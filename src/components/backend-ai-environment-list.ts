@@ -351,7 +351,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <div
           id="controls"
           class="layout horizontal flex center"
-          kernel-id="[[item.digest]]"
         >
           <paper-icon-button
             class="fg blue controls-running"
