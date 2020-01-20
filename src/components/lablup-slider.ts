@@ -26,7 +26,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) editable = null;
   @property({type: Boolean}) pin = null;
   @property({type: Boolean}) markers = null;
-  @property({type: Number}) marker_limit = 50;
+  @property({type: Number}) marker_limit = 30;
   @property({type: Boolean}) disabled = null;
   @property({type: Object}) slider;
   @property({type: Object}) textfield;
@@ -53,6 +53,7 @@ export default class LablupSlider extends LitElement {
         mwc-slider {
           width: var(--slider-width, 100px);
           --mdc-theme-secondary: var(--slider-color, '#018786');
+          color: var(--paper-grey-700);
         }
       `];
   }
@@ -142,7 +143,7 @@ export default class LablupSlider extends LitElement {
 
   checkMarkerDisplay() {
     if (this.markers) {
-      if (this.max - this.min > this.marker_limit) {
+      if (((this.max - this.min) / this.step) > this.marker_limit) {
         this.slider.removeAttribute('markers');
       }
     }
