@@ -49,7 +49,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) concurrency_limit = {};
   @property({type: Object}) idle_timeout = {};
   @property({type: Object}) container_per_session_limit = {};
-  @property({type: Array}) allowed_vfolder_hosts = [] as any;
+  @property({type: Array}) allowed_vfolder_hosts = [];
   @property({type: String}) default_vfolder_host = '';
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
@@ -259,7 +259,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                   </div>
                   <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 10px;">
                     <wl-label>RAM(GB)</wl-label>
-                    <wl-textfield id="ram-resource" type="number" 
+                    <wl-textfield id="ram-resource" type="number"
                     @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) =>this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
@@ -301,7 +301,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                       Unlimited
                     </wl-label>
                   </div>
-                  <div class="vertical left layout" style="width: 110px;"> 
+                  <div class="vertical left layout" style="width: 110px;">
                       <wl-label>Concurrent Jobs</wl-label>
                       <wl-textfield id="concurrency-limit" type="number" @change="${(e) =>this._validateResourceInput(e)}"></wl-textfield>
                       <wl-label class="unlimited">
@@ -455,7 +455,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
-    
+
     this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
     this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
     this.gpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_device'];
@@ -673,7 +673,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       }
     }
   }
-  
+
   _updateInputStatus(resource) {
     let textfield = resource;
     let checkbox = textfield.closest('div').querySelector('wl-checkbox');
