@@ -455,9 +455,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
-
-    // this._getResourceInfo();
-
+    
     this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
     this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
     this.gpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_device'];
@@ -541,8 +539,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let vfolder_hosts: Array<object> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
 
-    // this._getResourceInfo();
-
     try {
       this._validateUserInput(this.cpu_resource);
       this._validateUserInput(this.ram_resource);
@@ -560,6 +556,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
     total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
 
+    this.concurrency_limit['value'] = this.concurrency_limit['value'] === '' ? 0 : parseInt(this.concurrency_limit['value']);
+    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
+    this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? 0 : parseInt(this.container_per_session_limit['value']);
+
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
         delete total_resource_slots[resource];
@@ -572,9 +572,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': parseInt(this.concurrency_limit['value']),
-      'max_containers_per_session': parseInt(this.container_per_session_limit['value']),
-      'idle_timeout': parseInt(this.idle_timeout['value']),
+      'max_concurrent_sessions': this.concurrency_limit['value'],
+      'max_containers_per_session': this.container_per_session_limit['value'],
+      'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': vfolder_count_limit,
       'max_vfolder_size': vfolder_capacity_limit,
       'allowed_vfolder_hosts': vfolder_hosts
@@ -639,19 +639,37 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _validateResourceInput(e) {
-    const resource_name = e.target.closest('wl-textfield');
-    if (resource_name.value < 0) {
-      resource_name.value = 0;
+    const textfield = e.target.closest('wl-textfield');
+     const checkbox = textfield.closest('div').querySelector('.unlimited').querySelector('wl-checkbox');
+    if (textfield.value < 0) {
+      textfield.value = 0;
+    }
+
+    if (textfield.value === '') {
+      try {
+        if (!checkbox['checked']) {
+          textfield['required']=true;
+          textfield.focus();
+          throw { "message" : "Please input value or check unlimited." };
+        }
+        else {
+          textfield['required']=false;
+          textfield.value = '';
+        }
+      } catch (err) {
+        this.notification.text = err.message;
+        this.notification.show();
+      }
     }
   }
+
 
   _validateUserInput(resource) {
     if (resource.disabled) {
       resource.value = '';
-    }
-    else {
+    } else {
       if (resource.value === '') {
-        throw {"message": "Please input value or check unlimited box."};
+          throw {"message" : "Cannot Update Resource Policy. Please check input values." };
       }
     }
   }
