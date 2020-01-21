@@ -190,11 +190,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                     <wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
+                      <wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
                         <option value="fifo" ?selected="${this.options['scheduler'] === "fifo"}">FIFO</option>
                         <option value="lifo" ?selected="${this.options['scheduler'] === "lifo"}">LIFO</option>
                         <option value="drf" ?selected="${this.options['scheduler'] === "drf"}">DRF</option>
-                     </wl-select>
+                      </wl-select>
                     </div>
                 </div>
             </div>
