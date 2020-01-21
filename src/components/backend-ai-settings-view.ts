@@ -79,6 +79,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
           width: 35px;
         }
 
+        .setting-desc-pulldown {
+          width: 265px;
+        }
+
+        .setting-pulldown {
+          width: 70px;
+        }
+
         wl-card > div {
           padding: 15px;
         }
@@ -183,13 +191,13 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
-                    <div class="vertical center-justified layout setting-desc">
+                    <div class="vertical center-justified layout setting-desc-pulldown">
                         <div>Scheduler</div>
                         <div class="description">Job scheduler.<br/>
                             Requires Backend.AI 19.12 or above.
                         </div>
                     </div>
-                    <div class="vertical center-justified layout setting-button">
+                    <div class="vertical layout setting-pulldown">
                       <wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
                         <option value="fifo" ?selected="${this.options['scheduler'] === "fifo"}">FIFO</option>
                         <option value="lifo" ?selected="${this.options['scheduler'] === "lifo"}">LIFO</option>
