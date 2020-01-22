@@ -416,19 +416,25 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
 
         <vaadin-grid-column width="50px" resizable>
-          <template class="header">Namespace</template>
+          <template class="header">
+            <vaadin-grid-sorter path="namespace">Namespace</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.namespace]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column resizable>
-          <template class="header">Language</template>
+          <template class="header">
+            <vaadin-grid-sorter path="lang">Language</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.lang]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" resizable>
-          <template class="header">Version</template>
+          <template class="header">
+            <vaadin-grid-sorter path="baseversion">Version</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.baseversion]]</div>
           </template>
