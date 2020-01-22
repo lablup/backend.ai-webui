@@ -732,7 +732,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           let names = image.name.split('/');
           if (names[1] !== undefined) {
             image.namespace = names[0];
-            image.lang = names[1];
+            image.lang = names.slice(1).join('');
           } else {
             image.lang = image.names;
           }
