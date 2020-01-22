@@ -2375,6 +2375,7 @@ class Registry {
   }
 
   add(key, value) {
+    key = encodeURIComponent(key);
     let regkey = `config/docker/registry/${key}`;
     const rqst = this.client.newSignedRequest("POST", "/config/set", {
       key: regkey,
@@ -2384,6 +2385,7 @@ class Registry {
   }
 
   delete(key) {
+    key = encodeURIComponent(key);
     const rqst = this.client.newSignedRequest("POST", "/config/delete", {
       "key": `config/docker/registry/${key}`,
       "prefix": true
