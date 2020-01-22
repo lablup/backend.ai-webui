@@ -2029,7 +2029,7 @@ class Maintenance {
     if (this.client.is_admin === true) {
       let q, v;
       if (registry !== '') {
-        registry = decodeURIComponent(registry);
+        registry = encodeURIComponent(registry);
         q = `mutation($registry: String) {` +
           `  rescan_images(registry: $registry) {` +
           `    ok msg ` +
