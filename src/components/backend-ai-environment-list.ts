@@ -415,7 +415,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="50px" resizable>
+        <vaadin-grid-column width="60px" resizable>
           <template class="header">
             <vaadin-grid-sorter path="namespace">Namespace</vaadin-grid-sorter>
           </template>
