@@ -75,14 +75,6 @@ export const BackendAiStyles =
       background-color: var(--general-background-color, #fafafa);
     }
 
-    neon-animated-pages .iron-selected {
-      position: static;
-    }
-
-    neon-animated-pages .iron-selected:not(.neon-animating) {
-      position: relative;
-    }
-
     span,
     iron-icon {
       pointer-events: none;
@@ -220,6 +212,10 @@ export const BackendAiStyles =
 
     .wl-card-title {
       font-weight: 200;
+    }
+
+    wl-select {
+      --input-font-family: var(--general-font-family);
     }
 
     .drawer-menu {
