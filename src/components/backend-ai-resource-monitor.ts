@@ -1589,6 +1589,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           imageName = specs[2];
         }
         this.supportImages[supportsKey] = this.imageInfo[imageName];
+        // Fallback routine if image has no metadata
+        if (!('group' in this.supportImages[supportsKey])) {
+          this.supportImages[supportsKey].group = 'Custom Environments';
+        }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
       });
       this._updateEnvironment();
