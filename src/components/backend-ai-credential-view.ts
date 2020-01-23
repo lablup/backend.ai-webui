@@ -206,6 +206,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
         if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
           this.use_user_list = true;
+          this._activeTab = 'user-lists';
         }
       });
     } else {
@@ -214,6 +215,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
       if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
         this.use_user_list = true;
+        this._activeTab = 'user-lists';
       } else {
         this.use_user_list = false;
       }
@@ -523,11 +525,11 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
-            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
             ${this._status === 'active' && this.use_user_list === true ? html`
-            <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>` :
+            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">Users</wl-tab>` :
       html``}
+            <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
+            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
           <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
@@ -535,7 +537,20 @@ export default class BackendAICredentialView extends BackendAIPage {
             Add credential
           </wl-button>
         </h3>
-        <wl-card id="credential-lists" class="tab-content">
+        <wl-card id="user-lists" class="admin item tab-content">
+          <h4 class="horizontal flex center center-justified layout">
+            <span>Users</span>
+            <span class="flex"></span>
+            <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
+              <wl-icon>add</wl-icon>
+              Create user
+            </wl-button>
+          </h4>
+          <div>
+            <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
+          </div>
+        </wl-card>
+        <wl-card id="credential-lists" class="tab-content" style="display:none;">
           <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>
             <span slot="description">
@@ -562,19 +577,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           </h4>
           <div>
             <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
-          </div>
-        </wl-card>
-        <wl-card id="user-lists" class="admin item tab-content" style="display:none;">
-          <h4 class="horizontal flex center center-justified layout">
-            <span>Users</span>
-            <span class="flex"></span>
-            <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
-              <wl-icon>add</wl-icon>
-              Create user
-            </wl-button>
-          </h4>
-          <div>
-            <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
           </div>
         </wl-card>
       </wl-card>
