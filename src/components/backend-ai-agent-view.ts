@@ -75,7 +75,8 @@ export default class BackendAIAgentView extends BackendAIPage {
             <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Connected</wl-tab>
             <wl-tab value="terminated-lists" @click="${(e) => this._showTab(e.target)}">Terminated</wl-tab>
             <wl-tab value="maintenance-lists" disabled>Maintaining</wl-tab>
-            <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>Scaling Group</wl-tab>
+            <wl-tab value="running-storage-lists" @click="${(e) => this._showTab(e.target)}">Storage</wl-tab>
+            <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>Resource Group</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
         </h3>
@@ -85,6 +86,9 @@ export default class BackendAIAgentView extends BackendAIPage {
         </div>
         <div id="terminated-lists" class="tab-content" style="display:none;">
           <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+        </div>
+        <div id="running-storage-lists" class="tab-content">
+          <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active'}"></backend-ai-agent-list>
         </div>
         <div id="scaling-group-lists" class="tab-content" style="display:none;">
           <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
