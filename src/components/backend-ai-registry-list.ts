@@ -182,7 +182,7 @@ class BackendAIRegistryList extends BackendAIPage {
   _deleteRegistry() {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
 
-    if (this.registryList[this.selectedIndex].hostname === name) {
+    if (this.registryList[this.selectedIndex].hostname === encodeURIComponent(name)) {
       window.backendaiclient.registry.delete(name)
         .then(({result}) => {
           if (result === "ok") {
