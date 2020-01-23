@@ -85,7 +85,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) current_page = 1;
-  @property({type: Number}) session_page_limit = 5;
+  @property({type: Number}) session_page_limit = 50;
   @property({type: Number}) total_session_count = 0;
 
   constructor() {
