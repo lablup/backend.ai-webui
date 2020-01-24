@@ -1583,12 +1583,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.supports[supportsKey].push(item.tag);
         let imageName: string;
         let specs: string[] = item.name.split('/');
-        if (specs.length == 2) {
-          imageName = specs[1];
+        if (specs.length === 1) {
+          imageName = specs[0];
         } else {
-          imageName = specs[2];
+          imageName = specs[1];
         }
-        this.supportImages[supportsKey] = this.imageInfo[imageName];
+        this.supportImages[supportsKey] = this.imageInfo[imageName] || {
+          name: 'Custom Environments',
+          description: 'Custom-built images.',
+          group: 'Custom Environments',
+          tags: [],
+          label: [
+            {
+              'category': 'Custom',
+              'tag': 'Custom',
+              'color': 'black'
+            }
+          ]
+        };
         // Fallback routine if image has no metadata
         if (!('group' in this.supportImages[supportsKey])) {
           this.supportImages[supportsKey].group = 'Custom Environments';
