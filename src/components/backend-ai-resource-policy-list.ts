@@ -311,7 +311,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                       </wl-label>
                   </div>
               </div>
-              <h4>Folders</h4>
+              <h4 style="margin-bottom:0px;">Folders</h4>
               <div class="horizontal center layout">
                 <div class="vertical layout" style="width: 110px;">
                 <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
@@ -322,7 +322,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                   </paper-listbox>
                 </paper-dropdown-menu>
                 </div>
-                <div class="vertical layout" style="width: 110px; margin: 20px 15px 0;">
+                <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
                   <wl-label class="folders">Capacity(GB)</wl-label>
                   <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
