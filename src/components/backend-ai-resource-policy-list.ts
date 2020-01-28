@@ -49,6 +49,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) concurrency_limit = {};
   @property({type: Object}) idle_timeout = {};
   @property({type: Object}) vfolder_capacity = {};
+  @property({type: Object}) vfolder_max_limit= {};
   @property({type: Object}) container_per_session_limit = {};
   @property({type: Array}) allowed_vfolder_hosts = [];
   @property({type: String}) default_vfolder_host = '';
@@ -459,9 +460,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
-
-    console.log(resourcePolicy);
-
     this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
     this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
     this.gpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_device'];
@@ -557,6 +555,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       this._validateUserInput(this.idle_timeout);
       this._validateUserInput(this.container_per_session_limit);
       this._validateUserInput(this.vfolder_capacity);
+      this._validateUserInput(this.vfolder_max_limit);
     } catch (err) {
       throw err;
     }
@@ -570,6 +569,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
     this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? 0 : parseInt(this.container_per_session_limit['value']);
     this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? 0 : parseInt(this.vfolder_capacity['value']);
+    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
@@ -577,15 +577,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       }
     });
 
-    let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
-
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
       'max_concurrent_sessions': this.concurrency_limit['value'],
       'max_containers_per_session': this.container_per_session_limit['value'],
       'idle_timeout': this.idle_timeout['value'],
-      'max_vfolder_count': vfolder_count_limit,
+      'max_vfolder_count': this.vfolder_max_limit['value'],
       'max_vfolder_size': this.vfolder_capacity['value'],
       'allowed_vfolder_hosts': vfolder_hosts
     };
@@ -652,14 +650,21 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _validateResourceInput(e) {
     const textfield = e.target.closest('wl-textfield');
-    const checkbox = textfield.closest('div').querySelector('.unlimited').querySelector('wl-checkbox');
+    const checkbox_el = textfield.closest('div').querySelector('.unlimited');
+    let checkbox;
+    if (checkbox_el) {
+      checkbox = checkbox_el.querySelector('wl-checkbox');
+    } else {
+      checkbox = null;
+    }
+    
     if (textfield.value < 0) {
       textfield.value = 0;
     }
 
     if (textfield.value === '') {
       try {
-        if (!checkbox['checked']) {
+        if (!checkbox || !checkbox['checked']) {
           textfield['required'] = true;
           textfield.focus();
           throw { "message" : "Please input value or check unlimited." };
@@ -717,6 +722,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
     this.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
     this.vfolder_capacity = this.shadowRoot.querySelector('#vfolder-capacity-limit');
+    this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
   }
 }
 
