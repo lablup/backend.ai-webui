@@ -21,7 +21,6 @@ import 'weightless/expansion';
 import 'weightless/checkbox';
 import 'weightless/label';
 
-
 import './backend-ai-credential-list';
 import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
@@ -34,7 +33,6 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
-import { register } from "@polymer/polymer/lib/utils/telemetry";
 
 /**
  Backend.AI Credential view page
@@ -226,6 +224,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
     }
     this._getResourceInfo();
+    this._getResourcePolicies();
     this._updateInputStatus(this.cpu_resource);
     this._updateInputStatus(this.ram_resource);
     this._updateInputStatus(this.gpu_resource);
@@ -379,17 +378,20 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _addResourcePolicy() {
-    console.log(this.shadowRoot.querySelector('#id_new_policy_name').value);
-    let name;
-    if (this.shadowRoot.querySelector('#id_new_policy_name').value != '') {
-      if (this.shadowRoot.querySelector('#id_new_policy_name').invalid == true) {
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    if (policy_info.value != '') {
+      if (policy_info.invalid == true) {
         return;
       }
-      name = this.shadowRoot.querySelector('#id_new_policy_name').value;
+      if (this.resource_policy_names.includes(policy_info.value)) {
+        policy_info.invalid=true;
+        policy_info.errorMessage = "Policy name already exists!";
+        return;
+      }
     } else {
-      this.notification.text = "Please input policy name";
-      this.notification.show();
-      return;
+        policy_info.invalid=true;
+        policy_info.errorMessage = "Please input policy name.";
+        return;
     }
     try {
       let input = this._readResourcePolicyInput();
@@ -599,6 +601,19 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  _validatePolicyName(e) {
+    let policy_info = e.target;
+    let policy_name = e.target.value;
+
+    if (this.resource_policy_names.includes(policy_name)) {
+      policy_info.errorMessage="Policy name already exists!";
+      policy_info.invalid=true;
+    }
+    else {
+      policy_info.invalid=false;
+    }
+   }
+
   _updateInputStatus(resource) {
     let textfield = resource;
     let checkbox = textfield.closest('div').querySelector('wl-checkbox');
@@ -748,7 +763,8 @@ export default class BackendAICredentialView extends BackendAIPage {
               <paper-input type="text" name="new_policy_name"
                            id="id_new_policy_name" label="Policy Name"
                            required
-                           error-message="Policy name only accepts letters and numbers" style="width:100%;"></paper-input>
+                           style="width:100%;"
+                           @change="${(e)=>this._validatePolicyName(e)}"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">

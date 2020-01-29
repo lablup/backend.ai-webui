@@ -53,6 +53,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) container_per_session_limit = {};
   @property({type: Array}) allowed_vfolder_hosts = [];
   @property({type: String}) default_vfolder_host = '';
+  @property({type: Array}) resource_policy_names = Array();
+  @property({type: String}) current_policy_name = '';
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
 
@@ -244,7 +246,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
                            required
-                           error-message="Policy name only accepts letters and numbers" style="width:100%;"></paper-input>
+                           style="width:100%;"
+                           focused="true"
+                           @change="${(e)=>this._validatePolicyName(e)}"
+                           ></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 0px;">
@@ -458,8 +463,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const controls = e.target.closest('#controls');
     const policyName = controls['policy-name'];
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
+    this.resource_policy_names = Object.keys(resourcePolicies);
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
+    this.current_policy_name = policyName;
     this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
     this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
     this.gpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_device'];
@@ -591,7 +598,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _modifyResourcePolicy() {
-    let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    let name = policy_info.value;
+    if (policy_info.invalid) {
+      return;
+    }
     try {
       let input = this._readResourcePolicyInput();
 
@@ -690,6 +701,19 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       }
     }
   }
+
+  _validatePolicyName(e) {
+    let policy_info = e.target;
+    let policy_name = e.target.value;
+    if (this.resource_policy_names.includes(policy_name)) {
+      if (policy_name !== this.current_policy_name) {
+        policy_info.errorMessage="Policy name already exists!";
+        policy_info.invalid=true;
+        return;
+      }
+    }
+    policy_info.invalid=false;
+   }
 
   _updateInputStatus(resource) {
     let textfield = resource;
