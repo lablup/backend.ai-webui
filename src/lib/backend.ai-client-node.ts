@@ -157,6 +157,7 @@ class Client {
   public maintenance: Maintenance;
   public scalingGroup: ScalingGroup;
   public registry: Registry;
+  public setting: Setting;
   public _features: any;
   public ready: boolean = false;
   static ERR_REQUEST: any;
@@ -201,6 +202,7 @@ class Client {
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
     this.registry = new Registry(this);
+    this.setting = new Setting(this);
     this.domain = new Domain(this);
 
     this._features = {}; // feature support list
@@ -1656,18 +1658,20 @@ class ContainerImage {
    * install specific container images from registry
    *
    * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+   * @param {object} resource - resource to use for installation.
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
    */
-  install(name, registry: string = 'index.docker.io') {
+  install(name, resource: object = {}, registry: string = 'index.docker.io') {
     if (registry != 'index.docker.io') {
       registry = registry + '/';
     } else {
       registry = '';
     }
     let sessionId = this.client.generateSessionId();
-    return this.client.createIfNotExists(registry + name, sessionId, {
-      'cpu': '1', 'mem': '512m',
-    }).then((response) => {
+    if (Object.keys(resource).length === 0) {
+      resource = {'cpu': '1', 'mem': '512m'}
+    }
+    return this.client.createIfNotExists(registry + name, sessionId, resource).then((response) => {
       return this.client.destroyKernel(sessionId);
     }).catch(err => {
       throw err;
@@ -2331,7 +2335,11 @@ class Registry {
   }
 
   add(key, value) {
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    let regkey = `config/docker/registry/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {
+      key: regkey,
+      value
+    });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -2339,6 +2347,65 @@ class Registry {
     const rqst = this.client.newSignedRequest("POST", "/config/delete", {
       "key": `config/docker/registry/${key}`,
       "prefix": true
+    });
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+class Setting {
+  public client: any;
+  public config: any;
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+    this.config = null;
+  }
+  /**
+   * List settings
+   *
+   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   */
+  list(prefix = "") {
+    prefix = `config/${prefix}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": prefix, "prefix": true});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Get settings
+   *
+   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   */
+  get(key) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": key, "prefix": false});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Set a setting
+   *
+   * @param {string} key - key to add.
+   * @param {string} value - value to add.
+   */
+  set(key, value) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Delete a setting
+   *
+   * @param {string} key - key to delete
+   * @param {boolean} prefix - prefix to delete. if prefix is true, this command will delete every settings starting with the key.
+   */
+  delete(key, prefix = false) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
+      "key": `${key}`,
+      "prefix": prefix
     });
     return this.client._wrapWithPromise(rqst);
   }
