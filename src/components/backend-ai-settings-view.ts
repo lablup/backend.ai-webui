@@ -20,11 +20,13 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import 'weightless/card';
 import 'weightless/switch';
 import 'weightless/select';
+import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("backend-ai-settings-view")
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Boolean}) options = Object();
+  @property({type: Object}) notification = Object();
 
   constructor() {
     super();
@@ -77,6 +79,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
           width: 35px;
         }
 
+        .setting-desc-pulldown {
+          width: 265px;
+        }
+
+        .setting-pulldown {
+          width: 70px;
+        }
+
         wl-card > div {
           padding: 15px;
         }
@@ -105,7 +115,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <div class="horizontal layout wrap setting-item">
                     <div class="vertical center-justified layout setting-desc">
                         <div>Automatic image update from repository</div>
-                        <div class="description">Allow automatic image update from registered registries.
+                        <div class="description">When new image comes out, update current image automatically. Please turn off when you preserve the current environment without updating.
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
@@ -181,18 +191,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
-                    <div class="vertical center-justified layout setting-desc">
+                    <div class="vertical center-justified layout setting-desc-pulldown">
                         <div>Scheduler</div>
                         <div class="description">Job scheduler.<br/>
                             Requires Backend.AI 19.12 or above.
                         </div>
                     </div>
-                    <div class="vertical center-justified layout setting-button">
-                     <wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
+                    <div class="vertical layout setting-pulldown">
+                      <wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
                         <option value="fifo" ?selected="${this.options['scheduler'] === "fifo"}">FIFO</option>
                         <option value="lifo" ?selected="${this.options['scheduler'] === "lifo"}">LIFO</option>
                         <option value="drf" ?selected="${this.options['scheduler'] === "drf"}">DRF</option>
-                     </wl-select>
+                      </wl-select>
                     </div>
                 </div>
             </div>
@@ -228,6 +238,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.notification = window.lablupNotification;
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateSettings();
@@ -293,8 +304,13 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   changeScheduler(e) {
     if (['fifo', 'lifo', 'drf'].includes(e.target.value)) {
-      window.backendaiclient.setting.set('plugins/scheduler', e.target.value).then((response) => {
+      let scheduler = `{${e.target.value}}`;
+      window.backendaiclient.setting.set('plugins/scheduler', scheduler).then((response) => {
         console.log(response);
+      }).catch(err => {
+        this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
+        this.notification.detail = err;
+        this.notification.show(true);
       });
     }
   }

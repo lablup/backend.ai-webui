@@ -28,6 +28,11 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     this._running = false;
     this._resolve = undefined;
     this.tcpServer = net.createServer();
+    if (env._apiVersionMajor > 4) {
+      this.sessionPrefix = 'session'; // `kernel` for v4, `session` for v5 and later.
+    } else {
+      this.sessionPrefix = 'kernel'; // `kernel` for v4, `session` for v5 and later.
+    }
   }
 
   get_header(queryString) {
@@ -47,27 +52,29 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     return hdrs;
   }
 
-  start(kernelId, app, ip, port) {
+  start(sessionName, app, ip, port) {
     return new Promise(resolve => {
       this._resolve = resolve;
-      this._start(kernelId, app, ip, port);
+      this._start(sessionName, app, ip, port);
     });
   }
 
-  _start(kernelId, app, ip, port){
+  _start(sessionName, app, ip, port) {
     this.ip = ip;
     this.port = port;
-    this._conn(kernelId, app);
+    this._conn(sessionName, app);
     this.tcpServer.listen(this.port, this.ip);
   }
-  
-  _conn(kernelId, app) {
-    let queryString = '/stream/kernel/' + kernelId + "/httpproxy?app=" + app;
-    let hdrs = () => { return this.get_header(queryString); };
+
+  _conn(sessionName, app) {
+    let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
+    let hdrs = () => {
+      return this.get_header(queryString);
+    };
     let url = this._config.endpoint + queryString;
     url = url.replace(/^http/, "ws");
 
-    this.tcpServer.on('listening', () =>{
+    this.tcpServer.on('listening', () => {
       //logger.info(`Starting an app-proxy server with ${this.ip}:${this.port}...`);
       this.port = this.tcpServer.address().port;
       this._running = true;

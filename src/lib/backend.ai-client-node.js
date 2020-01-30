@@ -1,9 +1,9 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v19.07.2)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.01.0)
 ====================================================================
 
-(C) Copyright 2016-2019 Lablup Inc.
+(C) Copyright 2016-2020 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -22,8 +22,8 @@ class ClientConfig {
      * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
      */
     constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
-        // fixed configs with this implementation
-        this._apiVersionMajor = 'v4';
+        // default configs.
+        this._apiVersionMajor = '4';
         this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
         this._hashType = 'sha256';
         if (endpoint === undefined || endpoint === null)
@@ -105,7 +105,7 @@ class Client {
     constructor(config, agentSignature) {
         this.ready = false;
         this.code = null;
-        this.kernelId = null;
+        this.sessionId = null;
         this.kernelType = null;
         this.clientVersion = '19.09.0';
         this.agentSignature = agentSignature;
@@ -117,6 +117,7 @@ class Client {
         }
         this._managerVersion = null;
         this._apiVersion = null;
+        this._apiVersionMajor = null;
         this.is_admin = false;
         this.is_superadmin = false;
         this.kernelPrefix = '/kernel';
@@ -248,6 +249,19 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     /**
+     * Get API major version
+     */
+    get APIMajorVersion() {
+        return this._apiVersionMajor;
+    }
+    /**
+     * Force API major version
+     */
+    set APIMajorVersion(value) {
+        this._apiVersionMajor = value;
+        this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+    }
+    /**
      * Get the server-side manager version.
      */
     async getManagerVersion() {
@@ -256,6 +270,11 @@ class Client {
             this._managerVersion = v.manager;
             this._apiVersion = v.version;
             this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
+            this._apiVersionMajor = v.version.substr(1, 2);
+            this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+            if (this._apiVersionMajor > 4) {
+                this.kernelPrefix = '/session';
+            }
         }
         return this._managerVersion;
     }
@@ -272,6 +291,20 @@ class Client {
         else {
             return false;
         }
+    }
+    _updateFieldCompatibilityByAPIVersion(fields) {
+        const v4_replacements = {
+            'session_name': 'sess_id'
+        };
+        if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
+            Object.keys(v4_replacements).forEach(key => {
+                let index = fields.indexOf(key);
+                if (index !== -1) {
+                    fields[index] = v4_replacements[key];
+                }
+            });
+        }
+        return fields;
     }
     _updateSupportList() {
         if (this.isAPIVersionCompatibleWith('v4.20190601')) {
@@ -488,6 +521,7 @@ class Client {
      * Obtain the session information by given sessionId.
      *
      * @param {string} sessionId - the sessionId given when created
+     * @param {string | null} ownerKey - owner key to access
      */
     getLogs(sessionId, ownerKey = null) {
         let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
@@ -547,14 +581,14 @@ class Client {
     createKernel(kernelType, sessionId = undefined, resources = {}) {
         return this.createIfNotExists(kernelType, sessionId, resources);
     }
-    destroyKernel(kernelId, ownerKey = null) {
-        return this.destroy(kernelId, ownerKey);
+    destroyKernel(sessionId, ownerKey = null) {
+        return this.destroy(sessionId, ownerKey);
     }
-    refreshKernel(kernelId, ownerKey = null) {
-        return this.restart(kernelId, ownerKey);
+    refreshKernel(sessionId, ownerKey = null) {
+        return this.restart(sessionId, ownerKey);
     }
-    runCode(code, kernelId, runId, mode) {
-        return this.execute(kernelId, runId, mode, code, {});
+    runCode(code, sessionId, runId, mode) {
+        return this.execute(sessionId, runId, mode, code, {});
     }
     upload(sessionId, path, fs) {
         const formData = new FormData();
@@ -1575,18 +1609,19 @@ class ComputeSession {
     /**
      * list compute sessions with specific conditions.
      *
-     * @param {array} fields - fields to query. Default fields are: ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"]
+     * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
      * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
      * @param {string} accessKey - access key that is used to start compute sessions.
      * @param {number} limit - limit number of query items.
      * @param {number} offset - offset for item query. Useful for pagination.
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      */
-    async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
+    async list(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
         if (accessKey === '')
             accessKey = null;
         if (group === '')
             group = null;
+        fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
@@ -1821,6 +1856,7 @@ class Maintenance {
         if (this.client.is_admin === true) {
             let q, v;
             if (registry !== '') {
+                registry = decodeURIComponent(registry);
                 q = `mutation($registry: String) {` +
                     `  rescan_images(registry: $registry) {` +
                     `    ok msg ` +
@@ -2146,6 +2182,7 @@ class Registry {
         return this.client._wrapWithPromise(rqst);
     }
     add(key, value) {
+        key = encodeURIComponent(key);
         let regkey = `config/docker/registry/${key}`;
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
             key: regkey,
@@ -2154,6 +2191,7 @@ class Registry {
         return this.client._wrapWithPromise(rqst);
     }
     delete(key) {
+        key = encodeURIComponent(key);
         const rqst = this.client.newSignedRequest("POST", "/config/delete", {
             "key": `config/docker/registry/${key}`,
             "prefix": true
