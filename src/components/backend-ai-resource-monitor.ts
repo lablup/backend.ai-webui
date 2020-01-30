@@ -905,13 +905,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         prefix = specs[1];
         kernelName = specs[2];
       }
-      const alias = this.aliases[item];
+      let alias = this.aliases[item];
       let basename;
       if (alias !== undefined) {
         basename = alias.split(' (')[0];
       } else {
         basename = kernelName;
       }
+      // Remove registry and namespace from alias and basename.
+      alias = alias.split('/').slice(-1)[0]
+      basename = basename.split('/').slice(-1)[0]
+
       let tags: string[] = [];
       if (kernelName in this.tags) {
         tags = tags.concat(this.tags[kernelName]);
@@ -1896,17 +1900,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <paper-dropdown-menu id="environment" label="Environments" horizontal-align="left">
                   <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                  selected="${this.default_language}">
-                ${this.languages.map(item => html`
-                    ${item.clickable === false ? html`
-                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>` :
-      html`
-                      <paper-item id="${item.name}" label="${item.alias}">${item.basename}
-                      ${item.tags ? item.tags.map(item => html`
-                        <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                      `) : ''}
-                      </paper-item>
-                    `}
-                `)}
+                    ${this.languages.map(item => html`
+                      ${item.clickable === false ? html`
+                        <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>
+                      ` : html`
+                        <paper-item id="${item.name}" label="${item.alias}">${item.basename}
+                          ${item.tags ? item.tags.map(item => html`
+                            <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                          `) : ''}
+                        </paper-item>
+                      `}
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="version" label="Version">
