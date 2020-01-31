@@ -1,9 +1,9 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v19.07.2)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.01.0)
 ====================================================================
 
-(C) Copyright 2016-2019 Lablup Inc.
+(C) Copyright 2016-2020 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -29,7 +29,7 @@ class ClientConfig {
   public _secretKey: string;
   public _userId: string;
   public _password: string;
-  public _proxyURL: string;
+  public _proxyURL: any;
   public _connectionMode: string;
 
   /**
@@ -41,8 +41,8 @@ class ClientConfig {
    * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
    */
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
-    // fixed configs with this implementation
-    this._apiVersionMajor = 'v4';
+    // default configs.
+    this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
     this._hashType = 'sha256';
     if (endpoint === undefined || endpoint === null)
@@ -132,13 +132,14 @@ class ClientConfig {
 
 class Client {
   public code: any;
-  public kernelId: string | null;
+  public sessionId: string | null;
   public kernelType: any;
   public clientVersion: string;
   public agentSignature: any;
   public _config: any;
   public _managerVersion: any;
   public _apiVersion: any;
+  public _apiVersionMajor: any;
   public is_admin: boolean;
   public is_superadmin: boolean;
   public kernelPrefix: any;
@@ -157,6 +158,7 @@ class Client {
   public maintenance: Maintenance;
   public scalingGroup: ScalingGroup;
   public registry: Registry;
+  public setting: Setting;
   public _features: any;
   public ready: boolean = false;
   static ERR_REQUEST: any;
@@ -172,7 +174,7 @@ class Client {
    */
   constructor(config, agentSignature) {
     this.code = null;
-    this.kernelId = null;
+    this.sessionId = null;
     this.kernelType = null;
     this.clientVersion = '19.09.0';
     this.agentSignature = agentSignature;
@@ -183,6 +185,7 @@ class Client {
     }
     this._managerVersion = null;
     this._apiVersion = null;
+    this._apiVersionMajor = null;
     this.is_admin = false;
     this.is_superadmin = false;
     this.kernelPrefix = '/kernel';
@@ -201,6 +204,7 @@ class Client {
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
     this.registry = new Registry(this);
+    this.setting = new Setting(this);
     this.domain = new Domain(this);
 
     this._features = {}; // feature support list
@@ -314,6 +318,21 @@ class Client {
   }
 
   /**
+   * Get API major version
+   */
+  get APIMajorVersion() {
+    return this._apiVersionMajor;
+  }
+
+  /**
+   * Force API major version
+   */
+  set APIMajorVersion(value) {
+    this._apiVersionMajor = value;
+    this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+  }
+
+  /**
    * Get the server-side manager version.
    */
   async getManagerVersion() {
@@ -322,6 +341,11 @@ class Client {
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
+      this._apiVersionMajor = v.version.substr(1, 2);
+      this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+      if (this._apiVersionMajor > 4) {
+        this.kernelPrefix = '/session';
+      }
     }
     return this._managerVersion;
   }
@@ -338,6 +362,21 @@ class Client {
     } else {
       return false;
     }
+  }
+
+  _updateFieldCompatibilityByAPIVersion(fields) {
+    const v4_replacements = {
+      'session_name': 'sess_id'
+    };
+    if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
+      Object.keys(v4_replacements).forEach(key => {
+        let index = fields.indexOf(key);
+        if (index !== -1) {
+          fields[index] = v4_replacements[key];
+        }
+      });
+    }
+    return fields;
   }
 
   _updateSupportList() {
@@ -435,6 +474,20 @@ class Client {
       'password': password
     };
     let rqst = this.newSignedRequest('POST', `/auth/signout`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Update user's password.
+   *
+   */
+  async updatePassword(oldPassword, newPassword, newPassword2) {
+    let body = {
+      'old_password': oldPassword,
+      'new_password': newPassword,
+      'new_password2': newPassword2
+    };
+    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body);
     return this._wrapWithPromise(rqst);
   }
 
@@ -547,6 +600,7 @@ class Client {
    * Obtain the session information by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
+   * @param {string | null} ownerKey - owner key to access
    */
   getLogs(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
@@ -613,16 +667,16 @@ class Client {
     return this.createIfNotExists(kernelType, sessionId, resources);
   }
 
-  destroyKernel(kernelId, ownerKey = null) {
-    return this.destroy(kernelId, ownerKey);
+  destroyKernel(sessionId, ownerKey = null) {
+    return this.destroy(sessionId, ownerKey);
   }
 
-  refreshKernel(kernelId, ownerKey = null) {
-    return this.restart(kernelId, ownerKey);
+  refreshKernel(sessionId, ownerKey = null) {
+    return this.restart(sessionId, ownerKey);
   }
 
-  runCode(code, kernelId, runId, mode) {
-    return this.execute(kernelId, runId, mode, code, {});
+  runCode(code, sessionId, runId, mode) {
+    return this.execute(sessionId, runId, mode, code, {});
   }
 
   upload(sessionId, path, fs) {
@@ -631,6 +685,24 @@ class Client {
     formData.append('src', fs, path);
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData);
     return this._wrapWithPromise(rqst);
+  }
+
+  download(sessionId, files) {
+    let params = {
+      'files': files
+    };
+    const q = querystring.stringify(params);
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download?${q}`, null);
+    return this._wrapWithPromise(rqst, true);
+  }
+
+  download_single(sessionId, file) {
+    let params = {
+      'file': file
+    };
+    const q = querystring.stringify(params);
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
+    return this._wrapWithPromise(rqst, true);
   }
 
   mangleUserAgentSignature() {
@@ -1327,7 +1399,7 @@ class Keypair {
       'concurrency_limit',
       'rate_limit'
     ];
-    if (accessKey !== null || accessKey !== '') {
+    if (accessKey !== null && accessKey !== '') {
       fields = fields.concat(['access_key', 'secret_key']);
     }
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
@@ -1336,7 +1408,7 @@ class Keypair {
       `  }` +
       `}`;
     let v;
-    if (accessKey !== null || accessKey !== '') {
+    if (accessKey !== null && accessKey !== '') {
       v = {
         'user_id': userId,
         'input': {
@@ -1624,18 +1696,20 @@ class ContainerImage {
    * install specific container images from registry
    *
    * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+   * @param {object} resource - resource to use for installation.
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
    */
-  install(name, registry: string = 'index.docker.io') {
+  install(name, resource: object = {}, registry: string = 'index.docker.io') {
     if (registry != 'index.docker.io') {
       registry = registry + '/';
     } else {
       registry = '';
     }
     let sessionId = this.client.generateSessionId();
-    return this.client.createIfNotExists(registry + name, sessionId, {
-      'cpu': '1', 'mem': '512m',
-    }).then((response) => {
+    if (Object.keys(resource).length === 0) {
+      resource = {'cpu': '1', 'mem': '512m'}
+    }
+    return this.client.createIfNotExists(registry + name, sessionId, resource).then((response) => {
       return this.client.destroyKernel(sessionId);
     }).catch(err => {
       throw err;
@@ -1683,17 +1757,18 @@ class ComputeSession {
   /**
    * list compute sessions with specific conditions.
    *
-   * @param {array} fields - fields to query. Default fields are: ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"]
+   * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
    * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
-  async list(fields = ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+  async list(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
              status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
     if (accessKey === '') accessKey = null;
     if (group === '') group = null;
+    fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
@@ -1954,6 +2029,7 @@ class Maintenance {
     if (this.client.is_admin === true) {
       let q, v;
       if (registry !== '') {
+        registry = decodeURIComponent(registry);
         q = `mutation($registry: String) {` +
           `  rescan_images(registry: $registry) {` +
           `    ok msg ` +
@@ -2299,14 +2375,79 @@ class Registry {
   }
 
   add(key, value) {
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    key = encodeURIComponent(key);
+    let regkey = `config/docker/registry/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {
+      key: regkey,
+      value
+    });
     return this.client._wrapWithPromise(rqst);
   }
 
   delete(key) {
+    key = encodeURIComponent(key);
     const rqst = this.client.newSignedRequest("POST", "/config/delete", {
       "key": `config/docker/registry/${key}`,
       "prefix": true
+    });
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+class Setting {
+  public client: any;
+  public config: any;
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+    this.config = null;
+  }
+  /**
+   * List settings
+   *
+   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   */
+  list(prefix = "") {
+    prefix = `config/${prefix}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": prefix, "prefix": true});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Get settings
+   *
+   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   */
+  get(key) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": key, "prefix": false});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Set a setting
+   *
+   * @param {string} key - key to add.
+   * @param {string} value - value to add.
+   */
+  set(key, value) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    return this.client._wrapWithPromise(rqst);
+  }
+  /**
+   * Delete a setting
+   *
+   * @param {string} key - key to delete
+   * @param {boolean} prefix - prefix to delete. if prefix is true, this command will delete every settings starting with the key.
+   */
+  delete(key, prefix = false) {
+    key = `config/${key}`;
+    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
+      "key": `${key}`,
+      "prefix": prefix
     });
     return this.client._wrapWithPromise(rqst);
   }

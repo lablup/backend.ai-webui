@@ -1,12 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
-
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -21,14 +19,25 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
 import 'weightless/card';
 import 'weightless/switch';
+import 'weightless/select';
+import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("backend-ai-settings-view")
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
+  @property({type: Boolean}) options = Object();
+  @property({type: Object}) notification = Object();
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
+    this.options = {
+      automatic_image_update: false,
+      cuda_gpu: false,
+      cuda_fgpu: false,
+      rocm_gpu: false,
+      tpu: false,
+      scheduler: 'fifo'
+    }
   }
 
   static get is() {
@@ -44,35 +53,43 @@ export default class BackendAiSettingsView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          div.description,
-          span.description {
-              font-size: 11px;
-              margin-top: 5px;
-              margin-right: 5px;
-          }
+        div.description,
+        span.description {
+          font-size: 11px;
+          margin-top: 5px;
+          margin-right: 5px;
+        }
 
-          .setting-item {
-              margin: 15px 10px;
-              width: 340px;
-          }
+        .setting-item {
+          margin: 15px 10px;
+          width: 340px;
+        }
 
-          .setting-desc {
-              width: 300px;
-          }
+        .setting-desc {
+          width: 300px;
+        }
 
-          .setting-button {
-              width: 35px;
-          }
+        .setting-button {
+          width: 35px;
+        }
 
-          wl-card > div {
-              padding: 15px;
-          }
+        .setting-desc-pulldown {
+          width: 265px;
+        }
+
+        .setting-pulldown {
+          width: 70px;
+        }
+
+        wl-card > div {
+          padding: 15px;
+        }
       `];
   }
 
@@ -98,11 +115,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <div class="horizontal layout wrap setting-item">
                     <div class="vertical center-justified layout setting-desc">
                         <div>Automatic image update from repository</div>
-                        <div class="description">Allow automatic image update from registered registries.
+                        <div class="description">When new image comes out, update current image automatically. Please turn off when you preserve the current environment without updating.
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="allow-image-update-switch" disabled></wl-switch>
+                        <wl-switch id="allow-image-update-switch" @change="${(e) => this.toggleImageUpdate(e)}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
@@ -125,16 +142,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         <wl-switch id="use-gui-on-web-switch" disabled></wl-switch>
                     </div>
                 </div>
-                <div class="horizontal layout wrap setting-item">
-                    <div class="vertical center-justified layout setting-desc">
-                        <div>SFTP support</div>
-                        <div class="description">Provides SFTP server for storage folders. <br/>Requires Backend.AI SFTP image.
-                        </div>
-                    </div>
-                    <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="cuda-gpu-support-switch" checked disabled></wl-switch>
-                    </div>
-                </div>
+            </div>
+            <div class="horizontal wrap layout" style="background-color:#FFFBE7;padding: 5px 15px;">
+              Note: The settings below are automatically applied depending on the installation environment and status.
             </div>
             <h3 class="horizontal center layout">
                 <span>Scaling</span>
@@ -162,21 +172,37 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div class="vertical center-justified layout setting-desc">
                         <div>CUDA GPU support</div>
                         <div class="description">NVidia CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.
+                        ${this.options['cuda_fgpu'] ? html`<br />Disabled because system uses Fractional GPU plugin` : html``}
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="cuda-gpu-support-switch" checked disabled></wl-switch>
+                        <wl-switch id="cuda-gpu-support-switch" ?checked="${this.options['cuda_gpu']}" disabled></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
                     <div class="vertical center-justified layout setting-desc">
                         <div>ROCm GPU support</div>
                         <div class="description">AMD ROCm GPU support. <br/>Requires Backend.AI ROCm Plugin. <br/>
-                            Requires Backend.AI 19.09 beta or above.
+                            Requires Backend.AI 19.12 or above.
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <wl-switch id="rocm-gpu-support-switch" disabled></wl-switch>
+                      <wl-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></wl-switch>
+                    </div>
+                </div>
+                <div class="horizontal layout wrap setting-item">
+                    <div class="vertical center-justified layout setting-desc-pulldown">
+                        <div>Scheduler</div>
+                        <div class="description">Job scheduler.<br/>
+                            Requires Backend.AI 19.12 or above.
+                        </div>
+                    </div>
+                    <div class="vertical layout setting-pulldown">
+                      <wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
+                        <option value="fifo" ?selected="${this.options['scheduler'] === "fifo"}">FIFO</option>
+                        <option value="lifo" ?selected="${this.options['scheduler'] === "lifo"}">LIFO</option>
+                        <option value="drf" ?selected="${this.options['scheduler'] === "drf"}">DRF</option>
+                      </wl-select>
                     </div>
                 </div>
             </div>
@@ -192,7 +218,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="fractional-gpu-switch" checked disabled></wl-switch>
+                        <wl-switch id="fractional-gpu-switch" ?checked="${this.options['cuda_fgpu']}" disabled></wl-switch>
                     </div>
                 </div>
                 <div class="horizontal layout wrap setting-item">
@@ -203,53 +229,90 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="tpu-switch" disabled></wl-switch>
-                    </div>
-                </div>
-                <div class="horizontal layout wrap setting-item">
-                    <div class="vertical center-justified layout setting-desc">
-                        <div>Precise Statistics</div>
-                        <div class="description">Use precise statistics module. Requires Backend.AI 19.06 or above. <br/>
-                        </div>
-                    </div>
-                    <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="precise-statistics-switch" disabled></wl-switch>
-                    </div>
-                </div>
-                <div class="horizontal layout wrap setting-item">
-                    <div class="vertical center-justified layout setting-desc">
-                        <div>Detailed Logging</div>
-                        <div class="description">Use detailed logging module. Requires Backend.AI 19.06 or above.<br/>
-                        </div>
-                    </div>
-                    <div class="vertical center-justified layout setting-button">
-                        <wl-switch id="detailed-logging-switch" disabled></wl-switch>
+                        <wl-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></wl-switch>
                     </div>
                 </div>
             </div>
-
-
         </wl-card>
     `;
   }
 
   firstUpdated() {
+    this.notification = window.lablupNotification;
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
+        this.updateSettings();
       }, true);
     } else { // already connected
+      this.updateSettings();
     }
   }
 
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-
     }
   }
 
-  _indexFrom1(index) {
-    return index + 1;
+  updateSettings() {
+
+
+    window.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
+      if (response['result'] === null || response['result'] === 'digest') { // digest mode
+        this.options['automatic_image_update'] = true;
+      } else if (response['result'] === 'tag' || response['result'] === 'none') {
+        this.options['automatic_image_update'] = false;
+      }
+      this.update(this.options);
+    });
+    window.backendaiclient.setting.get('plugins/scheduler').then((response) => {
+      if (response['result'] === null || response['result'] === 'fifo') { // digest mode
+        this.options['scheduler'] = 'fifo';
+      } else {
+        this.options['scheduler'] = response['result'];
+      }
+      this.update(this.options);
+    });
+    window.backendaiclient.getResourceSlots().then((response) => {
+      if ('cuda.device' in response) {
+        this.options['cuda_gpu'] = true;
+      }
+      if ('cuda.shares' in response) {
+        this.options['cuda_fgpu'] = true;
+      }
+      if ('rocm.device' in response) {
+        this.options['rocm_gpu'] = true;
+      }
+      if ('tpu.device' in response) {
+        this.options['tpu'] = true;
+      }
+      this.update(this.options);
+    });
+  }
+
+  toggleImageUpdate(e) {
+    if (e.target.checked === false) {
+      window.backendaiclient.setting.set('docker/image/auto_pull', 'none').then((response) => {
+        console.log(response);
+      });
+    } else {
+      window.backendaiclient.setting.set('docker/image/auto_pull', 'digest').then((response) => {
+        console.log(response);
+      });
+    }
+  }
+
+  changeScheduler(e) {
+    if (['fifo', 'lifo', 'drf'].includes(e.target.value)) {
+      let scheduler = `{${e.target.value}}`;
+      window.backendaiclient.setting.set('plugins/scheduler', scheduler).then((response) => {
+        console.log(response);
+      }).catch(err => {
+        this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
+        this.notification.detail = err;
+        this.notification.show(true);
+      });
+    }
   }
 }
 

@@ -6,7 +6,7 @@ UI / UX:
   - resources/icons/*
   - resources/*.css
   - src/plastics/**/*
-  - 
+
 library / SDK:
   - resources/lib/**/*
   - resources/wsproxy/**/*

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, LitElement, property} from "lit-element";
@@ -70,6 +70,7 @@ export default class BackendAILogin extends LitElement {
   @property({type: Boolean}) signup_support = false;
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
+  @property({type: Boolean}) allow_project_resource_monitor = false;
 
   constructor() {
     super();
@@ -230,6 +231,12 @@ export default class BackendAILogin extends LitElement {
     } else {
       this.change_signin_support = true;
     }
+    if (typeof config.general === "undefined" || typeof config.general.allowProjectResourceMonitor === "undefined" || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor == false) {
+      this.allow_project_resource_monitor = false;
+    } else {
+      this.allow_project_resource_monitor = true;
+    }
+
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
@@ -272,7 +279,7 @@ export default class BackendAILogin extends LitElement {
     } else {
       if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
         this.connection_mode = 'API';
-        localStorage.setItem('backendaiconsole.connection_mode', 'API');
+        //localStorage.setItem('backendaiconsole.connection_mode', 'API');
       } else {
         if (config.general.connectionMode.toUpperCase() === 'SESSION') {
           this.connection_mode = 'SESSION';
@@ -591,6 +598,7 @@ export default class BackendAILogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
+      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       window.backendaiclient.ready = true;
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
@@ -637,6 +645,7 @@ export default class BackendAILogin extends LitElement {
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = 'default';
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
+      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       return window.backendaiclient.getManagerVersion();
     }).then(response => {
       window.backendaiclient.ready = true;

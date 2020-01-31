@@ -4,10 +4,10 @@ Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin.
 
 Backend.AI console focuses to 
 
- * Provide both administration and user mode
  * Serve as desktop app and web service
+ * Provide both administration and user mode
  * Versatile devices ready such as mobile, tablet and desktop.
- * Built-in websocket proxy app for apps
+ * Built-in websocket proxy feature for apps
 
 ## User Features
  * Session management
@@ -15,14 +15,15 @@ Backend.AI console focuses to
     * Choose and run environment-supported apps
     * Terminal for each session
     * Fully-featured VSCode editor and environments (WIP)
- * Experiments
-    * Manages container stream
+ * Pipeline
+    * Experiments (with SACRED)
+    * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
-    * Upload  / download files
-    * SFTP server (backend.ai SFTP image needed)
-    * Share folders 
+    * Upload  / download files (with upload progress)
+    * Integrated SSH/SFTP server (app mode only)
+    * Share folders with friends / groups 
  * Statistics
     * User resource statistics
     * Session statistics
@@ -30,19 +31,21 @@ Backend.AI console focuses to
     * Insight (working)
 
 ## Management Features
+
  * Keypair management
     * Allocate resource limitation for keys
-    * Add / remove resource policies
+    * Add / remove resource policies for keys
  * Kernel managements
     * List supported kernels
-     * Add kernels
+     * Add kernel
      * Refresh kernel list
      * Categorize repository
-     * Add/update resource templates (under development)
+     * Add/update resource templates 
+     * Add/remove docker registries
  * User management
     * User creation / deletion
  * Manager settings
-    * Add repository
+    * Add /setting repository
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
@@ -51,6 +54,9 @@ Backend.AI console focuses to
     * Support userid / password login
 
 ## Setup Guide
+### Baked versions
+`backend.ai-console` production version is also served as `backend.ai-app` and refered by `backend.ai-console-server` as submodule. If you use `backend.ai-console-server`, you are using latest stable release of `backend.ai-console`.
+
 ### Configuration
 
 Backend.AI Console uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
@@ -66,6 +72,8 @@ siteDescription = "[Site description placeholder. It will be at the bottom of 'B
 connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
 signupSupport = false # Enable / disable signup feature support. Manager plugin is required.
+allowSignout = false # Let users signout from service. Signup plugin is required.
+allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]
@@ -77,6 +85,10 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
+[plugins]
+# Reserved to load plugins
+# login = "login-test.js"
+# sidebar = "sidebar-test.js"
 ```
 
 ## Branches
@@ -99,6 +111,13 @@ Backend.AI console is built with
 ```
 $ npm i
 ```
+You must perform first-time compilation for testing. Some additional mandatory packages should be copied to proper location.
+
+```
+$ make dep
+```
+
+Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
 
 ### Developing / testing without bundling
 
@@ -171,7 +190,7 @@ Make sure that you compile the console.
 $ make compile
 ```
 
-#### HTTP server
+#### HTTP server (with nginx)
 Good for develop phase. Not recommended for production environment.
 
 ```
@@ -180,7 +199,7 @@ $ docker-compose up console    // for testing
 $ docker-compose up -d console // as a daemon
 ```
 
-#### HTTPS with SSL
+#### HTTPS with SSL (with nginx)
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
@@ -211,6 +230,21 @@ Check your image name is `backendai-console_console` or `backendai-console_conso
 $ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 $ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
+### Building / serving with console-server
+
+If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.
+
+To download and deploy console from pre-built source, do the following in `backend.ai-console-server` repository:
+
+```console
+git submodule init
+git submodule update
+cd src/ai/backend/console/static
+git checkout master
+git fetch
+git pull
+```
+
 
 ### Running websocket proxy with node.js
 
@@ -278,7 +312,7 @@ Note: this command only works on macOS, because packaging uses `ditto`, that sup
 
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
 
-Note: Requires electron-installer-dmg to make disk image. It requires Python 2+ to build binary for package.
+Note: Requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
 
 ```
 $ make pack

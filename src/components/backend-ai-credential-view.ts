@@ -18,7 +18,8 @@ import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
-
+import 'weightless/checkbox';
+import 'weightless/label';
 
 import './backend-ai-credential-list';
 import './backend-ai-resource-policy-list';
@@ -46,16 +47,16 @@ import {
  */
 @customElement("backend-ai-credential-view")
 export default class BackendAICredentialView extends BackendAIPage {
-  @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
-  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
-  @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-  @property({type: Array}) fgpu_metric = [0, 0.2, 0.3, 0.5, 1, 2, 3, 4, 8, 16, "Unlimited"];
+  @property({type: Object}) cpu_resource = {};
+  @property({type: Object}) ram_resource = {};
+  @property({type: Object}) gpu_resource = {};
+  @property({type: Object}) fgpu_resource = {};
+  @property({type: Object}) concurrency_limit = {};
+  @property({type: Object}) idle_timeout = {};
+  @property({type: Object}) vfolder_capacity = {};
+  @property({type: Object}) vfolder_max_limit= {};
+  @property({type: Object}) container_per_session_limit = {};
   @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
-  @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
-  @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
-  @property({type: Array}) idle_timeout_metric = [60, 600, 900, 1800, 3600, 43200, 86400, 604800, 1209600];
-  @property({type: Array}) vfolder_capacity_metric = [1, 2, 5, 10, 20, 50, 100, 200, 1000];
-  @property({type: Array}) vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
   @property({type: Object}) resource_policies = Object();
   @property({type: Array}) resource_policy_names = Array();
   @property({type: Boolean}) is_admin = false;
@@ -89,36 +90,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           min-width: 350px;
         }
 
-        fieldset {
-          padding: 0;
-        }
-
-        fieldset div {
-          padding-left: 20px;
-          padding-right: 20px;
-        }
-
-        fieldset wl-button {
-          margin-left: 20px;
-          margin-right: 20px;
-          margin-bottom: 20px;
-        }
-
-        wl-dialog wl-textfield {
-          padding-left: 20px;
-          padding-right: 20px;
-          --input-font-family: Roboto, Noto, sans-serif;
-        }
-
-        wl-textfield {
-          --input-state-color-invalid: red;
-        }
-
-        wl-dialog paper-input {
-          margin: 15px 0 5px 0;
-          width: 100%;
-        }
-        wl-dialog h4 {
+        wl-dialog {
           margin: 15px 0 5px 0;
           font-weight: 100;
           font-size: 16px;
@@ -172,12 +144,45 @@ export default class BackendAICredentialView extends BackendAIPage {
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
           --expansion-content-padding: 0;
-          border-bottom: 1px solid #DDD;
         }
 
-        wl-expansion h4 {
+        wl-expansion {
           font-weight: 200;
-          border-bottom: 0;
+        }
+
+        wl-label {
+          width: 100%;
+          min-width: 60px;
+          font-weight: 400;
+          font-size: 11px;
+          --label-font-family: Roboto, Noto, sans-serif;
+        }
+
+        wl-label.folders {
+          margin: 3px 0px 7px 0px;
+        }
+
+        wl-label.unlimited {
+          margin: 4px 0px 0px 0px;
+        }
+
+        wl-list-item {
+          width: 100%;
+        }
+
+        wl-textfield {
+          width: 100%;
+          --input-state-color-invalid: red;
+          --input-padding-top-bottom: 0px;
+          --input-font-family: Roboto, Noto, sans-serif;
+        }
+
+        wl-checkbox {
+          --checkbox-size: 10px;
+          --checkbox-border-radius: 2px;
+          --checkbox-bg-checked: var(--paper-green-800);
+          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
+          --checkbox-color-checked: var(--paper-green-800);
         }
 
         #new-user-dialog wl-textfield {
@@ -206,6 +211,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
         if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
           this.use_user_list = true;
+          this._activeTab = 'user-lists';
         }
       });
     } else {
@@ -214,10 +220,22 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
       if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
         this.use_user_list = true;
+        this._activeTab = 'user-lists';
       } else {
         this.use_user_list = false;
       }
     }
+    this._getResourceInfo();
+    this._getResourcePolicies();
+    this._updateInputStatus(this.cpu_resource);
+    this._updateInputStatus(this.ram_resource);
+    this._updateInputStatus(this.gpu_resource);
+    this._updateInputStatus(this.fgpu_resource);
+    this._updateInputStatus(this.concurrency_limit);
+    this._updateInputStatus(this.idle_timeout);
+    this._updateInputStatus(this.container_per_session_limit);
+    this._updateInputStatus(this.vfolder_capacity);
+    this.vfolder_max_limit['value']= 10;
   }
 
   async _viewStateChanged(active) {
@@ -314,81 +332,89 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _readResourcePolicyInput() {
-    let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
-    let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
-    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
-    let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
-    let vfolder_hosts: string[] = [];
+    let total_resource_slots = {};
+    let vfolder_hosts: Array<object> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
-    if (cpu_resource === "Unlimited") {
-      cpu_resource = "Infinity";
+    try {
+      this._validateUserInput(this.cpu_resource);
+      this._validateUserInput(this.ram_resource);
+      this._validateUserInput(this.gpu_resource);
+      this._validateUserInput(this.fgpu_resource);
+      this._validateUserInput(this.concurrency_limit);
+      this._validateUserInput(this.idle_timeout);
+      this._validateUserInput(this.container_per_session_limit);
+      this._validateUserInput(this.vfolder_capacity);
+      this._validateUserInput(this.vfolder_max_limit);
+    } catch (err) {
+      throw err;
     }
-    if (ram_resource === "Unlimited") {
-      ram_resource = "Infinity";
-    } else {
-      ram_resource = ram_resource + 'g';
-    }
-    if (gpu_resource === "Unlimited") {
-      gpu_resource = "Infinity";
-    } else {
-      gpu_resource = parseInt(gpu_resource).toString();
-    }
-    if (fgpu_resource === "Unlimited") {
-      fgpu_resource = "Infinity";
-    } else {
-      fgpu_resource = parseFloat(fgpu_resource).toString();
-    }
-    let total_resource_slots = {
-      "cpu": cpu_resource,
-      "mem": ram_resource,
-      "cuda.device": gpu_resource,
-      "cuda.shares": fgpu_resource
-    };
-    let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit').value;
-    let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit').value;
-    let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
-    let vfolder_capacity_limit = this.shadowRoot.querySelector('#vfolder-capacity-limit').value;
-    let idle_timeout = this.shadowRoot.querySelector('#idle-timeout').value;
+
+    total_resource_slots['cpu'] = this.cpu_resource['value'];
+    total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
+    total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
+    total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
+
+    this.concurrency_limit['value'] = this.concurrency_limit['value'] === '' ? 0 : parseInt(this.concurrency_limit['value']);
+    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
+    this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? 0 : parseInt(this.container_per_session_limit['value']);
+    this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? 0 : parseInt(this.vfolder_capacity['value']);
+    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
+
+    Object.keys(total_resource_slots).map((resource) => {
+      if (isNaN(parseFloat(total_resource_slots[resource]))) {
+        delete total_resource_slots[resource];
+      }
+    });
+
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': concurrency_limit,
-      'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': parseInt(idle_timeout),
-      'max_vfolder_count': vfolder_count_limit,
-      'max_vfolder_size': vfolder_capacity_limit,
+      'max_concurrent_sessions': this.concurrency_limit['value'],
+      'max_containers_per_session': this.container_per_session_limit['value'],
+      'idle_timeout': this.idle_timeout['value'],
+      'max_vfolder_count': this.vfolder_max_limit['value'],
+      'max_vfolder_size': this.vfolder_capacity['value'],
       'allowed_vfolder_hosts': vfolder_hosts
     };
     return input;
   }
 
   _addResourcePolicy() {
-    let name;
-    if (this.shadowRoot.querySelector('#id_new_policy_name').value != '') {
-      if (this.shadowRoot.querySelector('#id_new_policy_name').invalid == true) {
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    if (policy_info.value != '') {
+      if (policy_info.invalid == true) {
         return;
       }
-      name = this.shadowRoot.querySelector('#id_new_policy_name').value;
-    } else {
-      this.notification.text = "Please input policy name";
-      this.notification.show();
-      return;
-    }
-    let input = this._readResourcePolicyInput();
-    window.backendaiclient.resourcePolicy.add(name, input).then(response => {
-      this.shadowRoot.querySelector('#new-policy-dialog').hide();
-      this.notification.text = "Resource policy successfully created.";
-      this.notification.show();
-      this.shadowRoot.querySelector('#resource-policy-list').refresh();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.shadowRoot.querySelector('#new-policy-dialog').hide();
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
+      if (this.resource_policy_names.includes(policy_info.value)) {
+        policy_info.invalid=true;
+        policy_info.errorMessage = "Policy name already exists!";
+        return;
       }
-    });
+    } else {
+        policy_info.invalid=true;
+        policy_info.errorMessage = "Please input policy name.";
+        return;
+    }
+    try {
+      let input = this._readResourcePolicyInput();
+      window.backendaiclient.resourcePolicy.add(name, input).then(response => {
+        this.shadowRoot.querySelector('#new-policy-dialog').hide();
+        this.notification.text = "Resource policy successfully created.";
+        this.notification.show();
+        this.shadowRoot.querySelector('#resource-policy-list').refresh();
+      }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
+          this.shadowRoot.querySelector('#new-policy-dialog').hide();
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
+        }
+      });
+    } catch (err) {
+      this.notification.text = err.message;
+      this.notification.show();
+    }
   }
 
   _addUser() {
@@ -477,22 +503,27 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   _modifyResourcePolicy() {
     let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
-    let input = this._readResourcePolicyInput();
+    try {
+      let input = this._readResourcePolicyInput();
 
-    window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
-      this.shadowRoot.querySelector('#new-policy-dialog').close();
-      this.notification.text = "Resource policy successfully updated.";
-      this.notification.show();
-      this.shadowRoot.querySelector('#resource-policy-list').refresh();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
+      window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      }
-    });
+        this.notification.text = "Resource policy successfully updated.";
+        this.notification.show();
+        this.shadowRoot.querySelector('#resource-policy-list').refresh();
+      }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
+          this.shadowRoot.querySelector('#new-policy-dialog').close();
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
+        }
+      });
+    } catch(err){
+      this.notification.text = err.message;
+      this.notification.show();
+    }
   }
 
   disablePage() {
@@ -517,17 +548,109 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
+  _toggleCheckbox(e) {
+    const checkEl = e.target;
+    const checked = checkEl.checked;
+    const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
+    wlTextEl.disabled = checked;
+    if (!wlTextEl.disabled) {
+      if (wlTextEl.value === '') {
+        wlTextEl.value = 0;
+      }
+    }
+  }
+
+  _validateResourceInput(e) {
+    const textfield = e.target.closest('wl-textfield');
+    const checkbox_el = textfield.closest('div').querySelector('.unlimited');
+    let checkbox;
+    if (checkbox_el) {
+      checkbox = checkbox_el.querySelector('wl-checkbox');
+    } else {
+      checkbox = null;
+    }
+    
+    if (textfield.value < 0) {
+      textfield.value = 0;
+    }
+
+    if (textfield.value === '') {
+      try {
+        if (!checkbox || !checkbox['checked']) {
+          textfield['required'] = true;
+          textfield.focus();
+          throw { "message" : "Please input value or check unlimited." };
+        }
+        else {
+          textfield['required'] = false;
+          textfield.value = '';
+        }
+      } catch (err) {
+        this.notification.text = err.message;
+        this.notification.show();
+      }
+    }
+  }
+
+
+  _validateUserInput(resource) {
+    if (resource.disabled) {
+      resource.value = '';
+    } else {
+      if (resource.value === '') {
+          throw {"message" : "Cannot create Resource Policy. Please check input values." };
+      }
+    }
+  }
+
+  _validatePolicyName(e) {
+    let policy_info = e.target;
+    let policy_name = e.target.value;
+
+    if (this.resource_policy_names.includes(policy_name)) {
+      policy_info.errorMessage="Policy name already exists!";
+      policy_info.invalid=true;
+    }
+    else {
+      policy_info.invalid=false;
+    }
+   }
+
+  _updateInputStatus(resource) {
+    let textfield = resource;
+    let checkbox = textfield.closest('div').querySelector('wl-checkbox');
+    if (textfield.value === '' || textfield.value === "0" ) {
+      textfield.disabled = true;
+      checkbox.checked = true;
+    } else {
+      textfield.disabled = false;
+      checkbox.checked = false;
+    }
+  }
+
+  _getResourceInfo() {
+    this.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
+    this.ram_resource = this.shadowRoot.querySelector('#ram-resource');
+    this.gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+    this.fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
+    this.concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
+    this.idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
+    this.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
+    this.vfolder_capacity = this.shadowRoot.querySelector('#vfolder-capacity-limit');
+    this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
+  }
+
   render() {
     // language=HTML
     return html`
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="credential-lists" checked @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
-            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
             ${this._status === 'active' && this.use_user_list === true ? html`
-            <wl-tab value="user-lists" @click="${(e) => this._showTab(e.target)}">Users</wl-tab>` :
+            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">Users</wl-tab>` :
       html``}
+            <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
+            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
           <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
@@ -535,7 +658,20 @@ export default class BackendAICredentialView extends BackendAIPage {
             Add credential
           </wl-button>
         </h3>
-        <wl-card id="credential-lists" class="tab-content">
+        <wl-card id="user-lists" class="admin item tab-content">
+          <h4 class="horizontal flex center center-justified layout">
+            <span>Users</span>
+            <span class="flex"></span>
+            <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
+              <wl-icon>add</wl-icon>
+              Create user
+            </wl-button>
+          </h4>
+          <div>
+            <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
+          </div>
+        </wl-card>
+        <wl-card id="credential-lists" class="tab-content" style="display:none;">
           <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>
             <span slot="description">
@@ -562,19 +698,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           </h4>
           <div>
             <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
-          </div>
-        </wl-card>
-        <wl-card id="user-lists" class="admin item tab-content" style="display:none;">
-          <h4 class="horizontal flex center center-justified layout">
-            <span>Users</span>
-            <span class="flex"></span>
-            <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
-              <wl-icon>add</wl-icon>
-              Create user
-            </wl-button>
-          </h4>
-          <div>
-            <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
           </div>
         </wl-card>
       </wl-card>
@@ -639,95 +762,102 @@ export default class BackendAICredentialView extends BackendAIPage {
           </h3>
           <form id="login-form">
             <fieldset>
-              <div class="vertical center layout">
-                <paper-input name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                             type="text"
-                             required
-                             error-message="Policy name only accepts letters and numbers"></paper-input>
-              </div>
+              <paper-input type="text" name="new_policy_name"
+                           id="id_new_policy_name" label="Policy Name"
+                           required
+                           style="width:100%;"
+                           @change="${(e)=>this._validatePolicyName(e)}"></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="cpu-resource" label="CPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.cpu_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.ram_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="gpu-resource" label="GPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.gpu_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="fgpu-resource" label="fGPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.fgpu_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-
+                  <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
+                    <wl-label>CPU</wl-label>
+                    <wl-textfield id="cpu-resource" type="number"
+                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                      <wl-label class="unlimited">
+                        <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                        Unlimited
+                      </wl-label>
+                  </div>
+                  <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
+                    <wl-label>RAM(GB)</wl-label>
+                    <wl-textfield id="ram-resource" type="number"
+                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
+                    <wl-label>GPU</wl-label>
+                    <wl-textfield id="gpu-resource" type="number"
+                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical layout" style="width:75px; margin:0px 0px 0px 10px;">
+                    <wl-label>fGPU</wl-label>
+                    <wl-textfield id="fgpu-resource" type="number"
+                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
               </div>
               <h4>Sessions</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.container_per_session_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="idle-timeout" label="Idle timeout (sec.)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.idle_timeout_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <div class="vertical left layout" style="width: 110px;">
+                    <wl-label>Container per session</wl-label>
+                    <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
+                    <wl-label>Idle timeout (sec.)</wl-label>
+                    <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical left layout" style="width: 110px;">
+                      <wl-label>Concurrent Jobs</wl-label>
+                      <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                      <wl-label class="unlimited">
+                        <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                        Unlimited
+                      </wl-label>
+                  </div>
               </div>
-
+              <h4 style="margin-bottom:0px;">Folders</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.concurrency_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-              <h4>Folders</h4>
-              <div class="horizontal center layout">
+                <div class="vertical layout" style="width: 110px;">
                 <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
                   <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.allowed_vfolder_hosts.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
+                    ${this.allowed_vfolder_hosts.map(item => html`
+                      <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-capacity-limit" label="Capacity (GB)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.vfolder_capacity_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-count-limit" label="Max.#">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.vfolder_count_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                </div>
+                <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
+                  <wl-label class="folders">Capacity(GB)</wl-label>
+                  <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                  <wl-label class="unlimited">
+                    <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                    Unlimited
+                </wl-label>
+                </div>
+                <div class="vertical layout" style="width: 110px;">
+                  <wl-label class="folders">Max.#</wl-label>
+                  <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                </div>
               </div>
+
               <br/><br/>
               <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined
                @click="${this._addResourcePolicy}">
@@ -768,7 +898,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 name="user_password"
                 id="id_user_password"
                 label="Password"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
               >
               </wl-textfield>
               <wl-textfield

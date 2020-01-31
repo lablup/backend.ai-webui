@@ -68,26 +68,6 @@ app.once('ready', function() {
             type: 'separator'
           },
           {
-            label: 'Login',
-            click: function () {
-              mainWindow.loadURL(url.format({ // Load HTML into new Window
-                pathname: path.join(mainIndex),
-                protocol: 'file',
-                slashes: true
-              }));
-            }
-          },
-          {
-            label: 'Logout',
-            click: function () {
-              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
-                '    document.dispatchEvent(event);');
-            }
-          },
-          {
-            type: 'separator'
-          },
-          {
             label: 'Force Update Screen',
             click: function () {
               mainContent.reloadIgnoringCache();
@@ -253,29 +233,17 @@ app.once('ready', function() {
         label: '&File',
         submenu: [
           {
-            label: 'Login',
-            click: function () {
+            label: 'Refresh App',
+            accelerator: 'CmdOrCtrl+R',
+            click: function() {
+              const proxyUrl = `http://localhost:${manager.port}/`;
               mainWindow.loadURL(url.format({ // Load HTML into new Window
                 pathname: path.join(mainIndex),
                 protocol: 'file',
                 slashes: true
               }));
-            }
-          },
-          {
-            label: 'Logout',
-            click: function () {
-              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-logout", {"detail": ""});' +
-                '    document.dispatchEvent(event);');
-            }
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Force Update Screen',
-            click: function () {
-              mainContent.reloadIgnoringCache();
+              mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
+              console.log('Re-connected to proxy: ' + proxyUrl);
             }
           },
           {
@@ -284,8 +252,8 @@ app.once('ready', function() {
           {
             label: '&Close',
             accelerator: 'Ctrl+W',
-            click: function () {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
+            click: function() {
+              const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.close();
               }
@@ -298,45 +266,36 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'Zoom In',
-            accelerator: 'Ctrl+=',
-            click: function () {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomIn()');
-              }
-            }
+            accelerator: 'CmdOrCtrl+=',
+            role: 'zoomin'
           },
           {
             label: 'Zoom Out',
-            accelerator: 'Ctrl+-',
-            click: function () {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomOut()');
-              }
-            }
+            accelerator: 'CmdOrCtrl+-',
+            role: 'zoomout'
           },
           {
             label: 'Actual Size',
-            accelerator: 'Ctrl+0',
-            click: function () {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript(
-                  '_zoomActualSize()');
-              }
-            }
+            accelerator: 'CmdOrCtrl+0',
+            role: 'resetzoom'
           },
           {
             label: 'Toggle &Full Screen',
             accelerator: 'F11',
-            click: function () {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
+            role: 'togglefullscreen'
+          },
+          /* Does not work
+          {
+            label: 'Toggle &Developer Tools',
+            accelerator: 'Alt+Ctrl+I',
+            click: function() {
+              const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
-                focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+                focusedWindow.toggleDevTools();
               }
             }
           },
+          */
         ]
       },
       {
@@ -353,7 +312,7 @@ app.once('ready', function() {
     ];
   }
 
-  var appmenu = Menu.buildFromTemplate(template);
+  const appmenu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(appmenu);
 });
 
