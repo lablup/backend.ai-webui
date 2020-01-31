@@ -454,20 +454,26 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="50px" resizable>
-          <template class="header">Namespace</template>
+        <vaadin-grid-column width="60px" resizable>
+          <template class="header">
+            <vaadin-grid-sorter path="namespace">Namespace</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.namespace]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column resizable>
-          <template class="header">Language</template>
+          <template class="header">
+            <vaadin-grid-sorter path="lang">Language</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.lang]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" resizable>
-          <template class="header">Version</template>
+          <template class="header">
+            <vaadin-grid-sorter path="baseversion">Version</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.baseversion]]</div>
           </template>
@@ -791,9 +797,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           let names = image.name.split('/');
           if (names[1] !== undefined) {
             image.namespace = names[0];
-            image.lang = names[1];
+            image.lang = names.slice(1).join('');
           } else {
-            image.lang = image.names;
+            image.namespace = '';
+            image.lang = names[0];
           }
           let langs = image.lang.split('-');
           let baseimage = [this._humanizeName(image.baseimage)];
@@ -882,6 +889,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'go': 'Go',
       'tester': 'Tester',
       'haskell': 'Haskell',
+      'sagemath': 'Sage',
       'java': 'Java',
       'php': 'PHP',
       'octave': 'Octave',
@@ -902,6 +910,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'py38': 'Python 3.8',
       'ubuntu16.04': 'Ubuntu 16.04',
       'ubuntu18.04': 'Ubuntu 18.04',
+      'ubuntu20.04': 'Ubuntu 20.04',
       'anaconda2018.12': 'Anaconda 2018.12',
       'alpine3.8': 'Alpine Linux 3.8',
       'ngc': 'NVidia GPU Cloud',

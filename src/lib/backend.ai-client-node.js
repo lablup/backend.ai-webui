@@ -1856,6 +1856,7 @@ class Maintenance {
         if (this.client.is_admin === true) {
             let q, v;
             if (registry !== '') {
+                registry = decodeURIComponent(registry);
                 q = `mutation($registry: String) {` +
                     `  rescan_images(registry: $registry) {` +
                     `    ok msg ` +
@@ -2181,6 +2182,7 @@ class Registry {
         return this.client._wrapWithPromise(rqst);
     }
     add(key, value) {
+        key = encodeURIComponent(key);
         let regkey = `config/docker/registry/${key}`;
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
             key: regkey,
@@ -2189,6 +2191,7 @@ class Registry {
         return this.client._wrapWithPromise(rqst);
     }
     delete(key) {
+        key = encodeURIComponent(key);
         const rqst = this.client.newSignedRequest("POST", "/config/delete", {
             "key": `config/docker/registry/${key}`,
             "prefix": true

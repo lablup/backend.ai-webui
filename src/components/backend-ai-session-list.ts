@@ -371,7 +371,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         Object.keys(sessions).map((objectKey, index) => {
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
-          const kernelImage = sessions[objectKey].lang.split('/')[2];
+          const kernelImage = sessions[objectKey].lang.split('/')[2] || sessions[objectKey].lang.split('/')[1];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
@@ -413,14 +413,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
-          let tag = session.lang.split(':')[1];
+          const specs = session.lang.split('/');
+          const tag = specs[specs.length - 1].split(':')[1]
           let tags = tag.split('-');
           if (tags[1] !== undefined) {
             sessions[objectKey].baseversion = tags[0];
             sessions[objectKey].baseimage = tags[1];
-            if (tags[2] !== undefined) {
-              sessions[objectKey].additional_reqs = tags.slice(1, tags.length).map((tag) => tag.toUpperCase());
-            }
+            sessions[objectKey].additional_reqs = tags.slice(1, tags.length).map((tag) => tag.toUpperCase());
           } else {
             sessions[objectKey].baseversion = sessions[objectKey].tag;
           }
@@ -470,12 +469,26 @@ export default class BackendAiSessionList extends BackendAIPage {
   _getKernelInfo(lang) {
     let tags: any = [];
     if (lang === undefined) return [];
-    let name = lang.split('/')[2].split(':')[0];
+    const specs = lang.split('/');
+    let name = (specs[2] || specs[1]).split(':')[0];
     if (name in this.kernel_labels) {
       tags.push(this.kernel_labels[name]);
     } else {
+      const imageParts = lang.split('/');
+      // const registry = imageParts[0]; // hide registry (ip of docker registry is exposed)
+      let namespace;
+      let langName;
+      if (imageParts.length === 3) {
+        namespace = imageParts[1];
+        langName = imageParts[2];
+      } else {
+        namespace = '';
+        langName = imageParts[1];
+      }
+      langName = langName.split(':')[0]
+      langName = namespace ? namespace + '/' + langName : langName;
       tags.push([
-        {'category': 'Env', 'tag': lang, 'color': 'green'}
+        {'category': 'Env', 'tag': `${langName}`, 'color': 'lightgrey'}
       ]);
     }
     return tags;
@@ -962,13 +975,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div>${rowData.item[this.sessionNameField]}</div>
           ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
             ${item.map(item => {
-        if (item.category === 'Env') {
-          item.category = item.tag;
-        }
-        if (rowData.item.baseversion) {
-          item.tag = rowData.item.baseversion;
-        }
-        return html`
+              if (item.category === 'Env') {
+                item.category = item.tag;
+                if (rowData.item.baseversion) {
+                  item.tag = rowData.item.baseversion;
+                }
+              }
+              return html`
                 <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
               `;
             })}
@@ -978,7 +991,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               ${rowData.item.additional_reqs.map((tag) => {
                 return html`
                   <lablup-shields app="" color="green" description="${tag}"></lablup-shields>
-                `
+                `;
               })}
             </div>
           ` : html``}
