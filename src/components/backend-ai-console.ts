@@ -290,8 +290,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else {
       this.allow_signout = true;
     }
-    if (typeof config.plugin !== "undefined" && 'login' in config.plugin) {
-      this.plugins['login'] = config.plugin.login;
+    if (typeof config.plugin !== "undefined") { // Store plugin informations
+      if ('login' in config.plugin) {
+        this.plugins['login'] = config.plugin.login;
+      }
+      if ('page' in config.plugin) {
+        // TODO : multiple sidebar plugins
+        this.plugins['page'] = config.plugin.page;
+      }
+      if ('sidebar' in config.plugin) {
+        // TODO : multiple sidebar plugins
+        this.plugins['sidebar'] = config.plugin.sidebar;
+      }
     }
     this.loginPanel.refreshWithConfig(config);
   }
@@ -706,7 +716,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.01.1.200107</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.01.6.200130</small>
               </address>
             </div>
         </div>

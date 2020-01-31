@@ -55,6 +55,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) imageNames = Object();
   @property({type: Array}) versions;
   @property({type: Array}) languages;
+  @property({type: Number}) marker_limit = 25;
   @property({type: String}) gpu_mode;
   @property({type: Number}) gpu_step = 0.05;
   @property({type: Object}) cpu_metric = {
@@ -505,7 +506,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       element.onKeyDown = (e) => {
         let enterKey = 13;
         if (e.keyCode === enterKey) {
-          e.stopPropagation();
+          e.preventDefault();
         }
       }
     });
@@ -607,10 +608,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
       }
       // Reload number of sessions
-      let fields = ["sess_id"];
+      let fields = ["created_at"];
       window.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
         .then(res => {
-          this.sessions_list = res.compute_session_list.items.map(e => e.sess_id);
+          this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
         });
 
       this._initAliases();
@@ -904,13 +905,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         prefix = specs[1];
         kernelName = specs[2];
       }
-      const alias = this.aliases[item];
+      let alias = this.aliases[item];
       let basename;
       if (alias !== undefined) {
         basename = alias.split(' (')[0];
       } else {
         basename = kernelName;
       }
+      // Remove registry and namespace from alias and basename.
+      alias = alias.split('/').slice(-1)[0]
+      basename = basename.split('/').slice(-1)[0]
+
       let tags: string[] = [];
       if (kernelName in this.tags) {
         tags = tags.concat(this.tags[kernelName]);
@@ -1582,12 +1587,28 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.supports[supportsKey].push(item.tag);
         let imageName: string;
         let specs: string[] = item.name.split('/');
-        if (specs.length == 2) {
-          imageName = specs[1];
+        if (specs.length === 1) {
+          imageName = specs[0];
         } else {
-          imageName = specs[2];
+          imageName = specs[1];
         }
-        this.supportImages[supportsKey] = this.imageInfo[imageName];
+        this.supportImages[supportsKey] = this.imageInfo[imageName] || {
+          name: 'Custom Environments',
+          description: 'Custom-built images.',
+          group: 'Custom Environments',
+          tags: [],
+          label: [
+            {
+              'category': 'Custom',
+              'tag': 'Custom',
+              'color': 'black'
+            }
+          ]
+        };
+        // Fallback routine if image has no metadata
+        if (!('group' in this.supportImages[supportsKey])) {
+          this.supportImages[supportsKey].group = 'Custom Environments';
+        }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
       });
       this._updateEnvironment();
@@ -1783,7 +1804,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
-              <span class="gauge-name">GPU</span>
+              <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_sg_slot.fgpu_slot}/${this.total_sg_slot.fgpu_slot}</span>
@@ -1879,17 +1900,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <paper-dropdown-menu id="environment" label="Environments" horizontal-align="left">
                   <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                  selected="${this.default_language}">
-                ${this.languages.map(item => html`
-                    ${item.clickable === false ? html`
-                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>` :
-      html`
-                      <paper-item id="${item.name}" label="${item.alias}">${item.basename}
-                      ${item.tags ? item.tags.map(item => html`
-                        <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                      `) : ''}
-                      </paper-item>
-                    `}
-                `)}
+                    ${this.languages.map(item => html`
+                      ${item.clickable === false ? html`
+                        <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>
+                      ` : html`
+                        <paper-item id="${item.name}" label="${item.alias}">${item.basename}
+                          ${item.tags ? item.tags.map(item => html`
+                            <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                          `) : ''}
+                        </paper-item>
+                      `}
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="version" label="Version">
@@ -1975,6 +1996,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">CPU</div>
                   <lablup-slider id="cpu-resource" class="cpu"
                                 pin snaps expand editable markers
+                                marker_limit="${this.marker_limit}"
                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                 value="${this.cpu_request}"></lablup-slider>
                   <span class="caption">Core</span>
@@ -1983,6 +2005,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">RAM</div>
                   <lablup-slider id="mem-resource" class="mem"
                                 pin snaps step=0.05 editable markers
+                                marker_limit="${this.marker_limit}"
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                 value="${this.mem_request}"></lablup-slider>
                   <span class="caption">GB</span>
@@ -1991,6 +2014,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">Shared Memory</div>
                   <lablup-slider id="shmem-resource" class="mem"
                                 pin snaps step=0.0025 editable markers
+                                marker_limit="${this.marker_limit}"
                                 min="0.0" max="${this.shmem_metric.max}"
                                 value="${this.shmem_request}"></lablup-slider>
                   <span class="caption">GB</span>
@@ -1999,6 +2023,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">GPU</div>
                   <lablup-slider id="gpu-resource" class="gpu"
                                 pin snaps editable markers step="${this.gpu_step}"
+                                marker_limit="${this.marker_limit}"
                                 min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
                   <span class="caption">GPU</span>
                 </div>
@@ -2006,6 +2031,7 @@ ${this.resource_templates.map(item => html`
                   <div class="resource-type" style="width:70px;">Sessions</div>
                   <lablup-slider id="session-resource" class="session"
                                 pin snaps editable markers step="1"
+                                marker_limit="${this.marker_limit}"
                                 min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
                   <span class="caption">#</span>
                 </div>
