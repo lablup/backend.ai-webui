@@ -46,6 +46,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
+  @property({type: Object}) installImageResource = Object();
 
   constructor() {
     super();
@@ -203,6 +204,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.selectedIndex = index;
     let chosenImage = this.images[this.selectedIndex];
     this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
+    this.installImageResource = {};
+    chosenImage['resource_limits'].forEach(elm => {
+      this.installImageResource[elm['key'].replace("_", ".")] = elm.min;
+    });
     this.installImageDialog.show();
   }
 
@@ -212,7 +217,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.hide();
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Downloading...');
-    window.backendaiclient.image.install(this.installImageName).then((response) => {
+    if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
+      this.installImageResource['gpu'] = 0;
+      this.installImageResource['fgpu'] = this.installImageResource['cuda.shares'];
+    } else if ('cuda.device' in this.installImageResource) {
+      this.installImageResource['gpu'] = this.installImageResource['cuda.device'];
+    }
+    // Add 256m to run the image.
+    if (this.installImageResource['mem'].endsWith('g')) {
+      this.installImageResource['mem'] = this.installImageResource['mem'].replace('g', '.5g');
+    } else if (this.installImageResource['mem'].endsWith('m')) {
+      this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
+    }
+    window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
       this._getImages();
@@ -334,7 +351,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <div
           id="controls"
           class="layout horizontal flex center"
-          kernel-id="[[item.digest]]"
         >
           <paper-icon-button
             class="fg blue controls-running"
@@ -399,20 +415,26 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="50px" resizable>
-          <template class="header">Namespace</template>
+        <vaadin-grid-column width="60px" resizable>
+          <template class="header">
+            <vaadin-grid-sorter path="namespace">Namespace</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.namespace]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column resizable>
-          <template class="header">Language</template>
+          <template class="header">
+            <vaadin-grid-sorter path="lang">Language</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.lang]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" resizable>
-          <template class="header">Version</template>
+          <template class="header">
+            <vaadin-grid-sorter path="baseversion">Version</vaadin-grid-sorter>
+          </template>
           <template>
             <div>[[item.baseversion]]</div>
           </template>
@@ -670,7 +692,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = window.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
@@ -710,9 +732,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           let names = image.name.split('/');
           if (names[1] !== undefined) {
             image.namespace = names[0];
-            image.lang = names[1];
+            image.lang = names.slice(1).join('');
           } else {
-            image.lang = image.names;
+            image.namespace = '';
+            image.lang = names[0];
           }
           let langs = image.lang.split('-');
           let baseimage = [this._humanizeName(image.baseimage)];
@@ -781,6 +804,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'go': 'Go',
       'tester': 'Tester',
       'haskell': 'Haskell',
+      'sagemath': 'Sage',
       'java': 'Java',
       'php': 'PHP',
       'octave': 'Octave',
@@ -801,6 +825,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'py38': 'Python 3.8',
       'ubuntu16.04': 'Ubuntu 16.04',
       'ubuntu18.04': 'Ubuntu 18.04',
+      'ubuntu20.04': 'Ubuntu 20.04',
       'anaconda2018.12': 'Anaconda 2018.12',
       'alpine3.8': 'Alpine Linux 3.8',
       'ngc': 'NVidia GPU Cloud',

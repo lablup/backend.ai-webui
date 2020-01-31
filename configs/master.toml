@@ -4,14 +4,16 @@
 #defaultSessionEnvironment =
 siteDescription = "Console"
 connectionMode = "SESSION"
-allowChangeSigninMode = false
+allowChangeSigninMode = true
 signupSupport = false
 allowSignout = false
-debug = false
+allowProjectResourceMonitor = true
+debug = true
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL = ""
+disableCertCheck = false
 
 [server]
 consoleServerURL =
