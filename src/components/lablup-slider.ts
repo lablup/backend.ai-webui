@@ -26,6 +26,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) editable = null;
   @property({type: Boolean}) pin = null;
   @property({type: Boolean}) markers = null;
+  @property({type: Number}) marker_limit = 30;
   @property({type: Boolean}) disabled = null;
   @property({type: Object}) slider;
   @property({type: Object}) textfield;
@@ -52,6 +53,7 @@ export default class LablupSlider extends LitElement {
         mwc-slider {
           width: var(--slider-width, 100px);
           --mdc-theme-secondary: var(--slider-color, '#018786');
+          color: var(--paper-grey-700);
         }
       `];
   }
@@ -91,7 +93,8 @@ export default class LablupSlider extends LitElement {
         const step = el.getAttribute('step');
         el.$formElement.step = step;
       });
-    }, 100)
+    }, 100);
+    this.checkMarkerDisplay();
   }
 
   connectedCallback() {
@@ -108,6 +111,9 @@ export default class LablupSlider extends LitElement {
         this.slider.layout();
         const event = new CustomEvent('value-changed', {'detail': {}});
         this.dispatchEvent(event);
+      }
+      if (['min', 'max'].includes(propName)) {
+        this.checkMarkerDisplay();
       }
     });
   }
@@ -133,6 +139,14 @@ export default class LablupSlider extends LitElement {
     }
     this.value = this.textfield.value;
     // updated function will be automatically called.
+  }
+
+  checkMarkerDisplay() {
+    if (this.markers) {
+      if (((this.max - this.min) / this.step) > this.marker_limit) {
+        this.slider.removeAttribute('markers');
+      }
+    }
   }
 }
 

@@ -182,7 +182,7 @@ class BackendAIRegistryList extends BackendAIPage {
   _deleteRegistry() {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
 
-    if (this.registryList[this.selectedIndex].hostname === name) {
+    if (this.registryList[this.selectedIndex].hostname === encodeURIComponent(name)) {
       window.backendaiclient.registry.delete(name)
         .then(({result}) => {
           if (result === "ok") {
@@ -251,6 +251,17 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
+  _hostRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>
+          ${decodeURIComponent(rowData.item["hostname"])}
+        </div>
+      `,
+      root
+    )
+  }
+
   _registryRenderer(root, column, rowData) {
     render(
       html`
@@ -312,10 +323,7 @@ class BackendAIRegistryList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.registryList}">
         <vaadin-grid-column flex-grow="0" width="40px" header="#" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="Hostname">
-          <template>
-            <div> [[item.hostname]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="Hostname" .renderer=${this._hostRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="2" header="Registry URL" resizable .renderer=${this._registryRenderer}>
         </vaadin-grid-column>
