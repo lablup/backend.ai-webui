@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, property} from "lit-element";
@@ -88,6 +88,14 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     if (active === false) {
       return true;
     }
+    // If disconnected
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.is_superadmin = window.backendaiclient.is_superadmin;
+      }, true);
+    } else { // already connected
+      this.is_superadmin = window.backendaiclient.is_superadmin;
+    }
     return false;
   }
 
@@ -115,7 +123,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
           <wl-tab-group>
             <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">Images</wl-tab>
             <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">Resource Presets</wl-tab>
-            ${window.backendaiclient.is_superadmin === true ? html`
+            ${this.is_superadmin ? html`
               <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">Registries</wl-tab>` : html``}
           </wl-tab-group>
           <div class="flex"></div>

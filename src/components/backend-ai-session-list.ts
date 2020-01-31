@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, property} from "lit-element";
@@ -46,8 +46,10 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Array}) compute_sessions = Array();
   @property({type: Array}) terminationQueue = Array();
   @property({type: String}) filterAccessKey = '';
+  @property({type: String}) sessionNameField = 'session_name';
   @property({type: Array}) appSupportList = Array();
   @property({type: Object}) appTemplate = Object();
+  @property({type: Object}) imageInfo = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
@@ -57,6 +59,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Boolean}) refreshing = false;
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) is_superadmin = false;
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) _grid = Object();
   @property({type: Object}) notification = Object();
@@ -247,7 +250,15 @@ export default class BackendAiSessionList extends BackendAIPage {
       response => response.json()
     ).then(
       json => {
-        this.kernel_labels = json.labels;
+        this.imageInfo = json.imageInfo;
+        for (let key in this.imageInfo) {
+          this.kernel_labels[key] = [];
+          if ("label" in this.imageInfo[key]) {
+            this.kernel_labels[key] = this.imageInfo[key].label;
+          } else {
+            this.kernel_labels[key] = [];
+          }
+        }
       }
     );
     if (!window.backendaiclient ||
@@ -270,13 +281,21 @@ export default class BackendAiSessionList extends BackendAIPage {
     // If disconnected
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        if (window.backendaiclient.APIMajorVersion < 5) {
+          this.sessionNameField = 'sess_id';
+        }
         this.is_admin = window.backendaiclient.is_admin;
+        this.is_superadmin = window.backendaiclient.is_superadmin;
         this._connectionMode = window.backendaiclient._config._connectionMode;
         this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
         this._refreshJobData();
       }, true);
     } else { // already connected
+      if (window.backendaiclient.APIMajorVersion < 5) {
+        this.sessionNameField = 'sess_id';
+      }
       this.is_admin = window.backendaiclient.is_admin;
+      this.is_superadmin = window.backendaiclient.is_superadmin;
       this._connectionMode = window.backendaiclient._config._connectionMode;
       this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
       this._refreshJobData();
@@ -311,7 +330,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
       case "running":
-        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING"];
+        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING", "PREPARING", "PULLING"];
         break;
       case "finished":
         status = ["TERMINATED", "CANCELLED"]; //TERMINATED, CANCELLED
@@ -321,13 +340,13 @@ export default class BackendAiSessionList extends BackendAIPage {
         // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
         break;
       default:
-        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING"];
+        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING", "PREPARING", "PULLING"];
     }
     if (window.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
     let fields = [
-      "sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
+      "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -335,6 +354,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
+    }
+    if (window.backendaiclient.is_superadmin) {
+      fields.push("agent");
     }
     let group_id = window.backendaiclient.current_group_id();
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, 50, 0, group_id).then((response) => {
@@ -344,12 +366,12 @@ export default class BackendAiSessionList extends BackendAIPage {
         let previous_sessions = this.compute_sessions;
         let previous_session_keys: any = [];
         Object.keys(previous_sessions).map((objectKey, index) => {
-          previous_session_keys.push(previous_sessions[objectKey].sess_id);
+          previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
         });
         Object.keys(sessions).map((objectKey, index) => {
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
-          const kernelImage = sessions[objectKey].lang.split('/')[2];
+          const kernelImage = sessions[objectKey].lang.split('/')[2] || sessions[objectKey].lang.split('/')[1];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
@@ -385,18 +407,17 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
-          let tag = session.lang.split(':')[1];
+          const specs = session.lang.split('/');
+          const tag = specs[specs.length - 1].split(':')[1]
           let tags = tag.split('-');
           if (tags[1] !== undefined) {
             sessions[objectKey].baseversion = tags[0];
             sessions[objectKey].baseimage = tags[1];
-            if (tags[2] !== undefined) {
-              sessions[objectKey].additional_req = tags[2].toUpperCase();
-            }
+            sessions[objectKey].additional_reqs = tags.slice(1, tags.length).map((tag) => tag.toUpperCase());
           } else {
             sessions[objectKey].baseversion = sessions[objectKey].tag;
           }
-          if (this._selected_items.includes(sessions[objectKey].sess_id)) {
+          if (this._selected_items.includes(sessions[objectKey][this.sessionNameField])) {
             sessions[objectKey].checked = true;
           } else {
             sessions[objectKey].checked = false;
@@ -442,12 +463,26 @@ export default class BackendAiSessionList extends BackendAIPage {
   _getKernelInfo(lang) {
     let tags: any = [];
     if (lang === undefined) return [];
-    let name = lang.split('/')[2].split(':')[0];
+    const specs = lang.split('/');
+    let name = (specs[2] || specs[1]).split(':')[0];
     if (name in this.kernel_labels) {
       tags.push(this.kernel_labels[name]);
     } else {
+      const imageParts = lang.split('/');
+      // const registry = imageParts[0]; // hide registry (ip of docker registry is exposed)
+      let namespace;
+      let langName;
+      if (imageParts.length === 3) {
+        namespace = imageParts[1];
+        langName = imageParts[2];
+      } else {
+        namespace = '';
+        langName = imageParts[1];
+      }
+      langName = langName.split(':')[0]
+      langName = namespace ? namespace + '/' + langName : langName;
       tags.push([
-        {'category': 'Env', 'tag': lang, 'color': 'green'}
+        {'category': 'Env', 'tag': `${langName}`, 'color': 'lightgrey'}
       ]);
     }
     return tags;
@@ -529,11 +564,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     return body;
   }
 
-  _terminateApp(kernelId) {
+  _terminateApp(sessionName) {
     let accessKey = window.backendaiclient._config.accessKey;
     let rqst = {
       method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + kernelId
+      uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -541,7 +576,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           let rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + kernelId + '/delete'
+            uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName + '/delete'
           };
           return this.sendRequest(rqst);
         }
@@ -568,14 +603,14 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _showLogs(e) {
     const controls = e.target.closest('#controls');
-    const kernelId = controls['kernel-id'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
 
-    window.backendaiclient.getLogs(kernelId, accessKey).then((req) => {
+    window.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
-        this.shadowRoot.querySelector('#work-title').innerHTML = `${kernelId}`;
+        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName}`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || 'No logs.';
         this.shadowRoot.querySelector('#work-dialog').show();
       }, 100);
@@ -594,7 +629,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _showAppLauncher(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const kernelId = controls['kernel-id'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
     this.appSupportList = [];
@@ -617,7 +652,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
     });
     let dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.setAttribute('kernel-id', kernelId);
+    dialog.setAttribute('session-name', sessionName);
     dialog.setAttribute('access-key', accessKey);
     dialog.positionTarget = e.target;
 
@@ -628,7 +663,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
-  async _open_wsproxy(kernelId, app = 'jupyter') {
+  async _open_wsproxy(sessionName, app = 'jupyter') {
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       return false;
     }
@@ -644,6 +679,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       param['access_key'] = window.backendaiclient._config.accessKey;
       param['secret_key'] = window.backendaiclient._config.secretKey;
     }
+    param['api_version'] = window.backendaiclient.APIMajorVersion;
     console.log(window.__local_proxy);
     if (window.isElectron && typeof window.__local_proxy === 'undefined') {
       this.shadowRoot.querySelector('#indicator').end();
@@ -674,7 +710,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       let rqst_proxy = {
         method: 'GET',
         app: app,
-        uri: this._getProxyURL() + 'proxy/' + token + "/" + kernelId + "/add?app=" + app
+        uri: this._getProxyURL() + 'proxy/' + token + "/" + sessionName + "/add?app=" + app
       };
       return await this.sendRequest(rqst_proxy);
     } catch (err) {
@@ -685,7 +721,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _runApp(e) {
     const controller = e.target;
     let controls = controller.closest('#app-dialog');
-    let kernelId = controls.getAttribute('kernel-id');
+    let sessionName = controls.getAttribute('session-name');
     let urlPostfix = controller['url-postfix'];
     let appName = controller['app-name'];
     if (appName === undefined || appName === null) {
@@ -699,12 +735,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (typeof window.backendaiwsproxy === "undefined" || window.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.shadowRoot.querySelector('#indicator').start();
-      this._open_wsproxy(kernelId, appName)
+      this._open_wsproxy(sessionName, appName)
         .then((response) => {
           if (appName === 'sshd') {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             this.sshPort = response.port;
-            this._readSSHKey(kernelId);
+            this._readSSHKey(sessionName);
             this._openSSHDialog();
             setTimeout(() => {
               this.shadowRoot.querySelector('#indicator').end();
@@ -723,17 +759,17 @@ export default class BackendAiSessionList extends BackendAIPage {
               window.open(response.url + urlPostfix, '_blank');
               this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
-              console.log(kernelId);
+              console.log(sessionName);
             }, 1000);
           }
         });
     }
   }
 
-  async _readSSHKey(kernelId) {
+  async _readSSHKey(sessionName) {
     const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
     const file = '/home/work/id_container';
-    const blob = await window.backendaiclient.download_single(kernelId, file);
+    const blob = await window.backendaiclient.download_single(sessionName, file);
     // TODO: This blob has additional leading letters in front of key texts.
     //       Manually trim those letters.
     const rawText = await blob.text();
@@ -746,10 +782,10 @@ export default class BackendAiSessionList extends BackendAIPage {
   _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const kernelId = controls['kernel-id'];
+    const sessionName = controls['session-name'];
     if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
       this.shadowRoot.querySelector('#indicator').start();
-      this._open_wsproxy(kernelId, 'ttyd')
+      this._open_wsproxy(sessionName, 'ttyd')
         .then((response) => {
           if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
@@ -757,7 +793,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               window.open(response.url, '_blank');
               this.shadowRoot.querySelector('#indicator').end();
               console.log("Terminal proxy loaded: ");
-              console.log(kernelId);
+              console.log(sessionName);
             }, 1000);
           }
         });
@@ -768,9 +804,9 @@ export default class BackendAiSessionList extends BackendAIPage {
   _openTerminateSessionDialog(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const kernelId = controls['kernel-id'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
-    this.terminateSessionDialog.kernelId = kernelId;
+    this.terminateSessionDialog.sessionName = sessionName;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
   }
@@ -787,28 +823,28 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _terminateSession(e) {
     const controls = e.target.closest('#controls');
-    const kernelId = controls['kernel-id'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
 
-    if (this.terminationQueue.includes(kernelId)) {
+    if (this.terminationQueue.includes(sessionName)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
     this.notification.text = 'Terminating session...';
     this.notification.show();
-    return this._terminateKernel(kernelId, accessKey);
+    return this._terminateKernel(sessionName, accessKey);
   }
 
   _terminateSessionWithCheck(e) {
-    if (this.terminationQueue.includes(this.terminateSessionDialog.kernelId)) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionName)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
     this.notification.text = 'Terminating session...';
     this.notification.show();
-    return this._terminateKernel(this.terminateSessionDialog.kernelId, this.terminateSessionDialog.accessKey).then(response => {
+    return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey).then(response => {
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -844,7 +880,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.notification.show();
 
     let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item.sess_id, item.access_key);
+      return this._terminateKernel(item[this.sessionNameField], item.access_key);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then(response => {
@@ -867,7 +903,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.notification.show();
 
     let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item.sess_id, item.access_key);
+      return this._terminateKernel(item[this.sessionNameField], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then(response => {
       this._selected_items = [];
@@ -885,10 +921,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   // General closing
 
-  async _terminateKernel(kernelId, accessKey) {
-    this.terminationQueue.push(kernelId);
-    return this._terminateApp(kernelId).then(() => {
-      window.backendaiclient.destroyKernel(kernelId, accessKey).then((req) => {
+  async _terminateKernel(sessionName, accessKey) {
+    this.terminationQueue.push(sessionName);
+    return this._terminateApp(sessionName).then(() => {
+      window.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
         setTimeout(() => {
           this.terminationQueue = [];
           this.refreshList(true, false);
@@ -931,22 +967,31 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div class="layout vertical start">
-            <div>${rowData.item.sess_id}</div>
-              ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
-${item.map(item => {
-        if (item.category === 'Env' && rowData.item.baseversion !== undefined) {
-          item.category = item.tag;
-          item.tag = rowData.item.baseversion;
-        }
-        return html`
-            <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
-            `
-      })}
-                `) : html``}
-        ${rowData.item.additional_req ? html`
-          <lablup-shields app="" color="green" description="${rowData.item.additional_req}"></lablup-shields>
+          <div>${rowData.item[this.sessionNameField]}</div>
+          ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
+            ${item.map(item => {
+              if (item.category === 'Env') {
+                item.category = item.tag;
+                if (rowData.item.baseversion) {
+                  item.tag = rowData.item.baseversion;
+                }
+              }
+              return html`
+                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
+              `;
+            })}
+          `) : html``}
+          ${rowData.item.additional_reqs ? html`
+            <div class="layout horizontal center wrap">
+              ${rowData.item.additional_reqs.map((tag) => {
+                return html`
+                  <lablup-shields app="" color="green" description="${tag}"></lablup-shields>
+                `;
+              })}
+            </div>
           ` : html``}
-        </div>`, root
+        </div>
+      `, root
     );
   }
 
@@ -954,7 +999,7 @@ ${item.map(item => {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
-             .kernel-id="${rowData.item.sess_id}"
+             .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}">
@@ -1033,7 +1078,7 @@ ${item.map(item => {
   }
 
   _toggleCheckbox(object) {
-    let exist = this._selected_items.findIndex(x => x.sess_id == object.sess_id);
+    let exist = this._selected_items.findIndex(x => x[this.sessionNameField] == object[this.sessionNameField]);
     if (exist === -1) {
       this._selected_items.push(object)
     } else {
@@ -1166,7 +1211,7 @@ ${item.map(item => {
         </vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="Usage" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="Starts" path="created_at">
+        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="Starts" path="created_at">
           <template>
             <div class="layout vertical">
               <span>[[item.created_at_hr]]</span>
@@ -1180,6 +1225,15 @@ ${item.map(item => {
             </div>
           </template>
         </vaadin-grid-column>
+        ${this.is_superadmin ? html`
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="Agent">
+            <template>
+              <div class="layout vertical">
+                <span>[[item.agent]]</span>
+              </div>
+            </template>
+          </vaadin-grid-column>
+            ` : html``}
       </vaadin-grid>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-dialog id="work-dialog" fixed blockscrolling scrollable

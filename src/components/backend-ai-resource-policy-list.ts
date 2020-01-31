@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, property} from "lit-element";
@@ -24,6 +24,8 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
+import 'weightless/checkbox';
+import 'weightless/label';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -40,18 +42,19 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
-  @property({type: Array}) cpu_metric = [1, 2, 3, 4, 8, 16, 24, 32, 48, "Unlimited"];
-  @property({type: Array}) ram_metric = [1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512, "Unlimited"];
-  @property({type: Array}) gpu_metric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, "Unlimited"];
-  @property({type: Array}) fgpu_metric = [0, 0.2, 0.3, 0.5, 1, 2, 3, 4, 8, 16, "Unlimited"];
-  @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
-  @property({type: Array}) concurrency_metric = [1, 2, 3, 4, 5, 10, 50, "Unlimited"];
-  @property({type: Array}) container_per_session_metric = [1, 2, 3, 4, 8, "Unlimited"];
-  @property({type: Array}) idle_timeout_metric = [60, 600, 900, 1800, 3600, 43200, 86400, 604800, 1209600];
-  @property({type: Array}) vfolder_capacity_metric = [1, 2, 5, 10, 20, 50, 100, 200, 1000];
-  @property({type: Array}) vfolder_count_metric = [1, 2, 3, 4, 5, 10, 30, 50, 100];
+  @property({type: Object}) cpu_resource = {};
+  @property({type: Object}) ram_resource = {};
+  @property({type: Object}) gpu_resource = {};
+  @property({type: Object}) fgpu_resource = {};
+  @property({type: Object}) concurrency_limit = {};
+  @property({type: Object}) idle_timeout = {};
+  @property({type: Object}) vfolder_capacity = {};
+  @property({type: Object}) vfolder_max_limit= {};
+  @property({type: Object}) container_per_session_limit = {};
   @property({type: Array}) allowed_vfolder_hosts = [];
   @property({type: String}) default_vfolder_host = '';
+  @property({type: Array}) resource_policy_names = Array();
+  @property({type: String}) current_policy_name = '';
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
 
@@ -138,6 +141,40 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
         }
+
+        wl-label {
+          width: 100%;
+          min-width: 60px;
+          font-size: 11px;
+          --label-font-family: Roboto, Noto, sans-serif;
+        }
+
+        wl-label.folders {
+          margin: 3px 0px 7px 0px;
+        }
+
+        wl-label.unlimited {
+          margin: 4px 0px 0px 0px;
+        }
+
+        wl-list-item {
+          width: 100%;
+        }
+
+        wl-textfield {
+          width: 100%;
+          --input-padding-top-bottom: 0px;
+          --input-font-family: Roboto, Noto, sans-serif;
+        }
+
+        wl-checkbox {
+          --checkbox-size: 10px;
+          --checkbox-border-radius: 2px;
+          --checkbox-bg-checked: var(--paper-green-800);
+          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
+          --checkbox-color-checked: var(--paper-green-800);
+        }
+
       `];
   }
 
@@ -209,88 +246,99 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             <fieldset>
               <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
                            required
-                           error-message="Policy name only accepts letters and numbers"></paper-input>
+                           style="width:100%;"
+                           focused="true"
+                           @change="${(e)=>this._validatePolicyName(e)}"
+                           ></paper-input>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="cpu-resource" label="CPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.cpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="ram-resource" label="RAM (GB)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.ram_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="gpu-resource" label="GPU">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.gpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="fgpu-resource" label="fgpu">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.fgpu_metric.map(item => html`
-                    <paper-item value="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                  <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 0px;">
+                    <wl-label>CPU</wl-label>
+                    <wl-textfield id="cpu-resource" type="number"
+                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                      <wl-label class="unlimited">
+                        <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                        Unlimited
+                      </wl-label>
+                  </div>
+                  <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 10px;">
+                    <wl-label>RAM(GB)</wl-label>
+                    <wl-textfield id="ram-resource" type="number"
+                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 10px;">
+                    <wl-label>GPU</wl-label>
+                    <wl-textfield id="gpu-resource" type="number"
+                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical layout" style="width:75px; margin: 0px 0px 0px 10px;">
+                    <wl-label>fGPU</wl-label>
+                    <wl-textfield id="fgpu-resource" type="number"
+                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
               </div>
               <h4>Sessions</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="container-per-session-limit" label="Container per session">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.container_per_session_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="idle-timeout" label="Idle timeout (sec.)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.idle_timeout_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                <div class="vertical left layout" style="width: 110px;">
+                    <wl-label>Container per session</wl-label>
+                    <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
+                    <wl-label>Idle timeout (sec.)</wl-label>
+                    <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                    <wl-label class="unlimited">
+                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                      Unlimited
+                    </wl-label>
+                  </div>
+                  <div class="vertical left layout" style="width: 110px;">
+                      <wl-label>Concurrent Jobs</wl-label>
+                      <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                      <wl-label class="unlimited">
+                        <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                        Unlimited
+                      </wl-label>
+                  </div>
               </div>
-
+              <h4 style="margin-bottom:0px;">Folders</h4>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="concurrency-limit" label="Concurrent Jobs">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.concurrency_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-              <h4>Folders</h4>
-              <div class="horizontal center layout">
+                <div class="vertical layout" style="width: 110px;">
                 <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
                   <paper-listbox slot="dropdown-content" selected="0">
                     ${this.allowed_vfolder_hosts.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
+                      <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
                     `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-capacity-limit" label="Capacity (GB)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.vfolder_capacity_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="vfolder-count-limit" label="Max.#">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.vfolder_count_metric.map(item => html`
-                      <paper-item value="${item}">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                </div>
+                <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
+                  <wl-label class="folders">Capacity(GB)</wl-label>
+                  <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                  <wl-label class="unlimited">
+                    <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                    Unlimited
+                </wl-label>
+                </div>
+                <div class="vertical layout" style="width: 110px;">
+                  <wl-label class="folders">Max.#</wl-label>
+                  <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                </div>
               </div>
 
               <br/><br/>
@@ -299,7 +347,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                 <wl-icon>add</wl-icon>
                 Update
               </wl-button>
-
             </fieldset>
           </form>
         </wl-card>
@@ -388,6 +435,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
+    this._getResourceInfo();
   }
 
   async _viewStateChanged(active) {
@@ -415,19 +463,32 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const controls = e.target.closest('#controls');
     const policyName = controls['policy-name'];
     let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
+    this.resource_policy_names = Object.keys(resourcePolicies);
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
-    this.shadowRoot.querySelector('#cpu-resource').value = resourcePolicy.total_resource_slots.cpu;
-    this.shadowRoot.querySelector('#gpu-resource').value = resourcePolicy.total_resource_slots['cuda_device'];
-    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePolicy.total_resource_slots['cuda_shares'];
-    this.shadowRoot.querySelector('#ram-resource').value = resourcePolicy.total_resource_slots['mem'];
+    this.current_policy_name = policyName;
+    this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
+    this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
+    this.gpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_device'];
+    this.fgpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_shares'];
+    this.concurrency_limit['value'] = resourcePolicy.max_concurrent_sessions;
+    this.idle_timeout['value'] = resourcePolicy.idle_timeout;
+    this.container_per_session_limit['value'] = resourcePolicy.max_containers_per_session;
+    this.vfolder_capacity['value'] = resourcePolicy.max_vfolder_size;
 
-    this.shadowRoot.querySelector('#concurrency-limit').value = resourcePolicy.max_concurrent_sessions;
-    this.shadowRoot.querySelector('#container-per-session-limit').value = resourcePolicy.max_containers_per_session;
+    this._updateInputStatus(this.cpu_resource);
+    this._updateInputStatus(this.ram_resource);
+    this._updateInputStatus(this.gpu_resource);
+    this._updateInputStatus(this.fgpu_resource);
+    this._updateInputStatus(this.concurrency_limit);
+    this._updateInputStatus(this.idle_timeout);
+    this._updateInputStatus(this.container_per_session_limit);
+    this._updateInputStatus(this.vfolder_capacity);
+
     this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
     this.shadowRoot.querySelector('#vfolder-capacity-limit').value = resourcePolicy.max_vfolder_size;
-    this.shadowRoot.querySelector('#idle-timeout').value = resourcePolicy.idle_timeout;
-    this.shadowRoot.querySelector('#allowed_vfolder-hosts').value = resourcePolicy.allowed_vfolder_hosts[0]; /* TODO: multiple vfolder hosts */
+    this.shadowRoot.querySelector('#allowed_vfolder-hosts').value = resourcePolicy.allowed_vfolder_hosts[0];
+    /* TODO: multiple vfolder hosts */
   }
 
   _refreshPolicyData() {
@@ -488,75 +549,86 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _readResourcePolicyInput() {
-    let cpu_resource = this.shadowRoot.querySelector('#cpu-resource').value;
-    let ram_resource = this.shadowRoot.querySelector('#ram-resource').value;
-    let gpu_resource = this.shadowRoot.querySelector('#gpu-resource').value;
-    let fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource').value;
+    let total_resource_slots = {};
     let vfolder_hosts: Array<object> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
-    if (cpu_resource === "Unlimited") {
-      cpu_resource = "Infinity";
+
+    try {
+      this._validateUserInput(this.cpu_resource);
+      this._validateUserInput(this.ram_resource);
+      this._validateUserInput(this.gpu_resource);
+      this._validateUserInput(this.fgpu_resource);
+      this._validateUserInput(this.concurrency_limit);
+      this._validateUserInput(this.idle_timeout);
+      this._validateUserInput(this.container_per_session_limit);
+      this._validateUserInput(this.vfolder_capacity);
+      this._validateUserInput(this.vfolder_max_limit);
+    } catch (err) {
+      throw err;
     }
-    if (ram_resource === "Unlimited") {
-      ram_resource = "Infinity";
-    } else {
-      ram_resource = ram_resource + 'g';
-    }
-    if (gpu_resource === "Unlimited") {
-      gpu_resource = "Infinity";
-    } else {
-      gpu_resource = parseInt(gpu_resource).toString();
-    }
-    if (fgpu_resource === "Unlimited") {
-      fgpu_resource = "Infinity";
-    } else {
-      fgpu_resource = parseFloat(fgpu_resource).toString();
-    }
-    let total_resource_slots = {
-      "cpu": cpu_resource,
-      "mem": ram_resource,
-      "cuda.device": gpu_resource,
-      "cuda.shares": fgpu_resource
-    };
-    let concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit').value;
-    let containers_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit').value;
-    let vfolder_count_limit = this.shadowRoot.querySelector('#vfolder-count-limit').value;
-    let vfolder_capacity_limit = this.shadowRoot.querySelector('#vfolder-capacity-limit').value;
-    let idle_timeout = this.shadowRoot.querySelector('#idle-timeout').value;
+
+    total_resource_slots['cpu'] = this.cpu_resource['value'];
+    total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
+    total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
+    total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
+
+    this.concurrency_limit['value'] = this.concurrency_limit['value'] === '' ? 0 : parseInt(this.concurrency_limit['value']);
+    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
+    this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? 0 : parseInt(this.container_per_session_limit['value']);
+    this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? 0 : parseInt(this.vfolder_capacity['value']);
+    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
+
+    Object.keys(total_resource_slots).map((resource) => {
+      if (isNaN(parseFloat(total_resource_slots[resource]))) {
+        delete total_resource_slots[resource];
+      }
+    });
+
     let input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': concurrency_limit,
-      'max_containers_per_session': containers_per_session_limit,
-      'idle_timeout': parseInt(idle_timeout),
-      'max_vfolder_count': vfolder_count_limit,
-      'max_vfolder_size': vfolder_capacity_limit,
+      'max_concurrent_sessions': this.concurrency_limit['value'],
+      'max_containers_per_session': this.container_per_session_limit['value'],
+      'idle_timeout': this.idle_timeout['value'],
+      'max_vfolder_count': this.vfolder_max_limit['value'],
+      'max_vfolder_size': this.vfolder_capacity['value'],
       'allowed_vfolder_hosts': vfolder_hosts
     };
     return input;
   }
 
   _modifyResourcePolicy() {
-    let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
-    let input = this._readResourcePolicyInput();
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    let name = policy_info.value;
+    if (policy_info.invalid) {
+      return;
+    }
+    try {
+      let input = this._readResourcePolicyInput();
 
-    window.backendaiclient.resourcePolicy.mutate(name, input)
-      .then(({modify_keypair_resource_policy}) => {
-        if (modify_keypair_resource_policy.ok) {
-          this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-          this.notification.text = "Resource policy successfully updated.";
-          this.notification.show();
-          this.refresh();
-        }
-      }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      }
-    });
+      window.backendaiclient.resourcePolicy.mutate(name, input)
+        .then(({modify_keypair_resource_policy}) => {
+          if (modify_keypair_resource_policy.ok) {
+            this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+            this.notification.text = "Resource policy successfully updated.";
+            this.notification.show();
+            this.refresh();
+          }
+        })
+        .catch(err => {
+            console.log(err);
+            if (err && err.message) {
+              this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true);
+            }
+      });
+    } catch (err) {
+      this.notification.text = err.message;
+      this.notification.show();
+    };
+
   }
 
   _deleteKey(e) {
@@ -564,7 +636,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const accessKey = controls.accessKey;
     window.backendaiclient.keypair.delete(accessKey).then(response => {
       this.refresh();
-    }).catch(err => {
+    })
+    .catch(err => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -574,14 +647,106 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     });
   }
 
+  _toggleCheckbox(e) {
+    const checkEl = e.target;
+    const checked = checkEl.checked;
+    const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
+    wlTextEl.disabled = checked;
+    if (!wlTextEl.disabled) {
+      if (wlTextEl.value === '') {
+        wlTextEl.value = 0;
+      }
+    }
+  }
+
+  _validateResourceInput(e) {
+    const textfield = e.target.closest('wl-textfield');
+    const checkbox_el = textfield.closest('div').querySelector('.unlimited');
+    let checkbox;
+    if (checkbox_el) {
+      checkbox = checkbox_el.querySelector('wl-checkbox');
+    } else {
+      checkbox = null;
+    }
+    
+    if (textfield.value < 0) {
+      textfield.value = 0;
+    }
+
+    if (textfield.value === '') {
+      try {
+        if (!checkbox || !checkbox['checked']) {
+          textfield['required'] = true;
+          textfield.focus();
+          throw { "message" : "Please input value or check unlimited." };
+        }
+        else {
+          textfield['required'] = false;
+          textfield.value = '';
+        }
+      } catch (err) {
+        this.notification.text = err.message;
+        this.notification.show();
+      }
+    }
+  }
+
+
+  _validateUserInput(resource) {
+    if (resource.disabled) {
+      resource.value = '';
+    } else {
+      if (resource.value === '') {
+          throw {"message" : "Cannot Update Resource Policy. Please check input values." };
+      }
+    }
+  }
+
+  _validatePolicyName(e) {
+    let policy_info = e.target;
+    let policy_name = e.target.value;
+    if (this.resource_policy_names.includes(policy_name)) {
+      if (policy_name !== this.current_policy_name) {
+        policy_info.errorMessage="Policy name already exists!";
+        policy_info.invalid=true;
+        return;
+      }
+    }
+    policy_info.invalid=false;
+   }
+
+  _updateInputStatus(resource) {
+    let textfield = resource;
+    let checkbox = textfield.closest('div').querySelector('wl-checkbox');
+    if (textfield.value === '' || textfield.value === "0" ) {
+      textfield.disabled = true;
+      checkbox.checked = true;
+    } else {
+      textfield.disabled = false;
+      checkbox.checked = false;
+    }
+  }
+
   _markIfUnlimited(value) {
-    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+    if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
     } else if (['NaN', NaN].includes(value)) {
       return '-';
     } else {
       return value;
     }
+  }
+
+  _getResourceInfo() {
+    this.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
+    this.ram_resource = this.shadowRoot.querySelector('#ram-resource');
+    this.gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+    this.fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
+    this.concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
+    this.idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
+    this.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
+    this.vfolder_capacity = this.shadowRoot.querySelector('#vfolder-capacity-limit');
+    this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
   }
 }
 

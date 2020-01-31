@@ -4,8 +4,8 @@ Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin.
 
 Backend.AI console focuses to 
 
- * Provide both administration and user mode
  * Serve as desktop app and web service
+ * Provide both administration and user mode
  * Versatile devices ready such as mobile, tablet and desktop.
  * Built-in websocket proxy feature for apps
 
@@ -17,13 +17,13 @@ Backend.AI console focuses to
     * Fully-featured VSCode editor and environments (WIP)
  * Pipeline
     * Experiments (with SACRED)
-    * Manages container streams
+    * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
-    * Upload  / download files
-    * SFTP server (backend.ai SFTP image needed)
-    * Share folders 
+    * Upload  / download files (with upload progress)
+    * Integrated SSH/SFTP server (app mode only)
+    * Share folders with friends / groups 
  * Statistics
     * User resource statistics
     * Session statistics
@@ -31,19 +31,21 @@ Backend.AI console focuses to
     * Insight (working)
 
 ## Management Features
+
  * Keypair management
     * Allocate resource limitation for keys
-    * Add / remove resource policies
+    * Add / remove resource policies for keys
  * Kernel managements
     * List supported kernels
-     * Add kernels
+     * Add kernel
      * Refresh kernel list
      * Categorize repository
-     * Add/update resource templates (under development)
+     * Add/update resource templates 
+     * Add/remove docker registries
  * User management
     * User creation / deletion
  * Manager settings
-    * Add repository
+    * Add /setting repository
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
@@ -83,6 +85,10 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
+[plugins]
+# Reserved to load plugins
+# login = "login-test.js"
+# sidebar = "sidebar-test.js"
 ```
 
 ## Branches
@@ -105,6 +111,13 @@ Backend.AI console is built with
 ```
 $ npm i
 ```
+You must perform first-time compilation for testing. Some additional mandatory packages should be copied to proper location.
+
+```
+$ make dep
+```
+
+Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
 
 ### Developing / testing without bundling
 
@@ -217,7 +230,7 @@ Check your image name is `backendai-console_console` or `backendai-console_conso
 $ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 $ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
-### Building with console-server
+### Building / serving with console-server
 
 If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.
 
@@ -299,7 +312,7 @@ Note: this command only works on macOS, because packaging uses `ditto`, that sup
 
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
 
-Note: Requires electron-installer-dmg to make disk image. It requires Python 2+ to build binary for package.
+Note: Requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
 
 ```
 $ make pack

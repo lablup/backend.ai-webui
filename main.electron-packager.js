@@ -1,34 +1,22 @@
-// Modules to control application life and create native browser window / Local tester file
+// Modules to control application life and create native browser window
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
-process.env.serveMode = "dev";
-process.env.liveDebugMode = false;
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
-const nfs = require('fs');
-const npjoin = require('path').join;
 const BASE_DIR = __dirname;
-let ProxyManager, versions, es6Path, electronPath, mainIndex;
-if (process.env.serveMode == 'dev') {
-  ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
-  versions = require('./version');
-  es6Path = npjoin(__dirname, 'build/electron-app/app');  // ES6 module loader with custom protocol
-  electronPath = npjoin(__dirname, 'build/electron-app');
-  mainIndex = 'build/electron-app/app.html';
-} else {
-  ProxyManager = require('./app/wsproxy/wsproxy.js');
-  versions = require('./app/version');
-  es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
-  electronPath = npjoin(__dirname);
-  mainIndex = 'app.html';
-}
+const ProxyManager = require('./app/wsproxy/wsproxy.js');
+const versions = require('./app/version');
+process.env.liveDebugMode = false;
 let windowWidth = 1280;
 let windowHeight = 970;
-let debugMode = true;
 
+// ES6 module loader with custom protocol
+const nfs = require('fs');
+const npjoin = require('path').join;
+const es6Path = npjoin(__dirname, 'app');
 protocol.registerSchemesAsPrivileged([
-  {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
+  { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
 ]);
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -37,8 +25,11 @@ let mainWindow;
 let mainContent;
 let devtools;
 let manager = new ProxyManager();
+
+var mainIndex = 'app/index.html';
 let mainURL;
 
+// Modules to control application life and create native browser window
 app.once('ready', function() {
   var template;
   if (process.platform === 'darwin') {
@@ -47,20 +38,17 @@ app.once('ready', function() {
         label: 'Backend.AI',
         submenu: [
           {
-            label: 'About Backend.AI App',
+            label: 'About Backend.AI Console',
             click: function () {
-              let scr = `window.runScriptOnMainTab();`;
-              mainContent.executeJavaScript('window.showSplash();');
+              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
+                '    document.dispatchEvent(event);');
             }
           },
           {
-            label: 'App version ' + versions.package + ' (rev.' + versions.revision + ')',
+            label: 'App version ' + versions.package +' (rev.' + versions.revision + ')',
             click: function () {
-              clipboard.writeText(versions.package + ' (rev.' + versions.revision + ')');
-              const response = dialog.showMessageBox({
-                type: 'info',
-                message: 'Version information is copied to clipboard.'
-              });
+              clipboard.writeText(versions.package +' (rev.' + versions.revision + ')');
+              const response = dialog.showMessageBox({type:'info', message:'Version information is copied to clipboard.'});
             }
           },
           {
@@ -102,7 +90,7 @@ app.once('ready', function() {
           {
             label: 'Quit',
             accelerator: 'Command+Q',
-            click: function () {
+            click: function() {
               app.quit();
             }
           },
@@ -152,7 +140,7 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            click: function () {
+            click: function() {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomIn()');
@@ -162,7 +150,7 @@ app.once('ready', function() {
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            click: function () {
+            click: function() {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomOut()');
@@ -172,7 +160,7 @@ app.once('ready', function() {
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            click: function () {
+            click: function() {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript(
@@ -183,7 +171,7 @@ app.once('ready', function() {
           {
             label: 'Toggle Full Screen',
             accelerator: 'Ctrl+Command+F',
-            click: function () {
+            click: function() {
               var focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
@@ -218,8 +206,8 @@ app.once('ready', function() {
         label: 'Help',
         submenu: [
           {
-            label: 'Backend.AI Webpage',
-            click: function () {
+            label: 'Learn More',
+            click: function() {
               shell.openExternal('https://www.backend.ai/');
             }
           }
@@ -283,26 +271,14 @@ app.once('ready', function() {
             accelerator: 'F11',
             role: 'togglefullscreen'
           },
-          /* Does not work
-          {
-            label: 'Toggle &Developer Tools',
-            accelerator: 'Alt+Ctrl+I',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
-              }
-            }
-          },
-          */
         ]
       },
       {
         label: 'Help',
         submenu: [
           {
-            label: 'Backend.AI Webpage',
-            click: function () {
+            label: 'Learn More',
+            click: function() {
               shell.openExternal('https://www.backend.ai/');
             }
           }
@@ -311,12 +287,11 @@ app.once('ready', function() {
     ];
   }
 
-  const appmenu = Menu.buildFromTemplate(template);
+  var appmenu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(appmenu);
 });
 
-
-function createWindow() {
+function createWindow () {
   // Create the browser window.
   devtools = null;
 
@@ -328,54 +303,36 @@ function createWindow() {
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nativeWindowOpen: true,
-      nodeIntegration: true,
-      webviewTag: true,
-      preload: path.join(electronPath, 'preload.js'),
-      devTools: true
+      nodeIntegration: false,
+      preload: path.join(BASE_DIR, 'preload.js'),
+      devTools: false
     }
   });
-  // and load the index.html of the app.
-  if (process.env.liveDebugMode === true) {
-    // Load HTML into new Window (dynamic serving for develop)
-    mainWindow.loadURL(url.format({
-      pathname: '127.0.0.1:9081',
-      protocol: 'http',
-      slashes: true
-    }));
-  } else {
-    // Load HTML into new Window (file-based serving)
-    nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
-      if (err) {
-        console.log('No configuration file found.');
-        return;
-      }
-      let config = toml(data);
-      if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-      }
-      if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
-        mainURL = config.server.consoleServerURL;
-      } else {
-        mainURL = url.format({
-          pathname: path.join(mainIndex),
-          protocol: 'file',
-          slashes: true
-        });
-      }
-      if ('general' in config && 'siteDescription' in config.general) {
-        process.env.siteDescription = config.general.siteDescription;
-      } else {
-        process.env.siteDescription = '';
-      }
-      mainWindow.loadURL(mainURL);
-    });
-  }
-  mainContent = mainWindow.webContents;
-  if (debugMode === true) {
-    devtools = new BrowserWindow();
-    mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-    mainWindow.webContents.openDevTools({mode: 'detach'});
-  }
+  // Load HTML into new Window (file-based serving)
+  nfs.readFile(path.join(BASE_DIR, '/app/config.toml'), 'utf-8', (err, data) => {
+    if (err) {
+      console.log('No configuration file found.');
+      return;
+    }
+    let config = toml(data);
+    if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    }
+    if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
+      mainURL = config.server.consoleServerURL;
+    } else {
+      mainURL = url.format({
+        pathname: path.join(mainIndex),
+        protocol: 'file',
+        slashes: true
+      });
+    }
+    mainWindow.loadURL(mainURL);
+    mainContent = mainWindow.webContents;
+    //devtools = new BrowserWindow();
+    //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+    //mainWindow.webContents.openDevTools({ mode: 'detach' });
+  });
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
     if (mainWindow) {
@@ -402,6 +359,7 @@ function createWindow() {
     devtools = null;
     app.quit()
   });
+
   mainWindow.on('closed', function () {
     mainWindow = null;
     mainContent = null;
@@ -409,18 +367,16 @@ function createWindow() {
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    console.log('---------------------------------------------------------------');
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
   });
 }
 
 function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {
-  console.log('popup from main thread');
   event.preventDefault();
   Object.assign(options, {
     frame: true,
     show: false,
-    backgroundColor: '#efefef',
+    backgroundColor: '#EFEFEF',
     //parent: win,
     titleBarStyle: '',
     width: windowWidth,
@@ -440,9 +396,8 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
     event.newGuest.show()
   });
   event.newGuest.loadURL(url);
-  event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    console.log('---------------------------------------------------------------');
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event);
+  event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
+    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
   });
   event.newGuest.on('close', (e) => {
     let c = BrowserWindow.getFocusedWindow();
@@ -455,19 +410,14 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
     const url = request.url.substr(7);    /* all urls start with 'file://' */
-    const extension = url.split('.').pop();
-    let options = {path: path.normalize(`${BASE_DIR}/${url}`)};
-    callback(options);
+    callback({ path: path.normalize(`${BASE_DIR}/${url}`)});
   }, (err) => {
     if (err) console.error('Failed to register protocol');
   });
-  // Force mime-type to javascript
   protocol.registerBufferProtocol('es6', (req, cb) => {
     nfs.readFile(
       npjoin(es6Path, req.url.replace('es6://', '')),
-      (e, b) => {
-        cb({mimeType: 'text/javascript', data: b})
-      }
+      (e, b) => { cb({ mimeType: 'text/javascript', data: b }) }
     )
   });
   createWindow()
@@ -481,7 +431,6 @@ app.on('window-all-closed', function () {
   }
 });
 
-
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -491,84 +440,22 @@ app.on('activate', function () {
 });
 app.on('certificate-error', function (event, webContents, url, error,
                                       certificate, callback) {
-  event.preventDefault();
-  callback(true);
+      event.preventDefault();
+      callback(true);
 });
-// Let windows without node integration
+
 app.on('web-contents-created', (event, contents) => {
-  if (contents.getType() === 'webview') {
-    contents.on('new-window', function (newWindowEvent, url) {
-      newWindowEvent.preventDefault();
-      console.log("is it a blocking call?,", url);
-      console.log(newWindowEvent);
-      newWindowEvent.newGuest = newWindowEvent.sender;
-    });
-  }
   contents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away preload scripts if unused or verify their location is legitimate
     delete webPreferences.preload;
     delete webPreferences.preloadURL;
-    webPreferences.nativeWindowOpen = true;
-    //console.log(event);
+
     // Disable Node.js integration
-    //webPreferences.nodeIntegration = false;
-  });
-});
+    webPreferences.nodeIntegration = false;
 
-
-function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
-  console.log('------- requested URL:', url);
-  const ev = event;
-  openPageURL = url;
-  Object.assign(options, {
-    title: "Loading...",
-    frame: true,
-    visible: false,
-    backgroundColor: '#efefef',
-    closable: true,
-    src: url,
-    webviewAttributes: {
-      //nodeintegration: false,
-      allowpopups: true,
-      autosize: false,
-      //webviewTag: true,
-      webpreferences: defaultWebPreferences
-    },
-    ready: loadURLonTab
-  });
-  if (frameName === 'modal') {
-    options.modal = true;
-  }
-  let newTab = tabGroup.addTab(options);
-  newTab.webview.addEventListener('page-title-updated', (e) => {
-    const newTitle = e.target.getTitle();
-    newTab.setTitle(newTitle);
-  });
-  newTab.on("webview-ready", (tab) => {
-    tab.show(true);
-    console.log('webview ready', tab);
-    //event.newGuest = tab.webview.getWebContents();
-    //console.log('new guest: ', event.newGuest);
-  });
-  newTab.webview.addEventListener('dom-ready', (e) => {
-    console.log('from event,', ev);
-    console.log("new tab", e);
-    e.target.openDevTools();
-    //if (openPageURL !== '') {
-    let newTabContents = e.target.getWebContents();
-    //let newURL = openPageURL;
-    //openPageURL = '';
-    //e.target.loadURL(newURL);
-    newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-      event.preventDefault();
-      newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
-    });
+    // Verify URL being loaded
+    //if (!params.src.startsWith('https://yourapp.com/')) {
+    //  event.preventDefault()
     //}
-    console.log("access?,", ev.webview);
-    ev.newGuest = newTabContents;
-  });
-  //event.newGuest = tab.webview.getWebContents();
-  //event.newGuest = newTab.webview.getWebContents();
-  //console.log("New window: ", newTab.webview);
-  //return newTab.webview;
-}
+  })
+});

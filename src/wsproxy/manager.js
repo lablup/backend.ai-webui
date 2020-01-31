@@ -51,7 +51,13 @@ class Manager extends EventEmitter {
         "created": Date.now(),
         "endpoint": req.body.endpoint
       };
-      if(req.body.mode && req.body.mode == "SESSION") {
+      // Receive API version from console. Initialization timing is different so we use API information from requester.
+      if (req.body.api_version) {
+        cf['_apiVersionMajor'] = req.body.api_version;
+      } else {
+        cf['_apiVersionMajor'] = 4;
+      }
+      if (req.body.mode && req.body.mode == "SESSION") {
         cf['mode'] = "SESSION";
         cf['session'] = req.body.session;
         cf['endpoint'] = cf['endpoint'] + "/func";
@@ -65,6 +71,7 @@ class Manager extends EventEmitter {
           req.body.endpoint,
         );
         this.aiclient = new ai.backend.Client(config);
+        this.aiclient.APIMajorVersion = cf['_apiVersionMajor'];
       }
       this._config = cf;
 
@@ -79,27 +86,27 @@ class Manager extends EventEmitter {
       res.send(rtn);
     });
 
-    this.app.get('/proxy/local/:kernelId', (req, res) => {
-      let kernelId = req.params["kernelId"];
-      if (!this._config){
+    this.app.get('/proxy/local/:sessionName', (req, res) => {
+      let sessionName = req.params["sessionName"];
+      if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      if (kernelId in this.proxies) {
+      if (sessionName in this.proxies) {
         res.send({"code": 200});
       } else {
         res.send({"code": 404});
       }
     });
 
-    this.app.get('/proxy/local/:kernelId/add', async (req, res) => {
+    this.app.get('/proxy/local/:sessionName/add', async (req, res) => {
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      let kernelId = req.params["kernelId"];
+      let sessionName = req.params["sessionName"];
       let app = req.query.app || "jupyter";
-      let p = kernelId + "|" + app;
+      let p = sessionName + "|" + app;
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       let port = undefined;
@@ -118,7 +125,7 @@ class Manager extends EventEmitter {
         let maxtry = 5;
         for (let i = 0; i < maxtry; i++) {
           try {
-            await gateway.start_proxy(kernelId, app, ip, port);
+            await gateway.start_proxy(sessionName, app, ip, port);
             port = gateway.getPort();
             assigned = true;
             break;
@@ -160,18 +167,18 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:kernelId/delete', (req, res) => {
+    this.app.get('/proxy/local/:sessionName/delete', (req, res) => {
       //find all and kill
 
-      let kernelId = req.params["kernelId"];
-      if (!this._config){
+      let sessionName = req.params["sessionName"];
+      if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      if (kernelId in this.proxies) {
-        this.proxies[kernelId].stop_proxy();
+      if (sessionName in this.proxies) {
+        this.proxies[sessionName].stop_proxy();
         res.send({"code": 200});
-        delete this.proxies[kernelId];
+        delete this.proxies[sessionName];
       } else {
         res.send({"code": 404});
       }

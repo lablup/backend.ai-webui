@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html} from "lit-element";
@@ -450,11 +450,11 @@ export default class BackendAIData extends BackendAIPage {
               </paper-dropdown-menu>
               <paper-dropdown-menu id="add-folder-type" label="Type">
                 <paper-listbox slot="dropdown-content" selected="0">
-                ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
-                  <paper-item label="group">Group</paper-item>
-                ` : html``}
                 ${this.allowed_folder_type.includes('user') ? html`
                   <paper-item label="user">User</paper-item>
+                ` : html``}
+                ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+                  <paper-item label="group">Group</paper-item>
                 ` : html``}
                 </paper-listbox>
               </paper-dropdown-menu>
@@ -1302,7 +1302,7 @@ export default class BackendAIData extends BackendAIPage {
     let path = this.explorer.breadcrumb.concat(fn).join("/");
     let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
     job.then(res => {
-      const url = window.URL.createObjectURL(res);
+      const url = res.url;
       let a = document.createElement('a');
       a.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -1378,7 +1378,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   _isDownloadable(file) {
-    return file.size < 209715200
+    return true;
   }
 
   _hideDialog(e) {
