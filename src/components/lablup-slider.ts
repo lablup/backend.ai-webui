@@ -26,6 +26,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) editable = null;
   @property({type: Boolean}) pin = null;
   @property({type: Boolean}) markers = null;
+  @property({type: Number}) marker_limit = 30;
   @property({type: Boolean}) disabled = null;
   @property({type: Object}) slider;
   @property({type: Object}) textfield;
@@ -44,6 +45,7 @@ export default class LablupSlider extends LitElement {
         }
 
         wl-textfield {
+          --input-state-color-invalid :  var(--input-state-color-inactive,hsl(var(--shade-400,var(--shade-hue,200),var(--shade-saturation,4%),var(--shade-lightness,65%))));
           width: var(--textfield-min-width, 65px);
           margin-left: 10px;
         }
@@ -51,6 +53,7 @@ export default class LablupSlider extends LitElement {
         mwc-slider {
           width: var(--slider-width, 100px);
           --mdc-theme-secondary: var(--slider-color, '#018786');
+          color: var(--paper-grey-700);
         }
       `];
   }
@@ -59,16 +62,18 @@ export default class LablupSlider extends LitElement {
     // language=HTML
     return html`
       <div class="horizontal center layout">
-      <mwc-slider id="slider" class="${this.id}" value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}" 
-        ?pin="${this.pin}"
-        ?markers="${this.markers}"
-        @change="${this.syncToText}"
-      ></mwc-slider>
-      ${this.editable ? html`<wl-textfield id="textfield" class="${this.id}" type="number"
-          value="${this.value}" min="${this.min}" max="${this.max}"
+      <mwc-slider id="slider" class="${this.id}" value="${this.value}"
+          min="${this.min}" max="${this.max}" step="${this.step}"
+          ?pin="${this.pin}"
+          ?markers="${this.markers}"
+          @change="${this.syncToText}">
+      </mwc-slider>
+      ${this.editable ? html`
+        <wl-textfield id="textfield" class="${this.id}" type="number"
+          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
           @change="${this.syncToSlider}">
-
-        </wl-textfield>` : html``}
+        </wl-textfield>
+      ` : html``}
       </div>
     `;
   }
@@ -78,6 +83,18 @@ export default class LablupSlider extends LitElement {
     if (this.editable) {
       this.textfield = this.shadowRoot.querySelector('#textfield');
     }
+
+    // wl-textfield does not provide step property. The default step for number input
+    // is 1, so float numbers will invalidate the wl-textfield, which is a problem.
+    // So, we manually set the step property of wl-textfield's input field here.
+    const textfields = this.shadowRoot.querySelectorAll('wl-textfield');
+    setTimeout(() => {
+      textfields.forEach((el) => {
+        const step = el.getAttribute('step');
+        el.$formElement.step = step;
+      });
+    }, 100);
+    this.checkMarkerDisplay();
   }
 
   connectedCallback() {
@@ -88,13 +105,25 @@ export default class LablupSlider extends LitElement {
     super.disconnectedCallback();
   }
 
+  updated(changedProperties) {
+    changedProperties.forEach((oldVal, propName) => {
+      if (propName === 'value') {
+        this.slider.layout();
+        const event = new CustomEvent('value-changed', {'detail': {}});
+        this.dispatchEvent(event);
+      }
+      if (['min', 'max'].includes(propName)) {
+        this.checkMarkerDisplay();
+      }
+    });
+  }
+
   syncToText() {
-    this.textfield.value = this.slider.value;
-    this.syncValue();
+    this.value = this.slider.value;
+    // updated function will be automatically called.
   }
 
   syncToSlider() {
-    this.slider.value = this.textfield.value;
     let rounded = Math.round(this.textfield.value / this.step) * this.step;
     this.textfield.value = rounded.toFixed(((decimal_places: number) => {
       if (Math.floor(decimal_places) === decimal_places) {
@@ -108,12 +137,16 @@ export default class LablupSlider extends LitElement {
     if (this.textfield.value < this.min) {
       this.textfield.value = this.min;
     }
-    this.syncValue();
+    this.value = this.textfield.value;
+    // updated function will be automatically called.
   }
 
-  syncValue() {
-    this.value = this.textfield.value;
-    this.slider.layout();
+  checkMarkerDisplay() {
+    if (this.markers) {
+      if (((this.max - this.min) / this.step) > this.marker_limit) {
+        this.slider.removeAttribute('markers');
+      }
+    }
   }
 }
 

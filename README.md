@@ -4,8 +4,8 @@ Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin.
 
 Backend.AI console focuses to 
 
- * Provide both administration and user mode
  * Serve as desktop app and web service
+ * Provide both administration and user mode
  * Versatile devices ready such as mobile, tablet and desktop.
  * Built-in websocket proxy feature for apps
 
@@ -45,7 +45,7 @@ Backend.AI console focuses to
  * User management
     * User creation / deletion
  * Manager settings
-    * Add repository
+    * Add /setting repository
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
@@ -85,6 +85,10 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
+[plugins]
+# Reserved to load plugins
+# login = "login-test.js"
+# sidebar = "sidebar-test.js"
 ```
 
 ## Branches
