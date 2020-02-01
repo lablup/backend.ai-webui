@@ -42,7 +42,6 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
-//import '@material/mwc-drawer';
 
 /**
  Backend.AI GUI Console
