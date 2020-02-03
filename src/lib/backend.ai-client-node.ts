@@ -1195,6 +1195,36 @@ class VFolder {
   }
 
   /**
+   * Request a download and get the token for direct download.
+   *
+   * @param {string} file - File to download. Should contain full path.
+   * @param {string} name - Virtual folder name that files are in.
+   */
+  request_download(file, name = false) {
+    let params = {
+      'file': file
+    };
+    let q = querystring.stringify(params);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/request_download?${q}`, null);
+    return this.client._wrapWithPromise(rqst, true);
+  }
+
+  /**
+   * Download file in a Virtual folder.
+   *
+   * @param {string} file - File to download. Should contain full path.
+   * @param {string} name - Virtual folder name that files are in.
+   */
+  download_with_token(file, name = false) {
+    let params = {
+      'file': file
+    };
+    let q = querystring.stringify(params);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+    return this.client._wrapWithPromise(rqst, true);
+  }
+
+  /**
    * List files in specific virtual folder / path.
    *
    * @param {string} path - Directory path to list.
