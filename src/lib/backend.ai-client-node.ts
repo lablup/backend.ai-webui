@@ -1210,17 +1210,16 @@ class VFolder {
   }
 
   /**
-   * Download file in a Virtual folder.
+   * Download file in a Virtual folder with token.
    *
-   * @param {string} file - File to download. Should contain full path.
-   * @param {string} name - Virtual folder name that files are in.
+   * @param {string} token - Temporary token to download specific file.
    */
-  download_with_token(file, name = false) {
+  download_with_token(token: string = '') {
     let params = {
-      'file': file
+      'token': token
     };
     let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
     return this.client._wrapWithPromise(rqst, true);
   }
 
