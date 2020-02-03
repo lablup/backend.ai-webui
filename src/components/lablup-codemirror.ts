@@ -58,7 +58,7 @@ export default class LablupCodemirror extends LitElement {
   }
 
   refresh() {
-    window.setTimeout(() => this.editor.refresh(), 0);
+    window.setTimeout(() => this.editor.refresh(), 100);
   }
 
   getValue() {
