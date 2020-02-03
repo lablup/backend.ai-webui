@@ -1200,13 +1200,12 @@ class VFolder {
    * @param {string} file - File to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
    */
-  request_download(file, name = false) {
-    let params = {
+  request_download_token(file, name = false) {
+    let body = {
       'file': file
     };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/request_download?${q}`, null);
-    return this.client._wrapWithPromise(rqst, true);
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+    return this.client._wrapWithPromise(rqst);
   }
 
   /**
@@ -1221,6 +1220,23 @@ class VFolder {
     let q = querystring.stringify(params);
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
     return this.client._wrapWithPromise(rqst, true);
+  }
+
+  /**
+   * Get download URL in a Virtual folder with token.
+   *
+   * @param {string} token - Temporary token to download specific file.
+   */
+  get_download_url_with_token(token: string = '') {
+    let params = {
+      'token': token
+    };
+    let q = querystring.stringify(params);
+    if (this.client._config.connectionMode === 'SESSION') {
+      return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
+    } else {
+      return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+    }
   }
 
   /**
