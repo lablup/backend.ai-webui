@@ -62,7 +62,7 @@ export default class LablupCodemirror extends LitElement {
   }
 
   getValue() {
-    this.editor.getValue();
+    return this.editor.getValue();
   }
 
   setValue(val) {
@@ -77,6 +77,7 @@ export default class LablupCodemirror extends LitElement {
       CodemirrorThemeMonokai,
       css`
         .CodeMirror {
+          height: auto;
           font-size: 15px;
         }
       `,

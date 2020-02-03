@@ -23,6 +23,7 @@ import 'weightless/select';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-codemirror';
+import './lablup-loading-indicator';
 
 @customElement("backend-ai-usersettings-view")
 export default class BackendAiUserSettingsView extends BackendAIPage {
@@ -113,6 +114,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>General</span>
@@ -197,9 +199,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
 
   _fetchBootstrapScript() {
     // Fetch user's bootstrap code.
-    const fields = ['bootstrap_script'];
-    return window.backendaiclient.user.list(true, fields).then((response) => {
-      const script =  response.users.bootstrap_script || '';
+    return window.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
+      const script =  resp || '';
       this.lastSavedBootstrapScript = script;
       return script;
     }).catch(err => {
@@ -213,29 +214,20 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   async _saveBootstrapScript() {
-    // TODO: uncomment when bootstrap_script field is added in the server
-    // const editor = this.shadowRoot.querySelector('#codemirror-editor');
-    // const code = editor.getValue();
-    // const input: Object = {bootstrap_script: code};
-    // if (this.lastSavedBootstrapScript === code) {
-    //   this.notification.text = 'No changes';
-    //   this.notification.show();
-    //   return;
-    // }
-    // this.indicator.show();
-    // window.backendaiclient.user.modify(window.backendaiclient.email, input)
-    //   .then(res => {
-    //     if (res.modify_user.ok) {
-    //       this.notification.text = 'Saved bootstrap script';
-    //     } else {
-    //       this.notification.text = `Error: ${res.modify_user.msg}`;
-    //     }
-    //     this.notification.show();
-    //     this.indicator.hide();
-    //   })
-
-    this.notification.text = 'Not implemented yet';
-    this.notification.show();
+    const editor = this.shadowRoot.querySelector('#codemirror-editor');
+    const script = editor.getValue();
+    if (this.lastSavedBootstrapScript === script) {
+      this.notification.text = 'No changes';
+      this.notification.show();
+      return;
+    }
+    this.indicator.show();
+    window.backendaiclient.userConfig.update_bootstrap_script(script)
+      .then(res => {
+        this.notification.text = 'Saved bootstrap script';
+        this.notification.show();
+        this.indicator.hide();
+      });
   }
 
   async _saveBootstrapScriptAndCloseDialog() {
@@ -243,16 +235,13 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this._hideBootstrapScriptDialog();
   }
 
-  _editBootstrapScript() {
+  async _editBootstrapScript() {
     const editor = this.shadowRoot.querySelector('#codemirror-editor');
     const dialog = this.shadowRoot.querySelector('#bootstrap-dialog');
-    // TODO: uncomment when bootstrap_script field is added in the server
-    // const script = this._fetchBootstrapScript();
-    // editor.setValue(script);
-    editor.setValue('');
+    const script = await this._fetchBootstrapScript();
+    editor.setValue(script);
     dialog.show();
   }
-
 
   _hideBootstrapScriptDialog() {
     const dialog = this.shadowRoot.querySelector('#bootstrap-dialog');
