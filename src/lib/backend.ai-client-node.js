@@ -137,6 +137,7 @@ class Client {
         this.scalingGroup = new ScalingGroup(this);
         this.registry = new Registry(this);
         this.setting = new Setting(this);
+        this.userConfig = new UserConfig(this);
         this.domain = new Domain(this);
         this._features = {}; // feature support list
         //if (this._config.connectionMode === 'API') {
@@ -2252,6 +2253,36 @@ class Setting {
             "key": `${key}`,
             "prefix": prefix
         });
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class UserConfig {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Get content of bootstrap script of a keypair.
+     */
+    get_bootstrap_script() {
+        if (!this.client._config.accessKey) {
+            throw 'Your access key is not set';
+        }
+        const rqst = this.client.newSignedRequest('GET', '/user-config/bootstrap-script');
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update bootstrap script of a keypair.
+     *
+     * @param {string} data - text content of bootstrap script.
+     */
+    update_bootstrap_script(data) {
+        const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { data });
         return this.client._wrapWithPromise(rqst);
     }
 }
