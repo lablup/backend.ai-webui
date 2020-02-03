@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-console",
-  "version": "20.01.6",
+  "version": "20.02.0",
   "repository": "https://github.com/lablup/backend.ai-console.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
@@ -50,6 +50,7 @@
     "@vaadin/vaadin-item": "^2.1.1",
     "@vaadin/vaadin-progress-bar": "^1.1.2",
     "@vaadin/vaadin-upload": "^4.2.2",
+    "@vanillawc/wc-codemirror": "^1.4.1",
     "@webcomponents/webcomponentsjs": "^2.4.1",
     "d3": "^5.15.0",
     "lit-element": "^2.2.1",
