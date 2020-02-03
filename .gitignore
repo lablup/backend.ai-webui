@@ -97,6 +97,10 @@ src/lib/webcomponents-loader.js
 # -E files
 **/*.html-E
 **/*.js-E
+**/*.ts-E
+
+# backend.ai app directory
+backend.ai-app/
 
 # Vim Swap
 [._]*.s[a-v][a-z]

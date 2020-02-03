@@ -137,6 +137,7 @@ class Client {
         this.scalingGroup = new ScalingGroup(this);
         this.registry = new Registry(this);
         this.setting = new Setting(this);
+        this.userConfig = new UserConfig(this);
         this.domain = new Domain(this);
         this._features = {}; // feature support list
         //if (this._config.connectionMode === 'API') {
@@ -996,6 +997,31 @@ class VFolder {
     uploadFormData(fss, name = null) {
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss);
         return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Create a upload session for a file to Virtual folder.
+     *
+     * @param {string} path - Path to upload.
+     * @param {string} fs - File object to upload.
+     * @param {string} name - Virtual folder name.
+     */
+    async create_upload_session(path, fs, name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let body = {
+            'path': path,
+            'size': fs.size
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/create_upload_session`, body);
+        const res = await this.client._wrapWithPromise(rqst);
+        const token = res['token'];
+        let url = this.client._config.endpoint;
+        if (this.client._config.connectionMode === 'SESSION') {
+            url = url + '/func';
+        }
+        url = url + `${this.urlPrefix}/_/tus/upload/${token}`;
+        return url;
     }
     /**
      * Create directory in specific Virtual folder.
@@ -2252,6 +2278,36 @@ class Setting {
             "key": `${key}`,
             "prefix": prefix
         });
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class UserConfig {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Get content of bootstrap script of a keypair.
+     */
+    get_bootstrap_script() {
+        if (!this.client._config.accessKey) {
+            throw 'Your access key is not set';
+        }
+        const rqst = this.client.newSignedRequest('GET', '/user-config/bootstrap-script');
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update bootstrap script of a keypair.
+     *
+     * @param {string} data - text content of bootstrap script.
+     */
+    update_bootstrap_script(data) {
+        const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { data });
         return this.client._wrapWithPromise(rqst);
     }
 }
