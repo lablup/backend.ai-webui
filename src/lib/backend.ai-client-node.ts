@@ -1195,6 +1195,51 @@ class VFolder {
   }
 
   /**
+   * Request a download and get the token for direct download.
+   *
+   * @param {string} file - File to download. Should contain full path.
+   * @param {string} name - Virtual folder name that files are in.
+   */
+  request_download_token(file, name = false) {
+    let body = {
+      'file': file
+    };
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Download file in a Virtual folder with token.
+   *
+   * @param {string} token - Temporary token to download specific file.
+   */
+  download_with_token(token: string = '') {
+    let params = {
+      'token': token
+    };
+    let q = querystring.stringify(params);
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
+    return this.client._wrapWithPromise(rqst, true);
+  }
+
+  /**
+   * Get download URL in a Virtual folder with token.
+   *
+   * @param {string} token - Temporary token to download specific file.
+   */
+  get_download_url_with_token(token: string = '') {
+    let params = {
+      'token': token
+    };
+    let q = querystring.stringify(params);
+    if (this.client._config.connectionMode === 'SESSION') {
+      return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
+    } else {
+      return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+    }
+  }
+
+  /**
    * List files in specific virtual folder / path.
    *
    * @param {string} path - Directory path to list.

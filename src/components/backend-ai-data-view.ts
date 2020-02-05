@@ -66,6 +66,7 @@ export default class BackendAIData extends BackendAIPage {
   public _boundFileNameRenderer: any;
   public _boundCreatedTimeRenderer: any;
   public _boundPermissionRenderer: any;
+  public _uploadFlag: any;
   public shadowRoot: any;
   public fileListGrid: any;
   public notification: any;
@@ -1355,9 +1356,10 @@ export default class BackendAIData extends BackendAIPage {
   _downloadFile(e) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.download(path, this.explorer.id);
+    let job = window.backendaiclient.vfolder.request_download_token(path, this.explorer.id);
     job.then(res => {
-      const url = res.url;
+      const token = res.token;
+      const url = window.backendaiclient.vfolder.get_download_url_with_token(token);
       let a = document.createElement('a');
       a.addEventListener('click', function (e) {
         e.stopPropagation();
