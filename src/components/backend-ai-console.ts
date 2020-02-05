@@ -214,6 +214,39 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         a.email:hover {
           color: #29b6f6;
         }
+
+        .dropdown {
+          float: right;
+          position: relative;
+          display: inline-block;
+        }
+
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f1f1f1;
+          min-width: 100px;
+          overflow: auto;
+          box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+          right: 0;
+          z-index: 1;
+        }
+
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          font-size: 11px;
+          display: block;
+        }
+
+        .dropdown a:hover {
+          background-color: #ddd;
+        }
+
+        .dropdown-show {
+          display: block;
+        }
+
       `];
   }
 
@@ -256,6 +289,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     })
+
+    window.addEventListener("click", (event) => {
+      let path = event['path'];
+      let elements_name = Object.keys(path).map( function(key, index) {
+        return path[key]['id'];
+      });
+      if (!elements_name.includes("dropdown-button")){
+        this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
+      }
+    });
   }
 
   connectedCallback() {
@@ -520,6 +563,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.sidebarMenu.selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
+        case 'errorlogs':
+          this.menuTitle = 'Error Logs';
+          this.sidebarMenu.selected = null;
+          this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
+          break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
           this.sidebarMenu.selected = 0;
@@ -577,6 +625,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else {
       drawer.open = true;
     }
+  }
+
+  _toggleDropdown() {
+    let dropdown = this.shadowRoot.querySelector('.dropdown-content');
+    dropdown.classList.toggle('dropdown-show');
   }
 
   showTOSAgreement() {
@@ -733,7 +786,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <a class="email" style="margin-top:4px;font-size: 14px;text-align:right" @click="${this._openUserPrefDialog}">${this.user_id}</a>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
-            <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button>
+            <div class="dropdown" slot="actionItems">
+              <mwc-icon-button slot="actionItems" id="dropdown-button" icon="menu" @click="${() => this._toggleDropdown()}"></mwc-icon-button>
+              <div class="dropdown-content" slot="actionItems">
+                <a href="/errorlogs">Error Logs</a>
+                <a id="sign-button" @click="${() => this.logout()}">Log Out</a>
+              </div>
+            </div>
+            <!-- <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button> -->
           </mwc-top-app-bar-fixed>
 
           <div class="content">
@@ -751,6 +811,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
+                <backend-ai-error-log-view class="page" name="errorlogs" ?active="${this._page === 'errorlogs'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
               </div>
             </section>
           </div>

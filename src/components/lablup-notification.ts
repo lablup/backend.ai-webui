@@ -16,6 +16,9 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) text = '';
   @property({type: String}) detail = '';
   @property({type: String}) message = '';
+  @property({type: String}) requestUrl = '';
+  @property({type: String}) status = '';
+  @property({type: String}) timestamp = '';
   @property({type: Object}) indicator;
   @property({type: Array}) notifications = Array();
   @property({type: Array}) notificationstore = Array();
@@ -126,7 +129,18 @@ export default class LablupNotification extends LitElement {
     button.innerHTML = "<wl-icon>close</wl-icon>";
     notification.appendChild(button);
   }
-  async show(persistent: boolean = false, message: string = '') {
+  async show(persistent: boolean = false, message: string = '', log: object = Object()) {
+    // if(Object.keys(log).length === 0) {
+    //   log['timestamp'] = new Date().toUTCString();
+    //   log['type'] = '';
+    //   log['statusCode'] = 200;
+    //   log['statusText'] = 'OK';
+    //   log['message'] = message;
+    //   log['requestUrl'] = '';
+    //   log['requestMethod'] = '';
+    //   log['title'] = '';
+    //   log['message'] = message;
+    // }
     this.gc();
     let notification_message: string;
     let notification_detail: string;
@@ -147,10 +161,11 @@ export default class LablupNotification extends LitElement {
       notification_message = message;
       notification_detail = this.detail;
     }
-    this.notificationstore.push({
-      message: notification_message;
-    notification_detail;
-  })
+    // this.notificationstore.push(log);
+    if(Object.keys(log).length !== 0) {
+      this._saveToLocalStoarge("backendaiconsole.logs", log);
+    }
+
     if (this.detail != '') {
       let more_button = document.createElement('wl-button');
       more_button.setAttribute('slot', "action");
@@ -192,6 +207,15 @@ export default class LablupNotification extends LitElement {
       icon: icon
     };
     this.newDesktopNotification = new Notification(title, options);
+  }
+
+  _saveToLocalStoarge(key, logMessages) {
+    let previous_log = JSON.parse(localStorage.getItem(key) || '{}');
+    let current_log = Array();
+
+    current_log.push(logMessages);
+    current_log = current_log.concat(previous_log);    
+    localStorage.setItem(key, JSON.stringify(current_log));
   }
 
   gc() {
