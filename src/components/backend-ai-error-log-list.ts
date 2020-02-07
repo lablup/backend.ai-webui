@@ -86,7 +86,6 @@
         this.notification = window.lablupNotification;
         // if localStorage is empty, then empty Array will goes to errorlogs
         this.errorlogs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
-        // console.log(this.errorlogs);
 
         document.addEventListener('log-message-refresh', () => this._refreshLogData());
         document.addEventListener('log-message-clear', () => this._clearLogData());
@@ -109,35 +108,35 @@
          <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
          <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Error logs"
           .items="${this.errorlogs}">
-          <vaadin-grid-column resizable flex-grow="0" text-align="center" width="190px" header="TimeStamp">
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" width="190px" header="TimeStamp">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.timestamp]]</span>
               </div>
           </template>
           </vaadin-grid-column>
-          <vaadin-grid-column resizable flex-grow="0" text-align="center" width="110px" header="Status">
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" width="110px" header="Status">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.statusCode]] [[item.statusText]]</span>
               </div>
           </template>
           </vaadin-grid-column>
-          <vaadin-grid-column resizable flex-grow="0" text-align="center" width="150px" header="Error Title">
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" width="150px" header="Error Title">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.title]]</span>
               </div>
           </template>
           </vaadin-grid-column>
-          <vaadin-grid-column resizable flex-grow="0" text-align="center" width="250px" header="Error Message">
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" width="250px" header="Error Message">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.message]]</span>
               </div>
           </template>
           </vaadin-grid-column>
-          <vaadin-grid-column resizable flex-grow="0" text-align="center" width="70px" header="Method">
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" width="70px" header="Method">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.requestMethod]]</span>

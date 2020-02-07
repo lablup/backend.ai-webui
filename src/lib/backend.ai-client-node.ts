@@ -317,6 +317,11 @@ class Client {
     }
 
     let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+    if (previous_log) {
+      if (previous_log.length > 5000) {
+        previous_log = previous_log.slice(1, 5000);
+      }
+    }
     let log_stack = Array();
     let current_log = {
       "isError" : false,

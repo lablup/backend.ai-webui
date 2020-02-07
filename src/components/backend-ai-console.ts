@@ -489,7 +489,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (err && err.title) {
         this.notification.text = err.title;
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -789,7 +789,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div class="dropdown" slot="actionItems">
               <mwc-icon-button slot="actionItems" id="dropdown-button" icon="menu" @click="${() => this._toggleDropdown()}"></mwc-icon-button>
               <div class="dropdown-content" slot="actionItems">
-                <a href="/errorlogs">Error Logs</a>
+                <a href="/usersettings">Error Logs</a>
                 <a id="sign-button" @click="${() => this.logout()}">Log Out</a>
               </div>
             </div>

@@ -248,6 +248,11 @@ class Client {
             };
         }
         let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+        if (previous_log) {
+            if (previous_log.length > 5000) {
+                previous_log = previous_log.slice(1, 5000);
+            }
+        }
         let log_stack = Array();
         let current_log = {
             "isError": false,
@@ -1093,76 +1098,73 @@ class VFolder {
      * @param {string} name - Virtual folder name that files are in.
      */
     download(file, name = false) {
-      let params = {
-        'file': file
-      };
-      let q = querystring.stringify(params);
-      let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-      return this.client._wrapWithPromise(rqst, true);
+        let params = {
+            'file': file
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+        return this.client._wrapWithPromise(rqst, true);
     }
-
-  /**
-   * Request a download and get the token for direct download.
-   *
-   * @param {string} file - File to download. Should contain full path.
-   * @param {string} name - Virtual folder name that files are in.
-   */
-  request_download_token(file, name = false) {
-    let body = {
-      'file': file
-    };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Download file in a Virtual folder with token.
-   *
-   * @param {string} token - Temporary token to download specific file.
-   */
-  download_with_token(token = '') {
-    let params = {
-      'token': token
-    };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
-    return this.client._wrapWithPromise(rqst, true);
-  }
-
-  /**
-   * Get download URL in a Virtual folder with token.
-   *
-   * @param {string} token - Temporary token to download specific file.
-   */
-  get_download_url_with_token(token = '') {
-    let params = {
-      'token': token
-    };
-    let q = querystring.stringify(params);
-    if (this.client._config.connectionMode === 'SESSION') {
-      return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
-    } else {
-      return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+    /**
+     * Request a download and get the token for direct download.
+     *
+     * @param {string} file - File to download. Should contain full path.
+     * @param {string} name - Virtual folder name that files are in.
+     */
+    request_download_token(file, name = false) {
+        let body = {
+            'file': file
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+        return this.client._wrapWithPromise(rqst);
     }
-  }
-
-  /**
-   * List files in specific virtual folder / path.
-   *
-   * @param {string} path - Directory path to list.
-   * @param {string} name - Virtual folder name to look up with.
-   */
-  list_files(path, name = null) {
-    if (name == null) {
-      name = this.name;
+    /**
+     * Download file in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    download_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
+        return this.client._wrapWithPromise(rqst, true);
     }
-    let params = {
-      'path': path
-    };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
-    return this.client._wrapWithPromise(rqst);
-  }
+    /**
+     * Get download URL in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    get_download_url_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        if (this.client._config.connectionMode === 'SESSION') {
+            return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
+        }
+        else {
+            return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+        }
+    }
+    /**
+     * List files in specific virtual folder / path.
+     *
+     * @param {string} path - Directory path to list.
+     * @param {string} name - Virtual folder name to look up with.
+     */
+    list_files(path, name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let params = {
+            'path': path
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
+        return this.client._wrapWithPromise(rqst);
+    }
     /**
      * Invite someone to specific virtual folder with permission.
      *
@@ -1354,7 +1356,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
+  
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [

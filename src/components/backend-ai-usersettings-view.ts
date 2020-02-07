@@ -152,14 +152,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <div class="layout horizontal center filters">
-        <div id="multiple-action-buttons" style="display:none;">
-          <wl-button outlined class="multiple-action-button" @click="${() => this._removeLogMessage()}">
-            <wl-icon style="--icon-size: 20px;">delete</wl-icon>
-            terminate
-          </wl-button>
-        </div>
-      </div>
       <wl-card class="item">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
@@ -265,7 +257,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
     this._activeTab = "general";
-
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
     this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');
   }
@@ -284,7 +275,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -320,14 +311,10 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   _hideBootstrapScriptDialog() {
-    // const dialog = this.shadowRoot.querySelector('#bootstrap-dialog');
-    // dialog.hide();
     this.bootstrapDialog.hide();
   }
 
   _hideClearLogsDialog() {
-    // const dialog = this.shadowRoot.querySelector("#clearlogs-dialog");
-    // dialog.hide();
     this.clearLogsDialog.hide();
   }
 
@@ -346,8 +333,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   _showClearLogsDialog() {
-    // const dialog = this.shadowRoot.querySelector('#clearlogs-dialog');
-    //  dialog.show();
     this.clearLogsDialog.show();
   }
 
@@ -362,8 +347,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   _showTab(tab) {
-    var els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (var x = 0; x < els.length; x++) {
+    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.value;
