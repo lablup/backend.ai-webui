@@ -22,6 +22,7 @@ import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
 import {default as AnsiUp} from '../lib/ansiup';
+import {default as JsonToCSV} from '../lib/json_to_csv';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/checkbox';
@@ -271,7 +272,37 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
 
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
-  }
+
+    /* TODO: json to csv file converting */
+    document.addEventListener('backend-ai-csv-file-export', () => {
+      let group_id = window.backendaiclient.current_group_id();
+      let fields = [
+        "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
+        "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+      ];
+      if (this._connectionMode === "SESSION") {
+        fields.push("user_email");
+      }
+      if (window.backendaiclient.is_superadmin) {
+        fields.push("agent");
+      }
+      window.backendaiclient.computeSession.listAll(fields, null, this.filterAccessKey, 50, 0, group_id).then((response) => {
+        console.log(response);
+        let total_count = response.compute_sessions.length;
+        let sessions = response.compute_sessions;
+        // console.log("total_count : ",total_count);
+        
+        Object.keys(sessions).map((key) => {
+          console.log(sessions[key]);
+          //Object.keys(sessions[key]).filter();
+        });
+      }
+      // let compute_sessions_all = 
+      // let session_info = JSON.stringify(this.compute_sessions);
+      // JsonToCSV.exportToCsv('test.csv',this.compute_sessions);
+      ); 
+  });
+}
 
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -1134,6 +1165,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span class="flex"></span>
         <paper-input id="access-key-filter" type="search" size=30
                      label="access key" no-label-float .value="${this.filterAccessKey}"
+                     style="display:none"
                      on-change="_updateFilterAccessKey">
         </paper-input>
       </div>

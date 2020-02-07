@@ -59,7 +59,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
   @property({type: Object}) resource_policies = Object();
   @property({type: Array}) resource_policy_names = Array();
-  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) isAdmin = false;
   @property({type: String}) _status = 'inactive';
   @property({type: Array}) allowed_vfolder_hosts = Array();
   @property({type: String}) default_vfolder_host = '';
@@ -225,6 +225,12 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.use_user_list = false;
       }
     }
+    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
+    && typeof window.backendaiclient.is_admin !== "undefined" && window.backendaiclient.is_admin === true) {
+      this.isAdmin = true;
+    } else {
+      this.isAdmin = false;
+    }
     this._getResourceInfo();
     this._getResourcePolicies();
     this._updateInputStatus(this.cpu_resource);
@@ -236,6 +242,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._updateInputStatus(this.container_per_session_limit);
     this._updateInputStatus(this.vfolder_capacity);
     this.vfolder_max_limit['value']= 10;
+
   }
 
   async _viewStateChanged(active) {
@@ -628,6 +635,10 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  _exportToCSV() {
+    console.log(this._activeTab);
+  }
+
   _getResourceInfo() {
     this.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
     this.ram_resource = this.shadowRoot.querySelector('#ram-resource');
@@ -652,11 +663,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
           </wl-tab-group>
-          <div class="flex"></div>
-          <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
-            <wl-icon>add</wl-icon>
-            Add credential
-          </wl-button>
         </h3>
         <wl-card id="user-lists" class="admin item tab-content">
           <h4 class="horizontal flex center center-justified layout">
@@ -666,12 +672,27 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-icon>add</wl-icon>
               Create user
             </wl-button>
+            <wl-button class="fg teal" id="export-csv" outlined @click="${this._exportToCSV}" style="margin-left: 10px;">
+            <wl-icon>get_app</wl-icon>
+            export CSV
+          </wl-button>
           </h4>
           <div>
             <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
           </div>
         </wl-card>
         <wl-card id="credential-lists" class="tab-content" style="display:none;">
+        <h4 class="horizontal flex layout">
+          <span class="flex"></span>
+          <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
+            <wl-icon>add</wl-icon>
+            Add credential
+          </wl-button>
+          <wl-button class="fg teal" id="export-csv" outlined @click="${this._exportToCSV}" style="margin-left: 10px;">
+              <wl-icon>get_app</wl-icon>
+              export CSV
+            </wl-button>
+        </h4>
           <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>
             <span slot="description">
@@ -695,6 +716,11 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-icon>add</wl-icon>
               Create policy
             </wl-button>
+            ${this.isAdmin ? html`
+            <wl-button class="fg teal" id="export-csv" outlined @click="${this._exportToCSV}" style="margin-left: 10px;">
+            <wl-icon>get_app</wl-icon>
+            export CSV
+          </wl-button>` : html``}
           </h4>
           <div>
             <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>

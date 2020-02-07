@@ -1067,76 +1067,73 @@ class VFolder {
      * @param {string} name - Virtual folder name that files are in.
      */
     download(file, name = false) {
-      let params = {
-        'file': file
-      };
-      let q = querystring.stringify(params);
-      let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-      return this.client._wrapWithPromise(rqst, true);
+        let params = {
+            'file': file
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+        return this.client._wrapWithPromise(rqst, true);
     }
-
-  /**
-   * Request a download and get the token for direct download.
-   *
-   * @param {string} file - File to download. Should contain full path.
-   * @param {string} name - Virtual folder name that files are in.
-   */
-  request_download_token(file, name = false) {
-    let body = {
-      'file': file
-    };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Download file in a Virtual folder with token.
-   *
-   * @param {string} token - Temporary token to download specific file.
-   */
-  download_with_token(token = '') {
-    let params = {
-      'token': token
-    };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
-    return this.client._wrapWithPromise(rqst, true);
-  }
-
-  /**
-   * Get download URL in a Virtual folder with token.
-   *
-   * @param {string} token - Temporary token to download specific file.
-   */
-  get_download_url_with_token(token = '') {
-    let params = {
-      'token': token
-    };
-    let q = querystring.stringify(params);
-    if (this.client._config.connectionMode === 'SESSION') {
-      return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
-    } else {
-      return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+    /**
+     * Request a download and get the token for direct download.
+     *
+     * @param {string} file - File to download. Should contain full path.
+     * @param {string} name - Virtual folder name that files are in.
+     */
+    request_download_token(file, name = false) {
+        let body = {
+            'file': file
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+        return this.client._wrapWithPromise(rqst);
     }
-  }
-
-  /**
-   * List files in specific virtual folder / path.
-   *
-   * @param {string} path - Directory path to list.
-   * @param {string} name - Virtual folder name to look up with.
-   */
-  list_files(path, name = null) {
-    if (name == null) {
-      name = this.name;
+    /**
+     * Download file in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    download_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
+        return this.client._wrapWithPromise(rqst, true);
     }
-    let params = {
-      'path': path
-    };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
-    return this.client._wrapWithPromise(rqst);
-  }
+    /**
+     * Get download URL in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    get_download_url_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        if (this.client._config.connectionMode === 'SESSION') {
+            return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
+        }
+        else {
+            return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+        }
+    }
+    /**
+     * List files in specific virtual folder / path.
+     *
+     * @param {string} path - Directory path to list.
+     * @param {string} name - Virtual folder name to look up with.
+     */
+    list_files(path, name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let params = {
+            'path': path
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
+        return this.client._wrapWithPromise(rqst);
+    }
     /**
      * Invite someone to specific virtual folder with permission.
      *
@@ -1328,7 +1325,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
+  
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [
@@ -1708,6 +1705,42 @@ class ComputeSession {
         };
         if (accessKey != null) {
             v['ak'] = accessKey;
+        }
+        if (group != null) {
+            v['group_id'] = group;
+        }
+        return this.client.gql(q, v);
+    }
+    /**
+     * list all status of compute sessions.
+     *
+     * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+     * @param {string} accessKey - access key that is used to start compute sessions.
+     * @param {number} limit - limit number of query items.
+     * @param {number} offset - offset for item query. Useful for pagination.
+     * @param {string} group - project group id to query. Default returns sessions from all groups.
+     */
+    async listAll(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = "RUNNING", accessKey = '', limit = 30, offset = 0, group = '') {
+        if (accessKey === '')
+            accessKey = null;
+        if (group === '')
+            group = null;
+        fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
+        // For V3/V4 API compatibility
+        let q, v;
+        q = `query($domain_name:String, $group_id:String, $ak:String, $status:String) {
+      compute_sessions(domain_name:$domain_name, group_id:$group_id, access_key:$ak, status:$status) {
+        ${fields.join(" ")}
+      }
+    }`;
+        v = {
+        // domain_name: null,
+        // group_id: null,
+        // access_key: accessKey,
+        // status: status
+        };
+        if (accessKey != null) {
+            v['access_key'] = accessKey;
         }
         if (group != null) {
             v['group_id'] = group;
