@@ -241,6 +241,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     return this.condition === 'running';
   }
 
+  _isPreparing(status) {
+     const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
+     if (preparingStatuses.indexOf(status) === -1) {
+       return false;
+     }
+     return true;
+  }
+
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this._grid = this.shadowRoot.querySelector('#list-grid');
@@ -1009,6 +1017,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             <paper-icon-button class="fg controls-running"
                                @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"></paper-icon-button>
+          ` : html``}
+          ${this._isRunning && !this._isPreparing(rowData.item.status) ? html`
             <paper-icon-button class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"></paper-icon-button>
@@ -1137,9 +1147,9 @@ export default class BackendAiSessionList extends BackendAIPage {
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}">
-        ${this.condition == 'running' ? html`
-        <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
-        </vaadin-grid-column>
+        ${this._isRunning ? html`
+          <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+          </vaadin-grid-column>
         ` : html``}
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
