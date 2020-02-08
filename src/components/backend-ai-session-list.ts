@@ -1002,27 +1002,24 @@ export default class BackendAiSessionList extends BackendAIPage {
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}">
-             ${rowData.item.appSupport ? html`
+          ${rowData.item.appSupport ? html`
             <paper-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
                                icon="vaadin:caret-right"></paper-icon-button>
             <paper-icon-button class="fg controls-running"
                                @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"></paper-icon-button>
-                               ` : html``}
-             ${this.condition === 'running' ? html`
             <paper-icon-button class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"></paper-icon-button>
-                               ` : html``}
-             ${this._isRunning ? html`
+          ` : html``}
+          ${this._isRunning ? html`
             <paper-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
                                on-tap="_showLogs"></paper-icon-button>
-             ` : html`
-            <paper-icon-button disabled class="fg controls-running" icon="assignment"
-            ></paper-icon-button>
-             `}
+          ` : html`
+            <paper-icon-button disabled class="fg controls-running" icon="assignment"></paper-icon-button>
+          `}
         </div>`, root
     );
   }
