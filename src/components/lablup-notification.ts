@@ -8,6 +8,9 @@ import 'weightless/snackbar';
 import 'weightless/button';
 import 'weightless/icon';
 
+import {navigate} from '../backend-ai-app';
+import {store} from '../store';
+
 @customElement("lablup-notification")
 export default class LablupNotification extends LitElement {
   public shadowRoot: any;
@@ -118,7 +121,9 @@ export default class LablupNotification extends LitElement {
     // if (notification.querySelector('wl-button') === null) {
     //   this._createCloseButton(notification);
     // }
-    location.href = window.location.origin + '/usersettings';
+    this._hideNotification(e);
+    window.history.pushState({}, '', '/usersettings');
+    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
   }
 
   _createCloseButton(notification) {
@@ -136,7 +141,6 @@ export default class LablupNotification extends LitElement {
       this.notifications = []; // Reset notifications
       document.body.removeChild(snackbar);
     }
-    
     this.gc();
     let notification_message: string;
     let notification_detail: string;
@@ -162,12 +166,12 @@ export default class LablupNotification extends LitElement {
       this._saveToLocalStoarge("backendaiconsole.logs", log);
     }
 
-    if (this.detail != '') {
+    if (this.detail !== '') {
       let more_button = document.createElement('wl-button');
       more_button.style.fontSize = 12 + 'px';
-      more_button.setAttribute('slot', "action");
-      more_button.setAttribute('flat', "");
-      more_button.setAttribute('fab', "");
+      more_button.setAttribute('slot', 'action');
+      more_button.setAttribute('flat', '');
+      more_button.setAttribute('fab', '');
       more_button.style.width = 80 + 'px';
       more_button.addEventListener('click', this._moreNotification.bind(this));
       more_button.innerHTML = "See Detail";
@@ -209,11 +213,11 @@ export default class LablupNotification extends LitElement {
   }
 
   _saveToLocalStoarge(key, logMessages) {
-    let previous_log = JSON.parse(localStorage.getItem(key) || '{}');
+    const previous_log = JSON.parse(localStorage.getItem(key) || '{}');
     let current_log = Array();
 
     current_log.push(logMessages);
-    current_log = current_log.concat(previous_log);    
+    current_log = current_log.concat(previous_log);
     localStorage.setItem(key, JSON.stringify(current_log));
   }
 

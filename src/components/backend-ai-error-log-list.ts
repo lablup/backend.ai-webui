@@ -19,16 +19,16 @@
  import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
  import '@vaadin/vaadin-icons/vaadin-icons';
  import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
- 
+
  import 'weightless/card';
  import 'weightless/dialog';
  import 'weightless/checkbox';
  import 'weightless/title';
- 
+
  import './lablup-loading-indicator';
  import './backend-ai-indicator';
  import '../plastics/lablup-shields/lablup-shields';
- 
+
  import {BackendAiStyles} from './backend-ai-console-styles';
  import {BackendAIPage} from './backend-ai-page';
  import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -46,7 +46,7 @@
      @property({type: Array}) _selected_items = Array();
      @property({type: Object}) loadingIndicator = Object();
      @property({type: Object}) _grid = Object();
-     
+
      constructor() {
          super();
      }
@@ -79,22 +79,22 @@
       firstUpdated() {
         this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
         this._grid = this.shadowRoot.querySelector('#list-grid');
-        if (!window.backendaiclient ||
-          !window.backendaiclient.is_admin) {
+        if (!window.backendaiclient || !window.backendaiclient.is_admin) {
           this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)';
         }
         this.notification = window.lablupNotification;
         // if localStorage is empty, then empty Array will goes to errorlogs
-        this.errorlogs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+        // this.errorlogs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
 
         document.addEventListener('log-message-refresh', () => this._refreshLogData());
         document.addEventListener('log-message-clear', () => this._clearLogData());
-
       }
 
       _refreshLogData() {
+        this.loadingIndicator.show();
         this.errorlogs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
         this._grid.clearCache();
+        this.loadingIndicator.hide();
       }
 
       _clearLogData() {
@@ -174,4 +174,3 @@
       "backend-ai-error-log-list": BackendAiErrorLogList;
     }
  }
-  

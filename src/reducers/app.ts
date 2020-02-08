@@ -7,6 +7,7 @@ import {CLOSE_SNACKBAR, OPEN_SNACKBAR, UPDATE_DRAWER_STATE, UPDATE_OFFLINE, UPDA
 
 const INITIAL_STATE = {
   page: '',
+  params: {},
   offline: false,
   drawerOpened: false,
   offlineIndicatorOpened: false,
@@ -17,7 +18,8 @@ const app = (state = INITIAL_STATE, action) => {
     case UPDATE_PAGE:
       return {
         ...state,
-        page: action.page
+        page: action.page,
+        params: action.params
       };
     case UPDATE_OFFLINE:
       return {

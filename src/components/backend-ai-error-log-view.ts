@@ -45,7 +45,7 @@
     }
 
     firstUpdated() {
-        this._lists = this.shadowRoot.querySelectorAll("backend-ai-session-list"); 
+        this._lists = this.shadowRoot.querySelectorAll("backend-ai-session-list");
     }
 
     render() {

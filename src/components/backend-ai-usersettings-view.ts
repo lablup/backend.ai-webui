@@ -5,6 +5,7 @@
 
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
+import {store} from '../store';
 
 import {BackendAiStyles} from './backend-ai-console-styles';
 import {
@@ -24,6 +25,7 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/icon';
 import 'weightless/button';
+
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-codemirror';
@@ -159,7 +161,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
             <wl-tab value="logs" checked @click="${(e) => this._showTab(e.target)}">Logs</wl-tab>
           </wl-tab-group>
         </h3>
-        <wl-card id="general" class="item tab-content">
+        <wl-card id="general" class="item tab-content" style="display:none;">
           <h3 class="horizontal flex center layout">
             <span>General</span>
             <span class="flex"></span>
@@ -236,9 +238,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         <div slot="header" style="border-bottom:none;">Are you sure you want to delete all of the log messages ?</div>
         <div slot="footer" style="border-top:none;">
           <wl-button inverted flat id="discard-removal"
-                     style="margin: 0 5px;" 
+                     style="margin: 0 5px;"
                      @click="${this._hideClearLogsDialog}">No</wl-button>
-          <wl-button id="apply-removal" class="button" 
+          <wl-button id="apply-removal" class="button"
                      style="margin: 0 5px;"
                      @click="${this._removeLogMessage}">Yes</wl-button>
         </div>
@@ -259,6 +261,22 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this._activeTab = "general";
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
     this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');
+  }
+
+  async _viewStateChanged(active) {
+    const params = store.getState().app.params;
+    const tab = params.tab;
+    if (tab && tab === 'logs') {
+      window.setTimeout(() => {
+        const tabEl = this.shadowRoot.querySelector('wl-tab[value="logs"]');
+        tabEl.click();
+      }, 0);
+    } else {
+      window.setTimeout(() => {
+        const tabEl = this.shadowRoot.querySelector('wl-tab[value="general"]');
+        tabEl.click();
+      }, 0);
+    }
   }
 
   updateSettings() {
@@ -303,8 +321,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   async _editBootstrapScript() {
-    const editor = this.shadowRoot.querySelector('#codemirror-editor');
-    // const dialog = this.shadowRoot.querySelector('#bootstrap-dialog');
     const script = await this._fetchBootstrapScript();
     this.bootstrapDialog.setValue(script);
     this.bootstrapDialog.show();
@@ -340,10 +356,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this.logGrid = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     let event = new CustomEvent("log-message-refresh", this.logGrid);
     document.dispatchEvent(event);
-    localStorage.getItem('backendaiconsole.logs');
-    this.notification.text = 'Refreshing Log Messages...';
-    this.notification.show();
-    this.indicator.hide();
   }
 
   _showTab(tab) {
@@ -352,6 +364,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.value;
+    if (this._activeTab === 'logs') {
+      this._refreshLogs();
+    }
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 }
