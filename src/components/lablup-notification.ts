@@ -142,16 +142,16 @@ export default class LablupNotification extends LitElement {
       document.body.removeChild(snackbar);
     }
     this.gc();
-    let notification_message: string;
-    let notification_detail: string;
+    //let notification_message: string;
+    //let notification_detail: string;
     let notification = document.createElement('wl-snackbar');
     // if (message === '') {
     notification.innerHTML = '<span style="overflow-x:hidden">' + this.text + '</span>';
     if (this.detail != '') {
       notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
     }
-    notification_message = this.text;
-    notification_detail = this.detail;
+    //notification_message = this.text;
+    //notification_detail = this.detail;
     // } else {
     //   notification.innerHTML = '<span style="overflow-x:hidden">' + message + '</span>';
     //   this.text = message;
