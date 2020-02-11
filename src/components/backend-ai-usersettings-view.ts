@@ -166,7 +166,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
             <span>Preferences</span>
             <span class="flex"></span>
           </h3>
-          <div class="horizontal wrap layout">
+          <div class="horizontal wrap layout"  style="display:none;">
             <div class="horizontal layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
                 <div>TEST1</div>
@@ -190,11 +190,11 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
               </wl-button>
             </div>
           </div>
-          <h3 class="horizontal center layout">
+          <h3 class="horizontal center layout" style="display:none;">
             <span>Package Installation</span>
             <span class="flex"></span>
           </h3>
-          <div class="horizontal wrap layout">
+          <div class="horizontal wrap layout" style="display:none;">
             <div class="horizontal layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
                 <div>TEST1</div>
@@ -210,12 +210,13 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         <wl-card id="logs" class="item tab-content" style="display:none;">
         <h3 class="horizontal center layout">
           <span>Log messages</span>
+          <span class="mini" style="font-size:13px;padding-left:15px;">(Up to 5000 recent logs)</span>
           <span class="flex"></span>
-          <wl-button class="fg cyan" inverted outlined @click="${this._refreshLogs}" style="margin: 0px 10px;">
+          <wl-button class="fg cyan" inverted outlined @click="${() => this._refreshLogs()}" style="margin: 0px 10px;">
             <wl-icon>refresh</wl-icon>
             refresh
           </wl-button>
-          <wl-button class="fg teal" inverted outlined @click="${this._showClearLogsDialog}" style="margin: 0px 10px;">
+          <wl-button class="fg teal" inverted outlined @click="${() => this._showClearLogsDialog()}" style="margin: 0px 10px;">
             <wl-icon>delete</wl-icon>
             clear logs
         </wl-button>
