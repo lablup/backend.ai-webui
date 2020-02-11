@@ -226,7 +226,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           display: none;
           position: absolute;
           background-color: #f1f1f1;
-          min-width: 140px;
+          min-width: 160px;
           overflow: auto;
           box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
           right: 0;
@@ -536,7 +536,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'usersettings':
-          this.menuTitle = 'User Settings';
+          this.menuTitle = 'Settings & Logs';
           this.sidebarMenu.selected = 4;
           this.updateTitleColor('var(--paper-teal-800)', '#efefef');
           break;
@@ -796,8 +796,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   Change Password
                 </a>
                 <a class="horizontal layout start center" href="/usersettings">
+                  <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                  Preferences
+                </a>
+                <a class="horizontal layout start center" href="/usersettings">
                   <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                  Logs
+                  Logs / Errors
                 </a>
                 <a class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
