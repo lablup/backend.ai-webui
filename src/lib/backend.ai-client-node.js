@@ -1137,16 +1137,17 @@ class VFolder {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
-    /**
-     * Invite someone to specific virtual folder with permission.
-     *
-     * @param {string} perm - Permission to give to. `rw` or `ro`.
-     * @param {array} emails - User E-mail to invite.
-     * @param {string} name - Virtual folder name to invite.
-     */
-    invite(perm, emails, name = null) {
-        if (name == null) {
-            name = this.name;
+
+  /**
+   * Invite someone to specific virtual folder with permission.
+   *
+   * @param {string} perm - Permission to give to. `rw` or `ro`.
+   * @param {array} emails - User E-mail to invite.
+   * @param {string} name - Virtual folder name to invite.
+   */
+  invite(perm, emails, name = null) {
+    if (name == null) {
+      name = this.name;
         }
         let body = {
             'perm': perm,
@@ -1825,19 +1826,20 @@ class Group {
     constructor(client) {
         this.client = client;
     }
-    /**
-     * List registred groups.
-     * @param {string} domain_name - domain name of group
-     * @param {boolean} is_active - List whether active users or inactive users.
-     * {
-     *   'name': String,          // Group name.
-     *   'description': String,   // Description for group.
-     *   'is_active': Boolean,    // Whether the group is active or not.
-     *   'created_at': String,    // Created date of group.
-     *   'modified_at': String,   // Modified date of group.
-     *   'domain_name': String,   // Domain for group.
-     * };
-     */
+
+  /**
+   * List registred groups.
+   * @param {boolean} is_active - List whether active users or inactive users.
+   * @param {string} domain_name - domain name of group
+   * {
+   *   'name': String,          // Group name.
+   *   'description': String,   // Description for group.
+   *   'is_active': Boolean,    // Whether the group is active or not.
+   *   'created_at': String,    // Created date of group.
+   *   'modified_at': String,   // Modified date of group.
+   *   'domain_name': String,   // Domain for group.
+   * };
+   */
     list(is_active = true, domain_name = false, fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
         let q, v;
         if (this.client.is_admin === true) {
@@ -1856,10 +1858,10 @@ class Group {
             }
         }
         else {
-            q = `query {` +
-                `  groups { ${fields.join(" ")} }` +
-                '}';
-            v = {};
+          q = `query($is_active:Boolean) {` +
+            `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
+            '}';
+          v = {'is_active': is_active};
         }
         return this.client.gql(q, v);
     }

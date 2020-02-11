@@ -558,7 +558,7 @@ export default class BackendAILogin extends LitElement {
       window.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
       let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name, id}"];
-      let q = `query { user { ${fields.join(" ")} } }`;
+      let q = `query { user{ ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
       return window.backendaiclient.gql(q, v);
     }).then(response => {
@@ -566,7 +566,21 @@ export default class BackendAILogin extends LitElement {
       if (this.email !== email) {
         this.email = email;
       }
-      let groups = response['user'].groups;
+      let role = response['user'].role;
+      this.domain_name = response['user'].domain_name;
+      window.backendaiclient.email = this.email;
+      window.backendaiclient.is_admin = false;
+      window.backendaiclient.is_superadmin = false;
+
+      if (["superadmin", "admin"].includes(role)) {
+        window.backendaiclient.is_admin = true;
+      }
+      if (["superadmin"].includes((role))) {
+        window.backendaiclient.is_superadmin = true;
+      }
+      return window.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
+    }).then(response => {
+      let groups = response.groups;
       if (groups !== null) {
         window.backendaiclient.groups = groups.map((item) => {
           return item.name;
@@ -579,22 +593,10 @@ export default class BackendAILogin extends LitElement {
       } else {
         window.backendaiclient.groups = ['default'];
       }
-      let role = response['user'].role;
-      this.domain_name = response['user'].domain_name;
-      window.backendaiclient.email = this.email;
       window.backendaiclient.current_group = window.backendaiclient.groups[0];
       window.backendaiclient.current_group_id = () => {
         return window.backendaiclient.groupIds[window.backendaiclient.current_group];
       };
-      window.backendaiclient.is_admin = false;
-      window.backendaiclient.is_superadmin = false;
-
-      if (["superadmin", "admin"].includes(role)) {
-        window.backendaiclient.is_admin = true;
-      }
-      if (["superadmin"].includes((role))) {
-        window.backendaiclient.is_superadmin = true;
-      }
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
@@ -609,9 +611,15 @@ export default class BackendAILogin extends LitElement {
       //this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
-        if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
+        console.log(err);
+        if (typeof err.message !== 'undefined') {
+          if (typeof err.title !== 'undefined') {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+          } else {
+            this.notification.text = PainKiller.relieve(err);
+            this.notification.detail = err;
+          }
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
