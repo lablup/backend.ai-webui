@@ -652,6 +652,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  _moveToLogPage() {
+    window.history.pushState({}, '', '/usersettings');
+    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+  }
+
   render() {
     // language=HTML
     return html`
@@ -799,7 +804,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
                   Preferences
                 </a>
-                <a class="horizontal layout start center" href="/usersettings">
+                <a class="horizontal layout start center"  @click="${() => this._moveToLogPage()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
                   Logs / Errors
                 </a>
