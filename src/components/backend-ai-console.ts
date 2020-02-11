@@ -563,7 +563,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.sidebarMenu.selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
-        case 'errorlogs':
+        case 'logs':
           this.menuTitle = 'Logs';
           this.sidebarMenu.selected = null;
           this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
