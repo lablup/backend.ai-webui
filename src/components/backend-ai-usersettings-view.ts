@@ -229,9 +229,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           <lablup-codemirror id="codemirror-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer">
-          <wl-button inverted flat id="discard-code" @click="${this._hideBootstrapScriptDialog}">Cancel</wl-button>
-          <wl-button id="save-code" class="button" @click="${this._saveBootstrapScript}">Save</wl-button>
-          <wl-button id="save-code-and-close" @click="${this._saveBootstrapScriptAndCloseDialog}">Save and close</wl-button>
+          <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">Cancel</wl-button>
+          <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">Save</wl-button>
+          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">Save and close</wl-button>
         </div>
       </wl-dialog>
       <wl-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
@@ -239,10 +239,10 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         <div slot="footer" style="border-top:none;">
           <wl-button inverted flat id="discard-removal"
                      style="margin: 0 5px;"
-                     @click="${this._hideClearLogsDialog}">No</wl-button>
+                     @click="${() => this._hideClearLogsDialog()}">No</wl-button>
           <wl-button id="apply-removal" class="button"
                      style="margin: 0 5px;"
-                     @click="${this._removeLogMessage}">Yes</wl-button>
+                     @click="${() => this._removeLogMessage()}">Yes</wl-button>
         </div>
       </wl-dialog>
     `;
@@ -256,7 +256,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     } else { // already connected
       this.updateSettings();
     }
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector(
+      !'#loading-indicator');
     this.notification = window.lablupNotification;
     this._activeTab = "general";
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');

@@ -62,7 +62,7 @@
               width: 100%;
               border: 0;
               font-size: 12px;
-              height: calc(100vh - 240px);
+              height: calc(100vh - 260px);
             }
 
             vaadin-grid-cell {
