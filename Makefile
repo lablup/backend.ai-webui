@@ -19,6 +19,7 @@ run_tests:
 versiontag:
 	echo '{ "package": "${BUILD_VERSION}", "build": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
 	sed -i -E 's/window.packageVersion = "\(.*\)"/window.packageVersion = "${BUILD_VERSION}"/g' index.html
+	sed -i -E 's/"version": "\(.*\)"/"version": "${BUILD_VERSION}"/g' manifest.json
 	sed -i -E 's/window.buildVersion = "\(.*\)"/window.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
 	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.ts
 compile_keepversion: 
