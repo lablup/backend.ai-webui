@@ -288,7 +288,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
-    })
+    });
 
     window.addEventListener("click", (event) => {
       let path = event['path'];
@@ -564,7 +564,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
         case 'errorlogs':
-          this.menuTitle = 'Error Logs';
+          this.menuTitle = 'Logs';
           this.sidebarMenu.selected = null;
           this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
           break;
@@ -811,7 +811,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
-                <backend-ai-error-log-view class="page" name="errorlogs" ?active="${this._page === 'errorlogs'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
+                <backend-ai-error-log-view class="page" name="logs" ?active="${this._page === 'logs'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-log-view>
               </div>
             </section>
           </div>
