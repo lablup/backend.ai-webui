@@ -1855,8 +1855,8 @@ class Group {
     }
     /**
      * List registred groups.
-     * @param {string} domain_name - domain name of group
      * @param {boolean} is_active - List whether active users or inactive users.
+     * @param {string} domain_name - domain name of group
      * {
      *   'name': String,          // Group name.
      *   'description': String,   // Description for group.
@@ -1884,10 +1884,10 @@ class Group {
             }
         }
         else {
-            q = `query {` +
-                `  groups { ${fields.join(" ")} }` +
+            q = `query($is_active:Boolean) {` +
+                `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
                 '}';
-            v = {};
+            v = { 'is_active': is_active };
         }
         return this.client.gql(q, v);
     }
