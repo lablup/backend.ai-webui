@@ -611,7 +611,6 @@ export default class BackendAILogin extends LitElement {
       //this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
-        console.log(err);
         if (typeof err.message !== 'undefined') {
           if (typeof err.title !== 'undefined') {
             this.notification.text = PainKiller.relieve(err.title);
@@ -627,7 +626,7 @@ export default class BackendAILogin extends LitElement {
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
