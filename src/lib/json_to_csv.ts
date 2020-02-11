@@ -8,29 +8,61 @@ Licensed under MIT
 */
 
 export default class JsonToCsv {
+    static flatten(objs: object[]) {
+      if (!objs || !objs.length) {
+        return;
+      }
+      const keys = Object.keys(objs[0]);
+      objs.map(obj => {
+        keys.map((k) => {
+          let cell = (obj[k] === null || obj[k] === undefined) ? '' : obj[k].toString();
+          if (cell.search(/("|,|\n)/g) >= 0) {
+            if (cell[0] === '[') { // Array of Objects
+              let subJson = JSON.parse(cell);
+              subJson.map((key) => {
+                if (key.name) { // session service_ports
+                  delete obj[k];
+                }
+              });
+            } else if (cell[0] === '{') {
+              let subJson = JSON.parse(cell);
+              Object.keys(subJson).map((key) => {
+                obj[k +'.'+ key] = subJson[key];
+              });
+              delete obj[k];
+            }
+          }
+        });
+      });
+    }
+
     static exportToCsv(filename: string, rows: object[]) {
       if (!rows || !rows.length) {
         return;
       }
+      JsonToCsv.flatten(rows);
       const separator = ',';
       const keys = Object.keys(rows[0]);
-      const csvContent =
+      const csvContent = 
         keys.join(separator) +
-        '\n' +
-        rows.map(row => {
-          return keys.map(k => {
-            let cell = row[k] === null || row[k] === undefined ? '' : row[k];
-            cell = cell instanceof Date
-              ? cell.toLocaleString()
-              : cell.toString().replace(/"/g, '""');
-              
-            if (cell.search(/("|,|\n)/g) >= 0) {
-              cell = `"${cell}"`;
-            }
-            return cell;
-          }).join(separator);
-        }).join('\n');
-  
+          '\n' + 
+          rows.map(row => {
+            return keys.map(k => {
+              let cell = '';
+              if (row[k]&& typeof row[k] === 'object') {
+                if (row[k].name) { // session service_ports
+                  cell = JSON.stringify(row[k], ['protocol', 'host_ports', 'container_ports']);
+                  cell = cell.replace(/"/g, '""');
+                }
+                if (cell.search(/("|,|\n)/g) >= 0) {
+                  cell = `"${cell}"`;
+                }
+              } else {
+                cell = row[k] === null || row[k] === undefined ? '' : row[k].toString();
+              }
+              return cell;
+            }).join(separator);
+          }).join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       if (navigator.msSaveBlob) { // IE 10+
         navigator.msSaveBlob(blob, filename);

@@ -111,7 +111,7 @@ export default class BackendAiSessionView extends BackendAIPage {
 
   _exportToCSV() {
     console.log("Downloading CSV File...");
-    let event = new CustomEvent("backend-ai-csv-file-export", {"detail": window.backendaiclient.current_group});
+    let event = new CustomEvent("backend-ai-csv-file-export-session", {"detail": window.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
 

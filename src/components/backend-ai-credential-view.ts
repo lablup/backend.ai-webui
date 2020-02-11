@@ -10,6 +10,7 @@ import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
+import '@material/mwc-textfield/mwc-textfield';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
@@ -24,6 +25,7 @@ import 'weightless/label';
 import './backend-ai-credential-list';
 import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
+import JsonToCsv from '../lib/json_to_csv';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -66,8 +68,10 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Boolean}) use_user_list = false;
   @property({type: String}) new_access_key = '';
   @property({type: String}) new_secret_key = '';
-  @property({type: String}) _activeTab = 'credential-lists';
+  @property({type: String}) _activeTab = 'users';
   @property({type: Object}) notification = Object();
+  @property({type: Object}) exportToCsvDialog = Object();
+  @property({type: String}) _defaultFileName = '';
 
   constructor() {
     super();
@@ -108,6 +112,10 @@ export default class BackendAICredentialView extends BackendAIPage {
           --button-bg: var(--paper-light-green-600);
           --button-bg-hover: var(--paper-green-600);
           --button-bg-active: var(--paper-green-900);
+        }
+
+        wl-icon.close {
+          color: black;
         }
 
         wl-card h3 {
@@ -185,6 +193,16 @@ export default class BackendAICredentialView extends BackendAIPage {
           --checkbox-color-checked: var(--paper-green-800);
         }
 
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-green-600);
+        }
+
+        mwc-textfield#export-file-name {
+          margin-bottom: 10px;
+        }
+
         #new-user-dialog wl-textfield {
           margin-bottom: 15px;
         }
@@ -242,7 +260,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._updateInputStatus(this.container_per_session_limit);
     this._updateInputStatus(this.vfolder_capacity);
     this.vfolder_max_limit['value']= 10;
-
+    this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
+    this._defaultFileName = new Date().toISOString().substring(0, 10) + '_' 
+                          + new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
   }
 
   async _viewStateChanged(active) {
@@ -634,9 +654,45 @@ export default class BackendAICredentialView extends BackendAIPage {
       checkbox.checked = false;
     }
   }
+  _openExportToCsvDialog() {
+    console.log(this.exportToCsvDialog);
+    console.dir(this.exportToCsvDialog);
+    this.exportToCsvDialog.show();
+  }
 
   _exportToCSV() {
-    console.log(this._activeTab);
+    let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
+
+    if (!fileNameEl.validity.valid) {
+      console.log('invalid Input');
+      return;
+    }
+    console.log(this._activeTab)
+    let fields;
+    switch(this._activeTab) {
+      case 'user-lists':
+        fields = ['email', 'username', 'password', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+        window.backendaiclient.user.list(null, fields).then((response) => {
+          let users = response.users;
+          JsonToCsv.exportToCsv(this._activeTab+'_'+this._defaultFileName, users);
+        });
+        break;
+      case 'credential-lists':
+        /* TODO: implement getting credential-lists */
+        fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
+      'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
+      
+        break;
+      case 'resource-policy-lists':
+        window.backendaiclient.resourcePolicy.get().then((response) => {
+          let resourcePolicies = response.keypair_resource_policies;
+          JsonToCsv.exportToCsv(this._activeTab+'_'+this._defaultFileName, resourcePolicies);
+        });
+        break;
+    }
+    this.notification.text = "Downloading CSV file..."
+    this.notification.show();
+    this.exportToCsvDialog.hide();
   }
 
   _getResourceInfo() {
@@ -672,10 +728,10 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-icon>add</wl-icon>
               Create user
             </wl-button>
-            <wl-button class="fg teal" id="export-csv" outlined @click="${this._exportToCSV}" style="margin-left: 10px;">
+            ${this.isAdmin ? html`<wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
             <wl-icon>get_app</wl-icon>
             export CSV
-          </wl-button>
+          </wl-button>` : html``}
           </h4>
           <div>
             <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
@@ -688,10 +744,10 @@ export default class BackendAICredentialView extends BackendAIPage {
             <wl-icon>add</wl-icon>
             Add credential
           </wl-button>
-          <wl-button class="fg teal" id="export-csv" outlined @click="${this._exportToCSV}" style="margin-left: 10px;">
-              <wl-icon>get_app</wl-icon>
-              export CSV
-            </wl-button>
+          ${this.isAdmin ? html`<wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
+            <wl-icon>get_app</wl-icon>
+            export CSV
+          </wl-button>` : html``};
         </h4>
           <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>
@@ -717,7 +773,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               Create policy
             </wl-button>
             ${this.isAdmin ? html`
-            <wl-button class="fg teal" id="export-csv" outlined @click="${this._exportToCSV}" style="margin-left: 10px;">
+            <wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
             <wl-icon>get_app</wl-icon>
             export CSV
           </wl-button>` : html``}
@@ -941,6 +997,30 @@ export default class BackendAICredentialView extends BackendAIPage {
               </wl-button>
             </fieldset>
           </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
+      <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
+        <h3 class="horizontal center layout" style="padding:10px;">
+          <span style="margin-left:10px;">Export ${this._activeTab} list to CSV File</span>
+          <div class="flex"></div>
+          <wl-button flat fab @click="${(e) => this._hideDialog(e)}">
+            <wl-icon class="close">close</wl-icon>
+          </wl-button>
+        </h3>
+        <section style="padding: 5px;">
+          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
+                          validationMessage="Allows letters, numbers and -_."
+                          value="${this._activeTab+'_'+this._defaultFileName}" required
+          ></mwc-textfield> 
+          <div class="horizontal center layout">
+            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
+            @click="${this._exportToCSV}">
+              <wl-icon>get_app</wl-icon>
+              Export CSV File
+            </wl-button>
+          </div>
+          </section>
         </wl-card>
       </wl-dialog>
     `;
