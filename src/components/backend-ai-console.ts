@@ -15,6 +15,7 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
+import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 
 import '@polymer/iron-icon/iron-icon';
@@ -225,9 +226,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           display: none;
           position: absolute;
           background-color: #f1f1f1;
-          min-width: 100px;
+          min-width: 140px;
           overflow: auto;
-          box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
           right: 0;
           z-index: 1;
         }
@@ -235,7 +236,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         .dropdown-content a {
           color: black;
           padding: 12px 16px;
-          font-size: 11px;
+          text-align: left;
+          font-size: 13px;
           display: block;
         }
 
@@ -783,14 +785,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
             <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
             <div slot="actionItems" class="vertical end-justified flex layout">
-              <a class="email" style="margin-top:4px;font-size: 14px;text-align:right" @click="${this._openUserPrefDialog}">${this.user_id}</a>
+              <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
             <div class="dropdown" slot="actionItems">
-              <mwc-icon-button slot="actionItems" id="dropdown-button" icon="menu" @click="${() => this._toggleDropdown()}"></mwc-icon-button>
+              <mwc-icon-button slot="actionItems" id="dropdown-button" icon="account_circle" @click="${() => this._toggleDropdown()}"></mwc-icon-button>
               <div class="dropdown-content" slot="actionItems">
-                <a href="/usersettings">Error Logs</a>
-                <a id="sign-button" @click="${() => this.logout()}">Log Out</a>
+                <a class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                  Change Password
+                </a>
+                <a class="horizontal layout start center" href="/usersettings">
+                  <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                  Logs
+                </a>
+                <a class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                  Log Out
+                </a>
               </div>
             </div>
             <!-- <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button> -->
