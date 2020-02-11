@@ -163,7 +163,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         </h3>
         <wl-card id="general" class="item tab-content" style="display:none;">
           <h3 class="horizontal flex center layout">
-            <span>General</span>
+            <span>Preferences</span>
             <span class="flex"></span>
           </h3>
           <div class="horizontal wrap layout">
