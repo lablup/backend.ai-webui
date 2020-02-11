@@ -1067,87 +1067,83 @@ class VFolder {
      * @param {string} name - Virtual folder name that files are in.
      */
     download(file, name = false) {
-      let params = {
-        'file': file
-      };
-      let q = querystring.stringify(params);
-      let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-      return this.client._wrapWithPromise(rqst, true);
+        let params = {
+            'file': file
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+        return this.client._wrapWithPromise(rqst, true);
     }
-
-  /**
-   * Request a download and get the token for direct download.
-   *
-   * @param {string} file - File to download. Should contain full path.
-   * @param {string} name - Virtual folder name that files are in.
-   */
-  request_download_token(file, name = false) {
-    let body = {
-      'file': file
-    };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Download file in a Virtual folder with token.
-   *
-   * @param {string} token - Temporary token to download specific file.
-   */
-  download_with_token(token = '') {
-    let params = {
-      'token': token
-    };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
-    return this.client._wrapWithPromise(rqst, true);
-  }
-
-  /**
-   * Get download URL in a Virtual folder with token.
-   *
-   * @param {string} token - Temporary token to download specific file.
-   */
-  get_download_url_with_token(token = '') {
-    let params = {
-      'token': token
-    };
-    let q = querystring.stringify(params);
-    if (this.client._config.connectionMode === 'SESSION') {
-      return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
-    } else {
-      return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+    /**
+     * Request a download and get the token for direct download.
+     *
+     * @param {string} file - File to download. Should contain full path.
+     * @param {string} name - Virtual folder name that files are in.
+     */
+    request_download_token(file, name = false) {
+        let body = {
+            'file': file
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+        return this.client._wrapWithPromise(rqst);
     }
-  }
-
-  /**
-   * List files in specific virtual folder / path.
-   *
-   * @param {string} path - Directory path to list.
-   * @param {string} name - Virtual folder name to look up with.
-   */
-  list_files(path, name = null) {
-    if (name == null) {
-      name = this.name;
+    /**
+     * Download file in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    download_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
+        return this.client._wrapWithPromise(rqst, true);
     }
-    let params = {
-      'path': path
-    };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Invite someone to specific virtual folder with permission.
-   *
-   * @param {string} perm - Permission to give to. `rw` or `ro`.
-   * @param {array} emails - User E-mail to invite.
-   * @param {string} name - Virtual folder name to invite.
-   */
-  invite(perm, emails, name = null) {
-    if (name == null) {
-      name = this.name;
+    /**
+     * Get download URL in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    get_download_url_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        if (this.client._config.connectionMode === 'SESSION') {
+            return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
+        }
+        else {
+            return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+        }
+    }
+    /**
+     * List files in specific virtual folder / path.
+     *
+     * @param {string} path - Directory path to list.
+     * @param {string} name - Virtual folder name to look up with.
+     */
+    list_files(path, name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let params = {
+            'path': path
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Invite someone to specific virtual folder with permission.
+     *
+     * @param {string} perm - Permission to give to. `rw` or `ro`.
+     * @param {array} emails - User E-mail to invite.
+     * @param {string} name - Virtual folder name to invite.
+     */
+    invite(perm, emails, name = null) {
+        if (name == null) {
+            name = this.name;
         }
         let body = {
             'perm': perm,
@@ -1329,7 +1325,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
+  
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [
@@ -1826,20 +1822,19 @@ class Group {
     constructor(client) {
         this.client = client;
     }
-
-  /**
-   * List registred groups.
-   * @param {boolean} is_active - List whether active users or inactive users.
-   * @param {string} domain_name - domain name of group
-   * {
-   *   'name': String,          // Group name.
-   *   'description': String,   // Description for group.
-   *   'is_active': Boolean,    // Whether the group is active or not.
-   *   'created_at': String,    // Created date of group.
-   *   'modified_at': String,   // Modified date of group.
-   *   'domain_name': String,   // Domain for group.
-   * };
-   */
+    /**
+     * List registred groups.
+     * @param {boolean} is_active - List whether active users or inactive users.
+     * @param {string} domain_name - domain name of group
+     * {
+     *   'name': String,          // Group name.
+     *   'description': String,   // Description for group.
+     *   'is_active': Boolean,    // Whether the group is active or not.
+     *   'created_at': String,    // Created date of group.
+     *   'modified_at': String,   // Modified date of group.
+     *   'domain_name': String,   // Domain for group.
+     * };
+     */
     list(is_active = true, domain_name = false, fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
         let q, v;
         if (this.client.is_admin === true) {
@@ -1858,10 +1853,10 @@ class Group {
             }
         }
         else {
-          q = `query($is_active:Boolean) {` +
-            `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
-            '}';
-          v = {'is_active': is_active};
+            q = `query($is_active:Boolean) {` +
+                `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
+                '}';
+            v = { 'is_active': is_active };
         }
         return this.client.gql(q, v);
     }
