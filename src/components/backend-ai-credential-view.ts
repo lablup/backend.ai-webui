@@ -4,8 +4,6 @@
 
 import {css, customElement, html, property} from "lit-element";
 
-import {BackendAIPage} from './backend-ai-page';
-
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
@@ -25,9 +23,10 @@ import 'weightless/label';
 import './backend-ai-credential-list';
 import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
-import JsonToCsv from '../lib/json_to_csv';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
+import JsonToCsv from '../lib/json_to_csv';
+import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
@@ -261,8 +260,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._updateInputStatus(this.vfolder_capacity);
     this.vfolder_max_limit['value']= 10;
     this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
-    this._defaultFileName = new Date().toISOString().substring(0, 10) + '_' 
-                          + new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
+    this._defaultFileName = this._getDefaultCSVFileName();
   }
 
   async _viewStateChanged(active) {
@@ -506,7 +504,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     window.backendaiclient.group.list()
       .then(res => {
         const default_id = res.groups.find(x => x.name === 'default').id;
-
         return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
       })
       .then(res => {
@@ -619,7 +616,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
-
   _validateUserInput(resource) {
     if (resource.disabled) {
       resource.value = '';
@@ -655,39 +651,35 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
   _openExportToCsvDialog() {
-    console.log(this.exportToCsvDialog);
-    console.dir(this.exportToCsvDialog);
+    this._defaultFileName = this._getDefaultCSVFileName();
     this.exportToCsvDialog.show();
   }
 
   _exportToCSV() {
     let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
-
     if (!fileNameEl.validity.valid) {
-      console.log('invalid Input');
       return;
     }
-    console.log(this._activeTab)
-    let fields;
     switch(this._activeTab) {
       case 'user-lists':
-        fields = ['email', 'username', 'password', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
-        window.backendaiclient.user.list(null, fields).then((response) => {
-          let users = response.users;
-          JsonToCsv.exportToCsv(this._activeTab+'_'+this._defaultFileName, users);
+        let users = this.shadowRoot.querySelector('#user-list')['users'];
+        users.map((obj) => { // filtering unnecessary key
+          ['password', 'need_password_change'].forEach(key => delete obj[key]);
         });
+        JsonToCsv.exportToCsv(fileNameEl.value, users);
         break;
       case 'credential-lists':
-        /* TODO: implement getting credential-lists */
-        fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-      'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-      
+        let credential_active = this.shadowRoot.querySelector('#active-credential-list')['keypairs'];
+        let credential_inactive = this.shadowRoot.querySelector('#inactive-credential-list')['keypairs'];
+        let credential = credential_active.concat(credential_inactive);
+        credential.map((obj)=> { // filtering unnecessary key
+          ['is_admin'].forEach(key => delete obj[key]);
+        });
+        JsonToCsv.exportToCsv(fileNameEl.value, credential);
         break;
       case 'resource-policy-lists':
-        window.backendaiclient.resourcePolicy.get().then((response) => {
-          let resourcePolicies = response.keypair_resource_policies;
-          JsonToCsv.exportToCsv(this._activeTab+'_'+this._defaultFileName, resourcePolicies);
-        });
+        let resource_policy = this.shadowRoot.querySelector('#resource-policy-list')['resourcePolicy'];
+        JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
         break;
     }
     this.notification.text = "Downloading CSV file..."
@@ -705,6 +697,12 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
     this.vfolder_capacity = this.shadowRoot.querySelector('#vfolder-capacity-limit');
     this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
+  }
+
+  _getDefaultCSVFileName() {
+    let date = new Date().toISOString().substring(0, 10);
+    let time = new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
+    return date+'_'+time;
   }
 
   render() {
@@ -747,7 +745,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           ${this.isAdmin ? html`<wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
             <wl-icon>get_app</wl-icon>
             export CSV
-          </wl-button>` : html``};
+          </wl-button>` : html``}
         </h4>
           <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>

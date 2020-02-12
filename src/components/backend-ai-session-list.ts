@@ -127,6 +127,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           padding: 0;
         }
 
+        wl-icon#warning {
+          padding-right: 2px;
+          --icon-size	: 12px;
+          color: var(--paper-red-600);
+        }
+
         paper-icon-button.controls-running {
           --paper-icon-button: {
             width: 25px;
@@ -249,6 +255,11 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         wl-label.unlimited {
           margin: 12px 0px;
+        }
+
+        wl-label.warning {
+          font-size: 10px;
+          --label-color: var(--paper-red-600);
         }
 
         wl-checkbox#export-csv-checkbox {
@@ -1019,8 +1030,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _openExportToCsvDialog() {
-    console.log(this.exportToCsvDialog);
-    console.dir(this.exportToCsvDialog);
     this.exportToCsvDialog.show();
   }
 
@@ -1218,7 +1227,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
 
     if (!fileNameEl.validity.valid) {
-      console.log('invalid Input');
       return;
     }
 
@@ -1233,25 +1241,32 @@ export default class BackendAiSessionList extends BackendAIPage {
       fields.push("agent");
     }
 
-    let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
-
-    if (isUnlimited) {
-      window.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-        // let total_count = response.compute_sessions.length;
-        let sessions = response.compute_sessions;
-        // console.log("total_count : ",total_count);
+    window.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
+      let sessions = response.compute_sessions;
       JsonToCsv.exportToCsv(fileNameEl.value, sessions);
-      }); 
-    } else {
-      let dateTo = this.shadowRoot.querySelector('#date-to');
-      let dateFrom = this.shadowRoot.querySelector('#date-from');
 
-      if(dateTo.validity.valid && dateFrom.validity.valid) {
-        // TODO : new backendaiclien.computeSession query will be added (date range)
-        console.log('Session between ' , dateFrom.value, ' ~ ', dateTo.value, " will be downloaded.");
-      }
-    }
-    
+      this.notification.text = "Downloading CSV file..."
+      this.notification.show();
+      this.exportToCsvDialog.hide();
+    });
+
+    // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
+    // if (isUnlimited) {
+    //   window.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
+    //     // let total_count = response.compute_sessions.length;
+    //     let sessions = response.compute_sessions;
+    //     // console.log("total_count : ",total_count);
+    //   JsonToCsv.exportToCsv(fileNameEl.value, sessions);
+    //   }); 
+    // } else {
+    //   let dateTo = this.shadowRoot.querySelector('#date-to');
+    //   let dateFrom = this.shadowRoot.querySelector('#date-from');
+
+    //   if(dateTo.validity.valid && dateFrom.validity.valid) {
+    //     // TODO : new backendaiclien.computeSession query will be added (date range)
+    //     console.log('Session between ' , dateFrom.value, ' ~ ', dateTo.value, " will be downloaded.");
+    //   }
+    // }
   }
 
   render() {
@@ -1478,10 +1493,9 @@ export default class BackendAiSessionList extends BackendAIPage {
         <section style="padding: 10px;">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
-                          value="${'session_'+this._defaultFileName}" required
-          
-          ></mwc-textfield> 
-          <div class="horizontal center layout">
+                          value="${'session_'+this._defaultFileName}" required 
+                          style="margin-bottom:10px;"></mwc-textfield> 
+          <div class="horizontal center layout" style="display:none;">
             <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
                           value="${this._getFirstDateOfMonth()}" required
                           @change="${this._validateDateRange}">
@@ -1493,9 +1507,13 @@ export default class BackendAiSessionList extends BackendAIPage {
               <wl-icon slot="before">date_range</wl-icon>
             </wl-textfield>
           </div>
-          <div class="horizontal center layout">
+          <div class="horizontal center layout" style="display:none;">
             <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
             <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
+          </div>
+          <div class="horizontal center layout" style="margin-bottom:10px;">
+            <wl-icon id="warning">warning</wl-icon>
+            <wl-label class="warning" for="warning">Only recent 100 session logs will be exported.</wl-label>
           </div>
           <div class="horizontal center layout">
             <wl-button class="fg green" type="button" inverted outlined style="width:100%;"

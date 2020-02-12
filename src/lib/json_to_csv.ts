@@ -16,20 +16,36 @@ export default class JsonToCsv {
       objs.map(obj => {
         keys.map((k) => {
           let cell = (obj[k] === null || obj[k] === undefined) ? '' : obj[k].toString();
+          if (cell === '[object Object]') {
+            cell = JSON.stringify(obj[k]);
+          }
           if (cell.search(/("|,|\n)/g) >= 0) {
             if (cell[0] === '[') { // Array of Objects
               let subJson = JSON.parse(cell);
-              subJson.map((key) => {
-                if (key.name) { // session service_ports
-                  delete obj[k];
-                }
-              });
+              if (k === 'groups') { // groups key in users
+                subJson.map((key) => {
+                  obj[k + '.' + 'name'] = key.name;
+                })
+              } else {
+                subJson.map((key) => {
+                  obj[k + '.' + key] = key;
+                });
+              }
+              delete obj[k];
             } else if (cell[0] === '{') {
               let subJson = JSON.parse(cell);
               Object.keys(subJson).map((key) => {
+                subJson[key] = (['cpu', 'mem', 'cuda_shares','cuda_device'].includes(key) 
+                               && typeof subJson[key] === 'string' ) ? '' : subJson[key];
                 obj[k +'.'+ key] = subJson[key];
               });
               delete obj[k];
+            } else {
+              if (cell.includes('GMT')) { // Datetime string
+                obj[k] = cell.split(',').join("");
+              } else if (cell.includes(',')) {
+                cell = cell.split(',');
+              }
             }
           }
         });
@@ -50,10 +66,8 @@ export default class JsonToCsv {
             return keys.map(k => {
               let cell = '';
               if (row[k]&& typeof row[k] === 'object') {
-                if (row[k].name) { // session service_ports
-                  cell = JSON.stringify(row[k], ['protocol', 'host_ports', 'container_ports']);
-                  cell = cell.replace(/"/g, '""');
-                }
+                cell = JSON.stringify(row[k]);
+                cell = cell.replace(/"/g, '""');
                 if (cell.search(/("|,|\n)/g) >= 0) {
                   cell = `"${cell}"`;
                 }
