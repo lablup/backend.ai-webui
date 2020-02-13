@@ -31,6 +31,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-codemirror';
 import './lablup-loading-indicator';
 import './backend-ai-error-log-list';
+import './backend-ai-general';
 
 @customElement("backend-ai-usersettings-view")
 export default class BackendAiUserSettingsView extends BackendAIPage {
@@ -161,51 +162,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
             <wl-tab value="logs" checked @click="${(e) => this._showTab(e.target)}">Logs</wl-tab>
           </wl-tab-group>
         </h3>
-        <wl-card id="general" class="item tab-content" style="display:none;">
-          <h3 class="horizontal flex center layout">
-            <span>Preferences</span>
-            <span class="flex"></span>
-          </h3>
-          <div class="horizontal wrap layout"  style="display:none;">
-            <div class="horizontal layout wrap setting-item">
-              <div class="vertical center-justified layout setting-desc">
-                <div>TEST1</div>
-                <div class="description">This is description.
-                </div>
-              </div>
-              <div class="vertical center-justified layout setting-button">
-                <wl-switch id="register-new-image-switch" disabled></wl-switch>
-              </div>
-            </div>
-          </div>
-          <h3 class="horizontal center layout">
-            <span>Shell Environments</span>
-            <span class="flex"></span>
-          </h3>
-          <div class="horizontal wrap layout">
-            <div class="horizontal layout wrap setting-item">
-              <wl-button class="fg teal" outlined @click="${this._editBootstrapScript}">
-                <wl-icon>edit</wl-icon>
-                Edit bootstrap script
-              </wl-button>
-            </div>
-          </div>
-          <h3 class="horizontal center layout" style="display:none;">
-            <span>Package Installation</span>
-            <span class="flex"></span>
-          </h3>
-          <div class="horizontal wrap layout" style="display:none;">
-            <div class="horizontal layout wrap setting-item">
-              <div class="vertical center-justified layout setting-desc">
-                <div>TEST1</div>
-                <div class="description">This is description.
-                </div>
-              </div>
-              <div class="vertical center-justified layout setting-button">
-                <wl-switch id="register-new-image-switch" disabled></wl-switch>
-              </div>
-            </div>
-          </div>
+        <wl-card id="general" class="item tab-content">
+        <backend-ai-general active="true"></backend-ai-general>
         </wl-card>
         <wl-card id="logs" class="item tab-content" style="display:none;">
         <h3 class="horizontal center layout">
@@ -224,18 +182,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
         </wl-card>
       </wl-card>
-      <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <div slot="header">Bootstrap script</div>
-        <div slot="content">
-          <lablup-codemirror id="codemirror-editor" mode="shell"></lablup-codemirror>
-        </div>
-        <div slot="footer">
-          <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">Cancel</wl-button>
-          <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">Save</wl-button>
-          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">Save and close</wl-button>
-        </div>
-      </wl-dialog>
-      <wl-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
+      <wl-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling style="border-bottom:none;">
         <div slot="header" style="border-bottom:none;">Are you sure you want to delete all of the log messages ?</div>
         <div slot="footer" style="border-top:none;">
           <wl-button inverted flat id="discard-removal"
@@ -258,9 +205,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       this.updateSettings();
     }
     this.indicator = this.shadowRoot.querySelector(
-      !'#loading-indicator');
+      '#loading-indicator');
     this.notification = window.lablupNotification;
-    this._activeTab = "general";
+    // this._activeTab = "general";
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
     this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');
   }
