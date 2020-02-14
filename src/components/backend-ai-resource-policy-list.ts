@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
-import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -15,6 +14,7 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
+import '@material/mwc-textfield/mwc-textfield';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -122,19 +122,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: calc(100% - 40px);
         }
 
-        paper-dialog paper-input {
-          padding-left: 20px;
-          padding-right: 20px;
-        }
-
-        paper-dialog h4 {
-          margin: 10px 0 5px 0;
-          font-weight: 400;
-          font-size: 13px;
-          padding-left: 20px;
-          border-bottom: 1px solid #ccc;
-        }
-
         wl-button.create-button {
           width: 335px;
           --button-bg: white;
@@ -175,6 +162,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --checkbox-color-checked: var(--paper-green-800);
         }
 
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-green-600);
+        }
       `];
   }
 
@@ -244,12 +236,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           required
-                           style="width:100%;"
-                           focused="true"
-                           @change="${(e)=>this._validatePolicyName(e)}"
-                           ></paper-input>
+              <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
+                             validationMessage="Policy name is Required."
+                             required
+                             @change="${(e)=>this._validatePolicyName(e.target)}"></mwc-textfield>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 0px;">
@@ -456,6 +446,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _launchResourcePolicyDialog(e) {
     this.updateCurrentPolicyToDialog(e);
+    this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
+    this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
     this.shadowRoot.querySelector('#modify-policy-dialog').show();
   }
 
@@ -466,6 +458,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.resource_policy_names = Object.keys(resourcePolicies);
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
+    // this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
     this.current_policy_name = policyName;
     this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
     this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
@@ -600,7 +593,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _modifyResourcePolicy() {
     let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
     let name = policy_info.value;
-    if (policy_info.invalid) {
+    // if (!policy_info.validity.valid || name === '') {
+      
+    //   return;
+    // }
+    console.log(policy_info.checkValidity());
+    if(!policy_info.checkValidity()) {
+      policy_info.reportValidity();
       return;
     }
     try {
@@ -702,17 +701,50 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     }
   }
 
-  _validatePolicyName(e) {
-    let policy_info = e.target;
-    let policy_name = e.target.value;
-    if (this.resource_policy_names.includes(policy_name)) {
-      if (policy_name !== this.current_policy_name) {
-        policy_info.errorMessage="Policy name already exists!";
-        policy_info.invalid=true;
-        return;
+  _validatePolicyName(input) {
+    let policy_info = input;
+    let policy_name = input.value;
+
+    console.dir(policy_info);
+
+    policy_info.validityTransform = (newValue, nativeValidity) => {
+      console.dir(nativeValidity);
+      if (!nativeValidity.valid) {
+        if (nativeValidity.patternMismatch) {
+          policy_info.validationMessage = "Allows letters, numbers and -_.";
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
+        }
+        else if (nativeValidity.valueMissing) {
+          policy_info.validationMessage = "Policy name is Required."
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        }
+        else {
+          policy_info.validationMessage = "Allows letters, numbers and -_."
+          return {
+            valid: nativeValidity.valid,
+            badInput: !nativeValidity.valid
+          }
+        }
+      } else {
+        let policy_names = this.resource_policy_names;
+        policy_names = policy_names.filter(item => item !== this.current_policy_name);
+        const isValid = !policy_names.includes(policy_name);
+        if (!isValid) {
+          policy_info.validationMessage = "Policy Name Already Exists!";
+        }
+      
+        return {
+          valid: isValid,
+          customError: !isValid,
+        };
       }
-    }
-    policy_info.invalid=false;
+    };
    }
 
   _updateInputStatus(resource) {
@@ -749,7 +781,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
   }
 }
-
 
 declare global {
   interface HTMLElementTagNameMap {

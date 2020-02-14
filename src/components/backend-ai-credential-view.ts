@@ -6,7 +6,6 @@ import {css, customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
@@ -188,6 +187,12 @@ export default class BackendAICredentialView extends BackendAIPage {
         #new-user-dialog wl-textfield {
           margin-bottom: 15px;
         }
+
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-green-600);
+        }
       `];
   }
 
@@ -272,6 +277,9 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   _launchResourcePolicyDialog() {
     this._readVFolderHostInfo();
+    this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
+    this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
+    this.shadowRoot.querySelector('#id_new_policy_name').value = '';
     this.shadowRoot.querySelector('#new-policy-dialog').show();
   }
 
@@ -381,19 +389,9 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   _addResourcePolicy() {
     let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
-    if (policy_info.value != '') {
-      if (policy_info.invalid == true) {
-        return;
-      }
-      if (this.resource_policy_names.includes(policy_info.value)) {
-        policy_info.invalid=true;
-        policy_info.errorMessage = "Policy name already exists!";
-        return;
-      }
-    } else {
-        policy_info.invalid=true;
-        policy_info.errorMessage = "Please input policy name.";
-        return;
+    if(!policy_info.checkValidity()) {
+      policy_info.reportValidity();
+      return;
     }
     try {
       let input = this._readResourcePolicyInput();
@@ -606,14 +604,47 @@ export default class BackendAICredentialView extends BackendAIPage {
   _validatePolicyName(e) {
     let policy_info = e.target;
     let policy_name = e.target.value;
-
-    if (this.resource_policy_names.includes(policy_name)) {
-      policy_info.errorMessage="Policy name already exists!";
-      policy_info.invalid=true;
-    }
-    else {
-      policy_info.invalid=false;
-    }
+    policy_info.validityTransform = (nativeValidity) => {
+      if (!nativeValidity) { 
+        policy_info.validationMessage = "Policy name Required."
+        return {
+          valid: false,
+          valueMissing: true
+        }
+      }
+      if (!nativeValidity.valid) {
+        if (nativeValidity.patternMismatch) {
+          policy_info.validationMessage = "Allows letters, numbers and -_.";
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
+        }
+        else if (nativeValidity.valueMissing) {
+          policy_info.validationMessage = "Policy name Required."
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          }
+        }
+        else {
+          policy_info.validationMessage = "Allows letters, numbers and -_."
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid,
+          }
+        }
+      } else {
+        const isValid = !this.resource_policy_names.includes(policy_name);
+        if (!isValid) {
+          policy_info.validationMessage = "Policy Name Already Exists!";
+        }
+        return {
+          valid: isValid,
+          customError: !isValid,
+        };
+      }
+    };
    }
 
   _updateInputStatus(resource) {
@@ -762,11 +793,10 @@ export default class BackendAICredentialView extends BackendAIPage {
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="new_policy_name"
-                           id="id_new_policy_name" label="Policy Name"
-                           required
-                           style="width:100%;"
-                           @change="${(e)=>this._validatePolicyName(e)}"></paper-input>
+            <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
+                             validationMessage="Policy name is Required."
+                             required
+                             @change="${(e)=>this._validatePolicyName(e)}"></mwc-textfield>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
