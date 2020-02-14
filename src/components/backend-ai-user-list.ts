@@ -45,6 +45,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
   @property({type: Object}) users = Object();
+  @property({type: Object}) userView = Object();
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = Array();
   @property({type: String}) condition = 'active';
@@ -54,6 +55,10 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
+  @property({type: Number}) _pageSize = 1;
+  @property({type: Object}) userGrid = Object();
+  @property({type: Number}) _currentPage = 1; 
+  @property({type: Number}) _totalUserCount = 0;
 
   constructor() {
     super();
@@ -160,6 +165,21 @@ export default class BackendAIUserList extends BackendAIPage {
               --button-bg-active: var(--paper-green-600);
               color: var(--paper-green-900);
           }
+
+                  wl-icon.pagination {
+          color: var(--paper-grey-700);
+        }
+
+        wl-button.pagination {
+          width: 15px;
+          height: 15px;
+          padding: 10 10px;
+          box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-red-600);
+        }
       `];
   }
 
@@ -167,7 +187,9 @@ export default class BackendAIUserList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
-  }
+    this.userGrid = this.shadowRoot.querySelector('#user-grid');
+    this._currentPage = 1;
+    }
 
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -204,6 +226,8 @@ export default class BackendAIUserList extends BackendAIPage {
       // Blank for the next impl.
       //});
       this.users = users;
+      this._totalUserCount = this.users.length;
+      this._updateItemsFromPage(1);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -315,6 +339,23 @@ export default class BackendAIUserList extends BackendAIPage {
     }
   }
 
+  _updateItemsFromPage(page) {
+    if (typeof page !== 'number') {
+      let page_action = page.target;
+      if (page_action['role'] !== 'button') {
+        page_action = page.target.closest('wl-button');
+      }
+      if (page_action.id === 'previous-page') {
+        this._currentPage -= 1;
+      } else {
+        this._currentPage += 1;
+      }
+    }
+    let start = (this._currentPage - 1) * this.userGrid.pageSize;
+    let end = this._currentPage * this.userGrid.pageSize;
+    this.userView = this.users.slice(start, end);
+  }
+
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -419,8 +460,8 @@ export default class BackendAIUserList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="User list"
-                   id="user-grid" .items="${this.users}">
+      <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="User list"
+                   id="user-grid" .items="${this.userView}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
@@ -439,6 +480,19 @@ export default class BackendAIUserList extends BackendAIPage {
         <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
+      <div class="horizontal center-justified layout flex" style="padding: 10px;">
+        <wl-button class="pagination" id="previous-page"
+                   ?disabled="${ this._currentPage === 1 }"
+                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+          <wl-icon class="pagination">navigate_before</wl-icon>
+        </wl-button>
+        <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${ Math.ceil( this._totalUserCount / this._pageSize)} </wl-label>
+        <wl-button class="pagination" id="next-page"
+                   ?disabled="${ this._totalUserCount <= this._pageSize * this._currentPage}"
+                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+          <wl-icon class="pagination">navigate_next</wl-icon>
+        </wl-button>
+      </div>
       <wl-dialog id="signout-user-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
