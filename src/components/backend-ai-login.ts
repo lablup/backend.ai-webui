@@ -207,11 +207,11 @@ export default class BackendAILogin extends LitElement {
           } else {
             this.notification.text = PainKiller.relieve('Plugin loading failed.');
           }
-          this.notification.show(true);
+          this.notification.show(this, err);
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          this.notification.show(true);
+          this.notification.show(this, err);
         }
       });
     }
@@ -537,7 +537,7 @@ export default class BackendAILogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(this, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -622,7 +622,7 @@ export default class BackendAILogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(this, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -671,11 +671,11 @@ export default class BackendAILogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(this, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show(true);
+        this.notification.show(this, err);
       }
       this.open();
     });
