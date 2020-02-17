@@ -292,6 +292,12 @@ export default class BackendAICredentialList extends BackendAIPage {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
     window.backendaiclient.keypair.delete(accessKey).then(response => {
+      if (response.delete_keypair && !response.delete_keypair.ok) {
+        throw {
+          title: 'Unable to delete keypair',
+          message: response.delete_keypair.msg
+        };
+      }
       this.refresh();
     }).catch(err => {
       console.log(err);

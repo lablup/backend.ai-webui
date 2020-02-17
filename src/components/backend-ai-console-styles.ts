@@ -787,6 +787,10 @@ export const BackendAiStyles =
       color: var(--paper-green-400) !important;
     }
 
+    .fg.teal {
+      color: var(--paper-teal-400) !important;
+    }
+
     .fg.cyan {
       color: var(--paper-cyan-400) !important;
     }
