@@ -42,7 +42,6 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
-//import '@material/mwc-drawer';
 
 /**
  Backend.AI GUI Console
@@ -456,7 +455,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'environment', 'settings', 'maintenance', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
@@ -491,29 +490,34 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.sidebarMenu.selected = 3;
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
+        case 'usersettings':
+          this.menuTitle = 'User Settings';
+          this.sidebarMenu.selected = 4;
+          this.updateTitleColor('var(--paper-teal-800)', '#efefef');
+          break;
         case 'credential':
           this.menuTitle = 'User Credentials & Policies';
-          this.sidebarMenu.selected = 5;
+          this.sidebarMenu.selected = 6;
           this.updateTitleColor('var(--paper-lime-800)', '#efefef');
           break;
         case 'environment':
           this.menuTitle = 'Environments & Presets';
-          this.sidebarMenu.selected = 6;
+          this.sidebarMenu.selected = 7;
           this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
           break;
         case 'agent':
           this.menuTitle = 'Computation Resources';
-          this.sidebarMenu.selected = 7;
+          this.sidebarMenu.selected = 8;
           this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
           break;
         case 'settings':
           this.menuTitle = 'Settings';
-          this.sidebarMenu.selected = 8;
+          this.sidebarMenu.selected = 9;
           this.updateTitleColor('var(--paper-green-800)', '#efefef');
           break;
         case 'maintenance':
           this.menuTitle = 'Maintenance';
-          this.sidebarMenu.selected = 9;
+          this.sidebarMenu.selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
         default:
@@ -646,6 +650,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   Statistics
                 </paper-item>
               </a>
+              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem" style="display:none;">
+                <paper-item link>
+                  <iron-icon class="fg teal" icon="icons:settings"></iron-icon>
+                  Settings
+                  <span class="flex"></span>
+                </paper-item>
+              </a>
+
               ${this.is_admin ?
       html`
               <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
@@ -674,7 +686,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg green" icon="icons:settings"></iron-icon>
-                  Settings
+                  System Settings
                   <span class="flex"></span>
                 </paper-item>
               </a>
@@ -709,7 +721,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.01.6.200130</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.02.0.200203</small>
               </address>
             </div>
         </div>
@@ -731,6 +743,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
                 <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
                 <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
+                <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usersettings-view>
                 <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-credential-view>
                 <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-agent-view>
                 <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-data-view>

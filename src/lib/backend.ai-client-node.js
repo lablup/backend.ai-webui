@@ -137,6 +137,7 @@ class Client {
         this.scalingGroup = new ScalingGroup(this);
         this.registry = new Registry(this);
         this.setting = new Setting(this);
+        this.userConfig = new UserConfig(this);
         this.domain = new Domain(this);
         this._features = {}; // feature support list
         //if (this._config.connectionMode === 'API') {
@@ -998,6 +999,31 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
+     * Create a upload session for a file to Virtual folder.
+     *
+     * @param {string} path - Path to upload.
+     * @param {string} fs - File object to upload.
+     * @param {string} name - Virtual folder name.
+     */
+    async create_upload_session(path, fs, name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let body = {
+            'path': path,
+            'size': fs.size
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/create_upload_session`, body);
+        const res = await this.client._wrapWithPromise(rqst);
+        const token = res['token'];
+        let url = this.client._config.endpoint;
+        if (this.client._config.connectionMode === 'SESSION') {
+            url = url + '/func';
+        }
+        url = url + `${this.urlPrefix}/_/tus/upload/${token}`;
+        return url;
+    }
+    /**
      * Create directory in specific Virtual folder.
      *
      * @param {string} path - Directory path to create.
@@ -1047,6 +1073,49 @@ class VFolder {
         let q = querystring.stringify(params);
         let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
         return this.client._wrapWithPromise(rqst, true);
+    }
+    /**
+     * Request a download and get the token for direct download.
+     *
+     * @param {string} file - File to download. Should contain full path.
+     * @param {string} name - Virtual folder name that files are in.
+     */
+    request_download_token(file, name = false) {
+        let body = {
+            'file': file
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Download file in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    download_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
+        return this.client._wrapWithPromise(rqst, true);
+    }
+    /**
+     * Get download URL in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    get_download_url_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        if (this.client._config.connectionMode === 'SESSION') {
+            return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
+        }
+        else {
+            return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+        }
     }
     /**
      * List files in specific virtual folder / path.
@@ -1755,8 +1824,8 @@ class Group {
     }
     /**
      * List registred groups.
-     * @param {string} domain_name - domain name of group
      * @param {boolean} is_active - List whether active users or inactive users.
+     * @param {string} domain_name - domain name of group
      * {
      *   'name': String,          // Group name.
      *   'description': String,   // Description for group.
@@ -1784,10 +1853,10 @@ class Group {
             }
         }
         else {
-            q = `query {` +
-                `  groups { ${fields.join(" ")} }` +
+            q = `query($is_active:Boolean) {` +
+                `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
                 '}';
-            v = {};
+            v = { 'is_active': is_active };
         }
         return this.client.gql(q, v);
     }
@@ -2252,6 +2321,36 @@ class Setting {
             "key": `${key}`,
             "prefix": prefix
         });
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class UserConfig {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Get content of bootstrap script of a keypair.
+     */
+    get_bootstrap_script() {
+        if (!this.client._config.accessKey) {
+            throw 'Your access key is not set';
+        }
+        const rqst = this.client.newSignedRequest('GET', '/user-config/bootstrap-script');
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update bootstrap script of a keypair.
+     *
+     * @param {string} data - text content of bootstrap script.
+     */
+    update_bootstrap_script(data) {
+        const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { data });
         return this.client._wrapWithPromise(rqst);
     }
 }

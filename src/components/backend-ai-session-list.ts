@@ -266,6 +266,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     return this.condition === 'running';
   }
 
+  _isPreparing(status) {
+     const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
+     if (preparingStatuses.indexOf(status) === -1) {
+       return false;
+     }
+     return true;
+  }
+
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this._grid = this.shadowRoot.querySelector('#list-grid');
@@ -1034,27 +1042,26 @@ export default class BackendAiSessionList extends BackendAIPage {
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}">
-             ${rowData.item.appSupport ? html`
+          ${rowData.item.appSupport ? html`
             <paper-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
                                icon="vaadin:caret-right"></paper-icon-button>
             <paper-icon-button class="fg controls-running"
                                @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"></paper-icon-button>
-                               ` : html``}
-             ${this.condition === 'running' ? html`
+          ` : html``}
+          ${this._isRunning && !this._isPreparing(rowData.item.status) ? html`
             <paper-icon-button class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"></paper-icon-button>
-                               ` : html``}
-             ${this._isRunning ? html`
+          ` : html``}
+          ${this._isRunning ? html`
             <paper-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
                                on-tap="_showLogs"></paper-icon-button>
-             ` : html`
-            <paper-icon-button disabled class="fg controls-running" icon="assignment"
-            ></paper-icon-button>
-             `}
+          ` : html`
+            <paper-icon-button disabled class="fg controls-running" icon="assignment"></paper-icon-button>
+          `}
         </div>`, root
     );
   }
@@ -1172,9 +1179,9 @@ export default class BackendAiSessionList extends BackendAIPage {
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}" height-by-rows>
-        ${this.condition == 'running' ? html`
-        <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
-        </vaadin-grid-column>
+        ${this._isRunning ? html`
+          <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+          </vaadin-grid-column>
         ` : html``}
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
