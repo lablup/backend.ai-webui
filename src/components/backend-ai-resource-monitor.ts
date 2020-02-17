@@ -905,13 +905,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         prefix = specs[1];
         kernelName = specs[2];
       }
-      const alias = this.aliases[item];
+      let alias = this.aliases[item];
       let basename;
       if (alias !== undefined) {
         basename = alias.split(' (')[0];
       } else {
         basename = kernelName;
       }
+      // Remove registry and namespace from alias and basename.
+      alias = alias.split('/').slice(-1)[0]
+      basename = basename.split('/').slice(-1)[0]
+
       let tags: string[] = [];
       if (kernelName in this.tags) {
         tags = tags.concat(this.tags[kernelName]);
@@ -1018,7 +1022,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           if (item.allocatable === true) {
             if ('cuda.shares' in item.resource_slots) {
               item.gpu = item.resource_slots['cuda.shares'];
-            } else if ('cuda.device' in item) {
+            } else if ('cuda.device' in item.resource_slots) {
               item.gpu = item.resource_slots['cuda.device'];
             } else {
               item.gpu = 0;
@@ -1583,12 +1587,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.supports[supportsKey].push(item.tag);
         let imageName: string;
         let specs: string[] = item.name.split('/');
-        if (specs.length == 2) {
-          imageName = specs[1];
+        if (specs.length === 1) {
+          imageName = specs[0];
         } else {
-          imageName = specs[2];
+          imageName = specs[1];
         }
-        this.supportImages[supportsKey] = this.imageInfo[imageName];
+        this.supportImages[supportsKey] = this.imageInfo[imageName] || {
+          name: 'Custom Environments',
+          description: 'Custom-built images.',
+          group: 'Custom Environments',
+          tags: [],
+          label: [
+            {
+              'category': 'Custom',
+              'tag': 'Custom',
+              'color': 'black'
+            }
+          ]
+        };
         // Fallback routine if image has no metadata
         if (!('group' in this.supportImages[supportsKey])) {
           this.supportImages[supportsKey].group = 'Custom Environments';
@@ -1776,7 +1792,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.gpu_slot}/${this.total_sg_slot.fgpu_slot}</span>
+              <span class="gauge-label">${this.used_sg_slot.gpu_slot}/${this.total_sg_slot.gpu_slot}</span>
               <paper-progress id="gpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.gpu_slot}"></paper-progress>
               <paper-progress id="gpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
               <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
@@ -1884,17 +1900,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <paper-dropdown-menu id="environment" label="Environments" horizontal-align="left">
                   <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                  selected="${this.default_language}">
-                ${this.languages.map(item => html`
-                    ${item.clickable === false ? html`
-                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>` :
-      html`
-                      <paper-item id="${item.name}" label="${item.alias}">${item.basename}
-                      ${item.tags ? item.tags.map(item => html`
-                        <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                      `) : ''}
-                      </paper-item>
-                    `}
-                `)}
+                    ${this.languages.map(item => html`
+                      ${item.clickable === false ? html`
+                        <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>
+                      ` : html`
+                        <paper-item id="${item.name}" label="${item.alias}">${item.basename}
+                          ${item.tags ? item.tags.map(item => html`
+                            <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                          `) : ''}
+                        </paper-item>
+                      `}
+                    `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="version" label="Version">
