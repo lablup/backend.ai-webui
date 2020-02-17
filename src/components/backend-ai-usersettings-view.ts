@@ -28,7 +28,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-codemirror';
 import './lablup-loading-indicator';
 import './backend-ai-error-log-list';
-import './backend-ai-general';
+import './backend-ai-usersettings-general-list';
 
 @customElement("backend-ai-usersettings-view")
 export default class BackendAiUserSettingsView extends BackendAIPage {
@@ -160,23 +160,23 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           </wl-tab-group>
         </h3>
         <wl-card id="general" class="item tab-content">
-        <backend-ai-general active="true"></backend-ai-general>
+          <backend-ai-usersettings-general-list active="true"></backend-ai-usersettings-general-list>
         </wl-card>
         <wl-card id="logs" class="item tab-content" style="display:none;">
-        <h3 class="horizontal center layout">
-          <span>Log messages</span>
-          <span class="mini" style="font-size:13px;padding-left:15px;">(Up to 5000 recent logs)</span>
-          <span class="flex"></span>
-          <wl-button class="fg cyan" inverted outlined @click="${() => this._refreshLogs()}" style="margin: 0px 10px;">
-            <wl-icon>refresh</wl-icon>
-            refresh
+          <h3 class="horizontal center layout">
+            <span>Log messages</span>
+            <span class="mini" style="font-size:13px;padding-left:15px;">(Up to 5000 recent logs)</span>
+            <span class="flex"></span>
+            <wl-button class="fg cyan" inverted outlined @click="${() => this._refreshLogs()}" style="margin: 0px 10px;">
+              <wl-icon>refresh</wl-icon>
+              refresh
+            </wl-button>
+            <wl-button class="fg teal" inverted outlined @click="${() => this._showClearLogsDialog()}" style="margin: 0px 10px;">
+              <wl-icon>delete</wl-icon>
+              clear logs
           </wl-button>
-          <wl-button class="fg teal" inverted outlined @click="${() => this._showClearLogsDialog()}" style="margin: 0px 10px;">
-            <wl-icon>delete</wl-icon>
-            clear logs
-        </wl-button>
-        </h3>
-        <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
+          </h3>
+          <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
         </wl-card>
       </wl-card>
       <wl-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling style="border-bottom:none;">

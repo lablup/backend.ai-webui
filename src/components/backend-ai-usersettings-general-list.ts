@@ -23,8 +23,8 @@ import 'weightless/button';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-codemirror';
 
-@customElement("backend-ai-general")
-export default class BackendAiGeneral extends BackendAIPage {
+@customElement("backend-ai-usersettings-general-list")
+export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   public indicator: any;
   public lastSavedBootstrapScript: string = '';
 
@@ -236,11 +236,10 @@ export default class BackendAiGeneral extends BackendAIPage {
       </wl-dialog>
     `;
   }
-
 }
 
-  declare global {
+declare global {
   interface HTMLElementTageNameMap {
-  "backend-ai-general": BackendAiGeneral;
+    "backend-ai-general": BackendAiUsersettingsGeneralList;
   }
 }

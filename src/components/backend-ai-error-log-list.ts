@@ -107,7 +107,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     if (!window.backendaiclient || !window.backendaiclient.is_admin) {
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 260px)';
+      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 260px)!important';
     }
     this.notification = window.lablupNotification;
 
