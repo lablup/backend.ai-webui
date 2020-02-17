@@ -370,7 +370,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <template class="header">Endpoint</template>
           <template>
             <div>[[item.id]]</div>
-            <div class="indicator">[[item.addr]]</div>
+            <div class="indicator monospace">[[item.addr]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
