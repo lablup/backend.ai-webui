@@ -51,7 +51,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) _grid = Object();
   @property({type: Object}) logView = Object();
-  @property({type: Number}) _pageSize = 10;
+  @property({type: Number}) _pageSize = 25;
   @property({type: Number}) _currentPage = 1;
   @property({type: Number}) _totalLogCount = 0;
 
@@ -70,7 +70,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           width: 100%;
           border: 0;
           font-size: 12px;
-          height: calc(100vh - 260px);
+          height: calc(100vh - 320px);
         }
 
         vaadin-grid-cell {
@@ -107,7 +107,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     if (!window.backendaiclient || !window.backendaiclient.is_admin) {
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 260px)!important';
+      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 320px)!important';
     }
     this.notification = window.lablupNotification;
 
