@@ -235,7 +235,7 @@ export default class BackendAiSignup extends LitElement {
     }).catch((e) => {
       if (e.message) {
         this.notification.text = e.message;
-        this.notification.show(true);
+        this.notification.show(true, e);
       }
       console.log(e);
     });

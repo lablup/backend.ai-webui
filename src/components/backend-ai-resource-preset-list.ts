@@ -390,7 +390,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -424,7 +424,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -478,7 +478,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -493,7 +493,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }

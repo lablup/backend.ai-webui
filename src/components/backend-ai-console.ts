@@ -15,6 +15,7 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
+import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 
 import '@polymer/iron-icon/iron-icon';
@@ -214,6 +215,40 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         a.email:hover {
           color: #29b6f6;
         }
+
+        .dropdown {
+          float: right;
+          position: relative;
+          display: inline-block;
+        }
+
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f1f1f1;
+          min-width: 160px;
+          overflow: auto;
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+          right: 0;
+          z-index: 1;
+        }
+
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-align: left;
+          font-size: 13px;
+          display: block;
+        }
+
+        .dropdown a:hover {
+          background-color: #ddd;
+        }
+
+        .dropdown-show {
+          display: block;
+        }
+
       `];
   }
 
@@ -255,7 +290,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
-    })
+    });
+
+    window.addEventListener("click", (event) => {
+      let path = event['path'];
+      let elements_name = Object.keys(path).map( function(key, index) {
+        return path[key]['id'];
+      });
+      if (!elements_name.includes("dropdown-button")){
+        this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
+      }
+    });
   }
 
   connectedCallback() {
@@ -446,7 +491,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (err && err.title) {
         this.notification.text = err.title;
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -491,7 +536,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'usersettings':
-          this.menuTitle = 'User Settings';
+          this.menuTitle = 'Settings & Logs';
           this.sidebarMenu.selected = 4;
           this.updateTitleColor('var(--paper-teal-800)', '#efefef');
           break;
@@ -519,6 +564,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.menuTitle = 'Maintenance';
           this.sidebarMenu.selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
+          break;
+        case 'logs':
+          this.menuTitle = 'Logs';
+          this.sidebarMenu.selected = null;
+          this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
           break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
@@ -579,6 +629,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  _toggleDropdown() {
+    let dropdown = this.shadowRoot.querySelector('.dropdown-content');
+    dropdown.classList.toggle('dropdown-show');
+  }
+
   showTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
@@ -594,6 +649,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.TOSdialog.title = "Privacy Policy";
       this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
       this.TOSdialog.open();
+    }
+  }
+
+  _moveToLogPage() {
+    let currentPage = window.location.toString().split(/[\/]+/).pop();
+    window.history.pushState({}, '', '/usersettings');
+    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings-logs', {});
+      document.dispatchEvent(event);
     }
   }
 
@@ -730,10 +795,31 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
             <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
             <div slot="actionItems" class="vertical end-justified flex layout">
-              <a class="email" style="margin-top:4px;font-size: 14px;text-align:right" @click="${this._openUserPrefDialog}">${this.user_id}</a>
+              <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
-            <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button>
+            <div class="dropdown" slot="actionItems">
+              <mwc-icon-button slot="actionItems" id="dropdown-button" icon="account_circle" @click="${() => this._toggleDropdown()}"></mwc-icon-button>
+              <div class="dropdown-content" slot="actionItems">
+                <a class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                  Change Password
+                </a>
+                <a class="horizontal layout start center" href="/usersettings">
+                  <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                  Preferences
+                </a>
+                <a class="horizontal layout start center"  @click="${() => this._moveToLogPage()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                  Logs / Errors
+                </a>
+                <a class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                  Log Out
+                </a>
+              </div>
+            </div>
+            <!-- <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button> -->
           </mwc-top-app-bar-fixed>
 
           <div class="content">

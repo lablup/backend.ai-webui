@@ -279,7 +279,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err;
         this._hideDialogById("#create-scaling-group-dialog");
-        this.notification.show(true);
+        this.notification.show(true, err);
       })
   }
 
