@@ -102,7 +102,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 240px);
+          height: calc(100vh - 290px);
         }
 
         paper-item {
@@ -392,7 +392,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       fields.push("agent");
     }
     let group_id = window.backendaiclient.current_group_id();
-  
+
     window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
       this.loadingIndicator.hide();
       this.total_session_count = response.compute_session_list.total_count;

@@ -425,14 +425,14 @@ export default class BackendAIUserList extends BackendAIPage {
         <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.email]]</div>
+              <div>[[item.email]]</div>
             </div>
           </template>
         </vaadin-grid-sort-column>
         <vaadin-grid-sort-column resizable header="Name" path="username">
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.username]]</div>
+              <div>[[item.username]]</div>
             </div>
           </template>
         </vaadin-grid-sort-column>
