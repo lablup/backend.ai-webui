@@ -210,6 +210,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     // this._activeTab = "general";
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
     this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');
+    document.addEventListener('backend-ai-usersettings-logs', () => {
+      this._viewStateChanged(true);
+    });
   }
 
   async _viewStateChanged(active) {

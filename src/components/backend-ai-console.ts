@@ -653,8 +653,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _moveToLogPage() {
+    let currentPage = window.location.toString().split(/[\/]+/).pop();
     window.history.pushState({}, '', '/usersettings');
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings-logs', {});
+      document.dispatchEvent(event);
+    }
   }
 
   render() {
@@ -832,7 +837,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
-                <backend-ai-error-log-view class="page" name="logs" ?active="${this._page === 'logs'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-log-view>
               </div>
             </section>
           </div>
