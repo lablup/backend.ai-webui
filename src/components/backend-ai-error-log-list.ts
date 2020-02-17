@@ -25,6 +25,9 @@ import 'weightless/dialog';
 import 'weightless/checkbox';
 import 'weightless/title';
 import 'weightless/expansion';
+import 'weightless/icon';
+import 'weightless/button';
+import 'weightless/label';
 
 import './lablup-loading-indicator';
 import './backend-ai-indicator';
@@ -43,10 +46,14 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) statusText = '';
   @property({type: String}) title = '';
   @property({type: String}) message = '';
-  @property({type: Array}) errorlogs = Array();
+  @property({type: Array}) logs = Array();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) _grid = Object();
+  @property({type: Object}) logView = Object();
+  @property({type: Number}) _pageSize = 10;
+  @property({type: Number}) _currentPage = 1;
+  @property({type: Number}) _totalLogCount = 0;
 
   constructor() {
       super();
@@ -74,6 +81,25 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           color: red;
         }
 
+        wl-label {
+          --label-font-family: Roboto, Noto, sans-serif;
+          --label-color: black;
+        }
+
+        wl-icon.pagination {
+          color: var(--paper-grey-700);
+        }
+
+        wl-button.pagination {
+          width: 15px;
+          height: 15px;
+          padding: 10px;
+          box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-teal-100);
+          --button-bg-active: var(--paper-teal-600);
+          --button-bg-active-flat: var(--paper-teal-600);
+        }
       `];
   }
 
@@ -91,23 +117,43 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
   _refreshLogData() {
     this.loadingIndicator.show();
-    this.errorlogs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+    this.logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+    this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
+    this._updateItemsFromPage(1);
     this._grid.clearCache();
     this.loadingIndicator.hide();
   }
 
   _clearLogData() {
-    this.errorlogs = [];
+    this.logs = [];
+    this.logView = [];
+    this._totalLogCount = 1;
+    this._currentPage = 1;
     this._grid.clearCache();
+  }
+
+  _updateItemsFromPage(page) {
+    if (typeof page !== 'number') {
+      let page_action = page.target;
+      if (page_action['role'] !== 'button') {
+        page_action = page.target.closest('wl-button');
+      }
+      page_action.id === 'previous-page' ? this._currentPage -= 1 : this._currentPage += 1;
+    }
+    let start = (this._currentPage - 1) * this._grid.pageSize;
+    let end = this._currentPage * this._grid.pageSize;
+    if (this.logs.length > 0) {
+      this.logView = this.logs.slice(start, end);
+    }
   }
 
   render() {
     // language=HTML
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <vaadin-grid id="list-grid"
+      <vaadin-grid id="list-grid" page-size="${this._pageSize}"
                    theme="row-stripes column-borders compact wrap-cell-content"
-                   aria-label="Error logs" .items="${this.errorlogs}">
+                   aria-label="Error logs" .items="${this.logView}">
         <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="TimeStamp">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
@@ -165,6 +211,21 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
+      <div class="horizontal center-justified layout flex" style="padding: 10px;">
+        <wl-button class="pagination" id="previous-page"
+                   ?disabled="${this._currentPage === 1 }"
+                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+          <wl-icon class="pagination">navigate_before</wl-icon>
+        </wl-button>
+        <wl-label style="padding: 5px 15px 0px 15px;">
+          ${this._currentPage} / ${Math.ceil( this._totalLogCount / this._pageSize)}
+        </wl-label>
+        <wl-button class="pagination" id="next-page"
+                   ?disabled="${this._totalLogCount <= this._pageSize * this._currentPage }"
+                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+          <wl-icon class="pagination">navigate_next</wl-icon>
+        </wl-button>
+      </div>
     `;
   }
 }
