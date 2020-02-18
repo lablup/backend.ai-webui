@@ -297,7 +297,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (!window.backendaiclient ||
       !window.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)';
+      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 260px)';
     }
     this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
