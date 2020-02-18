@@ -222,10 +222,10 @@ export default class LablupNotification extends LitElement {
   }
 
   gc() {
-    // if (this.notifications.length > 0) {
-    //   let opened_notifications = this.notifications.filter(noti => noti.open === true);
-    //   this.notifications = opened_notifications;
-    // }
+    if (this.notifications.length > 0) {
+      let opened_notifications = this.notifications.filter(noti => noti.open === true);
+      this.notifications = opened_notifications;
+    }
     // if (this.notificationstore.length > 5000) {
     //   this.notificationstore = this.notificationstore.slice(1, 5000);
     // }
