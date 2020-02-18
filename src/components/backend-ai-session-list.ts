@@ -833,7 +833,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               this.shadowRoot.querySelector('#indicator').end();
               console.log("Terminal proxy loaded: ");
               console.log(sessionName);
-            }, 1000);
+            }, 3000);
           }
         });
     }
