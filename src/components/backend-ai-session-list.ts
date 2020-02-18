@@ -799,7 +799,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
               console.log(sessionName);
-            }, 1000);
+            }, 3000);
           }
         });
     }
