@@ -160,7 +160,6 @@ app.once('ready', function() {
             label: 'Actual Size',
             accelerator: 'Command+0',
             role: 'resetzoom'
-            }
           },
           {
             label: 'Toggle Full Screen',
