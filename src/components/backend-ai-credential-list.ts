@@ -234,7 +234,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -250,7 +250,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     }
   }
@@ -269,7 +269,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     }
   }
@@ -304,7 +304,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -336,7 +336,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -459,7 +459,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           </template>
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.user_id]]</div>
+              <div>[[item.user_id]]</div>
             </div>
           </template>
         </vaadin-grid-column>
@@ -467,7 +467,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         <vaadin-grid-column resizable>
           <template class="header">Access Key</template>
           <template>
-            <div class="indicator">[[item.access_key]]</div>
+            <div class="monospace">[[item.access_key]]</div>
           </template>
         </vaadin-grid-column>
 

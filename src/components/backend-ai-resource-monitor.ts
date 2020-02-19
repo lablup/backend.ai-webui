@@ -658,10 +658,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -812,14 +812,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       document.dispatchEvent(event);
     }).catch((err) => {
       this.metadata_updating = false;
-      console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
@@ -1263,7 +1262,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -1617,7 +1616,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }

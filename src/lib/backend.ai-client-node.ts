@@ -233,6 +233,7 @@ class Client {
     let errorTitle = '';
     let errorMsg;
     let resp, body;
+
     try {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
@@ -301,13 +302,47 @@ class Client {
           errorMsg = 'server responded failure: '
             + `${resp.status} ${resp.statusText} - ${body.title}`;
       }
-
       throw {
+        isError: true,
+        timestamp: new Date().toUTCString(),
         type: errorType,
+        requestUrl: rqst.uri,
+        requestMethod: rqst.method,
+        requestParameters: rqst.body,
+        statusCode: resp.status,
+        statusText: resp.statusText,
         title: errorTitle,
         message: errorMsg,
       };
     }
+
+    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+    if (previous_log) {
+      if (previous_log.length > 5000) {
+        previous_log = previous_log.slice(1, 5000);
+      }
+    }
+    let log_stack = Array();
+    let current_log = {
+      "isError" : false,
+      "timestamp" : new Date().toUTCString(),
+      "type" : "",
+      "requestUrl" : rqst.uri,
+      "requestMethod" : rqst.method,
+      "requestParameters" : rqst.body,
+      "statusCode" : resp.status,
+      "statusText" : resp.statusText,
+      "title" : body.title,
+      "message" : ""
+    };
+
+    log_stack.push(current_log);
+
+    if(previous_log) {
+      log_stack = log_stack.concat(previous_log);
+    }
+    localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
+
     return body;
   }
 

@@ -67,6 +67,7 @@ export default class BackendAILogin extends LitElement {
   @property({type: Object}) clientConfig;
   @property({type: Object}) client;
   @property({type: Object}) notification;
+  @property({type: Object}) user_groups;
   @property({type: Boolean}) signup_support = false;
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
@@ -207,11 +208,11 @@ export default class BackendAILogin extends LitElement {
           } else {
             this.notification.text = PainKiller.relieve('Plugin loading failed.');
           }
-          this.notification.show(true);
+          this.notification.show(this, err);
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          this.notification.show(true);
+          this.notification.show(this, err);
         }
       });
     }
@@ -537,7 +538,7 @@ export default class BackendAILogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(this, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -566,6 +567,7 @@ export default class BackendAILogin extends LitElement {
       if (this.email !== email) {
         this.email = email;
       }
+      this.user_groups = response['user'].groups;
       let role = response['user'].role;
       this.domain_name = response['user'].domain_name;
       window.backendaiclient.email = this.email;
@@ -581,8 +583,13 @@ export default class BackendAILogin extends LitElement {
       return window.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
     }).then(response => {
       let groups = response.groups;
+      let user_group_ids = this.user_groups.map(({id}) => id);
       if (groups !== null) {
-        window.backendaiclient.groups = groups.map((item) => {
+        window.backendaiclient.groups = groups.filter((item) => {
+          if (user_group_ids.includes(item.id)) {
+            return item;
+          }
+        }).map((item) => {
           return item.name;
         });
         let groupMap = Object();
@@ -622,7 +629,7 @@ export default class BackendAILogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(this, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -671,11 +678,11 @@ export default class BackendAILogin extends LitElement {
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(this, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show(true);
+        this.notification.show(this, err);
       }
       this.open();
     });

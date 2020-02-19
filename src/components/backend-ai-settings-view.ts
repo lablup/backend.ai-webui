@@ -310,7 +310,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }).catch(err => {
         this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
         this.notification.detail = err;
-        this.notification.show(true);
+        this.notification.show(true, err);
       });
     }
   }
