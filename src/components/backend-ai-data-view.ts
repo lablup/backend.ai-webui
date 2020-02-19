@@ -413,7 +413,7 @@ export default class BackendAIData extends BackendAIPage {
             <template class="header">id</template>
             <template>
               <div class="layout vertical">
-                <span class="indicator">[[item.id]]</span>
+                <span class="indicator monospace">[[item.id]]</span>
               </div>
             </template>
           </vaadin-grid-column>
@@ -1087,7 +1087,7 @@ export default class BackendAIData extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
     this.closeDialog('add-folder-dialog');
@@ -1111,7 +1111,7 @@ export default class BackendAIData extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -1144,7 +1144,7 @@ export default class BackendAIData extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }

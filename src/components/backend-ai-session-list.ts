@@ -26,6 +26,8 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/checkbox';
 import 'weightless/title';
+import 'weightless/button';
+import 'weightless/icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator';
@@ -82,6 +84,9 @@ export default class BackendAiSessionList extends BackendAIPage {
   });
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
+  @property({type: Number}) current_page = 1;
+  @property({type: Number}) session_page_limit = 50;
+  @property({type: Number}) total_session_count = 0;
 
   constructor() {
     super();
@@ -97,7 +102,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 240px);
+          height: calc(100vh - 290px);
         }
 
         paper-item {
@@ -121,6 +126,26 @@ export default class BackendAiSessionList extends BackendAIPage {
         wl-icon {
           --icon-size: 16px;
           padding: 0;
+        }
+
+        wl-icon.pagination {
+          color: var(--paper-grey-700);
+        }
+
+        wl-button.pagination {
+          width: 15px;
+          height: 15px;
+          padding: 10 10px;
+          box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-red-600);
+        }
+
+        wl-label {
+          background-color : color: var(--paper-grey-500);
+          font-family: Roboto;
         }
 
         paper-icon-button.controls-running {
@@ -272,7 +297,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (!window.backendaiclient ||
       !window.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)';
+      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 260px)';
     }
     this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
@@ -367,11 +392,17 @@ export default class BackendAiSessionList extends BackendAIPage {
       fields.push("agent");
     }
     let group_id = window.backendaiclient.current_group_id();
-    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, 50, 0, group_id).then((response) => {
+
+    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
       this.loadingIndicator.hide();
+      this.total_session_count = response.compute_session_list.total_count;
+      if (this.total_session_count === 0) {
+        this.total_session_count = 1;
+      }
       let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
         let previous_sessions = this.compute_sessions;
+
         let previous_session_keys: any = [];
         Object.keys(previous_sessions).map((objectKey, index) => {
           previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
@@ -458,7 +489,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -580,6 +611,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     };
     return this.sendRequest(rqst)
       .then((response) => {
+        this.total_session_count -= 1;
         let accessKey = window.backendaiclient._config.accessKey;
         if (response !== undefined && response.code !== 404) {
           let rqst = {
@@ -594,7 +626,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
-          this.notification.show(true);
+          this.notification.show(true, err);
         }
       });
   }
@@ -626,10 +658,10 @@ export default class BackendAiSessionList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -767,7 +799,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
               console.log(sessionName);
-            }, 1000);
+            }, 3000);
           }
         });
     }
@@ -801,7 +833,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               this.shadowRoot.querySelector('#indicator').end();
               console.log("Terminal proxy loaded: ");
               console.log(sessionName);
-            }, 1000);
+            }, 3000);
           }
         });
     }
@@ -864,7 +896,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show(true);
+      this.notification.show(true, err);
       let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     });
@@ -901,7 +933,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show(true);
+      this.notification.show(true, err);
     });
   }
 
@@ -922,7 +954,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._selected_items = [];
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-      this.notification.show(true);
+      this.notification.show(true, err);
     });
   }
 
@@ -939,14 +971,14 @@ export default class BackendAiSessionList extends BackendAIPage {
       }).catch((err) => {
         this.refreshList(true, false);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-        this.notification.show(true);
+        this.notification.show(true, err);
       });
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -1146,7 +1178,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       </div>
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
-         .items="${this.compute_sessions}">
+         .items="${this.compute_sessions}" height-by-rows>
         ${this._isRunning ? html`
           <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
           </vaadin-grid-column>
@@ -1241,6 +1273,19 @@ export default class BackendAiSessionList extends BackendAIPage {
           </vaadin-grid-column>
             ` : html``}
       </vaadin-grid>
+      <div class="horizontal center-justified layout flex" style="padding: 10px;">
+      <wl-button class="pagination" id="previous-page"
+                   ?disabled="${ this.current_page === 1 }"
+                   @click="${(e) => {this._updateSessionPage(e)}}">
+          <wl-icon class="pagination">navigate_before</wl-icon>
+        </wl-button>
+        <wl-label style="padding: 5px 15px 0px 15px;">${this.current_page} / ${ Math.ceil( this.total_session_count / this.session_page_limit)}</wl-label>
+        <wl-button class="pagination" id="next-page"
+                   ?disabled="${ this.total_session_count <= this.session_page_limit * this.current_page}"
+                   @click="${(e) => {this._updateSessionPage(e)}}">
+          <wl-icon class="pagination">navigate_next</wl-icon>
+        </wl-button>
+      </div>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-dialog id="work-dialog" fixed blockscrolling scrollable
                     style="padding:0;">
@@ -1255,7 +1300,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           <paper-dialog-scrollable id="work-area" style="overflow:scroll;"></paper-dialog-scrollable>
           <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                   style="border-style: none;width: 100%;"></iframe>
-
         </wl-card>
       </wl-dialog>
       <wl-dialog id="app-dialog" fixed backdrop blockscrolling
@@ -1340,6 +1384,20 @@ export default class BackendAiSessionList extends BackendAIPage {
       </wl-dialog>
 
 `;
+  }
+  _updateSessionPage(e) {
+    let page_action = e.target;
+    if (page_action['role'] !== 'button') {
+      page_action = e.target.closest('wl-button');
+    }
+
+    if (page_action.id === 'previous-page') {
+      this.current_page -= 1;
+    } else {
+      this.current_page += 1;
+    }
+
+    this.refreshList();
   }
 }
 

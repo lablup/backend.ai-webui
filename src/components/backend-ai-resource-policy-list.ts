@@ -528,7 +528,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -620,7 +620,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               this.shadowRoot.querySelector('#modify-policy-dialog').hide();
               this.notification.text = PainKiller.relieve(err.title);
               this.notification.detail = err.message;
-              this.notification.show(true);
+              this.notification.show(true, err);
             }
       });
     } catch (err) {
@@ -641,7 +641,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
