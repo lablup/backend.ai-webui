@@ -223,30 +223,24 @@ export default class BackendAICredentialView extends BackendAIPage {
 
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        if (window.backendaiclient.is_admin !== true) {
-          this.disablePage();
-        }
-        if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
-          this.use_user_list = true;
-          this._activeTab = 'user-lists';
-        }
+        this._preparePage();
       });
     } else {
-      if (window.backendaiclient.is_admin !== true) {
-        this.disablePage();
-      }
-      if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
-        this.use_user_list = true;
-        this._activeTab = 'user-lists';
-      } else {
-        this.use_user_list = false;
-      }
+      this._preparePage();
     }
-    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
-    && typeof window.backendaiclient.is_admin !== "undefined" && window.backendaiclient.is_admin === true) {
-      this.isAdmin = true;
+  }
+
+  _preparePage() {
+    if (window.backendaiclient.is_admin !== true) {
+      this.disablePage();
     } else {
-      this.isAdmin = false;
+      this.isAdmin = true;
+    }
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
+      this.use_user_list = true;
+      this._activeTab = 'user-lists';
+    } else {
+      this.use_user_list = false;
     }
     this._getResourceInfo();
     this._getResourcePolicies();
@@ -258,7 +252,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._updateInputStatus(this.idle_timeout);
     this._updateInputStatus(this.container_per_session_limit);
     this._updateInputStatus(this.vfolder_capacity);
-    this.vfolder_max_limit['value']= 10;
+    this.vfolder_max_limit['value'] = 10;
     this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
     this._defaultFileName = this._getDefaultCSVFileName();
   }
@@ -593,7 +587,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     } else {
       checkbox = null;
     }
-    
+
     if (textfield.value < 0) {
       textfield.value = 0;
     }
@@ -682,7 +676,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
         break;
     }
-    this.notification.text = "Downloading CSV file..."
+    this.notification.text = "Downloading CSV file...";
     this.notification.show();
     this.exportToCsvDialog.hide();
   }
@@ -1010,7 +1004,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
                           value="${this._activeTab+'_'+this._defaultFileName}" required
-          ></mwc-textfield> 
+          ></mwc-textfield>
           <div class="horizontal center layout">
             <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
             @click="${this._exportToCSV}">
