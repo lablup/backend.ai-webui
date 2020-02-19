@@ -148,6 +148,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
+    this.indicator.show();
   }
 
   async _viewStateChanged(active) {
@@ -231,6 +232,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
+      this.indicator.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;

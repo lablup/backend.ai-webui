@@ -715,7 +715,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   Statistics
                 </paper-item>
               </a>
-              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem" style="display:none;">
+              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg teal" icon="icons:settings"></iron-icon>
                   Settings
