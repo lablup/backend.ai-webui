@@ -169,7 +169,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   render() {
     //languate=HTML
     return html`
-      <wl-card elevation="1">
+      <wl-card style="padding-bottom:1em">User settings will be introduced</wl-card>
+      <wl-card elevation="1" style="display:none">
         <h3 class="horizontal center layout">
           <span>Preferences</span>
           <span class="flex"></span>
