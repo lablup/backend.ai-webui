@@ -202,7 +202,7 @@ export default class BackendAILogin extends LitElement {
         console.log("Plugin loaded.");
       }).catch((err) => {   // Connection failed
         if (this.loginPanel.open !== true) {
-          if (err.message !== undefined) {
+          if (typeof err.message !== "undefined") {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
           } else {
