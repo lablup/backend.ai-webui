@@ -155,8 +155,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       <wl-card class="item">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="general" checked @click="${(e) => this._showTab(e.target)}">General</wl-tab>
-            <wl-tab value="logs" checked @click="${(e) => this._showTab(e.target)}">Logs</wl-tab>
+            <wl-tab value="general" checked @click="${(e) => this._showTab(e.target)}" >General</wl-tab>
+            <wl-tab value="logs" @click="${(e) => this._showTab(e.target)}">Logs</wl-tab>
           </wl-tab-group>
         </h3>
         <wl-card id="general" class="item tab-content">

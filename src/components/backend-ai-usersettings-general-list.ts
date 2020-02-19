@@ -1,7 +1,7 @@
 /**
  @license
-Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
-*/
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ */
 
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
@@ -73,10 +73,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-teal-100);
           --button-bg-active: var(--paper-teal-100);
-          --button-bg-disabled: #ccc;
+          --button-bg-disabled: #cccccc;
           --button-color: var(--paper-teal-100);
           --button-color-hover: var(--paper-teal-100);
-          --button-color-disabled: #ccc;
+          --button-color-disabled: #cccccc;
         }
 
         #bootstrap-dialog wl-button {
@@ -115,7 +115,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _fetchBootstrapScript() {
     // Fetch user's bootstrap code.
     return window.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
-      const script =  resp || '';
+      const script = resp || '';
       this.lastSavedBootstrapScript = script;
       return script;
     }).catch(err => {
@@ -169,8 +169,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   render() {
     //languate=HTML
     return html`
-      <wl-card class="item">
-        <h3 class="horizontal flex center layout">
+      <wl-card elevation="1">
+        <h3 class="horizontal center layout">
           <span>Preferences</span>
           <span class="flex"></span>
         </h3>
