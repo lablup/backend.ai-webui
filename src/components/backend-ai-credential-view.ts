@@ -1000,7 +1000,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
       <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
         <h3 class="horizontal center layout" style="padding:10px;">
-          <span style="margin-left:10px;">Export ${this._activeTab} list to CSV File</span>
+          <span style="margin-left:10px; font-size:18px;">Export ${this._activeTab} to csv file</span>
           <div class="flex"></div>
           <wl-button flat fab @click="${(e) => this._hideDialog(e)}">
             <wl-icon class="close">close</wl-icon>

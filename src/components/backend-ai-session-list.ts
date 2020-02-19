@@ -20,6 +20,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
+import '@material/mwc-textfield/mwc-textfield';
 
 import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/card';
@@ -135,6 +136,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           color: var(--paper-grey-700);
         }
 
+        wl-icon.warning {
+          color: red;
+        }
+
         wl-button.pagination {
           width: 15px;
           height: 15px;
@@ -144,11 +149,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
           --button-bg-active-flat: var(--paper-red-600);
-        }
-
-        wl-label {
-          background-color : color: var(--paper-grey-500);
-          font-family: Roboto;
         }
 
         paper-icon-button.controls-running {
@@ -266,6 +266,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         wl-label {
           width: 100%;
+          background-color : color: var(--paper-grey-500);
           min-width: 60px;
           font-size: 12px;
           --label-font-family: Roboto, Noto, sans-serif;
@@ -1410,12 +1411,13 @@ export default class BackendAiSessionList extends BackendAIPage {
             ` : html``}
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
-      <wl-button class="pagination" id="previous-page"
+        <wl-button class="pagination" id="previous-page"
                    ?disabled="${ this.current_page === 1 }"
                    @click="${(e) => {this._updateSessionPage(e)}}">
           <wl-icon class="pagination">navigate_before</wl-icon>
         </wl-button>
-        <wl-label style="padding: 5px 15px 0px 15px;">${this.current_page} / ${ Math.ceil( this.total_session_count / this.session_page_limit)}</wl-label>
+        <wl-label style="padding-top: 5px; width:auto; text-align:center;">
+        ${this.current_page} / ${ Math.ceil( this.total_session_count / this.session_page_limit)}</wl-label>
         <wl-button class="pagination" id="next-page"
                    ?disabled="${ this.total_session_count <= this.session_page_limit * this.current_page}"
                    @click="${(e) => {this._updateSessionPage(e)}}">
@@ -1549,7 +1551,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
           </div>
           <div class="horizontal center layout" style="margin-bottom:10px;">
-            <wl-icon id="warning">warning</wl-icon>
+            <wl-icon class="warning">warning</wl-icon>
             <wl-label class="warning" for="warning">Only recent 100 session logs will be exported.</wl-label>
           </div>
           <div class="horizontal center layout">
