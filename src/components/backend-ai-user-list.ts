@@ -166,6 +166,7 @@ export default class BackendAIUserList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
+    this.indicator.show();
   }
 
   async _viewStateChanged(active) {
