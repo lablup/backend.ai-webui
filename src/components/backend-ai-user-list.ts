@@ -23,7 +23,6 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
