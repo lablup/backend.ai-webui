@@ -425,7 +425,7 @@ export default class BackendAILogin extends LitElement {
       this.free();
       if (this.signoutPanel.open !== true) {
         console.log(err);
-        if (err.message !== undefined) {
+        if (typeof err.message !== 'undefined') {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
