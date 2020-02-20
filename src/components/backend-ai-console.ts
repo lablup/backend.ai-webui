@@ -242,14 +242,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
 
         .dropdown a:hover {
-          background-color: #ddd;
+          background-color: #dddddd;
         }
 
         .dropdown-show {
           display: block;
         }
+
         .mini-ui .full-menu {
-          display:none;
+          display: none;
         }
 
       `];
@@ -297,10 +298,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
     window.addEventListener("click", (event) => {
       let path = event['path'];
-      let elements_name = Object.keys(path).map( function(key, index) {
+      let elements_name = Object.keys(path).map(function (key, index) {
         return path[key]['id'];
       });
-      if (!elements_name.includes("dropdown-button")){
+      if (!elements_name.includes("dropdown-button")) {
         this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
       }
     });
@@ -686,7 +687,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui": ""}">
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
             <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
