@@ -237,7 +237,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>Desktop Notification</div>
-              <div class="description">Turn on or off desktop notification. Backend.AI uses OS built-in notification system.
+              <div class="description">Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within console.
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -247,7 +247,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>Use Compact Sidebar by default</div>
-              <div class="description">Compact sidebar lets you use more workspace.
+              <div class="description">Compact sidebar lets you use more workspace. <br />When this option is turned on, compact sidebar becomes the initial UI at startup.
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
