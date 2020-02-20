@@ -255,8 +255,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
-
-
     window.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
         this.options['automatic_image_update'] = true;
