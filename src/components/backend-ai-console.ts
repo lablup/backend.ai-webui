@@ -106,6 +106,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) drawerToggleButton;
   @property({type: Object}) sidebarMenu;
   @property({type: Object}) TOSdialog = Object();
+  @property({type: Boolean}) mini_ui = false;
 
   constructor() {
     super();
@@ -132,7 +133,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
 
         #app-body {
-          --mdc-drawer-width: 190px;
           --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
           --mdc-drawer-border-left: 0;
           --mdc-drawer-border-right: 0;
@@ -185,7 +185,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
 
         .mdc-drawer {
-          width: 190px !important;
         }
 
         wl-select {
@@ -194,7 +193,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           --input-color-disabled: rgb(221, 221, 221);
           --input-label-color: rgb(221, 221, 221);
           --input-label-font-size: 10px;
-          --input-padding-left-right: 20px;
+          --input-padding-left-right: 0;
+          width: 135px;
           --input-border-style: 0;
           --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
         }
@@ -247,6 +247,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
         .dropdown-show {
           display: block;
+        }
+        .mini-ui .full-menu {
+          display:none;
         }
 
       `];
@@ -397,9 +400,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
     } else { // Open drawer
+      if (this.mini_ui) {
+        this.appBody.style.setProperty('--mdc-drawer-width', '50px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '50px');
+      } else {
+        this.appBody.style.setProperty('--mdc-drawer-width', '190px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+      }
       this.appBody.type = 'dismissible';
       this.appBody.open = true;
-      this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
       this.drawerToggleButton.style.display = 'none';
     }
   }
@@ -665,7 +674,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   render() {
     // language=HTML
     return html`
-      <mwc-drawer id="app-body">
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui": ""}">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
             <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
@@ -673,7 +682,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
                     sizing="contain"></iron-image>
                 </div>
-                <div class="vertical start-justified layout" style="margin-left:10px;margin-right:10px;">
+                <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                   <div class="site-name"><span class="bold">Backend</span>.AI</div>
                   ${this.siteDescription ?
       html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
@@ -683,60 +692,61 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <span class="flex"></span>
               </div>
             </div>
-            <div id="group-select-box" style="height:50px;">
+            <div class="horizontal start-justified layout">
+              <mwc-icon-button id="drawer-toggle-button2" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
+              <div id="group-select-box" class="full-menu" style="height:50px;"></div>
             </div>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
               <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon id="activities-icon" class="fg green" icon="icons:view-quilt"></iron-icon>
-                  Summary
+                  <span class="full-menu">Summary</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'job'}" href="/job" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg red" icon="icons:subject"></iron-icon>
-                  Sessions
+                  <span class="full-menu">Sessions</span>
                 </paper-item>
               </a>
               ${false ? html`
               <paper-item disabled>
                 <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
-                Experiments
+                <span class="full-menu">Experiments</span>
               </paper-item>` : html``}
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
-                  Data &amp; Storage
+                  <span class="full-menu">Data &amp; Storage</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
                 <paper-item link>
                   <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
-                  Statistics
+                  <span class="full-menu">Statistics</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg teal" icon="icons:settings"></iron-icon>
-                  Settings
-                  <span class="flex"></span>
+                  <span class="full-menu">Settings</span>
                 </paper-item>
               </a>
 
               ${this.is_admin ?
       html`
-              <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
+              <h4 class="full-menu" style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
 
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg lime" icon="icons:face"></iron-icon>
-                  Users
+                  <span class="full-menu">Users</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
-                  Environments
+                  <span class="full-menu">Environments</span>
                 </paper-item>
               </a>
       ` : html``}
@@ -745,26 +755,26 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                  Resources
+                  <span class="full-menu">Resources</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg green" icon="icons:settings"></iron-icon>
-                  System Settings
+                  <span class="full-menu">System Settings</span>
                   <span class="flex"></span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'maintenance'}" href="/maintenance" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg pink" icon="icons:build"></iron-icon>
-                  Maintenance
+                  <span class="full-menu">Maintenance</span>
                   <span class="flex"></span>
                 </paper-item>
               </a>
       ` : html``}
             </paper-listbox>
-            <footer>
+            <footer class="full-menu">
               <div class="terms-of-use" style="margin-bottom:50px;">
                 <small style="font-size:11px;">
                   <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
@@ -783,7 +793,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </small>
               </div>
             </footer>
-            <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
+            <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
                 <small class="sidebar-footer" style="font-size:9px;">20.02.4.200219</small>
