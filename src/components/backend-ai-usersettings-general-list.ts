@@ -118,27 +118,43 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   firstUpdated() {
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
-    this.readSettings();
+    this.readUserSettings();
   }
 
-  readSettings() {
-    let desktop_notification: string | null = localStorage.getItem('backendaiconsole.usersetting.desktop_notification');
-    if (desktop_notification !== null && desktop_notification != '' && desktop_notification != '""') {
-      if (desktop_notification === "false") {
-        this.options.desktop_notification = false;
+  readUserSettings() {
+    this._readUserSetting('desktop_notification', true);
+  }
+
+  _readUserSetting(name, default_value = true) {
+    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
+    if (value !== null && value != '' && value != '""') {
+      if (value === "false") {
+        this.options[name] = false;
+      } else if (value === "true") {
+        this.options[name] = true;
       } else {
-        this.options.desktop_notification = true;
+        this.options[name] = value;
       }
     } else {
-      this.options.desktop_notification = true;
+      this.options[name] = default_value;
+    }
+  }
+
+  _writeUserSetting(name, value) {
+    if (value === false) {
+      localStorage.setItem('backendaiconsole.usersetting.' + name, "false");
+    } else if (value === true) {
+      localStorage.setItem('backendaiconsole.usersetting.' + name, "true");
+    } else {
+      localStorage.setItem('backendaiconsole.usersetting.' + name, value);
     }
   }
 
   toggleDesktopNotification(e) {
     if (e.target.checked === false) {
-      localStorage.setItem('backendaiconsole.usersetting.desktop_notification', "false");
+      this._writeUserSetting('desktop_notification', false);
     } else {
-      localStorage.setItem('backendaiconsole.usersetting.desktop_notification', "true");
+      this._writeUserSetting('desktop_notification', true);
     }
   }
 
