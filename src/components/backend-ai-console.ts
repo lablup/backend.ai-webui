@@ -393,6 +393,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       });
   }
 
+  toggleSidebarUI() {
+    if (!this.mini_ui) {
+      this.mini_ui = true;
+      this.appBody.style.setProperty('--mdc-drawer-width', '71px');
+      this.mainToolbar.style.setProperty('--mdc-drawer-width', '71px');
+    } else {
+      this.mini_ui = false;
+      this.appBody.style.setProperty('--mdc-drawer-width', '190px');
+      this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+    }
+  }
+
   _changeDrawerLayout(width, height) {
     if (width < 700) {  // Close drawer
       this.appBody.type = 'modal';
@@ -401,8 +413,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.drawerToggleButton.style.display = 'block';
     } else { // Open drawer
       if (this.mini_ui) {
-        this.appBody.style.setProperty('--mdc-drawer-width', '50px');
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '50px');
+        this.appBody.style.setProperty('--mdc-drawer-width', '71px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '71px');
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', '190px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
@@ -693,7 +705,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               </div>
             </div>
             <div class="horizontal start-justified layout">
-              <mwc-icon-button id="drawer-toggle-button2" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
+              <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
               <div id="group-select-box" class="full-menu" style="height:50px;"></div>
             </div>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
