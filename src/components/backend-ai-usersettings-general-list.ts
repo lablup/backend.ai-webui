@@ -93,6 +93,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           padding-left: 0;
         }
 
+        wl-card {
+          margin: 0;
+        }
+
         wl-card wl-card {
           margin: 0;
           padding: 0;
@@ -169,8 +173,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   render() {
     //languate=HTML
     return html`
-      <wl-card style="padding-bottom:1em">User settings will be introduced.</wl-card>
-      <wl-card elevation="1" style="display:none">
+      <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>Preferences</span>
           <span class="flex"></span>
