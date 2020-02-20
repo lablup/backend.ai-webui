@@ -397,21 +397,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   toggleSidebarUI() {
     if (!this.mini_ui) {
       this.mini_ui = true;
-      this.appBody.style.setProperty('--mdc-drawer-width', '71px');
-      this.mainToolbar.style.setProperty('--mdc-drawer-width', '71px');
     } else {
       this.mini_ui = false;
-      this.appBody.style.setProperty('--mdc-drawer-width', '190px');
-      this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
     }
+    this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 
   _changeDrawerLayout(width, height) {
     if (width < 700) {  // Close drawer
+      this.appBody.style.setProperty('--mdc-drawer-width', '190px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
+      if (this.mini_ui) {
+        this.mini_ui = false;
+      }
     } else { // Open drawer
       if (this.mini_ui) {
         this.appBody.style.setProperty('--mdc-drawer-width', '71px');
