@@ -118,14 +118,27 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   firstUpdated() {
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
+    this.readSettings();
   }
 
-  updateSettings() {
-  }
-
-  toggleDesktopNotification() {
-    if (e.target.checked === false) {
+  readSettings() {
+    let desktop_notification: string | null = localStorage.getItem('backendaiconsole.usersetting.desktop_notification');
+    if (desktop_notification !== null && desktop_notification != '' && desktop_notification != '""') {
+      if (desktop_notification === "false") {
+        this.options.desktop_notification = false;
+      } else {
+        this.options.desktop_notification = true;
+      }
     } else {
+      this.options.desktop_notification = true;
+    }
+  }
+
+  toggleDesktopNotification(e) {
+    if (e.target.checked === false) {
+      localStorage.setItem('backendaiconsole.usersetting.desktop_notification', "false");
+    } else {
+      localStorage.setItem('backendaiconsole.usersetting.desktop_notification', "true");
     }
   }
 
@@ -156,7 +169,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.indicator.show();
     window.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
-        this.notification.text = 'Saved bootstrap script';
+        this.notification.text = 'Bootstrap script updated.';
         this.notification.show();
         this.indicator.hide();
       });
