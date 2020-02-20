@@ -75,7 +75,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 300px);
+          height: calc(100vh - 400px);
         }
 
         paper-item {

@@ -75,7 +75,7 @@ export default class BackendAIUserList extends BackendAIPage {
           vaadin-grid {
               border: 0;
               font-size: 14px;
-              height: calc(100vh - 260px);
+              height: calc(100vh - 350px);
           }
 
           paper-item {
@@ -461,9 +461,10 @@ export default class BackendAIUserList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="User list"
-                   id="user-grid" .items="${this.userView}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+      <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
+                   aria-label="User list" id="user-grid" .items="${this.userView}">
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" 
+                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
             <div class="layout horizontal center flex">
@@ -487,7 +488,8 @@ export default class BackendAIUserList extends BackendAIPage {
                    @click="${(e) => {this._updateItemsFromPage(e)}}">
           <wl-icon class="pagination">navigate_before</wl-icon>
         </wl-button>
-        <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${ Math.ceil( this._totalUserCount / this._pageSize)} </wl-label>
+        <wl-label style="padding: 5px 15px 0px 15px;">
+        ${this._currentPage} / ${ Math.ceil( this._totalUserCount / this._pageSize)}</wl-label>
         <wl-button class="pagination" id="next-page"
                    ?disabled="${ this._totalUserCount <= this._pageSize * this._currentPage}"
                    @click="${(e) => {this._updateItemsFromPage(e)}}">
@@ -521,107 +523,87 @@ export default class BackendAIUserList extends BackendAIPage {
                 <wl-textfield
                   label="User ID"
                   disabled
-                  value="${this.userInfo.email}"
-                ></wl-textfield>
+                  value="${this.userInfo.email}">
+                </wl-textfield>
                 <wl-textfield
                   label="User name"
                   id="username"
                   ?disabled=${!this.editMode}
-                  value="${this.userInfo.username}"
-                ></wl-textfield>
+                  value="${this.userInfo.username}">
+                </wl-textfield>
                 <wl-textfield
                   label="Full name"
                   id="full_name"
                   ?disabled=${!this.editMode}
-                  value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
-                ></wl-textfield>
-                ${
-      this.editMode
-        ? html`
-                      <wl-textfield type="password" label="New Password" id="password"></wl-textfield>
-                      <wl-textfield type="password" label="Confirm" id="confirm"></wl-textfield>
-                    `
-        : html``
-    }
-                <wl-textarea
-                  label="Description"
-                  id="description"
-                  value="${this.userInfo.description ? this.userInfo.description : ' '}"
-                  ?disabled=${!this.editMode}
-                >
+                  value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}">
+                </wl-textfield>
+                ${this.editMode ? html`
+                            <wl-textfield type="password" label="New Password" id="password"></wl-textfield>
+                            <wl-textfield type="password" label="Confirm" id="confirm"></wl-textfield>`
+                            : html``}
+                <wl-textarea label="Description" id="description"
+                             value="${this.userInfo.description ? this.userInfo.description : ' '}"
+                             ?disabled=${!this.editMode}>
                 </wl-textarea>
-
-                ${this.editMode
-      ? html`
-                      <wl-label label for="is_active_label" style="margin-bottom: auto">
-                        Active user?
-                      </wl-label>
-                      <wl-label label id="is_active_label">
-                        <wl-switch
-                          id="is_active"
-                          ?checked=${this.userInfo.is_active}
-                        ></wl-switch>
-                      </wl-label>
-                      <wl-label label for="need_password_change_label" style="margin-bottom: auto">
-                        Require password change?
-                      </wl-label>
-                      <wl-label label id="need_password_change_label">
-                        <wl-switch id="need_password_change" ?checked=${this.userInfo.need_password_change}></wl-switch>
-                      </wl-label>
-                      <wl-button
-                        class="fg green"
-                        type="button"
-                        outlined
-                        @click=${e => this._saveChanges(e)}
-                        style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;"
-                      >
-                        <wl-icon>check</wl-icon>
-                        Save Changes
-                      </wl-button>
-                    `
-      : html`
-                      <wl-textfield
-                        label="Active user?"
-                        disabled
-                        value="${this.userInfo.is_active ? `Yes` : `No`}"
-                      ></wl-textfield>
-                      <wl-textfield
-                        label="Require password change?"
-                        disabled
-                        value="${this.userInfo.need_password_change ? `Yes` : `No`}"
-                      ></wl-textfield>
-                    `
-    }
+                ${this.editMode ? html`
+                  <wl-label label for="is_active_label" style="margin-bottom: auto">
+                    Active user?
+                  </wl-label>
+                  <wl-label label id="is_active_label">
+                    <wl-switch
+                      id="is_active"
+                      ?checked=${this.userInfo.is_active}>
+                    </wl-switch>
+                  </wl-label>
+                  <wl-label label for="need_password_change_label" style="margin-bottom: auto">
+                    Require password change?
+                  </wl-label>
+                  <wl-label label id="need_password_change_label">
+                    <wl-switch id="need_password_change" ?checked=${this.userInfo.need_password_change}></wl-switch>
+                  </wl-label>
+                  <wl-button
+                    class="fg green"
+                    type="button"
+                    outlined
+                    @click=${e => this._saveChanges(e)}
+                    style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;">
+                    <wl-icon>check</wl-icon>
+                    Save Changes
+                  </wl-button>` : html`
+                      <wl-textfield label="Active user?" disabled
+                                    value="${this.userInfo.is_active ? `Yes` : `No`}">
+                      </wl-textfield>
+                      <wl-textfield label="Require password change?" disabled
+                                    value="${this.userInfo.need_password_change ? `Yes` : `No`}">
+                      </wl-textfield>
+              `}
+            </div>
+          </div>
+          ${this.editMode ? html``: html`
+            <div style="width:270px;">
+              <h4>Association</h4>
+              <div role="listbox" style="margin: 0;">
+                <vaadin-item>
+                  <div><strong>Domain</strong></div>
+                  <div secondary>${this.userInfo.domain_name}</div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Role</strong></div>
+                  <div secondary>${this.userInfo.role}</div>
+                </vaadin-item>
+                <vaadin-item>
+                  <div><strong>Groups</strong></div>
+                  <div secondary>
+                    <ul>
+                    ${this.userInfoGroups.map(item => html`
+                      <li>${item}</li>
+                    `)}
+                    </ul>
+                  </div>
+                </vaadin-item>
               </div>
             </div>
-            ${this.editMode
-      ? html``
-      : html`
-                <div style="width:270px;">
-                  <h4>Association</h4>
-                  <div role="listbox" style="margin: 0;">
-                    <vaadin-item>
-                      <div><strong>Domain</strong></div>
-                      <div secondary>${this.userInfo.domain_name}</div>
-                    </vaadin-item>
-                    <vaadin-item>
-                      <div><strong>Role</strong></div>
-                      <div secondary>${this.userInfo.role}</div>
-                    </vaadin-item>
-                    <vaadin-item>
-                      <div><strong>Groups</strong></div>
-                      <div secondary>
-                      <ul>
-                      ${this.userInfoGroups.map(item => html`
-                        <li>${item}</li>
-                      `)}
-                      </ul>
-                      </div>
-                    </vaadin-item>
-                  </div>
-                </div>
-                `
-    }
+          `}
           </div>
         </wl-card>
       </wl-dialog>
