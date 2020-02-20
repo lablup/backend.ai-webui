@@ -775,6 +775,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.notification.text = 'Shared memory setting is reduced to below the allocated memory.';
         this.notification.show();
       }
+      if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
+        this.shmem_request = 1;
+      }
       config['shmem'] = String(this.shmem_request) + 'g';
     }
 
