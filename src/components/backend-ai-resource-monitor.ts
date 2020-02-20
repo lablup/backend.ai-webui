@@ -772,6 +772,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
       if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
         this.shmem_request = this.mem_request;
+        this.notification.text = 'Shared memory setting is reduced to below the allocated memory.';
+        this.notification.show();
       }
       config['shmem'] = String(this.shmem_request) + 'g';
     }
