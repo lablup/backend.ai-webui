@@ -28,10 +28,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   public indicator: any;
   public lastSavedBootstrapScript: string = '';
 
+  @property({type: Boolean}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
 
   constructor() {
     super();
+    this.options = {
+      desktop_notification: true
+    }
   }
 
   static get styles() {
@@ -116,6 +120,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
   }
 
+  updateSettings() {
+  }
+
+  toggleDesktopNotification() {
+    if (e.target.checked === false) {
+    } else {
+    }
+  }
+
   _fetchBootstrapScript() {
     // Fetch user's bootstrap code.
     return window.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
@@ -178,15 +191,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span>Preferences</span>
           <span class="flex"></span>
         </h3>
-        <div class="horizontal wrap layout" style="display:none;">
+        <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>TEST1</div>
-              <div class="description">This is description.
+              <div>Desktop Notification</div>
+              <div class="description">Turn on or off desktop notification.
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="register-new-image-switch" disabled></wl-switch>
+              <wl-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${this.options['desktop_notification']}"></wl-switch>
             </div>
           </div>
         </div>
