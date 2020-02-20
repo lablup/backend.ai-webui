@@ -30,6 +30,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   @property({type: Boolean}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
+  @property({type: Object}) notification;
 
   constructor() {
     super();
@@ -118,6 +119,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   firstUpdated() {
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
+    this.notification = window.lablupNotification;
     this.readUserSettings();
   }
 
@@ -153,8 +155,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   toggleDesktopNotification(e) {
     if (e.target.checked === false) {
       this._writeUserSetting('desktop_notification', false);
+      this.notification.supportDesktopNotification = false;
     } else {
       this._writeUserSetting('desktop_notification', true);
+      this.notification.supportDesktopNotification = true;
     }
   }
 
@@ -232,11 +236,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
           </div>
         </div>
-        <h3 class="horizontal center layout">
+        <h3 class="horizontal center layout" style="display:none;">
           <span>Shell Environments</span>
           <span class="flex"></span>
         </h3>
-        <div class="horizontal wrap layout">
+        <div class="horizontal wrap layout" style="display:none;">
           <div class="horizontal layout wrap setting-item">
             <wl-button class="fg teal" outlined @click="${this._editBootstrapScript}">
               <wl-icon>edit</wl-icon>
