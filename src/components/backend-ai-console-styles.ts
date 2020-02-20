@@ -149,6 +149,11 @@ export const BackendAiStyles =
       padding-right: 5px;
     }
 
+    .mini-ui .portrait-canvas {
+      margin-left: 12px;
+      padding-right: 0;
+    }
+
     #main-panel-toolbar-buttons paper-icon-button {
       min-width: 40px;
     }
@@ -602,7 +607,6 @@ export const BackendAiStyles =
       border-right: 0;
       padding-right: 11px;
       font-weight: 900;
-
     }
 
     paper-toolbar span.welcome {
@@ -909,5 +913,5 @@ export const BackendAiStyles =
 
     vaadin-grid {
       font-family: var(--general-font-family);
-      }
+    }
   `;
