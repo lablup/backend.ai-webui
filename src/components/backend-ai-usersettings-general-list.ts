@@ -125,6 +125,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   readUserSettings() {
     this._readUserSetting('desktop_notification', true);
+    this._readUserSetting('compact_sidebar', false);
   }
 
   _readUserSetting(name, default_value = true) {
@@ -159,6 +160,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     } else {
       this._writeUserSetting('desktop_notification', true);
       this.notification.supportDesktopNotification = true;
+    }
+  }
+
+  toggleCompactSidebar(e) {
+    if (e.target.checked === false) {
+      this._writeUserSetting('compact_sidebar', false);
+    } else {
+      this._writeUserSetting('compact_sidebar', true);
     }
   }
 
@@ -228,13 +237,24 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>Desktop Notification</div>
-              <div class="description">Turn on or off desktop notification.
+              <div class="description">Turn on or off desktop notification. Backend.AI uses OS built-in notification system.
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
               <wl-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${this.options['desktop_notification']}"></wl-switch>
             </div>
           </div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>Use Compact Sidebar by default</div>
+              <div class="description">Compact sidebar lets you use more workspace.
+              </div>
+            </div>
+            <div class="vertical center-justified layout setting-button">
+              <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
+            </div>
+          </div>
+
         </div>
         <h3 class="horizontal center layout" style="display:none;">
           <span>Shell Environments</span>

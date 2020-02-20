@@ -107,9 +107,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) sidebarMenu;
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
+  @property({type: Boolean}) options = Object();
 
   constructor() {
     super();
+    this.options = {
+      compact_sidebar: false
+    }
   }
 
   static get styles() {
@@ -253,6 +257,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           display: none;
         }
 
+        .mini-ui a:hover paper-item span.full-menu {
+        }
       `];
   }
 
@@ -291,6 +297,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
+    this._readUserSetting('compact_sidebar', false);
+    this.mini_ui = this.options['compact_sidebar'];
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
@@ -352,6 +360,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     }
     this.loginPanel.refreshWithConfig(config);
+  }
+
+  _readUserSetting(name, default_value = true) {
+    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
+    if (value !== null && value != '' && value != '""') {
+      if (value === "false") {
+        this.options[name] = false;
+      } else if (value === "true") {
+        this.options[name] = true;
+      } else {
+        this.options[name] = value;
+      }
+    } else {
+      this.options[name] = default_value;
+    }
   }
 
   refreshPage() {
