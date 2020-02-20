@@ -134,9 +134,7 @@ class BackendAIRegistryList extends BackendAIPage {
         : {
           ...obj[hostname],
           hostname
-        }
-    );
-
+        });
   }
 
   _refreshRegistryList() {
@@ -429,8 +427,8 @@ class BackendAIRegistryList extends BackendAIPage {
                 label="Registry Hostname"
                 required
                 @click=${this._validateHostname}
-                @change=${this._validateHostname}>
-              </wl-textfield>
+                @change=${this._validateHostname}
+              ></wl-textfield>
               <wl-label class="helper-text" id="registry-hostname-validation" style="display:none;">Hostname is empty</wl-label>
               <wl-textfield
                 id="add-registry-url"
@@ -439,8 +437,8 @@ class BackendAIRegistryList extends BackendAIPage {
                 required
                 pattern="^(http|https)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$"
                 @click=${this._validateUrl}
-                @change=${this._validateUrl}>
-              </wl-textfield>
+                @change=${this._validateUrl}
+              ></wl-textfield>
               <wl-label class="helper-text" id="registry-url-validation" style="display:none;">URL Starts with http:// or https://</wl-label>
              <div class="horizontal layout flex">
               <wl-textfield
@@ -470,8 +468,9 @@ class BackendAIRegistryList extends BackendAIPage {
                   class="helper-text"
                   type="text"
                   label="Project Name"
+                  required
                   ></wl-textfield>
-                  <wl-label class="helper-text">* Harbor Only!</wl-label>
+                  <wl-label class="helper-text">*For harbor only!</wl-label>
               </div>
              </div>
               <div class="horizontal layout center-justified">
