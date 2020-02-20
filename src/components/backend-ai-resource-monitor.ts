@@ -770,6 +770,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['mem'] = String(this.mem_request) + 'g';
     }
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
+      if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
+        this.shmem_request = this.mem_request;
+      }
       config['shmem'] = String(this.shmem_request) + 'g';
     }
 
