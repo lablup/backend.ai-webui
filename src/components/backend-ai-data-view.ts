@@ -413,7 +413,7 @@ export default class BackendAIData extends BackendAIPage {
             <template class="header">id</template>
             <template>
               <div class="layout vertical">
-                <span class="indicator">[[item.id]]</span>
+                <span class="indicator monospace">[[item.id]]</span>
               </div>
             </template>
           </vaadin-grid-column>

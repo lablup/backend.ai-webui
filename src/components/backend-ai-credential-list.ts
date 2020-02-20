@@ -168,7 +168,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
-    this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
   }
 
   async _viewStateChanged(active) {
@@ -181,10 +180,12 @@ export default class BackendAICredentialList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshKeyData();
         this.isAdmin = window.backendaiclient.is_admin;
+        this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
       }, true);
     } else { // already connected
       this._refreshKeyData();
       this.isAdmin = window.backendaiclient.is_admin;
+      this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
     }
   }
 
@@ -254,6 +255,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
+      this.indicator.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -500,7 +502,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           </template>
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.user_id]]</div>
+              <div>[[item.user_id]]</div>
             </div>
           </template>
         </vaadin-grid-column>
@@ -508,7 +510,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         <vaadin-grid-column resizable>
           <template class="header">Access Key</template>
           <template>
-            <div class="indicator">[[item.access_key]]</div>
+            <div class="monospace">[[item.access_key]]</div>
           </template>
         </vaadin-grid-column>
 

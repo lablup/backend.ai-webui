@@ -23,7 +23,6 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
@@ -187,8 +186,6 @@ export default class BackendAIUserList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
-    this.userGrid = this.shadowRoot.querySelector('#user-grid');
-    this._currentPage = 1;
     }
 
   async _viewStateChanged(active) {
@@ -201,10 +198,14 @@ export default class BackendAIUserList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserData();
         this.isAdmin = window.backendaiclient.is_admin;
+        this.userGrid = this.shadowRoot.querySelector('#user-grid');
+        this._currentPage = 1;
       }, true);
     } else { // already connected
       this._refreshUserData();
       this.isAdmin = window.backendaiclient.is_admin;
+      this.userGrid = this.shadowRoot.querySelector('#user-grid');
+      this._currentPage = 1;
     }
   }
 
@@ -282,7 +283,7 @@ export default class BackendAIUserList extends BackendAIPage {
       this.notification.text = PainKiller.relieve('Signout finished.');
     }).catch((err) => {   // Signout failed
       console.log(err);
-      if (err.message !== undefined) {
+      if (typeof err.message !== "undefined") {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
       } else {
@@ -466,14 +467,14 @@ export default class BackendAIUserList extends BackendAIPage {
         <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.email]]</div>
+              <div>[[item.email]]</div>
             </div>
           </template>
         </vaadin-grid-sort-column>
         <vaadin-grid-sort-column resizable header="Name" path="username">
           <template>
             <div class="layout horizontal center flex">
-              <div class="indicator">[[item.username]]</div>
+              <div>[[item.username]]</div>
             </div>
           </template>
         </vaadin-grid-sort-column>

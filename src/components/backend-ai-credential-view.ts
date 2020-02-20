@@ -4,12 +4,11 @@
 
 import {css, customElement, html, property} from "lit-element";
 
-import {BackendAIPage} from './backend-ai-page';
-
 import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
+import '@material/mwc-textfield/mwc-textfield';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
@@ -26,6 +25,8 @@ import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
+import JsonToCsv from '../lib/json_to_csv';
+import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {
   IronFlex,
@@ -59,15 +60,17 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
   @property({type: Object}) resource_policies = Object();
   @property({type: Array}) resource_policy_names = Array();
-  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) isAdmin = false;
   @property({type: String}) _status = 'inactive';
   @property({type: Array}) allowed_vfolder_hosts = Array();
   @property({type: String}) default_vfolder_host = '';
   @property({type: Boolean}) use_user_list = false;
   @property({type: String}) new_access_key = '';
   @property({type: String}) new_secret_key = '';
-  @property({type: String}) _activeTab = 'credential-lists';
+  @property({type: String}) _activeTab = 'users';
   @property({type: Object}) notification = Object();
+  @property({type: Object}) exportToCsvDialog = Object();
+  @property({type: String}) _defaultFileName = '';
 
   constructor() {
     super();
@@ -108,6 +111,10 @@ export default class BackendAICredentialView extends BackendAIPage {
           --button-bg: var(--paper-light-green-600);
           --button-bg-hover: var(--paper-green-600);
           --button-bg-active: var(--paper-green-900);
+        }
+
+        wl-icon.close {
+          color: black;
         }
 
         wl-card h3 {
@@ -185,6 +192,16 @@ export default class BackendAICredentialView extends BackendAIPage {
           --checkbox-color-checked: var(--paper-green-800);
         }
 
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-green-600);
+        }
+
+        mwc-textfield#export-file-name {
+          margin-bottom: 10px;
+        }
+
         #new-user-dialog wl-textfield {
           margin-bottom: 15px;
         }
@@ -206,24 +223,24 @@ export default class BackendAICredentialView extends BackendAIPage {
 
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        if (window.backendaiclient.is_admin !== true) {
-          this.disablePage();
-        }
-        if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
-          this.use_user_list = true;
-          this._activeTab = 'user-lists';
-        }
+        this._preparePage();
       });
     } else {
-      if (window.backendaiclient.is_admin !== true) {
-        this.disablePage();
-      }
-      if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
-        this.use_user_list = true;
-        this._activeTab = 'user-lists';
-      } else {
-        this.use_user_list = false;
-      }
+      this._preparePage();
+    }
+  }
+
+  _preparePage() {
+    if (window.backendaiclient.is_admin !== true) {
+      this.disablePage();
+    } else {
+      this.isAdmin = true;
+    }
+    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
+      this.use_user_list = true;
+      this._activeTab = 'user-lists';
+    } else {
+      this.use_user_list = false;
     }
     this._getResourceInfo();
     this._getResourcePolicies();
@@ -235,7 +252,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._updateInputStatus(this.idle_timeout);
     this._updateInputStatus(this.container_per_session_limit);
     this._updateInputStatus(this.vfolder_capacity);
-    this.vfolder_max_limit['value']= 10;
+    this.vfolder_max_limit['value'] = 10;
+    this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
+    this._defaultFileName = this._getDefaultCSVFileName();
   }
 
   async _viewStateChanged(active) {
@@ -479,7 +498,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     window.backendaiclient.group.list()
       .then(res => {
         const default_id = res.groups.find(x => x.name === 'default').id;
-
         return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
       })
       .then(res => {
@@ -569,7 +587,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     } else {
       checkbox = null;
     }
-    
+
     if (textfield.value < 0) {
       textfield.value = 0;
     }
@@ -591,7 +609,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
     }
   }
-
 
   _validateUserInput(resource) {
     if (resource.disabled) {
@@ -627,6 +644,42 @@ export default class BackendAICredentialView extends BackendAIPage {
       checkbox.checked = false;
     }
   }
+  _openExportToCsvDialog() {
+    this._defaultFileName = this._getDefaultCSVFileName();
+    this.exportToCsvDialog.show();
+  }
+
+  _exportToCSV() {
+    let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
+    if (!fileNameEl.validity.valid) {
+      return;
+    }
+    switch(this._activeTab) {
+      case 'user-lists':
+        let users = this.shadowRoot.querySelector('#user-list')['users'];
+        users.map((obj) => { // filtering unnecessary key
+          ['password', 'need_password_change'].forEach(key => delete obj[key]);
+        });
+        JsonToCsv.exportToCsv(fileNameEl.value, users);
+        break;
+      case 'credential-lists':
+        let credential_active = this.shadowRoot.querySelector('#active-credential-list')['keypairs'];
+        let credential_inactive = this.shadowRoot.querySelector('#inactive-credential-list')['keypairs'];
+        let credential = credential_active.concat(credential_inactive);
+        credential.map((obj)=> { // filtering unnecessary key
+          ['is_admin'].forEach(key => delete obj[key]);
+        });
+        JsonToCsv.exportToCsv(fileNameEl.value, credential);
+        break;
+      case 'resource-policy-lists':
+        let resource_policy = this.shadowRoot.querySelector('#resource-policy-list')['resourcePolicy'];
+        JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
+        break;
+    }
+    this.notification.text = "Downloading CSV file...";
+    this.notification.show();
+    this.exportToCsvDialog.hide();
+  }
 
   _getResourceInfo() {
     this.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
@@ -638,6 +691,12 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
     this.vfolder_capacity = this.shadowRoot.querySelector('#vfolder-capacity-limit');
     this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
+  }
+
+  _getDefaultCSVFileName() {
+    let date = new Date().toISOString().substring(0, 10);
+    let time = new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
+    return date+'_'+time;
   }
 
   render() {
@@ -652,11 +711,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
           </wl-tab-group>
-          <div class="flex"></div>
-          <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
-            <wl-icon>add</wl-icon>
-            Add credential
-          </wl-button>
         </h3>
         <wl-card id="user-lists" class="admin item tab-content">
           <h4 class="horizontal flex center center-justified layout">
@@ -666,12 +720,27 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-icon>add</wl-icon>
               Create user
             </wl-button>
+            ${this.isAdmin ? html`<wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
+            <wl-icon>get_app</wl-icon>
+            export CSV
+          </wl-button>` : html``}
           </h4>
           <div>
             <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
           </div>
         </wl-card>
         <wl-card id="credential-lists" class="tab-content" style="display:none;">
+        <h4 class="horizontal flex layout">
+          <span class="flex"></span>
+          <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
+            <wl-icon>add</wl-icon>
+            Add credential
+          </wl-button>
+          ${this.isAdmin ? html`<wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
+            <wl-icon>get_app</wl-icon>
+            export CSV
+          </wl-button>` : html``}
+        </h4>
           <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>
             <span slot="description">
@@ -695,6 +764,11 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-icon>add</wl-icon>
               Create policy
             </wl-button>
+            ${this.isAdmin ? html`
+            <wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
+            <wl-icon>get_app</wl-icon>
+            export CSV
+          </wl-button>` : html``}
           </h4>
           <div>
             <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
@@ -915,6 +989,30 @@ export default class BackendAICredentialView extends BackendAIPage {
               </wl-button>
             </fieldset>
           </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
+      <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
+        <h3 class="horizontal center layout" style="padding:10px;">
+          <span style="margin-left:10px; font-size:18px;">Export ${this._activeTab} to csv file</span>
+          <div class="flex"></div>
+          <wl-button flat fab @click="${(e) => this._hideDialog(e)}">
+            <wl-icon class="close">close</wl-icon>
+          </wl-button>
+        </h3>
+        <section style="padding: 5px;">
+          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
+                          validationMessage="Allows letters, numbers and -_."
+                          value="${this._activeTab+'_'+this._defaultFileName}" required
+          ></mwc-textfield>
+          <div class="horizontal center layout">
+            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
+            @click="${this._exportToCSV}">
+              <wl-icon>get_app</wl-icon>
+              Export CSV File
+            </wl-button>
+          </div>
+          </section>
         </wl-card>
       </wl-dialog>
     `;

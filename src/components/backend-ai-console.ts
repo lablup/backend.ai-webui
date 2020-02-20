@@ -715,7 +715,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   Statistics
                 </paper-item>
               </a>
-              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem" style="display:none;">
+              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg teal" icon="icons:settings"></iron-icon>
                   Settings
@@ -786,7 +786,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.02.0.200217</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.02.4.200219</small>
               </address>
             </div>
         </div>

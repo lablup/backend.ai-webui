@@ -39,7 +39,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   @property({type: Boolean}) options = Object();
   @property({type: Object}) _activeTab = Object();
   @property({type: Object}) bootstrapDialog = Object();
-  @property({type: Object}) clearLogsDialog  = Object();
+  @property({type: Object}) clearLogsDialog = Object();
   @property({type: Object}) logGrid = Object();
 
   constructor() {
@@ -97,10 +97,10 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-teal-100);
           --button-bg-active: var(--paper-teal-100);
-          --button-bg-disabled: #ccc;
+          --button-bg-disabled: #cccccc;
           --button-color: var(--paper-teal-100);
           --button-color-hover: var(--paper-teal-100);
-          --button-color-disabled: #ccc;
+          --button-color-disabled: #cccccc;
         }
 
         #bootstrap-dialog wl-button {
@@ -135,12 +135,12 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         }
 
         wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
+          --tab-color: #666666;
+          --tab-color-hover: #222222;
+          --tab-color-hover-filled: #222222;
           --tab-color-active: var(--paper-teal-600);
           --tab-color-active-hover: var(--paper-teal-600);
-          --tab-color-active-filled: #ccc;
+          --tab-color-active-filled: #cccccc;
           --tab-bg-active: var(--paper-teal-200);
           --tab-bg-filled: var(--paper-teal-200);
           --tab-bg-active-hover: var(--paper-teal-200);
@@ -155,8 +155,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       <wl-card class="item">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="general" checked @click="${(e) => this._showTab(e.target)}">General</wl-tab>
-            <wl-tab value="logs" checked @click="${(e) => this._showTab(e.target)}">Logs</wl-tab>
+            <wl-tab value="general" checked @click="${(e) => this._showTab(e.target)}" >General</wl-tab>
+            <wl-tab value="logs" @click="${(e) => this._showTab(e.target)}">Logs</wl-tab>
           </wl-tab-group>
         </h3>
         <wl-card id="general" class="item tab-content">
@@ -201,8 +201,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     } else { // already connected
       this.updateSettings();
     }
-    this.indicator = this.shadowRoot.querySelector(
-      '#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
     // this._activeTab = "general";
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
@@ -234,7 +233,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   _fetchBootstrapScript() {
     // Fetch user's bootstrap code.
     return window.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
-      const script =  resp || '';
+      const script = resp || '';
       this.lastSavedBootstrapScript = script;
       return script;
     }).catch(err => {
@@ -252,8 +251,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     const script = editor.getValue();
     if (this.lastSavedBootstrapScript === script) {
       this.notification.text = 'No changes';
-      this.notification.show();
-      return;
+      return this.notification.show();
     }
     this.indicator.show();
     window.backendaiclient.userConfig.update_bootstrap_script(script)
@@ -261,7 +259,16 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         this.notification.text = 'Saved bootstrap script';
         this.notification.show();
         this.indicator.hide();
-      });
+      }).catch((err) => {
+      this.indicator.hide();
+      if (typeof err.message !== "undefined") {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+      } else {
+        this.notification.text = PainKiller.relieve('Plugin loading failed.');
+      }
+      this.notification.show();
+    });
   }
 
   async _saveBootstrapScriptAndCloseDialog() {
@@ -272,7 +279,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   async _editBootstrapScript() {
     const script = await this._fetchBootstrapScript();
     this.bootstrapDialog.setValue(script);
-    this.bootstrapDialog.show();
+    await this.bootstrapDialog.show();
   }
 
   _hideBootstrapScriptDialog() {
@@ -286,7 +293,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   _removeLogMessage() {
     let currentLogs = localStorage.getItem('backendaiconsole.logs');
     if (currentLogs) {
-    localStorage.removeItem('backendaiconsole.logs');
+      localStorage.removeItem('backendaiconsole.logs');
     }
     let event = new CustomEvent("log-message-clear", {});
     document.dispatchEvent(event);

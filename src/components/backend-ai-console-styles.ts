@@ -56,6 +56,7 @@ export const BackendAiStyles =
       --general-dialog-background-color: #ffffff;
       --app-drawer-width: 190px;
       --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
     }
 
     body {
@@ -137,6 +138,10 @@ export const BackendAiStyles =
       font-size: 12px;
       font-weight: 100;
       font-family: var(--general-font-family);
+    }
+
+    .monospace {
+      font-family: var(--general-monospace-font-family);
     }
 
     .portrait-canvas {

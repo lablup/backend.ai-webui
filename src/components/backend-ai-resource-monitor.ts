@@ -170,6 +170,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --slider-color: var(--paper-cyan-400);
         }
 
+        lablup-slider.session {
+          --slider-color: var(--paper-pink-400);
+        }
+
         paper-progress {
           width: 90px;
           --paper-progress-height: 5px;

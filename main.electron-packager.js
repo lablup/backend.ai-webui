@@ -55,9 +55,18 @@ app.once('ready', function() {
             type: 'separator'
           },
           {
-            label: 'Force Update Screen',
+            label: 'Refresh App',
+            accelerator: 'Command+R',
             click: function () {
-              mainContent.reloadIgnoringCache();
+              // mainContent.reloadIgnoringCache();
+              const proxyUrl = `http://localhost:${manager.port}/`;
+              mainWindow.loadURL(url.format({ // Load HTML into new Window
+                pathname: path.join(mainIndex),
+                protocol: 'file',
+                slashes: true
+              }));
+              mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
+              console.log('Re-connected to proxy: ' + proxyUrl);
             }
           },
           {
@@ -140,33 +149,17 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomIn()');
-              }
-            }
+            role: 'zoomin'
           },
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomOut()');
-              }
-            }
+            role: 'zoomout'
           },
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript(
-                  '_zoomActualSize()');
-              }
-            }
+            role: 'resetzoom'
           },
           {
             label: 'Toggle Full Screen',
