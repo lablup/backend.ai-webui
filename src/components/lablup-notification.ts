@@ -29,9 +29,13 @@ export default class LablupNotification extends LitElement {
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
   @property({type: Object}) newDesktopNotification = Object();
+  @property({type: Boolean}) options = Object();
 
   constructor() {
     super();
+    this.options = {
+      desktop_notification: true
+    }
   }
 
   static get is() {
@@ -86,6 +90,10 @@ export default class LablupNotification extends LitElement {
         });
       }
     }
+    this._readUserSetting('desktop_notification', true);
+    if (this.options['desktop_notification'] === false) {
+      this.supportDesktopNotification = false;
+    }
   }
 
   connectedCallback() {
@@ -102,6 +110,21 @@ export default class LablupNotification extends LitElement {
 
   async ladder() {
 
+  }
+
+  _readUserSetting(name, default_value = true) {
+    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
+    if (value !== null && value != '' && value != '""') {
+      if (value === "false") {
+        this.options[name] = false;
+      } else if (value === "true") {
+        this.options[name] = true;
+      } else {
+        this.options[name] = value;
+      }
+    } else {
+      this.options[name] = default_value;
+    }
   }
 
   _hideNotification(e) {
