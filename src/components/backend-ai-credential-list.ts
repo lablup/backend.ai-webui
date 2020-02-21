@@ -54,7 +54,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) keypairView = Object();
-  @property({type: Number}) _pageSize = 1;
+  @property({type: Number}) _pageSize = 10;
   @property({type: Object}) keypairGrid = Object();
   @property({type: Number}) _currentPage = 1; 
   @property({type: Number}) _totalCredentialCount = 0;

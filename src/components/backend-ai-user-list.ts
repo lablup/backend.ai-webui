@@ -54,7 +54,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Number}) _pageSize = 1;
+  @property({type: Number}) _pageSize = 10;
   @property({type: Object}) userGrid = Object();
   @property({type: Number}) _currentPage = 1; 
   @property({type: Number}) _totalUserCount = 0;
