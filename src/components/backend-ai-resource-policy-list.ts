@@ -425,7 +425,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
-    this._getResourceInfo();
   }
 
   async _viewStateChanged(active) {
@@ -436,10 +435,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshPolicyData();
+        this._getResourceInfo();
         this.is_admin = window.backendaiclient.is_admin;
       }, true);
     } else { // already connected
       this._refreshPolicyData();
+      this._getResourceInfo();
       this.is_admin = window.backendaiclient.is_admin;
     }
   }
@@ -593,11 +594,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _modifyResourcePolicy() {
     let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
     let name = policy_info.value;
-    // if (!policy_info.validity.valid || name === '') {
-      
-    //   return;
-    // }
-    console.log(policy_info.checkValidity());
     if(!policy_info.checkValidity()) {
       policy_info.reportValidity();
       return;
@@ -704,11 +700,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _validatePolicyName(input) {
     let policy_info = input;
     let policy_name = input.value;
-
-    console.dir(policy_info);
-
     policy_info.validityTransform = (newValue, nativeValidity) => {
-      console.dir(nativeValidity);
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
           policy_info.validationMessage = "Allows letters, numbers and -_.";
