@@ -170,6 +170,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --slider-color: var(--paper-cyan-400);
         }
 
+        lablup-slider.session {
+          --slider-color: var(--paper-pink-400);
+        }
+
         paper-progress {
           width: 90px;
           --paper-progress-height: 5px;
@@ -766,6 +770,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['mem'] = String(this.mem_request) + 'g';
     }
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
+      if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
+        this.shmem_request = this.mem_request;
+        this.notification.text = 'Shared memory setting is reduced to below the allocated memory.';
+        this.notification.show();
+      }
+      if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
+        this.shmem_request = 1;
+      }
       config['shmem'] = String(this.shmem_request) + 'g';
     }
 

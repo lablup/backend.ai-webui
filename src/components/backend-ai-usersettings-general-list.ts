@@ -1,7 +1,7 @@
 /**
  @license
-Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
-*/
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ */
 
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
@@ -28,10 +28,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   public indicator: any;
   public lastSavedBootstrapScript: string = '';
 
+  @property({type: Boolean}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
+  @property({type: Object}) notification;
 
   constructor() {
     super();
+    this.options = {
+      desktop_notification: true
+    }
   }
 
   static get styles() {
@@ -73,10 +78,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-teal-100);
           --button-bg-active: var(--paper-teal-100);
-          --button-bg-disabled: #ccc;
+          --button-bg-disabled: #cccccc;
           --button-color: var(--paper-teal-100);
           --button-color-hover: var(--paper-teal-100);
-          --button-color-disabled: #ccc;
+          --button-color-disabled: #cccccc;
         }
 
         #bootstrap-dialog wl-button {
@@ -91,6 +96,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           padding-top: 0;
           padding-bottom: 0;
           padding-left: 0;
+        }
+
+        wl-card {
+          margin: 0;
         }
 
         wl-card wl-card {
@@ -110,12 +119,62 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   firstUpdated() {
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
+    this.notification = window.lablupNotification;
+    this.readUserSettings();
+  }
+
+  readUserSettings() {
+    this._readUserSetting('desktop_notification', true);
+    this._readUserSetting('compact_sidebar', false);
+  }
+
+  _readUserSetting(name, default_value = true) {
+    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
+    if (value !== null && value != '' && value != '""') {
+      if (value === "false") {
+        this.options[name] = false;
+      } else if (value === "true") {
+        this.options[name] = true;
+      } else {
+        this.options[name] = value;
+      }
+    } else {
+      this.options[name] = default_value;
+    }
+  }
+
+  _writeUserSetting(name, value) {
+    if (value === false) {
+      localStorage.setItem('backendaiconsole.usersetting.' + name, "false");
+    } else if (value === true) {
+      localStorage.setItem('backendaiconsole.usersetting.' + name, "true");
+    } else {
+      localStorage.setItem('backendaiconsole.usersetting.' + name, value);
+    }
+  }
+
+  toggleDesktopNotification(e) {
+    if (e.target.checked === false) {
+      this._writeUserSetting('desktop_notification', false);
+      this.notification.supportDesktopNotification = false;
+    } else {
+      this._writeUserSetting('desktop_notification', true);
+      this.notification.supportDesktopNotification = true;
+    }
+  }
+
+  toggleCompactSidebar(e) {
+    if (e.target.checked === false) {
+      this._writeUserSetting('compact_sidebar', false);
+    } else {
+      this._writeUserSetting('compact_sidebar', true);
+    }
   }
 
   _fetchBootstrapScript() {
     // Fetch user's bootstrap code.
     return window.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
-      const script =  resp || '';
+      const script = resp || '';
       this.lastSavedBootstrapScript = script;
       return script;
     }).catch(err => {
@@ -139,7 +198,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.indicator.show();
     window.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
-        this.notification.text = 'Saved bootstrap script';
+        this.notification.text = 'Bootstrap script updated.';
         this.notification.show();
         this.indicator.hide();
       });
@@ -169,28 +228,39 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   render() {
     //languate=HTML
     return html`
-      <wl-card class="item">
-        <h3 class="horizontal flex center layout">
+      <wl-card elevation="1">
+        <h3 class="horizontal center layout">
           <span>Preferences</span>
           <span class="flex"></span>
         </h3>
-        <div class="horizontal wrap layout" style="display:none;">
+        <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>TEST1</div>
-              <div class="description">This is description.
+              <div>Desktop Notification</div>
+              <div class="description">Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within console.
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="register-new-image-switch" disabled></wl-switch>
+              <wl-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${this.options['desktop_notification']}"></wl-switch>
             </div>
           </div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>Use Compact Sidebar by default</div>
+              <div class="description">Compact sidebar lets you use more workspace. <br />When this option is turned on, compact sidebar becomes the initial UI at startup.
+              </div>
+            </div>
+            <div class="vertical center-justified layout setting-button">
+              <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
+            </div>
+          </div>
+
         </div>
-        <h3 class="horizontal center layout">
+        <h3 class="horizontal center layout" style="display:none;">
           <span>Shell Environments</span>
           <span class="flex"></span>
         </h3>
-        <div class="horizontal wrap layout">
+        <div class="horizontal wrap layout" style="display:none;">
           <div class="horizontal layout wrap setting-item">
             <wl-button class="fg teal" outlined @click="${this._editBootstrapScript}">
               <wl-icon>edit</wl-icon>

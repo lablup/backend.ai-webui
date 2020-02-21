@@ -23,7 +23,6 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
@@ -167,6 +166,7 @@ export default class BackendAIUserList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
+    this.indicator.show();
   }
 
   async _viewStateChanged(active) {
@@ -258,7 +258,7 @@ export default class BackendAIUserList extends BackendAIPage {
       this.notification.text = PainKiller.relieve('Signout finished.');
     }).catch((err) => {   // Signout failed
       console.log(err);
-      if (err.message !== undefined) {
+      if (typeof err.message !== "undefined") {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
       } else {

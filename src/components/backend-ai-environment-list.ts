@@ -29,6 +29,7 @@ import 'weightless/select';
 import 'weightless/textfield';
 
 import './backend-ai-resource-preset-list';
+import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("backend-ai-environment-list")
 export default class BackendAIEnvironmentList extends BackendAIPage {
@@ -771,6 +772,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       //let sorted_images = {};
       //image_keys.sort();
       this.images = domainImages;
+      this.loadingIndicator.hide();
+    }).catch((err) => {
+      console.log(err);
+      if (typeof err.message !== 'undefined') {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+      } else {
+        this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
+      }
+      this.notification.show();
       this.loadingIndicator.hide();
     });
   }
