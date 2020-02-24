@@ -517,19 +517,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
-
     if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
     }
     this.scaling_group = e.target.value;
-    console.log(this.active);
     if (this.active) {
       if (this.direction === 'vertical') {
         let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
         scaling_group_selection_box.firstChild.value = this.scaling_group;
       }
-      this.shadowRoot.querySelector('#scaling-groups').value = this.scaling_group;
-
+      let sgnum = this.scaling_groups.map((sg) => sg.name).indexOf(this.scaling_group);
+      if (sgnum < 0) sgnum = 0;
+      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = sgnum;
       if (forceUpdate === true) {
         //console.log('force update called');
         //this.metric_updating = true;
@@ -689,7 +688,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         ownershipPanel.style.display = 'none';
       }
       // this value initialization is temporary due to non-dynamic value recongition of paper-dropdown
-      this.shadowRoot.querySelector('#scaling-groups').value = this.scaling_groups[0].name;
+      let selectedSgroup = parseInt(this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected);
+      if (selectedSgroup >= this.scaling_groups.length) {
+        selectedSgroup = 0;
+      }
+      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = -1;
+      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = selectedSgroup;
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -1900,9 +1904,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
       ` : html``}
-      <wl-dialog id="new-session-dialog"
-                    fixed backdrop blockscrolling persistent
-                    style="padding:0;">
+      <wl-dialog id="new-session-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <wl-card class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Start new session</span>
@@ -1943,7 +1945,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                <paper-dropdown-menu id="scaling-groups" label="Resource Group" 
+                <paper-dropdown-menu id="scaling-groups" label="Resource Group"
                                      horizontal-align="left" style="padding-bottom: 1px;">
                   <paper-listbox slot="dropdown-content" selected="0">
                     ${this.scaling_groups.map(item => html`
