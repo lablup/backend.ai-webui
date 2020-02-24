@@ -17,8 +17,8 @@ import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
-
 import '@material/mwc-icon-button';
+
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/card';
@@ -1738,7 +1738,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let obj = environment.items.find(o => o.value === this.default_language);
     let idx = environment.items.indexOf(obj);
     environment.select(idx);
-    //console.log(a.items);
     return true;
   }
 
