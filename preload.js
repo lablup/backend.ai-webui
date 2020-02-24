@@ -1,3 +1,4 @@
+// Preload script for electron environment
 const { ipcRenderer } = require('electron');
 
 process.once('loaded', () => {
