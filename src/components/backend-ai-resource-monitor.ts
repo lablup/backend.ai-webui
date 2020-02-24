@@ -1815,6 +1815,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     let environment = this.shadowRoot.querySelector('#environment');
     let obj = environment.items.find(o => o.value === this.default_language);
+    if (typeof obj === 'undefined') { // Not ready yet.
+      setTimeout(() => {
+        console.log('Environment selector is not ready yet. Trying to set the default language again.');
+        this._selectDefaultLanguage();
+      }, 500);
+      return true;
+    }
     let idx = environment.items.indexOf(obj);
     environment.select(idx);
     return true;
