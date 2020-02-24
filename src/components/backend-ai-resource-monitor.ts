@@ -126,6 +126,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) ownerScalingGroups;
   @property({type: Boolean}) project_resource_monitor = false;
   @property({type: Object}) version_selector = Object();
+
   constructor() {
     super();
     this.active = false;
@@ -1968,7 +1969,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `}
                   `)}
               </mwc-select>
-              <mwc-select id="version" label="Version" style="padding-right:5px;">
+              <mwc-select id="version" label="Version" required style="padding-right:5px;">
                 <mwc-list-item selected></mwc-list-item>
               ${this.versions.map(item => html`
                 <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
