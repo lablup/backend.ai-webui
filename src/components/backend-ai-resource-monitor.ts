@@ -403,25 +403,29 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 40px;
         }
 
+        #environment {
+          width: 180px;
+        }
+
         mwc-select {
-          --mdc-theme-primary: blue;
-          --mdc-select-fill-color: aliceblue;
+          --mdc-theme-primary: var(--paper-red-600);
+          --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
           --mdc-select-dropdown-icon-color: blue;
 
-          --mdc-select-idle-line-color: rgba(0, 0, 255, 0.42);
-          --mdc-select-hover-line-color: rgba(0, 0, 255, 0.87);
+          --mdc-select-idle-line-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
 
-          --mdc-select-outlined-idle-border-color: rgba(0, 0, 255, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(0, 0, 255, 0.87);
+          --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
 
           /* inherits the styles of mwc-menu internally */
           --mdc-menu-item-height: 30px;
-          --mdc-theme-surface: aliceblue;
+          --mdc-theme-surface: white;
 
           /* inherits the styles of mwc-list internally */
           --mdc-list-vertical-padding: 0px;
-          --mdc-list-side-padding: 30px;
+          --mdc-list-side-padding: 10px;
         }
 
         wl-button[fab] {
@@ -492,7 +496,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             this.imageNames[key] = this.imageInfo[key].name;
           }
           if ("label" in this.imageInfo[key]) {
-            this.imageInfo[key].label.forEach((item)=>{
+            this.imageInfo[key].label.forEach((item) => {
               if (!("category" in item)) {
                 this.tags[key].push(item.tag);
               }
@@ -501,7 +505,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
       }
     );
-    this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
+    this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
     this.shadowRoot.querySelector('#version').addEventListener('selected', this.updateMetric.bind(this));
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
@@ -987,9 +991,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     console.log(this.versions);
     if (this.versions !== undefined) {
-      const versionSelector = this.shadowRoot.querySelector('#version');
-      versionSelector.select(0);
-      this.updateMetric('update versions');
+      this.updateMetric('update versions').then(() => {
+        let versionSelector = this.shadowRoot.querySelector('#version');
+        console.log(versionSelector);
+        return versionSelector.layout(true);
+
+      }).then(() => {
+        let versionSelector = this.shadowRoot.querySelector('#version');
+        versionSelector.select(0);
+        console.log("Selected");
+      });
     }
   }
 
@@ -1581,7 +1592,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   updateLanguage() {
-    let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
+    let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     if (selectedItem === null) return;
     let kernel = selectedItem.id;
     this._updateVersions(kernel);
@@ -1937,22 +1948,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <form id="launch-session-form">
             <fieldset>
               <div class="horizontal center layout">
-                <paper-dropdown-menu id="environment" label="Environments" horizontal-align="left">
-                  <paper-listbox slot="dropdown-content" attr-for-selected="id"
-                                 selected="${this.default_language}">
+                <mwc-select id="environment" label="Environments"
+                @updated="${this.updateLanguage}" selected="${this.default_language}">
                     ${this.languages.map(item => html`
                       ${item.clickable === false ? html`
-                        <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" disabled="true">${item.basename}</h5>
+                        <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
                       ` : html`
-                        <paper-item id="${item.name}" label="${item.alias}">${item.basename}
+                        <mwc-list-item id="${item.name}" value="${item.alias}" class="horizontal layout" twoline>
+                          <span>${item.basename}</span>
+                          <div slot="secondary">
                           ${item.tags ? item.tags.map(item => html`
-                            <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                            <lablup-shields slot="meta" description="${item}"></lablup-shields>
                           `) : ''}
-                        </paper-item>
+                          </div>
+                        </mwc-list-item>
                       `}
                     `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                </mwc-select>
                 <mwc-select id="version" label="Version">
               ${this.versions.map(item => html`
                     <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
