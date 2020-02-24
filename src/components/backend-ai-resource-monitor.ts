@@ -54,6 +54,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
+  @property({type: Object}) icons = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
   @property({type: Array}) versions;
@@ -504,6 +505,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             this.aliases[key] = this.imageInfo[key].name;
             this.imageNames[key] = this.imageInfo[key].name;
           }
+          if ("icon" in this.imageInfo[key]) {
+            this.icons[key] = this.imageInfo[key].icon;
+          } else {
+            this.icons[key] = 'default.png';
+          }
+
           if ("label" in this.imageInfo[key]) {
             this.imageInfo[key].label.forEach((item) => {
               if (!("category" in item)) {
@@ -974,6 +981,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (prefix != '') {
         tags.push(prefix);
       }
+      let icon: string = "default.png";
+      if (kernelName in this.icons) {
+        icon = this.icons[kernelName];
+      }
       if (interCategory !== this.supportImages[item].group) {
         //console.log(item);
         this.languages.push({
@@ -982,6 +993,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           prefix: "",
           kernelname: "",
           alias: "",
+          icon: "",
           basename: this.supportImages[item].group,
           tags: [],
           clickable: false
@@ -995,7 +1007,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         kernelname: kernelName,
         alias: alias,
         basename: basename,
-        tags: tags
+        tags: tags,
+        icon: icon
       });
     });
     this._initAliases();
@@ -1977,9 +1990,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
                     ` : html`
-                      <mwc-list-item id="${item.name}" value="${item.name}">
-                        <div class="horizontal justified layout">
-                          <span style="padding-right:5px;">${item.alias}</span>
+                      <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
+                          <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
+                        <div class="horizontal justified layout wrap">
+                          <div style="padding-right:5px;">${item.basename}</div>
                           <div class="flex"></div>
                           <div class="horizontal layout end-justified">
                           ${item.tags ? item.tags.map(item => html`
