@@ -222,7 +222,7 @@
       "description": "Caffe is a deep learning framework made with expression, speed, and modularity in mind. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
-      "icon": "caffe2.svg",
+      "icon": "caffe.png",
       "label": [
         {
           "category": "Env",
