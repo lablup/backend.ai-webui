@@ -1970,7 +1970,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="horizontal center layout" style="padding-top:15px;">
               <mwc-select id="environment" label="Environments" required style="padding-left:5px;" outlined
                 value="${this.default_language}">
-                <mwc-list-item selected>Choose environment</mwc-list-item>
+                <mwc-list-item selected style="display:none!important">Choose environment</mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
@@ -1989,7 +1989,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   `)}
               </mwc-select>
               <mwc-select id="version" label="Version" required style="padding-right:5px;">
-                <mwc-list-item selected></mwc-list-item>
+                <mwc-list-item selected style="display:none!important"></mwc-list-item>
               ${this.versions.map(item => html`
                 <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
               `)}
