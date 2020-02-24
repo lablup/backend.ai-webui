@@ -1734,6 +1734,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this.default_language = 'index.docker.io/lablup/ngc-tensorflow';
     }
+    let environment = this.shadowRoot.querySelector('#environment');
+    let obj = environment.items.find(o => o.value === this.default_language);
+    let idx = environment.items.indexOf(obj);
+    environment.select(idx);
+    //console.log(a.items);
     return true;
   }
 
