@@ -125,7 +125,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) ownerGroups;
   @property({type: Array}) ownerScalingGroups;
   @property({type: Boolean}) project_resource_monitor = false;
-
+  @property({type: Object}) version_selector = Object();
   constructor() {
     super();
     this.active = false;
@@ -408,11 +408,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         mwc-select {
+          width: 180px;
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
           --mdc-select-dropdown-icon-color: blue;
-
           --mdc-select-idle-line-color: rgba(255, 0, 0, 0.42);
           --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
 
@@ -421,11 +421,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
           /* inherits the styles of mwc-menu internally */
           --mdc-menu-item-height: 30px;
-          --mdc-theme-surface: white;
+          --mdc-theme-surface: #FBECEE;
 
           /* inherits the styles of mwc-list internally */
           --mdc-list-vertical-padding: 0px;
           --mdc-list-side-padding: 10px;
+          --mdc-list-item__primary-text: {
+            height: 20px;
+          };
         }
 
         wl-button[fab] {
@@ -441,7 +444,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   init_resource() {
-    this.versions = ['3.6'];
+    this.versions = ['Not Selected'];
     this.languages = [];
     this.gpu_mode = 'no';
     this.defaultResourcePolicy = 'UNLIMITED';
@@ -506,7 +509,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
-    this.shadowRoot.querySelector('#version').addEventListener('selected', this.updateMetric.bind(this));
+    this.version_selector = this.shadowRoot.querySelector('#version');
+    this.version_selector.addEventListener('selected', this.updateMetric.bind(this));
+
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
       this.resourceGauge.style.display = 'none';
@@ -741,7 +746,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _newSession() {
     //let kernel = this.shadowRoot.querySelector('#environment').value;
-    let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
+    let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
@@ -985,21 +990,33 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _updateVersions(kernel) {
     if (kernel in this.supports) {
-      this.versions = this.supports[kernel];
-      this.versions.sort();
-      this.versions.reverse(); // New version comes first.
+      this.version_selector.disabled = true;
+      let versions = this.supports[kernel];
+      versions.sort();
+      versions.reverse(); // New version comes first.
+      this.versions = versions;
+    } else {
+      return;
     }
-    console.log(this.versions);
+    console.log("now version", this.versions);
     if (this.versions !== undefined) {
-      this.updateMetric('update versions').then(() => {
-        let versionSelector = this.shadowRoot.querySelector('#version');
-        console.log(versionSelector);
-        return versionSelector.layout(true);
+//      this.updateMetric('update versions').then(() => {
+      console.log("list item", this.version_selector);
 
+      return this.version_selector.requestUpdate().then(() => {
+        return this.version_selector.layout(true);
       }).then(() => {
-        let versionSelector = this.shadowRoot.querySelector('#version');
-        versionSelector.select(0);
-        console.log("Selected");
+        console.log(this.version_selector.menuElement);
+
+//      }).then(() => {
+        setTimeout(() => {
+          this.version_selector.select(-1);
+
+          this.version_selector.select(0);
+          this.version_selector.disabled = false;
+
+          console.log("Selected");
+        }, 4000);
       });
     }
   }
@@ -1330,7 +1347,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.metric_updating = false;
       return this._aggregateResourceUse('update-metric');
     }
-    let selectedItem = this.shadowRoot.querySelector('#environment').selectedItem;
+    let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     let currentVersion = this.shadowRoot.querySelector('#version').value;
     if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute("disabled")) {
       this.metric_updating = false;
@@ -1948,17 +1965,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <form id="launch-session-form">
             <fieldset>
               <div class="horizontal center layout">
-                <mwc-select id="environment" label="Environments"
-                @updated="${this.updateLanguage}" selected="${this.default_language}">
+                <mwc-select id="environment" label="Environments" required
+                @updated="${this.updateLanguage}" value="${this.default_language}">
                     ${this.languages.map(item => html`
                       ${item.clickable === false ? html`
                         <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
                       ` : html`
                         <mwc-list-item id="${item.name}" value="${item.alias}" class="horizontal layout" twoline>
                           <span>${item.basename}</span>
-                          <div slot="secondary">
+                          <div slot="secondary" style="height:30px;" class="horizontal layout start-justified">
                           ${item.tags ? item.tags.map(item => html`
-                            <lablup-shields slot="meta" description="${item}"></lablup-shields>
+                            <lablup-shields slot="meta" style="margin-right:5px;" description="${item}"></lablup-shields>
                           `) : ''}
                           </div>
                         </mwc-list-item>
@@ -1966,9 +1983,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `)}
                 </mwc-select>
                 <mwc-select id="version" label="Version">
-              ${this.versions.map(item => html`
-                    <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
-              `)}
+                ${this.versions.map(item => html`
+                  <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
+                `)}
                 </mwc-select>
               </div>
               <div style="display:none;">
