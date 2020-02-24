@@ -975,10 +975,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'ubuntu18.04': 'Ubuntu 18.04',
       'ubuntu20.04': 'Ubuntu 20.04',
       'intel': 'Intel MKL',
-      'rocm': 'ROCm',
-      'cuda9': 'CUDA9',
-      'cuda10': 'CUDA10',
-      'cuda10.1': 'CUDA10.1',
+      'rocm': 'GPU:ROCm',
+      'cuda9': 'GPU:CUDA9',
+      'cuda10': 'GPU:CUDA10',
+      'cuda10.1': 'GPU:CUDA10.1',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
@@ -1898,11 +1898,26 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       });
     }
     if (fragment.length > 2) {
-      info.push({ // Additional information
+      let requirements = this._aliasName(fragment[2]).split(':');
+      let req = { // Additional information
         tag: this._aliasName(fragment[2]),
         color: 'green',
         size: '150px'
-      });
+      };
+      if (requirements.length > 1) {
+        info.push({ // Additional information
+          tag: requirements[1],
+          app: requirements[0],
+          color: 'green',
+          size: '150px'
+        });
+      } else {
+        info.push({ // Additional information
+          tag: requirements[0],
+          color: 'green',
+          size: '150px'
+        });
+      }
     }
     return info;
   }
@@ -2094,14 +2109,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
                     <div style="width:80px;">Version</div>
                     <div style="width:120px;">Base</div>
-                    <div style="width:150px;">Req.</div>
+                    <div style="width:150px;">Requirements</div>
                   </h5>
               ${this.versions.map(item => html`
                 <mwc-list-item id="${item}" value="${item}">
                   <span style="display:none">${item}</span>
                   <div class="horizontal layout end-justified">
                     ${this._getVersionInfo(item).map(item => html`
-                  <lablup-shields style="width:${item.size}!important;" color="${item.color}" description="${item.tag}"></lablup-shields>
+                  <lablup-shields style="width:${item.size}!important;" color="${item.color}" app="${item.app ? item.app : ''}" description="${item.tag}"></lablup-shields>
                 `)}
                   </div>
                 </mwc-list-item>
