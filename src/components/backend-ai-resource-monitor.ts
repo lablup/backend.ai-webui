@@ -403,9 +403,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 40px;
         }
 
-        #environment {
-        }
-
         mwc-select {
           width: 195px;
           --mdc-theme-primary: var(--paper-red-600);
@@ -420,7 +417,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
           /* inherits the styles of mwc-menu internally */
           --mdc-menu-item-height: 30px;
-          --mdc-theme-surface: #FBECEE;
+          --mdc-theme-surface: white;
 
           /* inherits the styles of mwc-list internally */
           --mdc-list-vertical-padding: 0px;
@@ -997,25 +994,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       return;
     }
-    console.log("now version", this.versions);
     if (this.versions !== undefined) {
-//      this.updateMetric('update versions').then(() => {
-      console.log("list item", this.version_selector);
-
       return this.version_selector.requestUpdate().then(() => {
         return this.version_selector.layout(true);
       }).then(() => {
-        console.log(this.version_selector.menuElement);
-
-//      }).then(() => {
         setTimeout(() => {
-          this.version_selector.select(-1);
-
           this.version_selector.select(0);
+          this.version_selector.select(1);
           this.version_selector.disabled = false;
-
-          console.log("Selected");
-        }, 4000);
+        }, 500);
       });
     }
   }
@@ -1965,6 +1952,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="horizontal center layout">
               <mwc-select id="environment" label="Environments" required style="padding-left:5px;"
               @updated="${this.updateLanguage}" value="${this.default_language}">
+                <mwc-list-item selected></mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
@@ -1981,6 +1969,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   `)}
               </mwc-select>
               <mwc-select id="version" label="Version" style="padding-right:5px;">
+                <mwc-list-item selected></mwc-list-item>
               ${this.versions.map(item => html`
                 <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
               `)}
