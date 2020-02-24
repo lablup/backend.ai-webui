@@ -935,6 +935,57 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return humanizedName;
   }
 
+  _aliasName(value) {
+    let alias = {
+      'python': 'Python',
+      'tensorflow': 'TensorFlow',
+      'pytorch': 'PyTorch',
+      'lua': 'Lua',
+      'r': 'R',
+      'r-base': 'R',
+      'julia': 'Julia',
+      'rust': 'Rust',
+      'cpp': 'C++',
+      'gcc': 'GCC',
+      'go': 'Go',
+      'tester': 'Tester',
+      'haskell': 'Haskell',
+      'matlab': 'MATLAB',
+      'sagemath': 'Sage',
+      'java': 'Java',
+      'php': 'PHP',
+      'octave': 'Octave',
+      'nodejs': 'Node',
+      'caffe': 'Caffe',
+      'scheme': 'Scheme',
+      'scala': 'Scala',
+      'base': 'Base',
+      'cntk': 'CNTK',
+      'h2o': 'H2O.AI',
+      'digits': 'DIGITS',
+      'py3': 'Python 3',
+      'py2': 'Python 2',
+      'py27': 'Python 2.7',
+      'py35': 'Python 3.5',
+      'py36': 'Python 3.6',
+      'py37': 'Python 3.7',
+      'py38': 'Python 3.8',
+      'py39': 'Python 3.8',
+      'ubuntu16.04': 'Ubuntu 16.04',
+      'ubuntu18.04': 'Ubuntu 18.04',
+      'ubuntu20.04': 'Ubuntu 20.04',
+      'anaconda2018.12': 'Anaconda 2018.12',
+      'alpine3.8': 'Alpine Linux 3.8',
+      'ngc': 'NVidia GPU Cloud',
+      'ff': 'Research Env.',
+    };
+    if (value in alias) {
+      return alias[value];
+    } else {
+      return value;
+    }
+  }
+
   _updateEnvironment() {
     // this.languages = Object.keys(this.supports);
     // this.languages.sort();
@@ -1828,19 +1879,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let info: any = [];
     let fragment = version.split('-');
     info.push({ // Version
-      tag: fragment[0],
-      color: 'blue'
+      tag: this._aliasName(fragment[0]),
+      color: 'blue',
+      size: '80px'
     });
     if (fragment.length > 1) {
       info.push({ // Language
-        tag: fragment[1],
-        color: 'red'
+        tag: this._aliasName(fragment[1]),
+        color: 'red',
+        size: '120px'
       });
     }
     if (fragment.length > 2) {
       info.push({ // Additional information
-        tag: fragment[2],
-        color: 'green'
+        tag: this._aliasName(fragment[2]),
+        color: 'green',
+        size: '150px'
       });
     }
     return info;
@@ -2032,15 +2086,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <mwc-list-item selected style="display:none!important"></mwc-list-item>
                   <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
                     <div style="width:80px;">Version</div>
-                    <div style="width:80px;">Base</div>
-                    <div style="width:200px;">Req.</div>
+                    <div style="width:120px;">Base</div>
+                    <div style="width:150px;">Req.</div>
                   </h5>
               ${this.versions.map(item => html`
                 <mwc-list-item id="${item}" value="${item}">
                   <span style="display:none">${item}</span>
                   <div class="horizontal layout end-justified">
                     ${this._getVersionInfo(item).map(item => html`
-                  <lablup-shields style="width:80px;" color="${item.color}" description="${item.tag}"></lablup-shields>
+                  <lablup-shields style="width:${item.size}!important;" color="${item.color}" description="${item.tag}"></lablup-shields>
                 `)}
                   </div>
                 </mwc-list-item>
