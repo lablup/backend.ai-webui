@@ -404,11 +404,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #environment {
-          width: 180px;
         }
 
         mwc-select {
-          width: 180px;
+          width: 195px;
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
@@ -1963,31 +1962,31 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </mwc-icon-button>
           </h3>
           <form id="launch-session-form">
+            <div class="horizontal center layout">
+              <mwc-select id="environment" label="Environments" required style="padding-left:5px;"
+              @updated="${this.updateLanguage}" value="${this.default_language}">
+                  ${this.languages.map(item => html`
+                    ${item.clickable === false ? html`
+                      <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
+                    ` : html`
+                      <mwc-list-item id="${item.name}" value="${item.alias}" class="horizontal layout" twoline>
+                        <span>${item.basename}</span>
+                        <div slot="secondary" style="height:30px;" class="horizontal layout start-justified">
+                        ${item.tags ? item.tags.map(item => html`
+                          <lablup-shields slot="meta" style="margin-right:5px;" description="${item}"></lablup-shields>
+                        `) : ''}
+                        </div>
+                      </mwc-list-item>
+                    `}
+                  `)}
+              </mwc-select>
+              <mwc-select id="version" label="Version" style="padding-right:5px;">
+              ${this.versions.map(item => html`
+                <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
+              `)}
+              </mwc-select>
+            </div>
             <fieldset>
-              <div class="horizontal center layout">
-                <mwc-select id="environment" label="Environments" required
-                @updated="${this.updateLanguage}" value="${this.default_language}">
-                    ${this.languages.map(item => html`
-                      ${item.clickable === false ? html`
-                        <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
-                      ` : html`
-                        <mwc-list-item id="${item.name}" value="${item.alias}" class="horizontal layout" twoline>
-                          <span>${item.basename}</span>
-                          <div slot="secondary" style="height:30px;" class="horizontal layout start-justified">
-                          ${item.tags ? item.tags.map(item => html`
-                            <lablup-shields slot="meta" style="margin-right:5px;" description="${item}"></lablup-shields>
-                          `) : ''}
-                          </div>
-                        </mwc-list-item>
-                      `}
-                    `)}
-                </mwc-select>
-                <mwc-select id="version" label="Version">
-                ${this.versions.map(item => html`
-                  <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
-                `)}
-                </mwc-select>
-              </div>
               <div style="display:none;">
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
