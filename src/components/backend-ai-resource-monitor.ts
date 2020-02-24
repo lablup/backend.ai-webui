@@ -15,6 +15,9 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+
 import '@material/mwc-icon-button';
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
@@ -400,6 +403,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 40px;
         }
 
+        mwc-select {
+          --mdc-theme-primary: blue;
+          --mdc-select-fill-color: aliceblue;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: blue;
+
+          --mdc-select-idle-line-color: rgba(0, 0, 255, 0.42);
+          --mdc-select-hover-line-color: rgba(0, 0, 255, 0.87);
+
+          --mdc-select-outlined-idle-border-color: rgba(0, 0, 255, 0.42);
+          --mdc-select-outlined-hover-border-color: rgba(0, 0, 255, 0.87);
+
+          /* inherits the styles of mwc-menu internally */
+          --mdc-menu-item-height: 30px;
+          --mdc-theme-surface: aliceblue;
+
+          /* inherits the styles of mwc-list internally */
+          --mdc-list-vertical-padding: 0px;
+          --mdc-list-side-padding: 30px;
+        }
+
         wl-button[fab] {
           --button-fab-size: 70px;
           border-radius: 6px;
@@ -478,7 +502,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
-    this.shadowRoot.querySelector('#version').addEventListener('selected-item-label-changed', this.updateMetric.bind(this));
+    this.shadowRoot.querySelector('#version').addEventListener('selected', this.updateMetric.bind(this));
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
       this.resourceGauge.style.display = 'none';
@@ -924,8 +948,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         basename = kernelName;
       }
       // Remove registry and namespace from alias and basename.
-      alias = alias.split('/').slice(-1)[0]
-      basename = basename.split('/').slice(-1)[0]
+      alias = alias.split('/').slice(-1)[0];
+      basename = basename.split('/').slice(-1)[0];
 
       let tags: string[] = [];
       if (kernelName in this.tags) {
@@ -967,12 +991,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.versions.sort();
       this.versions.reverse(); // New version comes first.
     }
+    console.log(this.versions);
     if (this.versions !== undefined) {
-      this.shadowRoot.querySelector('#version').value = this.versions[0];
+      const versionSelector = this.shadowRoot.querySelector('#version');
+      versionSelector.select(0);
       this.updateMetric('update versions');
     }
-    const versionSelector = this.shadowRoot.querySelector('#version paper-listbox');
-    if (versionSelector) versionSelector.selected = 0;
   }
 
   generateSessionId() {
@@ -1924,13 +1948,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `)}
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="version" label="Version">
-                  <paper-listbox slot="dropdown-content" selected="0">
+                <mwc-select id="version" label="Version">
               ${this.versions.map(item => html`
-                    <paper-item id="${item}" label="${item}">${item}</paper-item>
+                    <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
               `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                </mwc-select>
               </div>
               <div style="display:none;">
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
