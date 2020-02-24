@@ -1905,11 +1905,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     if (fragment.length > 2) {
       let requirements = this._aliasName(fragment[2]).split(':');
-      let req = { // Additional information
-        tag: this._aliasName(fragment[2]),
-        color: 'green',
-        size: '150px'
-      };
       if (requirements.length > 1) {
         info.push({ // Additional information
           tag: requirements[1],
