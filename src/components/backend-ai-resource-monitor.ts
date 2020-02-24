@@ -98,7 +98,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) used_pj_slot_percent;
   @property({type: Array}) resource_templates;
   @property({type: String}) default_language;
-  @property({type: Boolean}) launch_ready;
   @property({type: Number}) cpu_request;
   @property({type: Number}) mem_request;
   @property({type: Number}) shmem_request;
@@ -430,7 +429,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.resource_templates = [];
     this.vfolders = [];
     this.default_language = '';
-    this.launch_ready = false;
     this.concurrency_used = 0;
     this.concurrency_max = 0;
     this.concurrency_limit = 0;
@@ -506,6 +504,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
+    document.addEventListener("backend-ai-group-changed", (e)=> {
+      this.scaling_group = '';
+      this._updatePageVariables();
+    });
   }
 
   _initAliases() {
@@ -515,19 +517,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
-
     if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
     }
     this.scaling_group = e.target.value;
-    console.log(this.active);
     if (this.active) {
       if (this.direction === 'vertical') {
         let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
         scaling_group_selection_box.firstChild.value = this.scaling_group;
       }
-      this.shadowRoot.querySelector('#scaling-groups').value = this.scaling_group;
-
+      let sgnum = this.scaling_groups.map((sg) => sg.name).indexOf(this.scaling_group);
+      if (sgnum < 0) sgnum = 0;
+      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = sgnum;
       if (forceUpdate === true) {
         //console.log('force update called');
         //this.metric_updating = true;
@@ -684,11 +685,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (window.backendaiclient.is_admin) {
         ownershipPanel.style.display = 'block';
       } else {
-
-
         ownershipPanel.style.display = 'none';
       }
-
+      // this value initialization is temporary due to non-dynamic value recongition of paper-dropdown
+      let selectedSgroup = parseInt(this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected);
+      if (selectedSgroup >= this.scaling_groups.length) {
+        selectedSgroup = 0;
+      }
+      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = -1;
+      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = selectedSgroup;
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -1861,7 +1866,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <span style="margin-right:5px;">User Resource Limit</span>
         </div>
       </div>
-` : html``}
+      ` : html``}
       ${this.direction === 'vertical' && this.project_resource_monitor === true && this.total_pj_slot.cpu_slot != 0 ? html`
       <hr />
       <div class="vertical start-justified layout">
@@ -1898,10 +1903,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="flex"></div>
         </div>
       </div>
-` : html``}
-      <wl-dialog id="new-session-dialog"
-                    fixed backdrop blockscrolling persistent
-                    style="padding:0;">
+      ` : html``}
+      <wl-dialog id="new-session-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <wl-card class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>Start new session</span>
@@ -1942,14 +1945,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                <paper-dropdown-menu id="scaling-groups" label="Resource Group" horizontal-align="left">
-                  <paper-listbox selected="0" slot="dropdown-content">
-${this.scaling_groups.map(item =>
-      html`
+                <paper-dropdown-menu id="scaling-groups" label="Resource Group"
+                                     horizontal-align="left" style="padding-bottom: 1px;">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    ${this.scaling_groups.map(item => html`
                       <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-      `
-    )
-    }
+                      `)
+                     }
                   </paper-listbox>
                 </paper-dropdown-menu>
                 ` : html``}
@@ -1965,22 +1967,21 @@ ${this.scaling_groups.map(item =>
                 `)}
                 </backend-ai-dropdown-menu>
               </div>
-
             </fieldset>
             <wl-expansion name="resource-group" open>
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
-${this.resource_templates.map(item => html`
-                <wl-button class="resource-button vertical center start layout" role="option"
-                            style="height:140px;min-width:120px;" type="button"
-                            flat outlined
-                            @click="${this._chooseResourceTemplate}"
-                            id="${item.name}-button"
-                            .cpu="${item.cpu}"
-                            .mem="${item.mem}"
-                            .gpu="${item.gpu}">
+                ${this.resource_templates.map(item => html`
+                  <wl-button class="resource-button vertical center start layout" role="option"
+                             style="height:140px;min-width:120px;" type="button"
+                             flat outlined
+                             @click="${this._chooseResourceTemplate}"
+                             id="${item.name}-button"
+                             .cpu="${item.cpu}"
+                             .mem="${item.mem}"
+                             .gpu="${item.gpu}">
                   <div>
                     <h4>${item.name}</h4>
                     <ul>
@@ -1991,17 +1992,16 @@ ${this.resource_templates.map(item => html`
                   </div>
                 </wl-button>
               `)}
-              ${this.isEmpty(this.resource_templates) ?
-      html`
+              ${this.isEmpty(this.resource_templates) ? html`
                 <wl-button class="resource-button vertical center start layout" role="option"
-                            style="height:140px;width:350px;" type="button"
-                            flat inverted outlined disabled>
+                           style="height:140px;width:350px;" type="button"
+                           flat inverted outlined disabled>
                   <div>
                     <h4>No suitable preset</h4>
                     <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
                   </div>
                 </wl-button>
-` : html``}
+                ` : html``}
               </paper-listbox>
             </wl-expansion>
             <wl-expansion name="resource-group">
@@ -2011,44 +2011,44 @@ ${this.resource_templates.map(item => html`
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">CPU</div>
                   <lablup-slider id="cpu-resource" class="cpu"
-                                pin snaps expand editable markers
-                                marker_limit="${this.marker_limit}"
-                                min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                                value="${this.cpu_request}"></lablup-slider>
+                                 pin snaps expand editable markers
+                                 marker_limit="${this.marker_limit}"
+                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
+                                 value="${this.cpu_request}"></lablup-slider>
                   <span class="caption">Core</span>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">RAM</div>
                   <lablup-slider id="mem-resource" class="mem"
-                                pin snaps step=0.05 editable markers
-                                marker_limit="${this.marker_limit}"
-                                min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                                value="${this.mem_request}"></lablup-slider>
+                                 pin snaps step=0.05 editable markers
+                                 marker_limit="${this.marker_limit}"
+                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
+                                 value="${this.mem_request}"></lablup-slider>
                   <span class="caption">GB</span>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">Shared Memory</div>
                   <lablup-slider id="shmem-resource" class="mem"
-                                pin snaps step=0.0025 editable markers
-                                marker_limit="${this.marker_limit}"
-                                min="0.0" max="${this.shmem_metric.max}"
-                                value="${this.shmem_request}"></lablup-slider>
+                                 pin snaps step=0.0025 editable markers
+                                 marker_limit="${this.marker_limit}"
+                                 min="0.0" max="${this.shmem_metric.max}"
+                                 value="${this.shmem_request}"></lablup-slider>
                   <span class="caption">GB</span>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">GPU</div>
                   <lablup-slider id="gpu-resource" class="gpu"
-                                pin snaps editable markers step="${this.gpu_step}"
-                                marker_limit="${this.marker_limit}"
-                                min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
+                                 pin snaps editable markers step="${this.gpu_step}"
+                                 marker_limit="${this.marker_limit}"
+                                 min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
                   <span class="caption">GPU</span>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">Sessions</div>
                   <lablup-slider id="session-resource" class="session"
-                                pin snaps editable markers step="1"
-                                marker_limit="${this.marker_limit}"
-                                min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
+                                 pin snaps editable markers step="1"
+                                 marker_limit="${this.marker_limit}"
+                                 min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
                   <span class="caption">#</span>
                 </div>
               </div>
@@ -2076,7 +2076,7 @@ ${this.resource_templates.map(item => html`
                 <div class="horizontal center layout">
                   <paper-dropdown-menu id="owner-group" label="Owner group" horizontal-align="left">
                     <paper-listbox slot="dropdown-content" attr-for-selected="id"
-                                  selected="${this.default_language}">
+                                   selected="${this.default_language}">
                       ${this.ownerGroups.map(item => html`
                         <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
                       `)}
