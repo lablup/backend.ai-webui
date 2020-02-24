@@ -768,7 +768,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
       return;
     }
-    if (kernel === "" || version === "") {
+    if (kernel === "" || version === "" || version === "Not Selected") {
       this.notification.text = "You must specify Environment and Version.";
       this.notification.show();
       return;
@@ -1966,7 +1966,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="horizontal center layout" style="padding-top:15px;">
               <mwc-select id="environment" label="Environments" required style="padding-left:5px;" outlined
               @updated="${this.updateLanguage}" value="${this.default_language}">
-                <mwc-list-item selected></mwc-list-item>
+                <mwc-list-item selected>Choose environment</mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
