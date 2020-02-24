@@ -53,6 +53,11 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) keypairView = Object();
+  @property({type: Number}) _pageSize = 10;
+  @property({type: Object}) keypairGrid = Object();
+  @property({type: Number}) _currentPage = 1; 
+  @property({type: Number}) _totalCredentialCount = 0;
 
   constructor() {
     super();
@@ -70,7 +75,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 300px);
+          height: calc(100vh - 400px);
         }
 
         paper-item {
@@ -141,6 +146,21 @@ export default class BackendAICredentialList extends BackendAIPage {
         wl-label {
           --label-color: black;
         }
+        
+        wl-icon.pagination {
+          color: var(--paper-grey-700);
+        }
+
+        wl-button.pagination {
+          width: 15px;
+          height: 15px;
+          padding: 10 10px;
+          box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-red-100);
+          --button-bg-active: var(--paper-red-600);
+          --button-bg-active-flat: var(--paper-red-600);
+        }
 
       `];
   }
@@ -148,7 +168,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
-    this.indicator.show();
   }
 
   async _viewStateChanged(active) {
@@ -161,10 +180,12 @@ export default class BackendAICredentialList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshKeyData();
         this.isAdmin = window.backendaiclient.is_admin;
+        this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
       }, true);
     } else { // already connected
       this._refreshKeyData();
       this.isAdmin = window.backendaiclient.is_admin;
+      this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
     }
   }
 
@@ -229,6 +250,8 @@ export default class BackendAICredentialList extends BackendAIPage {
         }
       });
       this.keypairs = keypairs;
+      this._totalCredentialCount = this.keypairs.length > 0 ? this.keypairs.length : 1;
+      this._updateItemsFromPage(1);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -381,6 +404,24 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  _updateItemsFromPage(page) {
+    if (typeof page !== 'number') {
+      let page_action = page.target;
+      if (page_action['role'] !== 'button') {
+        page_action = page.target.closest('wl-button');
+      }
+      if (page_action.id === 'previous-page') {
+        this._currentPage -= 1;
+      } else {
+        this._currentPage += 1;
+      }
+    }
+    let start = (this._currentPage - 1) * this.keypairGrid.pageSize;
+    let end = this._currentPage * this.keypairGrid.pageSize;
+    this.keypairView = this.keypairs.slice(start, end);
+    console.log()
+  }
+
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -451,8 +492,8 @@ export default class BackendAICredentialList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
-                   id="keypair-grid" .items="${this.keypairs}">
+      <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="Credential list"
+                   id="keypair-grid" .items="${this.keypairView}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
         <vaadin-grid-column resizable>
@@ -562,10 +603,22 @@ export default class BackendAICredentialList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-
         <vaadin-grid-column width="150px" resizable header="Control" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
+      <div class="horizontal center-justified layout flex" style="padding: 10px;">
+        <wl-button class="pagination" id="previous-page"
+                   ?disabled="${ this._currentPage === 1 }"
+                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+          <wl-icon class="pagination">navigate_before</wl-icon>
+        </wl-button>
+        <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${ Math.ceil( this._totalCredentialCount / this._pageSize)} </wl-label>
+        <wl-button class="pagination" id="next-page"
+                   ?disabled="${ this._totalCredentialCount <= this._pageSize * this._currentPage}"
+                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+          <wl-icon class="pagination">navigate_next</wl-icon>
+        </wl-button>
+      </div>
       <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">

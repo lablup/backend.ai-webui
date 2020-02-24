@@ -72,7 +72,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 260px);
+          height: calc(100vh - 300px);
         }
 
         paper-item {
@@ -437,11 +437,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         this._refreshPolicyData();
         this._getResourceInfo();
         this.is_admin = window.backendaiclient.is_admin;
+        this._getResourceInfo();
       }, true);
     } else { // already connected
       this._refreshPolicyData();
       this._getResourceInfo();
       this.is_admin = window.backendaiclient.is_admin;
+      this._getResourceInfo();
     }
   }
 
