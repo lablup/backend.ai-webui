@@ -348,7 +348,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
-    this._defaultFileName = new Date().toISOString().substring(0, 10) + '_' 
+    this._defaultFileName = new Date().toISOString().substring(0, 10) + '_'
                           + new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
 
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
@@ -1068,9 +1068,9 @@ export default class BackendAiSessionList extends BackendAIPage {
             ${item.map(item => {
               if (item.category === 'Env') {
                 item.category = item.tag;
-                if (rowData.item.baseversion) {
-                  item.tag = rowData.item.baseversion;
-                }
+              }
+              if (item.category && rowData.item.baseversion) {
+                item.tag = rowData.item.baseversion;
               }
               return html`
                 <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
@@ -1190,7 +1190,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let checkbox = e.target;
     let dateFrom = this.shadowRoot.querySelector('#date-from');
     let dateTo = this.shadowRoot.querySelector('#date-to');
-    
+
     dateFrom.disabled = checkbox.checked;
     dateTo.disabled = checkbox.checked;
   }
@@ -1283,7 +1283,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     //     let sessions = response.compute_sessions;
     //     // console.log("total_count : ",total_count);
     //   JsonToCsv.exportToCsv(fileNameEl.value, sessions);
-    //   }); 
+    //   });
     // } else {
     //   let dateTo = this.shadowRoot.querySelector('#date-to');
     //   let dateFrom = this.shadowRoot.querySelector('#date-from');
@@ -1519,7 +1519,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
          </div>
-      </wl-dialog>     
+      </wl-dialog>
       <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
       <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
         <h3 class="horizontal center layout" style="padding:10px;">
@@ -1532,8 +1532,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         <section style="padding: 10px;">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
-                          value="${'session_'+this._defaultFileName}" required 
-                          style="margin-bottom:10px;"></mwc-textfield> 
+                          value="${'session_'+this._defaultFileName}" required
+                          style="margin-bottom:10px;"></mwc-textfield>
           <div class="horizontal center layout" style="display:none;">
             <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
                           value="${this._getFirstDateOfMonth()}" required
