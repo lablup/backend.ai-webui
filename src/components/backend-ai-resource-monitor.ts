@@ -1965,15 +1965,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <form id="launch-session-form">
             <div class="horizontal center layout" style="padding-top:15px;">
               <mwc-select id="environment" label="Environments" required style="padding-left:5px;" outlined
-              @updated="${this.updateLanguage}" value="${this.default_language}">
+                value="${this.default_language}">
                 <mwc-list-item selected>Choose environment</mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
                     ` : html`
-                      <mwc-list-item id="${item.name}" value="${item.alias}" class="horizontal layout">
+                      <mwc-list-item id="${item.name}" value="${item.name}" class="horizontal layout">
                         <div class="vertical layout start-justified">
-                          <span style="padding-right:5px;">${item.basename}</span>
+                          <span style="padding-right:5px;">${item.alias}</span>
                           <div class="horizontal layout start-justified">
                           ${item.tags ? item.tags.map(item => html`
                             <lablup-shields slot="meta" style="margin-right:5px;" description="${item}"></lablup-shields>
