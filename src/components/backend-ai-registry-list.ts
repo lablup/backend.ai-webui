@@ -422,12 +422,12 @@ class BackendAIRegistryList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="2" auto-width header="Registry URL" resizable .renderer=${this._registryRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" auto-width resizable header="Registry Type">
+        <vaadin-grid-column flex-grow="0" auto-width resizable header="Type">
           <template>
             <div> [[item.type]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" auto-width resizable header="Project Name (Harbor Only)">
+        <vaadin-grid-column flex-grow="0" auto-width resizable header="Harbor Project">
           <template>
             <div> [[item.project]] </div>
           </template>
