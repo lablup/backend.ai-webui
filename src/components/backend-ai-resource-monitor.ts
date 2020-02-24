@@ -514,7 +514,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           if ("label" in this.imageInfo[key]) {
             this.imageInfo[key].label.forEach((item) => {
               if (!("category" in item)) {
-                this.tags[key].push(item.tag);
+                this.tags[key].push(item);
               }
             });
           }
@@ -1991,16 +1991,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
                     ` : html`
                       <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-                          <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                        <div class="horizontal justified layout wrap">
+                        <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
+                        <div class="horizontal start-justified layout wrap">
                           <div style="padding-right:5px;">${item.basename}</div>
                           <div class="flex"></div>
                           <div class="horizontal layout end-justified">
                           ${item.tags ? item.tags.map(item => html`
-                            <lablup-shields slot="meta" style="margin-right:5px;" description="${item}"></lablup-shields>
+                            <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
                           `) : ''}
                           </div>
                         </div>
+                        <div class="flex"></div>
                       </mwc-list-item>
                     `}
                   `)}
