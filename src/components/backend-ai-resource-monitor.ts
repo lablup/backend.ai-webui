@@ -417,15 +417,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
 
           /* inherits the styles of mwc-menu internally */
-          --mdc-menu-item-height: 30px;
           --mdc-theme-surface: white;
 
           /* inherits the styles of mwc-list internally */
-          --mdc-list-vertical-padding: 0px;
+          --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 10px;
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+        }
+
+        #environment {
+          --mdc-menu-item-height: 60px;
+        }
+
+        #version {
+          --mdc-menu-item-height: 35px;
         }
 
         wl-button[fab] {
@@ -630,6 +637,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             });
             //scaling_select.updateOptions();
             scaling_group_selection_box.appendChild(scaling_select);
+          } else {
+            this.scaling_group = this.scaling_groups[0].name;
           }
           let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
           scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, false));
@@ -996,9 +1005,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return;
     }
     if (this.versions !== undefined) {
-      return this.version_selector.requestUpdate().then(() => {
-        return this.version_selector.layout(true);
-      }).then(() => {
+      return this.version_selector.layout(true).then(() => {
         setTimeout(() => {
           this.version_selector.select(0);
           this.version_selector.select(1);
@@ -1305,6 +1312,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }).catch(err => {
       this.aggregate_updating = false;
       if (err && err.message) {
+        console.log(err);
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
@@ -1950,20 +1958,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </mwc-icon-button>
           </h3>
           <form id="launch-session-form">
-            <div class="horizontal center layout">
-              <mwc-select id="environment" label="Environments" required style="padding-left:5px;"
+            <div class="horizontal center layout" style="padding-top:15px;">
+              <mwc-select id="environment" label="Environments" required style="padding-left:5px;" outlined
               @updated="${this.updateLanguage}" value="${this.default_language}">
                 <mwc-list-item selected></mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
-                      <h5 style="font-size:12px;padding: 0 10px 3px 10px;border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
+                      <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
                     ` : html`
-                      <mwc-list-item id="${item.name}" value="${item.alias}" class="horizontal layout" twoline>
-                        <span>${item.basename}</span>
-                        <div slot="secondary" style="height:30px;" class="horizontal layout start-justified">
-                        ${item.tags ? item.tags.map(item => html`
-                          <lablup-shields slot="meta" style="margin-right:5px;" description="${item}"></lablup-shields>
-                        `) : ''}
+                      <mwc-list-item id="${item.name}" value="${item.alias}" class="horizontal layout">
+                        <div class="vertical layout start-justified">
+                          <span style="padding-right:5px;">${item.basename}</span>
+                          <div class="horizontal layout start-justified">
+                          ${item.tags ? item.tags.map(item => html`
+                            <lablup-shields slot="meta" style="margin-right:5px;" description="${item}"></lablup-shields>
+                          `) : ''}
+                          </div>
                         </div>
                       </mwc-list-item>
                     `}
