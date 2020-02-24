@@ -460,6 +460,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       (this.shadowRoot.getElementById('group-select') as any).disabled = true;
       (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
     }
+
     // Detached from template to support live-update after creating new group (will need it)
     if (groupSelectionBox.hasChildNodes()) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild);
