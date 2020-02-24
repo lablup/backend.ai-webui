@@ -1089,6 +1089,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     if (this.versions !== undefined) {
       return this.version_selector.layout(true).then(() => {
+        this.updateMetric('update versions');
         setTimeout(() => {
           this.version_selector.select(0);
           this.version_selector.select(1);
