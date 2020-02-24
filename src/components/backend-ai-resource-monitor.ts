@@ -1824,6 +1824,28 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _getVersionInfo(version) {
+    let info: any = [];
+    let fragment = version.split('-');
+    info.push({ // Version
+      tag: fragment[0],
+      color: 'blue'
+    });
+    if (fragment.length > 1) {
+      info.push({ // Language
+        tag: fragment[1],
+        color: 'red'
+      });
+    }
+    if (fragment.length > 2) {
+      info.push({ // Additional information
+        tag: fragment[2],
+        color: 'green'
+      });
+    }
+    return info;
+  }
+
   _disableEnterKey() {
     this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
       element.onKeyDown = (e) => {
@@ -2008,8 +2030,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </mwc-select>
               <mwc-select id="version" label="Version" required>
                 <mwc-list-item selected style="display:none!important"></mwc-list-item>
+                  <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
+                    <div style="width:80px;">Version</div>
+                    <div style="width:80px;">Base</div>
+                    <div style="width:200px;">Req.</div>
+                  </h5>
               ${this.versions.map(item => html`
-                <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
+                <mwc-list-item id="${item}" value="${item}">
+                  <span style="display:none">${item}</span>
+                  <div class="horizontal layout end-justified">
+                    ${this._getVersionInfo(item).map(item => html`
+                  <lablup-shields style="width:80px;" color="${item.color}" description="${item.tag}"></lablup-shields>
+                `)}
+                  </div>
+                </mwc-list-item>
               `)}
               </mwc-select>
             </div>
