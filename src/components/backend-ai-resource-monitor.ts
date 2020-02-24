@@ -121,7 +121,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) ownerGroups;
   @property({type: Array}) ownerScalingGroups;
   @property({type: Boolean}) project_resource_monitor = false;
-  @property({type: Boolean}) is_project_Changed = false;
 
   constructor() {
     super();
@@ -1007,10 +1006,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           scaling_group = this.scaling_groups[0]['name'];
           this.scaling_group = scaling_group;
         }
-          param = {
-            'group': window.backendaiclient.current_group,
-            'scaling_group': scaling_group
-          };
+        param = {
+          'group': window.backendaiclient.current_group,
+          'scaling_group': scaling_group
+        };
       } else {
         param = {
           'group': window.backendaiclient.current_group
