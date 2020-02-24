@@ -54,9 +54,9 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Number}) _pageSize = 10;
+  @property({type: Number}) _pageSize = 20;
   @property({type: Object}) userGrid = Object();
-  @property({type: Number}) _currentPage = 1; 
+  @property({type: Number}) _currentPage = 1;
   @property({type: Number}) _totalUserCount = 0;
 
   constructor() {
@@ -463,7 +463,7 @@ export default class BackendAIUserList extends BackendAIPage {
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
                    aria-label="User list" id="user-grid" .items="${this.userView}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" 
+        <vaadin-grid-column width="40px" flex-grow="0" header="#"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="User ID" path="email">
           <template>
