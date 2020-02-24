@@ -530,14 +530,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
-    this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
-      element.onKeyDown = (e) => {
-        let enterKey = 13;
-        if (e.keyCode === enterKey) {
-          e.preventDefault();
-        }
-      }
-    });
   }
 
   _initAliases() {
@@ -582,10 +574,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.project_resource_monitor = window.backendaiclient._config.allow_project_resource_monitor;
         this._updatePageVariables();
+        this._disableEnterKey();
       }, true);
     } else {
       this.project_resource_monitor = window.backendaiclient._config.allow_project_resource_monitor;
       this._updatePageVariables();
+      this._disableEnterKey();
     }
     //this.run_after_connection(this._updatePageVariables());
   }
@@ -1781,6 +1775,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       this.resourceGauge.style.display = 'flex';
     }
+  }
+
+  _disableEnterKey() {
+    this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
+      element.onKeyDown = (e) => {
+        let enterKey = 13;
+        if (e.keyCode === enterKey) {
+          e.preventDefault();
+        }
+      }
+    });
   }
 
   render() {

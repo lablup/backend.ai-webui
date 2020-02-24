@@ -8,6 +8,7 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
+import '@polymer/paper-progress/paper-progress';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/hardware-icons';
@@ -15,7 +16,6 @@ import '@polymer/iron-icons/av-icons';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@polymer/paper-progress/paper-progress';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -24,6 +24,10 @@ import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
+import 'weightless/label';
+
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
@@ -37,6 +41,7 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) selectedIndex = 0;
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
+  @property({type: Array}) _registryType = Array();
 
   constructor() {
     super();
@@ -76,14 +81,40 @@ class BackendAIRegistryList extends BackendAIPage {
 
         wl-dialog wl-textfield {
           --input-font-family: Roboto, Noto, sans-serif;
-          margin-bottom: 20px
+          --input-state-color-invalid: #b00020;
+          margin-bottom: 20px;
         }
 
         wl-dialog {
           --dialog-min-width: 350px;
         }
-      `
-    ];
+
+        wl-textfield.helper-text {
+          margin-bottom: 0px;
+        }
+
+        wl-textfield#add-project-name {
+          --input-label-space: 20px;
+        }
+
+        wl-label.helper-text {
+          --label-color: #b00020;
+          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-size: 11px;
+        }
+
+        mwc-select#select-registry-type {
+          width: 167px;
+          padding-right: 10px;
+          --mdc-select-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-orange-400);
+        }
+
+        mwc-list-item {
+          height: 30px;
+          --mdc-list-item-graphic-margin: 0px;
+        }
+      `];
   }
 
   firstUpdated() {
@@ -103,9 +134,7 @@ class BackendAIRegistryList extends BackendAIPage {
         : {
           ...obj[hostname],
           hostname
-        }
-    );
-
+        });
   }
 
   _refreshRegistryList() {
@@ -126,9 +155,11 @@ class BackendAIRegistryList extends BackendAIPage {
     // If disconnected
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this._registryType = ['docker', 'harbor'];
       }, true);
     } else { // already connected
       this._refreshRegistryList();
+      this._registryType = ['docker', 'harbor'];
     }
   }
 
@@ -144,19 +175,26 @@ class BackendAIRegistryList extends BackendAIPage {
     const hostname = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-hostname")).value,
       url = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-url")).value,
       username = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-username")).value,
-      password = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-password")).value;
+      password = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-password")).value,
+      registerType = this.shadowRoot.querySelector('#select-registry-type').value,
+      projectName = this.shadowRoot.querySelector('#add-project-name').value;
 
-    if (hostname === "") {
-      this.notification.text = "Hostname is empty";
-      this.notification.show();
+    if (!this.shadowRoot.querySelector("#add-registry-hostname").valid) {
+      let validationMessage = this.shadowRoot.querySelector("#registry-hostname-validation");
+      if (validationMessage) {
+        validationMessage.style.display = 'block';
+      }
       return;
     }
-    if (url === "") {
-      this.notification.text = "URL field is empty";
-      this.notification.show();
+
+    if (!this.shadowRoot.querySelector("#add-registry-url").valid) {
+      let validationMessage = this.shadowRoot.querySelector("#registry-url-validation");
+      if (validationMessage) {
+        validationMessage.style.display = 'block';
+      }
       return;
     }
-
+    
     let input = {};
     input[""] = url;
 
@@ -164,6 +202,15 @@ class BackendAIRegistryList extends BackendAIPage {
       input['username'] = username;
 
       if (password !== "") input['password'] = password;
+    }
+
+    input['type'] = registerType;
+    if (registerType === 'harbor') {
+      if (projectName && projectName !== '') { 
+        input['project'] = projectName;
+      } else {
+        return;
+      }
     }
 
     window.backendaiclient.registry.add(hostname, input)
@@ -239,6 +286,54 @@ class BackendAIRegistryList extends BackendAIPage {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _toggleProjectNameInput(){
+    let select = this.shadowRoot.querySelector('#select-registry-type');
+    let projectTextEl = this.shadowRoot.querySelector('#add-project-name');
+    projectTextEl.disabled = !(select.value && select.value === 'harbor');
+    this.shadowRoot.querySelector('#project-name-validation').style.display = 'block';
+    if (projectTextEl.disabled) {
+      this.shadowRoot.querySelector('#project-name-validation').textContent = '*For harbor only!';
+    } else {
+      this.shadowRoot.querySelector('#project-name-validation').textContent = 'project name is required.';
+    } 
+  }
+
+  _validateUrl() {
+    let url = this.shadowRoot.querySelector('#add-registry-url').value;
+    let validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
+    // regular expression for URL check
+    let expression = "^(http|https|ftp)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$";
+    let regex = new RegExp(expression); 
+    if (url && url.match(regex)) {
+      this.shadowRoot.querySelector('#add-registry-url').invalid = false;
+      validationMessage.style.display = 'none';
+    } else {
+      this.shadowRoot.querySelector('#add-registry-url').invalid = true;
+      validationMessage.style.display = 'block';
+    }
+  }
+
+  _validateHostname() {
+   let hostname = this.shadowRoot.querySelector('#add-registry-hostname').value;
+   let validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
+   if (hostname && hostname !== '') {
+     validationMessage.style.display = 'none';
+   } else {
+     validationMessage.style.display = 'block';
+   }
+  }
+
+  _validateProjectName() {
+    let projectName = this.shadowRoot.querySelector('#add-project-name').value;
+    let validationMessage = this.shadowRoot.querySelector('#project-name-validation');
+    if (projectName && projectName !== '') {
+      validationMessage.style.display = 'none';
+    }
+    else {
+      validationMessage.style.display = 'block';
+    }
   }
 
   _indexRenderer(root, column, rowData) {
@@ -325,7 +420,17 @@ class BackendAIRegistryList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="Hostname" .renderer=${this._hostRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="2" header="Registry URL" resizable .renderer=${this._registryRenderer}>
+        <vaadin-grid-column flex-grow="2" auto-width header="Registry URL" resizable .renderer=${this._registryRenderer}>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow="0" auto-width resizable header="Type">
+          <template>
+            <div> [[item.type]] </div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow="0" auto-width resizable header="Harbor Project">
+          <template>
+            <div> [[item.project]] </div>
+          </template>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="Username">
           <template>
@@ -353,25 +458,58 @@ class BackendAIRegistryList extends BackendAIPage {
             <fieldset>
               <wl-textfield
                 id="add-registry-hostname"
+                class="helper-text"
                 type="text"
                 label="Registry Hostname"
+                required
+                @click=${this._validateHostname}
+                @change=${this._validateHostname}
               ></wl-textfield>
+              <wl-label class="helper-text" id="registry-hostname-validation" style="display:none;">Hostname is empty</wl-label>
               <wl-textfield
                 id="add-registry-url"
-                type="text"
+                class="helper-text"
                 label="Registry URL"
+                required
+                pattern="^(http|https)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$"
+                @click=${this._validateUrl}
+                @change=${this._validateUrl}
               ></wl-textfield>
+              <wl-label class="helper-text" id="registry-url-validation" style="display:none;">URL Starts with http:// or https://</wl-label>
+             <div class="horizontal layout flex">
               <wl-textfield
                 id="add-registry-username"
                 type="text"
                 label="Username (Optional)"
+                style="padding-right:10px;"
               ></wl-textfield>
               <wl-textfield
                 id="add-registry-password"
                 type="password"
                 label="Password (Optional)"
+                style="padding-left:10px;"
               ></wl-textfield>
-
+             </div>
+             <div class="horizontal layout" style="padding-bottom:10px;">
+              <mwc-select id="select-registry-type" label="Registry Type"
+                          @change=${this._toggleProjectNameInput} required
+                          validationMessage="Please select one option.">
+                ${this._registryType.map(item => html`
+                  <mwc-list-item value="${item}" ?selected="${item === 'docker'}">${item}</mwc-list-item>
+                `)}
+              </mwc-select>
+               <div class="vertical layout" style="padding-left:10px;">
+                  <wl-textfield
+                  id="add-project-name"
+                  class="helper-text"
+                  type="text"
+                  label="Project Name"
+                  required
+                  @change=${this._validateProjectName}
+                  ></wl-textfield>
+                  <wl-label class="helper-text" id="project-name-validation" style="display:block;">*For harbor only!</wl-label>
+              </div>
+             </div>
               <div class="horizontal layout center-justified">
                 <wl-button
                   class="fg orange"
