@@ -405,7 +405,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         mwc-select {
-          width: 195px;
+          width: 100%;
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
@@ -421,14 +421,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
           /* inherits the styles of mwc-list internally */
           --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 10px;
+          --mdc-list-side-padding: 25px;
           --mdc-list-item__primary-text: {
             height: 20px;
           };
         }
 
         #environment {
-          --mdc-menu-item-height: 60px;
+          --mdc-menu-item-height: 40px;
+          z-index: 10000;
+          max-height: 300px;
         }
 
         #version {
@@ -1621,7 +1623,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
       'resource_limits { key min max }'
     ];
-    window.backendaiclient.image.list(fields, true).then((response) => {
+    window.backendaiclient.image.list(fields, true, false).then((response) => {
       const images: Array<object> = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
@@ -1967,18 +1969,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </mwc-icon-button>
           </h3>
           <form id="launch-session-form">
-            <div class="horizontal center layout" style="padding-top:15px;">
-              <mwc-select id="environment" label="Environments" required style="padding-left:5px;" outlined
+            <div class="vertical center layout" style="padding-top:15px;">
+              <mwc-select id="environment" label="Environments" required
                 value="${this.default_language}">
                 <mwc-list-item selected style="display:none!important">Choose environment</mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
                     ` : html`
-                      <mwc-list-item id="${item.name}" value="${item.name}" class="horizontal layout">
-                        <div class="vertical layout start-justified">
+                      <mwc-list-item id="${item.name}" value="${item.name}">
+                        <div class="horizontal justified layout">
                           <span style="padding-right:5px;">${item.alias}</span>
-                          <div class="horizontal layout start-justified">
+                          <div class="flex"></div>
+                          <div class="horizontal layout end-justified">
                           ${item.tags ? item.tags.map(item => html`
                             <lablup-shields slot="meta" style="margin-right:5px;" description="${item}"></lablup-shields>
                           `) : ''}
@@ -1988,7 +1991,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `}
                   `)}
               </mwc-select>
-              <mwc-select id="version" label="Version" required style="padding-right:5px;">
+              <mwc-select id="version" label="Version" required>
                 <mwc-list-item selected style="display:none!important"></mwc-list-item>
               ${this.versions.map(item => html`
                 <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
@@ -2155,8 +2158,7 @@ ${this.resource_templates.map(item => html`
                 </wl-label>
               </div>
             </wl-expansion>
-
-            <fieldset style="padding-top:0;">
+            <fieldset slot="footer" style="padding-top:0;">
               <wl-button class="launch-button" type="button" id="launch-button"
                                            outlined @click="${() => this._newSession()}">
                                           <wl-icon>rowing</wl-icon>
