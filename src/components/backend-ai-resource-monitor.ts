@@ -768,6 +768,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
       return;
     }
+    if (kernel === "" || version === "") {
+      this.notification.text = "You must specify Environment and Version.";
+      this.notification.show();
+      return;
+    }
     if (this.enable_scaling_group) {
       this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
     }
