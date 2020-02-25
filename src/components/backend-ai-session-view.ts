@@ -82,6 +82,11 @@ export default class BackendAiSessionView extends BackendAIPage {
 
         mwc-menu {
           --mdc-theme-surface: #f1f1f1;
+          --mdc-menu-item-height : auto;
+        }
+
+        mwc-list-item {
+          font-size : 14px;
         }
 
         mwc-icon-button {
