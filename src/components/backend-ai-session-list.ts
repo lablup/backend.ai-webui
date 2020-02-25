@@ -312,7 +312,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-     const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
+     const preparingStatuses = ['RESTARTING', 'PULLING'];
      if (preparingStatuses.indexOf(status) === -1) {
        return false;
      }
