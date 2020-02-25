@@ -8,7 +8,12 @@ import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
+
 import '@material/mwc-textfield/mwc-textfield';
+import "@material/mwc-list/mwc-list-item";
+import "@material/mwc-icon-button/mwc-icon-button";
+import "@material/mwc-menu/mwc-menu";
+
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
@@ -210,6 +215,19 @@ export default class BackendAICredentialView extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--paper-green-600);
+        }
+
+        mwc-menu {
+          --mdc-theme-surface: #f1f1f1;
+        }
+
+        mwc-icon-button {
+          --mdc-icon-size: 20px;
+          color: var(--paper-grey-700);
+        }
+
+        mwc-icon-button#dropdown-menu-button {
+          margin-left: 10px;
         }
       `];
   }
@@ -731,6 +749,14 @@ export default class BackendAICredentialView extends BackendAIPage {
     return date+'_'+time;
   }
 
+  _toggleDropdown() {
+    let menu = this.shadowRoot.querySelector("#dropdown-menu");
+    menu.open = !menu.open;
+    if(this.exportToCsvDialog.open) {
+      menu.open = false;
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -738,11 +764,25 @@ export default class BackendAICredentialView extends BackendAIPage {
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
             ${this._status === 'active' && this.use_user_list === true ? html`
-            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">Users</wl-tab>` :
-      html``}
+              <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">Users</wl-tab>
+            ` : html``}
             <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
           </wl-tab-group>
+          ${this.isAdmin ? html`
+              <span class="flex"></span>
+              <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
+                               @click="${this._toggleDropdown}">
+                <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
+                  <mwc-list-item>
+                    <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
+                      <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
+                      export CSV
+                    </a>
+                  </mwc-list-item>
+                </mwc-menu>
+              </mwc-icon-button>
+            ` : html``}
         </h3>
         <wl-card id="user-lists" class="admin item tab-content">
           <h4 class="horizontal flex center center-justified layout">
@@ -752,10 +792,6 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-icon>add</wl-icon>
               Create user
             </wl-button>
-            ${this.isAdmin ? html`<wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
-            <wl-icon>get_app</wl-icon>
-            export CSV
-          </wl-button>` : html``}
           </h4>
           <div>
             <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
@@ -768,10 +804,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             <wl-icon>add</wl-icon>
             Add credential
           </wl-button>
-          ${this.isAdmin ? html`<wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
-            <wl-icon>get_app</wl-icon>
-            export CSV
-          </wl-button>` : html``}
         </h4>
           <wl-expansion name="credential-group" open role="list">
             <h4 slot="title">Active</h4>
@@ -796,11 +828,6 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-icon>add</wl-icon>
               Create policy
             </wl-button>
-            ${this.isAdmin ? html`
-            <wl-button class="fg teal" id="export-csv" outlined @click="${this._openExportToCsvDialog}" style="margin-left: 10px;">
-            <wl-icon>get_app</wl-icon>
-            export CSV
-          </wl-button>` : html``}
           </h4>
           <div>
             <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
