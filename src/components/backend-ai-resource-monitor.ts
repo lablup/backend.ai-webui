@@ -126,6 +126,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) ownerScalingGroups;
   @property({type: Boolean}) project_resource_monitor = false;
   @property({type: Object}) version_selector = Object();
+  @property({type: Boolean}) _default_language_updated = false;
 
   constructor() {
     super();
@@ -1802,6 +1803,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _selectDefaultLanguage() {
+    if (this._default_language_updated === true) {
+      return;
+    }
     if (window.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in window.backendaiclient._config &&
       window.backendaiclient._config.default_session_environment !== '') {
@@ -1824,6 +1828,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     let idx = environment.items.indexOf(obj);
     environment.select(idx);
+    this._default_language_updated = true;
     return true;
   }
 
