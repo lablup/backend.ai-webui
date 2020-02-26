@@ -22,11 +22,14 @@
     "update": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
+    "@material/mwc-button": "^0.13.0",
     "@material/mwc-drawer": "^0.13.0",
+    "@material/mwc-formfield": "^0.13.0",
     "@material/mwc-icon-button": "^0.13.0",
     "@material/mwc-list": "^0.13.0",
     "@material/mwc-select": "^0.13.0",
     "@material/mwc-slider": "^0.13.0",
+    "@material/mwc-switch": "^0.13.0",
     "@material/mwc-textfield": "^0.13.0",
     "@material/mwc-top-app-bar-fixed": "^0.13.0",
     "@polymer/iron-dropdown": "^3.0.1",
