@@ -236,7 +236,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.indicator.end(1000);
       this._getImages();
     }).catch(err => {
-      this.selectedCheckbox.checked = false;
+      this._uncheckSelectedRow();
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
       this.indicator.set(100, 'Problem occurred during installation.');
       this.indicator.end(1000);
     });
@@ -623,7 +626,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </wl-button>
         </div>
       </wl-dialog>
-      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling>
+      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling persistent>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
             <p>You are about to install the image <span style="color:blue;">${this.installImageName}</span>.</p>
@@ -633,7 +636,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <wl-button class="cancel" inverted flat
                        @click="${(e) => {
                                 this._hideDialog(e)
-                                this.selectedCheckbox.checked = false;
+                                this._uncheckSelectedRow();
                               }}">
               Cancel
             </wl-button>
@@ -699,6 +702,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     container.querySelectorAll(".row.extra").forEach(e => {
       e.remove();
     });
+  }
+
+  _uncheckSelectedRow() {
+    this.selectedCheckbox.checked = false;
   }
 
   firstUpdated() {
@@ -794,7 +801,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       } else {
         this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
       }
-      this.notification.show();
+      this.notification.show(true, err);
       this.loadingIndicator.hide();
     });
   }
