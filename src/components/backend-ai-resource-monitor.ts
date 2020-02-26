@@ -2155,7 +2155,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     ${this._getVersionInfo(item).map(item => html`
                       <lablup-shields style="width:${item.size}!important;"
                                       color="${item.color}"
-                                      app="${item.app ? item.app : ''}" 
+                                      app="${item.app && item.app != "" && item.app != " " ? item.app : ''}"
                                       description="${item.tag}">
                       </lablup-shields>
                     `)}
