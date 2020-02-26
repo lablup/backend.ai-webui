@@ -630,7 +630,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <p>This process requires significant download time. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="cancel" inverted flat
+                       @click="${(e) => {
+                                this._hideDialog(e)
+                                this.selectedCheckbox.checked = false;
+                              }}">
+              Cancel
+            </wl-button>
             <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>
          </div>
       </wl-dialog>
