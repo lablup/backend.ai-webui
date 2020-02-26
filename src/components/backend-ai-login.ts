@@ -147,6 +147,11 @@ export default class BackendAILogin extends LitElement {
           --button-bg-active: var(--paper-green-600);
         }
 
+        wl-button.change-login-mode-button {
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
+        }
+
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
@@ -716,7 +721,7 @@ export default class BackendAILogin extends LitElement {
                 <div class="horizontal center layout">
                   <small>Want to login another way?</small>
                   <div class="flex"></div>
-                  <wl-button class="signup-button fg green mini" outlined type="button" @click="${() => this._changeSigninMode()}">Click to use ${this.connection_mode == 'SESSION' ? html`IAM` : html`ID`}</wl-button>
+                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">Click to use ${this.connection_mode == 'SESSION' ? html`IAM` : html`ID`}</wl-button>
                 </div>
             ` : html``}
               <wl-textfield type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
