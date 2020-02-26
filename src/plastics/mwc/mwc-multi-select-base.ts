@@ -741,11 +741,11 @@ export abstract class SelectBase extends FormElement {
     if (this.mdcFoundation) {
       this.mdcFoundation.handleMenuItemAction(evt.detail.index);
     }
+    // CHANGED : to provide multiple selection
     if (this.selected === null) {
       this.value = '';
     } else {
-      let result = (this.selected as any).map(a => a.value);
-      this.value = result;
+      this.value = (this.selected as any).map(a => a.value);
       this.selectedText = this.value.toString();
     }
   }
