@@ -2115,7 +2115,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               @click="${() => this._hideSessionDialog()}">
             </mwc-icon-button>
           </h3>
-          <fieldset>
           <form id="launch-session-form">
             <div class="vertical center layout" style="padding-top:15px;">
               <mwc-select id="environment" label="Environments" required
@@ -2194,7 +2193,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 `)}
                 </backend-ai-dropdown-menu>
               </div>
-            </fieldset>
             <wl-expansion name="resource-group" open>
               <span slot="title">Resource allocation</span>
               <span slot="description"></span>
