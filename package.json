@@ -27,6 +27,7 @@
     "@material/mwc-formfield": "^0.13.0",
     "@material/mwc-icon-button": "^0.13.0",
     "@material/mwc-list": "^0.13.0",
+    "@material/mwc-menu": "^0.13.0",
     "@material/mwc-select": "^0.13.0",
     "@material/mwc-slider": "^0.13.0",
     "@material/mwc-switch": "^0.13.0",
