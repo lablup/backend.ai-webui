@@ -16,6 +16,7 @@ import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-select';
+import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield/mwc-textfield';
@@ -792,6 +793,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
+    console.log(vfolder);
+    return;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.shmem_request = this.shadowRoot.querySelector('#shmem-resource').value;
@@ -2182,11 +2185,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders to mount">
+                <backend-ai-dropdown-menu id="vfolder2" multi attr-for-selected="value" style="display:none;" label="Folders to mount">
+
                 ${this.vfolders.map(item => html`
                   <paper-item value="${item.name}">${item.name}</paper-item>
                 `)}
                 </backend-ai-dropdown-menu>
+                <mwc-multi-select id="vfolder" label="Folders to mount" multi>
+                ${this.vfolders.map(item => html`
+                  <mwc-list-item value="${item.name}">${item.name}</mwc-list-item>
+                `)}
+                </mwc-multi-select>
               </div>
             <wl-expansion name="resource-group" open>
               <span slot="title">Resource allocation</span>

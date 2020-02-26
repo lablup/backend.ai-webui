@@ -22,9 +22,11 @@
     "update": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
+    "@material/mwc-button": "^0.13.0",
     "@material/mwc-drawer": "^0.13.0",
     "@material/mwc-icon-button": "^0.13.0",
     "@material/mwc-list": "^0.13.0",
+    "@material/mwc-menu": "^0.13.0",
     "@material/mwc-select": "^0.13.0",
     "@material/mwc-slider": "^0.13.0",
     "@material/mwc-textfield": "^0.13.0",
