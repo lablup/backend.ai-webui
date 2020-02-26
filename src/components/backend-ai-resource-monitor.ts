@@ -1106,6 +1106,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     if (this.versions !== undefined) {
       return this.version_selector.layout(true).then(() => {
+        // Set version selector's value beforehand to update resources in
+        // updateMetric method. Without this, LAUNCH button's disabled state is not
+        // updated, so in some cases, user cannot launch a session even though
+        // there are available resources for the selected image.
+        this.version_selector.value = this.versions[0];
         this.updateMetric('update versions');
         setTimeout(() => {
           this.version_selector.select(0);
