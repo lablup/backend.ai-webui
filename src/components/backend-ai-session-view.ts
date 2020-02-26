@@ -106,12 +106,12 @@ export default class BackendAiSessionView extends BackendAIPage {
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.shadowRoot.querySelector('#running-jobs').refreshList(true, false);
     });
-
-    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
-    && typeof window.backendaiclient.is_admin !== "undefined" && window.backendaiclient.is_admin === true) {
-      this.is_admin = true;
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.is_admin = window.backendaiclient.is_admin;
+      }, true);
     } else {
-      this.is_admin = false;
+      this.is_admin = window.backendaiclient.is_admin;
     }
   }
 
@@ -188,7 +188,7 @@ export default class BackendAiSessionView extends BackendAIPage {
         <div id="others-lists" class="tab-content" style="display:none;">
           <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
         </div>
-        
+
       </wl-card>
 `;
   }
