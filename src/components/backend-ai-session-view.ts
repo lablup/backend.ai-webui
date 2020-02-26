@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
-import './backend-ai-dropdown-menu';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
@@ -153,7 +152,7 @@ export default class BackendAiSessionView extends BackendAIPage {
         <div id="others-lists" class="tab-content" style="display:none;">
           <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
         </div>
-        
+
       </wl-card>
 `;
   }

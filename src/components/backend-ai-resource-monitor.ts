@@ -21,7 +21,6 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield/mwc-textfield';
 
-import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
@@ -350,10 +349,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 50%;
         }
 
-        backend-ai-dropdown-menu {
-          width: 100%;
-        }
-
         #launch-session {
           --button-bg: var(--paper-red-50);
           --button-bg-hover: var(--paper-red-100);
@@ -416,14 +411,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-select-dropdown-icon-color: blue;
           --mdc-select-idle-line-color: rgba(255, 0, 0, 0.42);
           --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
-
           --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
           --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
-
-          /* inherits the styles of mwc-menu internally */
           --mdc-theme-surface: white;
-
-          /* inherits the styles of mwc-list internally */
           --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 25px;
           --mdc-list-item__primary-text: {
