@@ -407,7 +407,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 40px;
         }
 
-        mwc-select {
+        mwc-select,
+        mwc-multi-select {
           width: 100%;
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
@@ -454,6 +455,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         #version {
           --mdc-menu-item-height: 35px;
+        }
+
+        #vfolder {
+          width: 100%;
         }
 
         wl-button[fab] {
@@ -792,9 +797,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
-    let vfolder = this.shadowRoot.querySelector('#vfolder').selectedValues;
-    console.log(vfolder);
-    return;
+    let vfolder = this.shadowRoot.querySelector('#vfolder').value;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.shmem_request = this.shadowRoot.querySelector('#shmem-resource').value;
@@ -2185,12 +2188,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <backend-ai-dropdown-menu id="vfolder2" multi attr-for-selected="value" style="display:none;" label="Folders to mount">
-
-                ${this.vfolders.map(item => html`
-                  <paper-item value="${item.name}">${item.name}</paper-item>
-                `)}
-                </backend-ai-dropdown-menu>
                 <mwc-multi-select id="vfolder" label="Folders to mount" multi>
                 ${this.vfolders.map(item => html`
                   <mwc-list-item value="${item.name}">${item.name}</mwc-list-item>

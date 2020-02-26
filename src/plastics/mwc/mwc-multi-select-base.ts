@@ -744,9 +744,9 @@ export abstract class SelectBase extends FormElement {
     if (this.selected === null) {
       this.value = '';
     } else {
-      let result = this.selected.map(a => a.value);
-      this.value = result.toString();
-      this.selectedText = this.value;
+      let result = (this.selected as any).map(a => a.value);
+      this.value = result;
+      this.selectedText = this.value.toString();
     }
   }
 
