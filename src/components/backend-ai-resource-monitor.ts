@@ -1818,6 +1818,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.default_language = 'index.docker.io/lablup/ngc-tensorflow';
     }
     let environment = this.shadowRoot.querySelector('#environment');
+    //await environment.updateComplete; async way.
     let obj = environment.items.find(o => o.value === this.default_language);
     if (typeof obj === 'undefined') { // Not ready yet.
       setTimeout(() => {
