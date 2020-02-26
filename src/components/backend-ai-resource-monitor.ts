@@ -580,6 +580,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _updateSelectedScalingGroup() {
+    let Sgroups = this.shadowRoot.querySelector('#scaling-groups');
+    let selectedSgroup = Sgroups.items.find(item => item.value === this.scaling_group);
+    let idx = Sgroups.items.indexOf(selectedSgroup);
+    Sgroups.select(idx);
+  }
+
   async updateScalingGroup(forceUpdate = false, e) {
     if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
       return;
@@ -593,10 +600,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       // let sgnum = this.scaling_groups.map((sg) => sg.name).indexOf(this.scaling_group);
       // if (sgnum < 0) sgnum = 0;
       // this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = sgnum;
-
-      this.shadowRoot.querySelectorAll('#scaling-groups mwc-list-item').forEach( item => {
-        item.selected = (item.value === this.scaling_group) ? true : false;
-      });
       if (forceUpdate === true) {
         //console.log('force update called');
         //this.metric_updating = true;
@@ -759,14 +762,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       } else {
         ownershipPanel.style.display = 'none';
       }
-      // this value initialization is temporary due to non-dynamic value recongition of paper-dropdown
-      // let selectedSgroup = parseInt(this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected);
-      // if (selectedSgroup >= this.scaling_groups.length) {
-      //   selectedSgroup = 0;
-      // }
-      // this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = -1;
-      // this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = selectedSgroup;
-      this.shadowRoot.querySelector('#scaling-groups').value = this.scaling_group;
+      this._updateSelectedScalingGroup();
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -2168,13 +2164,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                  <mwc-select id="scaling-groups" label="Resource Group"
-                              required>
+                  <mwc-select id="scaling-groups" label="Resource Group" required
+                              @selected="${(e) => this.updateScalingGroup(false, e)}">
                     ${this.scaling_groups.map(item => html`
                       <mwc-list-item class="scaling-group-dropdown"
                                      id="${item.name}"
-                                     value="${item.name}"
-                                     ?selected="${item.name === this.scaling_group}">
+                                     value="${item.name}">
                         ${item.name}
                       </mwc-list-item>
                     `)}
