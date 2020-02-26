@@ -48,6 +48,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
   @property({type: Object}) installImageResource = Object();
+  @property({type: Object}) selectedCheckbox = Object();
 
   constructor() {
     super();
@@ -235,6 +236,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.indicator.end(1000);
       this._getImages();
     }).catch(err => {
+      this.selectedCheckbox.checked = false;
       this.indicator.set(100, 'Problem occurred during installation.');
       this.indicator.end(1000);
     });
@@ -386,9 +388,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
-          <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.installed}" ?disabled="${rowData.item.installed}" @click="${(e) => {
-        this.openInstallImageDialog(rowData.index)
-      }}"></wl-checkbox>
+          <wl-checkbox id="${rowData.item.name}" style="--checkbox-size:12px;"
+                       ?checked="${rowData.item.installed}"
+                       ?disabled="${rowData.item.installed}"
+                       @click="${(e) => {
+                          this.openInstallImageDialog(rowData.index)
+                          this.selectedCheckbox = e.target;
+                       }}">
+          </wl-checkbox>
         </div>
       `, root);
   }
