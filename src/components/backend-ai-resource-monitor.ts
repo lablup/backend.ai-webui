@@ -18,6 +18,7 @@ import '@polymer/paper-item/paper-item';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
+import '@material/mwc-textfield/mwc-textfield';
 
 import './backend-ai-dropdown-menu';
 import 'weightless/button';
@@ -428,6 +429,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           };
         }
 
+        mwc-select#scaling-groups {
+          margin-right:5px;
+          width: 170px;
+        }
+
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-green-600);
+        }
+
+        mwc-textfield#session-name {
+          padding-top: 20px;
+          margin-left: 5px;
+        }
+
         #environment {
           --mdc-menu-item-height: 40px;
           z-index: 10000;
@@ -552,8 +569,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     });
     document.addEventListener("backend-ai-group-changed", (e)=> {
-      this.scaling_group = '';
-      this._updatePageVariables();
+      // this.scaling_group = '';
+      this._updatePageVariables(true);
     });
   }
 
@@ -573,9 +590,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
         scaling_group_selection_box.firstChild.value = this.scaling_group;
       }
-      let sgnum = this.scaling_groups.map((sg) => sg.name).indexOf(this.scaling_group);
-      if (sgnum < 0) sgnum = 0;
-      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = sgnum;
+      // let sgnum = this.scaling_groups.map((sg) => sg.name).indexOf(this.scaling_group);
+      // if (sgnum < 0) sgnum = 0;
+      // this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = sgnum;
+
+      this.shadowRoot.querySelectorAll('#scaling-groups mwc-list-item').forEach( item => {
+        item.selected = (item.value === this.scaling_group) ? true : false;
+      });
       if (forceUpdate === true) {
         //console.log('force update called');
         //this.metric_updating = true;
@@ -597,23 +618,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.project_resource_monitor = window.backendaiclient._config.allow_project_resource_monitor;
-        this._updatePageVariables();
+        this._updatePageVariables(true);
         this._disableEnterKey();
       }, true);
     } else {
       this.project_resource_monitor = window.backendaiclient._config.allow_project_resource_monitor;
-      this._updatePageVariables();
+      this._updatePageVariables(true);
       this._disableEnterKey();
     }
     //this.run_after_connection(this._updatePageVariables());
   }
 
-  async _updatePageVariables() {
+  async _updatePageVariables(isChanged) {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
       this.enable_scaling_group = window.backendaiclient.supports('scaling-group');
       if (this.enable_scaling_group === true) {
-        if (this.scaling_group === '') {
+        if (this.scaling_group === '' || isChanged) {
           const currentGroup = window.backendaiclient.current_group || null;
           let sgs = await window.backendaiclient.scalingGroup.list(currentGroup);
           this.scaling_groups = sgs.scaling_groups;
@@ -652,7 +673,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             this.scaling_group = this.scaling_groups[0].name;
           }
           let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
-          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', this.updateScalingGroup.bind(this, false));
+          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
+            this.updateScalingGroup.bind(this, false);
+          });
         }
       }
       // Reload number of sessions
@@ -737,12 +760,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         ownershipPanel.style.display = 'none';
       }
       // this value initialization is temporary due to non-dynamic value recongition of paper-dropdown
-      let selectedSgroup = parseInt(this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected);
-      if (selectedSgroup >= this.scaling_groups.length) {
-        selectedSgroup = 0;
-      }
-      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = -1;
-      this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = selectedSgroup;
+      // let selectedSgroup = parseInt(this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected);
+      // if (selectedSgroup >= this.scaling_groups.length) {
+      //   selectedSgroup = 0;
+      // }
+      // this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = -1;
+      // this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = selectedSgroup;
+      this.shadowRoot.querySelector('#scaling-groups').value = this.scaling_group;
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -2091,6 +2115,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               @click="${() => this._hideSessionDialog()}">
             </mwc-icon-button>
           </h3>
+          <fieldset>
           <form id="launch-session-form">
             <div class="vertical center layout" style="padding-top:15px;">
               <mwc-select id="environment" label="Environments" required
@@ -2128,33 +2153,39 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   <span style="display:none">${item}</span>
                   <div class="horizontal layout end-justified">
                     ${this._getVersionInfo(item).map(item => html`
-                  <lablup-shields style="width:${item.size}!important;" color="${item.color}" app="${item.app ? item.app : ''}" description="${item.tag}"></lablup-shields>
-                `)}
+                      <lablup-shields style="width:${item.size}!important;"
+                                      color="${item.color}"
+                                      app="${item.app ? item.app : ''}" 
+                                      description="${item.tag}">
+                      </lablup-shields>
+                    `)}
                   </div>
                 </mwc-list-item>
               `)}
               </mwc-select>
             </div>
-            <fieldset>
               <div style="display:none;">
                 <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                <paper-dropdown-menu id="scaling-groups" label="Resource Group"
-                                     horizontal-align="left" style="padding-bottom: 1px;">
-                  <paper-listbox slot="dropdown-content" selected="0">
+                  <mwc-select id="scaling-groups" label="Resource Group"
+                              required>
                     ${this.scaling_groups.map(item => html`
-                      <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                      `)
-                     }
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                      <mwc-list-item class="scaling-group-dropdown"
+                                     id="${item.name}"
+                                     value="${item.name}"
+                                     ?selected="${item.name === this.scaling_group}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
                 ` : html``}
-                <paper-input id="session-name" label="Session name (optional)"
-                             value="" pattern="[a-zA-Z0-9_-]{4,}" auto-validate
-                             error-message="4 or more characters / no whitespace">
-                </paper-input>
+                <mwc-textfield id="session-name" placeholder="Session name (optional)"
+                               pattern="[a-zA-Z0-9_-]{4,}" fullwidth
+                               validationMessage="4 or more characters / no whitespace."
+                               style="margin-left:5px;">
+                </mwc-textfield>
               </div>
               <div class="horizontal center layout">
                 <backend-ai-dropdown-menu id="vfolder" multi attr-for-selected="value" label="Folders to mount">
