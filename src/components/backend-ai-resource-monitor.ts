@@ -409,7 +409,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
           --mdc-select-dropdown-icon-color: blue;
-          --mdc-select-idle-line-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
           --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
           --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
           --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
@@ -428,8 +428,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
+          --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
+          --mdc-text-field-hover-line-color: rgba(255, 0, 0, 0.87);
           --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
+          --mdc-theme-primary: var(--paper-red-600);
         }
 
         mwc-textfield#session-name {
