@@ -231,13 +231,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         mwc-list-item {
           font-size : 13px;
           text-align: 13px;
-<<<<<<< HEAD
         }
 
         mwc-list-item mwc-icon {
           --mdc-icon-size : 13px;
-=======
->>>>>>> 2e9145df0f15da285bab25e8074501de46d2ef94
         }
 
         .mini-ui .full-menu {
