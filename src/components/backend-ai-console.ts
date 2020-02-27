@@ -306,11 +306,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
     window.addEventListener("click", (event) => {
       let path = event['path'];
-      let elements_name = Object.keys(path).map(function (key, index) {
-        return path[key]['id'];
-      });
-      if (!elements_name.includes("dropdown-button")) {
-        this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
+      if (typeof path === 'object') {
+        let elements_name = Object.keys(path).map(function (key, index) {
+          return path[key]['id'];
+        });
+        if (!elements_name.includes("dropdown-button")) {
+          this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
+        }
       }
     });
   }
@@ -833,7 +835,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.02.5.200226</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.02.5.200227</small>
               </address>
             </div>
         </div>
