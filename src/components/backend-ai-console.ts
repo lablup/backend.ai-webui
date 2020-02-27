@@ -17,6 +17,8 @@ import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-menu';
+import '@material/mwc-list/mwc-list-item';
 
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -220,37 +222,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           color: #29b6f6;
         }
 
-        .dropdown {
-          float: right;
-          position: relative;
-          display: inline-block;
-        }
-
-        .dropdown-content {
-          display: none;
-          position: absolute;
-          background-color: #f1f1f1;
-          min-width: 160px;
-          overflow: auto;
+        mwc-menu {
+          --mdc-theme-surface: #f1f1f1;
+          --mdc-menu-item-height : auto;
           box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-          right: 0;
-          z-index: 1;
         }
 
-        .dropdown-content a {
-          color: black;
-          padding: 12px 16px;
-          text-align: left;
-          font-size: 13px;
-          display: block;
+        mwc-list-item {
+          font-size : 13px;
+          text-align: 13px;
         }
 
-        .dropdown a:hover {
-          background-color: #dddddd;
-        }
-
-        .dropdown-show {
-          display: block;
+        mwc-list-item mwc-icon {
+          --mdc-icon-size : 13px;
         }
 
         .mini-ui .full-menu {
@@ -304,17 +288,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
     // TODO : it should be reimplemented.
-    window.addEventListener("click", (event) => {
-      let path = event['path'];
-      if (typeof path === 'object') {
-        let elements_name = Object.keys(path).map(function (key, index) {
-          return path[key]['id'];
-        });
-        if (!elements_name.includes("dropdown-button")) {
-          this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
-        }
-      }
-    });
+    // window.addEventListener("click", (event) => {
+    //   let path = event['path'];
+    //   if (typeof path === 'object') {
+    //     let elements_name = Object.keys(path).map(function (key, index) {
+    //       return path[key]['id'];
+    //     });
+    //     if (!elements_name.includes("dropdown-button")) {
+    //       this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
+    //     }
+    //   }
+    // });
   }
 
   connectedCallback() {
@@ -678,8 +662,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _toggleDropdown() {
-    let dropdown = this.shadowRoot.querySelector('.dropdown-content');
-    dropdown.classList.toggle('dropdown-show');
+    let menu = this.shadowRoot.querySelector("#dropdown-menu");
+    let menu_icon = this.shadowRoot.querySelector('#dropdown-button');
+    menu.anchor = menu_icon;
+    menu.open = !menu.open;
   }
 
   showTOSAgreement() {
@@ -706,6 +692,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
     if (currentPage && currentPage === 'usersettings') {
       let event = new CustomEvent('backend-ai-usersettings-logs', {});
+      document.dispatchEvent(event);
+    }
+  }
+
+  _moveToUserSettingsPage() {
+    let currentPage = window.location.toString().split(/[\/]+/).pop();
+    window.history.pushState({}, '', '/usersettings');
+    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'general'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings', {});
       document.dispatchEvent(event);
     }
   }
@@ -847,28 +843,40 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
-            <div class="dropdown" slot="actionItems">
-              <mwc-icon-button slot="actionItems" id="dropdown-button" icon="account_circle" @click="${() => this._toggleDropdown()}"></mwc-icon-button>
-              <div class="dropdown-content" slot="actionItems">
-                <a class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
-                  <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                  Change Password
+              <mwc-icon-button slot="actionItems" id="dropdown-button"
+                               icon="account_circle"
+                               @click="${() => this._toggleDropdown()}">
+              </mwc-icon-button>
+              <mwc-menu id="dropdown-menu" absolute x=-50 y=40>
+                <mwc-list-item>
+                  <a class="horizontal layout start center"
+                     @click="${() => this._openUserPrefDialog()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                    Change Password
                 </a>
-                <a class="horizontal layout start center" href="/usersettings">
-                  <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
-                  Preferences
-                </a>
-                <a class="horizontal layout start center"  @click="${() => this._moveToLogPage()}">
-                  <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                  Logs / Errors
-                </a>
-                <a class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
-                  <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
-                  Log Out
-                </a>
-              </div>
-            </div>
-            <!-- <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button> -->
+                </mwc-list-item>
+                <mwc-list-item>
+                  <a class="horizontal layout start center"
+                     @click="${() => this._moveToUserSettingsPage()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                    Preferences
+                  </a>
+                </mwc-list-item>
+                <mwc-list-item>
+                  <a class="horizontal layout start center"
+                    @click="${() => this._moveToLogPage()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                    Logs / Errors
+                  </a>
+                </mwc-list-item>
+                <mwc-list-item>
+                  <a class="horizontal layout start center" id="sign-button"
+                    @click="${() => this.logout()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                    Log Out
+                  </a>
+                </mwc-list-item>
+              </mwc-menu>
           </mwc-top-app-bar-fixed>
 
           <div class="content">
