@@ -263,6 +263,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
             </div>
           </div>
+          ${window.isElectron ? html`
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>Keep Login Session Information while Logout</div>
@@ -273,6 +274,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${this.options['preserve_login']}"></wl-switch>
             </div>
           </div>
+          ` : html``}
         </div>
         <h3 class="horizontal center layout" style="display:none;">
           <span>Shell Environments</span>
