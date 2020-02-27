@@ -29,7 +29,7 @@ export default class LablupNotification extends LitElement {
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
   @property({type: Object}) newDesktopNotification = Object();
-  @property({type: Boolean}) options = Object();
+  @property({type: Object}) options = Object();
 
   constructor() {
     super();
