@@ -209,6 +209,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     document.addEventListener('backend-ai-usersettings-logs', () => {
       this._viewStateChanged(true);
     });
+    document.addEventListener('backend-ai-usersettings', () => {
+      this._viewStateChanged(true);
+    })
   }
 
   async _viewStateChanged(active) {

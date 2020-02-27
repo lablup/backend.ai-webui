@@ -696,6 +696,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  _moveToUserSettingsPage() {
+    let currentPage = window.location.toString().split(/[\/]+/).pop();
+    window.history.pushState({}, '', '/usersettings');
+    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'general'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings', {});
+      document.dispatchEvent(event);
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -846,7 +856,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </a>
                 </mwc-list-item>
                 <mwc-list-item>
-                  <a class="horizontal layout start center" href="/usersettings">
+                  <a class="horizontal layout start center"
+                     @click="${() => this._moveToUserSettingsPage()}">
                     <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
                     Preferences
                   </a>
