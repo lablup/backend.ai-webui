@@ -614,6 +614,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   async close_app_window(performClose = false) {
+    this._readUserSetting('preserve_login', false); // Refresh the option. (it can be changed during the session)
     if (this.options['preserve_login'] === false) { // Delete login information.
       this.notification.text = 'Clean up login session...';
       this.notification.show();
