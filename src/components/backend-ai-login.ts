@@ -147,6 +147,11 @@ export default class BackendAILogin extends LitElement {
           --button-bg-active: var(--paper-green-600);
         }
 
+        wl-button.change-login-mode-button {
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
+        }
+
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
@@ -703,9 +708,6 @@ export default class BackendAILogin extends LitElement {
           <h3 class="horizontal center layout">
             <div>Login with ${this.connection_mode == 'SESSION' ? html`E-mail` : html`IAM`}</div>
             <div class="flex"></div>
-            ${this.change_signin_support ? html`
-                <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`Use IAM` : html`Use ID/password`}</a></small>
-            ` : html``}
             ${this.signup_support ? html`
             <div class="vertical center-justified layout">
               <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
@@ -715,6 +717,13 @@ export default class BackendAILogin extends LitElement {
           </h3>
           <form id="login-form">
             <fieldset>
+            ${this.change_signin_support ? html`
+                <div class="horizontal center layout">
+                  <small>Want to login another way?</small>
+                  <div class="flex"></div>
+                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">Click to use ${this.connection_mode == 'SESSION' ? html`IAM` : html`ID`}</wl-button>
+                </div>
+            ` : html``}
               <wl-textfield type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
                            label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
               <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"

@@ -48,6 +48,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
   @property({type: Object}) installImageResource = Object();
+  @property({type: Object}) selectedCheckbox = Object();
 
   constructor() {
     super();
@@ -235,6 +236,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.indicator.end(1000);
       this._getImages();
     }).catch(err => {
+      this._uncheckSelectedRow();
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
       this.indicator.set(100, 'Problem occurred during installation.');
       this.indicator.end(1000);
     });
@@ -386,9 +391,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
-          <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.installed}" ?disabled="${rowData.item.installed}" @click="${(e) => {
-        this.openInstallImageDialog(rowData.index)
-      }}"></wl-checkbox>
+          <wl-checkbox id="${rowData.item.name}" style="--checkbox-size:12px;"
+                       ?checked="${rowData.item.installed}"
+                       ?disabled="${rowData.item.installed}"
+                       @click="${(e) => {
+                          this.openInstallImageDialog(rowData.index)
+                          this.selectedCheckbox = e.target;
+                       }}">
+          </wl-checkbox>
         </div>
       `, root);
   }
@@ -616,14 +626,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </wl-button>
         </div>
       </wl-dialog>
-      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling>
+      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling persistent>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
             <p>You are about to install the image <span style="color:blue;">${this.installImageName}</span>.</p>
             <p>This process requires significant download time. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="cancel" inverted flat
+                       @click="${(e) => {
+                                this._hideDialog(e)
+                                this._uncheckSelectedRow();
+                              }}">
+              Cancel
+            </wl-button>
             <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>
          </div>
       </wl-dialog>
@@ -686,6 +702,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     container.querySelectorAll(".row.extra").forEach(e => {
       e.remove();
     });
+  }
+
+  _uncheckSelectedRow() {
+    this.selectedCheckbox.checked = false;
   }
 
   firstUpdated() {
@@ -781,7 +801,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       } else {
         this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
       }
-      this.notification.show();
+      this.notification.show(true, err);
       this.loadingIndicator.hide();
     });
   }

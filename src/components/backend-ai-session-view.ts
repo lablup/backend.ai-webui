@@ -11,6 +11,10 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
+import '@material/mwc-textfield/mwc-textfield';
+import "@material/mwc-list/mwc-list-item";
+import "@material/mwc-icon-button/mwc-icon-button";
+import "@material/mwc-menu/mwc-menu";
 
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-console-styles';
@@ -75,6 +79,23 @@ export default class BackendAiSessionView extends BackendAIPage {
           --button-bg-active:  var(--paper-green-600);
         }
 
+        mwc-menu {
+          --mdc-theme-surface: #f1f1f1;
+          --mdc-menu-item-height : auto;
+        }
+
+        mwc-list-item {
+          font-size : 14px;
+        }
+
+        mwc-icon-button {
+          --mdc-icon-size: 20px;
+          color: var(--paper-grey-700);
+        }
+
+        mwc-icon-button#dropdown-menu-button {
+          margin-left: 10px;
+        }
       `];
   }
 
@@ -84,12 +105,12 @@ export default class BackendAiSessionView extends BackendAIPage {
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.shadowRoot.querySelector('#running-jobs').refreshList(true, false);
     });
-
-    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
-    && typeof window.backendaiclient.is_admin !== "undefined" && window.backendaiclient.is_admin === true) {
-      this.is_admin = true;
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.is_admin = window.backendaiclient.is_admin;
+      }, true);
     } else {
-      this.is_admin = false;
+      this.is_admin = window.backendaiclient.is_admin;
     }
   }
 
@@ -126,6 +147,11 @@ export default class BackendAiSessionView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.value + '-jobs').setAttribute('active', true);
   }
 
+  _toggleDropdown() {
+    let menu = this.shadowRoot.querySelector("#dropdown-menu");
+    menu.open = !menu.open;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -138,10 +164,19 @@ export default class BackendAiSessionView extends BackendAIPage {
           </wl-tab-group>
           <div class="flex"></div>
           <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
-          ${this.is_admin ? html`<wl-button class="fg teal" id="export-csv" outlined @click="${this._exportToCSV}" style="margin-left: 10px;">
-            <wl-icon>get_app</wl-icon>
-            export CSV
-          </wl-button>` : html``}
+          ${this.is_admin ? html`
+              <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
+                               @click="${this._toggleDropdown}">
+                <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
+                  <mwc-list-item>
+                    <a class="horizontal layout start center" @click="${this._exportToCSV}">
+                      <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
+                      export CSV
+                    </a>
+                  </mwc-list-item>
+                </mwc-menu>
+              </mwc-icon-button>
+            ` : html``}
         </h3>
         <div id="running-lists" class="tab-content">
           <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
