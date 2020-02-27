@@ -114,7 +114,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   constructor() {
     super();
     this.options = {
-      compact_sidebar: false
+      compact_sidebar: false,
+      preserve_login: false
     }
   }
 
@@ -265,6 +266,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (window.isElectron) {
       configPath = './config.toml';
       document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
+      document.addEventListener('backend-ai-app-close', this.close_app_window.bind(this, true));
       document.addEventListener('backend-ai-show-splash', this.splash.show.bind(this));
     } else {
       configPath = '../../config.toml';
@@ -282,7 +284,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     });
     this._readUserSetting('compact_sidebar', false);
+    this._readUserSetting('preserve_login', false);
     this.mini_ui = this.options['compact_sidebar'];
+
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
@@ -609,6 +613,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  async close_app_window(performClose = false) {
+    if (this.options['preserve_login'] === false) { // Delete login information.
+      this.notification.text = 'Clean up login session...';
+      this.notification.show();
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+      }
+    }
+    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
+      if (window.backendaiclient._config.connectionMode === 'SESSION') {
+        await window.backendaiclient.logout();
+      }
+      window.backendaiclient = null;
+    }
+  }
+
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
     if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
@@ -625,6 +647,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         const key = keys[i];
         if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
       }
+
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
