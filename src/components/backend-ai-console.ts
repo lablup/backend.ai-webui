@@ -107,7 +107,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) sidebarMenu;
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
-  @property({type: Boolean}) options = Object();
+  @property({type: Object}) options = Object();
 
   constructor() {
     super();

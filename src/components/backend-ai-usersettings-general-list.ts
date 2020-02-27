@@ -28,7 +28,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   public indicator: any;
   public lastSavedBootstrapScript: string = '';
 
-  @property({type: Boolean}) options = Object();
+  @property({type: Objects}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
   @property({type: Object}) notification;
 

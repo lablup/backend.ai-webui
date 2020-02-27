@@ -25,7 +25,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 @customElement("backend-ai-settings-view")
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
-  @property({type: Boolean}) options = Object();
+  @property({type: Object}) options = Object();
   @property({type: Object}) notification = Object();
 
   constructor() {

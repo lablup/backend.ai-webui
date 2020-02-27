@@ -36,7 +36,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   public lastSavedBootstrapScript: string = '';
 
   @property({type: Object}) images = Object();
-  @property({type: Boolean}) options = Object();
+  @property({type: Object}) options = Object();
   @property({type: Object}) _activeTab = Object();
   @property({type: Object}) bootstrapDialog = Object();
   @property({type: Object}) clearLogsDialog = Object();
