@@ -49,6 +49,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: String}) installImageName = '';
   @property({type: Object}) installImageResource = Object();
   @property({type: Object}) selectedCheckbox = Object();
+  @property({type: Object}) _grid = Object();
 
   constructor() {
     super();
@@ -713,12 +714,32 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = window.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
+    
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
+      
     } else { // already connected
       this._getImages();
+      this._grid = this.shadowRoot.querySelector('#testgrid');
+      
+      // fired sorter-changes
+      this._grid.addEventListener('sorter-changed', (e) => {
+        let sorter = e.target;
+        let sorterPath = sorter.path.toString();
+        if (sorter.direction) {
+          if (sorter.direction === 'asc') {
+            this._grid.items.sort((a, b) => {
+              return a[sorterPath] < b[sorterPath] ? -1 : a[sorterPath] > b[sorterPath] ?  1 : 0;
+            });
+          } else {
+            this._grid.items.sort((a, b) => {
+              return a[sorterPath] > b[sorterPath] ? -1 : a[sorterPath] < b[sorterPath] ? 1 : 0;
+            });
+          }
+        }
+      });
     }
   }
 
