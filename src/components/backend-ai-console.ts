@@ -291,18 +291,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
-    // TODO : it should be reimplemented.
-    // window.addEventListener("click", (event) => {
-    //   let path = event['path'];
-    //   if (typeof path === 'object') {
-    //     let elements_name = Object.keys(path).map(function (key, index) {
-    //       return path[key]['id'];
-    //     });
-    //     if (!elements_name.includes("dropdown-button")) {
-    //       this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
-    //     }
-    //   }
-    // });
   }
 
   connectedCallback() {
