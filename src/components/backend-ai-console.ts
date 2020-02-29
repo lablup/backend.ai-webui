@@ -284,9 +284,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
-    this._readUserSetting('compact_sidebar', false);
-    this._readUserSetting('preserve_login', false);
-    this._readUserSetting('beta_feature', false);
+    this._readUserSettings();
     this.mini_ui = this.options['compact_sidebar'];
 
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
@@ -352,6 +350,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     }
     this.loginPanel.refreshWithConfig(config);
+  }
+
+  _readUserSettings() { // Read all user settings.
+    for (let i = 0, len = localStorage.length; i < len; ++i) {
+      if (localStorage.key(i).startsWith('backendaiconsole.usersetting.')) {
+        let key = localStorage.key(i).replace('backendaiconsole.usersetting.', '');
+        this._readUserSetting(key);
+      }
+    }
   }
 
   _readUserSetting(name, default_value = true) {
