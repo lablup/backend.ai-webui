@@ -206,8 +206,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </wl-button>
         </h4>
         <div>
-          <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
             <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
@@ -390,7 +388,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -424,7 +422,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -478,7 +476,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -493,7 +491,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }

@@ -235,11 +235,42 @@ class Client {
                         + `${resp.status} ${resp.statusText} - ${body.title}`;
             }
             throw {
+                isError: true,
+                timestamp: new Date().toUTCString(),
                 type: errorType,
+                requestUrl: rqst.uri,
+                requestMethod: rqst.method,
+                requestParameters: rqst.body,
+                statusCode: resp.status,
+                statusText: resp.statusText,
                 title: errorTitle,
                 message: errorMsg,
             };
         }
+        let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+        if (previous_log) {
+            if (previous_log.length > 5000) {
+                previous_log = previous_log.slice(1, 5000);
+            }
+        }
+        let log_stack = Array();
+        let current_log = {
+            "isError": false,
+            "timestamp": new Date().toUTCString(),
+            "type": "",
+            "requestUrl": rqst.uri,
+            "requestMethod": rqst.method,
+            "requestParameters": rqst.body,
+            "statusCode": resp.status,
+            "statusText": resp.statusText,
+            "title": body.title,
+            "message": ""
+        };
+        log_stack.push(current_log);
+        if (previous_log) {
+            log_stack = log_stack.concat(previous_log);
+        }
+        localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
         return body;
     }
     /**
@@ -1753,6 +1784,42 @@ class ComputeSession {
         v = {
             'sess_id': sessionId,
         };
+        return this.client.gql(q, v);
+    }
+    /**
+     * list all status of compute sessions.
+     *
+     * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+     * @param {string} accessKey - access key that is used to start compute sessions.
+     * @param {number} limit - limit number of query items.
+     * @param {number} offset - offset for item query. Useful for pagination.
+     * @param {string} group - project group id to query. Default returns sessions from all groups.
+     */
+    async listAll(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], accessKey = '', group = '') {
+        if (accessKey === '')
+            accessKey = null;
+        if (group === '')
+            group = null;
+        fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
+        // For V3/V4 API compatibility
+        let q, v;
+        q = `query($domain_name:String, $group_id:String, $ak:String, $status:String) {
+      compute_sessions(domain_name:$domain_name, group_id:$group_id, access_key:$ak, status:$status) {
+        ${fields.join(" ")}
+      }
+    }`;
+        v = {
+        // domain_name: null,
+        // group_id: null,
+        // access_key: accessKey,
+        // status: status
+        };
+        if (accessKey != null) {
+            v['access_key'] = accessKey;
+        }
+        if (group != null) {
+            v['group_id'] = group;
+        }
         return this.client.gql(q, v);
     }
 }

@@ -413,7 +413,7 @@ export default class BackendAIData extends BackendAIPage {
             <template class="header">id</template>
             <template>
               <div class="layout vertical">
-                <span class="indicator">[[item.id]]</span>
+                <span class="indicator monospace">[[item.id]]</span>
               </div>
             </template>
           </vaadin-grid-column>
@@ -1087,7 +1087,7 @@ export default class BackendAIData extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
     this.closeDialog('add-folder-dialog');
@@ -1111,7 +1111,7 @@ export default class BackendAIData extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -1144,7 +1144,7 @@ export default class BackendAIData extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -1289,12 +1289,13 @@ export default class BackendAIData extends BackendAIPage {
 
   fileUpload(fileObj) {
     this._uploadFlag = true;
-    this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
+    this.uploadFilesExist = this.uploadFiles.length > 0;
     const path = this.explorer.breadcrumb.concat(fileObj.name).join("/");
     let job = window.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
     job.then(url => {
       const start_date = new Date().getTime();
       const upload = new tus.Upload(fileObj, {
+        endpoint: url,
         retryDelays: [0, 3000, 5000, 10000, 20000],
         uploadUrl: url,
         chunkSize: 15728640, // 15MB
