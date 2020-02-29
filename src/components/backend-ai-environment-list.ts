@@ -49,6 +49,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: String}) installImageName = '';
   @property({type: Object}) installImageResource = Object();
   @property({type: Object}) selectedCheckbox = Object();
+  @property({type: Object}) _grid = Object();
 
   constructor() {
     super();
@@ -66,7 +67,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-            height: calc(100vh - 200px);
+          height: calc(100vh - 200px);
         }
 
         wl-button > wl-icon {
@@ -395,9 +396,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                        ?checked="${rowData.item.installed}"
                        ?disabled="${rowData.item.installed}"
                        @click="${(e) => {
-                          this.openInstallImageDialog(rowData.index)
-                          this.selectedCheckbox = e.target;
-                       }}">
+        this.openInstallImageDialog(rowData.index);
+        this.selectedCheckbox = e.target;
+      }}">
           </wl-checkbox>
         </div>
       `, root);
@@ -635,9 +636,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
          <div slot="footer">
             <wl-button class="cancel" inverted flat
                        @click="${(e) => {
-                                this._hideDialog(e)
-                                this._uncheckSelectedRow();
-                              }}">
+      this._hideDialog(e)
+      this._uncheckSelectedRow();
+    }}">
               Cancel
             </wl-button>
             <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>
@@ -713,12 +714,34 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = window.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
+
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
+
     } else { // already connected
       this._getImages();
+    }
+    this._grid = this.shadowRoot.querySelector('#testgrid');
+    this._grid.addEventListener('sorter-changed', (e) => {
+      this._refreshSorter(e)
+    });
+  }
+
+  _refreshSorter(e) {
+    let sorter = e.target;
+    let sorterPath = sorter.path.toString();
+    if (sorter.direction) {
+      if (sorter.direction === 'asc') {
+        this._grid.items.sort((a, b) => {
+          return a[sorterPath] < b[sorterPath] ? -1 : a[sorterPath] > b[sorterPath] ? 1 : 0;
+        });
+      } else {
+        this._grid.items.sort((a, b) => {
+          return a[sorterPath] > b[sorterPath] ? -1 : a[sorterPath] < b[sorterPath] ? 1 : 0;
+        });
+      }
     }
   }
 
