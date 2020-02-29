@@ -115,7 +115,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     super();
     this.options = {
       compact_sidebar: false,
-      preserve_login: false
+      preserve_login: false,
+      beta_feature: false
     }
   }
 
@@ -285,6 +286,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this._readUserSetting('compact_sidebar', false);
     this._readUserSetting('preserve_login', false);
+    this._readUserSetting('beta_feature', false);
     this.mini_ui = this.options['compact_sidebar'];
 
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
