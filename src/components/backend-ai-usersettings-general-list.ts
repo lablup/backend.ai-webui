@@ -126,6 +126,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   readUserSettings() {
     this._readUserSetting('desktop_notification', true);
     this._readUserSetting('compact_sidebar', false);
+    this._readUserSetting('preserve_login', false);
   }
 
   _readUserSetting(name, default_value = true) {
@@ -168,6 +169,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       this._writeUserSetting('compact_sidebar', false);
     } else {
       this._writeUserSetting('compact_sidebar', true);
+    }
+  }
+
+  togglePreserveLogin(e) {
+    if (e.target.checked === false) {
+      this._writeUserSetting('preserve_login', false);
+    } else {
+      this._writeUserSetting('preserve_login', true);
     }
   }
 
@@ -247,14 +256,25 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>Use Compact Sidebar by default</div>
-              <div class="description">Compact sidebar lets you use more workspace. <br />When this option is turned on, compact sidebar becomes the initial UI at startup.
+              <div class="description">Compact sidebar lets you use more workspace. <br />If this option is turned on, compact sidebar becomes the initial UI at startup.
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
               <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
             </div>
           </div>
-
+          ${window.isElectron ? html`
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>Keep Login Session Information while Logout</div>
+              <div class="description">Let console app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.
+              </div>
+            </div>
+            <div class="vertical center-justified layout setting-button">
+              <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${this.options['preserve_login']}"></wl-switch>
+            </div>
+          </div>
+          ` : html``}
         </div>
         <h3 class="horizontal center layout" style="display:none;">
           <span>Shell Environments</span>
