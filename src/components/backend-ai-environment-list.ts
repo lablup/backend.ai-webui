@@ -205,8 +205,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   openInstallImageDialog(index) {
     this.selectedIndex = index;
-    console.log(this.images);
-    console.log(this._grid.items);
     let chosenImage = this.images[this.selectedIndex];
     this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
     this.installImageResource = {};
@@ -234,8 +232,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else if (this.installImageResource['mem'].endsWith('m')) {
       this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
     }
-    console.log(this.installImageName);
-    return;
     window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
@@ -736,7 +732,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   _refreshSorter(e) {
     let sorter = e.target;
     let sorterPath = sorter.path.toString();
-    console.log(sorter);
     if (sorter.direction) {
       if (sorter.direction === 'asc') {
         this._grid.items.sort((a, b) => {
