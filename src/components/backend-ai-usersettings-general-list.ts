@@ -31,6 +31,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Object}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
   @property({type: Object}) notification;
+  @property({type: Boolean}) beta_feature_panel = false;
 
   constructor() {
     super();
@@ -130,6 +131,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this._readUserSetting('compact_sidebar', false);
     this._readUserSetting('preserve_login', false);
     this._readUserSetting('beta_feature', false);
+    this.beta_feature_panel = this.options['beta_feature'];
   }
 
   _readUserSetting(name, default_value = true) {
@@ -187,8 +189,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   toggleBetaFeature(e) {
     if (e.target.checked === false) {
       this._writeUserSetting('beta_feature', false);
+      this.beta_feature_panel = false;
     } else {
       this._writeUserSetting('beta_feature', true);
+      this.beta_feature_panel = true;
     }
   }
 
@@ -298,7 +302,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
           </div>
         </div>
-        ${this.options.beta_feature ? html`
+        ${this.beta_feature_panel ? html`
         <h4 class="horizontal center layout">
           <span>Beta Features</span>
           <span class="flex"></span>
