@@ -29,6 +29,7 @@ import 'weightless/select';
 import 'weightless/textfield';
 
 import './backend-ai-resource-preset-list';
+import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("backend-ai-environment-list")
 export default class BackendAIEnvironmentList extends BackendAIPage {
@@ -49,6 +50,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
   @property({type: Object}) installImageResource = Object();
+  @property({type: Object}) selectedCheckbox = Object();
+  @property({type: Object}) _grid = Object();
 
   constructor() {
     super();
@@ -66,7 +69,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-            height: calc(100vh - 200px);
+          height: calc(100vh - 200px);
         }
 
         wl-button > wl-icon {
@@ -243,6 +246,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.indicator.end(1000);
       this._getImages();
     }).catch(err => {
+      this._uncheckSelectedRow();
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
       this.indicator.set(100, 'Problem occurred during installation.');
       this.indicator.end(1000);
     });
@@ -424,9 +431,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
-          <wl-checkbox style="--checkbox-size:12px;" ?checked="${rowData.item.installed}" ?disabled="${rowData.item.installed}" @click="${(e) => {
-        this.openInstallImageDialog(rowData.index)
-      }}"></wl-checkbox>
+          <wl-checkbox id="${rowData.item.name}" style="--checkbox-size:12px;"
+                       ?checked="${rowData.item.installed}"
+                       ?disabled="${rowData.item.installed}"
+                       @click="${(e) => {
+        this.openInstallImageDialog(rowData.index);
+        this.selectedCheckbox = e.target;
+      }}">
+          </wl-checkbox>
         </div>
       `, root);
   }
@@ -680,14 +692,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </wl-button>
         </div>
       </wl-dialog>
-      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling>
+      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling persistent>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
             <p>You are about to install the image <span style="color:blue;">${this.installImageName}</span>.</p>
             <p>This process requires significant download time. Do you want to proceed?</p>
          </div>
          <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
+            <wl-button class="cancel" inverted flat
+                       @click="${(e) => {
+      this._hideDialog(e)
+      this._uncheckSelectedRow();
+    }}">
+              Cancel
+            </wl-button>
             <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>
          </div>
       </wl-dialog>
@@ -752,17 +770,43 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  _uncheckSelectedRow() {
+    this.selectedCheckbox.checked = false;
+  }
+
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = window.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
+
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
+
     } else { // already connected
       this._getImages();
+    }
+    this._grid = this.shadowRoot.querySelector('#testgrid');
+    this._grid.addEventListener('sorter-changed', (e) => {
+      this._refreshSorter(e)
+    });
+  }
+
+  _refreshSorter(e) {
+    let sorter = e.target;
+    let sorterPath = sorter.path.toString();
+    if (sorter.direction) {
+      if (sorter.direction === 'asc') {
+        this._grid.items.sort((a, b) => {
+          return a[sorterPath] < b[sorterPath] ? -1 : a[sorterPath] > b[sorterPath] ? 1 : 0;
+        });
+      } else {
+        this._grid.items.sort((a, b) => {
+          return a[sorterPath] > b[sorterPath] ? -1 : a[sorterPath] < b[sorterPath] ? 1 : 0;
+        });
+      }
     }
   }
 
@@ -842,6 +886,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       //let sorted_images = {};
       //image_keys.sort();
       this.images = domainImages;
+      this.loadingIndicator.hide();
+    }).catch((err) => {
+      console.log(err);
+      if (typeof err.message !== 'undefined') {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+      } else {
+        this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
+      }
+      this.notification.show(true, err);
       this.loadingIndicator.hide();
     });
   }

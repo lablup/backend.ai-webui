@@ -25,7 +25,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 @customElement("backend-ai-settings-view")
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
-  @property({type: Boolean}) options = Object();
+  @property({type: Object}) options = Object();
   @property({type: Object}) notification = Object();
 
   constructor() {
@@ -255,8 +255,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
-
-
     window.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
         this.options['automatic_image_update'] = true;
@@ -310,7 +308,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }).catch(err => {
         this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
         this.notification.detail = err;
-        this.notification.show(true);
+        this.notification.show(true, err);
       });
     }
   }

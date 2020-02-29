@@ -8,7 +8,7 @@ export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
 export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
-export const navigate = (path: any) => (dispatch: any) => {
+export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   // Extract the page name from path.
   if (['/summary', '/job', '/experiment', '/data', '/statistics', '/usersettings', '/agent', '/resource', '/user', '/credential', '/environment', '/settings', '/maintenance'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
     path = path.split(/[\/]+/).pop();
@@ -27,14 +27,13 @@ export const navigate = (path: any) => (dispatch: any) => {
   //const page = path === '/' ? 'summary' : path.slice(1);
   // Any other info you might want to extract from the path (like page type),
   // you can do here
-  dispatch(loadPage(page));
+  dispatch(loadPage(page, params));
 
   // Close the drawer - in case the *path* change came from a link in the drawer.
   dispatch(updateDrawerState(false));
 };
 
-const loadPage = (page) => (dispatch) => {
-  console.log("Navigating page:", page);
+const loadPage = (page, params: Object = {}) => (dispatch) => {
   switch (page) {
     case 'summary':
       import('./components/backend-ai-summary-view.js').then((module) => {
@@ -73,18 +72,22 @@ const loadPage = (page) => (dispatch) => {
     case 'statistics':
       import('./components/backend-ai-statistics-view.js');
       break;
+    case 'logs':
+      import('./components/backend-ai-error-log-view.js');
+      break;
     default:
       import('./components/backend-ai-summary-view.js').then((module) => {
       });
       break;
   }
-  dispatch(updatePage(page));
+  dispatch(updatePage(page, params));
 };
 
-const updatePage = (page) => {
+const updatePage = (page, params) => {
   return {
     type: UPDATE_PAGE,
-    page
+    page,
+    params
   };
 };
 

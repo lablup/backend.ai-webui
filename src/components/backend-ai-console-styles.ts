@@ -56,6 +56,7 @@ export const BackendAiStyles =
       --general-dialog-background-color: #ffffff;
       --app-drawer-width: 190px;
       --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
     }
 
     body {
@@ -139,9 +140,18 @@ export const BackendAiStyles =
       font-family: var(--general-font-family);
     }
 
+    .monospace {
+      font-family: var(--general-monospace-font-family);
+    }
+
     .portrait-canvas {
       margin-left: 16px;
       padding-right: 5px;
+    }
+
+    .mini-ui .portrait-canvas {
+      margin-left: 12px;
+      padding-right: 0;
     }
 
     #main-panel-toolbar-buttons paper-icon-button {
@@ -597,7 +607,6 @@ export const BackendAiStyles =
       border-right: 0;
       padding-right: 11px;
       font-weight: 900;
-
     }
 
     paper-toolbar span.welcome {
@@ -904,5 +913,5 @@ export const BackendAiStyles =
 
     vaadin-grid {
       font-family: var(--general-font-family);
-      }
+    }
   `;

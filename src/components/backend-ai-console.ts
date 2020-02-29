@@ -15,7 +15,10 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
+import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-menu';
+import '@material/mwc-list/mwc-list-item';
 
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -105,9 +108,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) drawerToggleButton;
   @property({type: Object}) sidebarMenu;
   @property({type: Object}) TOSdialog = Object();
+  @property({type: Boolean}) mini_ui = false;
+  @property({type: Object}) options = Object();
 
   constructor() {
     super();
+    this.options = {
+      compact_sidebar: false,
+      preserve_login: false
+    }
   }
 
   static get styles() {
@@ -131,7 +140,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
 
         #app-body {
-          --mdc-drawer-width: 190px;
           --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
           --mdc-drawer-border-left: 0;
           --mdc-drawer-border-right: 0;
@@ -184,7 +192,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
 
         .mdc-drawer {
-          width: 190px !important;
         }
 
         wl-select {
@@ -193,7 +200,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           --input-color-disabled: rgb(221, 221, 221);
           --input-label-color: rgb(221, 221, 221);
           --input-label-font-size: 10px;
-          --input-padding-left-right: 20px;
+          --input-padding-left-right: 0;
+          width: 135px;
           --input-border-style: 0;
           --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
         }
@@ -213,6 +221,28 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
         a.email:hover {
           color: #29b6f6;
+        }
+
+        mwc-menu {
+          --mdc-theme-surface: #f1f1f1;
+          --mdc-menu-item-height : auto;
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        mwc-list-item {
+          font-size : 13px;
+          text-align: 13px;
+        }
+
+        mwc-list-item mwc-icon {
+          --mdc-icon-size : 13px;
+        }
+
+        .mini-ui .full-menu {
+          display: none;
+        }
+
+        .mini-ui a:hover paper-item span.full-menu {
         }
       `];
   }
@@ -236,6 +266,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (window.isElectron) {
       configPath = './config.toml';
       document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
+      document.addEventListener('backend-ai-app-close', this.close_app_window.bind(this, true));
       document.addEventListener('backend-ai-show-splash', this.splash.show.bind(this));
     } else {
       configPath = '../../config.toml';
@@ -252,10 +283,26 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
+    this._readUserSetting('compact_sidebar', false);
+    this._readUserSetting('preserve_login', false);
+    this.mini_ui = this.options['compact_sidebar'];
+
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
-    })
+    });
+    // TODO : it should be reimplemented.
+    // window.addEventListener("click", (event) => {
+    //   let path = event['path'];
+    //   if (typeof path === 'object') {
+    //     let elements_name = Object.keys(path).map(function (key, index) {
+    //       return path[key]['id'];
+    //     });
+    //     if (!elements_name.includes("dropdown-button")) {
+    //       this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
+    //     }
+    //   }
+    // });
   }
 
   connectedCallback() {
@@ -305,6 +352,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.loginPanel.refreshWithConfig(config);
   }
 
+  _readUserSetting(name, default_value = true) {
+    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
+    if (value !== null && value != '' && value != '""') {
+      if (value === "false") {
+        this.options[name] = false;
+      } else if (value === "true") {
+        this.options[name] = true;
+      } else {
+        this.options[name] = value;
+      }
+    } else {
+      this.options[name] = default_value;
+    }
+  }
+
   refreshPage() {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.is_connected = true;
@@ -345,16 +407,35 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       });
   }
 
+  toggleSidebarUI() {
+    if (!this.mini_ui) {
+      this.mini_ui = true;
+    } else {
+      this.mini_ui = false;
+    }
+    this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
+  }
+
   _changeDrawerLayout(width, height) {
     if (width < 700) {  // Close drawer
+      this.appBody.style.setProperty('--mdc-drawer-width', '190px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
+      if (this.mini_ui) {
+        this.mini_ui = false;
+      }
     } else { // Open drawer
+      if (this.mini_ui) {
+        this.appBody.style.setProperty('--mdc-drawer-width', '71px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '71px');
+      } else {
+        this.appBody.style.setProperty('--mdc-drawer-width', '190px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+      }
       this.appBody.type = 'dismissible';
       this.appBody.open = true;
-      this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
       this.drawerToggleButton.style.display = 'none';
     }
   }
@@ -446,7 +527,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (err && err.title) {
         this.notification.text = err.title;
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -491,7 +572,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
           break;
         case 'usersettings':
-          this.menuTitle = 'User Settings';
+          this.menuTitle = 'Settings & Logs';
           this.sidebarMenu.selected = 4;
           this.updateTitleColor('var(--paper-teal-800)', '#efefef');
           break;
@@ -520,10 +601,34 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.sidebarMenu.selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
+        case 'logs':
+          this.menuTitle = 'Logs';
+          this.sidebarMenu.selected = null;
+          this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
+          break;
         default:
           this.menuTitle = 'LOGIN REQUIRED';
           this.sidebarMenu.selected = 0;
       }
+    }
+  }
+
+  async close_app_window(performClose = false) {
+    this._readUserSetting('preserve_login', false); // Refresh the option. (it can be changed during the session)
+    if (this.options['preserve_login'] === false) { // Delete login information.
+      this.notification.text = 'Clean up login session...';
+      this.notification.show();
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+      }
+    }
+    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
+      if (window.backendaiclient._config.connectionMode === 'SESSION') {
+        await window.backendaiclient.logout();
+      }
+      window.backendaiclient = null;
     }
   }
 
@@ -543,6 +648,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         const key = keys[i];
         if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
       }
+
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (window.isElectron) {
@@ -579,6 +685,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  _toggleDropdown() {
+    let menu = this.shadowRoot.querySelector("#dropdown-menu");
+    let menu_icon = this.shadowRoot.querySelector('#dropdown-button');
+    menu.anchor = menu_icon;
+    menu.open = !menu.open;
+  }
+
   showTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
@@ -597,10 +710,30 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  _moveToLogPage() {
+    let currentPage = window.location.toString().split(/[\/]+/).pop();
+    window.history.pushState({}, '', '/usersettings');
+    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings-logs', {});
+      document.dispatchEvent(event);
+    }
+  }
+
+  _moveToUserSettingsPage() {
+    let currentPage = window.location.toString().split(/[\/]+/).pop();
+    window.history.pushState({}, '', '/usersettings');
+    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'general'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings', {});
+      document.dispatchEvent(event);
+    }
+  }
+
   render() {
     // language=HTML
     return html`
-      <mwc-drawer id="app-body">
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
             <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
@@ -608,7 +741,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
                     sizing="contain"></iron-image>
                 </div>
-                <div class="vertical start-justified layout" style="margin-left:10px;margin-right:10px;">
+                <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                   <div class="site-name"><span class="bold">Backend</span>.AI</div>
                   ${this.siteDescription ?
       html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
@@ -618,60 +751,61 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <span class="flex"></span>
               </div>
             </div>
-            <div id="group-select-box" style="height:50px;">
+            <div class="horizontal start-justified layout">
+              <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
+              <div id="group-select-box" class="full-menu" style="height:50px;"></div>
             </div>
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
               <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon id="activities-icon" class="fg green" icon="icons:view-quilt"></iron-icon>
-                  Summary
+                  <span class="full-menu">Summary</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'job'}" href="/job" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg red" icon="icons:subject"></iron-icon>
-                  Sessions
+                  <span class="full-menu">Sessions</span>
                 </paper-item>
               </a>
               ${false ? html`
               <paper-item disabled>
                 <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
-                Experiments
+                <span class="full-menu">Experiments</span>
               </paper-item>` : html``}
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
-                  Data &amp; Storage
+                  <span class="full-menu">Data &amp; Storage</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
                 <paper-item link>
                   <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
-                  Statistics
+                  <span class="full-menu">Statistics</span>
                 </paper-item>
               </a>
-              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem" style="display:none;">
+              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg teal" icon="icons:settings"></iron-icon>
-                  Settings
-                  <span class="flex"></span>
+                  <span class="full-menu">Settings</span>
                 </paper-item>
               </a>
 
               ${this.is_admin ?
       html`
-              <h4 style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
+              <h4 class="full-menu" style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
 
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg lime" icon="icons:face"></iron-icon>
-                  Users
+                  <span class="full-menu">Users</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
-                  Environments
+                  <span class="full-menu">Environments</span>
                 </paper-item>
               </a>
       ` : html``}
@@ -680,26 +814,26 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
                   <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                  Resources
+                  <span class="full-menu">Resources</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg green" icon="icons:settings"></iron-icon>
-                  System Settings
+                  <span class="full-menu">System Settings</span>
                   <span class="flex"></span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'maintenance'}" href="/maintenance" tabindex="-1" role="menuitem">
                 <paper-item link>
                   <iron-icon class="fg pink" icon="icons:build"></iron-icon>
-                  Maintenance
+                  <span class="full-menu">Maintenance</span>
                   <span class="flex"></span>
                 </paper-item>
               </a>
       ` : html``}
             </paper-listbox>
-            <footer>
+            <footer class="full-menu">
               <div class="terms-of-use" style="margin-bottom:50px;">
                 <small style="font-size:11px;">
                   <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
@@ -718,10 +852,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </small>
               </div>
             </footer>
-            <div id="sidebar-navbar-footer" class="vertical center center-justified layout">
+            <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.02.0.200203</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.02.5.200227</small>
               </address>
             </div>
         </div>
@@ -730,10 +864,43 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
             <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
             <div slot="actionItems" class="vertical end-justified flex layout">
-              <a class="email" style="margin-top:4px;font-size: 14px;text-align:right" @click="${this._openUserPrefDialog}">${this.user_id}</a>
+              <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
-            <mwc-icon-button slot="actionItems" id="sign-button" icon="launch" on @click="${() => this.logout()}"></mwc-icon-button>
+              <mwc-icon-button slot="actionItems" id="dropdown-button"
+                               icon="account_circle"
+                               @click="${() => this._toggleDropdown()}">
+              </mwc-icon-button>
+              <mwc-menu id="dropdown-menu" absolute x=-50 y=40>
+                <mwc-list-item>
+                  <a class="horizontal layout start center"
+                     @click="${() => this._openUserPrefDialog()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                    Change Password
+                </a>
+                </mwc-list-item>
+                <mwc-list-item>
+                  <a class="horizontal layout start center"
+                     @click="${() => this._moveToUserSettingsPage()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                    Preferences
+                  </a>
+                </mwc-list-item>
+                <mwc-list-item>
+                  <a class="horizontal layout start center"
+                    @click="${() => this._moveToLogPage()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                    Logs / Errors
+                  </a>
+                </mwc-list-item>
+                <mwc-list-item>
+                  <a class="horizontal layout start center" id="sign-button"
+                    @click="${() => this.logout()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                    Log Out
+                  </a>
+                </mwc-list-item>
+              </mwc-menu>
           </mwc-top-app-bar-fixed>
 
           <div class="content">

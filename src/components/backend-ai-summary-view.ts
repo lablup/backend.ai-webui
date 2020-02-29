@@ -173,11 +173,12 @@ export default class BackendAISummary extends BackendAIPage {
         }, 15000);
       }
     }).catch(err => {
+      this.indicator.hide();
       this.jobs = [];
       this.sessions = 0;
       this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
       this.notification.detail = err;
-      this.notification.show(true);
+      this.notification.show(true, err);
     });
   }
 
@@ -218,10 +219,11 @@ export default class BackendAISummary extends BackendAIPage {
         }, 15000);
       }
     }).catch(err => {
+      this.indicator.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -370,7 +372,7 @@ export default class BackendAISummary extends BackendAIPage {
       .catch(err => {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       })
   }
 
