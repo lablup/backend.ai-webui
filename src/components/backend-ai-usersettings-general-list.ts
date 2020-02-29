@@ -35,9 +35,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   constructor() {
     super();
-    this.options = {
+    this.options = {  // Default option.
       desktop_notification: true,
       compact_sidebar: false,
+      preserve_login: false,
       beta_feature: false,
     }
   }
@@ -127,11 +128,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   readUserSettings() {
-    this._readUserSetting('desktop_notification', true);
-    this._readUserSetting('compact_sidebar', false);
-    this._readUserSetting('preserve_login', false);
-    this._readUserSetting('beta_feature', false);
+    this._readUserSettings();
     this.beta_feature_panel = this.options['beta_feature'];
+  }
+
+  _readUserSettings() { // Read all user settings.
+    for (let i = 0, len = localStorage.length; i < len; ++i) {
+      if (localStorage.key(i).startsWith('backendaiconsole.usersetting.')) {
+        let key = localStorage.key(i).replace('backendaiconsole.usersetting.', '');
+        this._readUserSetting(key);
+      }
+    }
   }
 
   _readUserSetting(name, default_value = true) {
@@ -307,6 +314,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span>Beta Features</span>
           <span class="flex"></span>
         </h4>
+        <div>
+          Preparing now. :)
+        </div>
         ` : html``}
 
         <h3 class="horizontal center layout" style="display:none;">
