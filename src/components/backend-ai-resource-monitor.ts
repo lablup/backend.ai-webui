@@ -492,7 +492,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shmem_request = 0.0625;
     this.gpu_request = 0;
     this.session_request = 1;
-    this.scaling_groups = [];
+    this.scaling_groups = [{name: ''}]; // if there isno scaling group, set the name as emptry string
     this.scaling_group = '';
     this.enable_scaling_group = false;
     this.sessions_list = [];
@@ -592,7 +592,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.scaling_group = e.target.value;
     if (this.active) {
       if (this.direction === 'vertical') {
-        let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
+        const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
         scaling_group_selection_box.firstChild.value = this.scaling_group;
       }
       // let sgnum = this.scaling_groups.map((sg) => sg.name).indexOf(this.scaling_group);
@@ -638,15 +638,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (this.scaling_group === '' || isChanged) {
           const currentGroup = window.backendaiclient.current_group || null;
           let sgs = await window.backendaiclient.scalingGroup.list(currentGroup);
-          this.scaling_groups = sgs.scaling_groups;
+          // Make empty scaling group item if there is no scaling groups.
+          this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+          this.scaling_group = this.scaling_groups[0].name;
           if (this.direction === 'vertical') {
-            this.scaling_group = this.scaling_groups[0].name;
-            let scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
+            const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
             // Detached from template to support live-update after creating new group (will need it)
             if (scaling_group_selection_box.hasChildNodes()) {
               scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
             }
-            let scaling_select = document.createElement('wl-select');
+            const scaling_select = document.createElement('wl-select');
             scaling_select.label = "Resource Group";
             scaling_select.name = 'scaling-group-select';
             scaling_select.id = 'scaling-group-select';
@@ -670,10 +671,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             });
             //scaling_select.updateOptions();
             scaling_group_selection_box.appendChild(scaling_select);
-          } else {
-            this.scaling_group = this.scaling_groups[0].name;
           }
-          let scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
+          const scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
+          scaling_group_selection_dialog.selectedText = this.scaling_group;
           scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
             this.updateScalingGroup.bind(this, false);
           });
@@ -1152,7 +1152,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
     return window.backendaiclient.keypair.info(window.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
-      let param: any;
+      const param: any = {group: window.backendaiclient.current_group};
       if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
         let scaling_group: string = '';
         if (this.scaling_group !== '') {
@@ -1161,14 +1161,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           scaling_group = this.scaling_groups[0]['name'];
           this.scaling_group = scaling_group;
         }
-        param = {
-          'group': window.backendaiclient.current_group,
-          'scaling_group': scaling_group
-        };
-      } else {
-        param = {
-          'group': window.backendaiclient.current_group
-        };
+        if (scaling_group) {
+          param['scaling_group'] = scaling_group;
+        }
       }
       //console.log('check resource preset from : aggregate resource use, ', from);
       return window.backendaiclient.resourcePreset.check(param);
@@ -1203,7 +1198,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
       //let scaling_group_resource_remaining = response.scaling_group_remaining;
       //console.log('current:', this.scaling_group);
-      if (this.scaling_group == '') { // IT IS ERROR SITUATION.
+      if (this.scaling_group === '') { // no scaling group in the current project
+        response.scaling_groups[''] = {
+          using: {'cpu': 0, 'mem': 0},
+          remaining: {'cpu': 0, 'mem': 0},
+        }
       }
       let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
       let scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
