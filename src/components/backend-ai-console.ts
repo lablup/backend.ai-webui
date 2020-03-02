@@ -381,6 +381,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
+    this._writeRecentProjectGroup(this.current_group);
   }
 
   showUpdateNotifier() {
@@ -730,7 +731,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _writeRecentProjectGroup(value) {
-    if (value !== null && value !== '') {
+    if (value !== null && value !== '' && value !== '""') {
       localStorage.setItem('backendaiconsole.projectGroup', value);
     } else {
       localStorage.setItem('backendaiconsole.projectGroup', window.backendaiclient.current_group);
