@@ -492,7 +492,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shmem_request = 0.0625;
     this.gpu_request = 0;
     this.session_request = 1;
-    this.scaling_groups = [{name: ''}]; // if there isno scaling group, set the name as emptry string
+    this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
     this.enable_scaling_group = false;
     this.sessions_list = [];
