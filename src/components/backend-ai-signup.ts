@@ -121,6 +121,10 @@ export default class BackendAiSignup extends LitElement {
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = window.lablupNotification;
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
+    let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
+    for (const textfield of textfields) {
+      this._addInputValidator(textfield);
+    }
   }
 
   receiveTOSAgreement() {
@@ -245,41 +249,52 @@ export default class BackendAiSignup extends LitElement {
       console.log(e);
     });
   }
-  _validateInput(e) {
-    let info = e.target;
-    info.validityTransform = (value, nativeValidity) => {
-      if (!nativeValidity.valid) {
-        if (nativeValidity.patternMismatch) {
-          info.validationMessage = "At least 1 alphabet, 1 number and 1 special character is required.";
-          return {
-            valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid
-          };
-        } else if (nativeValidity.valueMissing) {
-          info.validationMessage = "Input Required.";
-          return {
-            valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
-          }
-        } else if (nativeValidity.tooShort) {
-          info.validationMessage = "Password should be longer than 8.";
-          return {
-            valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
-          }
-        }else {
-          info.validationMessage = "At least 1 alphabet, 1 number and 1 special character is required.";
-          return {
-            valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid,
-          }
-        }
+
+  _addInputValidator(obj) {
+    if (!obj.hasAttribute('auto-validate')) {
+      return;
+    }
+    let validationMessage: string;
+    if (obj.validityTransform === null) {
+      if (obj.getAttribute('error-message')) {
+        validationMessage = obj.getAttribute('error-message');
       } else {
-        return {
-          valid: nativeValidity.valid
-        }
+        validationMessage = 'Validation failed.';
       }
-    };
+      obj.validityTransform = (value, nativeValidity) => {
+        if (!nativeValidity.valid) {
+          if (nativeValidity.patternMismatch) {
+            obj.validationMessage = validationMessage;
+            return {
+              valid: nativeValidity.valid,
+              patternMismatch: !nativeValidity.valid
+            };
+          } else if (nativeValidity.valueMissing) {
+            obj.validationMessage = "Value required.";
+            return {
+              valid: nativeValidity.valid,
+              valueMissing: !nativeValidity.valid
+            }
+          } else if (nativeValidity.tooShort) {
+            obj.validationMessage = "Input too short.";
+            return {
+              valid: nativeValidity.valid,
+              valueMissing: !nativeValidity.valid
+            }
+          } else {
+            obj.validationMessage = validationMessage;
+            return {
+              valid: nativeValidity.valid,
+              patternMismatch: !nativeValidity.valid,
+            }
+          }
+        } else {
+          return {
+            valid: nativeValidity.valid
+          }
+        }
+      };
+    }
   }
 
   // TODO: global error message patcher
@@ -319,12 +334,14 @@ export default class BackendAiSignup extends LitElement {
               <mwc-textfield type="password" name="password1" id="id_password1"
                            label="Password" minlength="8"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           @change="${(e)=>this._validateInput(e)}"
+                           error-message="At least 1 alphabet, 1 number and 1 special character is required."
+                           auto-validate
                            value=""></mwc-textfield>
               <mwc-textfield type="password" name="password2" id="id_password2"
                            label="Password (again)" minlength="8"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           @change="${(e)=>this._validateInput(e)}"
+                           error-message="At least 1 alphabet, 1 number and 1 special character is required."
+                           auto-validate
                            value=""></mwc-textfield>
               <div style="margin-top:10px;">
                 <wl-checkbox id="approve-terms-of-service">

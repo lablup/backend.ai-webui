@@ -394,47 +394,51 @@ export default class BackendAIData extends BackendAIPage {
     }
   }
 
-  _validateInput(e) {
-    let info = e.target;
-    let validationMessage: string;
-    if (info.getAttribute('error-message')) {
-      validationMessage = info.getAttribute('error-message');
-    } else {
-      validationMessage = 'Validation failed.';
+  _addInputValidator(obj) {
+    if (!obj.hasAttribute('auto-validate')) {
+      return;
     }
-    info.validityTransform = (value, nativeValidity) => {
-      if (!nativeValidity.valid) {
-        if (nativeValidity.patternMismatch) {
-          info.validationMessage = validationMessage;
-          return {
-            valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid
-          };
-        } else if (nativeValidity.valueMissing) {
-          info.validationMessage = "Value required.";
-          return {
-            valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
-          }
-        } else if (nativeValidity.tooShort) {
-          info.validationMessage = "Input too short.";
-          return {
-            valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
+    let validationMessage: string;
+    if (obj.validityTransform === null) {
+      if (obj.getAttribute('error-message')) {
+        validationMessage = obj.getAttribute('error-message');
+      } else {
+        validationMessage = 'Validation failed.';
+      }
+      obj.validityTransform = (value, nativeValidity) => {
+        if (!nativeValidity.valid) {
+          if (nativeValidity.patternMismatch) {
+            obj.validationMessage = validationMessage;
+            return {
+              valid: nativeValidity.valid,
+              patternMismatch: !nativeValidity.valid
+            };
+          } else if (nativeValidity.valueMissing) {
+            obj.validationMessage = "Value required.";
+            return {
+              valid: nativeValidity.valid,
+              valueMissing: !nativeValidity.valid
+            }
+          } else if (nativeValidity.tooShort) {
+            obj.validationMessage = "Input too short.";
+            return {
+              valid: nativeValidity.valid,
+              valueMissing: !nativeValidity.valid
+            }
+          } else {
+            obj.validationMessage = validationMessage;
+            return {
+              valid: nativeValidity.valid,
+              patternMismatch: !nativeValidity.valid,
+            }
           }
         } else {
-          info.validationMessage = validationMessage;
           return {
-            valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid,
+            valid: nativeValidity.valid
           }
         }
-      } else {
-        return {
-          valid: nativeValidity.valid
-        }
-      }
-    };
+      };
+    }
   }
 
   render() {
@@ -495,8 +499,8 @@ export default class BackendAIData extends BackendAIPage {
             </wl-button>
           </h3>
           <section>
-            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
-                         error-message="Allows letters, numbers and -_." @change="${(e) => this._validateInput(e)}"></mwc-textfield>
+            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" auto-validate
+                         error-message="Allows letters, numbers and -_."></mwc-textfield>
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-host" label="Host">
                 <paper-listbox slot="dropdown-content" selected="0">
@@ -548,7 +552,7 @@ export default class BackendAIData extends BackendAIPage {
             <div class="warning">WARNING: this cannot be undone!</div>
             <div>
               <mwc-textfield class="red" id="delete-folder-name" label="Type folder name to delete"
-                           pattern="[a-zA-Z0-9_-]*" @change="${(e) => this._validateInput(e)}"
+                           pattern="[a-zA-Z0-9_-]*"
                            error-message="Allows letters, numbers and -_." auto-validate></mwc-textfield>
               <br/>
               <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
@@ -698,7 +702,7 @@ export default class BackendAIData extends BackendAIPage {
             </wl-button>
           </h3>
           <section>
-            <mwc-textfield id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" @change="${(e) => this._validateInput(e)}"
+            <mwc-textfield id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" auto-validate
                          error-message="Allows letters, numbers and -_."></mwc-textfield>
             <br/>
             <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
@@ -1029,7 +1033,10 @@ export default class BackendAIData extends BackendAIPage {
     });
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
-
+    let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
+    for (const textfield of textfields) {
+      this._addInputValidator(textfield);
+    }
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
   }
 
