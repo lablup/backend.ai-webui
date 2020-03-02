@@ -923,7 +923,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
-      <backend-ai-login id="login-panel"></backend-ai-login>
+      <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>

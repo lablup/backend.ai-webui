@@ -409,53 +409,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
     });
   }
 
-  _addInputValidator(obj) {
-    if (!obj.hasAttribute('auto-validate')) {
-      return;
-    }
-    let validationMessage: string;
-    if (obj.validityTransform === null) {
-      if (obj.getAttribute('error-message')) {
-        validationMessage = obj.getAttribute('error-message');
-      } else {
-        validationMessage = 'Validation failed.';
-      }
-      obj.validityTransform = (value, nativeValidity) => {
-        if (!nativeValidity.valid) {
-          if (nativeValidity.patternMismatch) {
-            obj.validationMessage = validationMessage;
-            return {
-              valid: nativeValidity.valid,
-              patternMismatch: !nativeValidity.valid
-            };
-          } else if (nativeValidity.valueMissing) {
-            obj.validationMessage = "Value required.";
-            return {
-              valid: nativeValidity.valid,
-              valueMissing: !nativeValidity.valid
-            }
-          } else if (nativeValidity.tooShort) {
-            obj.validationMessage = "Input too short.";
-            return {
-              valid: nativeValidity.valid,
-              valueMissing: !nativeValidity.valid
-            }
-          } else {
-            obj.validationMessage = validationMessage;
-            return {
-              valid: nativeValidity.valid,
-              patternMismatch: !nativeValidity.valid,
-            }
-          }
-        } else {
-          return {
-            valid: nativeValidity.valid
-          }
-        }
-      };
-    }
-  }
-
   updateCurrentPresetToDialog(e) {
     const controls = e.target.closest('#controls');
     const preset_name = controls['preset-name'];

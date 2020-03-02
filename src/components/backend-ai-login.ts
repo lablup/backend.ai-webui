@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -24,6 +24,7 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAIPage} from "./backend-ai-page";
 
 declare global {
   const ai: typeof aiSDK;
@@ -44,8 +45,7 @@ declare global {
  @group Backend.AI Console
  */
 @customElement("backend-ai-login")
-export default class BackendAILogin extends LitElement {
-  public shadowRoot: any; // ShadowRoot
+export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) api_key = '';
   @property({type: String}) secret_key = '';
   @property({type: String}) user_id = '';
@@ -57,7 +57,6 @@ export default class BackendAILogin extends LitElement {
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
   @property({type: String}) connection_mode = 'API';
-;
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
@@ -387,6 +386,7 @@ export default class BackendAILogin extends LitElement {
       this.notification.show();
       return;
     }
+    (this.shadowRoot.querySelector('#signup-dialog') as any).active = true;
     (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
     //this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
     (this.shadowRoot.querySelector('#signup-dialog') as any).open();

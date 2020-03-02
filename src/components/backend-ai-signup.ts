@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
@@ -20,6 +20,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
+import {BackendAIPage} from "./backend-ai-page";
 
 /**
  Backend.AI Signup feature for GUI Console
@@ -35,8 +36,7 @@ import {
  @group Backend.AI Console
  */
 @customElement("backend-ai-signup")
-export default class BackendAiSignup extends LitElement {
-  public shadowRoot: any; // ShadowRoot
+export default class BackendAiSignup extends BackendAIPage {
   @property({type: String}) company_name = '';
   @property({type: String}) company_id = '';
   @property({type: String}) user_name = '';
@@ -248,53 +248,6 @@ export default class BackendAiSignup extends LitElement {
       }
       console.log(e);
     });
-  }
-
-  _addInputValidator(obj) {
-    if (!obj.hasAttribute('auto-validate')) {
-      return;
-    }
-    let validationMessage: string;
-    if (obj.validityTransform === null) {
-      if (obj.getAttribute('error-message')) {
-        validationMessage = obj.getAttribute('error-message');
-      } else {
-        validationMessage = 'Validation failed.';
-      }
-      obj.validityTransform = (value, nativeValidity) => {
-        if (!nativeValidity.valid) {
-          if (nativeValidity.patternMismatch) {
-            obj.validationMessage = validationMessage;
-            return {
-              valid: nativeValidity.valid,
-              patternMismatch: !nativeValidity.valid
-            };
-          } else if (nativeValidity.valueMissing) {
-            obj.validationMessage = "Value required.";
-            return {
-              valid: nativeValidity.valid,
-              valueMissing: !nativeValidity.valid
-            }
-          } else if (nativeValidity.tooShort) {
-            obj.validationMessage = "Input too short.";
-            return {
-              valid: nativeValidity.valid,
-              valueMissing: !nativeValidity.valid
-            }
-          } else {
-            obj.validationMessage = validationMessage;
-            return {
-              valid: nativeValidity.valid,
-              patternMismatch: !nativeValidity.valid,
-            }
-          }
-        } else {
-          return {
-            valid: nativeValidity.valid
-          }
-        }
-      };
-    }
   }
 
   // TODO: global error message patcher
