@@ -571,7 +571,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         namespace = '';
         langName = imageParts[1];
       }
-      langName = langName.split(':')[0]
+      langName = langName.split(':')[0];
       langName = namespace ? namespace + '/' + langName : langName;
       tags.push([
         {'category': 'Env', 'tag': `${langName}`, 'color': 'lightgrey'}
