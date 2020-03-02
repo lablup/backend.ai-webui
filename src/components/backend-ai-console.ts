@@ -115,7 +115,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     super();
     this.options = {
       compact_sidebar: false,
-      preserve_login: false
+      preserve_login: false,
+      beta_feature: false
     }
   }
 
@@ -283,26 +284,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
-    this._readUserSetting('compact_sidebar', false);
-    this._readUserSetting('preserve_login', false);
+    this._readUserSettings();
     this.mini_ui = this.options['compact_sidebar'];
 
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
-    // TODO : it should be reimplemented.
-    // window.addEventListener("click", (event) => {
-    //   let path = event['path'];
-    //   if (typeof path === 'object') {
-    //     let elements_name = Object.keys(path).map(function (key, index) {
-    //       return path[key]['id'];
-    //     });
-    //     if (!elements_name.includes("dropdown-button")) {
-    //       this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
-    //     }
-    //   }
-    // });
   }
 
   connectedCallback() {
@@ -350,6 +338,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     }
     this.loginPanel.refreshWithConfig(config);
+  }
+
+  _readUserSettings() { // Read all user settings.
+    for (let i = 0, len = localStorage.length; i < len; ++i) {
+      if (localStorage.key(i).startsWith('backendaiconsole.usersetting.')) {
+        let key = localStorage.key(i).replace('backendaiconsole.usersetting.', '');
+        this._readUserSetting(key);
+      }
+    }
   }
 
   _readUserSetting(name, default_value = true) {
