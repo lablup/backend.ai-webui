@@ -339,11 +339,6 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
       }
     );
-    if (!window.backendaiclient ||
-      !window.backendaiclient.is_admin) {
-      this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 260px)';
-    }
     this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
@@ -367,6 +362,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     // If disconnected
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        if (!window.backendaiclient.is_admin) {
+          this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)';
+        } else {
+          this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+        }
         if (window.backendaiclient.APIMajorVersion < 5) {
           this.sessionNameField = 'sess_id';
         }
@@ -377,6 +378,12 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._refreshJobData();
       }, true);
     } else { // already connected
+      if (!window.backendaiclient.is_admin) {
+        this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)';
+      } else {
+        this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+      }
       if (window.backendaiclient.APIMajorVersion < 5) {
         this.sessionNameField = 'sess_id';
       }
