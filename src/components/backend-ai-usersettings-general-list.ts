@@ -31,11 +31,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Object}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
   @property({type: Object}) notification;
+  @property({type: Boolean}) beta_feature_panel = false;
 
   constructor() {
     super();
-    this.options = {
-      desktop_notification: true
+    this.options = {  // Default option.
+      desktop_notification: true,
+      compact_sidebar: false,
+      preserve_login: false,
+      beta_feature: false,
     }
   }
 
@@ -124,9 +128,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   readUserSettings() {
-    this._readUserSetting('desktop_notification', true);
-    this._readUserSetting('compact_sidebar', false);
-    this._readUserSetting('preserve_login', false);
+    this._readUserSettings();
+    this.beta_feature_panel = this.options['beta_feature'];
+  }
+
+  _readUserSettings() { // Read all user settings.
+    for (let i = 0, len = localStorage.length; i < len; ++i) {
+      if (localStorage.key(i).startsWith('backendaiconsole.usersetting.')) {
+        let key = localStorage.key(i).replace('backendaiconsole.usersetting.', '');
+        this._readUserSetting(key);
+      }
+    }
   }
 
   _readUserSetting(name, default_value = true) {
@@ -152,6 +164,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     } else {
       localStorage.setItem('backendaiconsole.usersetting.' + name, value);
     }
+    this.options[name] = value;
   }
 
   toggleDesktopNotification(e) {
@@ -177,6 +190,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       this._writeUserSetting('preserve_login', false);
     } else {
       this._writeUserSetting('preserve_login', true);
+    }
+  }
+
+  toggleBetaFeature(e) {
+    if (e.target.checked === false) {
+      this._writeUserSetting('beta_feature', false);
+      this.beta_feature_panel = false;
+    } else {
+      this._writeUserSetting('beta_feature', true);
+      this.beta_feature_panel = true;
     }
   }
 
@@ -275,7 +298,27 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
           </div>
           ` : html``}
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>Beta features</div>
+              <div class="description">Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.
+              </div>
+            </div>
+            <div class="vertical center-justified layout setting-button">
+              <wl-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${this.options['beta_feature']}"></wl-switch>
+            </div>
+          </div>
         </div>
+        ${this.beta_feature_panel ? html`
+        <h4 class="horizontal center layout">
+          <span>Beta Features</span>
+          <span class="flex"></span>
+        </h4>
+        <div>
+          Preparing now. :)
+        </div>
+        ` : html``}
+
         <h3 class="horizontal center layout" style="display:none;">
           <span>Shell Environments</span>
           <span class="flex"></span>
