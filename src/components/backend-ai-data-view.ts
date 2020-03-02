@@ -13,6 +13,7 @@ import '@polymer/paper-item/paper-item';
 import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
+import '@polymer/paper-input/paper-input';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';

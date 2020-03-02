@@ -14,11 +14,14 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
+import '@polymer/paper-input/paper-input';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
+
+import '@material/mwc-textfield';
 
 import 'weightless/button';
 import 'weightless/card';
