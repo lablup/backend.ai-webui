@@ -99,6 +99,16 @@ class BackendAiResourcePresetList extends BackendAIPage {
           padding-right: 5px;
         }
 
+        mwc-textfield {
+          width: 100%;
+          --mdc-theme-primary: #242424;
+          --mdc-text-field-fill-color: transparent;
+        }
+
+        mwc-textfield.yellow {
+          --mdc-theme-primary: var(--paper-yellow-600) !important;
+        }
+
         wl-button.create-button {
           width: 335px;
           --button-bg: white;
@@ -289,7 +299,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 auto-validate
                 required
                 pattern="[a-zA-Z0-9-_]+"
-                error-message="Policy name only accepts letters and numbers"
+                error-message="Preset name only accepts letters and numbers"
               ></mwc-textfield>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
