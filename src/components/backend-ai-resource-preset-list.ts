@@ -461,11 +461,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const preset_name = controls['preset-name'];
     let resourcePresets = window.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
+    console.log(resourcePreset);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
     this.shadowRoot.querySelector('#id_preset_name').value = preset_name;
     this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
-    this.shadowRoot.querySelector('#gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
-    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
+    if ('cuda.device' in resourcePreset.resource_slots) {
+      this.shadowRoot.querySelector('#gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
+    } else {
+      this.shadowRoot.querySelector('#gpu-resource').value = "";
+    }
+    if ('cuda.shares' in resourcePreset.resource_slots) {
+      this.shadowRoot.querySelector('#fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
+    } else {
+      this.shadowRoot.querySelector('#fgpu-resource').value = "";
+    }
     this.shadowRoot.querySelector('#ram-resource').value = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
   }
 
@@ -530,7 +539,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     let input = this._readResourcePresetInput();
     window.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#modify-template-dialog').hide();
-      this.notification.text = "Resource policy successfully updated.";
+      this.notification.text = "Resource preset successfully updated.";
       this.notification.show();
       this._refreshTemplateData();
     }).catch(err => {
