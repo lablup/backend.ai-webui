@@ -134,8 +134,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _readUserSettings() { // Read all user settings.
     for (let i = 0, len = localStorage.length; i < len; ++i) {
-      if (localStorage.key(i).startsWith('backendaiconsole.usersetting.')) {
-        let key = localStorage.key(i).replace('backendaiconsole.usersetting.', '');
+      if (localStorage.key(i)!.startsWith('backendaiconsole.usersetting.')) {
+        let key = localStorage.key(i)!.replace('backendaiconsole.usersetting.', '');
         this._readUserSetting(key);
       }
     }

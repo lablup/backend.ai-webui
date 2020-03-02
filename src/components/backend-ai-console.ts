@@ -342,8 +342,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   _readUserSettings() { // Read all user settings.
     for (let i = 0, len = localStorage.length; i < len; ++i) {
-      if (localStorage.key(i).startsWith('backendaiconsole.usersetting.')) {
-        let key = localStorage.key(i).replace('backendaiconsole.usersetting.', '');
+      if (localStorage.key(i)!.startsWith('backendaiconsole.usersetting.')) {
+        let key = localStorage.key(i)!.replace('backendaiconsole.usersetting.', '');
         this._readUserSetting(key);
       }
     }
@@ -852,7 +852,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.02.5.200227</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.03.0.200302</small>
               </address>
             </div>
         </div>
