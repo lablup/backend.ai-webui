@@ -440,7 +440,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _refreshUserInfoPanel() {
     this.user_id = window.backendaiclient.email;
     this.domain = window.backendaiclient._config.domainName;
-    this.current_group = window.backendaiclient.current_group;
+    this.current_group = this._readRecentProjectGroup();
     this.groups = window.backendaiclient.groups;
     let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
@@ -644,6 +644,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.projectGroup)/.test(key))
+        localStorage.removeItem(key);
       }
 
       if (performClose === true) {
@@ -669,6 +671,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   changeGroup(e) {
     window.backendaiclient.current_group = e.target.value;
     this.current_group = window.backendaiclient.current_group;
+    this._writeRecentProjectGroup(window.backendaiclient.current_group);
     let event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
@@ -714,6 +717,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (currentPage && currentPage === 'usersettings') {
       let event = new CustomEvent('backend-ai-usersettings-logs', {});
       document.dispatchEvent(event);
+    }
+  }
+  _readRecentProjectGroup() {
+    let value: string | null = localStorage.getItem('backendaiconsole.projectGroup');
+    if (value !== null && value !== '' && value !== '""') {
+      return value;
+    } else {
+      return window.backendaiclient.current_group;
+    }
+  }
+
+  _writeRecentProjectGroup(value) {
+    if (value !== null && value !== '') {
+      localStorage.setItem('backendaiconsole.projectGroup', value);
+    } else {
+      localStorage.setItem('backendaiconsole.projectGroup', window.backendaiclient.current_group);
     }
   }
 
