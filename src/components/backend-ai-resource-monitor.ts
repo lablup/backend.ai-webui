@@ -1868,7 +1868,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     const ownerEmail = this.shadowRoot.querySelector('#owner-email');
     const email = ownerEmail.value;
-    if (!ownerEmail.validate()) {
+    if (!ownerEmail.checkValidity()) {
       this.notification.text = 'Invalid email address';
       this.notification.show();
       this.ownerKeypairs = [];
@@ -2283,9 +2283,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span slot="description">Set session owner</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
-                  <paper-input id="owner-email" class="flex" value=""
+                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
                     pattern="^.+@.+\..+$"
-                    label="Owner Email" size="40"></paper-input>
+                    label="Owner Email" size="40"></mwc-textfield>
                   <mwc-icon-button icon="refresh" class="blue"
                     @click="${() => this._fetchSessionOwnerGroups()}">
                   </mwc-icon-button>
