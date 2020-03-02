@@ -270,6 +270,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     } else {
       this.use_user_list = false;
     }
+    this._addValidatorToPolicyInput();
     this._getResourceInfo();
     this._getResourcePolicies();
     this._updateInputStatus(this.cpu_resource);
@@ -641,10 +642,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
-  _validatePolicyName(e) {
-    let policy_info = e.target;
-    let policy_name = e.target.value;
-    policy_info.validityTransform = (nativeValidity) => {
+  _addValidatorToPolicyInput() {
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    policy_info.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity) {
         policy_info.validationMessage = "Policy name Required.";
         return {
@@ -675,7 +675,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           }
         }
       } else {
-        const isValid = !this.resource_policy_names.includes(policy_name);
+        const isValid = !this.resource_policy_names.includes(value);
         if (!isValid) {
           policy_info.validationMessage = "Policy Name Already Exists!";
         }
@@ -685,7 +685,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         };
       }
     };
-   }
+  }
 
   _updateInputStatus(resource) {
     let textfield = resource;
@@ -901,8 +901,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <fieldset>
             <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
                              validationMessage="Policy name is Required."
-                             required
-                             @change="${(e)=>this._validatePolicyName(e)}"></mwc-textfield>
+                             required></mwc-textfield>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
