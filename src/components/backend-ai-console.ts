@@ -620,8 +620,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) {
+          localStorage.removeItem(key);
+        }
       }
+      // remove data in sessionStorage
+      sessionStorage.clear();
     }
     if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
       if (window.backendaiclient._config.connectionMode === 'SESSION') {
@@ -645,10 +649,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
-        if (/^(backendaiconsole\.projectGroup)/.test(key))
-        localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) {
+          localStorage.removeItem(key);
+        }
       }
+      // remove data in sessionStorage
+      sessionStorage.clear();
 
       if (performClose === true) {
         // Do nothing. this window will be closed.
@@ -722,20 +728,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
   _readRecentProjectGroup() {
-    let value: string | null = localStorage.getItem('backendaiconsole.projectGroup');
-    if (value !== null && value !== '' && value !== '""') {
-      return value;
-    } else {
-      return window.backendaiclient.current_group;
-    }
+    let value: string | null = sessionStorage.getItem('backendaiconsole.projectGroup');
+    return value ? value : window.backendaiclient.current_group;
   }
 
-  _writeRecentProjectGroup(value) {
-    if (value !== null && value !== '' && value !== '""') {
-      localStorage.setItem('backendaiconsole.projectGroup', value);
-    } else {
-      localStorage.setItem('backendaiconsole.projectGroup', window.backendaiclient.current_group);
-    }
+  _writeRecentProjectGroup(value : string) {
+    sessionStorage.setItem('backendaiconsole.projectGroup', value ? value : window.backendaiclient.current_group);
   }
 
   _moveToUserSettingsPage() {
