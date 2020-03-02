@@ -646,12 +646,12 @@ export default class BackendAICredentialView extends BackendAIPage {
     let policy_info = e.target;
     let policy_name = e.target.value;
     policy_info.validityTransform = (nativeValidity) => {
-      if (!nativeValidity) { 
-        policy_info.validationMessage = "Policy name Required."
+      if (!nativeValidity) {
+        policy_info.validationMessage = "Policy name Required.";
         return {
           valid: false,
           valueMissing: true
-        }
+        };
       }
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
@@ -669,7 +669,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           }
         }
         else {
-          policy_info.validationMessage = "Allows letters, numbers and -_."
+          policy_info.validationMessage = "Allows letters, numbers and -_.";
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid,

@@ -9,6 +9,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
+import '@material/mwc-textfield';
 import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6';
@@ -108,6 +109,11 @@ export default class BackendAiSignup extends LitElement {
               --button-bg-hover: var(--paper-green-300);
               --button-bg-active: var(--paper-green-300);
           }
+          mwc-textfield {
+            width: 100%;
+            --mdc-text-field-fill-color: transparent;
+          }
+
       `];
   }
 
@@ -240,6 +246,42 @@ export default class BackendAiSignup extends LitElement {
       console.log(e);
     });
   }
+  _validateInput(e) {
+    let info = e.target;
+    info.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.patternMismatch) {
+          info.validationMessage = "At least 1 alphabet, 1 number and 1 special character is required.";
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
+        } else if (nativeValidity.valueMissing) {
+          info.validationMessage = "Input Required.";
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          }
+        } else if (nativeValidity.tooShort) {
+          info.validationMessage = "Password should be longer than 8.";
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          }
+        }else {
+          info.validationMessage = "At least 1 alphabet, 1 number and 1 special character is required.";
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid,
+          }
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid
+        }
+      }
+    };
+  }
 
   // TODO: global error message patcher
   _politeErrorMessage(err) {
@@ -268,22 +310,24 @@ export default class BackendAiSignup extends LitElement {
           </h3>
           <form id="signup-form">
             <fieldset>
-              <paper-input type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
+              <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
                            label="E-mail" value="${this.user_email}"
-                           @change="${() => this._clear_info()}"></paper-input>
-              <paper-input type="text" name="user_name" id="id_user_name" maxlength="30"
-                           label="User Name" value="${this.user_name}"></paper-input>
-              <paper-input type="text" name="token" id="id_token" maxlength="50"
-                           label="Invitation Token"></paper-input>
-              <paper-input type="password" name="password1" id="id_password1"
-                           label="Password"
+                           @change="${() => this._clear_info()}"></mwc-textfield>
+              <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
+                           label="User Name" value="${this.user_name}"></mwc-textfield>
+              <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
+                           label="Invitation Token"></mwc-textfield>
+              <mwc-textfield type="password" name="password1" id="id_password1"
+                           label="Password" minlength="8"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           value=""></paper-input>
-              <paper-input type="password" name="password2" id="id_password2"
-                           label="Password (again)"
+                           @change="${(e)=>this._validateInput(e)}"
+                           value=""></mwc-textfield>
+              <mwc-textfield type="password" name="password2" id="id_password2"
+                           label="Password (again)" minlength="8"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           value=""></paper-input>
-              <div>
+                           @change="${(e)=>this._validateInput(e)}"
+                           value=""></mwc-textfield>
+              <div style="margin-top:10px;">
                 <wl-checkbox id="approve-terms-of-service">
                 </wl-checkbox>
                  I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">terms of service</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">privacy policy</a>.
