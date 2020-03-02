@@ -4,7 +4,6 @@
 
 import {css, customElement, html, property} from "lit-element";
 
-import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';

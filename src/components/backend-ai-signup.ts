@@ -4,7 +4,6 @@
  */
 
 import {css, customElement, html, LitElement, property} from "lit-element";
-import '@polymer/paper-input/paper-input';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
