@@ -441,6 +441,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.user_id = window.backendaiclient.email;
     this.domain = window.backendaiclient._config.domainName;
     this.current_group = this._readRecentProjectGroup();
+    window.backendaiclient.current_group = this.current_group;
     this.groups = window.backendaiclient.groups;
     let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
