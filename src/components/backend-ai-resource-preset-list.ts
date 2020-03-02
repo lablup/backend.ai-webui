@@ -14,7 +14,6 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-input/paper-input';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -243,23 +242,23 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
+              <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="Preset Name"
                           auto-validate required
                           pattern="[a-zA-Z0-9_-]+"
                           disabled
-                          error-message="Policy name only accepts letters, numbers, underscore, and dash"></paper-input>
+                          error-message="Policy name only accepts letters, numbers, underscore, and dash"></mwc-textfield>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-input id="cpu-resource" type="number" label="CPU"
-                    min="1" value="1"></paper-input>
-                <paper-input id="ram-resource" type="number" label="RAM (GB)"
-                    min="1" value="1"></paper-input>
+                <mwc-textfield id="cpu-resource" type="number" label="CPU"
+                    min="1" value="1"></mwc-textfield>
+                <mwc-textfield id="ram-resource" type="number" label="RAM (GB)"
+                    min="1" value="1"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <paper-input id="gpu-resource" type="number" label="GPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></paper-input>
-                <paper-input id="fgpu-resource" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></paper-input>
+                <mwc-textfield id="gpu-resource" type="number" label="GPU"
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
+                <mwc-textfield id="fgpu-resource" type="number" label="fGPU"
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
               <br/><br/>
               <wl-button class="fg orange create-button" outlined type="button"
@@ -282,7 +281,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </h3>
           <form id="preset-creation-form">
             <fieldset>
-              <paper-input
+              <mwc-textfield
                 type="text"
                 name="preset_name"
                 id="create-preset-name"
@@ -291,19 +290,19 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 required
                 pattern="[a-zA-Z0-9-_]+"
                 error-message="Policy name only accepts letters and numbers"
-              ></paper-input>
+              ></mwc-textfield>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-input id="create-cpu-resource" type="number" label="CPU"
-                    min="1" value="1"></paper-input>
-                <paper-input id="create-ram-resource" type="number" label="RAM (GB)"
-                    min="1" value="1"></paper-input>
+                <mwc-textfield id="create-cpu-resource" type="number" label="CPU"
+                    min="1" value="1"></mwc-textfield>
+                <mwc-textfield id="create-ram-resource" type="number" label="RAM (GB)"
+                    min="1" value="1"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <paper-input id="create-gpu-resource" type="number" label="GPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></paper-input>
-                <paper-input id="create-fgpu-resource" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></paper-input>
+                <mwc-textfield id="create-gpu-resource" type="number" label="GPU"
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
+                <mwc-textfield id="create-fgpu-resource" type="number" label="fGPU"
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
               <wl-button
                 class="fg orange create-button"
@@ -334,6 +333,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
+    let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
+    for (const textfield of textfields) {
+      this._addInputValidator(textfield);
+    }
   }
 
   async _viewStateChanged(active) {
@@ -394,6 +397,53 @@ class BackendAiResourcePresetList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  _addInputValidator(obj) {
+    if (!obj.hasAttribute('auto-validate')) {
+      return;
+    }
+    let validationMessage: string;
+    if (obj.validityTransform === null) {
+      if (obj.getAttribute('error-message')) {
+        validationMessage = obj.getAttribute('error-message');
+      } else {
+        validationMessage = 'Validation failed.';
+      }
+      obj.validityTransform = (value, nativeValidity) => {
+        if (!nativeValidity.valid) {
+          if (nativeValidity.patternMismatch) {
+            obj.validationMessage = validationMessage;
+            return {
+              valid: nativeValidity.valid,
+              patternMismatch: !nativeValidity.valid
+            };
+          } else if (nativeValidity.valueMissing) {
+            obj.validationMessage = "Value required.";
+            return {
+              valid: nativeValidity.valid,
+              valueMissing: !nativeValidity.valid
+            }
+          } else if (nativeValidity.tooShort) {
+            obj.validationMessage = "Input too short.";
+            return {
+              valid: nativeValidity.valid,
+              valueMissing: !nativeValidity.valid
+            }
+          } else {
+            obj.validationMessage = validationMessage;
+            return {
+              valid: nativeValidity.valid,
+              patternMismatch: !nativeValidity.valid,
+            }
+          }
+        } else {
+          return {
+            valid: nativeValidity.valid
+          }
+        }
+      };
+    }
   }
 
   updateCurrentPresetToDialog(e) {
