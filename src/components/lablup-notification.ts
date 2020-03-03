@@ -145,8 +145,13 @@ export default class LablupNotification extends LitElement {
     //   this._createCloseButton(notification);
     // }
     this._hideNotification(e);
+    let currentPage = window.location.toString().split(/[\/]+/).pop();
     window.history.pushState({}, '', '/usersettings');
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings-logs', {});
+      document.dispatchEvent(event);
+    }
   }
 
   _createCloseButton(notification) {

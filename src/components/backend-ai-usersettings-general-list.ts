@@ -19,8 +19,13 @@ import 'weightless/switch';
 import 'weightless/select';
 import 'weightless/icon';
 import 'weightless/button';
+import 'weightless/label';
+
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
+import './lablup-loading-indicator';
 import './lablup-codemirror';
 
 @customElement("backend-ai-usersettings-general-list")
@@ -30,8 +35,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   @property({type: Object}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
+  @property({type: Object}) userconfigDialog = Object();
   @property({type: Object}) notification;
   @property({type: Boolean}) beta_feature_panel = false;
+  @property({type: Array}) rcfiles = Array();
+  @property({type: String}) rcfile = '';
 
   constructor() {
     super();
@@ -67,7 +75,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         .setting-item {
           margin: 15px 10px;
-          width: 340px;
         }
 
         .setting-desc {
@@ -112,19 +119,55 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --card-elevation: 0;
         }
 
-        #bootstrap-dialog {
+        #bootstrap-dialog, #userconfig-dialog {
           --dialog-min-width: calc(100vw - 200px);
           --dialog-max-width: calc(100vw - 200px);
           --dialog-min-height: calc(100vh - 100px);
           --dialog-max-height: calc(100vh - 100px);
         }
+
+        mwc-select#select-rcfile-type {
+          width: 300px;
+          padding-right: 10px;
+          --mdc-select-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-teal-400);
+        }
+
+        mwc-list-item {
+          height: 30px;
+          --mdc-list-item-graphic-margin: 0px;
+        }
+
+        wl-icon.warning {
+          --icon-size: 16px;
+          padding: 0;
+          color: red;
+        }
+
+        wl-label.warning {
+          font-family: Roboto, Noto, sans-serif;
+          font-size: 12px;
+          --label-color: var(--paper-red-600);
+        }
       `];
   }
 
   firstUpdated() {
-    this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
     this.notification = window.lablupNotification;
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.readUserSettings();
+    // If disconnected
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
+        this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
+        this.rcfile = '.bashrc';
+      });
+    } else { // already connected
+      this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
+      this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
+      this.rcfile = '.bashrc';
+    }
   }
 
   readUserSettings() {
@@ -220,7 +263,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _saveBootstrapScript() {
-    const editor = this.shadowRoot.querySelector('#codemirror-editor');
+    const editor = this.shadowRoot.querySelector('#bootstrap-dialog #codemirror-editor');
     const script = editor.getValue();
     if (this.lastSavedBootstrapScript === script) {
       this.notification.text = 'No changes';
@@ -251,10 +294,138 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.bootstrapDialog.hide();
   }
 
+  async _editUserConfigScript() {
+    let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    this.rcfiles = await this._fetchUserConfigScript();
+    let rcfile_names = Array( ".bashrc", ".zshrc" );
+    rcfile_names.map(filename => {
+      let idx = this.rcfiles.findIndex(item => item.path === filename);
+      if (idx == -1) {
+        this.rcfiles.push({path: filename, data: ""});
+        editor.setValue('');
+      } else {
+        let code = this.rcfiles[idx]['data'];
+        editor.setValue(code);
+      }
+    });
+    let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+    if (idx != -1) {
+      let code = this.rcfiles[idx]['data'];
+      editor.setValue(code);
+    } else {
+      editor.setValue('');
+    }
+    this.userconfigDialog.show();
+  }
+
+  _fetchUserConfigScript() {
+    // Fetch user's .zshrc or .bashrc code
+    return window.backendaiclient.userConfig.get_dotfile_script().then((resp) => {
+      const script = resp || '';
+      return script;
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+  async _saveUserConfigScript() {
+    const editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    const script = editor.getValue();
+    let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+    if (idx != -1) { // if recent modified file is in rcfiles
+      if (this.rcfiles[idx]['data'] === '') { // if new rcfile
+        if (script !== '') {
+          // create and save with data and path
+          window.backendaiclient.userConfig.create_dotfile_script(
+            script, this.rcfiles[idx]['path'])
+            .then(res => {
+              this.indicator.hide();
+              this.notification.text = "User config script created.";
+              this.notification.show();
+            }).catch(err => {
+              this.indicator.hide();
+              console.log(err);
+              if (err && err.message) {
+                this.notification.text = PainKiller.relieve(err.title);
+                this.notification.detail = err.message;
+                this.notification.show(true, err);
+              }
+          });
+        } else {
+          this.indicator.hide();
+          this.notification.text = "New User config file can be created with non-empty data.";
+          this.notification.show();
+          return;
+        }
+      } else { // if rcfile already exists
+        if (this.rcfiles[idx]['data'] === script) {
+          this.notification.text = 'No changes';
+          this.notification.show();
+          return;
+        }
+        else {
+          window.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
+          .then(res => {
+            this.notification.text = 'User config script updated.';
+            this.notification.show();
+            this.indicator.hide();
+          }).catch(err => {
+            this.indicator.hide();
+            console.log(err);
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+            }
+          });
+        }
+      }
+    }
+    this.indicator.show();
+  }
+
+  async _saveUserConfigScriptAndCloseDialog() {
+    await this._saveUserConfigScript();
+    this._hideUserConfigScriptDialog();
+  }
+
+  _hideUserConfigScriptDialog() {
+    this.userconfigDialog.hide();
+  }
+
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+  }
+
+  _toggleRcFileName() {
+    let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    let select = this.shadowRoot.querySelector('#select-rcfile-type');
+    this.rcfile = select.value;
+    let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+    let code = this.rcfiles[idx]['data'];
+    editor.setValue(code);
+  }
+
+  _deleteRcFile(path: string) {
+    // this.rcfiles.map( item => {
+    //   window.backendaiclient.userConfig.delete_dotfile_script(item.path);
+    // });
+    if (path) {
+      window.backendaiclient.userConfig.delete_dotfile_script(path);
+    }
+  }
+
+  _createRcFile(path: string) {
+    if (path) {
+      window.backendaiclient.userConfig.create_dotfile_script(path);
+    }
   }
 
   render() {
@@ -318,18 +489,19 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           Preparing now. :)
         </div>
         ` : html``}
-
-        <h3 class="horizontal center layout" style="display:none;">
+        <h3 class="horizontal center layout">
           <span>Shell Environments</span>
           <span class="flex"></span>
         </h3>
-        <div class="horizontal wrap layout" style="display:none;">
-          <div class="horizontal layout wrap setting-item">
-            <wl-button class="fg teal" outlined @click="${this._editBootstrapScript}">
+        <div class="horizontal wrap layout setting-item">
+            <wl-button class="fg teal" outlined @click="${this._editBootstrapScript}" style="margin-right:20px; display:none;">
               <wl-icon>edit</wl-icon>
               Edit bootstrap script
             </wl-button>
-          </div>
+            <wl-button class="fg green" outlined @click="${this._editUserConfigScript}">
+              <wl-icon>edit</wl-icon>
+              Edit user config script
+            </wl-button>
         </div>
         <h3 class="horizontal center layout" style="display:none;">
           <span>Package Installation</span>
@@ -349,6 +521,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
       </wl-card>
       <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
         <div slot="header" style="padding: 0px 20px;">
         <h3 class="horizontal center layout">
           <span>Bootstrap script</span>
@@ -365,6 +538,45 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">Cancel</wl-button>
           <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">Save</wl-button>
           <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">Save and close</wl-button>
+        </div>
+      </wl-dialog>
+      <wl-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
+      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+        <div slot="header" style="padding: 0px 20px;">
+          <h3 class="horizontal center layout">
+            <span>Edit ${this.rcfile} shell script</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <div class="vertical layout">
+            <mwc-select id="select-rcfile-type"
+                        label="config file name"
+                        required
+                        validationMessage="Please select one option."
+                        @change=${this._toggleRcFileName}>
+              ${this.rcfiles.map(item => html`
+                <mwc-list-item value="${item.path}"
+                               ?selected="${item.path === this.rcfile}">
+                  ${item.path}
+                </mwc-list-item>`)}
+            </mwc-select>
+            <div class="horizontal layout">
+              <wl-icon class="warning">warning</wl-icon>
+              <wl-label class="warning" for="warning">
+                This Update will be applied to new sessions.
+              </wl-label>
+            </div>
+          </div>
+        </div>
+        <div slot="content">
+          <lablup-codemirror id="codemirror-editor" mode="shell"></lablup-codemirror>
+        </div>
+        <div slot="footer">
+          <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">Cancel</wl-button>
+          <wl-button id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">Save</wl-button>
+          <wl-button id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">Save and close</wl-button>
         </div>
       </wl-dialog>
     `;

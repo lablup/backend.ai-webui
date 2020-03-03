@@ -86,7 +86,7 @@ export default class LablupCodemirror extends LitElement {
 
   render() {
     return html`
-      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai" src="${this.src}"></wc-codemirror>
+      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai"></wc-codemirror>
     `;
   }
 }
