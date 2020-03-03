@@ -381,6 +381,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
+    this._writeRecentProjectGroup(this.current_group);
   }
 
   showUpdateNotifier() {
@@ -440,7 +441,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _refreshUserInfoPanel() {
     this.user_id = window.backendaiclient.email;
     this.domain = window.backendaiclient._config.domainName;
-    this.current_group = window.backendaiclient.current_group;
+    this.current_group = this._readRecentProjectGroup();
+    window.backendaiclient.current_group = this.current_group;
     this.groups = window.backendaiclient.groups;
     let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
@@ -618,8 +620,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) {
+          localStorage.removeItem(key);
+        }
       }
+      // remove data in sessionStorage
+      sessionStorage.clear();
     }
     if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
       if (window.backendaiclient._config.connectionMode === 'SESSION') {
@@ -643,8 +649,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) {
+          localStorage.removeItem(key);
+        }
       }
+      // remove data in sessionStorage
+      sessionStorage.clear();
 
       if (performClose === true) {
         // Do nothing. this window will be closed.
@@ -669,6 +679,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   changeGroup(e) {
     window.backendaiclient.current_group = e.target.value;
     this.current_group = window.backendaiclient.current_group;
+    this._writeRecentProjectGroup(window.backendaiclient.current_group);
     let event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
@@ -715,6 +726,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       let event = new CustomEvent('backend-ai-usersettings-logs', {});
       document.dispatchEvent(event);
     }
+  }
+  _readRecentProjectGroup() {
+    let value: string | null = sessionStorage.getItem('backendaiconsole.projectGroup');
+    return value ? value : window.backendaiclient.current_group;
+  }
+
+  _writeRecentProjectGroup(value : string) {
+    sessionStorage.setItem('backendaiconsole.projectGroup', value ? value : window.backendaiclient.current_group);
   }
 
   _moveToUserSettingsPage() {
