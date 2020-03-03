@@ -440,6 +440,9 @@ export default class BackendAICredentialView extends BackendAIPage {
       let name_field = this.shadowRoot.querySelector('#id_new_policy_name');
       name_field.checkValidity();
       let name = name_field.value;
+      if (name === '') {
+        throw {"message": "Policy name should not be empty"};
+      }
       let input = this._readResourcePolicyInput();
       window.backendaiclient.resourcePolicy.add(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
