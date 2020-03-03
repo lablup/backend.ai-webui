@@ -437,6 +437,9 @@ export default class BackendAICredentialView extends BackendAIPage {
       return;
     }
     try {
+      let name_field = this.shadowRoot.querySelector('#id_new_policy_name');
+      name_field.checkValidity();
+      let name = name_field.value;
       let input = this._readResourcePolicyInput();
       window.backendaiclient.resourcePolicy.add(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
@@ -995,7 +998,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
               <br/><br/>
               <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined
-               @click="${this._addResourcePolicy}">
+               @click="${() => this._addResourcePolicy()}">
                          <wl-icon>add</wl-icon>
                          Create
               </wl-button>
