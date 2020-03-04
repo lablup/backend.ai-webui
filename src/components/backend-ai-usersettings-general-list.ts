@@ -368,8 +368,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           this.notification.show();
           return;
         }
+        else if (script === '') {
+          this.notification.text = 'Please update script with non empty value.';
+          this.notification.show();
+          return;
+        }
         else {
-          window.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
+          await window.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
           .then(res => {
             this.notification.text = 'User config script updated.';
             this.notification.show();
@@ -386,6 +391,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       }
     }
+    this.rcfiles = await this._fetchUserConfigScript();
     this.indicator.show();
   }
 
@@ -404,28 +410,70 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     dialog.hide();
   }
 
+  _updateSelectedRcFileName() {
+    let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
+    if (rcfiles.items.length > 0) {
+      let selectedFile = rcfiles.items.find(item => item.path === this.rcfile);
+      console.log(selectedFile);
+      let idx = rcfiles.items.indexOf(selectedFile);
+      rcfiles.select(idx);
+    } 
+  }
+
   _toggleRcFileName() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
     let select = this.shadowRoot.querySelector('#select-rcfile-type');
     this.rcfile = select.value;
-    let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+    let idx = this.rcfiles.findIndex(item => item.path === select.value);
     let code = this.rcfiles[idx]['data'];
     editor.setValue(code);
   }
 
   _deleteRcFile(path: string) {
-    // this.rcfiles.map( item => {
-    //   window.backendaiclient.userConfig.delete_dotfile_script(item.path);
-    // });
     if (path) {
-      window.backendaiclient.userConfig.delete_dotfile_script(path);
+      window.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
+        let message = 'User config script '+ path + 'is deleted.';
+        this.notification.text = message;
+        this.notification.show();
+        this.indicator.hide();
+      }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      })
     }
+  }
+
+  _deleteRcFileAll() {
+    this.rcfiles.map( item => {
+      let path = item.path;
+      window.backendaiclient.userConfig.delete_dotfile_script(item.path).then(res => {
+        let message = 'User config script '+ path + 'is deleted.';
+        this.notification.text = message;
+        this.notification.show();
+        this.indicator.hide();
+      }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+    });
   }
 
   _createRcFile(path: string) {
     if (path) {
       window.backendaiclient.userConfig.create_dotfile_script(path);
     }
+  }
+
+  _changeCurrentCodeView() {
+
   }
 
   render() {
@@ -555,10 +603,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                         label="config file name"
                         required
                         validationMessage="Please select one option."
-                        @change=${this._toggleRcFileName}>
+                        @change="${this._toggleRcFileName}">
               ${this.rcfiles.map(item => html`
-                <mwc-list-item value="${item.path}"
-                               ?selected="${item.path === this.rcfile}">
+                <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                   ${item.path}
                 </mwc-list-item>`)}
             </mwc-select>
