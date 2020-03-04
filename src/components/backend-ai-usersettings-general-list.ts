@@ -414,7 +414,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
     if (rcfiles.items.length > 0) {
       let selectedFile = rcfiles.items.find(item => item.path === this.rcfile);
-      console.log(selectedFile);
       let idx = rcfiles.items.indexOf(selectedFile);
       rcfiles.select(idx);
     } 
