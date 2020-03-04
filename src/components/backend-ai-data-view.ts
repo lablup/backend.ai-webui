@@ -188,7 +188,7 @@ export default class BackendAIData extends BackendAIPage {
           <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
         <div id="automount-folder-lists" class="tab-content" style="display:none;">
-        <p>Folders starting with <span class="monospace">.</span> will be automounted when session is started.</p>
+        <p>Folders starting with a <span class="monospace">.</span>(dot) are automatically mounted when a new session is started.</p>
           <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
       </wl-card>
@@ -204,6 +204,7 @@ export default class BackendAIData extends BackendAIPage {
           <section>
             <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" auto-validate
                          error-message="Allows letters, numbers and -_."></mwc-textfield>
+            <div>Folders starting with a <span class="monospace">.</span>(dot) are automatically mounted when a new session is started.</div>
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-host" label="Host">
                 <paper-listbox slot="dropdown-content" selected="0">
