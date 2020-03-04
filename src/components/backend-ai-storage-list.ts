@@ -46,6 +46,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-storage-list")
 export default class BackendAiStorageList extends BackendAIPage {
+  @property({type: String}) storageType = 'general';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
@@ -400,7 +401,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div role="listbox" style="margin: 0;">
             <vaadin-item>
               <div><strong>ID</strong></div>
-              <div secondary>${this.folderInfo.id}</div>
+              <div class="monospace" secondary>${this.folderInfo.id}</div>
             </vaadin-item>
             <vaadin-item>
               <div><strong>Location</strong></div>
@@ -650,6 +651,27 @@ export default class BackendAiStorageList extends BackendAIPage {
     `;
   }
 
+  firstUpdated() {
+    this._addEventListenerDropZone();
+    this._mkdir = this._mkdir.bind(this);
+
+    this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
+    this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
+    this.fileListGrid.addEventListener('selected-items-changed', () => {
+      this._toggleCheckbox();
+    });
+    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.notification = window.lablupNotification;
+    let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
+    for (const textfield of textfields) {
+      this._addInputValidator(textfield);
+    }
+    document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
+    document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
+    this._refreshFolderUI({"detail": {"mini-ui": window.mini_ui}});
+    console.log(this.storageType);
+  }
+
   _modifySharedFolderPermissions() {
     const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
@@ -847,24 +869,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     )
   }
 
-  firstUpdated() {
-    this._addEventListenerDropZone();
-    this._mkdir = this._mkdir.bind(this);
-
-    this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
-    this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
-    this.fileListGrid.addEventListener('selected-items-changed', () => {
-      this._toggleCheckbox();
-    });
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
-    let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
-    for (const textfield of textfields) {
-      this._addInputValidator(textfield);
-    }
-    document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
-    document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
-    this._refreshFolderUI({"detail": {"mini-ui": window.mini_ui}});
+  refreshFolderList() {
+    return this._refreshFolderList();
   }
 
   _refreshFolderList() {
@@ -950,39 +956,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       return true;
     }
     return false;
-  }
-
-  _addFolder() {
-    let name = this.shadowRoot.querySelector('#add-folder-name').value;
-    let host = this.shadowRoot.querySelector('#add-folder-host').value;
-    let type = this.shadowRoot.querySelector('#add-folder-type').value;
-    let group;
-    if (['user', 'group'].includes(type) === false) {
-      type = 'user';
-    }
-    if (type == 'user') {
-      group = '';
-    } else {
-      if (this.is_admin) {
-        group = this.shadowRoot.querySelector('#add-folder-group').value;
-      } else {
-        group = window.backendaiclient.current_group;
-      }
-    }
-    let job = window.backendaiclient.vfolder.create(name, host, group);
-    job.then((value) => {
-      this.notification.text = 'Folder is successfully created.';
-      this.notification.show();
-      this._refreshFolderList();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
-    this.closeDialog('add-folder-dialog');
   }
 
   _getControlId(e) {

@@ -57,6 +57,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
   @property({type: Object}) indicator = Object();
+  @property({type: Object}) folderLists = Object();
 
   constructor() {
     super();
@@ -311,7 +312,7 @@ export default class BackendAIData extends BackendAIPage {
           </wl-button>
         </h3>
         <div id="folder-lists" class="tab-content">
-          <backend-ai-storage-list active></backend-ai-storage-list>
+          <backend-ai-storage-list id="general-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
       </wl-card>
       <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
@@ -377,6 +378,7 @@ export default class BackendAIData extends BackendAIPage {
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
+    this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
   }
 
   async _viewStateChanged(active) {
@@ -459,6 +461,9 @@ export default class BackendAIData extends BackendAIPage {
 
   _refreshFolderList() {
     // Send notification to folder objects
+    for (const list of this.folderLists) {
+      list.refreshFolderList();
+    }
   }
 
   _hideDialog(e) {
