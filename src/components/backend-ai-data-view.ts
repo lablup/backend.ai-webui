@@ -8,7 +8,6 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/iron-icons/social-icons';
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-item/paper-item';
 import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
@@ -36,6 +35,7 @@ import 'weightless/tab';
 import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
+import '@material/mwc-icon-button';
 
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -132,7 +132,7 @@ export default class BackendAIData extends BackendAIPage {
           width: 330px;
         }
 
-        paper-icon-button.tiny {
+        mwc-icon-button.tiny {
           width: 35px;
           height: 35px;
         }
@@ -153,6 +153,15 @@ export default class BackendAIData extends BackendAIPage {
           top: 0;
           position: fixed;
           margin: 170px 0 0 0;
+        }
+
+        #folder-explorer-dialog vaadin-grid vaadin-grid-column {
+          height: 32px !important;
+        }
+
+        #folder-explorer-dialog vaadin-grid mwc-icon-button {
+          --mdc-icon-size: 24px;
+          --mdc-icon-button-size: 28px;
         }
 
         @media screen and (max-width: 899px) {
@@ -762,19 +771,19 @@ export default class BackendAIData extends BackendAIPage {
           class="layout horizontal flex center"
           folder-id="${rowData.item.name}"
         >
-          <paper-icon-button
+          <mwc-icon-button
             class="fg green controls-running"
-            icon="vaadin:info-circle-o"
+            icon="info"
             @click="${(e) => this._infoFolder(e)}"
-          ></paper-icon-button>
+          ></mwc-icon-button>
 
           ${this._hasPermission(rowData.item, 'r')
         ? html`
-              <paper-icon-button
+              <mwc-icon-button
                 class="fg blue controls-running"
-                icon="folder-open"
+                icon="folder_open"
                 @click="${(e) => this._folderExplorer(e)}" .folder-id="${rowData.item.name}"
-              ></paper-icon-button>
+              ></mwc-icon-button>
             `
         : html``
       }
@@ -783,33 +792,33 @@ export default class BackendAIData extends BackendAIPage {
 
           ${rowData.item.is_owner && rowData.item.type == 'user'
         ? html`
-              <paper-icon-button
+              <mwc-icon-button
                 class="fg blue controls-running"
-                icon="social:share"
+                icon="share"
                 @click="${(e) => this._shareFolderDialog(e)}"
-              ></paper-icon-button>
+              ></mwc-icon-button>
             `
         : html``
       }
 
           ${rowData.item.is_owner
         ? html`
-              <paper-icon-button
+              <mwc-icon-button
                 class="fg cyan controls-running"
-                icon="perm-identity"
+                icon="perm_identity"
                 @click=${e => this._modifyPermissionDialog(rowData.item.id)}
-              ></paper-icon-button>
+              ></mwc-icon-button>
             `
         : html``
       }
 
           ${this._hasPermission(rowData.item, 'd')
         ? html`
-              <paper-icon-button
+              <mwc-icon-button
                 class="fg red controls-running"
                 icon="delete"
                 @click="${(e) => this._deleteFolderDialog(e)}"
-              ></paper-icon-button>
+              ></mwc-icon-button>
             `
         : html``
       }
@@ -824,10 +833,10 @@ export default class BackendAIData extends BackendAIPage {
       html`
         ${!this._isDir(rowData.item) && this._isDownloadable(rowData.item) ?
         html`
-            <paper-icon-button id="download-btn" class="tiny fg blue" icon="vaadin:download"
-                               filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></paper-icon-button>
-            <paper-icon-button id="delete-btn" class="tiny fg red" icon="vaadin:trash"
-                               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></paper-icon-button>
+            <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+                               filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+            <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
+                               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
                                ` : html``}
        `, root
     );
@@ -838,14 +847,14 @@ export default class BackendAIData extends BackendAIPage {
       html`
         ${this._isDir(rowData.item) ?
         html`
-          <div class="indicator" @click="${(e) => this._enqueueFolder(e)}" name="${rowData.item.filename}">
-            <paper-icon-button class="fg controls-running" icon="folder-open"
-                               name="${rowData.item.filename}"></paper-icon-button>
+          <div class="indicator horizontal center layout" @click="${(e) => this._enqueueFolder(e)}" name="${rowData.item.filename}">
+            <mwc-icon-button class="fg controls-running" icon="folder_open"
+                               name="${rowData.item.filename}"></mwc-icon-button>
             ${rowData.item.filename}
           </div>
        ` : html`
-          <div class="indicator">
-            <paper-icon-button class="fg controls-running" icon="insert-drive-file"></paper-icon-button>
+          <div class="indicator horizontal center layout">
+            <mwc-icon-button class="fg controls-running" icon="insert_drive_file"></mwc-icon-button>
             ${rowData.item.filename}
           </div>
        `}
