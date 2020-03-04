@@ -678,7 +678,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">Cancel</wl-button>
           <wl-button id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">Save</wl-button>
           <wl-button id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">Save and close</wl-button>
-          <wl-button id="delete-all" @click="${() => this._deleteRcFileAll()}" >delete all</wl-button>
+          <wl-button id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">delete all</wl-button>
         </div>
       </wl-dialog>
       <wl-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
