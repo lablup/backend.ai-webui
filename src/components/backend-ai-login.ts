@@ -494,12 +494,10 @@ export default class BackendAILogin extends LitElement {
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
-          this.notification.show();
-          this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          this.notification.show();
         }
+        this.notification.show();
         this.open();
       });
     } else {
