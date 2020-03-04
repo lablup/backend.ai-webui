@@ -46,7 +46,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
@@ -60,6 +59,11 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
   @property({type: Array}) allowedGroups = [];
+  @property({type: Object}) fileListGrid = Object();
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) deleteFileDialog = Object();
+  @property({type: Object}) indicator = Object();
+  @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
   @property({type: Object}) _boundTypeRenderer = Object();
@@ -70,11 +74,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) _boundCreatedTimeRenderer = Object();
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
-  @property({type: Object}) fileListGrid = Object();
-  @property({type: Object}) notification = Object();
-  @property({type: Object}) deleteFileDialog = Object();
-  @property({type: Object}) indicator = Object();
-  @property({type: Array}) allowed_folder_type = [];
 
   constructor() {
     super();
@@ -385,20 +384,20 @@ export default class BackendAIData extends BackendAIPage {
               </paper-dropdown-menu>
               <paper-dropdown-menu id="add-folder-type" label="Type">
                 <paper-listbox slot="dropdown-content" selected="0">
-                ${this.allowed_folder_type.includes('user') ? html`
+                ${(this.allowed_folder_type as String[]).includes('user') ? html`
                   <paper-item label="user">User</paper-item>
                 ` : html``}
-                ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+                ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
                   <paper-item label="group">Group</paper-item>
                 ` : html``}
                 </paper-listbox>
               </paper-dropdown-menu>
             </div>
-            ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+            ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-group" label="Group">
                 <paper-listbox slot="dropdown-content" selected="0">
-                ${this.allowedGroups.map(item => html`
+                ${(this.allowedGroups as any).map(item => html`
                   <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
                 `)}
                 </paper-listbox>
@@ -701,11 +700,11 @@ export default class BackendAIData extends BackendAIPage {
 
   _modifySharedFolderPermissions() {
     const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
-    const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== this.invitees[idx].perm)
+    const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value,
-        'user': this.invitees[idx].shared_to.uuid,
-        'vfolder': this.invitees[idx].vfolder_id
+        'user': (this.invitees as any)[idx].shared_to.uuid,
+        'vfolder': (this.invitees as any)[idx].vfolder_id
       }));
     const promiseArray = inputList.map(input => window.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then((response: any) => {
@@ -956,7 +955,7 @@ export default class BackendAIData extends BackendAIPage {
     let vhost_info = await window.backendaiclient.vfolder.list_hosts();
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
-    if (this.allowed_folder_type.includes('group')) {
+    if ((this.allowed_folder_type as String[]).includes('group')) {
       const group_info = await window.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
@@ -1179,7 +1178,7 @@ export default class BackendAIData extends BackendAIPage {
           file.error = false;
           file.complete = false;
           temp.push(file);
-          this.uploadFiles.push(file);
+          (this.uploadFiles as any).push(file);
         }
       }
 
@@ -1213,7 +1212,7 @@ export default class BackendAIData extends BackendAIPage {
       file.caption = '';
       file.error = false;
       file.complete = false;
-      this.uploadFiles.push(file);
+      (this.uploadFiles as any).push(file);
     }
 
     for (let i = 0; i < length; i++) {
@@ -1245,7 +1244,7 @@ export default class BackendAIData extends BackendAIPage {
         onProgress: (bytesUploaded, bytesTotal) => {
           if (!this._uploadFlag) {
             upload.abort();
-            this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption = `Canceling...`;
+            (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].caption = `Canceling...`;
             this.uploadFiles = this.uploadFiles.slice();
             setTimeout(() => {
               this.uploadFiles = [];
@@ -1267,16 +1266,16 @@ export default class BackendAIData extends BackendAIPage {
             estimated_time_left = `${hour}:${min}:${sec}`;
           }
           const percentage = (bytesUploaded / bytesTotal * 100).toFixed(1);
-          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].progress = bytesUploaded / bytesTotal;
-          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
+          (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].progress = bytesUploaded / bytesTotal;
+          (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
           this.uploadFiles = this.uploadFiles.slice();
         },
         onSuccess: () => {
           this._clearExplorer();
-          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].complete = true;
+          (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].complete = true;
           this.uploadFiles = this.uploadFiles.slice();
           setTimeout(() => {
-            this.uploadFiles.splice(this.uploadFiles.indexOf(fileObj), 1);
+            this.uploadFiles.splice((this.uploadFiles as any).indexOf(fileObj), 1);
             this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
             this.uploadFiles = this.uploadFiles.slice();
           }, 1000);
