@@ -40,6 +40,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Boolean}) beta_feature_panel = false;
   @property({type: Array}) rcfiles = Array();
   @property({type: String}) rcfile = '';
+  @property({type: String}) prevRcfile = '';
 
   constructor() {
     super();
@@ -315,7 +316,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     } else {
       editor.setValue('');
     }
-    this.userconfigDialog.show();
+    editor.refresh();
   }
 
   _fetchUserConfigScript() {
@@ -333,10 +334,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
-  async _saveUserConfigScript() {
+  async _saveUserConfigScript(fileName : string = this.rcfile) {
     const editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
     const script = editor.getValue();
-    let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+    let idx = this.rcfiles.findIndex(item => item.path === fileName);
+    let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
+    if (rcfiles.items.length > 0) {
+      let selectedFile = rcfiles.items.find(item => item.value === fileName);
+      let idx = rcfiles.items.indexOf(selectedFile);
+      rcfiles.select(idx);
+    }
     if (idx != -1) { // if recent modified file is in rcfiles
       if (this.rcfiles[idx]['data'] === '') { // if new rcfile
         if (script !== '') {
@@ -345,7 +352,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             script, this.rcfiles[idx]['path'])
             .then(res => {
               this.indicator.hide();
-              this.notification.text = "User config script created.";
+              this.notification.text = "User config script created. This will be applied to new sessions only.";
               this.notification.show();
             }).catch(err => {
               this.indicator.hide();
@@ -376,7 +383,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         else {
           await window.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
           .then(res => {
-            this.notification.text = 'User config script updated.';
+            this.notification.text = 'User config script updated. This will be applied to new sessions only.';
             this.notification.show();
             this.indicator.hide();
           }).catch(err => {
@@ -391,7 +398,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       }
     }
-    this.rcfiles = await this._fetchUserConfigScript();
+    await setTimeout(() => {
+      this._editUserConfigScript();
+    }, 200);
     this.indicator.show();
   }
 
@@ -404,28 +413,52 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.userconfigDialog.hide();
   }
 
+  _hideCurrentEditorChangeDialog() {
+    this.shadowRoot.querySelector('#change-current-editor-dialog').hide();
+  }
+
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
   }
 
-  _updateSelectedRcFileName() {
+  _updateSelectedRcFileName(fileName : string) {
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
+    let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
     if (rcfiles.items.length > 0) {
-      let selectedFile = rcfiles.items.find(item => item.path === this.rcfile);
+      let selectedFile = rcfiles.items.find(item => item.value === fileName);
       let idx = rcfiles.items.indexOf(selectedFile);
+      let code = this.rcfiles[idx]['data'];
       rcfiles.select(idx);
+      editor.setValue(code);
     } 
+  }
+
+  _changeCurrentEditorData() {
+    let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    let select = this.shadowRoot.querySelector('#select-rcfile-type');
+    let idx = this.rcfiles.findIndex(item => item.path === select.value);
+    let code = this.rcfiles[idx]['data'];
+    editor.setValue(code);
   }
 
   _toggleRcFileName() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
     let select = this.shadowRoot.querySelector('#select-rcfile-type');
+    this.prevRcfile = this.rcfile;
     this.rcfile = select.value;
-    let idx = this.rcfiles.findIndex(item => item.path === select.value);
+    let idx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
     let code = this.rcfiles[idx]['data'];
-    editor.setValue(code);
+    let editorCode = editor.getValue();
+    select.layout();
+    if (code !== editorCode) {
+      this._launchChangeCurrentEditorDialog();
+    } else {
+      idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+      code = this.rcfiles[idx]['data'];
+      editor.setValue(code);
+    }
   }
 
   _deleteRcFile(path: string) {
@@ -450,7 +483,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.rcfiles.map( item => {
       let path = item.path;
       window.backendaiclient.userConfig.delete_dotfile_script(item.path).then(res => {
-        let message = 'User config script '+ path + 'is deleted.';
+        let message = 'User config script '+ path + ' is deleted.';
         this.notification.text = message;
         this.notification.show();
         this.indicator.hide();
@@ -471,8 +504,30 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
-  _changeCurrentCodeView() {
+  _launchUserConfigDialog() {
+    this._editUserConfigScript();
+    this.userconfigDialog.show();
+  }
 
+  _launchChangeCurrentEditorDialog() {
+    this.shadowRoot.querySelector('#change-current-editor-dialog').show();
+  }
+
+  _discardCurrentEditorChange() {
+    this._updateSelectedRcFileName(this.rcfile);
+    this._hideCurrentEditorChangeDialog();
+  }
+
+  _saveCurrentEditorChange() {
+    this._saveUserConfigScript(this.prevRcfile);
+    this._updateSelectedRcFileName(this.rcfile);
+    // this._changeCurrentEditorData();
+    this._hideCurrentEditorChangeDialog();
+  }
+
+  _cancelCurrentEditorChange() {
+    this._updateSelectedRcFileName(this.prevRcfile);
+    this._hideCurrentEditorChangeDialog();
   }
 
   render() {
@@ -545,7 +600,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <wl-icon>edit</wl-icon>
               Edit bootstrap script
             </wl-button>
-            <wl-button class="fg green" outlined @click="${this._editUserConfigScript}">
+            <wl-button class="fg green" outlined @click="${this._launchUserConfigDialog}">
               <wl-icon>edit</wl-icon>
               Edit user config script
             </wl-button>
@@ -602,7 +657,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                         label="config file name"
                         required
                         validationMessage="Please select one option."
-                        @change="${this._toggleRcFileName}">
+                        @selected="${this._toggleRcFileName}">
               ${this.rcfiles.map(item => html`
                 <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                   ${item.path}
@@ -623,6 +678,28 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">Cancel</wl-button>
           <wl-button id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">Save</wl-button>
           <wl-button id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">Save and close</wl-button>
+          <wl-button id="delete-all" @click="${() => this._deleteRcFileAll()}" >delete all</wl-button>
+        </div>
+      </wl-dialog>
+      <wl-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
+        <div slot="header" style="border-bottom:none;">
+          <h3>Do you want to save the changes you made to ${this.prevRcfile} ?
+          </h3>
+          <span>Your changes will be lost if you don't save them.</span>
+        </div>
+        <div slot="footer" style="border-top:none;">
+          <wl-button id="discard-editor-data"
+                     style="margin: 0 5px;"
+                     @click="${() => this._discardCurrentEditorChange()}">
+                     don't save</wl-button>
+          <wl-button id="save-editor-data"
+                     style="margin: 0 5px;"
+                     @click="${() => this._saveCurrentEditorChange()}">
+                     save</wl-button>
+          <wl-button inverted flat id="cancel-editor" class="button"
+                     style="margin: 0 5px;"
+                     @click="${() => this._cancelCurrentEditorChange()}">
+                     cancel</wl-button>
         </div>
       </wl-dialog>
     `;
