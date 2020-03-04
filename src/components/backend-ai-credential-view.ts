@@ -4,7 +4,6 @@
 
 import {css, customElement, html, property} from "lit-element";
 
-import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
@@ -271,6 +270,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     } else {
       this.use_user_list = false;
     }
+    this._addValidatorToPolicyInput();
     this._getResourceInfo();
     this._getResourcePolicies();
     this._updateInputStatus(this.cpu_resource);
@@ -437,6 +437,12 @@ export default class BackendAICredentialView extends BackendAIPage {
       return;
     }
     try {
+      let name_field = this.shadowRoot.querySelector('#id_new_policy_name');
+      name_field.checkValidity();
+      let name = name_field.value;
+      if (name === '') {
+        throw {"message": "Policy name should not be empty"};
+      }
       let input = this._readResourcePolicyInput();
       window.backendaiclient.resourcePolicy.add(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
@@ -642,16 +648,15 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
-  _validatePolicyName(e) {
-    let policy_info = e.target;
-    let policy_name = e.target.value;
-    policy_info.validityTransform = (nativeValidity) => {
-      if (!nativeValidity) { 
-        policy_info.validationMessage = "Policy name Required."
+  _addValidatorToPolicyInput() {
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    policy_info.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity) {
+        policy_info.validationMessage = "Policy name Required.";
         return {
           valid: false,
           valueMissing: true
-        }
+        };
       }
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
@@ -669,14 +674,14 @@ export default class BackendAICredentialView extends BackendAIPage {
           }
         }
         else {
-          policy_info.validationMessage = "Allows letters, numbers and -_."
+          policy_info.validationMessage = "Allows letters, numbers and -_.";
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid,
           }
         }
       } else {
-        const isValid = !this.resource_policy_names.includes(policy_name);
+        const isValid = !this.resource_policy_names.includes(value);
         if (!isValid) {
           policy_info.validationMessage = "Policy Name Already Exists!";
         }
@@ -686,7 +691,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         };
       }
     };
-   }
+  }
 
   _updateInputStatus(resource) {
     let textfield = resource;
@@ -902,8 +907,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <fieldset>
             <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
                              validationMessage="Policy name is Required."
-                             required
-                             @change="${(e)=>this._validatePolicyName(e)}"></mwc-textfield>
+                             required></mwc-textfield>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
@@ -997,7 +1001,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
               <br/><br/>
               <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined
-               @click="${this._addResourcePolicy}">
+               @click="${() => this._addResourcePolicy()}">
                          <wl-icon>add</wl-icon>
                          Create
               </wl-button>
