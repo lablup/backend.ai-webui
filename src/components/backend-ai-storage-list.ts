@@ -200,13 +200,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 220px);
         }
 
         vaadin-grid.explorer {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 370px);
         }
 
         mwc-textfield {
@@ -668,7 +666,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": window.mini_ui}});
-    console.log(this.storageType);
   }
 
   _modifySharedFolderPermissions() {
@@ -879,7 +876,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     let l = window.backendaiclient.vfolder.list(groupId);
     l.then((value) => {
       this.indicator.hide();
-      this.folders = value;
+      let folders = value.filter(item => {
+        if (this.storageType === 'general' && !item.name.startsWith('.')) {
+          return item;
+        } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
+          return item;
+        }
+      });
+      this.folders = folders;
     });
     let vhosts = window.backendaiclient.vfolder.list_hosts();
     vhosts.then((response) => {

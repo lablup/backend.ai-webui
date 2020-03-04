@@ -64,11 +64,6 @@ export default class BackendAIData extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        vaadin-grid {
-          border: 0 !important;
-          font-size: 12px;
-        }
-
         ul {
           padding-left: 0;
         }
@@ -106,76 +101,13 @@ export default class BackendAIData extends BackendAIPage {
           height: 35px;
         }
 
-        .warning {
-          color: red;
+        wl-card.item {
+          height: calc(100vh - 145px) !important;
         }
 
-        vaadin-item {
-          font-size: 13px;
-          font-weight: 100;
-        }
-
-        #folder-explorer-dialog {
-          --dialog-height: calc(100vh - 170px);
-          height: calc(100vh - 170px);
-          right: 0;
-          top: 0;
-          position: fixed;
-          margin: 170px 0 0 0;
-        }
-
-        #folder-explorer-dialog vaadin-grid vaadin-grid-column {
-          height: 32px !important;
-        }
-
-        #folder-explorer-dialog vaadin-grid mwc-icon-button {
-          --mdc-icon-size: 24px;
-          --mdc-icon-button-size: 28px;
-        }
-
-        @media screen and (max-width: 899px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui {
-            left: 0;
-            --dialog-width: 100%;
-            width: 100%;
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          #folder-explorer-dialog {
-            left: 150px;
-            --dialog-width: calc(100% - 100px);
-            width: calc(100% - 100px);
-          }
-
-          #folder-explorer-dialog.mini_ui {
-            left: 65px;
-            --dialog-width: calc(100% - 45px);
-            width: calc(100% - 45px);
-          }
-        }
-
-        div.breadcrumb {
-          color: #637282;
-          font-size: 1em;
-          margin-bottom: 10px;
-        }
-
-        div.breadcrumb span:first-child {
-          display: none;
-        }
-
-        vaadin-grid.folderlist {
+        .tab-content {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 220px);
-        }
-
-        vaadin-grid.explorer {
-          border: 0;
-          font-size: 14px;
-          height: calc(100vh - 370px);
         }
 
         mwc-textfield {
@@ -186,47 +118,6 @@ export default class BackendAIData extends BackendAIPage {
 
         mwc-textfield.red {
           --mdc-theme-primary: var(--paper-red-400) !important;
-        }
-
-        wl-button.goto {
-          margin: 0;
-          padding: 5px;
-          min-width: 0;
-        }
-
-        wl-button.goto:last-of-type {
-          font-weight: bold;
-        }
-
-        div#upload {
-          margin: 0;
-          padding: 0;
-        }
-
-        div#dropzone {
-          display: none;
-          position: absolute;
-          top: 0;
-          height: 100%;
-          width: 100%;
-          z-index: 10;
-        }
-
-        div#dropzone, div#dropzone p {
-          margin: 0;
-          padding: 0;
-          width: 100%;
-          background: rgba(211, 211, 211, .5);
-          text-align: center;
-        }
-
-        .progress {
-          padding: 30px 10px;
-          border: 1px solid lightgray;
-        }
-
-        .progress-item {
-          padding: 10px 30px;
         }
 
         wl-tab-group {
@@ -282,9 +173,10 @@ export default class BackendAIData extends BackendAIPage {
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="horizontal center flex layout tab">
           <wl-tab-group>
-            <wl-tab value="folder-lists" checked>Folders</wl-tab>
-            <wl-tab value="shared-folder-lists" disabled>Shared Data</wl-tab>
-            <wl-tab value="model-lists" disabled>Models</wl-tab>
+            <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">Folders</wl-tab>
+            <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">Automount Folders</wl-tab>
+            <wl-tab value="shared-folder" disabled>Shared Data</wl-tab>
+            <wl-tab value="model" disabled>Models</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
           <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
@@ -292,8 +184,12 @@ export default class BackendAIData extends BackendAIPage {
             New folder
           </wl-button>
         </h3>
-        <div id="folder-lists" class="tab-content">
-          <backend-ai-storage-list id="general-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
+        <div id="general-folder-lists" class="tab-content">
+          <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
+        </div>
+        <div id="automount-folder-lists" class="tab-content" style="display:none;">
+        <p>Folders starting with <span class="monospace">.</span> will be automounted when session is started.</p>
+          <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
       </wl-card>
       <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
@@ -393,7 +289,7 @@ export default class BackendAIData extends BackendAIPage {
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-jobs').setAttribute('active', true);
+    this.shadowRoot.querySelector('#' + tab.value + '-storage').setAttribute('active', true);
   }
 
   async _addFolderDialog() {
