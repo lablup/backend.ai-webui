@@ -32,6 +32,7 @@ Backend.AI console focuses to
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
+    * Beta features
     * Console logs / errors
 
 ## Management Features
