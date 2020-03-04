@@ -14,6 +14,8 @@ import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
+import '@material/mwc-textfield';
+
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
@@ -271,6 +273,16 @@ export default class BackendAIData extends BackendAIPage {
           height: calc(100vh - 370px);
         }
 
+        mwc-textfield {
+          width: 100%;
+          --mdc-theme-primary: #242424;
+          --mdc-text-field-fill-color: transparent;
+        }
+
+        mwc-textfield.red {
+          --mdc-theme-primary: var(--paper-red-400) !important;
+        }
+
         wl-button.goto {
           margin: 0;
           padding: 5px;
@@ -440,8 +452,8 @@ export default class BackendAIData extends BackendAIPage {
             </wl-button>
           </h3>
           <section>
-            <paper-input id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
-                         error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" auto-validate
+                         error-message="Allows letters, numbers and -_."></mwc-textfield>
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-host" label="Host">
                 <paper-listbox slot="dropdown-content" selected="0">
@@ -492,9 +504,9 @@ export default class BackendAIData extends BackendAIPage {
           <section>
             <div class="warning">WARNING: this cannot be undone!</div>
             <div>
-              <paper-input class="red" id="delete-folder-name" label="Type folder name to delete"
+              <mwc-textfield class="red" id="delete-folder-name" label="Type folder name to delete"
                            pattern="[a-zA-Z0-9_-]*"
-                           error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+                           error-message="Allows letters, numbers and -_." auto-validate></mwc-textfield>
               <br/>
               <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
                 <wl-icon>close</wl-icon>
@@ -643,8 +655,8 @@ export default class BackendAIData extends BackendAIPage {
             </wl-button>
           </h3>
           <section>
-            <paper-input id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*"
-                         error-message="Allows letters, numbers and -_." auto-validate></paper-input>
+            <mwc-textfield id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" auto-validate
+                         error-message="Allows letters, numbers and -_."></mwc-textfield>
             <br/>
             <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
               <wl-icon>rowing</wl-icon>
@@ -974,7 +986,10 @@ export default class BackendAIData extends BackendAIPage {
     });
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = window.lablupNotification;
-
+    let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
+    for (const textfield of textfields) {
+      this._addInputValidator(textfield);
+    }
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
   }
 
@@ -1307,7 +1322,7 @@ export default class BackendAIData extends BackendAIPage {
           console.log("Failed because: " + error)
         },
         onProgress: (bytesUploaded, bytesTotal) => {
-          if(!this._uploadFlag) {
+          if (!this._uploadFlag) {
             upload.abort();
             this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption = `Canceling...`;
             this.uploadFiles = this.uploadFiles.slice();
