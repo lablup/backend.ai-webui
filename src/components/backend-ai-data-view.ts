@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -46,57 +46,38 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
-  public folders: any;
-  public folderInfo: any;
-  public is_admin: any;
-  public authenticated: any;
-  public deleteFolderId: any;
-  public explorer: any;
-  public explorerFiles: any;
-  public invitees: any;
-  public selectedFolder: any;
-  public uploadFiles: any;
-  public vhost: any;
-  public vhosts: any;
-  public allowedGroups: any;
-  public uploadFilesExist: any;
-  public _boundIndexRenderer: any;
-  public _boundTypeRenderer: any;
-  public _boundControlFolderListRenderer: any;
-  public _boundControlFileListRenderer: any;
-  public _boundPermissionViewRenderer: any;
-  public _boundFileNameRenderer: any;
-  public _boundCreatedTimeRenderer: any;
-  public _boundPermissionRenderer: any;
-  public _uploadFlag: any;
-  public shadowRoot: any;
-  public fileListGrid: any;
-  public notification: any;
-  public deleteFileDialog: any;
-  public indicator: any;
-  public updateComplete: any;
-  public allowed_folder_type: any;
+  public shadowRoot: any; // ShadowRoot
+  @property({type: Object}) folders = Object();
+  @property({type: Object}) folderInfo = Object();
+  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) authenticated = false;
+  @property({type: String}) deleteFolderId = '';
+  @property({type: Object}) explorer = Object();
+  @property({type: Array}) explorerFiles = [];
+  @property({type: Array}) invitees = [];
+  @property({type: String}) selectedFolder = '';
+  @property({type: Array}) uploadFiles = [];
+  @property({type: String}) vhost = '';
+  @property({type: Array}) vhosts = [];
+  @property({type: Array}) allowedGroups = [];
+  @property({type: Boolean}) uploadFilesExist = false;
+  @property({type: Object}) _boundIndexRenderer = Object();
+  @property({type: Object}) _boundTypeRenderer = Object();
+  @property({type: Object}) _boundControlFolderListRenderer = Object();
+  @property({type: Object}) _boundControlFileListRenderer = Object();
+  @property({type: Object}) _boundPermissionViewRenderer = Object();
+  @property({type: Object}) _boundFileNameRenderer = Object();
+  @property({type: Object}) _boundCreatedTimeRenderer = Object();
+  @property({type: Object}) _boundPermissionRenderer = Object();
+  @property({type: Boolean}) _uploadFlag = true;
+  @property({type: Object}) fileListGrid = Object();
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) deleteFileDialog = Object();
+  @property({type: Object}) indicator = Object();
+  @property({type: Array}) allowed_folder_type = [];
 
   constructor() {
     super();
-    // Resolve warning about scroll performance
-    // See https://developers.google.com/web/updates/2016/06/passive-event-listeners
-    this.folders = {};
-    this.folderInfo = {};
-    this.is_admin = false;
-    this.authenticated = false;
-    this.deleteFolderId = '';
-    this.active = false;
-    this.explorer = {};
-    this.explorerFiles = [];
-    this.invitees = [];
-    this.selectedFolder = '';
-    this.uploadFiles = [];
-    this.vhost = '';
-    this.vhosts = [];
-    this.allowedGroups = [];
-    this.uploadFilesExist = false;
-    this.allowed_folder_type = [];
     this._boundIndexRenderer = this.indexRenderer.bind(this);
     this._boundTypeRenderer = this.typeRenderer.bind(this);
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
@@ -105,66 +86,6 @@ export default class BackendAIData extends BackendAIPage {
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
-    this._uploadFlag = true;
-  }
-
-  static get properties() {
-    return {
-      folders: {
-        type: Object
-      },
-      folderInfo: {
-        type: Object
-      },
-      fileListGrid: {
-        type: Object
-      },
-      is_admin: {
-        type: Boolean
-      },
-      authenticated: {
-        type: Boolean
-      },
-      deleteFolderId: {
-        type: String
-      },
-      active: {
-        type: Boolean
-      },
-      explorer: {
-        type: Object
-      },
-      explorerFiles: {
-        type: Array
-      },
-      uploadFiles: {
-        type: Array
-      },
-      uploadFilesExist: {
-        type: Boolean
-      },
-      vhost: {
-        type: String
-      },
-      vhosts: {
-        type: Array
-      },
-      allowedGroups: {
-        type: Array
-      },
-      invitees: {
-        type: Array
-      },
-      deleteFileDialog: {
-        type: Object
-      },
-      notification: {
-        type: Object
-      },
-      indicator: {
-        type: Object
-      }
-    };
   }
 
   static get styles() {
