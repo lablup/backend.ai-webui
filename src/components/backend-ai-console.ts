@@ -414,6 +414,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.mini_ui = false;
     }
     window.mini_ui = this.mini_ui;
+    let event = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
+    document.dispatchEvent(event);
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 

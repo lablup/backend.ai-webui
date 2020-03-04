@@ -165,7 +165,8 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         @media screen and (max-width: 899px) {
-          #folder-explorer-dialog {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
             left: 0;
             --dialog-width: 100%;
             width: 100%;
@@ -177,6 +178,12 @@ export default class BackendAIData extends BackendAIPage {
             left: 150px;
             --dialog-width: calc(100% - 100px);
             width: calc(100% - 100px);
+          }
+
+          #folder-explorer-dialog.mini_ui {
+            left: 65px;
+            --dialog-width: calc(100% - 45px);
+            width: calc(100% - 45px);
           }
         }
 
@@ -480,7 +487,7 @@ export default class BackendAIData extends BackendAIPage {
           </div>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="folder-explorer-dialog">
+      <wl-dialog id="folder-explorer-dialog" class="folder-explorer">
         <wl-card>
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span>${this.explorer.id}</span>
@@ -920,6 +927,8 @@ export default class BackendAIData extends BackendAIPage {
       this._addInputValidator(textfield);
     }
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
+    document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
+    this._refreshFolderUI({"detail": {"mini-ui": window.mini_ui}});
   }
 
   _refreshFolderList() {
@@ -934,6 +943,15 @@ export default class BackendAIData extends BackendAIPage {
     let vhosts = window.backendaiclient.vfolder.list_hosts();
     vhosts.then((response) => {
     });
+  }
+
+  _refreshFolderUI(e) {
+    let folder_explorer = this.shadowRoot.querySelector('#folder-explorer-dialog');
+    if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
+      folder_explorer.classList.add('mini_ui');
+    } else {
+      folder_explorer.classList.remove('mini_ui');
+    }
   }
 
   async _viewStateChanged(active) {
