@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/iron-icons/social-icons';
 import '@polymer/paper-item/paper-item';
 import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';

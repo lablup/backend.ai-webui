@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/iron-icons/social-icons';
 import '@polymer/paper-item/paper-item';
 import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
@@ -15,17 +14,8 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-textfield';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-
-import '@vaadin/vaadin-item/vaadin-item';
-import '@vaadin/vaadin-upload/vaadin-upload';
-
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/checkbox';
 import 'weightless/dialog';
 import 'weightless/divider';
 import 'weightless/icon';
@@ -58,6 +48,9 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) folderLists = Object();
+  @property({type: String}) _status = 'inactive';
+  @property({type: Boolean}) active = true;
+  @property({type: Object}) _lists = Object();
 
   constructor() {
     super();
@@ -278,18 +271,6 @@ export default class BackendAIData extends BackendAIPage {
           --label-color: black;
         }
 
-        wl-checkbox {
-          --checkbox-color: var(--paper-orange-900);
-          --checkbox-color-checked: var(--paper-orange-900);
-          --checkbox-bg-checked: var(--paper-orange-900);
-          --checkbox-color-disabled-checked: var(--paper-orange-900);
-          --checkbox-bg-disabled-checked: var(--paper-orange-900);
-        }
-
-        #modify-permission-dialog {
-          --dialog-min-width: 600px;
-        }
-
       `];
   }
 
@@ -401,6 +382,18 @@ export default class BackendAIData extends BackendAIPage {
         this.allowed_folder_type = response;
       });
     }
+  }
+
+  _showTab(tab) {
+    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (let x = 0; x < els.length; x++) {
+      els[x].style.display = 'none';
+    }
+    this.shadowRoot.querySelector('#' + tab.value + '-lists').style.display = 'block';
+    for (let x = 0; x < this._lists.length; x++) {
+      this._lists[x].removeAttribute('active');
+    }
+    this.shadowRoot.querySelector('#' + tab.value + '-jobs').setAttribute('active', true);
   }
 
   async _addFolderDialog() {
