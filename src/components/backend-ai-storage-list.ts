@@ -525,8 +525,11 @@ export default class BackendAiStorageList extends BackendAIPage {
             </wl-button>
           </h3>
           <section>
-            <mwc-textfield id="mkdir-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" auto-validate
-                         error-message="Allows letters, numbers and -_."></mwc-textfield>
+            <mwc-textfield id="mkdir-name" label="Folder name"
+                           pattern="[a-zA-Z0-9_-]*"
+                           auto-validate
+                           required
+                           validationMessage="Allows letters, numbers and -_."></mwc-textfield>
             <br/>
             <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
               <wl-icon>rowing</wl-icon>
@@ -1065,13 +1068,18 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _mkdir(e) {
-    const newfolder = this.shadowRoot.querySelector('#mkdir-name').value;
+    const newfolderEl = this.shadowRoot.querySelector('#mkdir-name');
+    const newfolder = newfolderEl.value;
     const explorer = this.explorer;
-    let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id);
-    job.then(res => {
-      this.closeDialog('mkdir-dialog');
-      this._clearExplorer();
-    });
+    if(newfolderEl.checkValidity()) {
+        let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id);
+        job.then(res => {
+          this.closeDialog('mkdir-dialog');
+          this._clearExplorer();
+        });
+    } else {
+      return;
+    }
   }
 
   _isDir(file) {

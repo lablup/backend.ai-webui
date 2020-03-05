@@ -165,7 +165,6 @@ export default class BackendAIData extends BackendAIPage {
       `];
   }
 
-
   render() {
     // language=HTML
     return html`
@@ -202,9 +201,8 @@ export default class BackendAIData extends BackendAIPage {
             </wl-button>
           </h3>
           <section>
-            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" auto-validate
-                         error-message="Allows letters, numbers and -_."></mwc-textfield>
-            <div>Folders starting with a <span class="monospace">.</span>(dot) are automatically mounted when a new session is started.</div>
+            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" 
+            auto-validate required validationMessage="Allows letters, numbers and -_."></mwc-textfield>
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-host" label="Host">
                 <paper-listbox slot="dropdown-content" selected="0">
@@ -235,6 +233,10 @@ export default class BackendAIData extends BackendAIPage {
               </paper-dropdown-menu>
             </div>
             ` : html``}
+            <div style="font-size:11px;">
+              Folders starting with a <span class="monospace">.</span>(dot) are automatically mounted
+              <br/>when a new session is started.
+            </div>
             <br/>
             <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
               <wl-icon>rowing</wl-icon>
@@ -317,36 +319,39 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   _addFolder() {
-    let name = this.shadowRoot.querySelector('#add-folder-name').value;
+    let nameEl = this.shadowRoot.querySelector('#add-folder-name');
+    let name = nameEl.value;
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
     let type = this.shadowRoot.querySelector('#add-folder-type').value;
     let group;
     if (['user', 'group'].includes(type) === false) {
       type = 'user';
     }
-    if (type == 'user') {
+    if (type === 'user') {
       group = '';
     } else {
-      if (this.is_admin) {
-        group = this.shadowRoot.querySelector('#add-folder-group').value;
-      } else {
-        group = window.backendaiclient.current_group;
-      }
+      group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : window.backendaiclient.current_group;
     }
-    let job = window.backendaiclient.vfolder.create(name, host, group);
-    job.then((value) => {
-      this.notification.text = 'Folder is successfully created.';
-      this.notification.show();
-      this._refreshFolderList();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
-    this.closeDialog('add-folder-dialog');
+    console.log(nameEl);
+    console.dir(nameEl);
+    if (nameEl.checkValidity()) {
+      let job = window.backendaiclient.vfolder.create(name, host, group);
+      job.then((value) => {
+        this.notification.text = 'Folder is successfully created.';
+        this.notification.show();
+        this._refreshFolderList();
+      }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+      this.closeDialog('add-folder-dialog');
+    } else {
+      return ;
+    }
   }
 
   _refreshFolderList() {
