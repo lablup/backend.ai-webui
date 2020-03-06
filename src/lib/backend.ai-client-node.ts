@@ -565,7 +565,7 @@ class Client {
         config['mem'] = resources['mem'];
       }
       if (resources['gpu']) { // Temporary fix for resource handling
-        config['cuda.device'] = parseFloat(resources['gpu']).toFixed(2);
+        config['cuda.device'] = parseInt(resources['gpu']);
       }
       if (resources['vgpu']) { // Temporary fix for resource handling
         config['cuda.shares'] = parseFloat(resources['vgpu']).toFixed(2); // under 19.03
@@ -1898,9 +1898,9 @@ class ComputeSession {
     }
     return this.client.gql(q, v);
   }
-  
+
   /**
-   * list all status of compute sessions. 
+   * list all status of compute sessions.
    *
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
    * @param {string} accessKey - access key that is used to start compute sessions.
