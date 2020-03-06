@@ -24,7 +24,7 @@ import {addHasRemoveClass, FormElement, observer} from '@material/mwc-base/form-
 import {floatingLabel, FloatingLabel} from '@material/mwc-floating-label';
 import {lineRipple, LineRipple} from '@material/mwc-line-ripple';
 import {ListItemBase} from '@material/mwc-list/mwc-list-item-base';
-import {Menu} from '@material/mwc-menu';
+import {Menu, MWCListIndex} from '@material/mwc-menu';
 import {NotchedOutline} from '@material/mwc-notched-outline';
 import {MDCSelectAdapter} from '@material/select/adapter';
 import MDCSelectFoundation from '@material/select/foundation.js';
@@ -383,6 +383,7 @@ export abstract class SelectBase extends FormElement {
         return !!this.label;
       },
       floatLabel: (shouldFloat) => {
+        shouldFloat = this.selectedText !== '' ? true : false; // this is a temporary change for label floating.
         if (this.labelElement) {
           this.labelElement.floatingLabelFoundation.float(shouldFloat);
         }
@@ -660,9 +661,11 @@ export abstract class SelectBase extends FormElement {
     this.renderReady = true;
   }
 
-  select(index: number) {
+  /*
+   * MWCListIndex is equivalent to type number|Set<number>;
+   */
+  select(index: MWCListIndex) {
     const menuElement = this.menuElement;
-
     if (menuElement) {
       menuElement.select(index);
     }
