@@ -70,6 +70,7 @@ declare global {
     packageVersion: string;
     __local_proxy: string;
     lablupNotification: any;
+    mini_ui: boolean;
     process: any;
   }
 
@@ -286,6 +287,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this._readUserSettings();
     this.mini_ui = this.options['compact_sidebar'];
+    window.mini_ui = this.mini_ui;
 
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
@@ -411,6 +413,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else {
       this.mini_ui = false;
     }
+    window.mini_ui = this.mini_ui;
+    let event = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
+    document.dispatchEvent(event);
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 
@@ -423,6 +428,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
         this.mini_ui = false;
+        window.mini_ui = this.mini_ui;
       }
     } else { // Open drawer
       if (this.mini_ui) {
