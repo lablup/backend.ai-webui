@@ -611,6 +611,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _updateSelectedFolder() {
+    let folders = this.shadowRoot.querySelector('#vfolder');
+    let selectedFolders = folders.value;
+    let indexes = Array<number>();
+    folders.items.map((item, index:number) => {
+      if (selectedFolders.indexOf(item.value) > -1) {
+        indexes.push(index);
+      }
+    });
+    folders.select(indexes);
+  }
+
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (!this.active) {
@@ -2186,7 +2198,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-multi-select id="vfolder" label="Folders to mount" multi>
+                <mwc-multi-select id="vfolder" label="Folders to mount" multi
+                @selected="${this._updateSelectedFolder}">
                 ${this.vfolders.map(item => html`
                   <mwc-list-item value="${item.name}">${item.name}</mwc-list-item>
                 `)}
