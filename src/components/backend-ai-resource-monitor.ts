@@ -832,9 +832,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     config['cpu'] = this.cpu_request;
     if (this.gpu_mode == 'fgpu') {
-      config['fgpu'] = this.gpu_request;
+      config['cuda.shares'] = this.gpu_request;
     } else {
-      config['gpu'] = this.gpu_request;
+      config['cuda.device'] = this.gpu_request;
     }
 
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
