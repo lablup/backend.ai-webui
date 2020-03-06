@@ -1995,6 +1995,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           @click="${() => this._toggleResourceGauge()}">
         </mwc-icon-button>
         <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
+        ${this.direction === 'horizontal' ? html`
+          <div class="layout vertical end-justified wrap short-indicator">
+            <span class="gauge-label">TOTAL</span>
+            <div style="font-size:8px;height:10px;">RESOURCE</div>
+            <span class="gauge-label">MY</span>
+          </div>
+          ` : html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
