@@ -3,17 +3,19 @@
   "manifest_version": 4,
   "name": "Backend.AI Console",
   "short_name": "BackendAIConsole",
-  "version": "20.02.5",
+  "version": "20.03.0",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff",
-  "theme_color":"#fff",
-  "icons": [{
-    "src": "./manifest/backend-ai.iconset/icon_16x16@2x.png",
-    "sizes": "16x16",
-    "type": "image/png"
-  }, {
-    "src": "./manifest/backend-ai.iconset/icon_32x32@2x.png",
+  "theme_color": "#fff",
+  "icons": [
+    {
+      "src": "./manifest/backend-ai.iconset/icon_16x16@2x.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "./manifest/backend-ai.iconset/icon_32x32@2x.png",
     "sizes": "32x32",
     "type": "image/png"
   }, {

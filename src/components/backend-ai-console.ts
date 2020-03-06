@@ -70,6 +70,7 @@ declare global {
     packageVersion: string;
     __local_proxy: string;
     lablupNotification: any;
+    mini_ui: boolean;
     process: any;
   }
 
@@ -115,7 +116,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     super();
     this.options = {
       compact_sidebar: false,
-      preserve_login: false
+      preserve_login: false,
+      beta_feature: false
     }
   }
 
@@ -283,26 +285,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
-    this._readUserSetting('compact_sidebar', false);
-    this._readUserSetting('preserve_login', false);
+    this._readUserSettings();
     this.mini_ui = this.options['compact_sidebar'];
+    window.mini_ui = this.mini_ui;
 
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     window.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
-    // TODO : it should be reimplemented.
-    // window.addEventListener("click", (event) => {
-    //   let path = event['path'];
-    //   if (typeof path === 'object') {
-    //     let elements_name = Object.keys(path).map(function (key, index) {
-    //       return path[key]['id'];
-    //     });
-    //     if (!elements_name.includes("dropdown-button")) {
-    //       this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
-    //     }
-    //   }
-    // });
   }
 
   connectedCallback() {
@@ -352,6 +342,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.loginPanel.refreshWithConfig(config);
   }
 
+  _readUserSettings() { // Read all user settings.
+    for (let i = 0, len = localStorage.length; i < len; ++i) {
+      if (localStorage.key(i)!.startsWith('backendaiconsole.usersetting.')) {
+        let key = localStorage.key(i)!.replace('backendaiconsole.usersetting.', '');
+        this._readUserSetting(key);
+      }
+    }
+  }
+
   _readUserSetting(name, default_value = true) {
     let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
     if (value !== null && value != '' && value != '""') {
@@ -384,6 +383,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
+    this._writeRecentProjectGroup(this.current_group);
   }
 
   showUpdateNotifier() {
@@ -413,6 +413,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else {
       this.mini_ui = false;
     }
+    window.mini_ui = this.mini_ui;
+    let event = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
+    document.dispatchEvent(event);
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 
@@ -425,6 +428,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
         this.mini_ui = false;
+        window.mini_ui = this.mini_ui;
       }
     } else { // Open drawer
       if (this.mini_ui) {
@@ -443,7 +447,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _refreshUserInfoPanel() {
     this.user_id = window.backendaiclient.email;
     this.domain = window.backendaiclient._config.domainName;
-    this.current_group = window.backendaiclient.current_group;
+    this.current_group = this._readRecentProjectGroup();
+    window.backendaiclient.current_group = this.current_group;
     this.groups = window.backendaiclient.groups;
     let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
     if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
@@ -621,8 +626,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) {
+          localStorage.removeItem(key);
+        }
       }
+      // remove data in sessionStorage
+      sessionStorage.clear();
     }
     if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
       if (window.backendaiclient._config.connectionMode === 'SESSION') {
@@ -646,8 +655,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) {
+          localStorage.removeItem(key);
+        }
       }
+      // remove data in sessionStorage
+      sessionStorage.clear();
 
       if (performClose === true) {
         // Do nothing. this window will be closed.
@@ -672,6 +685,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   changeGroup(e) {
     window.backendaiclient.current_group = e.target.value;
     this.current_group = window.backendaiclient.current_group;
+    this._writeRecentProjectGroup(window.backendaiclient.current_group);
     let event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
@@ -718,6 +732,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       let event = new CustomEvent('backend-ai-usersettings-logs', {});
       document.dispatchEvent(event);
     }
+  }
+  _readRecentProjectGroup() {
+    let value: string | null = sessionStorage.getItem('backendaiconsole.projectGroup');
+    return value ? value : window.backendaiclient.current_group;
+  }
+
+  _writeRecentProjectGroup(value : string) {
+    sessionStorage.setItem('backendaiconsole.projectGroup', value ? value : window.backendaiclient.current_group);
   }
 
   _moveToUserSettingsPage() {
@@ -855,7 +877,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
               <address>
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.02.5.200227</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.03.0.200306</small>
               </address>
             </div>
         </div>
@@ -872,33 +894,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                                @click="${() => this._toggleDropdown()}">
               </mwc-icon-button>
               <mwc-menu id="dropdown-menu" absolute x=-50 y=40>
-                <mwc-list-item>
-                  <a class="horizontal layout start center"
-                     @click="${() => this._openUserPrefDialog()}">
+                <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                     <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
                     Change Password
-                </a>
                 </mwc-list-item>
-                <mwc-list-item>
-                  <a class="horizontal layout start center"
-                     @click="${() => this._moveToUserSettingsPage()}">
+                <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                     <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
                     Preferences
-                  </a>
                 </mwc-list-item>
-                <mwc-list-item>
-                  <a class="horizontal layout start center"
-                    @click="${() => this._moveToLogPage()}">
+                <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
                     <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
                     Logs / Errors
-                  </a>
                 </mwc-list-item>
-                <mwc-list-item>
-                  <a class="horizontal layout start center" id="sign-button"
-                    @click="${() => this.logout()}">
+                <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
                     <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
                     Log Out
-                  </a>
                 </mwc-list-item>
               </mwc-menu>
           </mwc-top-app-bar-fixed>
@@ -926,7 +936,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
-      <backend-ai-login id="login-panel"></backend-ai-login>
+      <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>

@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
-import './backend-ai-dropdown-menu';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';

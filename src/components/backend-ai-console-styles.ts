@@ -690,6 +690,11 @@ export const BackendAiStyles =
       margin: 20px;
     }
 
+    wl-backdrop {
+      --backdrop-bg: rgba(255, 0, 0, 0.3);
+      background: rgba(255, 0, 0, 0.3) !important;
+    }
+
     paper-toolbar {
       --paper-toolbar-sm-height: 45px;
     }

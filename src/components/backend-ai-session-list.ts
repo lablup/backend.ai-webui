@@ -12,7 +12,6 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
-import '@polymer/paper-input/paper-input';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -29,6 +28,7 @@ import 'weightless/checkbox';
 import 'weightless/title';
 import 'weightless/button';
 import 'weightless/icon';
+import 'weightless/textfield';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator';
@@ -297,12 +297,9 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         div.filters #access-key-filter {
-          --paper-input-container-input: {
-            font-size: small;
-          };
-          --paper-input-container-label: {
-            font-size: small;
-          };
+          --input-font-size: small;
+          --input-label-font-size: small;
+          --input-font-family: Roboto, Noto, sans-serif;
         }
       `];
   }
@@ -339,11 +336,6 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
       }
     );
-    if (!window.backendaiclient ||
-      !window.backendaiclient.is_admin) {
-      this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 260px)';
-    }
     this.notification = window.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
@@ -367,6 +359,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     // If disconnected
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        if (!window.backendaiclient.is_admin) {
+          this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)';
+        } else {
+          this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+        }
         if (window.backendaiclient.APIMajorVersion < 5) {
           this.sessionNameField = 'sess_id';
         }
@@ -377,6 +375,12 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._refreshJobData();
       }, true);
     } else { // already connected
+      if (!window.backendaiclient.is_admin) {
+        this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)';
+      } else {
+        this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+      }
       if (window.backendaiclient.APIMajorVersion < 5) {
         this.sessionNameField = 'sess_id';
       }
@@ -577,7 +581,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         namespace = '';
         langName = imageParts[1];
       }
-      langName = langName.split(':')[0]
+      langName = langName.split(':')[0];
       langName = namespace ? namespace + '/' + langName : langName;
       tags.push([
         {'category': 'Env', 'tag': `${langName}`, 'color': 'lightgrey'}
@@ -1313,11 +1317,11 @@ export default class BackendAiSessionList extends BackendAIPage {
           </wl-button>
         </div>
         <span class="flex"></span>
-        <paper-input id="access-key-filter" type="search" size=30
+        <wl-textfield id="access-key-filter" type="search" size=30
                      label="access key" no-label-float .value="${this.filterAccessKey}"
                      style="display:none"
                      on-change="_updateFilterAccessKey">
-        </paper-input>
+        </wl-textfield>
       </div>
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"

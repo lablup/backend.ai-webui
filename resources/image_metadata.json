@@ -5,6 +5,7 @@
       "description": "Python is a programming language that lets you work quickly and integrate systems more effectively.",
       "group": "Language",
       "tags": [],
+      "icon": "python.png",
       "label": [
         {
           "category": "Env",
@@ -18,6 +19,7 @@
       "description": "Python is a programming language that lets you work quickly and integrate systems more effectively. Optimized for Intel CPUs.",
       "group": "Language",
       "tags": [],
+      "icon": "python.png",
       "label": [
         {
           "category": "Env",
@@ -26,7 +28,7 @@
         },
         {
           "tag": "Intel MKL",
-          "color": "green"
+          "color": "blue"
         }
       ]
     },
@@ -35,6 +37,7 @@
       "description": "Lablup Research Platform is full-featured all-in-one research environment for machine learning and data science maintained by Lablup Inc.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "lablup.png",
       "label": [
         {
           "category": "Env",
@@ -65,6 +68,7 @@
       "description": "TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "tensorflow.png",
       "label": [
         {
           "category": "Env",
@@ -78,6 +82,7 @@
       "description": "TensorFlow Extended (TFX) is an end-to-end platform for deploying production ML pipelines.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "tensorflow.png",
       "label": [
         {
           "category": "Env",
@@ -91,6 +96,7 @@
       "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "pytorch.svg",
       "label": [
         {
           "category": "Env",
@@ -117,6 +123,7 @@
       "description": "Caffe is a deep learning framework made with expression, speed, and modularity in mind.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "caffe.png",
       "label": [
         {
           "category": "Env",
@@ -130,6 +137,7 @@
       "description": "This is Julia-integrated TensorFlow environment. TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "tensorflow.png",
       "label": [
         {
           "category": "Env",
@@ -160,6 +168,7 @@
       "description": "TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "tensorflow.png",
       "label": [
         {
           "category": "Env",
@@ -177,6 +186,7 @@
       "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "pytorch.svg",
       "label": [
         {
           "category": "Env",
@@ -194,6 +204,7 @@
       "description": "Caffe2 is a deep learning framework that provides an easy and straightforward way for you to experiment with deep learning and leverage community contributions of new models and algorithms. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "caffe2.svg",
       "label": [
         {
           "category": "Env",
@@ -211,6 +222,7 @@
       "description": "Caffe is a deep learning framework made with expression, speed, and modularity in mind. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "caffe.png",
       "label": [
         {
           "category": "Env",
@@ -228,6 +240,7 @@
       "description": "Caffe is a deep-learning framework made with flexibility, speed, and modularity in mind. NVCaffe is an NVIDIA-maintained fork of BVLC Caffe tuned for NVIDIA GPUs, particularly in multi-GPU configurations. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "caffe2.svg",
       "label": [
         {
           "category": "Env",
@@ -245,6 +258,7 @@
       "description": "MXNet is an open source deep learning framework suited for flexible research prototyping and production. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "mxnet.svg",
       "label": [
         {
           "category": "Env",
@@ -262,6 +276,7 @@
       "description": "MATLAB® combines a desktop environment tuned for iterative analysis and design processes with a programming language that expresses matrix and array mathematics directly. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Scientific Language",
       "tags": [],
+      "icon": "matlab.png",
       "label": [
         {
           "category": "Env",
@@ -283,6 +298,7 @@
       "description": "MATLAB® combines a desktop environment tuned for iterative analysis and design processes with a programming language that expresses matrix and array mathematics directly.",
       "group": "Scientific Language",
       "tags": [],
+      "icon": "matlab.png",
       "label": [
         {
           "category": "Env",
@@ -300,6 +316,7 @@
       "description": "TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications. This environment is optimized with Intel MKL.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "tensorflow.png",
       "label": [
         {
           "category": "Env",
@@ -317,6 +334,7 @@
       "description": "Python is a programming language that lets you work quickly and integrate systems more effectively. This environment is optimized with Intel MKL.",
       "group": "Language",
       "tags": [],
+      "icon": "python.png",
       "label": [
         {
           "category": "Env",
@@ -334,6 +352,7 @@
       "description": "Julia was designed from the beginning for high performance.",
       "group": "Scientific Language",
       "tags": [],
+      "icon": "julia.png",
       "label": [
         {
           "category": "Env",
@@ -347,6 +366,7 @@
       "description": "R is a free software environment for statistical computing and graphics.",
       "group": "Scientific Language",
       "tags": [],
+      "icon": "r-lang.svg",
       "label": [
         {
           "category": "Env",
@@ -360,6 +380,7 @@
       "description": "R is a free software environment for statistical computing and graphics.",
       "group": "Scientific Language",
       "tags": [],
+      "icon": "r-lang.svg",
       "label": [
         {
           "category": "Env",
@@ -373,6 +394,7 @@
       "description": "C is a procedural programming language.",
       "group": "Language",
       "tags": [],
+      "icon": "c.svg",
       "label": [
         {
           "category": "Env",
@@ -386,6 +408,7 @@
       "description": "C++ is a cross-platform language that can be used to create high-performance applications.",
       "group": "Language",
       "tags": [],
+      "icon": "cpp.svg",
       "label": [
         {
           "category": "Env",
@@ -399,6 +422,7 @@
       "description": "Rust is a modern systems programming language focusing on safety, speed, and concurrency. It accomplishes these goals by being memory safe without using garbage collection.",
       "group": "Language",
       "tags": [],
+      "icon": "rust.svg",
       "label": [
         {
           "category": "Env",
@@ -412,6 +436,7 @@
       "description": "GNU Octave is an free scientific programming language that provides powerful mathematics-oriented syntax with built-in plotting and visualization tools.",
       "group": "Scientific Language",
       "tags": [],
+      "icon": "octave.png",
       "label": [
         {
           "category": "Env",
@@ -464,6 +489,7 @@
       "description": "",
       "group": "Language",
       "tags": [],
+      "icon": "swift.svg",
       "label": [
         {
           "category": "Env",
@@ -477,6 +503,7 @@
       "description": "",
       "group": "Deep Learning Toolkit",
       "tags": [],
+      "icon": "h2o.png",
       "label": [
         {
           "category": "Env",
@@ -533,6 +560,7 @@
       "description": "",
       "group": "Application",
       "tags": [],
+      "icon": "sftp.png",
       "label": [
         {
           "category": "Env",
@@ -550,6 +578,7 @@
       "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment. This environment is fully integrated with Cloudia platform.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "pytorch.svg",
       "label": [
         {
           "category": "Env",

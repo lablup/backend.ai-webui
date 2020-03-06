@@ -29,6 +29,9 @@ export default class BackendAIPainKiller {
   public regexTable: any;
 
   static relieve(msg) {
+    if (typeof msg === 'undefined') {
+      return 'Problem occurred.';
+    }
     console.log(msg);
     if (window.backendaiconsole.debug === true) {
       return msg;

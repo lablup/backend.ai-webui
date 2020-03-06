@@ -9,6 +9,7 @@ allowSignout = true
 signupSupport = false
 debug = false
 allowProjectResourceMonitor = false
+AllowBetaFeatures = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"

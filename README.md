@@ -17,6 +17,7 @@ Backend.AI console focuses to
     * Fully-featured VSCode editor and environments (WIP)
  * Pipeline
     * Experiments (with SACRED)
+    * AutoML (with NNI)
     * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
  * Storage management
@@ -31,6 +32,7 @@ Backend.AI console focuses to
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
+    * Beta features
     * Console logs / errors
 
 ## Management Features

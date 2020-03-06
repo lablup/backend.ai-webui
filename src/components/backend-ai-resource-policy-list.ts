@@ -238,8 +238,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             <fieldset>
               <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
                              validationMessage="Policy name is Required."
-                             required
-                             @change="${(e)=>this._validatePolicyName(e.target)}"></mwc-textfield>
+                             required></mwc-textfield>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 0px;">
@@ -425,6 +424,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
+    this._validatePolicyName();
   }
 
   async _viewStateChanged(active) {
@@ -665,7 +665,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } else {
       checkbox = null;
     }
-    
+
     if (textfield.value < 0) {
       textfield.value = 0;
     }
@@ -694,14 +694,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       resource.value = '';
     } else {
       if (resource.value === '') {
-          throw {"message" : "Cannot Update Resource Policy. Please check input values." };
+        throw {"message": "Cannot Update Resource Policy. Please check input values."};
       }
     }
   }
 
-  _validatePolicyName(input) {
-    let policy_info = input;
-    let policy_name = input.value;
+  _validatePolicyName() {
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
     policy_info.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
@@ -710,8 +709,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid
           };
-        }
-        else if (nativeValidity.valueMissing) {
+        } else if (nativeValidity.valueMissing) {
           policy_info.validationMessage = "Policy name is Required."
           return {
             valid: nativeValidity.valid,
@@ -728,11 +726,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       } else {
         let policy_names = this.resource_policy_names;
         policy_names = policy_names.filter(item => item !== this.current_policy_name);
-        const isValid = !policy_names.includes(policy_name);
+        const isValid = !policy_names.includes(newValue);
         if (!isValid) {
           policy_info.validationMessage = "Policy Name Already Exists!";
         }
-      
+
         return {
           valid: isValid,
           customError: !isValid,
