@@ -525,11 +525,11 @@ export default class BackendAiStorageList extends BackendAIPage {
             </wl-button>
           </h3>
           <section>
-            <mwc-textfield id="mkdir-name" label="Folder name"
-                           pattern="[a-zA-Z0-9_-]*"
+            <mwc-textfield id="mkdir-name"
+                           label="Folder name"
                            auto-validate
                            required
-                           validationMessage="Allows letters, numbers and -_."></mwc-textfield>
+                           validationMessage="Value is required."></mwc-textfield>
             <br/>
             <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
               <wl-icon>rowing</wl-icon>
@@ -669,6 +669,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": window.mini_ui}});
+    this._validatePathName();
   }
 
   _modifySharedFolderPermissions() {
@@ -1071,6 +1072,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const newfolderEl = this.shadowRoot.querySelector('#mkdir-name');
     const newfolder = newfolderEl.value;
     const explorer = this.explorer;
+    newfolderEl.reportValidity();
     if(newfolderEl.checkValidity()) {
         let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
           console.log(err);
@@ -1379,6 +1381,41 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       })
   }
+
+  _validatePathName() {
+    let path_info = this.shadowRoot.querySelector('#mkdir-name');
+    console.dir(path_info)
+    console.dir(path_info.nativeValidity);
+    path_info.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          path_info.validationMessage = "Value is required."
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        } else {
+          return {
+            valid: nativeValidity.valid,
+            badInput: !nativeValidity.valid
+          }
+        }
+      } else {
+          // custom validation for path name using regex
+          let regex = /^([.a-zA-Z0-9-_]{1,})*(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
+          let isValid = regex.exec(path_info.value);
+          if (!isValid) {
+            path_info.validationMessage = "Path should start with .(dot) or letters, numbers only."
+          }
+
+          return {
+            valid: isValid,
+            customError: !isValid
+          };
+      }
+    }
+  }
+
 }
 declare global {
   interface HTMLElementTagNameMap {

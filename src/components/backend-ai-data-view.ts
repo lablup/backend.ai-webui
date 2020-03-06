@@ -36,6 +36,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
+
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
@@ -332,8 +333,7 @@ export default class BackendAIData extends BackendAIPage {
     } else {
       group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : window.backendaiclient.current_group;
     }
-    console.log(nameEl);
-    console.dir(nameEl);
+    nameEl.reportValidity();
     if (nameEl.checkValidity()) {
       let job = window.backendaiclient.vfolder.create(name, host, group);
       job.then((value) => {
