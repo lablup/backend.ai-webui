@@ -68,8 +68,9 @@ mac: dep
 	rm -rf ./app/backend.ai-console-macos
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos;
 	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js ./app/backend.ai-console-macos/backend.ai-console.app ./app/backend.ai-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
-	mv ./app/backend.ai-$(BUILD_DATE).dmg ./app/backend.ai-$(BUILD_VERSION)-$(site).dmg
+	mv ./app/backend.ai-console-macos/backend.ai-console.app './app/backend.ai-console-macos/Backend.AI Console.app'
+	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-console-macos/Backend.AI Console.app' ./app/backend.ai-console-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-$(site).dmg
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
