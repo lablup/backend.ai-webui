@@ -482,7 +482,7 @@ class Client {
                 config['mem'] = resources['mem'];
             }
             if (resources['gpu']) { // Temporary fix for resource handling
-                config['cuda.device'] = parseFloat(resources['gpu']).toFixed(2);
+                config['cuda.device'] = parseInt(resources['gpu']);
             }
             if (resources['vgpu']) { // Temporary fix for resource handling
                 config['cuda.shares'] = parseFloat(resources['vgpu']).toFixed(2); // under 19.03
