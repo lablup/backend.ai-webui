@@ -1072,7 +1072,17 @@ export default class BackendAiStorageList extends BackendAIPage {
     const newfolder = newfolderEl.value;
     const explorer = this.explorer;
     if(newfolderEl.checkValidity()) {
-        let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id);
+        let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
+          console.log(err);
+          if (err & err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          } else if (err && err.title) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.show(true, err);
+          }
+        })
         job.then(res => {
           this.closeDialog('mkdir-dialog');
           this._clearExplorer();
