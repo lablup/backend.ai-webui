@@ -1402,7 +1402,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       } else {
           // custom validation for path name using regex
-          let regex = /^([.a-zA-Z0-9-_]{1,})*(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
+          let regex = /^([.a-zA-Z0-9-_]{1,})+(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
           let isValid = regex.exec(path_info.value);
           if (!isValid) {
             path_info.validationMessage = "Path should start with .(dot) or letters, numbers only."
