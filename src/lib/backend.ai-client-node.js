@@ -481,14 +481,20 @@ class Client {
             if (resources['mem']) {
                 config['mem'] = resources['mem'];
             }
-            if (resources['gpu']) { // Temporary fix for resource handling
+            if (resources['gpu']) { // Legacy support (till 19.09)
                 config['cuda.device'] = parseInt(resources['gpu']);
             }
-            if (resources['vgpu']) { // Temporary fix for resource handling
+            if (resources['cuda.device']) { // Generalized device information from 20.03
+                config['cuda.device'] = parseInt(resources['cuda.device']);
+            }
+            if (resources['vgpu']) { // Legacy support (till 19.09)
                 config['cuda.shares'] = parseFloat(resources['vgpu']).toFixed(2); // under 19.03
             }
             else if (resources['fgpu']) {
                 config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
+            }
+            if (resources['cuda.shares']) { // Generalized device information from 20.03
+                config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
             }
             if (resources['tpu']) {
                 config['tpu.device'] = resources['tpu'];
