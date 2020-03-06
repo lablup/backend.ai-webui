@@ -2211,7 +2211,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <ul>
                       <li>${item.cpu} CPU</li>
                       <li>${item.mem}GB RAM</li>
-                      ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} GPU</li>`}
+                      ${!item.gpu ? html`<li>&nbsp;</li>` : html`<li>${item.gpu} GPU</li>`}
                       </ul>
                   </div>
                 </wl-button>
