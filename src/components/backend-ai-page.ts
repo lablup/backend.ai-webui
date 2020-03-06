@@ -63,8 +63,10 @@ export class BackendAIPage extends LitElement {
     }
     let validationMessage: string;
     if (obj.validityTransform === null) {
-      if (obj.getAttribute('error-message')) {
+      if (obj.getAttribute('error-message')) { // Support paper-component style attribute
         validationMessage = obj.getAttribute('error-message');
+      } else if (obj.getAttribute('validationMessage')) { // Support standard attribute
+        validationMessage = obj.getAttribute('validationMessage');
       } else {
         validationMessage = 'Validation failed.';
       }
