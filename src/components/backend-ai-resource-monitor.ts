@@ -611,6 +611,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _updateSelectedFolder() {
+    let folders = this.shadowRoot.querySelector('#vfolder');
+    let selectedFolders = folders.value;
+    let indexes = Array<number>();
+    folders.items.map((item, index:number) => {
+      if (selectedFolders.indexOf(item.value) > -1) {
+        indexes.push(index);
+      }
+    });
+    folders.select(indexes);
+  }
+
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (!this.active) {
@@ -832,9 +844,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     config['cpu'] = this.cpu_request;
     if (this.gpu_mode == 'fgpu') {
-      config['fgpu'] = this.gpu_request;
+      config['cuda.shares'] = this.gpu_request;
     } else {
-      config['gpu'] = this.gpu_request;
+      config['cuda.device'] = this.gpu_request;
     }
 
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
@@ -1983,6 +1995,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           @click="${() => this._toggleResourceGauge()}">
         </mwc-icon-button>
         <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
+        ${this.direction === 'horizontal' ? html`
+          <div class="layout vertical end-justified wrap short-indicator">
+            <span class="gauge-label">TOTAL</span>
+            <div style="font-size:8px;height:10px;">RESOURCE</div>
+            <span class="gauge-label">MY</span>
+          </div>
+          ` : html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
@@ -2186,7 +2205,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-multi-select id="vfolder" label="Folders to mount" multi>
+                <mwc-multi-select id="vfolder" label="Folders to mount" multi
+                @selected="${this._updateSelectedFolder}">
                 ${this.vfolders.map(item => html`
                   <mwc-list-item value="${item.name}">${item.name}</mwc-list-item>
                 `)}
@@ -2211,7 +2231,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <ul>
                       <li>${item.cpu} CPU</li>
                       <li>${item.mem}GB RAM</li>
-                      ${!item.gpu ? html`<li>NO GPU</li>` : html`<li>${item.gpu} fGPU</li>`}
+                      ${!item.gpu ? html`<li>&nbsp;</li>` : html`<li>${item.gpu} GPU</li>`}
                       </ul>
                   </div>
                 </wl-button>
