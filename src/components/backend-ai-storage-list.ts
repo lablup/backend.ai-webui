@@ -375,7 +375,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div class="warning">WARNING: this cannot be undone!</div>
             <div>
               <mwc-textfield class="red" id="delete-folder-name" label="Type folder name to delete"
-                           pattern="[a-zA-Z0-9_-]*"
+                           pattern="[a-zA-Z0-9_-.]*"
                            validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
               <br/>
               <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">

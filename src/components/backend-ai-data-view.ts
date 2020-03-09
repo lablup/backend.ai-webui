@@ -201,7 +201,7 @@ export default class BackendAIData extends BackendAIPage {
             </wl-button>
           </h3>
           <section>
-            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-]*" 
+            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-.]*"
             auto-validate required validationMessage="Allows letters, numbers and -_."></mwc-textfield>
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-host" label="Host">
