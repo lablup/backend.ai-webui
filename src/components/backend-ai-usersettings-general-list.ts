@@ -38,6 +38,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Object}) userconfigDialog = Object();
   @property({type: Object}) notification;
   @property({type: Boolean}) beta_feature_panel = false;
+  @property({type: Boolean}) shell_script_edit = false;
   @property({type: Array}) rcfiles = Array();
   @property({type: String}) rcfile = '';
   @property({type: String}) prevRcfile = '';
@@ -160,14 +161,20 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     // If disconnected
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
+          this.shell_script_edit = true;
+          this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
+          this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
+          this.rcfile = '.bashrc';
+        }
+      });
+    } else { // already connected
+      if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
+        this.shell_script_edit = true;
         this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
         this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
         this.rcfile = '.bashrc';
-      });
-    } else { // already connected
-      this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
-      this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
-      this.rcfile = '.bashrc';
+      }
     }
   }
 
@@ -264,7 +271,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _saveBootstrapScript() {
-    const editor = this.shadowRoot.querySelector('#bootstrap-dialog #codemirror-editor');
+    const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
     const script = editor.getValue();
     if (this.lastSavedBootstrapScript === script) {
       this.notification.text = 'No changes';
@@ -296,7 +303,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _editUserConfigScript() {
-    let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
     let rcfile_names = Array( ".bashrc", ".zshrc" );
     rcfile_names.map(filename => {
@@ -335,7 +342,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _saveUserConfigScript(fileName : string = this.rcfile) {
-    const editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     const script = editor.getValue();
     let idx = this.rcfiles.findIndex(item => item.path === fileName);
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
@@ -425,18 +432,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _updateSelectedRcFileName(fileName : string) {
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
-    let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     if (rcfiles.items.length > 0) {
       let selectedFile = rcfiles.items.find(item => item.value === fileName);
       let idx = rcfiles.items.indexOf(selectedFile);
       let code = this.rcfiles[idx]['data'];
       rcfiles.select(idx);
       editor.setValue(code);
-    } 
+    }
   }
 
   _changeCurrentEditorData() {
-    let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     let select = this.shadowRoot.querySelector('#select-rcfile-type');
     let idx = this.rcfiles.findIndex(item => item.path === select.value);
     let code = this.rcfiles[idx]['data'];
@@ -444,7 +451,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _toggleRcFileName() {
-    let editor = this.shadowRoot.querySelector('#userconfig-dialog #codemirror-editor');
+    let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     let select = this.shadowRoot.querySelector('#select-rcfile-type');
     this.prevRcfile = this.rcfile;
     this.rcfile = select.value;
@@ -591,16 +598,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           Preparing now. :)
         </div>
         ` : html``}
+        ${this.shell_script_edit ? html`
         <h3 class="horizontal center layout">
           <span>Shell Environments</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout setting-item">
-            <wl-button class="fg teal" outlined @click="${this._editBootstrapScript}" style="margin-right:20px; display:none;">
+            <wl-button class="fg teal" outlined @click="${()=>this._editBootstrapScript()}" style="margin-right:20px; display:none;">
               <wl-icon>edit</wl-icon>
               Edit bootstrap script
             </wl-button>
-            <wl-button class="fg green" outlined @click="${this._launchUserConfigDialog}">
+            <wl-button class="fg green" outlined @click="${()=>this._launchUserConfigDialog()}">
               <wl-icon>edit</wl-icon>
               Edit user config script
             </wl-button>
@@ -620,7 +628,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <wl-switch id="register-new-image-switch" disabled></wl-switch>
             </div>
           </div>
-        </div>
+        </div>`: html``}
       </wl-card>
       <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
@@ -634,7 +642,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </h3>
         </div>
         <div slot="content">
-          <lablup-codemirror id="codemirror-editor" mode="shell"></lablup-codemirror>
+          <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer">
           <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">Cancel</wl-button>
@@ -657,7 +665,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                         label="config file name"
                         required
                         validationMessage="Please select one option."
-                        @selected="${this._toggleRcFileName}">
+                        @selected="${()=>this._toggleRcFileName()}">
               ${this.rcfiles.map(item => html`
                 <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                   ${item.path}
@@ -672,7 +680,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
         </div>
         <div slot="content">
-          <lablup-codemirror id="codemirror-editor" mode="shell"></lablup-codemirror>
+          <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer">
           <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">Cancel</wl-button>
