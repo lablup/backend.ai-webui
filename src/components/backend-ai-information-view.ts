@@ -116,7 +116,7 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
           </div>
         </div>
-        <h4>System</h4>
+        <h4>Components</h4>
         <div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
@@ -158,7 +158,29 @@ export default class BackendAiInformationView extends BackendAIPage {
               ${this.redis_version}
             </div>
           </div>
-
+        </div>
+        <h4>Security</h4>
+        <div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>Default administrator account changed</div>
+              <div class="description">SHOULD change the default account / password for production use.
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+              <wl-icon>done</wl-icon>
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>Uses SSL</div>
+              <div class="description">HTTPS with proper SSL setup helps system
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+              <wl-icon>done</wl-icon>
+            </div>
+          </div>
         </div>
       </wl-card>
     `;
@@ -187,10 +209,10 @@ export default class BackendAiInformationView extends BackendAIPage {
     this.manager_version = window.backendaiclient.managerVersion;
     this.console_version = window.packageVersion;
     this.api_version = window.backendaiclient.apiVersion;
-    this.docker_version = '';
-    this.pgsql_version = '';
-    this.redis_version = '';
-    this.etcd_version = '';
+    this.docker_version = 'Not supported in this version.'; // It uses 20.03 API.
+    this.pgsql_version = 'Not supported in this version.';
+    this.redis_version = 'Not supported in this version.';
+    this.etcd_version = 'Not supported in this version.';
   }
 }
 
