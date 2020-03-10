@@ -215,11 +215,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _installImage() {
-    this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
-    this.notification.show();
     this.installImageDialog.hide();
-    this.indicator.start('indeterminate');
-    this.indicator.set(10, 'Downloading...');
     if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
       this.installImageResource['gpu'] = 0;
       this.installImageResource['fgpu'] = this.installImageResource['cuda.shares'];
@@ -232,6 +228,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else if (this.installImageResource['mem'].endsWith('m')) {
       this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
     }
+    this.installImageResource['domain'] = window.backendaiclient._config.domainName;
+    this.installImageResource['group_name'] = window.backendaiclient.current_group;
+
+    this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
+    this.notification.show();
+    this.indicator.start('indeterminate');
+    this.indicator.set(10, 'Downloading...');
     window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
@@ -393,12 +396,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
         <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
           <wl-checkbox id="${rowData.item.name}" style="--checkbox-size:12px;"
-                       ?checked="${rowData.item.installed}"
-                       ?disabled="${rowData.item.installed}"
-                       @click="${(e) => {
-        this.openInstallImageDialog(rowData.index);
-        this.selectedCheckbox = e.target;
-      }}">
+              ?checked="${rowData.item.installed}"
+              ?disabled="${rowData.item.installed}"
+              @click="${(e) => {
+                this.openInstallImageDialog(rowData.index);
+                this.selectedCheckbox = e.target;
+              }}">
           </wl-checkbox>
         </div>
       `, root);
@@ -635,10 +638,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
          </div>
          <div slot="footer">
             <wl-button class="cancel" inverted flat
-                       @click="${(e) => {
-      this._hideDialog(e)
-      this._uncheckSelectedRow();
-    }}">
+                @click="${(e) => {
+                  this._hideDialog(e)
+                  this._uncheckSelectedRow();
+                }}">
               Cancel
             </wl-button>
             <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>

@@ -594,21 +594,6 @@ export const BackendAiStyles =
       padding: 5px;
     }
 
-    paper-listbox.sidebar {
-      cursor: pointer;
-      color: var(--general-sidebar-color, #eeeeee);;
-    }
-
-    paper-listbox.sidebar a.iron-selected paper-item {
-      color: var(--general-sidebar-selected-color, #eeeeee);
-      background: var(--general-sidebar-selected-background-color, #23252b);
-      border-left: var(--general-sidebar-selected-border-left);
-      padding-left: 11px;
-      border-right: 0;
-      padding-right: 11px;
-      font-weight: 900;
-    }
-
     paper-toolbar span.welcome {
       margin-right: 30px;
       color: var(--general-menu-color);
@@ -846,34 +831,6 @@ export const BackendAiStyles =
 
     .fg.deep-purple {
       color: var(--paper-deep-purple-400) !important;
-    }
-
-    /* Drawer */
-
-    .drawer-menu .portrait-bar {
-      padding-left: 0 !important;
-      background-color: transparent;
-      color: var(--general-sidebar-topbar-color);
-      height: 80px;
-      @apply --general-sidebar-topbar-shadow;
-    }
-
-    .drawer-menu a {
-      color: #dddddd;
-    }
-
-    .drawer-menu iron-icon {
-      margin-right: 15px;
-    }
-
-    .drawer-menu h3 {
-      font-size: 12px;
-      font-weight: 400;
-      padding: 5px 15px;
-      margin: 0;
-      display: block;
-      color: var(--general-sidebar-h3-color);
-      border-bottom: var(--general-sidebar-h3-border-color);
     }
 
     /* Layout */
