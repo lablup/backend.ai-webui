@@ -90,7 +90,7 @@ export default class BackendAISplash extends LitElement {
             </ul>
             <ul>
               <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
-              <li class="copyright">Copyright &copy; 2015-2019 Lablup Inc.</li>
+              <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
             </ul>
           </div>
       </wl-dialog>
