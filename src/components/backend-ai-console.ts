@@ -70,6 +70,7 @@ declare global {
     buildVersion: string;
     packageVersion: string;
     packageEdition: string;
+    packageValidUntil: string;
     __local_proxy: string;
     lablupNotification: any;
     mini_ui: boolean;
@@ -96,6 +97,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
   @property({type: String}) edition = 'Open Source';
+  @property({type: String}) validUntil = '';
   @property({type: Array}) groups = Array();
   @property({type: String}) current_group = '';
   @property({type: Object}) plugins = Object();
@@ -324,11 +326,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       console.log(this.connection_server);
     }
-    if (typeof config.general !== "undefined" && 'edition' in config.license) {
+    if (typeof config.license !== "undefined" && 'edition' in config.license) {
       this.edition = config.license.edition;
-      window.packageEdition = this.edition;
       console.log(this.edition);
     }
+    window.packageEdition = this.edition;
+    if (typeof config.license !== "undefined" && 'validUntil' in config.license) {
+      this.validUntil = config.license.validUntil;
+      console.log(this.validUntil);
+    }
+    window.packageValidUntil = this.validUntil;
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
