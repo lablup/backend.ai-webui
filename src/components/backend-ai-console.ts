@@ -69,6 +69,7 @@ declare global {
     isElectron: boolean;
     buildVersion: string;
     packageVersion: string;
+    packageEdition: string;
     __local_proxy: string;
     lablupNotification: any;
     mini_ui: boolean;
@@ -325,6 +326,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     if (typeof config.general !== "undefined" && 'edition' in config.license) {
       this.edition = config.license.edition;
+      window.packageEdition = this.edition;
       console.log(this.edition);
     }
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
