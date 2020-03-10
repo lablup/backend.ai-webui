@@ -23,6 +23,16 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ `<backend-ai-summary-view>` is a Summary panel of backend.ai console.
+
+ Example:
+ <backend-ai-summary-view active></backend-ai-summary-view>
+
+ @group Lablup Elements
+ @element backend-ai-summary-view
+ */
+
 @customElement("backend-ai-summary-view")
 export default class BackendAISummary extends BackendAIPage {
   @property({type: String}) condition = 'running';
@@ -313,6 +323,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = window.backendaiclient.is_superadmin;
+        this.is_admin = window.backendaiclient.is_admin;
         this.authenticated = true;
         if (this.activeConnected) {
           this._refreshHealthPanel();
@@ -323,6 +334,7 @@ export default class BackendAISummary extends BackendAIPage {
       }, true);
     } else {
       this.is_superadmin = window.backendaiclient.is_superadmin;
+      this.is_admin = window.backendaiclient.is_admin;
       this.authenticated = true;
       this._refreshHealthPanel();
       this._refreshInvitations();
@@ -422,10 +434,6 @@ export default class BackendAISummary extends BackendAIPage {
           ${this.is_superadmin ? html`
           <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
-              <div class="layout vertical center flex" style="margin-bottom:5px;">
-                <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-                <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
-              </div>
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
                   <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
@@ -547,6 +555,17 @@ export default class BackendAISummary extends BackendAIPage {
             </lablup-activity-panel>
             `
     ) : ''}
+    ${this.is_admin
+      ? html`
+          <lablup-activity-panel title="Administration" elevation="1">
+            <div slot="message">
+              <div class="layout vertical center flex" style="margin-bottom:5px;">
+                <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+                <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
+              </div>
+            </div>
+          </lablup-activity-panel>`
+      : html``}
         </div>
       </wl-card>
 `;

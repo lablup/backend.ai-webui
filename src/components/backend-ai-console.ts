@@ -58,6 +58,7 @@ import './backend-ai-login';
  </backend-ai-console>
 
  @group Backend.AI Console
+ @element backend-ai-console
  */
 
 declare global {
@@ -227,17 +228,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
         mwc-menu {
           --mdc-theme-surface: #f1f1f1;
-          --mdc-menu-item-height : auto;
+          --mdc-menu-item-height: auto;
           box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
         mwc-list-item {
-          font-size : 13px;
+          font-size: 13px;
           text-align: 13px;
         }
 
         mwc-list-item mwc-icon {
-          --mdc-icon-size : 13px;
+          --mdc-icon-size: 13px;
         }
 
         .mini-ui .full-menu {
@@ -733,12 +734,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       document.dispatchEvent(event);
     }
   }
+
   _readRecentProjectGroup() {
     let value: string | null = sessionStorage.getItem('backendaiconsole.projectGroup');
     return value ? value : window.backendaiclient.current_group;
   }
 
-  _writeRecentProjectGroup(value : string) {
+  _writeRecentProjectGroup(value: string) {
     sessionStorage.setItem('backendaiconsole.projectGroup', value ? value : window.backendaiclient.current_group);
   }
 
