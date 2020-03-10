@@ -11,8 +11,6 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-item/paper-item';
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
@@ -20,9 +18,6 @@ import '@material/mwc-icon-button';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item';
 
-import '@polymer/iron-image/iron-image';
-
-import '@vaadin/vaadin-icons/vaadin-icons';
 import toml from 'markty-toml';
 
 import 'weightless/select';
@@ -128,8 +123,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronPositioning,
       // language=CSS
       css`
-        /* Drawer */
-
         .drawer-menu .portrait-bar {
           padding-left: 0 !important;
           background-color: transparent;
@@ -263,7 +256,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           --input-border-style-disabled: 1px solid #cccccc;
         }
 
-        paper-item,
         mwc-list-item {
           font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           font-weight: 400;
@@ -280,19 +272,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
 
         mwc-menu.user-menu mwc-list-item {
-          font-size: 13px;
-          text-align: 13px;
+          font-size: 16px;
         }
 
         mwc-menu.user-menu mwc-list-item mwc-icon {
-          --mdc-icon-size: 13px;
+          --mdc-icon-size: 16px;
         }
 
         .mini-ui .full-menu {
           display: none;
-        }
-
-        .mini-ui a:hover paper-item span.full-menu {
         }
       `];
   }
@@ -809,8 +797,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div id="portrait-bar" class="draggable">
               <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
                 <div class="portrait-canvas">
-                  <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
-                    sizing="contain"></iron-image>
+                  <img style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
+                    sizing="contain" />
                 </div>
                 <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                   <div class="site-name"><span class="bold">Backend</span>.AI</div>
