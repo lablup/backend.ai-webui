@@ -20,9 +20,6 @@ import '@material/mwc-icon-button';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item';
 
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-image/iron-image';
 
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -131,6 +128,34 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronPositioning,
       // language=CSS
       css`
+        /* Drawer */
+
+        .drawer-menu .portrait-bar {
+          padding-left: 0 !important;
+          background-color: transparent;
+          color: var(--general-sidebar-topbar-color);
+          height: 80px;
+          @apply --general-sidebar-topbar-shadow;
+        }
+
+        .drawer-menu a {
+          color: #dddddd;
+        }
+
+        .drawer-menu mwc-icon {
+          margin-right: 15px;
+        }
+
+        .drawer-menu h3 {
+          font-size: 12px;
+          font-weight: 400;
+          padding: 5px 15px;
+          margin: 0;
+          display: block;
+          color: var(--general-sidebar-h3-color);
+          border-bottom: var(--general-sidebar-h3-border-color);
+        }
+
         .drawer-menu,
         paper-listbox.sidebar,
         .drawer-menu footer,
@@ -782,36 +807,36 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
               <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon id="activities-icon" class="fg green" icon="icons:view-quilt"></iron-icon>
+                  <mwc-icon id="activities-icon" class="fg green" icon="icons:view-quilt">view_quilt</mwc-icon>
                   <span class="full-menu">Summary</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'job'}" href="/job" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon class="fg red" icon="icons:subject"></iron-icon>
+                  <mwc-icon class="fg red" icon="icons:subject">subject</mwc-icon>
                   <span class="full-menu">Sessions</span>
                 </paper-item>
               </a>
               ${false ? html`
               <paper-item disabled>
-                <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
+                <mwc-icon class="fg blue" icon="icons:pageview">pageview</mwc-icon>
                 <span class="full-menu">Experiments</span>
               </paper-item>` : html``}
               <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
+                  <mwc-icon class="fg orange" icon="vaadin:folder-open-o">cloud_upload</mwc-icon>
                   <span class="full-menu">Data &amp; Storage</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
                 <paper-item link>
-                  <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
+                  <mwc-icon class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
                   <span class="full-menu">Statistics</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon class="fg teal" icon="icons:settings"></iron-icon>
+                  <mwc-icon class="fg teal" icon="icons:settings">settings</mwc-icon>
                   <span class="full-menu">Settings</span>
                 </paper-item>
               </a>
@@ -822,13 +847,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
               <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
-                  <iron-icon class="fg lime" icon="icons:face"></iron-icon>
+                  <mwc-icon class="fg lime" icon="icons:face">face</mwc-icon>
                   <span class="full-menu">Users</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
+                  <mwc-icon class="fg orange" icon="icons:extension">extension</mwc-icon>
                   <span class="full-menu">Environments</span>
                 </paper-item>
               </a>
@@ -837,20 +862,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       html`
               <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
                 <paper-item link ?disabled="${!this.is_admin}">
-                  <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
+                  <mwc-icon class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
                   <span class="full-menu">Resources</span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon class="fg green" icon="icons:settings"></iron-icon>
+                  <mwc-icon class="fg green" icon="icons:settings">settings</mwc-icon>
                   <span class="full-menu">System Settings</span>
                   <span class="flex"></span>
                 </paper-item>
               </a>
               <a ?selected="${this._page === 'maintenance'}" href="/maintenance" tabindex="-1" role="menuitem">
                 <paper-item link>
-                  <iron-icon class="fg pink" icon="icons:build"></iron-icon>
+                  <mwc-icon class="fg pink" icon="icons:build">build</mwc-icon>
                   <span class="full-menu">Maintenance</span>
                   <span class="flex"></span>
                 </paper-item>
