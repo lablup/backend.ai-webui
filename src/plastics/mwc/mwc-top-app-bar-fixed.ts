@@ -19,7 +19,7 @@
 import {style} from '@material/mwc-top-app-bar/mwc-top-app-bar-css';
 import {css, customElement} from 'lit-element';
 
-import {BackendAiStyles} from '../../components/backend-ai-console-styles';
+import {BackendAiStyles} from '../../components/backend-ai-general-styles';
 
 import {TopAppBarFixedBase} from '@material/mwc-top-app-bar-fixed/mwc-top-app-bar-fixed-base';
 

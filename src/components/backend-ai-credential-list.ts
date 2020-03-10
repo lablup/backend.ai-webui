@@ -24,7 +24,7 @@ import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-indicator';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
   IronFlexAlignment,
@@ -56,7 +56,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) keypairView = Object();
   @property({type: Number}) _pageSize = 10;
   @property({type: Object}) keypairGrid = Object();
-  @property({type: Number}) _currentPage = 1; 
+  @property({type: Number}) _currentPage = 1;
   @property({type: Number}) _totalCredentialCount = 0;
 
   constructor() {
@@ -146,7 +146,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         wl-label {
           --label-color: black;
         }
-        
+
         wl-icon.pagination {
           color: var(--paper-grey-700);
         }

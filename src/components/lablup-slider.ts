@@ -13,7 +13,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 
 @customElement("lablup-slider")
 export default class LablupSlider extends LitElement {

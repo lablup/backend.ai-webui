@@ -31,7 +31,7 @@ import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-storage-list';
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 @customElement("backend-ai-data-view")

@@ -37,7 +37,7 @@ import './lablup-slider';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 import '../plastics/lablup-shields/lablup-shields';
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,

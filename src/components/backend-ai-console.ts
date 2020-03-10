@@ -28,7 +28,9 @@ import './lablup-notification';
 import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6';
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+
 import {
   IronFlex,
   IronFlexAlignment,
@@ -121,167 +123,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
+      BackendAiConsoleStyles,
       // language=CSS
       css`
-        .drawer-menu .portrait-bar {
-          padding-left: 0 !important;
-          background-color: transparent;
-          color: var(--general-sidebar-topbar-color);
-          height: 80px;
-          @apply --general-sidebar-topbar-shadow;
-        }
 
-        .drawer-menu a {
-          color: #dddddd;
-        }
-
-        .drawer-menu mwc-icon {
-        }
-
-        .drawer-menu h3 {
-          font-size: 12px;
-          font-weight: 400;
-          padding: 5px 15px;
-          margin: 0;
-          display: block;
-          color: var(--general-sidebar-h3-color);
-          border-bottom: var(--general-sidebar-h3-border-color);
-        }
-
-        .drawer-menu,
-        mwc-list.sidebar,
-        .drawer-menu footer,
-        #sidebar-navbar-footer {
-          background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
-        }
-
-        mwc-list.sidebar {
-          cursor: pointer;
-          color: var(--general-sidebar-color, #eeeeee);
-        }
-
-        mwc-list.sidebar mwc-list-item {
-          --mdc-theme-primary: var(--general-sidebar-selected-color, #eeeeee);
-          --mdc-theme-text-primary-on-background: var(--general-sidebar-color, #eeeeee);
-          --mdc-list-item-graphic-margin: 15px;
-          height: 48px;
-        }
-
-        mwc-list.sidebar mwc-list-item[selected] {
-          color: var(--general-sidebar-selected-color, #eeeeee);
-          background: var(--general-sidebar-selected-background-color, #23252b);
-          border-left: var(--general-sidebar-selected-border-left);
-          padding-left: 11px;
-          border-right: 0;
-          padding-right: 11px;
-          font-weight: 900;
-        }
-
-        #portrait-bar .bar {
-          background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
-        }
-
-        #app-body {
-          --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
-          --mdc-drawer-border-left: 0;
-          --mdc-drawer-border-right: 0;
-        }
-
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
-
-        .page {
-          display: none;
-        }
-
-        .page[active] {
-          display: block;
-        }
-
-        wl-progress-spinner {
-          --progress-spinner-size: 48px;
-          --progress-spinner-stroke-width: 12px;
-          width: 48px;
-          height: 48px;
-          position: fixed;
-          top: calc(50vh - 24px);
-        }
-
-        @media screen and (max-width: 899px) {
-          wl-progress-spinner {
-            left: calc(50% - 24px);
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          wl-progress-spinner {
-            left: calc(50% + 71px);
-          }
-        }
-
-        .draggable {
-          -webkit-user-select: none !important;
-          -webkit-app-region: drag !important;
-        }
-
-        .drawer-menu footer {
-          width: 190px;
-        }
-
-        mwc-tab {
-          color: #ffffff;
-        }
-
-        .mdc-drawer {
-        }
-
-        wl-select {
-          --input-bg: transparent;
-          --input-color: rgb(221, 221, 221);
-          --input-color-disabled: rgb(221, 221, 221);
-          --input-label-color: rgb(221, 221, 221);
-          --input-label-font-size: 10px;
-          --input-padding-left-right: 0;
-          width: 135px;
-          --input-border-style: 0;
-          --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-        }
-
-        wl-dialog wl-textfield {
-          --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
-        mwc-list-item {
-          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          font-weight: 400;
-        }
-
-        a.email:hover {
-          color: #29b6f6;
-        }
-
-        mwc-menu.user-menu {
-          --mdc-theme-surface: #f1f1f1;
-          --mdc-menu-item-height: auto;
-          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-        }
-
-        mwc-menu.user-menu mwc-list-item {
-          font-size: 16px;
-        }
-
-        mwc-menu.user-menu mwc-list-item mwc-icon {
-          --mdc-icon-size: 16px;
-        }
-
-        .mini-ui .full-menu {
-          display: none;
-        }
       `];
   }
 
@@ -590,6 +435,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
         this._page = view;
       }
+      console.log(view);
       this._updateSidebar(view);
     }
   }
@@ -633,7 +479,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'settings':
-        this.menuTitle = 'Settings';
+        this.menuTitle = 'Configurations';
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'maintenance':
@@ -860,7 +706,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
               <mwc-icon slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
-              <span class="full-menu">System Settings</span>
+              <span class="full-menu">Configurations</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
               <mwc-icon slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>

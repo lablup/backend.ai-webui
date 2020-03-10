@@ -31,7 +31,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 
 import JsonToCsv from '../lib/json_to_csv';
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
   IronFlexAlignment,

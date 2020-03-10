@@ -9,7 +9,7 @@ import './backend-ai-error-log-list';
 import 'weightless/card';
 
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
     IronFlex,
     IronFlexAlignment,
