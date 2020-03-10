@@ -85,7 +85,19 @@ export default class BackendAISummary extends BackendAIPage {
 
         ul li {
           list-style: none;
-          font-size: 13px;
+          font-size: 14px;
+        }
+
+        li:before {
+          padding: 3px;
+          transform: rotate(-45deg) translateY(-2px);
+          transition: color ease-in .2s;
+          border: solid;
+          border-width: 0 2px 2px 0;
+          border-color: #242424;
+          margin-right: 10px;
+          content: '';
+          display: inline-block;
         }
 
         span.indicator {
@@ -563,6 +575,10 @@ export default class BackendAISummary extends BackendAIPage {
                 <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
                 <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
               </div>
+              <ul>
+                <li><a href="/environment">Environments</a></li>
+                <li><a href="/settings">System Settings</a></li>
+              </ul>
             </div>
           </lablup-activity-panel>`
       : html``}
