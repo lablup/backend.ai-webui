@@ -794,105 +794,105 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     return html`
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
-            <div id="portrait-bar" class="draggable">
-              <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
-                <div class="portrait-canvas">
-                  <img style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
-                    sizing="contain" />
-                </div>
-                <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
-                  <div class="site-name"><span class="bold">Backend</span>.AI</div>
-                  ${this.siteDescription ?
+          <div id="portrait-bar" class="draggable">
+            <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
+              <div class="portrait-canvas">
+                <img style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
+                  sizing="contain" />
+              </div>
+              <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
+                <div class="site-name"><span class="bold">Backend</span>.AI</div>
+                ${this.siteDescription ?
       html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
       html``
     }
-                </div>
-                <span class="flex"></span>
               </div>
+              <span class="flex"></span>
             </div>
-            <div class="horizontal start-justified layout">
-              <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
-              <div id="group-select-box" class="full-menu" style="height:50px;"></div>
-            </div>
-            <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
-                <mwc-icon slot="graphic" id="activities-icon" class="fg green">view_quilt</mwc-icon>
-                <span class="full-menu">Summary</span>
-              </mwc-list-item>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
-                <mwc-icon slot="graphic" class="fg red">subject</mwc-icon>
-                <span class="full-menu">Sessions</span>
-              </mwc-list-item>
-              ${false ? html`
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}">
-                <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
-                <span class="full-menu">Experiments</span>
-              </mwc-list-item>` : html``}
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}">
-                <mwc-icon slot="graphic" class="fg orange">cloud_upload</mwc-icon>
-                <span class="full-menu">Data &amp; Storage</span>
-              </mwc-list-item>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
-                <mwc-icon slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
-                <span class="full-menu">Statistics</span>
-              </mwc-list-item>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
-                <mwc-icon  slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
-                <span class="full-menu">Settings</span>
-              </mwc-list-item>
-              ${this.is_admin ?
+          </div>
+          <div class="horizontal start-justified layout">
+            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
+            <div id="group-select-box" class="full-menu" style="height:50px;"></div>
+          </div>
+          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
+              <mwc-icon slot="graphic" id="activities-icon" class="fg green">view_quilt</mwc-icon>
+              <span class="full-menu">Summary</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
+              <mwc-icon slot="graphic" class="fg red">subject</mwc-icon>
+              <span class="full-menu">Sessions</span>
+            </mwc-list-item>
+            ${false ? html`
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}">
+              <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
+              <span class="full-menu">Experiments</span>
+            </mwc-list-item>` : html``}
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}">
+              <mwc-icon slot="graphic" class="fg orange">cloud_upload</mwc-icon>
+              <span class="full-menu">Data &amp; Storage</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
+              <mwc-icon slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
+              <span class="full-menu">Statistics</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
+              <mwc-icon  slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
+              <span class="full-menu">Settings</span>
+            </mwc-list-item>
+            ${this.is_admin ?
       html`
-              <h4 class="full-menu" style="height:12px;color:#eee;font-size:12px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
-                <mwc-icon  slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
-                <span class="full-menu">Users</span>
-              </mwc-list-item>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
-                <mwc-icon slot="graphic" class="fg orange" icon="icons:extension">extension</mwc-icon>
-                <span class="full-menu">Environments</span>
-              </mwc-list-item>
-      ` : html``}
-              ${this.is_superadmin ?
+            <h4 class="full-menu" style="height:12px;color:#eee;font-size:12px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
+              <mwc-icon  slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
+              <span class="full-menu">Users</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
+              <mwc-icon slot="graphic" class="fg orange" icon="icons:extension">extension</mwc-icon>
+              <span class="full-menu">Environments</span>
+            </mwc-list-item>
+    ` : html``}
+            ${this.is_superadmin ?
       html`
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
-                <mwc-icon slot="graphic" class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
-                <span class="full-menu">Resources</span>
-              </mwc-list-item>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
-                <mwc-icon slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
-                <span class="full-menu">System Settings</span>
-              </mwc-list-item>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
-                <mwc-icon slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
-                <span class="full-menu">Maintenance</span>
-              </mwc-list-item>
-      ` : html``}
-            </mwc-list>
-            <footer class="full-menu">
-              <div class="terms-of-use" style="margin-bottom:50px;">
-                <small style="font-size:11px;">
-                  <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
-                  ·
-                  <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">Privacy Policy</a>
-                  ·
-                  <a @click="${() => {
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
+              <mwc-icon slot="graphic" class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
+              <span class="full-menu">Resources</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
+              <mwc-icon slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
+              <span class="full-menu">System Settings</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
+              <mwc-icon slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
+              <span class="full-menu">Maintenance</span>
+            </mwc-list-item>
+    ` : html``}
+          </mwc-list>
+          <footer class="full-menu">
+            <div class="terms-of-use" style="margin-bottom:50px;">
+              <small style="font-size:11px;">
+                <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
+                ·
+                <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">Privacy Policy</a>
+                ·
+                <a @click="${() => {
       this.splash.show()
     }}">About</a>
-                  ${this.allow_signout === true ? html`
-                  ·
-                  <a @click="${() => {
+                ${this.allow_signout === true ? html`
+                ·
+                <a @click="${() => {
       this.loginPanel.signout()
     }}">Leave service</a>
-                  ` : html``}
-                </small>
-              </div>
-            </footer>
-            <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
-              <address>
-                <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.03.1.200309</small>
-              </address>
+                ` : html``}
+              </small>
             </div>
+          </footer>
+          <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
+            <address>
+              <small class="sidebar-footer">Lablup Inc.</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.03.1.200309</small>
+            </address>
+          </div>
         </div>
         <div slot="appContent">
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
@@ -944,7 +944,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               </div>
             </section>
           </div>
-          </div>
+        </div>
       </mwc-drawer>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
@@ -955,16 +955,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
 
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Change password</wl-title>
-         <div slot="content">
-            <wl-textfield id="pref-original-password" type="password" label="Original password" maxLength="30"></wl-textfield>
-            <wl-textfield id="pref-new-password" type="password" label="New password" maxLength="30"></wl-textfield>
-            <wl-textfield id="pref-new-password2" type="password" label="New password (again)" maxLength="30"></wl-textfield>
-         </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">Cancel</wl-button>
-            <wl-button class="ok" @click="${this._updateUserPassword}">Update</wl-button>
-         </div>
+       <wl-title level="3" slot="header">Change password</wl-title>
+       <div slot="content">
+        <wl-textfield id="pref-original-password" type="password" label="Original password" maxLength="30"></wl-textfield>
+        <wl-textfield id="pref-new-password" type="password" label="New password" maxLength="30"></wl-textfield>
+        <wl-textfield id="pref-new-password2" type="password" label="New password (again)" maxLength="30"></wl-textfield>
+       </div>
+       <div slot="footer">
+        <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">Cancel</wl-button>
+        <wl-button class="ok" @click="${this._updateUserPassword}">Update</wl-button>
+       </div>
       </wl-dialog>
     `;
   }
