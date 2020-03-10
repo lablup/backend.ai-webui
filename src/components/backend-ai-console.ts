@@ -158,9 +158,26 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
         .drawer-menu,
         paper-listbox.sidebar,
+        mwc-menu.sidebar,
         .drawer-menu footer,
         #sidebar-navbar-footer {
           background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
+        }
+
+        paper-listbox.sidebar,
+        mwc-menu.sidebar {
+          cursor: pointer;
+          color: var(--general-sidebar-color, #eeeeee);;
+        }
+
+        paper-listbox.sidebar a.iron-selected paper-item {
+          color: var(--general-sidebar-selected-color, #eeeeee);
+          background: var(--general-sidebar-selected-background-color, #23252b);
+          border-left: var(--general-sidebar-selected-border-left);
+          padding-left: 11px;
+          border-right: 0;
+          padding-right: 11px;
+          font-weight: 900;
         }
 
         #portrait-bar .bar {
@@ -242,7 +259,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           --input-border-style-disabled: 1px solid #cccccc;
         }
 
-        paper-item {
+        paper-item,
+        mwc-list-item {
           font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           font-weight: 400;
         }
@@ -251,18 +269,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           color: #29b6f6;
         }
 
-        mwc-menu {
+        mwc-menu.user-menu {
           --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height: auto;
           box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
-        mwc-list-item {
+        mwc-menu.user-menu mwc-list-item {
           font-size: 13px;
           text-align: 13px;
         }
 
-        mwc-list-item mwc-icon {
+        mwc-menu.user-menu mwc-list-item mwc-icon {
           --mdc-icon-size: 13px;
         }
 
@@ -920,7 +938,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                                icon="account_circle"
                                @click="${() => this._toggleDropdown()}">
               </mwc-icon-button>
-              <mwc-menu id="dropdown-menu" absolute x=-50 y=40>
+              <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-50 y=40>
                 <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                     <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
                     Change Password

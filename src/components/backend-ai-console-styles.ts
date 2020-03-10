@@ -594,21 +594,6 @@ export const BackendAiStyles =
       padding: 5px;
     }
 
-    paper-listbox.sidebar {
-      cursor: pointer;
-      color: var(--general-sidebar-color, #eeeeee);;
-    }
-
-    paper-listbox.sidebar a.iron-selected paper-item {
-      color: var(--general-sidebar-selected-color, #eeeeee);
-      background: var(--general-sidebar-selected-background-color, #23252b);
-      border-left: var(--general-sidebar-selected-border-left);
-      padding-left: 11px;
-      border-right: 0;
-      padding-right: 11px;
-      font-weight: 900;
-    }
-
     paper-toolbar span.welcome {
       margin-right: 30px;
       color: var(--general-menu-color);
