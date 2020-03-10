@@ -576,8 +576,10 @@ export default class BackendAISummary extends BackendAIPage {
                 <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
               </div>
               <ul>
-                <li><a href="/environment">Environments</a></li>
-                <li><a href="/settings">System Settings</a></li>
+                <li><a href="/environment">Update environment images</a></li>
+                <li><a href="/agent">Check resources</a></li>
+                <li><a href="/settings">Change system settings</a></li>
+                <li><a href="/environment">System maintenance</a></li>
               </ul>
             </div>
           </lablup-activity-panel>`
