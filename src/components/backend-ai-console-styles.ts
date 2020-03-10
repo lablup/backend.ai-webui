@@ -764,6 +764,18 @@ export const BackendAiStyles =
       background-color: var(--paper-pink-a200);
     }
 
+    .bg-purple {
+      background-color: var(--paper-purple-400);
+    }
+
+    .bg-brown {
+      background-color: var(--paper-brown-400);
+    }
+
+    .bg-blue-gray {
+      background-color: var(--paper-blue-gray-400);
+    }
+
     .white {
       color: #ffffff !important;
     }
@@ -789,6 +801,14 @@ export const BackendAiStyles =
     }
 
     .fg.orange {
+      color: var(--paper-orange-400) !important;
+    }
+
+    .fg.deep-orange {
+      color: var(--paper-deep-orange-400) !important;
+    }
+
+    .fg.amber {
       color: var(--paper-amber-400) !important;
     }
 
@@ -810,6 +830,22 @@ export const BackendAiStyles =
 
     .fg.pink {
       color: var(--paper-pink-a200) !important;
+    }
+
+    .fg.brown {
+      color: var(--paper-brown-400) !important;
+    }
+
+    .fg.blue-gray {
+      color: var(--paper-blue-gray-400) !important;
+    }
+
+    .fg.purple {
+      color: var(--paper-purple-400) !important;
+    }
+
+    .fg.deep-purple {
+      color: var(--paper-deep-purple-400) !important;
     }
 
     /* Drawer */

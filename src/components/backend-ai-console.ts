@@ -621,6 +621,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           this.sidebarMenu.selected = 10;
           this.updateTitleColor('var(--paper-pink-800)', '#efefef');
           break;
+        case 'information':
+          this.menuTitle = 'Information';
+          this.sidebarMenu.selected = 11;
+          this.updateTitleColor('var(--paper-purple-800)', '#efefef');
+          break;
         case 'logs':
           this.menuTitle = 'Logs';
           this.sidebarMenu.selected = null;
@@ -869,6 +874,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <span class="flex"></span>
                 </paper-item>
               </a>
+              <a ?selected="${this._page === 'information'}" href="/information" tabindex="-1" role="menuitem">
+                <paper-item link>
+                  <iron-icon class="fg purple" icon="icons:info"></iron-icon>
+                  <span class="full-menu">Information</span>
+                  <span class="flex"></span>
+                </paper-item>
+              </a>
       ` : html``}
             </paper-listbox>
             <footer class="full-menu">
@@ -943,6 +955,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
                 <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
+                <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
               </div>
             </section>

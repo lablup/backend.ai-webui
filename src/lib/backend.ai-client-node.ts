@@ -224,6 +224,12 @@ class Client {
   }
 
   /**
+   * Return the server-side manager version.
+   */
+  get apiVersion() {
+    return this._apiVersion;
+  }
+  /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
    * @param {Request} rqst - Request object to send
@@ -2668,7 +2674,7 @@ class UserConfig {
 
   /**
    * Update script dotfile of a keypair.
-   * 
+   *
    * @param {string} data - text content of script dotfile.
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
@@ -2684,7 +2690,7 @@ class UserConfig {
 
   /**
    * Delete script dotfile of a keypair.
-   * 
+   *
    * @param {string} path - path of script dotfile.
    */
   delete_dotfile_script(path: string) {
