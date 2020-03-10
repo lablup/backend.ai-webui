@@ -94,6 +94,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: String}) proxy_url = '';
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
+  @property({type: String}) edition = 'Open Source';
   @property({type: Array}) groups = Array();
   @property({type: String}) current_group = '';
   @property({type: Object}) plugins = Object();
@@ -321,6 +322,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (typeof config.general !== "undefined" && 'connectionServer' in config.general) {
       this.connection_server = config.general.connectionServer;
       console.log(this.connection_server);
+    }
+    if (typeof config.general !== "undefined" && 'edition' in config.license) {
+      this.edition = config.license.edition;
+      console.log(this.edition);
     }
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
