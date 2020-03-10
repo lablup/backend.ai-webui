@@ -1821,7 +1821,7 @@ class ContainerImage {
     }
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
-      resource = {'cpu': '1', 'mem': '512m'}
+      resource = {'cpu': '1', 'mem': '512m'};
     }
     return this.client.createIfNotExists(registry + name, sessionId, resource).then((response) => {
       return this.client.destroyKernel(sessionId);
@@ -2668,7 +2668,7 @@ class UserConfig {
 
   /**
    * Update script dotfile of a keypair.
-   * 
+   *
    * @param {string} data - text content of script dotfile.
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
@@ -2684,7 +2684,7 @@ class UserConfig {
 
   /**
    * Delete script dotfile of a keypair.
-   * 
+   *
    * @param {string} path - path of script dotfile.
    */
   delete_dotfile_script(path: string) {
