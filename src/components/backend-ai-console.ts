@@ -143,7 +143,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
 
         .drawer-menu mwc-icon {
-          margin-right: 15px;
         }
 
         .drawer-menu h3 {
@@ -157,20 +156,25 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
 
         .drawer-menu,
-        paper-listbox.sidebar,
-        mwc-menu.sidebar,
+        mwc-list.sidebar,
         .drawer-menu footer,
         #sidebar-navbar-footer {
           background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
         }
 
-        paper-listbox.sidebar,
-        mwc-menu.sidebar {
+        mwc-list.sidebar {
           cursor: pointer;
-          color: var(--general-sidebar-color, #eeeeee);;
+          color: var(--general-sidebar-color, #eeeeee);
         }
 
-        paper-listbox.sidebar a.iron-selected paper-item {
+        mwc-list.sidebar mwc-list-item {
+          --mdc-theme-primary: var(--general-sidebar-selected-color, #eeeeee);
+          --mdc-theme-text-primary-on-background: var(--general-sidebar-color, #eeeeee);
+          --mdc-list-item-graphic-margin: 15px;
+          height: 48px;
+        }
+
+        mwc-list.sidebar mwc-list-item[selected] {
           color: var(--general-sidebar-selected-color, #eeeeee);
           background: var(--general-sidebar-selected-background-color, #23252b);
           border-left: var(--general-sidebar-selected-border-left);
@@ -581,6 +585,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
   }
 
+  _menuSelected(e) {
+    // Reserved for future use.
+  }
+
   updated(changedProps: any) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
@@ -594,71 +602,62 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
         this._page = view;
       }
-      switch (view) {
-        case 'summary':
-          this.menuTitle = 'Summary';
-          this.sidebarMenu.selected = 0;
-          this.updateTitleColor('var(--paper-green-800)', '#efefef');
-          break;
-        case 'job':
-          this.menuTitle = 'Sessions';
-          this.sidebarMenu.selected = 1;
-          this.updateTitleColor('var(--paper-red-800)', '#efefef');
-          break;
-        case 'experiment':
-          this.menuTitle = 'Experiments';
-          this.sidebarMenu.selected = 2;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
-        case 'data':
-          this.menuTitle = 'Data & Storage';
-          this.sidebarMenu.selected = 2;
-          this.updateTitleColor('var(--paper-orange-800)', '#efefef');
-          break;
-        case 'statistics':
-          this.menuTitle = 'Statistics';
-          this.sidebarMenu.selected = 3;
-          this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
-          break;
-        case 'usersettings':
-          this.menuTitle = 'Settings & Logs';
-          this.sidebarMenu.selected = 4;
-          this.updateTitleColor('var(--paper-teal-800)', '#efefef');
-          break;
-        case 'credential':
-          this.menuTitle = 'User Credentials & Policies';
-          this.sidebarMenu.selected = 6;
-          this.updateTitleColor('var(--paper-lime-800)', '#efefef');
-          break;
-        case 'environment':
-          this.menuTitle = 'Environments & Presets';
-          this.sidebarMenu.selected = 7;
-          this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
-          break;
-        case 'agent':
-          this.menuTitle = 'Computation Resources';
-          this.sidebarMenu.selected = 8;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
-        case 'settings':
-          this.menuTitle = 'Settings';
-          this.sidebarMenu.selected = 9;
-          this.updateTitleColor('var(--paper-green-800)', '#efefef');
-          break;
-        case 'maintenance':
-          this.menuTitle = 'Maintenance';
-          this.sidebarMenu.selected = 10;
-          this.updateTitleColor('var(--paper-pink-800)', '#efefef');
-          break;
-        case 'logs':
-          this.menuTitle = 'Logs';
-          this.sidebarMenu.selected = null;
-          this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
-          break;
-        default:
-          this.menuTitle = 'LOGIN REQUIRED';
-          this.sidebarMenu.selected = 0;
-      }
+      this._updateSidebar(view);
+    }
+  }
+
+  _updateSidebar(view) {
+    switch (view) {
+      case 'summary':
+        this.menuTitle = 'Summary';
+        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        break;
+      case 'job':
+        this.menuTitle = 'Sessions';
+        this.updateTitleColor('var(--paper-red-800)', '#efefef');
+        break;
+      case 'experiment':
+        this.menuTitle = 'Experiments';
+        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+        break;
+      case 'data':
+        this.menuTitle = 'Data & Storage';
+        this.updateTitleColor('var(--paper-orange-800)', '#efefef');
+        break;
+      case 'statistics':
+        this.menuTitle = 'Statistics';
+        this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
+        break;
+      case 'usersettings':
+        this.menuTitle = 'Settings & Logs';
+        this.updateTitleColor('var(--paper-teal-800)', '#efefef');
+        break;
+      case 'credential':
+        this.menuTitle = 'User Credentials & Policies';
+        this.updateTitleColor('var(--paper-lime-800)', '#efefef');
+        break;
+      case 'environment':
+        this.menuTitle = 'Environments & Presets';
+        this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
+        break;
+      case 'agent':
+        this.menuTitle = 'Computation Resources';
+        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+        break;
+      case 'settings':
+        this.menuTitle = 'Settings';
+        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        break;
+      case 'maintenance':
+        this.menuTitle = 'Maintenance';
+        this.updateTitleColor('var(--paper-pink-800)', '#efefef');
+        break;
+      case 'logs':
+        this.menuTitle = 'Logs';
+        this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
+        break;
+      default:
+        this.menuTitle = 'LOGIN REQUIRED';
     }
   }
 
@@ -768,6 +767,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  _moveTo(url) {
+    window.history.pushState({}, '', url);
+    store.dispatch(navigate(decodeURIComponent(url), {}));
+  }
+
   _moveToLogPage() {
     let currentPage = window.location.toString().split(/[\/]+/).pop();
     window.history.pushState({}, '', '/usersettings');
@@ -822,84 +826,60 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
               <div id="group-select-box" class="full-menu" style="height:50px;"></div>
             </div>
-            <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
-              <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <mwc-icon id="activities-icon" class="fg green" icon="icons:view-quilt">view_quilt</mwc-icon>
-                  <span class="full-menu">Summary</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'job'}" href="/job" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <mwc-icon class="fg red" icon="icons:subject">subject</mwc-icon>
-                  <span class="full-menu">Sessions</span>
-                </paper-item>
-              </a>
+            <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
+                <mwc-icon slot="graphic" id="activities-icon" class="fg green">view_quilt</mwc-icon>
+                <span class="full-menu">Summary</span>
+              </mwc-list-item>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
+                <mwc-icon slot="graphic" class="fg red">subject</mwc-icon>
+                <span class="full-menu">Sessions</span>
+              </mwc-list-item>
               ${false ? html`
-              <paper-item disabled>
-                <mwc-icon class="fg blue" icon="icons:pageview">pageview</mwc-icon>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}">
+                <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
                 <span class="full-menu">Experiments</span>
-              </paper-item>` : html``}
-              <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <mwc-icon class="fg orange" icon="vaadin:folder-open-o">cloud_upload</mwc-icon>
-                  <span class="full-menu">Data &amp; Storage</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
-                <paper-item link>
-                  <mwc-icon class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
-                  <span class="full-menu">Statistics</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <mwc-icon class="fg teal" icon="icons:settings">settings</mwc-icon>
-                  <span class="full-menu">Settings</span>
-                </paper-item>
-              </a>
-
+              </mwc-list-item>` : html``}
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}">
+                <mwc-icon slot="graphic" class="fg orange">cloud_upload</mwc-icon>
+                <span class="full-menu">Data &amp; Storage</span>
+              </mwc-list-item>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
+                <mwc-icon slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
+                <span class="full-menu">Statistics</span>
+              </mwc-list-item>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
+                <mwc-icon  slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
+                <span class="full-menu">Settings</span>
+              </mwc-list-item>
               ${this.is_admin ?
       html`
-              <h4 class="full-menu" style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
-
-              <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
-                <paper-item link ?disabled="${!this.is_admin}">
-                  <mwc-icon class="fg lime" icon="icons:face">face</mwc-icon>
-                  <span class="full-menu">Users</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <mwc-icon class="fg orange" icon="icons:extension">extension</mwc-icon>
-                  <span class="full-menu">Environments</span>
-                </paper-item>
-              </a>
+              <h4 class="full-menu" style="height:12px;color:#eee;font-size:12px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
+                <mwc-icon  slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
+                <span class="full-menu">Users</span>
+              </mwc-list-item>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
+                <mwc-icon slot="graphic" class="fg orange" icon="icons:extension">extension</mwc-icon>
+                <span class="full-menu">Environments</span>
+              </mwc-list-item>
       ` : html``}
               ${this.is_superadmin ?
       html`
-              <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
-                <paper-item link ?disabled="${!this.is_admin}">
-                  <mwc-icon class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
-                  <span class="full-menu">Resources</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <mwc-icon class="fg green" icon="icons:settings">settings</mwc-icon>
-                  <span class="full-menu">System Settings</span>
-                  <span class="flex"></span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'maintenance'}" href="/maintenance" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <mwc-icon class="fg pink" icon="icons:build">build</mwc-icon>
-                  <span class="full-menu">Maintenance</span>
-                  <span class="flex"></span>
-                </paper-item>
-              </a>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
+                <mwc-icon slot="graphic" class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
+                <span class="full-menu">Resources</span>
+              </mwc-list-item>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
+                <mwc-icon slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
+                <span class="full-menu">System Settings</span>
+              </mwc-list-item>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
+                <mwc-icon slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
+                <span class="full-menu">Maintenance</span>
+              </mwc-list-item>
       ` : html``}
-            </paper-listbox>
+            </mwc-list>
             <footer class="full-menu">
               <div class="terms-of-use" style="margin-bottom:50px;">
                 <small style="font-size:11px;">
