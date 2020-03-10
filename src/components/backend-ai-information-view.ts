@@ -29,6 +29,11 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: String}) manager_version = '';
   @property({type: String}) manager_version_latest = '';
   @property({type: String}) console_version = '';
+  @property({type: String}) api_version = '';
+  @property({type: String}) docker_version = '';
+  @property({type: String}) pgsql_version = '';
+  @property({type: String}) redis_version = '';
+  @property({type: String}) etcd_version = '';
 
   constructor() {
     super();
@@ -102,14 +107,12 @@ export default class BackendAiInformationView extends BackendAIPage {
               <lablup-shields app="Latest Release" color="darkgreen" description="${this.manager_version_latest}" ui="flat"></lablup-shields>
             </div>
           </div>
-        </div>
-        <div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>API version</div>
             </div>
             <div class="vertical center-justified layout">
-              Backend.AI API
+              ${this.api_version}
             </div>
           </div>
         </div>
@@ -117,31 +120,45 @@ export default class BackendAiInformationView extends BackendAIPage {
         <div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Rescan image list from repository</div>
-              <div class="description">Rescan image list from registered repositories.<br />
-              It may take a long time, so please wait after execution.
+              <div>Docker version</div>
+              <div class="description">Docker version on the cluster
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <wl-button class="fg red" outlined label="Rescan images" icon="refresh">
-                <wl-icon>refresh</wl-icon>
-                <span id="rescan-image-button-desc">Rescan images</span>
-              </wl-button>
+              ${this.docker_version}
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Clean up old images</div>
-              <div class="description">Clean up old images from docker image list.
+              <div>PostgreSQL version</div>
+              <div class="description">Database system for Backend.AI
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <wl-button class="fg red" disabled outlined label="Clean up images" icon="delete">
-                <wl-icon>delete</wl-icon>
-                Clean up images
-              </wl-button>
+              ${this.pgsql_version}
             </div>
           </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>ETCD version</div>
+              <div class="description">Settings registry for Backend.AI
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+              ${this.etcd_version}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>Redis version</div>
+              <div class="description">Cache / temporary storage for Backend.AI. <br />Also uses as asynchronous communication along agents.
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+              ${this.redis_version}
+            </div>
+          </div>
+
         </div>
       </wl-card>
     `;
@@ -163,12 +180,17 @@ export default class BackendAiInformationView extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-
+      return;
     }
   }
   updateInformation() {
     this.manager_version = window.backendaiclient.managerVersion;
     this.console_version = window.packageVersion;
+    this.api_version = window.backendaiclient.apiVersion;
+    this.docker_version = '';
+    this.pgsql_version = '';
+    this.redis_version = '';
+    this.etcd_version = '';
   }
 }
 
