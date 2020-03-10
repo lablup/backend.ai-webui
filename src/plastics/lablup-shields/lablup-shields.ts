@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {css, html, LitElement} from "lit-element";
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
+import {css, customElement, html, LitElement, property} from "lit-element";
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
 
 /**
@@ -15,15 +14,17 @@ import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../
  @group Lablup Elements
  @element lablup-shields
  */
-class LablupShields extends LitElement {
+@customElement("lablup-shields")
+export default class LablupShields extends LitElement {
+  public shadowRoot: any; // ShadowRoot
+  @property({type: String}) app = '';
+  @property({type: String}) description = '';
+  @property({type: String}) color = 'green';
+  @property({type: String}) appColor = 'grey';
+  @property({type: String}) ui = 'flat';
+
   constructor() {
     super();
-    setPassiveTouchGestures(true);
-    this.app = '';
-    this.description = '';
-    this.color = 'green';
-    this.appColor = 'grey';
-    this.ui = 'flat';
   }
 
   static get styles() {
@@ -40,7 +41,7 @@ class LablupShields extends LitElement {
           line-height: 11px;
           padding: 4px;
           display: block;
-          color: #fff;
+          color: #ffffff;
         }
 
         .round {
@@ -49,35 +50,11 @@ class LablupShields extends LitElement {
       `];
   }
 
-  static get is() {
-    return 'lablup-shields';
-  }
-
-  static get properties() {
-    return {
-      app: {
-        type: String
-      },
-      description: {
-        type: String
-      },
-      color: {
-        type: String
-      },
-      appColor: {
-        type: String
-      },
-      ui: {
-        type: String
-      }
-    }
-  }
-
   get _colorScheme() {
     return {
-      "brightgreen": {"colorB": "#4c1", "colorT": "#222222"},
-      "lightgreen": {"colorB": "#F3F5D0", "colorT": "#222222"},
-      "green": {"colorB": "#97CA00"},
+      "brightgreen": {"colorB": "#44cc11", "colorT": "#222222"},
+      "lightgreen": {"colorB": "#f3f5d0", "colorT": "#222222"},
+      "green": {"colorB": "#97ca00"},
       "darkgreen": {"colorB": "#457B3B"},
       "yellow": {"colorB": "#dfb317"},
       "yellowgreen": {"colorB": "#a4a61d"},
@@ -85,8 +62,8 @@ class LablupShields extends LitElement {
       "red": {"colorB": "#e05d44"},
       "blue": {"colorB": "#007ec6"},
       "lightblue": {"colorB": "#caedfc", "colorT": "#222222"},
-      "grey": {"colorB": "#555"},
-      "gray": {"colorB": "#555"},
+      "grey": {"colorB": "#555555"},
+      "gray": {"colorB": "#555555"},
       "lightgrey": {"colorB": "#9f9f9f"},
       "lightgray": {"colorB": "#9f9f9f"}
     }
@@ -174,4 +151,8 @@ class LablupShields extends LitElement {
   }
 }
 
-customElements.define(LablupShields.is, LablupShields);
+declare global {
+  interface HTMLElementTagNameMap {
+    'lablup-shields': LablupShields;
+  }
+}
