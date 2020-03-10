@@ -197,6 +197,23 @@ export default class BackendAiStorageList extends BackendAIPage {
           display: none;
         }
 
+        .breadcrumb li:before {
+          padding: 3px;
+          transform: rotate(-45deg) translateY(-2px);
+          transition: color ease-in .2s;
+          border: solid;
+          border-width: 0 2px 2px 0;
+          border-color: #242424;
+          margin-right: 10px;
+          content: '';
+          display: inline-block;
+        }
+
+        .breadcrumb li {
+          display: inline-block;
+          font-size: 16px;
+        }
+
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
@@ -433,11 +450,14 @@ export default class BackendAiStorageList extends BackendAIPage {
 
           <div class="breadcrumb">
           ${this.explorer.breadcrumb ? html`
+          <ul>
               ${this.explorer.breadcrumb.map(item => html`
-               <wl-icon>keyboard_arrow_right</wl-icon>
-               <wl-button outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</wl-button>
+               <li>
+                 <a outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</a>
+               </li>
               `)}
-              ` : html``}
+          </ul>
+          ` : html``}
           </div>
           <div class="horizontal layout folder-action-buttons">
             <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
