@@ -1,6 +1,8 @@
 import {css} from 'lit-element';
+import {PaperColor} from "./paper-color";
 
-export const BackendAiStyles =
+export const BackendAiStyles = [
+  PaperColor,
   // language=CSS
   css`
     :host > *, html {
@@ -35,8 +37,6 @@ export const BackendAiStyles =
       --general-sidebar-topbar-color-4: #222222;
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
-      --general-sidebar-topbar-shadow: {
-      };
       --general-sidebar-selected-color: var(--paper-green-400);
       --general-sidebar-selected-background-color: rgba(244, 245, 247, 1); /* removed transparent */
       --general-sidebar-selected-background-gradient-color: transparent;
@@ -531,4 +531,4 @@ export const BackendAiStyles =
     vaadin-grid {
       font-family: var(--general-font-family);
     }
-  `;
+  `];
