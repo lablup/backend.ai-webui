@@ -33,17 +33,18 @@ export const BackendAiConsoleStyles =
       background-color: transparent;
       color: var(--general-sidebar-topbar-color);
       height: 80px;
-      @apply --general-sidebar-topbar-shadow;
     }
 
     .drawer-menu h3 {
+      height: 12px;
+      font-weight: 100;
       font-size: 12px;
       font-weight: 400;
       padding: 5px 15px;
       margin: 0;
       display: block;
       color: var(--general-sidebar-h3-color);
-      border-bottom: var(--general-sidebar-h3-border-color);
+      border-top: var(--general-sidebar-h3-border-color);
     }
 
     .drawer-menu,
@@ -231,28 +232,6 @@ export const BackendAiConsoleStyles =
       #toolbar-username, #toolbar-back-button {
         display: none;
       }
-    }
-
-    .copy-link-input {
-      font-size: inherit;
-      border: 0;
-      border-bottom: 1px solid #eeeeee;
-      width: 100%;
-    }
-
-    div.ui-draggable {
-      width: 100%;
-    }
-
-    .lazyload {
-      opacity: 0;
-      transform: scale(0.8);
-    }
-
-    .lazyloaded {
-      opacity: 1;
-      transform: scale(1);
-      transition: all 400ms;
     }
 
     .drawer-menu::-webkit-scrollbar {

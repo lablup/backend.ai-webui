@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -119,15 +119,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   static get styles() {
     return [
       BackendAiStyles,
+      BackendAiConsoleStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning,
-      BackendAiConsoleStyles,
-      // language=CSS
-      css`
-
-      `];
+      IronPositioning];
   }
 
   firstUpdated() {
@@ -688,7 +684,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </mwc-list-item>
             ${this.is_admin ?
       html`
-            <h4 class="full-menu" style="height:12px;color:#eee;font-size:12px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
+            <h3 class="full-menu">Administration</h3>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
               <mwc-icon  slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
               <span class="full-menu">Users</span>

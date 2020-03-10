@@ -7,14 +7,6 @@ export const BackendAiStyles =
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-      --general-menu-background-color-r: 255;
-      --general-menu-background-color-g: 255;
-      --general-menu-background-color-b: 255;
-      --general-menu-background-color-3: rgba(var(--general-menu-background-color-r),
-      var(--general-menu-background-color-g),
-      var(--general-menu-background-color-b),
-      1.0);
-      --general-menu-background-color-2: var(--paper-grey-200);
       --general-menu-background-color: var(--paper-green-600);
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
       --general-menu-background-border: rgba(23, 23, 23, 1);
@@ -35,8 +27,8 @@ export const BackendAiStyles =
       --general-background-color: rgba(244, 245, 247, 1);
       --general-sidebar-color: #dddddd;
       --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
-      --general-sidebar-h3-color: #424242;
-      --general-sidebar-h3-border-color: 1px solid #dddddd;
+      --general-sidebar-h3-color: #ccc;
+      --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
       --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1.00);
       --general-sidebar-topbar-background-color-4: var(--paper-grey-200);
@@ -125,26 +117,6 @@ export const BackendAiStyles =
       display: block;
       height: 0;
       clear: both;
-    }
-
-    ul.errorlist {
-      margin: 0;
-      padding: 0;
-    }
-
-    .errorlist li {
-      background-color: #ff7701;
-      color: white;
-      display: block;
-      margin: 0 0 3px;
-      padding: 4px 5px;
-    }
-
-    .copy-link-input {
-      font-size: inherit;
-      border: 0;
-      border-bottom: 1px solid #eeeeee;
-      width: 100%;
     }
 
     div.ui-draggable {
