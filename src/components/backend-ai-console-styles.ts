@@ -37,7 +37,6 @@ export const BackendAiConsoleStyles =
 
     .drawer-menu h3 {
       height: 12px;
-      font-weight: 100;
       font-size: 12px;
       font-weight: 400;
       padding: 5px 15px;
