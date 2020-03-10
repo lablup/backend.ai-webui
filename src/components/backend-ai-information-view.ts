@@ -34,6 +34,8 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: String}) pgsql_version = '';
   @property({type: String}) redis_version = '';
   @property({type: String}) etcd_version = '';
+  @property({type: Boolean}) account_changed = true;
+  @property({type: Boolean}) use_ssl = true;
 
   constructor() {
     super();
@@ -168,7 +170,7 @@ export default class BackendAiInformationView extends BackendAIPage {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <wl-icon>done</wl-icon>
+            ${this.account_changed ? html`<wl-icon>done</wl-icon>` : html`<wl-icon>warning</wl-icon>`}
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
@@ -178,7 +180,7 @@ export default class BackendAiInformationView extends BackendAIPage {
               </div>
             </div>
             <div class="vertical center-justified layout">
-              <wl-icon>done</wl-icon>
+            ${this.use_ssl ? html`<wl-icon>done</wl-icon>` : html`<wl-icon>warning</wl-icon>`}
             </div>
           </div>
         </div>
@@ -201,7 +203,7 @@ export default class BackendAiInformationView extends BackendAIPage {
 
   async _viewStateChanged(active) {
     await this.updateComplete;
-    if (active === false) {
+    if (!active) {
       return;
     }
   }
