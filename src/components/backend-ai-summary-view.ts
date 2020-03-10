@@ -34,6 +34,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) resources = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
+  @property({type: String}) console_version = '';
   @property({type: Number}) cpu_total = 0;
   @property({type: Number}) cpu_used = 0;
   @property({type: String}) cpu_percent = '0';
@@ -258,6 +259,7 @@ export default class BackendAISummary extends BackendAIPage {
 
   _sync_resource_values() {
     this.manager_version = window.backendaiclient.managerVersion;
+    this.console_version = window.packageVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources.gpu.total)) {
@@ -422,6 +424,7 @@ export default class BackendAISummary extends BackendAIPage {
             <div slot="message">
               <div class="layout vertical center flex" style="margin-bottom:5px;">
                 <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+                <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
               </div>
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
