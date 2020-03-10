@@ -23,6 +23,16 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-console-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ `<backend-ai-summary-view>` is a Summary panel of backend.ai console.
+
+ Example:
+ <backend-ai-summary-view active></backend-ai-summary-view>
+
+ @group Lablup Elements
+ @element backend-ai-summary-view
+ */
+
 @customElement("backend-ai-summary-view")
 export default class BackendAISummary extends BackendAIPage {
   @property({type: String}) condition = 'running';
@@ -34,6 +44,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) resources = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
+  @property({type: String}) console_version = '';
   @property({type: Number}) cpu_total = 0;
   @property({type: Number}) cpu_used = 0;
   @property({type: String}) cpu_percent = '0';
@@ -74,7 +85,19 @@ export default class BackendAISummary extends BackendAIPage {
 
         ul li {
           list-style: none;
-          font-size: 13px;
+          font-size: 14px;
+        }
+
+        li:before {
+          padding: 3px;
+          transform: rotate(-45deg) translateY(-2px);
+          transition: color ease-in .2s;
+          border: solid;
+          border-width: 0 2px 2px 0;
+          border-color: #242424;
+          margin-right: 10px;
+          content: '';
+          display: inline-block;
         }
 
         span.indicator {
@@ -258,6 +281,7 @@ export default class BackendAISummary extends BackendAIPage {
 
   _sync_resource_values() {
     this.manager_version = window.backendaiclient.managerVersion;
+    this.console_version = window.packageVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources.gpu.total)) {
@@ -311,6 +335,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = window.backendaiclient.is_superadmin;
+        this.is_admin = window.backendaiclient.is_admin;
         this.authenticated = true;
         if (this.activeConnected) {
           this._refreshHealthPanel();
@@ -321,6 +346,7 @@ export default class BackendAISummary extends BackendAIPage {
       }, true);
     } else {
       this.is_superadmin = window.backendaiclient.is_superadmin;
+      this.is_admin = window.backendaiclient.is_admin;
       this.authenticated = true;
       this._refreshHealthPanel();
       this._refreshInvitations();
@@ -420,9 +446,6 @@ export default class BackendAISummary extends BackendAIPage {
           ${this.is_superadmin ? html`
           <lablup-activity-panel title="Resource Statistics" elevation="1">
             <div slot="message">
-              <div class="layout vertical center flex" style="margin-bottom:5px;">
-                <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-              </div>
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
                   <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
@@ -544,6 +567,23 @@ export default class BackendAISummary extends BackendAIPage {
             </lablup-activity-panel>
             `
     ) : ''}
+    ${this.is_admin
+      ? html`
+          <lablup-activity-panel title="Administration" elevation="1">
+            <div slot="message">
+              <div class="layout vertical center flex" style="margin-bottom:5px;">
+                <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+                <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
+              </div>
+              <ul>
+                <li><a href="/environment">Update environment images</a></li>
+                <li><a href="/agent">Check resources</a></li>
+                <li><a href="/settings">Change system settings</a></li>
+                <li><a href="/environment">System maintenance</a></li>
+              </ul>
+            </div>
+          </lablup-activity-panel>`
+      : html``}
         </div>
       </wl-card>
 `;

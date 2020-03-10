@@ -97,7 +97,18 @@ export default class BackendAiStorageList extends BackendAIPage {
       css`
         vaadin-grid {
           border: 0 !important;
-          font-size: 12px;
+        }
+
+        vaadin-grid.folderlist {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 200px);
+        }
+
+        vaadin-grid.explorer {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 370px);
         }
 
         ul {
@@ -197,14 +208,21 @@ export default class BackendAiStorageList extends BackendAIPage {
           display: none;
         }
 
-        vaadin-grid.folderlist {
-          border: 0;
-          font-size: 14px;
+        .breadcrumb li:before {
+          padding: 3px;
+          transform: rotate(-45deg) translateY(-2px);
+          transition: color ease-in .2s;
+          border: solid;
+          border-width: 0 2px 2px 0;
+          border-color: #242424;
+          margin-right: 10px;
+          content: '';
+          display: inline-block;
         }
 
-        vaadin-grid.explorer {
-          border: 0;
-          font-size: 14px;
+        .breadcrumb li {
+          display: inline-block;
+          font-size: 16px;
         }
 
         mwc-textfield {
@@ -433,11 +451,14 @@ export default class BackendAiStorageList extends BackendAIPage {
 
           <div class="breadcrumb">
           ${this.explorer.breadcrumb ? html`
+          <ul>
               ${this.explorer.breadcrumb.map(item => html`
-               <wl-icon>keyboard_arrow_right</wl-icon>
-               <wl-button outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</wl-button>
+               <li>
+                 <a outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</a>
+               </li>
               `)}
-              ` : html``}
+          </ul>
+          ` : html``}
           </div>
           <div class="horizontal layout folder-action-buttons">
             <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
@@ -1073,22 +1094,22 @@ export default class BackendAiStorageList extends BackendAIPage {
     const newfolder = newfolderEl.value;
     const explorer = this.explorer;
     newfolderEl.reportValidity();
-    if(newfolderEl.checkValidity()) {
-        let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
-          console.log(err);
-          if (err & err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          } else if (err && err.title) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.show(true, err);
-          }
-        })
-        job.then(res => {
-          this.closeDialog('mkdir-dialog');
-          this._clearExplorer();
-        });
+    if (newfolderEl.checkValidity()) {
+      let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
+        console.log(err);
+        if (err & err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        } else if (err && err.title) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.show(true, err);
+        }
+      })
+      job.then(res => {
+        this.closeDialog('mkdir-dialog');
+        this._clearExplorer();
+      });
     } else {
       return;
     }
@@ -1401,17 +1422,17 @@ export default class BackendAiStorageList extends BackendAIPage {
           }
         }
       } else {
-          // custom validation for path name using regex
-          let regex = /^([.a-zA-Z0-9-_]{1,})+(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
-          let isValid = regex.exec(path_info.value);
-          if (!isValid) {
-            path_info.validationMessage = "Path should start with .(dot) or letters, numbers only."
-          }
+        // custom validation for path name using regex
+        let regex = /^([.a-zA-Z0-9-_]{1,})+(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
+        let isValid = regex.exec(path_info.value);
+        if (!isValid) {
+          path_info.validationMessage = "Path should start with .(dot) or letters, numbers only."
+        }
 
-          return {
-            valid: isValid,
-            customError: !isValid
-          };
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
       }
     }
   }
