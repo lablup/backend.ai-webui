@@ -1070,12 +1070,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       alias = alias.split('/').slice(-1)[0];
       basename = basename.split('/').slice(-1)[0];
 
-      let tags: string[] = [];
+      let tags: object[] = [];
       if (kernelName in this.tags) {
         tags = tags.concat(this.tags[kernelName]);
       }
-      if (prefix != '') {
-        tags.push(prefix);
+      if (prefix != '' && prefix != 'lablup') {
+        tags.push({
+          tag: prefix,
+          color: 'purple'
+        });
       }
       let icon: string = "default.png";
       if (kernelName in this.icons) {
