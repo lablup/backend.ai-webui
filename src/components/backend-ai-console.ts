@@ -759,32 +759,32 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
-              <mwc-icon-button slot="actionItems" id="dropdown-button"
-                               icon="account_circle"
-                               @click="${() => this._toggleDropdown()}">
-              </mwc-icon-button>
-              <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-50 y=40>
-                <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
-                    About
-                </mwc-list-item>
-                <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                    Change Password
-                </mwc-list-item>
-                <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
-                    Preferences
-                </mwc-list-item>
-                <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                    Logs / Errors
-                </mwc-list-item>
-                <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
-                    Log Out
-                </mwc-list-item>
-              </mwc-menu>
+            <mwc-icon-button slot="actionItems" id="dropdown-button"
+                             icon="account_circle"
+                             @click="${() => this._toggleDropdown()}">
+            </mwc-icon-button>
+            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-50 y=40>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
+                  About
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                  Change Password
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                  Preferences
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                  Logs / Errors
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                  Log Out
+              </mwc-list-item>
+            </mwc-menu>
           </mwc-top-app-bar-fixed>
 
           <div class="content">

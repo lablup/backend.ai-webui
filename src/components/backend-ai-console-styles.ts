@@ -274,7 +274,7 @@ export const BackendAiConsoleStyles = [
       #sidebar-navbar-footer {
         -webkit-backdrop-filter: saturate(180%) blur(20px);
         backdrop-filter: saturate(180%) blur(20px);
-        border: 0px none;
+        border: 0;
       }
 
       #sidebar-navbar-footer:before {
