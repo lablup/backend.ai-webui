@@ -27,9 +27,8 @@ import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
 
-import '../lib/backend.ai-client-es6';
-import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+import '../lib/backend.ai-client-es6';
 
 import {
   IronFlex,
@@ -122,7 +121,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   static get styles() {
     return [
-      BackendAiStyles,
       BackendAiConsoleStyles,
       IronFlex,
       IronFlexAlignment,

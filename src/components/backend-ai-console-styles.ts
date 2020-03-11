@@ -1,6 +1,8 @@
 import {css} from 'lit-element';
+import {BackendAiStyles} from "./backend-ai-general-styles";
 
-export const BackendAiConsoleStyles =
+export const BackendAiConsoleStyles = [
+  BackendAiStyles,
   // language=CSS
   css`
     .site-name {
@@ -301,4 +303,4 @@ export const BackendAiConsoleStyles =
         color: var(--general-sidebar-color);
       }
     }
-  `;
+  `];
