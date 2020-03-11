@@ -84,10 +84,6 @@ export const BackendAiConsoleStyles =
       --mdc-list-item-graphic-margin: 0;
     }
 
-    #portrait-bar .bar {
-      background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
-    }
-
     #app-body {
       --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
       --mdc-drawer-border-left: 0;
@@ -198,7 +194,7 @@ export const BackendAiConsoleStyles =
 
     .mini-ui .full-menu {
       display: none;
-      margin:0!important;
+      margin: 0 !important;
     }
 
     .sidebar-footer {
@@ -223,25 +219,6 @@ export const BackendAiConsoleStyles =
 
     #main-panel-toolbar-buttons paper-icon-button {
       min-width: 40px;
-    }
-
-    #main-panel-toolbar-title {
-      padding-top: 4px;
-      line-height: 22px;
-      height: 30px;
-      overflow: hidden;
-    }
-
-    #main-panel-toolbar-title-condensed {
-      font-size: 12px;
-      padding-top: 3px;
-      overflow: hidden;
-    }
-
-    @media screen and (max-width: 699px) {
-      #toolbar-username, #toolbar-back-button {
-        display: none;
-      }
     }
 
     .drawer-menu::-webkit-scrollbar {
@@ -287,7 +264,7 @@ export const BackendAiConsoleStyles =
     }
 
     @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-      #main-toolbar .bar {
+      #main-toolbar {
         /*-webkit-backdrop-filter: saturate(180%) blur(20px);
         backdrop-filter: saturate(180%) blur(20px);*/
       }
