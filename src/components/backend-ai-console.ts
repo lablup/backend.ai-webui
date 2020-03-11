@@ -765,6 +765,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                                @click="${() => this._toggleDropdown()}">
               </mwc-icon-button>
               <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-50 y=40>
+                <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
+                    <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
+                    About
+                </mwc-list-item>
                 <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                     <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
                     Change Password
