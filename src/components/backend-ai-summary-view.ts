@@ -108,6 +108,15 @@ export default class BackendAISummary extends BackendAIPage {
           font-size: 48px;
         }
 
+        a,
+        a:visited {
+          color: #222222;
+        }
+
+        a:hover {
+          color: #3e872d;
+        }
+
         vaadin-progress-bar {
           width: 190px;
           height: 10px;
