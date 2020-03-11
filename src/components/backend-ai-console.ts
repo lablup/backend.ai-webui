@@ -747,7 +747,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.03.1.200309</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.03.2.200311</small>
             </address>
           </div>
         </div>
