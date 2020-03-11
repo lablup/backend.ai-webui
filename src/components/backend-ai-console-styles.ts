@@ -136,6 +136,10 @@ export const BackendAiConsoleStyles = [
       wl-progress-spinner {
         left: calc(50% + 71px);
       }
+
+      .mini-ui wl-progress-spinner {
+        left: calc(50% + 29px);
+      }
     }
 
     .draggable {
