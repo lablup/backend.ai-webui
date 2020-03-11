@@ -39,7 +39,7 @@ export const BackendAiConsoleStyles =
       height: 12px;
       font-size: 12px;
       font-weight: 400;
-      padding: 5px 15px;
+      padding: 5px 15px 10px 15px;
       margin: 0;
       display: block;
       color: var(--general-sidebar-h3-color);
