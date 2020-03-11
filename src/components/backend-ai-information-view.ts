@@ -211,10 +211,10 @@ export default class BackendAiInformationView extends BackendAIPage {
     this.manager_version = window.backendaiclient.managerVersion;
     this.console_version = window.packageVersion;
     this.api_version = window.backendaiclient.apiVersion;
-    this.docker_version = 'Not supported in this version.'; // It uses 20.03 API.
-    this.pgsql_version = 'Not supported in this version.';
-    this.redis_version = 'Not supported in this version.';
-    this.etcd_version = 'Not supported in this version.';
+    this.docker_version = 'Compatible'; // It uses 20.03 API.
+    this.pgsql_version = 'Compatible';
+    this.redis_version = 'Compatible';
+    this.etcd_version = 'Compatible';
   }
 }
 
