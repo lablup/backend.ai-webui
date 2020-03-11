@@ -194,20 +194,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     if (typeof config.general !== "undefined" && 'connectionMode' in config.general) {
       this.connection_mode = config.general.connectionMode;
-      console.log(this.connection_mode);
+      //console.log(this.connection_mode);
     }
     if (typeof config.general !== "undefined" && 'connectionServer' in config.general) {
       this.connection_server = config.general.connectionServer;
-      console.log(this.connection_server);
+      //console.log(this.connection_server);
     }
     if (typeof config.license !== "undefined" && 'edition' in config.license) {
       this.edition = config.license.edition;
-      console.log(this.edition);
+      //console.log(this.edition);
     }
     window.packageEdition = this.edition;
     if (typeof config.license !== "undefined" && 'validUntil' in config.license) {
       this.validUntil = config.license.validUntil;
-      console.log(this.validUntil);
+      //console.log(this.validUntil);
     }
     window.packageValidUntil = this.validUntil;
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
@@ -443,7 +443,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
         this._page = view;
       }
-      console.log(view);
       this._updateSidebar(view);
     }
   }

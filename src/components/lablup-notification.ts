@@ -77,7 +77,7 @@ export default class LablupNotification extends LitElement {
 
   firstUpdated() {
     if ("Notification" in window) {
-      console.log(Notification.permission);
+      //console.log(Notification.permission);
       if (Notification.permission === "granted") {
         this.supportDesktopNotification = true;
       } else if (Notification.permission !== "denied") {

@@ -1405,8 +1405,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _validatePathName() {
     let path_info = this.shadowRoot.querySelector('#mkdir-name');
-    console.dir(path_info)
-    console.dir(path_info.nativeValidity);
     path_info.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
