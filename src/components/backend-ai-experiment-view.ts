@@ -31,7 +31,7 @@ import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
 
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,

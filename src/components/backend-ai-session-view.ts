@@ -17,7 +17,7 @@ import "@material/mwc-icon-button/mwc-icon-button";
 import "@material/mwc-menu/mwc-menu";
 
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,

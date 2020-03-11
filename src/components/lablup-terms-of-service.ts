@@ -11,7 +11,7 @@ import 'weightless/dialog';
 import 'weightless/title';
 import 'weightless/checkbox';
 
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
   IronFlexAlignment,

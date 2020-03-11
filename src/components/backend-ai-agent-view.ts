@@ -13,7 +13,7 @@ import 'weightless/tab-group';
 
 import './backend-ai-agent-list';
 import './backend-ai-scaling-group-list';
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 
 /**
  Backend.AI Agent view page

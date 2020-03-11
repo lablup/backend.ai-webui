@@ -1,6 +1,6 @@
 # backend.ai-console
 
-Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin.
+Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
 
 Backend.AI console focuses to 
 

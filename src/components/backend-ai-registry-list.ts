@@ -30,7 +30,7 @@ import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 import './backend-ai-indicator';
@@ -194,7 +194,7 @@ class BackendAIRegistryList extends BackendAIPage {
       }
       return;
     }
-    
+
     let input = {};
     input[""] = url;
 
@@ -206,7 +206,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
     input['type'] = registerType;
     if (registerType === 'harbor') {
-      if (projectName && projectName !== '') { 
+      if (projectName && projectName !== '') {
         input['project'] = projectName;
       } else {
         return;
@@ -297,7 +297,7 @@ class BackendAIRegistryList extends BackendAIPage {
       this.shadowRoot.querySelector('#project-name-validation').textContent = '*For harbor only!';
     } else {
       this.shadowRoot.querySelector('#project-name-validation').textContent = 'project name is required.';
-    } 
+    }
   }
 
   _validateUrl() {
@@ -305,7 +305,7 @@ class BackendAIRegistryList extends BackendAIPage {
     let validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
     // regular expression for URL check
     let expression = "^(http|https|ftp)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$";
-    let regex = new RegExp(expression); 
+    let regex = new RegExp(expression);
     if (url && url.match(regex)) {
       this.shadowRoot.querySelector('#add-registry-url').invalid = false;
       validationMessage.style.display = 'none';

@@ -32,7 +32,7 @@ import './lablup-loading-indicator';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
