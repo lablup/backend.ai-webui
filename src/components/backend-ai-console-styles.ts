@@ -17,6 +17,11 @@ export const BackendAiConsoleStyles =
     .site-name > .bold {
       font-weight: 400;
     }
+    
+    .mini-ui .site-name,
+    .mini-ui #sidebar-navbar-footer {
+      display: none;
+    }
 
     .drawer-menu {
       overflow-y: auto;
