@@ -224,6 +224,12 @@ class Client {
   }
 
   /**
+   * Return the server-side manager version.
+   */
+  get apiVersion() {
+    return this._apiVersion;
+  }
+  /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
    * @param {Request} rqst - Request object to send

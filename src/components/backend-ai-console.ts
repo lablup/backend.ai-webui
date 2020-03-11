@@ -63,6 +63,8 @@ declare global {
     isElectron: boolean;
     buildVersion: string;
     packageVersion: string;
+    packageEdition: string;
+    packageValidUntil: string;
     __local_proxy: string;
     lablupNotification: any;
     mini_ui: boolean;
@@ -88,6 +90,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: String}) proxy_url = '';
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
+  @property({type: String}) edition = 'Open Source';
+  @property({type: String}) validUntil = '';
   @property({type: Array}) groups = Array();
   @property({type: String}) current_group = '';
   @property({type: Object}) plugins = Object();
@@ -198,6 +202,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       console.log(this.connection_server);
     }
+    if (typeof config.license !== "undefined" && 'edition' in config.license) {
+      this.edition = config.license.edition;
+      console.log(this.edition);
+    }
+    window.packageEdition = this.edition;
+    if (typeof config.license !== "undefined" && 'validUntil' in config.license) {
+      this.validUntil = config.license.validUntil;
+      console.log(this.validUntil);
+    }
+    window.packageValidUntil = this.validUntil;
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
@@ -422,7 +436,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
@@ -481,6 +495,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       case 'maintenance':
         this.menuTitle = 'Maintenance';
         this.updateTitleColor('var(--paper-pink-800)', '#efefef');
+        break;
+      case 'information':
+        this.menuTitle = 'Information';
+        this.updateTitleColor('var(--paper-purple-800)', '#efefef');
         break;
       case 'logs':
         this.menuTitle = 'Logs';
@@ -708,6 +726,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
               <span class="full-menu">Maintenance</span>
             </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
+              <mwc-icon slot="graphic" class="fg purple">info</mwc-icon>
+              <span class="full-menu">Information</span>
+            </mwc-list-item>
     ` : html``}
           </mwc-list>
           <footer class="full-menu">
@@ -717,14 +739,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 ·
                 <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">Privacy Policy</a>
                 ·
-                <a @click="${() => {
-      this.splash.show()
-    }}">About</a>
+                <a @click="${() =>this.splash.show()}">About</a>
                 ${this.allow_signout === true ? html`
                 ·
-                <a @click="${() => {
-      this.loginPanel.signout()
-    }}">Leave service</a>
+                <a @click="${() => this.loginPanel.signout()}">Leave service</a>
                 ` : html``}
               </small>
             </div>
@@ -782,6 +800,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
                 <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
+                <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
               </div>
             </section>

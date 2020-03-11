@@ -12,6 +12,8 @@ import 'weightless/icon';
 export default class BackendAISplash extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
+  @property({type: String}) edition = 'Open Source';
+  @property({type: String}) validUntil = '';
 
   constructor() {
     super();
@@ -65,6 +67,8 @@ export default class BackendAISplash extends LitElement {
   }
 
   show() {
+    this.edition = window.packageEdition;
+    this.validUntil = window.packageValidUntil;
     this.dialog.show();
   }
 
@@ -85,7 +89,10 @@ export default class BackendAISplash extends LitElement {
           <div class="splash-information">
             <ul>
               <li>Backend.AI Console <span id="version-detail" class="detail">${window.packageVersion}</span></li>
-              <li><span id="license-detail">Enterprise Edition</span></li>
+              <li><span id="license-detail">${this.edition} Edition</span></li>
+              ${this.validUntil !== '' ? html`
+              <li><span id="valid-until" class="detail">Subscription is active until ${this.validUntil}</span></li>
+              ` : html``}
               <li><span id="mode-detail" class="detail">${window.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${window.buildVersion}</span></li>
             </ul>
             <ul>

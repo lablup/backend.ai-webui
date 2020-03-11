@@ -404,6 +404,10 @@ export const BackendAiStyles = [
       background-color: var(--paper-pink-a200);
     }
 
+    .bg-purple {
+      background-color: var(--paper-purple-400);
+    }
+
     .white {
       color: #ffffff !important;
     }
@@ -450,6 +454,10 @@ export const BackendAiStyles = [
 
     .fg.pink {
       color: var(--paper-pink-a200) !important;
+    }
+
+    .fg.purple {
+      color: var(--paper-purple-400) !important;
     }
 
     /* Layout */
