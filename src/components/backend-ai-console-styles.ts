@@ -17,7 +17,7 @@ export const BackendAiConsoleStyles =
     .site-name > .bold {
       font-weight: 400;
     }
-    
+
     .mini-ui .site-name,
     .mini-ui #sidebar-navbar-footer {
       display: none;
@@ -78,6 +78,10 @@ export const BackendAiConsoleStyles =
       border-right: 0;
       padding-right: 11px;
       font-weight: 900;
+    }
+
+    .mini-ui mwc-list.sidebar mwc-list-item {
+      --mdc-list-item-graphic-margin: 0;
     }
 
     #portrait-bar .bar {
@@ -194,7 +198,9 @@ export const BackendAiConsoleStyles =
 
     .mini-ui .full-menu {
       display: none;
+      margin:0!important;
     }
+
     .sidebar-footer {
       text-align: center;
       margin-left: auto;
@@ -211,7 +217,7 @@ export const BackendAiConsoleStyles =
     }
 
     .mini-ui .portrait-canvas {
-      margin-left: 12px;
+      margin-left: 8px;
       padding-right: 0;
     }
 

@@ -323,8 +323,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     } else { // Open drawer
       if (this.mini_ui) {
-        this.appBody.style.setProperty('--mdc-drawer-width', '71px');
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '71px');
+        this.appBody.style.setProperty('--mdc-drawer-width', '54px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', '190px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
