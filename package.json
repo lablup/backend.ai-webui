@@ -58,12 +58,14 @@
     "@vaadin/vaadin-upload": "^4.2.2",
     "@vanillawc/wc-codemirror": "^1.4.4",
     "@webcomponents/webcomponentsjs": "^2.4.2",
+    "bufferutil": "^4.0.1",
     "d3": "^5.15.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "log": "^6.0.0",
     "markty-toml": "0.1.1",
     "tus-js-client": "^1.8.0",
+    "utf-8-validate": "^5.0.2",
     "weightless": "^0.0.37"
   },
   "devDependencies": {
