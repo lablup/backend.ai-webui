@@ -1,3 +1,4 @@
+// Preload script for electron environment
 const { ipcRenderer } = require('electron');
 global.appRoot = window.appRoot = __dirname;
 
@@ -7,7 +8,7 @@ process.once('loaded', () => {
   });
 
   ipcRenderer.on('app-close-window', _ => {
-    let event = new CustomEvent("backend-ai-logout", {"detail": ""});
+    let event = new CustomEvent("backend-ai-app-close", {"detail": ""});
     document.dispatchEvent(event);
     setTimeout(function () {
       ipcRenderer.send('app-closed');

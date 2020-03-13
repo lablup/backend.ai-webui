@@ -13,7 +13,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 
 @customElement("lablup-slider")
 export default class LablupSlider extends LitElement {
@@ -65,6 +65,7 @@ export default class LablupSlider extends LitElement {
       <mwc-slider id="slider" class="${this.id}" value="${this.value}"
           min="${this.min}" max="${this.max}" step="${this.step}"
           ?pin="${this.pin}"
+          ?disabled="${this.disabled}"
           ?markers="${this.markers}"
           @change="${this.syncToText}">
       </mwc-slider>

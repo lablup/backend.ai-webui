@@ -13,7 +13,7 @@ import 'weightless/tab-group';
 
 import './backend-ai-agent-list';
 import './backend-ai-scaling-group-list';
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 
 /**
  Backend.AI Agent view page
@@ -75,7 +75,7 @@ export default class BackendAIAgentView extends BackendAIPage {
             <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Connected</wl-tab>
             <wl-tab value="terminated-lists" @click="${(e) => this._showTab(e.target)}">Terminated</wl-tab>
             <wl-tab value="maintenance-lists" disabled>Maintaining</wl-tab>
-            <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>Scaling Group</wl-tab>
+            <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>Resource Group</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
         </h3>

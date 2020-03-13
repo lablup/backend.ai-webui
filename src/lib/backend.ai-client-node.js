@@ -137,6 +137,7 @@ class Client {
         this.scalingGroup = new ScalingGroup(this);
         this.registry = new Registry(this);
         this.setting = new Setting(this);
+        this.userConfig = new UserConfig(this);
         this.domain = new Domain(this);
         this._features = {}; // feature support list
         //if (this._config.connectionMode === 'API') {
@@ -148,6 +149,12 @@ class Client {
      */
     get managerVersion() {
         return this._managerVersion;
+    }
+    /**
+     * Return the server-side manager version.
+     */
+    get apiVersion() {
+        return this._apiVersion;
     }
     /**
      * Promise wrapper for asynchronous request to Backend.AI manager.
@@ -234,11 +241,42 @@ class Client {
                         + `${resp.status} ${resp.statusText} - ${body.title}`;
             }
             throw {
+                isError: true,
+                timestamp: new Date().toUTCString(),
                 type: errorType,
+                requestUrl: rqst.uri,
+                requestMethod: rqst.method,
+                requestParameters: rqst.body,
+                statusCode: resp.status,
+                statusText: resp.statusText,
                 title: errorTitle,
                 message: errorMsg,
             };
         }
+        let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+        if (previous_log) {
+            if (previous_log.length > 5000) {
+                previous_log = previous_log.slice(1, 5000);
+            }
+        }
+        let log_stack = Array();
+        let current_log = {
+            "isError": false,
+            "timestamp": new Date().toUTCString(),
+            "type": "",
+            "requestUrl": rqst.uri,
+            "requestMethod": rqst.method,
+            "requestParameters": rqst.body,
+            "statusCode": resp.status,
+            "statusText": resp.statusText,
+            "title": body.title,
+            "message": ""
+        };
+        log_stack.push(current_log);
+        if (previous_log) {
+            log_stack = log_stack.concat(previous_log);
+        }
+        localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
         return body;
     }
     /**
@@ -449,14 +487,20 @@ class Client {
             if (resources['mem']) {
                 config['mem'] = resources['mem'];
             }
-            if (resources['gpu']) { // Temporary fix for resource handling
-                config['cuda.device'] = parseFloat(resources['gpu']).toFixed(2);
+            if (resources['gpu']) { // Legacy support (till 19.09)
+                config['cuda.device'] = parseInt(resources['gpu']);
             }
-            if (resources['vgpu']) { // Temporary fix for resource handling
+            if (resources['cuda.device']) { // Generalized device information from 20.03
+                config['cuda.device'] = parseInt(resources['cuda.device']);
+            }
+            if (resources['vgpu']) { // Legacy support (till 19.09)
                 config['cuda.shares'] = parseFloat(resources['vgpu']).toFixed(2); // under 19.03
             }
             else if (resources['fgpu']) {
                 config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
+            }
+            if (resources['cuda.shares']) { // Generalized device information from 20.03
+                config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
             }
             if (resources['tpu']) {
                 config['tpu.device'] = resources['tpu'];
@@ -998,6 +1042,31 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
+     * Create a upload session for a file to Virtual folder.
+     *
+     * @param {string} path - Path to upload.
+     * @param {string} fs - File object to upload.
+     * @param {string} name - Virtual folder name.
+     */
+    async create_upload_session(path, fs, name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let body = {
+            'path': path,
+            'size': fs.size
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/create_upload_session`, body);
+        const res = await this.client._wrapWithPromise(rqst);
+        const token = res['token'];
+        let url = this.client._config.endpoint;
+        if (this.client._config.connectionMode === 'SESSION') {
+            url = url + '/func';
+        }
+        url = url + `${this.urlPrefix}/_/tus/upload/${token}`;
+        return url;
+    }
+    /**
      * Create directory in specific Virtual folder.
      *
      * @param {string} path - Directory path to create.
@@ -1047,6 +1116,49 @@ class VFolder {
         let q = querystring.stringify(params);
         let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
         return this.client._wrapWithPromise(rqst, true);
+    }
+    /**
+     * Request a download and get the token for direct download.
+     *
+     * @param {string} file - File to download. Should contain full path.
+     * @param {string} name - Virtual folder name that files are in.
+     */
+    request_download_token(file, name = false) {
+        let body = {
+            'file': file
+        };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Download file in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    download_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
+        return this.client._wrapWithPromise(rqst, true);
+    }
+    /**
+     * Get download URL in a Virtual folder with token.
+     *
+     * @param {string} token - Temporary token to download specific file.
+     */
+    get_download_url_with_token(token = '') {
+        let params = {
+            'token': token
+        };
+        let q = querystring.stringify(params);
+        if (this.client._config.connectionMode === 'SESSION') {
+            return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
+        }
+        else {
+            return `${this.client._config.endpoint}${this.urlPrefix}/_/download_with_token?${q}`;
+        }
     }
     /**
      * List files in specific virtual folder / path.
@@ -1642,6 +1754,42 @@ class ComputeSession {
         }
         return this.client.gql(q, v);
     }
+    /**
+     * list all status of compute sessions.
+     *
+     * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+     * @param {string} accessKey - access key that is used to start compute sessions.
+     * @param {number} limit - limit number of query items.
+     * @param {number} offset - offset for item query. Useful for pagination.
+     * @param {string} group - project group id to query. Default returns sessions from all groups.
+     */
+    async listAll(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], accessKey = '', group = '') {
+        if (accessKey === '')
+            accessKey = null;
+        if (group === '')
+            group = null;
+        fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
+        // For V3/V4 API compatibility
+        let q, v;
+        q = `query($domain_name:String, $group_id:String, $ak:String, $status:String) {
+      compute_sessions(domain_name:$domain_name, group_id:$group_id, access_key:$ak, status:$status) {
+        ${fields.join(" ")}
+      }
+    }`;
+        v = {
+        // domain_name: null,
+        // group_id: null,
+        // access_key: accessKey,
+        // status: status
+        };
+        if (accessKey != null) {
+            v['access_key'] = accessKey;
+        }
+        if (group != null) {
+            v['group_id'] = group;
+        }
+        return this.client.gql(q, v);
+    }
 }
 class Resources {
     constructor(client) {
@@ -1755,8 +1903,8 @@ class Group {
     }
     /**
      * List registred groups.
-     * @param {string} domain_name - domain name of group
      * @param {boolean} is_active - List whether active users or inactive users.
+     * @param {string} domain_name - domain name of group
      * {
      *   'name': String,          // Group name.
      *   'description': String,   // Description for group.
@@ -1784,10 +1932,10 @@ class Group {
             }
         }
         else {
-            q = `query {` +
-                `  groups { ${fields.join(" ")} }` +
+            q = `query($is_active:Boolean) {` +
+                `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
                 '}';
-            v = {};
+            v = { 'is_active': is_active };
         }
         return this.client.gql(q, v);
     }
@@ -2252,6 +2400,93 @@ class Setting {
             "key": `${key}`,
             "prefix": prefix
         });
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class UserConfig {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Get content of bootstrap script of a keypair.
+     */
+    get_bootstrap_script() {
+        if (!this.client._config.accessKey) {
+            throw 'Your access key is not set';
+        }
+        const rqst = this.client.newSignedRequest('GET', '/user-config/bootstrap-script');
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update bootstrap script of a keypair.
+     *
+     * @param {string} data - text content of bootstrap script.
+     */
+    update_bootstrap_script(data) {
+        const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { data });
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Create content of script dotfile (.bashrc or .zshrc)
+     * @param {string} data - text content of script dotfile
+     * @param {string} path - path of script dotfile. (cwd: home directory)
+     */
+    create_dotfile_script(data = '', path) {
+        if (!this.client._config.accessKey) {
+            throw 'Your access key is not set';
+        }
+        let params = {
+            "path": path,
+            "data": data,
+            "permission": '644'
+        };
+        const rqst = this.client.newSignedRequest("POST", "/user-config/dotfiles", params);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Get content of script dotfile
+     */
+    get_dotfile_script() {
+        if (!this.client._config.accessKey) {
+            throw 'Your access key is not set';
+        }
+        // let params = {
+        //   "owner_access_key" : this.client._config.accessKey
+        // }
+        const rqst = this.client.newSignedRequest("GET", "/user-config/dotfiles");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update script dotfile of a keypair.
+     *
+     * @param {string} data - text content of script dotfile.
+     * @param {string} path - path of script dotfile. (cwd: home directory)
+     */
+    update_dotfile_script(data, path) {
+        let params = {
+            "data": data,
+            "path": path,
+            "permission": '644'
+        };
+        const rqst = this.client.newSignedRequest("PATCH", "/user-config/dotfiles", params);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Delete script dotfile of a keypair.
+     *
+     * @param {string} path - path of script dotfile.
+     */
+    delete_dotfile_script(path) {
+        let params = {
+            "path": path
+        };
+        const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
         return this.client._wrapWithPromise(rqst);
     }
 }

@@ -8,6 +8,9 @@ import 'weightless/snackbar';
 import 'weightless/button';
 import 'weightless/icon';
 
+import {navigate} from '../backend-ai-app';
+import {store} from '../store';
+
 @customElement("lablup-notification")
 export default class LablupNotification extends LitElement {
   public shadowRoot: any;
@@ -16,15 +19,23 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) text = '';
   @property({type: String}) detail = '';
   @property({type: String}) message = '';
+  @property({type: String}) requestUrl = '';
+  @property({type: String}) status = '';
+  @property({type: String}) timestamp = '';
   @property({type: Object}) indicator;
   @property({type: Array}) notifications = Array();
+  @property({type: Array}) notificationstore = Array();
   @property({type: Boolean}) active = true;
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
   @property({type: Object}) newDesktopNotification = Object();
+  @property({type: Object}) options = Object();
 
   constructor() {
     super();
+    this.options = {
+      desktop_notification: true
+    }
   }
 
   static get is() {
@@ -45,7 +56,7 @@ export default class LablupNotification extends LitElement {
         }
 
         wl-button {
-          --button-font-size: 12px;
+          --button-font-size: 11px;
           --button-fab-size: 12px;
         }
 
@@ -66,7 +77,7 @@ export default class LablupNotification extends LitElement {
 
   firstUpdated() {
     if ("Notification" in window) {
-      console.log(Notification.permission);
+      //console.log(Notification.permission);
       if (Notification.permission === "granted") {
         this.supportDesktopNotification = true;
       } else if (Notification.permission !== "denied") {
@@ -78,6 +89,10 @@ export default class LablupNotification extends LitElement {
           this.supportDesktopNotification = true;
         });
       }
+    }
+    this._readUserSetting('desktop_notification', true);
+    if (this.options['desktop_notification'] === false) {
+      this.supportDesktopNotification = false;
     }
   }
 
@@ -97,6 +112,21 @@ export default class LablupNotification extends LitElement {
 
   }
 
+  _readUserSetting(name, default_value = true) {
+    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
+    if (value !== null && value != '' && value != '""') {
+      if (value === "false") {
+        this.options[name] = false;
+      } else if (value === "true") {
+        this.options[name] = true;
+      } else {
+        this.options[name] = value;
+      }
+    } else {
+      this.options[name] = default_value;
+    }
+  }
+
   _hideNotification(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-snackbar');
@@ -104,15 +134,23 @@ export default class LablupNotification extends LitElement {
   }
 
   _moreNotification(e) {
-    const notification = e.target.closest('wl-snackbar');
-    const button = e.target.closest('wl-button');
-    notification.setAttribute('persistent', 'true');
-    if (notification.querySelector('div') !== null) {
-      notification.querySelector('div').style.display = 'block';
-    }
-    button.parentNode.removeChild(button);
-    if (notification.querySelector('wl-button') === null) {
-      this._createCloseButton(notification);
+    // const notification = e.target.closest('wl-snackbar');
+    // const button = e.target.closest('wl-button');
+    // notification.setAttribute('persistent', 'true');
+    // if (notification.querySelector('div') !== null) {
+    //   notification.querySelector('div').style.display = 'block';
+    // }
+    // button.parentNode.removeChild(button);
+    // if (notification.querySelector('wl-button') === null) {
+    //   this._createCloseButton(notification);
+    // }
+    this._hideNotification(e);
+    let currentPage = window.location.toString().split(/[\/]+/).pop();
+    window.history.pushState({}, '', '/usersettings');
+    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings-logs', {});
+      document.dispatchEvent(event);
     }
   }
 
@@ -125,28 +163,47 @@ export default class LablupNotification extends LitElement {
     button.innerHTML = "<wl-icon>close</wl-icon>";
     notification.appendChild(button);
   }
-  async show(persistent: boolean = false, message: string = '') {
-    this.gc();
-    let notification = document.createElement('wl-snackbar');
-    if (message === '') {
-      notification.innerHTML = '<span style="overflow-x:hidden">' + this.text + '</span>';
-      if (this.detail != '') {
-        notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
-      }
-    } else {
-      notification.innerHTML = '<span style="overflow-x:hidden">' + message + '</span>';
-      this.text = message;
-      if (this.detail != '') {
-        notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
-      }
+  async show(persistent: boolean = false, log: object = Object()) {
+    let snackbar = document.querySelector("wl-snackbar[persistent='true']");
+    if (snackbar) {
+      this.notifications = []; // Reset notifications
+      document.body.removeChild(snackbar);
     }
+    this.gc();
+    //let notification_message: string;
+    //let notification_detail: string;
+    let notification = document.createElement('wl-snackbar');
+    // if (message === '') {
+    notification.innerHTML = '<span style="overflow-x:hidden">' + this.text + '</span>';
     if (this.detail != '') {
+      notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
+    }
+    //notification_message = this.text;
+    //notification_detail = this.detail;
+    // } else {
+    //   notification.innerHTML = '<span style="overflow-x:hidden">' + message + '</span>';
+    //   this.text = message;
+    //   if (this.detail != '') {
+    //     notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
+    //   }
+    //   notification_message = message;
+    //   notification_detail = this.detail;
+    // }
+    // this.notificationstore.push(log);
+    if(Object.keys(log).length !== 0) {
+      this._saveToLocalStoarge("backendaiconsole.logs", log);
+    }
+
+    if (this.detail !== '') {
       let more_button = document.createElement('wl-button');
-      more_button.setAttribute('slot', "action");
-      more_button.setAttribute('flat', "");
-      more_button.setAttribute('fab', "");
+      more_button.style.fontSize = 12 + 'px';
+      more_button.setAttribute('slot', 'action');
+      more_button.setAttribute('flat', '');
+      more_button.setAttribute('fab', '');
+      more_button.style.width = 80 + 'px';
       more_button.addEventListener('click', this._moreNotification.bind(this));
-      more_button.innerHTML = "<wl-icon>expand_more</wl-icon>";
+      more_button.innerHTML = "See Detail";
+      // more_button.innerHTML = "<wl-icon>expand_more</wl-icon>";
       notification.appendChild(more_button);
     }
     this.detail = ''; // Reset the temporary detail scripts
@@ -183,10 +240,26 @@ export default class LablupNotification extends LitElement {
     this.newDesktopNotification = new Notification(title, options);
   }
 
+  _saveToLocalStoarge(key, logMessages) {
+    const previous_log = JSON.parse(localStorage.getItem(key) || '{}');
+    let current_log = Array();
+
+    current_log.push(logMessages);
+    current_log = current_log.concat(previous_log);
+    localStorage.setItem(key, JSON.stringify(current_log));
+  }
+
   gc() {
     if (this.notifications.length > 0) {
       let opened_notifications = this.notifications.filter(noti => noti.open === true);
       this.notifications = opened_notifications;
+    }
+    // if (this.notificationstore.length > 5000) {
+    //   this.notificationstore = this.notificationstore.slice(1, 5000);
+    // }
+    let logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+    if (logs.length > 5000) {
+      logs = logs.slice(1, 5000);
     }
     this.step = this.notifications.length;
   }

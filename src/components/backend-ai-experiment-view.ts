@@ -21,7 +21,6 @@ import '@polymer/paper-item/paper-item';
 
 import '@vaadin/vaadin-dialog/vaadin-dialog';
 import './backend-ai-session-list';
-import './backend-ai-dropdown-menu';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
@@ -32,7 +31,7 @@ import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
 
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -321,10 +320,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
         .resource-button ul {
           padding: 0;
           list-style-type: none;
-        }
-
-        backend-ai-dropdown-menu {
-          width: 100%;
         }
 
         wl-button.button {

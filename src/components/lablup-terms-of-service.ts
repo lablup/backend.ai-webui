@@ -11,7 +11,7 @@ import 'weightless/dialog';
 import 'weightless/title';
 import 'weightless/checkbox';
 
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
   IronFlexAlignment,
@@ -164,7 +164,7 @@ export default class LablupTermsOfService extends LitElement {
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
-          this.notification.show(true);
+          this.notification.show(true, err);
         }
       });
     } else {

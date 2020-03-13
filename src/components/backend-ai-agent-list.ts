@@ -18,7 +18,7 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 @customElement("backend-ai-agent-list")
@@ -203,7 +203,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -369,10 +369,10 @@ export default class BackendAIAgentList extends BackendAIPage {
         <vaadin-grid-column width="80px">
           <template class="header">Endpoint</template>
           <template>
-            <div class="indicator">[[item.addr]]</div>
+            <div>[[item.id]]</div>
+            <div class="indicator monospace">[[item.addr]]</div>
           </template>
         </vaadin-grid-column>
-
         <vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
           <template class="header">Region</template>
         </vaadin-grid-column>

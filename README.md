@@ -1,6 +1,6 @@
 # backend.ai-console
 
-Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin.
+Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
 
 Backend.AI console focuses to 
 
@@ -17,6 +17,7 @@ Backend.AI console focuses to
     * Fully-featured VSCode editor and environments (WIP)
  * Pipeline
     * Experiments (with SACRED)
+    * AutoML (with NNI)
     * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
  * Storage management
@@ -29,6 +30,10 @@ Backend.AI console focuses to
     * Session statistics
     * Workload statistics
     * Insight (working)
+ * Configurations
+    * User-specific web / app configurations
+    * Beta features
+    * Console logs / errors
 
 ## Management Features
 
@@ -43,7 +48,7 @@ Backend.AI console focuses to
      * Add/update resource templates 
      * Add/remove docker registries
  * User management
-    * User creation / deletion
+    * User creation / deletion / key management
  * Manager settings
     * Add /setting repository
     * Plugin support

@@ -31,7 +31,7 @@ import 'weightless/title';
 
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 @customElement("backend-ai-scaling-group-list")
@@ -279,7 +279,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err;
         this._hideDialogById("#create-scaling-group-dialog");
-        this.notification.show(true);
+        this.notification.show(true, err);
       })
   }
 

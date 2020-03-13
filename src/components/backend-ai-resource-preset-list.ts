@@ -20,6 +20,8 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
+import '@material/mwc-textfield';
+
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
@@ -27,7 +29,7 @@ import 'weightless/icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import '../plastics/lablup-shields/lablup-shields';
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 @customElement("backend-ai-resource-preset-list")
@@ -95,6 +97,16 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
         div.configuration wl-icon {
           padding-right: 5px;
+        }
+
+        mwc-textfield {
+          width: 100%;
+          --mdc-theme-primary: #242424;
+          --mdc-text-field-fill-color: transparent;
+        }
+
+        mwc-textfield.yellow {
+          --mdc-theme-primary: var(--paper-yellow-600) !important;
         }
 
         wl-button.create-button {
@@ -206,8 +218,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </wl-button>
         </h4>
         <div>
-          <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
             <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
@@ -242,23 +252,23 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="preset_name" id="id_preset_name" label="Preset Name"
+              <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="Preset Name"
                           auto-validate required
                           pattern="[a-zA-Z0-9_-]+"
                           disabled
-                          error-message="Policy name only accepts letters, numbers, underscore, and dash"></paper-input>
+                          error-message="Policy name only accepts letters, numbers, underscore, and dash"></mwc-textfield>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-input id="cpu-resource" type="number" label="CPU"
-                    min="1" value="1"></paper-input>
-                <paper-input id="ram-resource" type="number" label="RAM (GB)"
-                    min="1" value="1"></paper-input>
+                <mwc-textfield id="cpu-resource" type="number" label="CPU"
+                    min="1" value="1"></mwc-textfield>
+                <mwc-textfield id="ram-resource" type="number" label="RAM (GB)"
+                    min="1" value="1"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <paper-input id="gpu-resource" type="number" label="GPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></paper-input>
-                <paper-input id="fgpu-resource" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></paper-input>
+                <mwc-textfield id="gpu-resource" type="number" label="GPU"
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
+                <mwc-textfield id="fgpu-resource" type="number" label="fGPU"
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
               <br/><br/>
               <wl-button class="fg orange create-button" outlined type="button"
@@ -281,7 +291,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </h3>
           <form id="preset-creation-form">
             <fieldset>
-              <paper-input
+              <mwc-textfield
                 type="text"
                 name="preset_name"
                 id="create-preset-name"
@@ -289,20 +299,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 auto-validate
                 required
                 pattern="[a-zA-Z0-9-_]+"
-                error-message="Policy name only accepts letters and numbers"
-              ></paper-input>
+                error-message="Preset name only accepts letters and numbers"
+              ></mwc-textfield>
               <h4>Resource Preset</h4>
               <div class="horizontal center layout">
-                <paper-input id="create-cpu-resource" type="number" label="CPU"
-                    min="1" value="1"></paper-input>
-                <paper-input id="create-ram-resource" type="number" label="RAM (GB)"
-                    min="1" value="1"></paper-input>
+                <mwc-textfield id="create-cpu-resource" type="number" label="CPU"
+                    min="1" value="1"></mwc-textfield>
+                <mwc-textfield id="create-ram-resource" type="number" label="RAM (GB)"
+                    min="1" value="1"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <paper-input id="create-gpu-resource" type="number" label="GPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></paper-input>
-                <paper-input id="create-fgpu-resource" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></paper-input>
+                <mwc-textfield id="create-gpu-resource" type="number" label="GPU"
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
+                <mwc-textfield id="create-fgpu-resource" type="number" label="fGPU"
+                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
               <wl-button
                 class="fg orange create-button"
@@ -333,6 +343,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
+    let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
+    for (const textfield of textfields) {
+      this._addInputValidator(textfield);
+    }
   }
 
   async _viewStateChanged(active) {
@@ -390,7 +404,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -400,11 +414,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const preset_name = controls['preset-name'];
     let resourcePresets = window.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
+    console.log(resourcePreset);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
     this.shadowRoot.querySelector('#id_preset_name').value = preset_name;
     this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
-    this.shadowRoot.querySelector('#gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
-    this.shadowRoot.querySelector('#fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
+    if ('cuda.device' in resourcePreset.resource_slots) {
+      this.shadowRoot.querySelector('#gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
+    } else {
+      this.shadowRoot.querySelector('#gpu-resource').value = "";
+    }
+    if ('cuda.shares' in resourcePreset.resource_slots) {
+      this.shadowRoot.querySelector('#fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
+    } else {
+      this.shadowRoot.querySelector('#fgpu-resource').value = "";
+    }
     this.shadowRoot.querySelector('#ram-resource').value = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
   }
 
@@ -424,7 +447,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -469,7 +492,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     let input = this._readResourcePresetInput();
     window.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#modify-template-dialog').hide();
-      this.notification.text = "Resource policy successfully updated.";
+      this.notification.text = "Resource preset successfully updated.";
       this.notification.show();
       this._refreshTemplateData();
     }).catch(err => {
@@ -478,7 +501,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         this.shadowRoot.querySelector('#modify-template-dialog').hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -493,7 +516,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }

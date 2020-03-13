@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
-import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
@@ -15,6 +14,7 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
+import '@material/mwc-textfield/mwc-textfield';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -30,7 +30,7 @@ import 'weightless/label';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 @customElement("backend-ai-resource-policy-list")
@@ -72,7 +72,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 260px);
+          height: calc(100vh - 300px);
         }
 
         paper-item {
@@ -122,19 +122,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: calc(100% - 40px);
         }
 
-        paper-dialog paper-input {
-          padding-left: 20px;
-          padding-right: 20px;
-        }
-
-        paper-dialog h4 {
-          margin: 10px 0 5px 0;
-          font-weight: 400;
-          font-size: 13px;
-          padding-left: 20px;
-          border-bottom: 1px solid #ccc;
-        }
-
         wl-button.create-button {
           width: 335px;
           --button-bg: white;
@@ -175,6 +162,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --checkbox-color-checked: var(--paper-green-800);
         }
 
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-green-600);
+        }
       `];
   }
 
@@ -244,12 +236,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           </h3>
           <form id="login-form">
             <fieldset>
-              <paper-input type="text" name="new_policy_name" id="id_new_policy_name" label="Policy Name"
-                           required
-                           style="width:100%;"
-                           focused="true"
-                           @change="${(e)=>this._validatePolicyName(e)}"
-                           ></paper-input>
+              <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
+                             validationMessage="Policy name is Required."
+                             required></mwc-textfield>
               <h4>Resource Policy</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin: 0px 10px 0px 0px;">
@@ -435,7 +424,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = window.lablupNotification;
-    this._getResourceInfo();
+    this._validatePolicyName();
   }
 
   async _viewStateChanged(active) {
@@ -446,16 +435,22 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshPolicyData();
+        this._getResourceInfo();
         this.is_admin = window.backendaiclient.is_admin;
+        this._getResourceInfo();
       }, true);
     } else { // already connected
       this._refreshPolicyData();
+      this._getResourceInfo();
       this.is_admin = window.backendaiclient.is_admin;
+      this._getResourceInfo();
     }
   }
 
   _launchResourcePolicyDialog(e) {
     this.updateCurrentPolicyToDialog(e);
+    this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
+    this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
     this.shadowRoot.querySelector('#modify-policy-dialog').show();
   }
 
@@ -466,6 +461,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.resource_policy_names = Object.keys(resourcePolicies);
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
+    // this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
     this.current_policy_name = policyName;
     this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
     this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
@@ -535,7 +531,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -600,7 +596,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _modifyResourcePolicy() {
     let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
     let name = policy_info.value;
-    if (policy_info.invalid) {
+    if(!policy_info.checkValidity()) {
+      policy_info.reportValidity();
       return;
     }
     try {
@@ -621,7 +618,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               this.shadowRoot.querySelector('#modify-policy-dialog').hide();
               this.notification.text = PainKiller.relieve(err.title);
               this.notification.detail = err.message;
-              this.notification.show(true);
+              this.notification.show(true, err);
             }
       });
     } catch (err) {
@@ -642,7 +639,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
-        this.notification.show(true);
+        this.notification.show(true, err);
       }
     });
   }
@@ -668,7 +665,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } else {
       checkbox = null;
     }
-    
+
     if (textfield.value < 0) {
       textfield.value = 0;
     }
@@ -697,22 +694,49 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       resource.value = '';
     } else {
       if (resource.value === '') {
-          throw {"message" : "Cannot Update Resource Policy. Please check input values." };
+        throw {"message": "Cannot Update Resource Policy. Please check input values."};
       }
     }
   }
 
-  _validatePolicyName(e) {
-    let policy_info = e.target;
-    let policy_name = e.target.value;
-    if (this.resource_policy_names.includes(policy_name)) {
-      if (policy_name !== this.current_policy_name) {
-        policy_info.errorMessage="Policy name already exists!";
-        policy_info.invalid=true;
-        return;
+  _validatePolicyName() {
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    policy_info.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.patternMismatch) {
+          policy_info.validationMessage = "Allows letters, numbers and -_.";
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
+        } else if (nativeValidity.valueMissing) {
+          policy_info.validationMessage = "Policy name is Required."
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        }
+        else {
+          policy_info.validationMessage = "Allows letters, numbers and -_."
+          return {
+            valid: nativeValidity.valid,
+            badInput: !nativeValidity.valid
+          }
+        }
+      } else {
+        let policy_names = this.resource_policy_names;
+        policy_names = policy_names.filter(item => item !== this.current_policy_name);
+        const isValid = !policy_names.includes(newValue);
+        if (!isValid) {
+          policy_info.validationMessage = "Policy Name Already Exists!";
+        }
+
+        return {
+          valid: isValid,
+          customError: !isValid,
+        };
       }
-    }
-    policy_info.invalid=false;
+    };
    }
 
   _updateInputStatus(resource) {
@@ -749,7 +773,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
   }
 }
-
 
 declare global {
   interface HTMLElementTagNameMap {

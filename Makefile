@@ -3,7 +3,7 @@ BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
 REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
-site := $(or $(site),default)
+site := $(or $(site),master)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
@@ -19,6 +19,7 @@ run_tests:
 versiontag:
 	echo '{ "package": "${BUILD_VERSION}", "build": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
 	sed -i -E 's/window.packageVersion = "\(.*\)"/window.packageVersion = "${BUILD_VERSION}"/g' index.html
+	sed -i -E 's/"version": "\(.*\)"/"version": "${BUILD_VERSION}"/g' manifest.json
 	sed -i -E 's/window.buildVersion = "\(.*\)"/window.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
 	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.ts
 compile_keepversion: 
@@ -74,14 +75,15 @@ mac: dep
 	rm -rf ./app/backend.ai-console-macos
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos;
 	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js ./app/backend.ai-console-macos/backend.ai-console.app ./app/backend.ai-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
-	mv ./app/backend.ai-$(BUILD_DATE).dmg ./app/backend.ai-$(BUILD_DATE)-$(site).dmg
+	mv ./app/backend.ai-console-macos/backend.ai-console.app './app/backend.ai-console-macos/Backend.AI Console.app'
+	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-console-macos/Backend.AI Console.app' ./app/backend.ai-console-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-$(site).dmg
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
 	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
 	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
-	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-win32-x64-$(BUILD_DATE)-$(site).zip
+	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip
 linux: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico

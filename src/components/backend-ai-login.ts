@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -23,7 +23,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAIPage} from "./backend-ai-page";
 
 declare global {
   const ai: typeof aiSDK;
@@ -44,8 +45,7 @@ declare global {
  @group Backend.AI Console
  */
 @customElement("backend-ai-login")
-export default class BackendAILogin extends LitElement {
-  public shadowRoot: any; // ShadowRoot
+export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) api_key = '';
   @property({type: String}) secret_key = '';
   @property({type: String}) user_id = '';
@@ -57,7 +57,6 @@ export default class BackendAILogin extends LitElement {
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
   @property({type: String}) connection_mode = 'API';
-;
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
@@ -67,6 +66,7 @@ export default class BackendAILogin extends LitElement {
   @property({type: Object}) clientConfig;
   @property({type: Object}) client;
   @property({type: Object}) notification;
+  @property({type: Object}) user_groups;
   @property({type: Boolean}) signup_support = false;
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
@@ -146,6 +146,11 @@ export default class BackendAILogin extends LitElement {
           --button-bg-active: var(--paper-green-600);
         }
 
+        wl-button.change-login-mode-button {
+          --button-bg-hover: var(--paper-blue-100);
+          --button-bg-active: var(--paper-blue-600);
+        }
+
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
@@ -201,17 +206,17 @@ export default class BackendAILogin extends LitElement {
         console.log("Plugin loaded.");
       }).catch((err) => {   // Connection failed
         if (this.loginPanel.open !== true) {
-          if (err.message !== undefined) {
+          if (typeof err.message !== "undefined") {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Plugin loading failed.');
           }
-          this.notification.show(true);
+          this.notification.show(false, err);
           this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          this.notification.show(true);
+          this.notification.show(false, err);
         }
       });
     }
@@ -225,6 +230,7 @@ export default class BackendAILogin extends LitElement {
       this.signup_support = false;
     } else {
       this.signup_support = true;
+      (this.shadowRoot.querySelector('#signup-dialog') as any).active = true;
     }
     if (typeof config.general === "undefined" || typeof config.general.allowChangeSigninMode === "undefined" || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode == false) {
       this.change_signin_support = false;
@@ -424,7 +430,7 @@ export default class BackendAILogin extends LitElement {
       this.free();
       if (this.signoutPanel.open !== true) {
         console.log(err);
-        if (err.message !== undefined) {
+        if (typeof err.message !== 'undefined') {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
@@ -482,18 +488,16 @@ export default class BackendAILogin extends LitElement {
         this.free();
         if (this.loginPanel.open !== true) {
           console.log(err);
-          if (err.message !== undefined) {
+          if (typeof err.message !== "undefined") {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
-          this.notification.show();
-          this.open();
         } else {
           this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          this.notification.show();
         }
+        this.notification.show();
         this.open();
       });
     } else {
@@ -531,13 +535,13 @@ export default class BackendAILogin extends LitElement {
     }).catch((err) => {   // Connection failed
       console.log(err);
       if (this.loginPanel.open !== true) {
-        if (err.message !== undefined) {
+        if (typeof err.message !== "undefined") {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(false, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
@@ -558,7 +562,7 @@ export default class BackendAILogin extends LitElement {
       window.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
       let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name, id}"];
-      let q = `query { user { ${fields.join(" ")} } }`;
+      let q = `query { user{ ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
       return window.backendaiclient.gql(q, v);
     }).then(response => {
@@ -566,9 +570,29 @@ export default class BackendAILogin extends LitElement {
       if (this.email !== email) {
         this.email = email;
       }
-      let groups = response['user'].groups;
+      this.user_groups = response['user'].groups;
+      let role = response['user'].role;
+      this.domain_name = response['user'].domain_name;
+      window.backendaiclient.email = this.email;
+      window.backendaiclient.is_admin = false;
+      window.backendaiclient.is_superadmin = false;
+
+      if (["superadmin", "admin"].includes(role)) {
+        window.backendaiclient.is_admin = true;
+      }
+      if (["superadmin"].includes((role))) {
+        window.backendaiclient.is_superadmin = true;
+      }
+      return window.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
+    }).then(response => {
+      let groups = response.groups;
+      let user_group_ids = this.user_groups.map(({id}) => id);
       if (groups !== null) {
-        window.backendaiclient.groups = groups.map((item) => {
+        window.backendaiclient.groups = groups.filter((item) => {
+          if (user_group_ids.includes(item.id)) {
+            return item;
+          }
+        }).map((item) => {
           return item.name;
         });
         let groupMap = Object();
@@ -579,22 +603,10 @@ export default class BackendAILogin extends LitElement {
       } else {
         window.backendaiclient.groups = ['default'];
       }
-      let role = response['user'].role;
-      this.domain_name = response['user'].domain_name;
-      window.backendaiclient.email = this.email;
       window.backendaiclient.current_group = window.backendaiclient.groups[0];
       window.backendaiclient.current_group_id = () => {
         return window.backendaiclient.groupIds[window.backendaiclient.current_group];
       };
-      window.backendaiclient.is_admin = false;
-      window.backendaiclient.is_superadmin = false;
-
-      if (["superadmin", "admin"].includes(role)) {
-        window.backendaiclient.is_admin = true;
-      }
-      if (["superadmin"].includes((role))) {
-        window.backendaiclient.is_superadmin = true;
-      }
       window.backendaiclient._config._proxyURL = this.proxy_url;
       window.backendaiclient._config.domainName = this.domain_name;
       window.backendaiclient._config.default_session_environment = this.default_session_environment;
@@ -609,17 +621,22 @@ export default class BackendAILogin extends LitElement {
       //this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
-        if (err.message !== undefined) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
+        if (typeof err.message !== 'undefined') {
+          if (typeof err.title !== 'undefined') {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+          } else {
+            this.notification.text = PainKiller.relieve(err);
+            this.notification.detail = err;
+          }
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(false, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show();
+        this.notification.show(true);
       }
     });
   }
@@ -658,17 +675,17 @@ export default class BackendAILogin extends LitElement {
       //this.notification.show();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
-        if (err.message !== undefined) {
+        if (typeof err.message !== "undefined") {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
-        this.notification.show(true);
+        this.notification.show(false, err);
         this.open();
       } else {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show(true);
+        this.notification.show(false, err);
       }
       this.open();
     });
@@ -689,9 +706,6 @@ export default class BackendAILogin extends LitElement {
           <h3 class="horizontal center layout">
             <div>Login with ${this.connection_mode == 'SESSION' ? html`E-mail` : html`IAM`}</div>
             <div class="flex"></div>
-            ${this.change_signin_support ? html`
-                <small><a style="margin-left:15px;" @click="${() => this._changeSigninMode()}">${this.connection_mode == 'SESSION' ? html`Use IAM` : html`Use ID/password`}</a></small>
-            ` : html``}
             ${this.signup_support ? html`
             <div class="vertical center-justified layout">
               <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
@@ -701,6 +715,13 @@ export default class BackendAILogin extends LitElement {
           </h3>
           <form id="login-form">
             <fieldset>
+            ${this.change_signin_support ? html`
+                <div class="horizontal center layout">
+                  <small>Want to login another way?</small>
+                  <div class="flex"></div>
+                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">Click to use ${this.connection_mode == 'SESSION' ? html`IAM` : html`ID`}</wl-button>
+                </div>
+            ` : html``}
               <wl-textfield type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
                            label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
               <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"

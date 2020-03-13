@@ -11,7 +11,7 @@ import 'weightless/progress-spinner';
 import 'weightless/tab-group';
 import 'weightless/tab';
 
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-usage-list.js';
 import {
   IronFlex,

@@ -1,19 +1,24 @@
 [general]
-#apiEndpoint = 
-#apiEndpointText = 
-#defaultSessionEnvironment = 
+#apiEndpoint =
+#apiEndpointText =
+#defaultSessionEnvironment =
 siteDescription = "Console"
 connectionMode = "SESSION" #connectionMode = API
 allowChangeSigninMode = false # Allows user to change signin mode
+allowSignout = true
 signupSupport = false
 debug = false
+allowProjectResourceMonitor = false
+AllowBetaFeatures = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL = ""
+autoPortSelection = true
+disableCertCheck = true
 
 [server]
-consoleServerURL = 
+consoleServerURL =
 
 [plugin]
 #login = "signup-cloud.js"

@@ -7,14 +7,17 @@ import {css, customElement, html, property} from "lit-element";
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
-import './backend-ai-dropdown-menu';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
+import '@material/mwc-textfield/mwc-textfield';
+import "@material/mwc-list/mwc-list-item";
+import "@material/mwc-icon-button/mwc-icon-button";
+import "@material/mwc-menu/mwc-menu";
 
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -27,6 +30,7 @@ export default class BackendAiSessionView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
   @property({type: Object}) _lists = Object();
+  @property({type: Boolean}) is_admin = false;
 
   constructor() {
     super();
@@ -68,6 +72,30 @@ export default class BackendAiSessionView extends BackendAIPage {
           --tab-bg-filled: var(--paper-red-50);
           --tab-bg-active-hover: var(--paper-red-100);
         }
+
+        wl-button {
+          --button-bg:  var(--paper-light-green-50);
+          --button-bg-hover:  var(--paper-green-100);
+          --button-bg-active:  var(--paper-green-600);
+        }
+
+        mwc-menu {
+          --mdc-theme-surface: #f1f1f1;
+          --mdc-menu-item-height : auto;
+        }
+
+        mwc-list-item {
+          font-size : 14px;
+        }
+
+        mwc-icon-button {
+          --mdc-icon-size: 20px;
+          color: var(--paper-grey-700);
+        }
+
+        mwc-icon-button#dropdown-menu-button {
+          margin-left: 10px;
+        }
       `];
   }
 
@@ -77,6 +105,13 @@ export default class BackendAiSessionView extends BackendAIPage {
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.shadowRoot.querySelector('#running-jobs').refreshList(true, false);
     });
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.is_admin = window.backendaiclient.is_admin;
+      }, true);
+    } else {
+      this.is_admin = window.backendaiclient.is_admin;
+    }
   }
 
   async _viewStateChanged(active) {
@@ -94,6 +129,12 @@ export default class BackendAiSessionView extends BackendAIPage {
     this._status = 'active';
   }
 
+  _exportToCSV() {
+    console.log("Downloading CSV File...");
+    let event = new CustomEvent("backend-ai-csv-file-export-session", {"detail": window.backendaiclient.current_group});
+    document.dispatchEvent(event);
+  }
+
   _showTab(tab) {
     let els = this.shadowRoot.querySelectorAll(".tab-content");
     for (let x = 0; x < els.length; x++) {
@@ -104,6 +145,11 @@ export default class BackendAiSessionView extends BackendAIPage {
       this._lists[x].removeAttribute('active');
     }
     this.shadowRoot.querySelector('#' + tab.value + '-jobs').setAttribute('active', true);
+  }
+
+  _toggleDropdown() {
+    let menu = this.shadowRoot.querySelector("#dropdown-menu");
+    menu.open = !menu.open;
   }
 
   render() {
@@ -118,6 +164,19 @@ export default class BackendAiSessionView extends BackendAIPage {
           </wl-tab-group>
           <div class="flex"></div>
           <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
+          ${this.is_admin ? html`
+              <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
+                               @click="${this._toggleDropdown}">
+                <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
+                  <mwc-list-item>
+                    <a class="horizontal layout start center" @click="${this._exportToCSV}">
+                      <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
+                      export CSV
+                    </a>
+                  </mwc-list-item>
+                </mwc-menu>
+              </mwc-icon-button>
+            ` : html``}
         </h3>
         <div id="running-lists" class="tab-content">
           <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
@@ -128,6 +187,7 @@ export default class BackendAiSessionView extends BackendAIPage {
         <div id="others-lists" class="tab-content" style="display:none;">
           <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
         </div>
+
       </wl-card>
 `;
   }
