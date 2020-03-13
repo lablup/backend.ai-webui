@@ -25,7 +25,7 @@ if (process.env.serveMode == 'dev') {
 }
 let windowWidth = 1280;
 let windowHeight = 970;
-let debugMode = true;
+let debugMode = false;
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
@@ -39,6 +39,7 @@ let devtools;
 let manager = new ProxyManager();
 let mainURL;
 
+// Modules to control application life and create native browser window
 app.once('ready', function() {
   var template;
   if (process.platform === 'darwin') {
@@ -47,10 +48,10 @@ app.once('ready', function() {
         label: 'Backend.AI',
         submenu: [
           {
-            label: 'About Backend.AI App',
+            label: 'About Backend.AI Console',
             click: function () {
-              let scr = `window.runScriptOnMainTab();`;
-              mainContent.executeJavaScript('window.showSplash();');
+              mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
+                '    document.dispatchEvent(event);');
             }
           },
           {
@@ -67,9 +68,18 @@ app.once('ready', function() {
             type: 'separator'
           },
           {
-            label: 'Force Update Screen',
+            label: 'Refresh App',
+            accelerator: 'Command+R',
             click: function () {
-              mainContent.reloadIgnoringCache();
+              // mainContent.reloadIgnoringCache();
+              const proxyUrl = `http://localhost:${manager.port}/`;
+              mainWindow.loadURL(url.format({ // Load HTML into new Window
+                pathname: path.join(mainIndex),
+                protocol: 'file',
+                slashes: true
+              }));
+              mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
+              console.log('Re-connected to proxy: ' + proxyUrl);
             }
           },
           {
@@ -152,33 +162,17 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            click: function () {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomIn()');
-              }
-            }
+            role: 'zoomin'
           },
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            click: function () {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomOut()');
-              }
-            }
+            role: 'zoomout'
           },
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            click: function () {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript(
-                  '_zoomActualSize()');
-              }
-            }
+            role: 'resetzoom'
           },
           {
             label: 'Toggle Full Screen',
@@ -218,7 +212,7 @@ app.once('ready', function() {
         label: 'Help',
         submenu: [
           {
-            label: 'Backend.AI Webpage',
+            label: 'Learn More',
             click: function () {
               shell.openExternal('https://www.backend.ai/');
             }
@@ -283,25 +277,13 @@ app.once('ready', function() {
             accelerator: 'F11',
             role: 'togglefullscreen'
           },
-          /* Does not work
-          {
-            label: 'Toggle &Developer Tools',
-            accelerator: 'Alt+Ctrl+I',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
-              }
-            }
-          },
-          */
         ]
       },
       {
         label: 'Help',
         submenu: [
           {
-            label: 'Backend.AI Webpage',
+            label: 'Learn More',
             click: function () {
               shell.openExternal('https://www.backend.ai/');
             }
@@ -311,7 +293,7 @@ app.once('ready', function() {
     ];
   }
 
-  const appmenu = Menu.buildFromTemplate(template);
+  var appmenu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(appmenu);
 });
 
@@ -331,7 +313,7 @@ function createWindow() {
       nodeIntegration: true,
       webviewTag: true,
       preload: path.join(electronPath, 'preload.js'),
-      devTools: true
+      devTools: false
     }
   });
   // and load the index.html of the app.
@@ -409,13 +391,11 @@ function createWindow() {
   });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    console.log('---------------------------------------------------------------');
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
   });
 }
 
 function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, win) {
-  console.log('popup from main thread');
   event.preventDefault();
   Object.assign(options, {
     frame: true,
@@ -441,7 +421,6 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   });
   event.newGuest.loadURL(url);
   event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    console.log('---------------------------------------------------------------');
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event);
   });
   event.newGuest.on('close', (e) => {
@@ -499,8 +478,6 @@ app.on('web-contents-created', (event, contents) => {
   if (contents.getType() === 'webview') {
     contents.on('new-window', function (newWindowEvent, url) {
       newWindowEvent.preventDefault();
-      console.log("is it a blocking call?,", url);
-      console.log(newWindowEvent);
       newWindowEvent.newGuest = newWindowEvent.sender;
     });
   }
@@ -517,7 +494,6 @@ app.on('web-contents-created', (event, contents) => {
 
 
 function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
-  console.log('------- requested URL:', url);
   const ev = event;
   openPageURL = url;
   Object.assign(options, {
@@ -546,14 +522,9 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   });
   newTab.on("webview-ready", (tab) => {
     tab.show(true);
-    console.log('webview ready', tab);
-    //event.newGuest = tab.webview.getWebContents();
-    //console.log('new guest: ', event.newGuest);
   });
   newTab.webview.addEventListener('dom-ready', (e) => {
-    console.log('from event,', ev);
-    console.log("new tab", e);
-    e.target.openDevTools();
+    //e.target.openDevTools();
     //if (openPageURL !== '') {
     let newTabContents = e.target.getWebContents();
     //let newURL = openPageURL;
@@ -563,8 +534,6 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
       event.preventDefault();
       newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
     });
-    //}
-    console.log("access?,", ev.webview);
     ev.newGuest = newTabContents;
   });
   //event.newGuest = tab.webview.getWebContents();
