@@ -503,6 +503,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       default:
         this.menuTitle = 'LOGIN REQUIRED';
     }
+    document.title = "Backend.AI - " + this.menuTitle;
   }
 
   async close_app_window(performClose = false) {
