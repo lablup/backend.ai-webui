@@ -38,13 +38,16 @@ let mainAppTab = tabGroup.addTab({
     webpreferences: defaultWebPreferences
   }
 });
-console.log(mainAppTab.webview);
 mainAppTab.webview.addEventListener('page-title-updated', () => {
   console.log('updated');
   const newTitle = mainAppTab.webview.getTitle();
+  console.log(newTitle);
   let bgColor;
   mainAppTab.setTitle(newTitle);
   switch (newTitle) {
+    case 'Backend.AI':
+      bgColor = '#2e7d32';
+      break;
     case 'Backend.AI - Summary':
       bgColor = '#2e7d32';
       break;
