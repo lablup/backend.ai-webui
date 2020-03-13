@@ -25,7 +25,7 @@ if (process.env.serveMode == 'dev') {
 }
 let windowWidth = 1280;
 let windowHeight = 970;
-let debugMode = false;
+let debugMode = true;
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
@@ -313,7 +313,7 @@ function createWindow() {
       nodeIntegration: true,
       webviewTag: true,
       preload: path.join(electronPath, 'preload.js'),
-      devTools: false
+      devTools: (debugMode === true)
     }
   });
   // and load the index.html of the app.
@@ -524,7 +524,8 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     tab.show(true);
   });
   newTab.webview.addEventListener('dom-ready', (e) => {
-    //e.target.openDevTools();
+    e.target.openDevTools();
+
     //if (openPageURL !== '') {
     let newTabContents = e.target.getWebContents();
     //let newURL = openPageURL;

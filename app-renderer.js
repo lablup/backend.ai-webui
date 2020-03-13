@@ -38,7 +38,9 @@ let mainAppTab = tabGroup.addTab({
     webpreferences: defaultWebPreferences
   }
 });
+console.log(mainAppTab.webview);
 mainAppTab.webview.addEventListener('page-title-updated', () => {
+  console.log('updated');
   const newTitle = mainAppTab.webview.getTitle();
   let bgColor;
   mainAppTab.setTitle(newTitle);
@@ -87,7 +89,9 @@ mainAppTab.on("webview-ready", (tab) => {
 let mainWebView = mainAppTab.webview;
 mainWebView.addEventListener('dom-ready', (e) => {
   mainWebView.executeJavaScript('window.__local_proxy="' + window.__local_proxy + '";');
-  mainWebView.openDevTools();
+  if (remote.process.env.serveMode === 'dev') {
+    mainWebView.openDevTools();
+  }
   let mainWebViewWebContents = mainWebView.getWebContents();
   mainWebView.addEventListener('will-navigate', ({url}) => {
     console.log('navigate to', url);
