@@ -1,4 +1,7 @@
-// Modules to control application life and create native browser window / Local tester file
+/**
+ @license
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ */
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
 process.env.serveMode = "dev";
@@ -25,7 +28,7 @@ if (process.env.serveMode == 'dev') {
 }
 let windowWidth = 1280;
 let windowHeight = 970;
-let debugMode = true;
+let debugMode = false;
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
@@ -462,12 +465,13 @@ app.on('window-all-closed', function () {
 
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
+  // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
   }
 });
+
 app.on('certificate-error', function (event, webContents, url, error,
                                       certificate, callback) {
   event.preventDefault();
@@ -486,59 +490,5 @@ app.on('web-contents-created', (event, contents) => {
     delete webPreferences.preload;
     delete webPreferences.preloadURL;
     webPreferences.nativeWindowOpen = true;
-    //console.log(event);
-    // Disable Node.js integration
-    //webPreferences.nodeIntegration = false;
   });
 });
-
-
-function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
-  const ev = event;
-  openPageURL = url;
-  Object.assign(options, {
-    title: "Loading...",
-    frame: true,
-    visible: false,
-    backgroundColor: '#efefef',
-    closable: true,
-    src: url,
-    webviewAttributes: {
-      //nodeintegration: false,
-      allowpopups: true,
-      autosize: false,
-      //webviewTag: true,
-      webpreferences: defaultWebPreferences
-    },
-    ready: loadURLonTab
-  });
-  if (frameName === 'modal') {
-    options.modal = true;
-  }
-  let newTab = tabGroup.addTab(options);
-  newTab.webview.addEventListener('page-title-updated', (e) => {
-    const newTitle = e.target.getTitle();
-    newTab.setTitle(newTitle);
-  });
-  newTab.on("webview-ready", (tab) => {
-    tab.show(true);
-  });
-  newTab.webview.addEventListener('dom-ready', (e) => {
-    e.target.openDevTools();
-
-    //if (openPageURL !== '') {
-    let newTabContents = e.target.getWebContents();
-    //let newURL = openPageURL;
-    //openPageURL = '';
-    //e.target.loadURL(newURL);
-    newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-      event.preventDefault();
-      newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
-    });
-    ev.newGuest = newTabContents;
-  });
-  //event.newGuest = tab.webview.getWebContents();
-  //event.newGuest = newTab.webview.getWebContents();
-  //console.log("New window: ", newTab.webview);
-  //return newTab.webview;
-}

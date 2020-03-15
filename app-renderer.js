@@ -1,4 +1,7 @@
-//const TabGroup = require("electron-tabs");
+/**
+ @license
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ */
 const {remote, ipcRenderer} = require('electron');
 const url = require('url');
 const path = require('path');
@@ -24,7 +27,6 @@ mainURL = url.format({
 });
 
 let openPageURL = '';
-let openPageEvent = {};
 let defaultWebPreferences = "allowRunningInsecureContent,nativeWindowOpen=yes";
 
 let tabGroup = new TabGroup();
@@ -41,9 +43,7 @@ let mainAppTab = tabGroup.addTab({
   }
 });
 mainAppTab.webview.addEventListener('page-title-updated', () => {
-  console.log('updated');
   const newTitle = mainAppTab.webview.getTitle();
-  console.log(newTitle);
   let bgColor;
   mainAppTab.setTitle(newTitle);
   switch (newTitle) {
@@ -59,11 +59,14 @@ mainAppTab.webview.addEventListener('page-title-updated', () => {
     case 'Backend.AI - Experiments':
       bgColor = '#0277bd';
       break;
-    case 'Backend.AI - Storage':
+    case 'Backend.AI - Data & Storage':
       bgColor = '#ef6c00';
       break;
     case 'Backend.AI - Statistics':
       bgColor = '#00838f';
+      break;
+    case 'Backend.AI - Settings & Logs':
+      bgColor = '#00695c';
       break;
     case 'Backend.AI - User Credentials & Policies':
       bgColor = '#9e9d24';
@@ -80,6 +83,9 @@ mainAppTab.webview.addEventListener('page-title-updated', () => {
     case 'Backend.AI - Maintenance':
       bgColor = '#ad1457';
       break;
+    case 'Backend.AI - Information':
+      bgColor = '#6a1b9a';
+      break;
     default:
       bgColor = '#cccccc';
   }
@@ -94,7 +100,7 @@ mainAppTab.on("webview-ready", (tab) => {
 let mainWebView = mainAppTab.webview;
 mainWebView.addEventListener('dom-ready', (e) => {
   mainWebView.executeJavaScript('window.__local_proxy="' + window.__local_proxy + '";');
-  if (remote.process.env.serveMode === 'dev') {
+  if (remote.debugMode === true) {
     mainWebView.openDevTools();
   }
   let mainWebViewWebContents = mainWebView.getWebContents();
@@ -109,15 +115,7 @@ mainWebView.addEventListener('dom-ready', (e) => {
 
 function newTabWindow(event, url, frameName, disposition, options, additionalFeatures) {
   let guestInstanceId = options && options.webPreferences && options.webPreferences.guestInstanceId;
-  console.log(guestInstanceId);
   event.preventDefault();
-  console.log('------- requested URL:', url);
-  const ev = event;
-  //openPageEvent = event;
-  //console.log('event log:', ev);
-  //if (url === 'about:blank#blocked') {
-  //  url = window.__local_proxy;//'about:blank';
-  // }
   openPageURL = url;
   Object.assign(options, {
   //let local_options = {
@@ -139,74 +137,46 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
     options['src'] = "";
   }
   options.webviewAttributes['data-guest-instance-id'] = guestInstanceId;
-  console.log(options);
-  //);
   let tab = tabGroup.addTab(options);
-  console.log(tab);
   const newTabWebView = tab.webview;
-  console.log("new tab webview:", newTabWebView);
   newTabWebView.addEventListener('page-title-updated', (e) => {
-    const newTitle = e.target.getTitle();
-    tab.setTitle(newTitle);
+    let title = e.target.getTitle();
+    if (title.length > 25) {
+      title = title.substring(0, 20) + '...';
+      tab.setTitle(title);
+    }
+    tab.setTitle(title);
+  });
+  tab.on("title-changed", (title, tab) => {
+    if (title.length > 25) {
+      title = title.substring(0, 20) + '...';
+      tab.setTitle(title);
+    }
   });
   tab.on("webview-ready", (tab) => {
-    //tab.show(true);
-    //console.log('webview ready', tab);
-    //event.newGuest = tab.webview.getWebContents();
-    //console.log('new guest: ', event.newGuest);
   });
-  newTabWebView.addEventListener('dom-ready', (e) => {
-    //console.log('from event,', ev);
-    //console.log("new tab", e);
-    //if (openPageURL != '') {
-
+  newTabWebView.add1entListener('dom-ready', (e) => {
+    if (remote.debugMode === true) {
       e.target.openDevTools();
-      let newTabContents = e.target.getWebContents();
-      //let newURL = openPageURL;
-      //openPageURL = '';
-      //e.target.loadURL(newURL);
-    //e.target.executeJavaScript(`
-    //  window.open = function backendAIOpenWindow(url, frameName) {
-    //    return originalWindowOpen(url, frameName, 'FEATURES_STRING');
-    //  }
-    //`);
-
-
-      newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-        return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
-      });
-      //openPageEvent.newGuest = newTabContents.webContents;
-      //console.log('window? ', openPageEvent.newGuest.window);
-      //console.log('window22? ', openPageEvent.newGuest);
-      //ev.newGuest = newTabContents;
-    //}
+    }
+    let newTabContents = e.target.getWebContents();
+    newTabContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+      return newTabWindow(event, url, frameName, disposition, options, additionalFeatures);
+    });
   });
   newTabWebView.addEventListener('did-finish-load', () => {
-    //console.log('load finished', guestInstanceId);
-    //newTabWebView.setAttribute('data-guest-instance-id',guestInstanceId);
-    console.log(newTabWebView);
   });
   newTabWebView.addEventListener('did-navigate', (e) => {
-    console.log('navigate to 222', e);
   });
   newTabWebView.addEventListener('will-navigate', (e) => {
-    console.log('navigate to 333', e);
   });
   newTabWebView.addEventListener('page-favicon-updated', (e) => {
-    console.log('favicon', e.favicons[0]);
     tab.setIcon(e.favicons[0]);
   });
-  console.log(newTabWebView);
-  event.newGuest = 'asdasdasd';//newTabWebView;
-  event.newGuest.ABC = 3;
-  //event.newGuest = tab.webview.getWebContents();
-  //event.newGuest = newTab.webview.getWebContents();
-  //console.log("New window: ", newTab.webview);
   return newTabWebView;
 }
 
 function loadURLonTab(tab) {
-  //console.log("tab opened:", tab);
 }
 
 function showSplash() {
