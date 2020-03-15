@@ -10,8 +10,6 @@ body {
 .etabs-tabgroup {
   height: 48px;
   width: 100%;
-  /*width: calc(100% - 190px);
-  border-left: 190px solid rgba(24, 24, 24, 1.0);*/
   border-bottom: 0;
   background-color: #cccccc;
   cursor: default;
