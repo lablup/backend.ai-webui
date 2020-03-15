@@ -5,12 +5,12 @@ const path = require('path');
 let TabGroup;
 if (remote.process.env.serveMode === 'dev') {
   mainIndex = 'build/electron-app/app/index.html';
-  //TabGroup = require("./tab");
-  TabGroup = require("electron-tabs");
+  TabGroup = require("./tab");
+  //TabGroup = require("electron-tabs");
 } else { // Production
   mainIndex = 'app/index.html';
-  //TabGroup = require("./tab");
-  TabGroup = require("electron-tabs");
+  TabGroup = require("./tab");
+  //TabGroup = require("electron-tabs");
 }
 
 if (remote.process.env.siteDescription !== '') {
