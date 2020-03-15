@@ -152,6 +152,7 @@ body {
 
 .etabs-tab-title {
   display: inline-block;
+  overflow-x: hidden;
   margin-left: 10px;
 }
 
