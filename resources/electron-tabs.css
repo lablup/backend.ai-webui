@@ -4,7 +4,6 @@ body {
   font-size: 14px;
   color: #222222;
   margin: 0;
-  overflow-x: hidden;
   word-break: keep-all;
 }
 
@@ -20,6 +19,7 @@ body {
   font-size: 14px;
   -webkit-user-select: none;
   user-select: none;
+  overflow: overlay;
   -webkit-user-select: none !important;
   -webkit-app-region: drag !important;
 }
@@ -151,7 +151,6 @@ body {
 
 .etabs-tab-title {
   display: inline-block;
-  overflow-x: hidden;
   margin-left: 10px;
 }
 
