@@ -183,11 +183,6 @@ export const BackendAiStyles = [
       margin: 60px;
     }
 
-    paper-checkbox {
-      display: block;
-      margin-bottom: 40px;
-    }
-
     iron-icon.tiny {
       --iron-icon-height: 12px;
       --iron-icon-width: 12px;

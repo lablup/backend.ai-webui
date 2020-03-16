@@ -10,7 +10,6 @@ import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 
 import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
 
@@ -2190,7 +2189,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </mwc-select>
             </div>
               <div style="display:none;">
-                <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
+                <wl-checkbox id="use-gpu-checkbox">Use GPU</wl-checkbox>
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
