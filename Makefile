@@ -52,9 +52,21 @@ dep:
 	mkdir -p ./build/electron-app/node_modules/markty
 	mkdir -p ./build/electron-app/node_modules/markty-toml
 	mkdir -p ./build/electron-app/node_modules/electron-tabs
+	mkdir -p ./build/electron-app/node_modules/dragula
+	mkdir -p ./build/electron-app/node_modules/contra
+	mkdir -p ./build/electron-app/node_modules/atoa
+	mkdir -p ./build/electron-app/node_modules/ticky
+	mkdir -p ./build/electron-app/node_modules/crossvent
+	mkdir -p ./build/electron-app/node_modules/custom-event
 	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
 	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
 	cp -Rp ./node_modules/electron-tabs ./build/electron-app/node_modules
+	cp -Rp ./node_modules/dragula ./build/electron-app/node_modules
+	cp -Rp ./node_modules/contra ./build/electron-app/node_modules
+	cp -Rp ./node_modules/atoa ./build/electron-app/node_modules
+	cp -Rp ./node_modules/ticky ./build/electron-app/node_modules
+	cp -Rp ./node_modules/crossvent ./build/electron-app/node_modules
+	cp -Rp ./node_modules/custom-event ./build/electron-app/node_modules
 	cp ./preload.js ./build/electron-app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json

@@ -4,7 +4,8 @@
  */
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
-process.env.serveMode = "dev";
+process.env.serveMode = "prod"; // Prod OR debug
+let debugMode = false;
 process.env.liveDebugMode = false;
 const url = require('url');
 const path = require('path');
@@ -28,7 +29,6 @@ if (process.env.serveMode == 'dev') {
 }
 let windowWidth = 1280;
 let windowHeight = 970;
-let debugMode = true;
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}

@@ -13,10 +13,11 @@ if (remote.process.env.serveMode === 'dev') {
 } else { // Production
   mainIndex = 'app/index.html';
   TabGroup = require("./tab");
+
+  //const dragula = require("../../node_modules/dragula");
   //TabGroup = require("electron-tabs");
 }
 const dragula = require("dragula");
-
 
 if (remote.process.env.siteDescription !== '') {
   document.querySelector('#description').innerHTML = remote.process.env.siteDescription;
