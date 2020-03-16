@@ -54,26 +54,6 @@ import './backend-ai-login';
  @element backend-ai-console
  */
 
-declare global {
-  interface Window {
-    backendaiclient: any;
-    backendaiconsole: any;
-    backendaiwsproxy: any;
-    isElectron: boolean;
-    buildVersion: string;
-    packageVersion: string;
-    packageEdition: string;
-    packageValidUntil: string;
-    __local_proxy: string;
-    lablupNotification: any;
-    mini_ui: boolean;
-    process: any;
-  }
-  interface ai {
-    backend: any;
-  }
-}
-
 @customElement("backend-ai-console")
 export default class BackendAIConsole extends connect(store)(LitElement) {
   public shadowRoot: any; // ShadowRoot
@@ -128,8 +108,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
-    window.lablupNotification = this.shadowRoot.querySelector('#notification');
-    this.notification = window.lablupNotification;
+    globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
+    this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
@@ -137,13 +117,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.splash = this.shadowRoot.querySelector('#about-panel');
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
+<<<<<<< HEAD
     if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('#portrait-bar') as HTMLElement).style.display = 'none';
+=======
+    if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
+      (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
+>>>>>>> master
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     let configPath;
-    if (window.isElectron) {
+    if (globalThis.isElectron) {
       configPath = './config.toml';
       document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
       document.addEventListener('backend-ai-app-close', this.close_app_window.bind(this, true));
@@ -154,21 +139,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
-      if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         this.loginPanel.login();
       }
     }).catch(err => {
       console.log("Initialization failed.");
-      if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
     this._readUserSettings();
     this.mini_ui = this.options['compact_sidebar'];
-    window.mini_ui = this.mini_ui;
+    globalThis.mini_ui = this.mini_ui;
 
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
-    window.addEventListener("resize", (event) => {
+    globalThis.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
   }
@@ -203,12 +188,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.edition = config.license.edition;
       //console.log(this.edition);
     }
-    window.packageEdition = this.edition;
+    globalThis.packageEdition = this.edition;
     if (typeof config.license !== "undefined" && 'validUntil' in config.license) {
       this.validUntil = config.license.validUntil;
       //console.log(this.validUntil);
     }
-    window.packageValidUntil = this.validUntil;
+    globalThis.packageValidUntil = this.validUntil;
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
@@ -257,15 +242,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   refreshPage() {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.is_connected = true;
-    window.backendaiclient.proxyURL = this.proxy_url;
-    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
-      && typeof window.backendaiclient.is_admin !== "undefined" && window.backendaiclient.is_admin === true) {
+    globalThis.backendaiclient.proxyURL = this.proxy_url;
+    if (typeof globalThis.backendaiclient !== "undefined" && globalThis.backendaiclient != null
+      && typeof globalThis.backendaiclient.is_admin !== "undefined" && globalThis.backendaiclient.is_admin === true) {
       this.is_admin = true;
     } else {
       this.is_admin = false;
     }
-    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
-      && typeof window.backendaiclient.is_superadmin !== "undefined" && window.backendaiclient.is_superadmin === true) {
+    if (typeof globalThis.backendaiclient !== "undefined" && globalThis.backendaiclient != null
+      && typeof globalThis.backendaiclient.is_superadmin !== "undefined" && globalThis.backendaiclient.is_superadmin === true) {
       this.is_superadmin = true;
     } else {
       this.is_superadmin = false;
@@ -276,7 +261,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   showUpdateNotifier() {
     let indicator = <any>this.shadowRoot.getElementById('backend-ai-indicator');
-    indicator.innerHTML = 'New console available. Please <a onclick="window.location.reload()">reload</a> to update.';
+    indicator.innerHTML = 'New console available. Please <a onclick="globalThis.location.reload()">reload</a> to update.';
     indicator.show();
   }
 
@@ -301,7 +286,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else {
       this.mini_ui = false;
     }
-    window.mini_ui = this.mini_ui;
+    globalThis.mini_ui = this.mini_ui;
     let event = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
     document.dispatchEvent(event);
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
@@ -316,7 +301,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
         this.mini_ui = false;
-        window.mini_ui = this.mini_ui;
+        globalThis.mini_ui = this.mini_ui;
       }
     } else { // Open drawer
       if (this.mini_ui) {
@@ -333,13 +318,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _refreshUserInfoPanel() {
-    this.user_id = window.backendaiclient.email;
-    this.domain = window.backendaiclient._config.domainName;
+    this.user_id = globalThis.backendaiclient.email;
+    this.domain = globalThis.backendaiclient._config.domainName;
     this.current_group = this._readRecentProjectGroup();
-    window.backendaiclient.current_group = this.current_group;
-    this.groups = window.backendaiclient.groups;
+    globalThis.backendaiclient.current_group = this.current_group;
+    this.groups = globalThis.backendaiclient.groups;
     let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
-    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
+    if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
       (this.shadowRoot.getElementById('group-select') as any).disabled = true;
       (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
     }
@@ -408,7 +393,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.notification.show();
       return;
     }
-    const p = window.backendaiclient.updatePassword(oldPassword, newPassword, newPassword2);
+    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword, newPassword2);
     p.then((resp) => {
       this.notification.text = 'Password updated';
       this.notification.show();
@@ -522,25 +507,25 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       // remove data in sessionStorage
       sessionStorage.clear();
     }
-    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
-      if (window.backendaiclient._config.connectionMode === 'SESSION') {
-        await window.backendaiclient.logout();
+    if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
+      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
+        await globalThis.backendaiclient.logout();
       }
-      window.backendaiclient = null;
+      globalThis.backendaiclient = null;
     }
   }
 
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
-    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
+    if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = 'Clean up now...';
       this.notification.show();
-      if (window.backendaiclient._config.connectionMode === 'SESSION') {
-        await window.backendaiclient.logout();
+      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
+        await globalThis.backendaiclient.logout();
       }
       this.is_admin = false;
       this.is_superadmin = false;
-      window.backendaiclient = null;
+      globalThis.backendaiclient = null;
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
@@ -553,15 +538,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
       if (performClose === true) {
         // Do nothing. this window will be closed.
-      } else if (window.isElectron) {
+      } else if (globalThis.isElectron) {
         this.user_id = '';
         this.domain = '';
         this._page = 'summary';
-        window.history.pushState({}, '', '/summary');
+        globalThis.history.pushState({}, '', '/summary');
         store.dispatch(navigate(decodeURIComponent('/')));
         this.loginPanel.login();
       } else {
-        window.location.reload();
+        globalThis.location.reload();
       }
     }
   }
@@ -572,10 +557,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   changeGroup(e) {
-    window.backendaiclient.current_group = e.target.value;
-    this.current_group = window.backendaiclient.current_group;
-    this._writeRecentProjectGroup(window.backendaiclient.current_group);
-    let event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
+    globalThis.backendaiclient.current_group = e.target.value;
+    this.current_group = globalThis.backendaiclient.current_group;
+    this._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
+    let event = new CustomEvent("backend-ai-group-changed", {"detail": globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
 
@@ -614,13 +599,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _moveTo(url) {
-    window.history.pushState({}, '', url);
+    globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), {}));
   }
 
   _moveToLogPage() {
-    let currentPage = window.location.toString().split(/[\/]+/).pop();
-    window.history.pushState({}, '', '/usersettings');
+    let currentPage = globalThis.location.toString().split(/[\/]+/).pop();
+    globalThis.history.pushState({}, '', '/usersettings');
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
     if (currentPage && currentPage === 'usersettings') {
       let event = new CustomEvent('backend-ai-usersettings-logs', {});
@@ -630,16 +615,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   _readRecentProjectGroup() {
     let value: string | null = sessionStorage.getItem('backendaiconsole.projectGroup');
-    return value ? value : window.backendaiclient.current_group;
+    return value ? value : globalThis.backendaiclient.current_group;
   }
 
   _writeRecentProjectGroup(value: string) {
-    sessionStorage.setItem('backendaiconsole.projectGroup', value ? value : window.backendaiclient.current_group);
+    sessionStorage.setItem('backendaiconsole.projectGroup', value ? value : globalThis.backendaiclient.current_group);
   }
 
   _moveToUserSettingsPage() {
-    let currentPage = window.location.toString().split(/[\/]+/).pop();
-    window.history.pushState({}, '', '/usersettings');
+    let currentPage = globalThis.location.toString().split(/[\/]+/).pop();
+    globalThis.history.pushState({}, '', '/usersettings');
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'general'}));
     if (currentPage && currentPage === 'usersettings') {
       let event = new CustomEvent('backend-ai-usersettings', {});

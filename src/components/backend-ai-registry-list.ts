@@ -111,7 +111,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#indicator');
   }
 
@@ -131,7 +131,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _refreshRegistryList() {
-    window.backendaiclient.registry.list()
+    globalThis.backendaiclient.registry.list()
       .then(({result}) => {
         this.registryList = this._parseRegistryList(result);
         console.log(this.registryList);
@@ -146,7 +146,7 @@ class BackendAIRegistryList extends BackendAIPage {
     }
 
     // If disconnected
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._registryType = ['docker', 'harbor'];
       }, true);
@@ -206,7 +206,7 @@ class BackendAIRegistryList extends BackendAIPage {
       }
     }
 
-    window.backendaiclient.registry.add(hostname, input)
+    globalThis.backendaiclient.registry.add(hostname, input)
       .then(({result}) => {
         if (result === "ok") {
           this.notification.text = "Registry successfully added";
@@ -223,7 +223,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
 
     if (this.registryList[this.selectedIndex].hostname === encodeURIComponent(name)) {
-      window.backendaiclient.registry.delete(name)
+      globalThis.backendaiclient.registry.delete(name)
         .then(({result}) => {
           if (result === "ok") {
             this.notification.text = "Registry successfully deleted";
@@ -243,7 +243,7 @@ class BackendAIRegistryList extends BackendAIPage {
   _rescanImage() {
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Updating registry information...');
-    window.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
+    globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
           this.indicator.set(100, 'Registry update finished.');

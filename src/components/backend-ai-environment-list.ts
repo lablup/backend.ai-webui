@@ -186,7 +186,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
+    globalThis.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
       .then(res => {
         const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
 
@@ -228,14 +228,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else if (this.installImageResource['mem'].endsWith('m')) {
       this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
     }
-    this.installImageResource['domain'] = window.backendaiclient._config.domainName;
-    this.installImageResource['group_name'] = window.backendaiclient.current_group;
+    this.installImageResource['domain'] = globalThis.backendaiclient._config.domainName;
+    this.installImageResource['group_name'] = globalThis.backendaiclient.current_group;
 
     this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
     this.notification.show();
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Downloading...');
-    window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
+    globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
       this._getImages();
@@ -340,7 +340,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   modifyServicePort() {
     const value = this._parseServicePort();
     const image = this.images[this.selectedIndex];
-    window.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
+    globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
       .then(({result}) => {
         if (result === "ok") {
           this.notification.text = "Service port successfully modified";
@@ -717,10 +717,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this.indicator = this.shadowRoot.querySelector('#indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
 
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
@@ -760,9 +760,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   _getImages() {
     this.loadingIndicator.show();
 
-    window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
+    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return window.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
+      return globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
     }).then((response) => {
       let images = response.images;
       let domainImages: any = [];

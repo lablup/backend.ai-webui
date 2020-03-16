@@ -94,7 +94,7 @@ export default class LablupTermsOfService extends LitElement {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
     if (this.block) {
       this.dialog.backdrop = true;

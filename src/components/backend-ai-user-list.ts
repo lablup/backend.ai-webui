@@ -157,7 +157,7 @@ export default class BackendAIUserList extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     }
 
@@ -167,16 +167,16 @@ export default class BackendAIUserList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserData();
-        this.isAdmin = window.backendaiclient.is_admin;
+        this.isAdmin = globalThis.backendaiclient.is_admin;
         this.userGrid = this.shadowRoot.querySelector('#user-grid');
         this._currentPage = 1;
       }, true);
     } else { // already connected
       this._refreshUserData();
-      this.isAdmin = window.backendaiclient.is_admin;
+      this.isAdmin = globalThis.backendaiclient.is_admin;
       this.userGrid = this.shadowRoot.querySelector('#user-grid');
       this._currentPage = 1;
     }
@@ -193,7 +193,7 @@ export default class BackendAIUserList extends BackendAIPage {
     }
     this.indicator.hide();
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
-    return window.backendaiclient.user.list(is_active, fields).then((response) => {
+    return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
       //Object.keys(users).map((objectKey, index) => {
       //var user = users[objectKey];
@@ -252,7 +252,7 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _signoutUser() {
-    window.backendaiclient.user.delete(this.signoutUserName).then(response => {
+    globalThis.backendaiclient.user.delete(this.signoutUserName).then(response => {
       this.notification.text = PainKiller.relieve('Signout finished.');
     }).catch((err) => {   // Signout failed
       console.log(err);
@@ -268,7 +268,7 @@ export default class BackendAIUserList extends BackendAIPage {
 
   async _getUserData(user_id) {
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
-    return window.backendaiclient.user.get(user_id, fields);
+    return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
   refresh() {
@@ -350,7 +350,7 @@ export default class BackendAIUserList extends BackendAIPage {
             <wl-icon>settings</wl-icon>
           </wl-button>
 
-          ${window.backendaiclient.is_superadmin && this._isActive() ? html`
+          ${globalThis.backendaiclient.is_superadmin && this._isActive() ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._signoutUserDialog(e)}">
                                <wl-icon>delete_forever</wl-icon>
@@ -410,7 +410,7 @@ export default class BackendAIUserList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.user.modify(this.userInfo.email, input)
+    globalThis.backendaiclient.user.modify(this.userInfo.email, input)
       .then(res => {
         if (res.modify_user.ok) {
           this.shadowRoot.querySelector("#user-info-dialog").hide();

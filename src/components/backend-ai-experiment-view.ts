@@ -316,7 +316,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   _showTab(tab) {

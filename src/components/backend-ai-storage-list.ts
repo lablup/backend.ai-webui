@@ -682,14 +682,14 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._toggleCheckbox();
     });
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
       this._addInputValidator(textfield);
     }
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
-    this._refreshFolderUI({"detail": {"mini-ui": window.mini_ui}});
+    this._refreshFolderUI({"detail": {"mini-ui": globalThis.mini_ui}});
     this._validatePathName();
   }
 
@@ -701,7 +701,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         'user': (this.invitees as any)[idx].shared_to.uuid,
         'vfolder': (this.invitees as any)[idx].vfolder_id
       }));
-    const promiseArray = inputList.map(input => window.backendaiclient.vfolder.modify_invitee_permission(input));
+    const promiseArray = inputList.map(input => globalThis.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then((response: any) => {
       if (response.length === 0) {
         this.notification.text = 'No changes made.';
@@ -897,8 +897,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   _refreshFolderList() {
     this.indicator.show();
     let groupId = null;
-    groupId = window.backendaiclient.current_group_id();
-    let l = window.backendaiclient.vfolder.list(groupId);
+    groupId = globalThis.backendaiclient.current_group_id();
+    let l = globalThis.backendaiclient.vfolder.list(groupId);
     l.then((value) => {
       this.indicator.hide();
       let folders = value.filter(item => {
@@ -910,7 +910,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
       this.folders = folders;
     });
-    let vhosts = window.backendaiclient.vfolder.list_hosts();
+    let vhosts = globalThis.backendaiclient.vfolder.list_hosts();
     vhosts.then((response) => {
     });
   }
@@ -929,25 +929,25 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         this._refreshFolderList();
       }, true);
     } else {
-      this.is_admin = window.backendaiclient.is_admin;
+      this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this._refreshFolderList();
     }
   }
 
   async _addFolderDialog() {
-    let vhost_info = await window.backendaiclient.vfolder.list_hosts();
+    let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
     if ((this.allowed_folder_type as String[]).includes('group')) {
-      const group_info = await window.backendaiclient.group.list();
+      const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
     this.openDialog('add-folder-dialog');
@@ -995,7 +995,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _infoFolder(e) {
     const folderId = this._getControlId(e);
-    let job = window.backendaiclient.vfolder.info(folderId);
+    let job = globalThis.backendaiclient.vfolder.info(folderId);
     job.then((value) => {
       this.folderInfo = value;
       this.openDialog('info-folder-dialog');
@@ -1027,7 +1027,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _deleteFolder(folderId) {
-    let job = window.backendaiclient.vfolder.delete(folderId);
+    let job = globalThis.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
       this.notification.text = 'Folder is successfully deleted.';
       this.notification.show();
@@ -1046,7 +1046,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   _clearExplorer(path = this.explorer.breadcrumb.join('/'),
                  id = this.explorer.id,
                  dialog = false) {
-    let job = window.backendaiclient.vfolder.list_files(path, id);
+    let job = globalThis.backendaiclient.vfolder.list_files(path, id);
     job.then(value => {
       this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
       this.explorer.files = JSON.parse(value.files);
@@ -1095,7 +1095,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const explorer = this.explorer;
     newfolderEl.reportValidity();
     if (newfolderEl.checkValidity()) {
-      let job = window.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
+      let job = globalThis.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
         console.log(err);
         if (err & err.message) {
           this.notification.text = PainKiller.relieve(err.title);
@@ -1200,7 +1200,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._uploadFlag = true;
     this.uploadFilesExist = this.uploadFiles.length > 0;
     const path = this.explorer.breadcrumb.concat(fileObj.name).join("/");
-    let job = window.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
+    let job = globalThis.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
     job.then(url => {
       const start_date = new Date().getTime();
       const upload = new tus.Upload(fileObj, {
@@ -1266,10 +1266,10 @@ export default class BackendAiStorageList extends BackendAIPage {
   _downloadFile(e) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.request_download_token(path, this.explorer.id);
+    let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id);
     job.then(res => {
       const token = res.token;
-      const url = window.backendaiclient.vfolder.get_download_url_with_token(token);
+      const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
       let a = document.createElement('a');
       a.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -1304,7 +1304,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         let filename = this.explorer.breadcrumb.concat(file.filename).join("/");
         filenames.push(filename);
       });
-      let job = window.backendaiclient.vfolder.delete_files(filenames, true, this.explorer.id);
+      let job = globalThis.backendaiclient.vfolder.delete_files(filenames, true, this.explorer.id);
       job.then(res => {
         this.notification.text = 'Files deleted.';
         this.notification.show();
@@ -1314,7 +1314,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       if (this.deleteFileDialog.filename != '') {
         let path = this.explorer.breadcrumb.concat(this.deleteFileDialog.filename).join("/");
-        let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
+        let job = globalThis.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
         job.then(res => {
           this.notification.text = 'File deleted.';
           this.notification.show();
@@ -1328,7 +1328,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   _deleteFile(e) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = window.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
+    let job = globalThis.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
     job.then(res => {
       this.notification.text = 'File deleted.';
       this.notification.show();
@@ -1361,7 +1361,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _modifyPermissionDialog(vfolder_id) {
-    window.backendaiclient.vfolder.list_invitees(vfolder_id)
+    globalThis.backendaiclient.vfolder.list_invitees(vfolder_id)
       .then(res => {
         this.invitees = res.shared;
         this.openDialog('modify-permission-dialog');
@@ -1386,7 +1386,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.vfolder.invite(permission, emailArray, this.selectedFolder)
+    globalThis.backendaiclient.vfolder.invite(permission, emailArray, this.selectedFolder)
       .then(res => {
         let msg;
         if (res.invited_ids && res.invited_ids.length > 0) {

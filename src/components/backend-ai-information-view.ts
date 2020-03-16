@@ -189,10 +189,10 @@ export default class BackendAiInformationView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#indicator');
 
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateInformation();
       }, true);
@@ -208,9 +208,9 @@ export default class BackendAiInformationView extends BackendAIPage {
     }
   }
   updateInformation() {
-    this.manager_version = window.backendaiclient.managerVersion;
-    this.console_version = window.packageVersion;
-    this.api_version = window.backendaiclient.apiVersion;
+    this.manager_version = globalThis.backendaiclient.managerVersion;
+    this.console_version = globalThis.packageVersion;
+    this.api_version = globalThis.backendaiclient.apiVersion;
     this.docker_version = 'Compatible'; // It uses 20.03 API.
     this.pgsql_version = 'Compatible';
     this.redis_version = 'Compatible';

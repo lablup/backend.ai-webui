@@ -303,7 +303,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
       }
     );
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
@@ -324,37 +324,37 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        if (!window.backendaiclient.is_admin) {
+        if (!globalThis.backendaiclient.is_admin) {
           this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
           this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)!important';
         } else {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
         }
-        if (window.backendaiclient.APIMajorVersion < 5) {
+        if (globalThis.backendaiclient.APIMajorVersion < 5) {
           this.sessionNameField = 'sess_id';
         }
-        this.is_admin = window.backendaiclient.is_admin;
-        this.is_superadmin = window.backendaiclient.is_superadmin;
-        this._connectionMode = window.backendaiclient._config._connectionMode;
-        this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
+        this.is_admin = globalThis.backendaiclient.is_admin;
+        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+        this._connectionMode = globalThis.backendaiclient._config._connectionMode;
+        this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._refreshJobData();
       }, true);
     } else { // already connected
-      if (!window.backendaiclient.is_admin) {
+      if (!globalThis.backendaiclient.is_admin) {
         this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
         this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)!important';
       } else {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
       }
-      if (window.backendaiclient.APIMajorVersion < 5) {
+      if (globalThis.backendaiclient.APIMajorVersion < 5) {
         this.sessionNameField = 'sess_id';
       }
-      this.is_admin = window.backendaiclient.is_admin;
-      this.is_superadmin = window.backendaiclient.is_superadmin;
-      this._connectionMode = window.backendaiclient._config._connectionMode;
-      this.enableScalingGroup = window.backendaiclient.supports('scaling-group');
+      this.is_admin = globalThis.backendaiclient.is_admin;
+      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+      this._connectionMode = globalThis.backendaiclient._config._connectionMode;
+      this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._refreshJobData();
     }
   }
@@ -399,7 +399,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       default:
         status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING", "PREPARING", "PULLING"];
     }
-    if (window.backendaiclient.supports('detailed-session-states')) {
+    if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
     let fields = [
@@ -412,12 +412,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
     }
-    if (window.backendaiclient.is_superadmin) {
+    if (globalThis.backendaiclient.is_superadmin) {
       fields.push("agent");
     }
-    let group_id = window.backendaiclient.current_group_id();
+    let group_id = globalThis.backendaiclient.current_group_id();
 
-    window.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
+    globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
       this.loadingIndicator.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
@@ -436,7 +436,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].lang.split('/')[2] || sessions[objectKey].lang.split('/')[1];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
-          sessions[objectKey].mem_slot = parseFloat(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
+          sessions[objectKey].mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           // Readable text
           sessions[objectKey].cpu_used_time = this._automaticScaledTime(sessions[objectKey].cpu_used);
@@ -589,7 +589,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _elapsed(start, end) {
-    return window.backendaiclient.utils.elapsedTime(start, end);
+    return globalThis.backendaiclient.utils.elapsedTime(start, end);
   }
 
   _indexRenderer(root, column, rowData) {
@@ -628,7 +628,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _terminateApp(sessionName) {
-    let accessKey = window.backendaiclient._config.accessKey;
+    let accessKey = globalThis.backendaiclient._config.accessKey;
     let rqst = {
       method: 'GET',
       uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName
@@ -636,7 +636,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     return this.sendRequest(rqst)
       .then((response) => {
         this.total_session_count -= 1;
-        let accessKey = window.backendaiclient._config.accessKey;
+        let accessKey = globalThis.backendaiclient._config.accessKey;
         if (response !== undefined && response.code !== 404) {
           let rqst = {
             method: 'GET',
@@ -657,10 +657,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _getProxyURL() {
     let url = 'http://127.0.0.1:5050/';
-    if (window.__local_proxy !== undefined) {
-      url = window.__local_proxy;
-    } else if (window.backendaiclient._config.proxyURL !== undefined) {
-      url = window.backendaiclient._config.proxyURL;
+    if (globalThis.__local_proxy !== undefined) {
+      url = globalThis.__local_proxy;
+    } else if (globalThis.backendaiclient._config.proxyURL !== undefined) {
+      url = globalThis.backendaiclient._config.proxyURL;
     }
     return url;
   }
@@ -670,7 +670,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
 
-    window.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
@@ -699,7 +699,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.appSupportList = [];
     appServices.forEach((elm) => {
       if (elm in this.appTemplate) {
-        if (elm !== 'sshd' || (elm === 'sshd' && window.isElectron)) {
+        if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
           this.appTemplate[elm].forEach((app) => {
             this.appSupportList.push(app);
           });
@@ -728,24 +728,23 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   async _open_wsproxy(sessionName, app = 'jupyter') {
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
 
     let param = {
-      endpoint: window.backendaiclient._config.endpoint
+      endpoint: globalThis.backendaiclient._config.endpoint
     };
-    if (window.backendaiclient._config.connectionMode === 'SESSION') {
+    if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
       param['mode'] = "SESSION";
-      param['session'] = window.backendaiclient._config._session_id;
+      param['session'] = globalThis.backendaiclient._config._session_id;
     } else {
       param['mode'] = "DEFAULT";
-      param['access_key'] = window.backendaiclient._config.accessKey;
-      param['secret_key'] = window.backendaiclient._config.secretKey;
+      param['access_key'] = globalThis.backendaiclient._config.accessKey;
+      param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }
-    param['api_version'] = window.backendaiclient.APIMajorVersion;
-    console.log(window.__local_proxy);
-    if (window.isElectron && typeof window.__local_proxy === 'undefined') {
+    param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
+    if (globalThis.isElectron && typeof globalThis.__local_proxy === 'undefined') {
       this.shadowRoot.querySelector('#indicator').end();
       this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
       this.notification.show();
@@ -796,7 +795,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       urlPostfix = '';
     }
 
-    if (typeof window.backendaiwsproxy === "undefined" || window.backendaiwsproxy === null) {
+    if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(sessionName, appName)
@@ -820,7 +819,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           } else if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
-              window.open(response.url + urlPostfix, '_blank');
+              globalThis.open(response.url + urlPostfix, '_blank');
               this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
               console.log(sessionName);
@@ -833,13 +832,13 @@ export default class BackendAiSessionList extends BackendAIPage {
   async _readSSHKey(sessionName) {
     const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
     const file = '/home/work/id_container';
-    const blob = await window.backendaiclient.download_single(sessionName, file);
+    const blob = await globalThis.backendaiclient.download_single(sessionName, file);
     // TODO: This blob has additional leading letters in front of key texts.
     //       Manually trim those letters.
     const rawText = await blob.text();
     const index = rawText.indexOf('-----');
     const trimmedBlob = await blob.slice(index, blob.size, blob.type);
-    downloadLinkEl.href = window.URL.createObjectURL(trimmedBlob);
+    downloadLinkEl.href = globalThis.URL.createObjectURL(trimmedBlob);
     downloadLinkEl.download = 'id_container';
   }
 
@@ -847,14 +846,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionName = controls['session-name'];
-    if (window.backendaiwsproxy == undefined || window.backendaiwsproxy == null) {
+    if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.shadowRoot.querySelector('#indicator').start();
       this._open_wsproxy(sessionName, 'ttyd')
         .then((response) => {
           if (response.url) {
             this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
             setTimeout(() => {
-              window.open(response.url, '_blank');
+              globalThis.open(response.url, '_blank');
               this.shadowRoot.querySelector('#indicator').end();
               console.log("Terminal proxy loaded: ");
               console.log(sessionName);
@@ -988,7 +987,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   async _terminateKernel(sessionName, accessKey) {
     this.terminationQueue.push(sessionName);
     return this._terminateApp(sessionName).then(() => {
-      window.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
+      globalThis.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
         setTimeout(() => {
           this.terminationQueue = [];
           this.refreshList(true, false);
@@ -1015,7 +1014,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
     if (dialog.id === 'ssh-dialog') {
       const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
-      window.URL.revokeObjectURL(downloadLinkEl.href);
+      globalThis.URL.revokeObjectURL(downloadLinkEl.href);
     }
   }
 
@@ -1228,18 +1227,18 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
 
-    let group_id = window.backendaiclient.current_group_id();
+    let group_id = globalThis.backendaiclient.current_group_id();
     let fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
 
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
     }
-    if (window.backendaiclient.is_superadmin) {
+    if (globalThis.backendaiclient.is_superadmin) {
       fields.push("agent");
     }
 
-    window.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
+    globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
       let sessions = response.compute_sessions;
       JsonToCsv.exportToCsv(fileNameEl.value, sessions);
 
@@ -1250,7 +1249,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
     // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
     // if (isUnlimited) {
-    //   window.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
+    //   globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
     //     // let total_count = response.compute_sessions.length;
     //     let sessions = response.compute_sessions;
     //     // console.log("total_count : ",total_count);

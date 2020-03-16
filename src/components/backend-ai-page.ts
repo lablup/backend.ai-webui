@@ -17,11 +17,11 @@ export class BackendAIPage extends LitElement {
   }
 
   get activeConnected() {
-    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null && window.backendaiclient.ready === true;
+    return this.active && typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null && globalThis.backendaiclient.ready === true;
   }
 
   get connected() {
-    return typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null && window.backendaiclient.ready === true;
+    return typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null && globalThis.backendaiclient.ready === true;
   }
 
   public run_after_connection = (fn: any) => {

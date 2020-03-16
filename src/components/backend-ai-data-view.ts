@@ -257,7 +257,7 @@ export default class BackendAIData extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
   }
 
@@ -266,18 +266,18 @@ export default class BackendAIData extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
-        window.backendaiclient.vfolder.allowed_types().then(response => {
+        globalThis.backendaiclient.vfolder.allowed_types().then(response => {
           this.allowed_folder_type = response;
         });
       }, true);
     } else {
-      this.is_admin = window.backendaiclient.is_admin;
+      this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
-      window.backendaiclient.vfolder.allowed_types().then(response => {
+      globalThis.backendaiclient.vfolder.allowed_types().then(response => {
         this.allowed_folder_type = response;
       });
     }
@@ -296,11 +296,11 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   async _addFolderDialog() {
-    let vhost_info = await window.backendaiclient.vfolder.list_hosts();
+    let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
     if ((this.allowed_folder_type as String[]).includes('group')) {
-      const group_info = await window.backendaiclient.group.list();
+      const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
     this.openDialog('add-folder-dialog');
@@ -330,11 +330,11 @@ export default class BackendAIData extends BackendAIPage {
     if (type === 'user') {
       group = '';
     } else {
-      group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : window.backendaiclient.current_group;
+      group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
     }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-      let job = window.backendaiclient.vfolder.create(name, host, group);
+      let job = globalThis.backendaiclient.vfolder.create(name, host, group);
       job.then((value) => {
         this.notification.text = 'Folder is successfully created.';
         this.notification.show();
