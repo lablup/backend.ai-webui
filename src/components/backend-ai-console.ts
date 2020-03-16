@@ -117,13 +117,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.splash = this.shadowRoot.querySelector('#about-panel');
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
-<<<<<<< HEAD
-    if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
-      (this.shadowRoot.querySelector('#portrait-bar') as HTMLElement).style.display = 'none';
-=======
     if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
-      (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
->>>>>>> master
+      (this.shadowRoot.querySelector('#portrait-bar') as HTMLElement).style.display = 'none';
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
