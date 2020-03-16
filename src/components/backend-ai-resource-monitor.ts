@@ -12,7 +12,6 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-select';

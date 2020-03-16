@@ -16,7 +16,6 @@ import '@polymer/paper-button/paper-button';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
 import '@vaadin/vaadin-dialog/vaadin-dialog';
@@ -232,29 +231,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
           padding: 5px 20px;
           border-bottom: 1px solid #dddddd;
           font-weight: 100;
-        }
-
-        paper-slider {
-          width: 285px;
-          --paper-slider-input: {
-            width: 70px;
-          };
-          --paper-slider-height: 3px;
-        }
-
-        paper-slider.mem {
-          --paper-slider-knob-color: var(--paper-orange-400);
-          --paper-slider-active-color: var(--paper-orange-400);
-        }
-
-        paper-slider.cpu {
-          --paper-slider-knob-color: var(--paper-light-green-400);
-          --paper-slider-active-color: var(--paper-light-green-400);
-        }
-
-        paper-slider.gpu {
-          --paper-slider-knob-color: var(--paper-cyan-400);
-          --paper-slider-active-color: var(--paper-cyan-400);
         }
 
         paper-progress {
