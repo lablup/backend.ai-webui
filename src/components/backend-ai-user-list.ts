@@ -8,7 +8,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import '@polymer/paper-icon-button/paper-icon-button';
 import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
@@ -19,6 +18,7 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
+import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
@@ -344,28 +344,30 @@ export default class BackendAIUserList extends BackendAIPage {
   controlRenderer(root, column?, rowData?) {
     render(
       html`
-            <div
-              id="controls"
-              class="layout horizontal flex center"
-              .user-id="${rowData.item.email}"
-            >
-              <paper-icon-button
-                class="fg green"
-                icon="assignment"
-                @click="${(e) => this._showUserDetail(e)}"
-              ></paper-icon-button>
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+          .user-id="${rowData.item.email}">
+          <wl-button fab flat inverted
+            class="fg green"
+            icon="assignment"
+            @click="${(e) => this._showUserDetail(e)}">
+            <wl-icon>assignment</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
+            class="fg blue"
+            icon="settings"
+            @click="${(e) => this._editUserDetail(e)}">
+            <wl-icon>settings</wl-icon>
+          </wl-button>
 
-              <paper-icon-button
-                class="fg blue"
-                icon="settings"
-                @click="${(e) => this._editUserDetail(e)}"
-              ></paper-icon-button>
-
-              ${window.backendaiclient.is_superadmin && this._isActive() ? html`
-                    <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                       @click="${(e) => this._signoutUserDialog(e)}"></paper-icon-button>
-              ` : html``}
-            </div>
+          ${window.backendaiclient.is_superadmin && this._isActive() ? html`
+            <wl-button fab flat inverted class="fg red controls-running"
+                               @click="${(e) => this._signoutUserDialog(e)}">
+                               <wl-icon>delete_forever</wl-icon>
+            </wl-button>
+          ` : html``}
+        </div>
       `, root
     );
   }

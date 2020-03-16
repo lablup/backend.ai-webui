@@ -14,6 +14,7 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/icon';
+import 'weightless/button';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -349,12 +350,12 @@ export default class BackendAIAgentList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <paper-icon-button disabled class="fg" icon="assignment"></paper-icon-button>
+          <wl-button fab flat inverted disabled class="fg" icon="assignment"></wl-button>
           ${this._isRunning() ? html`
-            <paper-icon-button disabled class="fg controls-running" icon="build"></paper-icon-button>
-            <paper-icon-button disabled class="fg controls-running" icon="alarm-add"></paper-icon-button>
-            <paper-icon-button disabled class="fg controls-running" icon="av:pause"></paper-icon-button>
-            <paper-icon-button disabled class="fg controls-running" icon="delete"></paper-icon-button>
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="build"></wl-button>
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="alarm-add"></wl-button>
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="av:pause"></wl-button>
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="delete"></wl-button>
           ` : html``}
     </div>`, root
     );

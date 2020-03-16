@@ -7,8 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-icon-button/paper-icon-button';
-
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
@@ -207,7 +205,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
-          <paper-icon-button
+          <wl-button fab flat inverted
             icon="settings"
             class="fg blue"
             @click=${() => {
@@ -215,15 +213,14 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         this.shadowRoot.querySelector("#modify-scaling-group-active").checked = this.scalingGroups[rowData.index].is_active;
         this._launchDialogById("#modify-scaling-group-dialog")
       }}
-          ></paper-icon-button>
-          <paper-icon-button
+          ><wl-icon>settings</wl-icon></wl-button>
+          <wl-button fab flat inverted
             icon="delete"
             class="fg red"
             @click=${() => {
         this.selectedIndex = rowData.index;
         this._launchDialogById("#delete-scaling-group-dialog")
-      }}
-          ></paper-icon-button>
+      }}><wl-icon>delete</wl-icon></wl-button>
         </div>
       `, root
     )

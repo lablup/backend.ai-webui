@@ -414,7 +414,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div slot="after">
                     <div class="horizontal layout">
                       <div class="layout vertical center center-justified flex" style="width:50px;">
-                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                          <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                       </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
@@ -443,7 +443,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div slot="after">
                     <div class="horizontal layout">
                       <div class="layout vertical center center-justified flex" style="width:50px;">
-                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                          <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                       </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
@@ -472,7 +472,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div slot="after">
                   <div class="horizontal layout">
                     <div class="layout vertical center center-justified flex" style="width:50px;">
-                        <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                        <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                     </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
@@ -501,7 +501,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div slot="after">
                   <div class="horizontal layout">
                     <div class="layout vertical center center-justified flex" style="width:50px;">
-                        <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                        <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                     </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
@@ -530,7 +530,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div slot="after">
                     <div class="horizontal layout">
                       <div class="layout vertical center center-justified flex" style="width:50px;">
-                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                          <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                       </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">

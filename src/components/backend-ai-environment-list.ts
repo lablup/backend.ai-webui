@@ -362,7 +362,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
-          <paper-icon-button
+          <wl-button fab flat inverted
             class="fg blue controls-running"
             on-tap="_modifyImage"
             icon="icons:settings"
@@ -371,9 +371,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
         this._launchDialogById("#modify-image-dialog");
         this.requestUpdate();
-      }}
-          ></paper-icon-button>
-          <paper-icon-button
+      }}>
+            <wl-icon>settings</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
             class="fg pink controls-running"
             icon="icons:apps"
             @click=${() => {
@@ -382,8 +383,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this._decodeServicePort();
         this._launchDialogById("#modify-app-dialog");
         this.requestUpdate();
-      }}
-          ></paper-icon-button>
+      }}>
+            <wl-icon>apps</wl-icon>
+          </wl-button>
         </div>
       `,
       root
