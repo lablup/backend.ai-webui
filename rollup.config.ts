@@ -1,6 +1,8 @@
 import resolve from '@rollup/plugin-node-resolve';
 //import babel from 'rollup-plugin-babel'; // To support legacy browsers
-import typescript from '@rollup/plugin-typescript';
+import typescript from 'rollup-plugin-typescript';
+//import typescript from 'rollup-plugin-typescript2';
+//import typescript from '@rollup/plugin-typescript';
 import { terser } from "rollup-plugin-terser";
 
 export default {
@@ -13,9 +15,10 @@ export default {
     sourcemap: false
   },
   plugins: [
+    //babel(),
     typescript(),
     terser(),
-    //babel(),
     resolve()
+//    babel()
   ]
 };

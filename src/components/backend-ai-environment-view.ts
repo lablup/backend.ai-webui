@@ -89,12 +89,12 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       return true;
     }
     // If disconnected
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_superadmin = window.backendaiclient.is_superadmin;
+        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       }, true);
     } else { // already connected
-      this.is_superadmin = window.backendaiclient.is_superadmin;
+      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
     }
     return false;
   }

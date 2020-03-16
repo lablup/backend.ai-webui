@@ -115,7 +115,7 @@ export default class BackendAiSignup extends BackendAIPage {
   firstUpdated() {
     this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {

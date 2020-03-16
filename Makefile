@@ -22,7 +22,7 @@ versiontag:
 	sed -i -E 's/"version": "\(.*\)"/"version": "${BUILD_VERSION}"/g' manifest.json
 	sed -i -E 's/window.buildVersion = "\(.*\)"/window.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
 	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\(.*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-console.ts
-compile_keepversion: 
+compile_keepversion:
 	npm run build
 compile: versiontag
 	npm run build
@@ -48,6 +48,8 @@ dep:
 	mkdir -p ./build/electron-app/node_modules/markty-toml
 	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
 	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
+	#rm ./build/electron-app/node_modules/markty-toml/dist/marktytoml.js
+	#cp ./node_modules/markty-toml/dist/marktytoml.es.js ./build/electron-app/node_modules/markty-toml/dist/marktytoml.js
 	cp ./preload.js ./build/electron-app/preload.js
 	mkdir -p ./build/electron-app/app/wsproxy/config
 	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json

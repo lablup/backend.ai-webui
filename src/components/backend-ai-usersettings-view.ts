@@ -194,7 +194,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   firstUpdated() {
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateSettings();
       }, true);
@@ -202,7 +202,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       this.updateSettings();
     }
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     // this._activeTab = "general";
     this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
     this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');
@@ -218,12 +218,12 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     const params = store.getState().app.params;
     const tab = params.tab;
     if (tab && tab === 'logs') {
-      window.setTimeout(() => {
+      globalThis.setTimeout(() => {
         const tabEl = this.shadowRoot.querySelector('wl-tab[value="logs"]');
         tabEl.click();
       }, 0);
     } else {
-      window.setTimeout(() => {
+      globalThis.setTimeout(() => {
         const tabEl = this.shadowRoot.querySelector('wl-tab[value="general"]');
         tabEl.click();
       }, 0);
@@ -235,7 +235,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
 
   _fetchBootstrapScript() {
     // Fetch user's bootstrap code.
-    return window.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
+    return globalThis.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
       const script = resp || '';
       this.lastSavedBootstrapScript = script;
       return script;
@@ -257,7 +257,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       return this.notification.show();
     }
     this.indicator.show();
-    window.backendaiclient.userConfig.update_bootstrap_script(script)
+    globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
         this.notification.text = 'Saved bootstrap script';
         this.notification.show();
