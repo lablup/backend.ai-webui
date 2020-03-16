@@ -227,21 +227,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
           font-weight: 100;
         }
 
-        paper-progress {
-          width: 100px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677eb;
-          --paper-progress-secondary-color: #98be5a;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
-
-        .short-indicator paper-progress {
-          width: 50px;
-        }
-
         .short-indicator .gauge-label {
           width: 80px;
         }

@@ -123,32 +123,23 @@ export default class BackendAISummary extends BackendAIPage {
           height: 10px;
         }
 
-        paper-progress,
         mwc-linear-progress {
           width: 190px;
           height: 5px;
           border-radius: 0;
-          --paper-progress-height: 5px;
-          --paper-progress-active-color: #3677eb;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
+          --mdc-theme-primary: #3677eb;
         }
 
-        paper-progress.start-bar,
         mwc-linear-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
           --mdc-theme-primary: #3677eb;
-          --paper-progress-active-color: #3677eb;
         }
 
-        paper-progress.end-bar,
         mwc-linear-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
           --mdc-theme-primary: #98be5a;
-          --paper-progress-active-color: #98be5a;
         }
 
         wl-button[class*="green"] {

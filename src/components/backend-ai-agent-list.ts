@@ -10,10 +10,11 @@ import {BackendAIPage} from './backend-ai-page';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/icon';
 import 'weightless/button';
+
+import '@material/mwc-linear-progress';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -92,15 +93,12 @@ export default class BackendAIAgentList extends BackendAIPage {
           height: 6px;
         }
 
-        paper-progress {
+        mwc-linear-progress {
           width: 100px;
           border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677eb;
-          --paper-progress-secondary-color: #98be5a;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
+          height: 10px;
+          --mdc-theme-primary: #3677eb;
+          --mdc-linear-progress-buffer-color: #98be5a;
         }
       `];
   }
@@ -159,8 +157,8 @@ export default class BackendAIAgentList extends BackendAIPage {
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
           if (agent.cpu_cur_pct !== null) {
             agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
-            agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots * 100.0;
-            agents[objectKey].cpu_current_usage_ratio = agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots;
+            agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
+            agents[objectKey].cpu_current_usage_ratio = (agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots) / 100.0;
             agents[objectKey].current_cpu_percent = agents[objectKey].current_cpu_percent.toFixed(2);
           } else {
             agents[objectKey].current_cpu_percent = 0;
@@ -175,8 +173,8 @@ export default class BackendAIAgentList extends BackendAIPage {
           agents[objectKey].current_mem = window.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
           agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
           agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
-          agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots * 100.0;
-          agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots * 100.0;
+          agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
+          agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
           agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
           if ('cuda.device' in available_slots) {
             agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
@@ -397,8 +395,8 @@ export default class BackendAIAgentList extends BackendAIPage {
                   </div>
                 </div>
                 <span class="flex"></span>
-                <paper-progress id="cpu-usage-bar" value="[[item.cpu_current_usage_ratio]]"
-                                secondary-progress="[[item.cpu_total_usage_ratio]]"></paper-progress>
+                <mwc-linear-progress id="cpu-usage-bar" progress="[[item.cpu_current_usage_ratio]]"
+                                buffer="[[item.cpu_total_usage_ratio]]"></mwc-linear-progress>
               </div>
               <div class="layout horizontal center flex">
                 <wl-icon class="fg green">memory</wl-icon>
@@ -413,8 +411,8 @@ export default class BackendAIAgentList extends BackendAIPage {
                   </div>
                 </div>
                 <span class="flex"></span>
-                <paper-progress id="mem-usage-bar" value="[[item.mem_current_usage_ratio]]"
-                                secondary-progress="[[item.mem_total_usage_ratio]]"></paper-progress>
+                <mwc-linear-progress id="mem-usage-bar" progress="[[item.mem_current_usage_ratio]]"
+                                buffer="[[item.mem_total_usage_ratio]]"></mwc-linear-progress>
 
               </div>
               <template is="dom-if" if="[[item.gpu_slots]]">
