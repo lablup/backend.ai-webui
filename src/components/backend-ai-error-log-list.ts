@@ -98,10 +98,10 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this._grid = this.shadowRoot.querySelector('#list-grid');
-    if (!window.backendaiclient || !window.backendaiclient.is_admin) {
+    if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 320px)!important';
     }
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
 
     document.addEventListener('log-message-refresh', () => this._refreshLogData());
     document.addEventListener('log-message-clear', () => this._clearLogData());

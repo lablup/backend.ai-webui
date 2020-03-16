@@ -105,12 +105,12 @@ export default class BackendAiSessionView extends BackendAIPage {
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.shadowRoot.querySelector('#running-jobs').refreshList(true, false);
     });
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
       }, true);
     } else {
-      this.is_admin = window.backendaiclient.is_admin;
+      this.is_admin = globalThis.backendaiclient.is_admin;
     }
   }
 
@@ -131,7 +131,7 @@ export default class BackendAiSessionView extends BackendAIPage {
 
   _exportToCSV() {
     console.log("Downloading CSV File...");
-    let event = new CustomEvent("backend-ai-csv-file-export-session", {"detail": window.backendaiclient.current_group});
+    let event = new CustomEvent("backend-ai-csv-file-export-session", {"detail": globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
 

@@ -123,7 +123,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   connectedCallback() {
@@ -136,26 +136,26 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        window.backendaiclient.scalingGroup.list_all()
+        globalThis.backendaiclient.scalingGroup.list_all()
           .then(res => {
             this.scalingGroups = res.scaling_groups;
           });
 
-        window.backendaiclient.domain.list()
+        globalThis.backendaiclient.domain.list()
           .then(({domains}) => {
             this.domains = domains;
             this.requestUpdate(); // without this render is called beforehands, so update is required
           })
       }, true);
     } else { // already connected
-      window.backendaiclient.scalingGroup.list_all()
+      globalThis.backendaiclient.scalingGroup.list_all()
         .then(res => {
           this.scalingGroups = res.scaling_groups;
         });
 
-      window.backendaiclient.domain.list()
+      globalThis.backendaiclient.domain.list()
         .then(({domains}) => {
           this.domains = domains;
           this.requestUpdate(); // without this render is called beforehands, so update is required
@@ -242,10 +242,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.scalingGroup.create(scalingGroup, description)
+    globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
       .then(({create_scaling_group: res}) => {
         if (res.ok) {
-          return window.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
+          return globalThis.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
         } else {
           this.notification.text = PainKiller.relieve(res.title);
           this.notification.detail = res.msg;
@@ -291,7 +291,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.scalingGroup.modify(name, input)
+    globalThis.backendaiclient.scalingGroup.modify(name, input)
       .then(({modify_scaling_group}) => {
         if (modify_scaling_group.ok) {
           this.notification.text = "Resource group successfully modified";
@@ -315,7 +315,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.scalingGroup.delete(name)
+    globalThis.backendaiclient.scalingGroup.delete(name)
       .then(({delete_scaling_group}) => {
         if (delete_scaling_group.ok) {
           this.notification.text = "Resource group successfully deleted";
@@ -332,7 +332,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
-    window.backendaiclient.scalingGroup.list_all()
+    globalThis.backendaiclient.scalingGroup.list_all()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         this.requestUpdate(); // without this render is called beforehands, so update is required

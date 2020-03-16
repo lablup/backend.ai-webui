@@ -413,7 +413,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this._validatePolicyName();
   }
 
@@ -422,17 +422,17 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshPolicyData();
         this._getResourceInfo();
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
         this._getResourceInfo();
       }, true);
     } else { // already connected
       this._refreshPolicyData();
       this._getResourceInfo();
-      this.is_admin = window.backendaiclient.is_admin;
+      this.is_admin = globalThis.backendaiclient.is_admin;
       this._getResourceInfo();
     }
   }
@@ -447,7 +447,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   updateCurrentPolicyToDialog(e) {
     const controls = e.target.closest('#controls');
     const policyName = controls['policy-name'];
-    let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
+    let resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     this.resource_policy_names = Object.keys(resourcePolicies);
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
@@ -478,9 +478,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _refreshPolicyData() {
-    return window.backendaiclient.resourcePolicy.get().then((response) => {
+    return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       let rp = response.keypair_resource_policies;
-      //let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      //let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
       return rp;
     }).then((response) => {
       let resourcePolicies = response;
@@ -492,7 +492,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           policy['total_resource_slots'].cpu = 'Unlimited';
         }
         if ('mem' in policy['total_resource_slots']) {
-          policy['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
+          policy['total_resource_slots'].mem = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
         } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
           policy['total_resource_slots'].mem = 'Unlimited';
         }
@@ -593,7 +593,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     try {
       let input = this._readResourcePolicyInput();
 
-      window.backendaiclient.resourcePolicy.mutate(name, input)
+      globalThis.backendaiclient.resourcePolicy.mutate(name, input)
         .then(({modify_keypair_resource_policy}) => {
           if (modify_keypair_resource_policy.ok) {
             this.shadowRoot.querySelector('#modify-policy-dialog').hide();
@@ -621,7 +621,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _deleteKey(e) {
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
-    window.backendaiclient.keypair.delete(accessKey).then(response => {
+    globalThis.backendaiclient.keypair.delete(accessKey).then(response => {
       this.refresh();
     })
     .catch(err => {

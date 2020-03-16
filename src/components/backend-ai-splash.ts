@@ -67,8 +67,8 @@ export default class BackendAISplash extends LitElement {
   }
 
   show() {
-    this.edition = window.packageEdition;
-    this.validUntil = window.packageValidUntil;
+    this.edition = globalThis.packageEdition;
+    this.validUntil = globalThis.packageValidUntil;
     this.dialog.show();
   }
 
@@ -88,12 +88,12 @@ export default class BackendAISplash extends LitElement {
           </div>
           <div class="splash-information">
             <ul>
-              <li>Backend.AI Console <span id="version-detail" class="detail">${window.packageVersion}</span></li>
+              <li>Backend.AI Console <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
               <li><span id="license-detail">${this.edition} Edition</span></li>
               ${this.validUntil !== '' ? html`
               <li><span id="valid-until" class="detail">Subscription is active until ${this.validUntil}</span></li>
               ` : html``}
-              <li><span id="mode-detail" class="detail">${window.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${window.buildVersion}</span></li>
+              <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
             </ul>
             <ul>
               <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>

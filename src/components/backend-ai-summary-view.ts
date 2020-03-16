@@ -167,7 +167,7 @@ export default class BackendAISummary extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   _refreshHealthPanel() {
@@ -197,7 +197,7 @@ export default class BackendAISummary extends BackendAIPage {
         status = 'RUNNING';
     }
     let fields = ["created_at"];
-    window.backendaiclient.computeSession.list(fields, status).then((response) => {
+    globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.indicator.hide();
       this.jobs = response;
       this.sessions = response.compute_session_list.total_count;
@@ -220,9 +220,9 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
+    return globalThis.backendaiclient.resourcePolicy.get(globalThis.backendaiclient.resource_policy).then((response) => {
       let rp = response.keypair_resource_policies;
-      this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
     });
   }
 
@@ -243,7 +243,7 @@ export default class BackendAISummary extends BackendAIPage {
     }
     this.indicator.show();
 
-    window.backendaiclient.resources.totalResourceInformation().then((response) => {
+    globalThis.backendaiclient.resources.totalResourceInformation().then((response) => {
       this.indicator.hide();
       this.resources = response;
       this._sync_resource_values();
@@ -291,10 +291,10 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _sync_resource_values() {
-    this.manager_version = window.backendaiclient.managerVersion;
-    this.console_version = window.packageVersion;
+    this.manager_version = globalThis.backendaiclient.managerVersion;
+    this.console_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
-    this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
+    this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources.gpu.total)) {
       this.gpu_total = 0;
     } else {
@@ -317,8 +317,8 @@ export default class BackendAISummary extends BackendAIPage {
     // mem.total: total memory
     // mem.allocated: allocated by backend.ai
     // mem.used: used by backend.ai
-    this.mem_used = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
-    this.mem_allocated = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
+    this.mem_used = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
+    this.mem_allocated = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
 
@@ -343,10 +343,10 @@ export default class BackendAISummary extends BackendAIPage {
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     this._init_resource_values();
     this.requestUpdate();
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_superadmin = window.backendaiclient.is_superadmin;
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         if (this.activeConnected) {
           this._refreshHealthPanel();
@@ -356,8 +356,8 @@ export default class BackendAISummary extends BackendAIPage {
         }
       }, true);
     } else {
-      this.is_superadmin = window.backendaiclient.is_superadmin;
-      this.is_admin = window.backendaiclient.is_admin;
+      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+      this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this._refreshHealthPanel();
       this._refreshInvitations();
@@ -386,7 +386,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.invitations().then(res => {
+    globalThis.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
       if (this.active) {
         setTimeout(() => {
@@ -400,7 +400,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.accept_invitation(invitation.id)
+    globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
@@ -417,7 +417,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.delete_invitation(invitation.id)
+    globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();

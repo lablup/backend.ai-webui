@@ -74,7 +74,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   constructor() {
     super();
-    window.backendaiconsole = {};
+    globalThis.backendaiconsole = {};
   }
 
   static get styles() {
@@ -163,7 +163,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   _changeSigninMode() {
@@ -217,9 +217,9 @@ export default class BackendAILogin extends BackendAIPage {
       });
     }
     if (typeof config.general === "undefined" || typeof config.general.debug === "undefined" || config.general.debug === '') {
-      window.backendaiconsole.debug = false;
+      globalThis.backendaiconsole.debug = false;
     } else if (config.general.debug === true) {
-      window.backendaiconsole.debug = true;
+      globalThis.backendaiconsole.debug = true;
       console.log('Debug flag is set to true');
     }
     if (typeof config.general === "undefined" || typeof config.general.signupSupport === "undefined" || config.general.signupSupport === '' || config.general.signupSupport == false) {
@@ -553,14 +553,14 @@ export default class BackendAILogin extends BackendAIPage {
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
     return this.client.gql(q, v).then(response => {
-      window.backendaiclient = this.client;
+      globalThis.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
-      window.backendaiclient.resource_policy = resource_policy;
+      globalThis.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
       let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name, id}"];
       let q = `query { user{ ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
-      return window.backendaiclient.gql(q, v);
+      return globalThis.backendaiclient.gql(q, v);
     }).then(response => {
       let email = response['user'].email;
       if (this.email !== email) {
@@ -569,22 +569,22 @@ export default class BackendAILogin extends BackendAIPage {
       this.user_groups = response['user'].groups;
       let role = response['user'].role;
       this.domain_name = response['user'].domain_name;
-      window.backendaiclient.email = this.email;
-      window.backendaiclient.is_admin = false;
-      window.backendaiclient.is_superadmin = false;
+      globalThis.backendaiclient.email = this.email;
+      globalThis.backendaiclient.is_admin = false;
+      globalThis.backendaiclient.is_superadmin = false;
 
       if (["superadmin", "admin"].includes(role)) {
-        window.backendaiclient.is_admin = true;
+        globalThis.backendaiclient.is_admin = true;
       }
       if (["superadmin"].includes((role))) {
-        window.backendaiclient.is_superadmin = true;
+        globalThis.backendaiclient.is_superadmin = true;
       }
-      return window.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
+      return globalThis.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
     }).then(response => {
       let groups = response.groups;
       let user_group_ids = this.user_groups.map(({id}) => id);
       if (groups !== null) {
-        window.backendaiclient.groups = groups.filter((item) => {
+        globalThis.backendaiclient.groups = groups.filter((item) => {
           if (user_group_ids.includes(item.id)) {
             return item;
           }
@@ -595,19 +595,19 @@ export default class BackendAILogin extends BackendAIPage {
         groups.forEach(function (element) {
           groupMap[element.name] = element.id;
         });
-        window.backendaiclient.groupIds = groupMap;
+        globalThis.backendaiclient.groupIds = groupMap;
       } else {
-        window.backendaiclient.groups = ['default'];
+        globalThis.backendaiclient.groups = ['default'];
       }
-      window.backendaiclient.current_group = window.backendaiclient.groups[0];
-      window.backendaiclient.current_group_id = () => {
-        return window.backendaiclient.groupIds[window.backendaiclient.current_group];
+      globalThis.backendaiclient.current_group = globalThis.backendaiclient.groups[0];
+      globalThis.backendaiclient.current_group_id = () => {
+        return globalThis.backendaiclient.groupIds[globalThis.backendaiclient.current_group];
       };
-      window.backendaiclient._config._proxyURL = this.proxy_url;
-      window.backendaiclient._config.domainName = this.domain_name;
-      window.backendaiclient._config.default_session_environment = this.default_session_environment;
-      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
-      window.backendaiclient.ready = true;
+      globalThis.backendaiclient._config._proxyURL = this.proxy_url;
+      globalThis.backendaiclient._config.domainName = this.domain_name;
+      globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
+      globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
+      globalThis.backendaiclient.ready = true;
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
@@ -642,26 +642,26 @@ export default class BackendAILogin extends BackendAIPage {
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
     return this.client.gql(q, v).then(response => {
-      window.backendaiclient = this.client;
+      globalThis.backendaiclient = this.client;
       let email = response['keypair'].user_id;
       let is_admin = response['keypair'].is_admin;
       let resource_policy = response['keypair'].resource_policy;
       if (this.email != email) {
         this.email = email;
       }
-      window.backendaiclient.groups = ['default'];
-      window.backendaiclient.email = this.email;
-      window.backendaiclient.current_group = 'default';
-      window.backendaiclient.is_admin = is_admin;
-      window.backendaiclient.is_superadmin = is_admin;
-      window.backendaiclient.resource_policy = resource_policy;
-      window.backendaiclient._config._proxyURL = this.proxy_url;
-      window.backendaiclient._config.domainName = 'default';
-      window.backendaiclient._config.default_session_environment = this.default_session_environment;
-      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
-      return window.backendaiclient.getManagerVersion();
+      globalThis.backendaiclient.groups = ['default'];
+      globalThis.backendaiclient.email = this.email;
+      globalThis.backendaiclient.current_group = 'default';
+      globalThis.backendaiclient.is_admin = is_admin;
+      globalThis.backendaiclient.is_superadmin = is_admin;
+      globalThis.backendaiclient.resource_policy = resource_policy;
+      globalThis.backendaiclient._config._proxyURL = this.proxy_url;
+      globalThis.backendaiclient._config.domainName = 'default';
+      globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
+      globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
+      return globalThis.backendaiclient.getManagerVersion();
     }).then(response => {
-      window.backendaiclient.ready = true;
+      globalThis.backendaiclient.ready = true;
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();

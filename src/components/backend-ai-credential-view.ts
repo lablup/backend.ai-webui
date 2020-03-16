@@ -237,7 +237,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     document.addEventListener('backend-ai-credential-refresh', () => {
       this.shadowRoot.querySelector('#active-credential-list').refresh();
       this.shadowRoot.querySelector('#inactive-credential-list').refresh();
@@ -249,7 +249,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       }, true);
     });
 
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._preparePage();
       });
@@ -259,12 +259,12 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _preparePage() {
-    if (window.backendaiclient.is_admin !== true) {
+    if (globalThis.backendaiclient.is_admin !== true) {
       this.disablePage();
     } else {
       this.isAdmin = true;
     }
-    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
+    if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
       this.use_user_list = true;
       this._activeTab = 'user-lists';
     } else {
@@ -305,7 +305,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _readVFolderHostInfo() {
-    window.backendaiclient.vfolder.list_hosts().then(response => {
+    globalThis.backendaiclient.vfolder.list_hosts().then(response => {
       this.allowed_vfolder_hosts = response.allowed;
       this.default_vfolder_host = response.default;
     }).catch(err => {
@@ -336,13 +336,13 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   async _getResourcePolicies() {
-    return window.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
+    return globalThis.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
       'total_resource_slots',
       'max_concurrent_sessions',
       'max_containers_per_session',
     ]).then((response) => {
-      let policies = window.backendaiclient.utils.gqlToObject(response.keypair_resource_policies, 'name');
-      let policyNames = window.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
+      let policies = globalThis.backendaiclient.utils.gqlToObject(response.keypair_resource_policies, 'name');
+      let policyNames = globalThis.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
       this.resource_policies = policies;
       this.resource_policy_names = policyNames;
     });
@@ -358,14 +358,14 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
       user_id = this.shadowRoot.querySelector('#id_new_user_id').value;
     } else {
-      user_id = window.backendaiclient.email;
+      user_id = globalThis.backendaiclient.email;
     }
     let resource_policy = this.shadowRoot.querySelector('#resource-policy').value;
     let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
     let access_key = this.shadowRoot.querySelector('#id_new_access_key').value;
     let secret_key = this.shadowRoot.querySelector('#id_new_secret_key').value;
     // Read resources
-    window.backendaiclient.keypair.add(user_id, is_active, is_admin,
+    globalThis.backendaiclient.keypair.add(user_id, is_active, is_admin,
       resource_policy, rate_limit, access_key, secret_key).then(response => {
       this.shadowRoot.querySelector('#new-keypair-dialog').hide();
       this.notification.text = "Keypair successfully created.";
@@ -444,7 +444,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         throw {"message": "Policy name should not be empty"};
       }
       let input = this._readResourcePolicyInput();
-      window.backendaiclient.resourcePolicy.add(name, input).then(response => {
+      globalThis.backendaiclient.resourcePolicy.add(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
         this.notification.text = "Resource policy successfully created.";
         this.notification.show();
@@ -523,10 +523,10 @@ export default class BackendAICredentialView extends BackendAIPage {
       'role': 'user'
     };
 
-    window.backendaiclient.group.list()
+    globalThis.backendaiclient.group.list()
       .then(res => {
         const default_id = res.groups.find(x => x.name === 'default').id;
-        return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
+        return Promise.resolve(globalThis.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
       })
       .then(res => {
         this.shadowRoot.querySelector('#new-user-dialog').hide();
@@ -552,7 +552,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     try {
       let input = this._readResourcePolicyInput();
 
-      window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
+      globalThis.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
         this.notification.text = "Resource policy successfully updated.";
         this.notification.show();

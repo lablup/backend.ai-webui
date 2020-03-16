@@ -109,7 +109,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   connectedCallback() {
@@ -122,7 +122,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         let status = 'ALIVE';
         this._loadAgentList(status);
@@ -150,7 +150,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         status = 'ALIVE';
     }
     let fields = ['id', 'status', 'addr', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'];
-    window.backendaiclient.agent.list(status, fields).then(response => {
+    globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         Object.keys(agents).map((objectKey, index) => {
@@ -175,9 +175,9 @@ export default class BackendAIAgentList extends BackendAIPage {
           } else {
             agents[objectKey].current_mem_bytes = 0;
           }
-          agents[objectKey].current_mem = window.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
-          agents[objectKey].mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
-          agents[objectKey].used_mem_slots = parseInt(window.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
+          agents[objectKey].current_mem = globalThis.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
+          agents[objectKey].mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
+          agents[objectKey].used_mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
           agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
           agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);

@@ -105,7 +105,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   }
 
   init() {
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener("backend-ai-connected", () => {
         if (this.updating) {
           return;
@@ -139,7 +139,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   }
 
   readUserStat() {
-    return window.backendaiclient.resources.user_stats()
+    return globalThis.backendaiclient.resources.user_stats()
       .then(res => {
         const {period, templates} = this;
         this.data = res;

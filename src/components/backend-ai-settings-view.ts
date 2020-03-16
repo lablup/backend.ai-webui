@@ -238,8 +238,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
+    this.notification = globalThis.lablupNotification;
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateSettings();
       }, true);
@@ -255,7 +255,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
-    window.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
+    globalThis.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
         this.options['automatic_image_update'] = true;
       } else if (response['result'] === 'tag' || response['result'] === 'none') {
@@ -263,7 +263,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
-    window.backendaiclient.setting.get('plugins/scheduler').then((response) => {
+    globalThis.backendaiclient.setting.get('plugins/scheduler').then((response) => {
       if (response['result'] === null || response['result'] === 'fifo') { // digest mode
         this.options['scheduler'] = 'fifo';
       } else {
@@ -271,7 +271,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
-    window.backendaiclient.getResourceSlots().then((response) => {
+    globalThis.backendaiclient.getResourceSlots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
       }
@@ -290,11 +290,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   toggleImageUpdate(e) {
     if (e.target.checked === false) {
-      window.backendaiclient.setting.set('docker/image/auto_pull', 'none').then((response) => {
+      globalThis.backendaiclient.setting.set('docker/image/auto_pull', 'none').then((response) => {
         console.log(response);
       });
     } else {
-      window.backendaiclient.setting.set('docker/image/auto_pull', 'digest').then((response) => {
+      globalThis.backendaiclient.setting.set('docker/image/auto_pull', 'digest').then((response) => {
         console.log(response);
       });
     }
@@ -303,7 +303,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   changeScheduler(e) {
     if (['fifo', 'lifo', 'drf'].includes(e.target.value)) {
       let scheduler = `{${e.target.value}}`;
-      window.backendaiclient.setting.set('plugins/scheduler', scheduler).then((response) => {
+      globalThis.backendaiclient.setting.set('plugins/scheduler', scheduler).then((response) => {
         console.log(response);
       }).catch(err => {
         this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');

@@ -338,7 +338,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
       this._addInputValidator(textfield);
@@ -350,15 +350,15 @@ class BackendAiResourcePresetList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshTemplateData();
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
       }, true);
     } else { // already connected
       this._refreshTemplateData();
-      this.is_admin = window.backendaiclient.is_admin;
-      window.backendaiclient.getResourceSlots()
+      this.is_admin = globalThis.backendaiclient.is_admin;
+      globalThis.backendaiclient.getResourceSlots()
         .then(res => {
           this.gpu_allocatable = (Object.keys(res).length !== 2);
           if (Object.keys(res).includes('cuda.shares')) {
@@ -389,7 +389,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _deleteResourcePresetWithCheck(e) {
-    window.backendaiclient.resourcePreset.delete(this.presetName).then(response => {
+    globalThis.backendaiclient.resourcePreset.delete(this.presetName).then(response => {
       this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
       this.notification.text = "Resource preset is successfully deleted.";
       this.notification.show();
@@ -408,7 +408,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   updateCurrentPresetToDialog(e) {
     const controls = e.target.closest('#controls');
     const preset_name = controls['preset-name'];
-    let resourcePresets = window.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
+    let resourcePresets = globalThis.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
     console.log(resourcePreset);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
@@ -424,18 +424,18 @@ class BackendAiResourcePresetList extends BackendAIPage {
     } else {
       this.shadowRoot.querySelector('#fgpu-resource').value = "";
     }
-    this.shadowRoot.querySelector('#ram-resource').value = parseFloat(window.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
+    this.shadowRoot.querySelector('#ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
   }
 
   _refreshTemplateData() {
     let param = {
-      'group': window.backendaiclient.current_group
+      'group': globalThis.backendaiclient.current_group
     };
-    return window.backendaiclient.resourcePreset.check(param).then((response) => {
+    return globalThis.backendaiclient.resourcePreset.check(param).then((response) => {
       let resourcePresets = response.presets;
       Object.keys(resourcePresets).map((objectKey, index) => {
         let preset = resourcePresets[objectKey];
-        preset.resource_slots.mem_gb = parseFloat(window.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
+        preset.resource_slots.mem_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
       });
       this.resourcePresets = resourcePresets;
     }).catch(err => {
@@ -486,7 +486,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       return;
     }
     let input = this._readResourcePresetInput();
-    window.backendaiclient.resourcePreset.mutate(name, input).then(response => {
+    globalThis.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#modify-template-dialog').hide();
       this.notification.text = "Resource preset successfully updated.";
       this.notification.show();
@@ -505,7 +505,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   _deleteKey(e) {
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
-    window.backendaiclient.keypair.delete(accessKey).then(response => {
+    globalThis.backendaiclient.keypair.delete(accessKey).then(response => {
       this.refresh();
     }).catch(err => {
       console.log(err);
@@ -575,7 +575,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       'resource_slots': JSON.stringify(resource_slots)
     };
 
-    window.backendaiclient.resourcePreset.add(preset_name, input)
+    globalThis.backendaiclient.resourcePreset.add(preset_name, input)
       .then(res => {
         this.shadowRoot.querySelector('#create-preset-dialog').hide();
         if (res.create_resource_preset.ok) {
