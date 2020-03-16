@@ -8,14 +8,12 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
+
+import 'weightless/icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -63,9 +61,10 @@ export default class BackendAIAgentList extends BackendAIPage {
           padding: 0;
         }
 
-        iron-icon {
+        wl-icon {
           width: 16px;
           height: 16px;
+          --icon-size: 16px;
           min-width: 16px;
           min-height: 16px;
           padding: 0;
@@ -386,7 +385,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <template>
             <div class="layout flex">
               <div class="layout horizontal center flex">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <wl-icon class="fg green">developer_board</wl-icon>
                 <div class="layout vertical start" style="padding-left:5px;">
                   <div class="layout horizontal start">
                     <span>[[ item.cpu_slots ]]</span>
@@ -402,7 +401,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                                 secondary-progress="[[item.cpu_total_usage_ratio]]"></paper-progress>
               </div>
               <div class="layout horizontal center flex">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <wl-icon class="fg green">memory</wl-icon>
                 <div class="layout vertical start" style="padding-left:5px;">
                   <div class="layout horizontal start">
                     <span>[[item.mem_slots]]</span>
@@ -420,7 +419,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               <template is="dom-if" if="[[item.gpu_slots]]">
                 <div class="layout horizontal center flex">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <wl-icon class="fg green">view_module</wl-icon>
                   <span style="padding-left:5px;">[[item.gpu_slots]]</span>
                   <span class="indicator">GPU</span>
                   <span class="flex"></span>
@@ -430,7 +429,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               </template>
               <template is="dom-if" if="[[item.vgpu_slots]]">
                 <div class="layout horizontal center flex">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <wl-icon class="fg green">view_module</wl-icon>
                   <span style="padding-left:5px;">[[item.vgpu_slots]]</span>
                   <span class="indicator">fGPU</span>
                   <span class="flex"></span>
