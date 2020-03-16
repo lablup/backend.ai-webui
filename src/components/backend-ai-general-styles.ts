@@ -267,10 +267,6 @@ export const BackendAiStyles = [
       margin: 0 0 16px 0;
     }
 
-    paper-dialog form {
-      margin-bottom: 0;
-    }
-
     .line {
       margin-bottom: 10px;
       display: -ms-flexbox;

@@ -6,8 +6,6 @@
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -176,6 +174,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         #work-area {
           width: 100%;
+          padding:5px;
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;
@@ -1411,7 +1410,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <paper-dialog-scrollable id="work-area" style="overflow:scroll;"></paper-dialog-scrollable>
+          <div id="work-area" style="overflow:scroll;"></div>
           <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                   style="border-style: none;width: 100%;"></iframe>
         </wl-card>
