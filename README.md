@@ -2,7 +2,7 @@
 
 Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
 
-Backend.AI console focuses to 
+Backend.AI console focuses to
 
  * Serve as desktop app and web service
  * Provide both administration and user mode
@@ -24,7 +24,7 @@ Backend.AI console focuses to
     * Create / delete folders
     * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
-    * Share folders with friends / groups 
+    * Share folders with friends / groups
  * Statistics
     * User resource statistics
     * Session statistics
@@ -45,7 +45,7 @@ Backend.AI console focuses to
      * Add kernel
      * Refresh kernel list
      * Categorize repository
-     * Add/update resource templates 
+     * Add/update resource templates
      * Add/remove docker registries
  * User management
     * User creation / deletion / key management
@@ -102,10 +102,10 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
  * production : Latest release branch
  * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
  * tags/v[versions] : version tags. Each tag represents release versions.
- 
+
 ## Development Guide
 
-Backend.AI console is built with  
+Backend.AI console is built with
  * `litelement` / `Polymer 3 `as webcomponent framework
  * `npm` as package manager
  * `rollup` as bundler
@@ -133,6 +133,12 @@ $ npm run wsproxy # To run websocket proxy
 ```
 
 ### Electron testing
+
+```
+$ make compile_wsproxy # Build websocket proxy.
+$ make dep             # Build app.
+$ make test_electron   # Test electron app.
+```
 
 #### Live testing
 
@@ -329,5 +335,5 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 
 ```
 $ make dep # Compile with app dependencies
-$ npm run electron:d  # OR, ./node_modules/electron/cli.js . 
+$ npm run electron:d  # OR, ./node_modules/electron/cli.js .
 ```
