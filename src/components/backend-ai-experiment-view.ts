@@ -7,7 +7,6 @@ import {css, customElement, html} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-import '@polymer/paper-icon-button/paper-icon-button';
 
 import '@polymer/paper-dialog/paper-dialog';
 import '@polymer/paper-button/paper-button';

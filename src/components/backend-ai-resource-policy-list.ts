@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
 import '@material/mwc-textfield/mwc-textfield';

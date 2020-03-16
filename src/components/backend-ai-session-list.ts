@@ -140,8 +140,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         mwc-icon-button.apps {
-          --mdc-icon-button-size: 30px;
-          --mdc-icon-size: 30px;
+          --mdc-icon-button-size: 48px;
+          --mdc-icon-size: 36px;
           padding: 3px;
           margin-right: 5px;
         }
@@ -203,11 +203,6 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         div.configuration wl-icon {
           padding-right: 5px;
-        }
-
-        paper-icon-button.apps {
-          width: 48px;
-          height: 48px;
         }
 
         .app-icon .label {

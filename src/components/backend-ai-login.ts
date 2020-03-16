@@ -86,10 +86,6 @@ export default class BackendAILogin extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-
         .warning {
           color: red;
         }
