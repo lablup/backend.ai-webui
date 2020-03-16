@@ -9,10 +9,6 @@ import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
 
 import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
 import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
@@ -83,14 +79,6 @@ export default class BackendAIUserList extends BackendAIPage {
               --paper-item-min-height: 30px;
           }
 
-          iron-icon {
-              width: 16px;
-              height: 16px;
-              min-width: 16px;
-              min-height: 16px;
-              padding: 0;
-          }
-
           paper-icon-button {
               --paper-icon-button: {
                   width: 25px;
@@ -136,10 +124,6 @@ export default class BackendAIUserList extends BackendAIPage {
 
           div.configuration {
               width: 70px !important;
-          }
-
-          div.configuration iron-icon {
-              padding-right: 5px;
           }
 
           wl-dialog wl-textfield,
