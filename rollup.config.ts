@@ -15,11 +15,10 @@ export default {
     sourcemap: false
   },
   plugins: [
-    typescript({
-      "experimentalDecorators": true
-    }),
-    terser(),
     //babel(),
+    typescript(),
+    terser(),
     resolve()
+//    babel()
   ]
 };
