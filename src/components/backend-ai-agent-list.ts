@@ -100,6 +100,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           --mdc-theme-primary: #3677eb;
           --mdc-linear-progress-buffer-color: #98be5a;
         }
+
+        .maintaining mwc-linear-progress,
+        .terminated mwc-linear-progress {
+          --mdc-linear-progress-buffering-dots-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 1 1'%3E%3Cpath d='M0,0h1v1H0' fill='#fff'/%3E%3C/svg%3E");
+        }
       `];
   }
 
@@ -361,7 +366,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
+      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="80px">
           <template class="header">Endpoint</template>
