@@ -6,9 +6,6 @@
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
@@ -242,6 +239,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           height: 48px;
           color: #ffffff;
           background-color: transparent;
+        }
+
+        wl-icon {
+          --icon-size: 24px;
         }
 
         @media screen and (max-width: 749px) {
@@ -2010,7 +2011,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           ` : html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+              <wl-icon class="fg blue">developer_board</wl-icon>
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
@@ -2022,7 +2023,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </div>
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+              <wl-icon class="fg blue">memory</wl-icon>
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
@@ -2036,7 +2037,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+              <wl-icon class="fg blue">view_module</wl-icon>
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
@@ -2051,7 +2052,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+              <wl-icon class="fg blue">view_module</wl-icon>
               <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
@@ -2064,7 +2065,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html``}
           <div class="layout horizontal center-justified monitor session">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
+              <wl-icon class="fg blue">assignment</wl-icon>
               <span class="gauge-name">Session</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
@@ -2100,7 +2101,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="flex"></div>
         <div class="layout horizontal center-justified monitor">
           <div class="layout vertical center center-justified" style="margin-right:5px;">
-            <iron-icon class="fg blue" icon="icons:group-work"></iron-icon>
+            <wl-icon class="fg blue">group_work</wl-icon>
             <span class="gauge-name">Project</span>
           </div>
           <div class="layout vertical start-justified wrap short-indicator">

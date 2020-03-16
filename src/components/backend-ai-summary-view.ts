@@ -12,7 +12,7 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
-
+import 'weightless/icon';
 
 import './lablup-activity-panel';
 import './backend-ai-chart';
@@ -154,6 +154,10 @@ export default class BackendAISummary extends BackendAIPage {
           --button-bg: var(--paper-red-50);
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
+        }
+
+        wl-icon {
+          --icon-size: 24px;
         }
 
         .invitation_folder_name {
@@ -457,7 +461,7 @@ export default class BackendAISummary extends BackendAIPage {
             <div slot="message">
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
-                  <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                  <wl-icon class="fg green">developer_board</wl-icon>
                   <span>CPU</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
@@ -472,7 +476,7 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
-                  <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                  <wl-icon class="fg green">memory</wl-icon>
                   <span>RAM</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
@@ -489,7 +493,7 @@ export default class BackendAISummary extends BackendAIPage {
               ${this.gpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <wl-icon class="fg green">view_module</wl-icon>
                     <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
@@ -500,7 +504,7 @@ export default class BackendAISummary extends BackendAIPage {
               ${this.fgpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <wl-icon class="fg green">view_module</wl-icon>
                     <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
