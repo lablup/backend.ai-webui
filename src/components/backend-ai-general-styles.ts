@@ -69,7 +69,7 @@ export const BackendAiStyles = [
     }
 
     span,
-    iron-icon {
+    wl-icon {
       pointer-events: none;
     }
 
@@ -183,9 +183,8 @@ export const BackendAiStyles = [
       margin: 60px;
     }
 
-    iron-icon.tiny {
-      --iron-icon-height: 12px;
-      --iron-icon-width: 12px;
+    wl-icon.tiny {
+      --icon-size: 12px;
     }
 
     wl-card {
