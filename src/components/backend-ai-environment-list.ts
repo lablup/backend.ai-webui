@@ -19,6 +19,7 @@ import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-indicator';
 import './backend-ai-indicator';
+import '@polymer/iron-icon';
 
 import 'weightless/button';
 import 'weightless/card';
