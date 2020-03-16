@@ -110,19 +110,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           --paper-item-min-height: 30px;
         }
 
-        wl-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-        }
-
-        wl-icon {
+        wl-icon.indicator {
           --icon-size: 16px;
         }
 
@@ -1116,7 +1104,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div class="layout horizontal center flex">
-          <wl-icon class="fg blue" style="margin-right:3px;">developer_board</wl-icon>
+          <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
           ${rowData.item.cpu_used_time.D ? html`
           <div class="vertical center-justified center layout">
             <span style="font-size:11px">${rowData.item.cpu_used_time.D}</span>
@@ -1148,7 +1136,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>` : html``}
         </div>
         <div class="layout horizontal center flex">
-          <wl-icon class="fg blue" style="margin-right:3px;">device_hub</wl-icon>
+          <wl-icon class="fg blue indicator" style="margin-right:3px;">device_hub</wl-icon>
           <div class="vertical start layout">
             <span style="font-size:9px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
             <span class="indicator">READ</span>
@@ -1324,7 +1312,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <template is="dom-if" if="[[item.scaling_group]]">
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green">work</wl-icon>
+                <wl-icon class="fg green indicator">work</wl-icon>
                 <span>[[item.scaling_group]]</span>
                 <span class="indicator">SG</span>
               </div>
@@ -1332,12 +1320,12 @@ export default class BackendAiSessionList extends BackendAIPage {
             </template>
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green" >developer_board</wl-icon>
+                <wl-icon class="fg green indicator">developer_board</wl-icon>
                 <span>[[item.cpu_slot]]</span>
                 <span class="indicator">core</span>
               </div>
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green">memory</wl-icon>
+                <wl-icon class="fg green indicator">memory</wl-icon>
                 <span>[[item.mem_slot]]</span>
                 <span class="indicator">GB</span>
               </div>
@@ -1345,27 +1333,27 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
                 <template is="dom-if" if="[[item.gpu_slot]]">
-                  <wl-icon class="fg green">view_module</wl-icon>
+                  <wl-icon class="fg green indicator">view_module</wl-icon>
                   <span>[[item.gpu_slot]]</span>
                   <span class="indicator">GPU</span>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
                   <template is="dom-if" if="[[item.fgpu_slot]]">
-                    <wl-icon class="fg green">view_module</wl-icon>
+                    <wl-icon class="fg green indicator">view_module</wl-icon>
                     <span>[[item.fgpu_slot]]</span>
                     <span class="indicator">GPU</span>
                   </template>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
                   <template is="dom-if" if="[[!item.fgpu_slot]]">
-                    <wl-icon class="fg green">view_module</wl-icon>
+                    <wl-icon class="fg green indicator">view_module</wl-icon>
                     <span>-</span>
                     <span class="indicator">GPU</span>
                   </template>
                 </template>
               </div>
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green">cloud_queue</wl-icon>
+                <wl-icon class="fg green indicator">cloud_queue</wl-icon>
                 <!-- <wl-icon class="fg yellow" icon="device:storage"></wl-icon> -->
                 <!-- <span>[[item.storage_capacity]]</span> -->
                 <!-- <span class="indicator">[[item.storage_unit]]</span> -->

@@ -68,88 +68,77 @@ export default class BackendAIUserList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          vaadin-grid {
-              border: 0;
-              font-size: 14px;
-              height: calc(100vh - 350px);
-          }
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 350px);
+        }
 
-          paper-item {
-              height: 30px;
-              --paper-item-min-height: 30px;
-          }
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
 
-          paper-icon-button {
-              --paper-icon-button: {
-                  width: 25px;
-                  height: 25px;
-                  min-width: 25px;
-                  min-height: 25px;
-                  padding: 3px;
-                  margin-right: 5px;
-              };
-          }
+        wl-card h4,
+        wl-card wl-label {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+        }
 
-          wl-card h4,
-          wl-card wl-label {
-              font-size: 14px;
-              padding: 5px 15px 5px 12px;
-              margin: 0 0 10px 0;
-              display: block;
-              height: 20px;
-          }
+        wl-card h4 {
+          border-bottom: 1px solid #DDD;
+        }
 
-          wl-card h4 {
-              border-bottom: 1px solid #DDD;
-          }
+        wl-label {
+          font-family: Roboto;
+        }
 
-          wl-label {
-              font-family: Roboto;
-          }
+        wl-switch {
+          margin-right: 15px;
+        }
 
-          wl-switch {
-              margin-right: 15px;
-          }
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
 
-          vaadin-item {
-              font-size: 13px;
-              font-weight: 100;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        div.configuration {
+          width: 70px !important;
+        }
 
-          div.configuration {
-              width: 70px !important;
-          }
+        wl-dialog wl-textfield,
+        wl-dialog wl-textarea {
+          padding-left: 15px;
+          --input-font-family: Roboto, Noto, sans-serif;
+          --input-color-disabled: #222;
+          --input-label-color-disabled: #222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #ccc;
+        }
 
-          wl-dialog wl-textfield,
-          wl-dialog wl-textarea {
-              padding-left: 15px;
-              --input-font-family: Roboto, Noto, sans-serif;
-              --input-color-disabled: #222;
-              --input-label-color-disabled: #222;
-              --input-label-font-size: 12px;
-              --input-border-style-disabled: 1px solid #ccc;
-          }
+        wl-textfield:not([disabled]),
+        wl-textarea:not([disabled]) {
+          margin-bottom: 15px;
+          width: 280px;
+        }
 
-          wl-textfield:not([disabled]),
-          wl-textarea:not([disabled]) {
-              margin-bottom: 15px;
-              width: 280px;
-          }
+        wl-button {
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+          color: var(--paper-green-900);
+        }
 
-          wl-button {
-              --button-bg: var(--paper-light-green-50);
-              --button-bg-hover: var(--paper-green-100);
-              --button-bg-active: var(--paper-green-600);
-              color: var(--paper-green-900);
-          }
-
-                  wl-icon.pagination {
+        wl-icon.pagination {
           color: var(--paper-grey-700);
         }
 

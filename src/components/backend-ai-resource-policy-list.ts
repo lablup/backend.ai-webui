@@ -76,7 +76,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --paper-item-min-height: 30px;
         }
 
-        wl-icon {
+        wl-icon.indicator {
           width: 16px;
           height: 16px;
           --icon-size: 16px;
@@ -85,15 +85,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           padding: 0;
         }
 
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        wl-button {
+          --button-fab-size: 40px;
+          margin-right: 5px;
         }
 
         vaadin-item {
@@ -361,12 +355,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       html`
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">developer_board</wl-icon>
+            <wl-icon class="fg green indicator">developer_board</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">memory</wl-icon>
+            <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
             <span class="indicator">GB</span>
           </div>
@@ -375,7 +369,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         ${rowData.item.total_resource_slots['cuda_device'] ?
         html`
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">view_module</wl-icon>
+            <wl-icon class="fg green indicator">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
             <span class="indicator">GPU</span>
           </div>
@@ -383,7 +377,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         ${rowData.item.total_resource_slots['cuda_shares'] ?
         html`
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">view_module</wl-icon>
+            <wl-icon class="fg green indicator">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
             <span class="indicator">fGPU</span>
           </div>
@@ -391,12 +385,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </div>
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">cloud_queue</wl-icon>
+            <wl-icon class="fg green indicator">cloud_queue</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">folder</wl-icon>
+            <wl-icon class="fg green indicator">folder</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
             <span class="indicator">Folders</span>
           </div>
