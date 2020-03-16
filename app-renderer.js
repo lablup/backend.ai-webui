@@ -54,7 +54,6 @@ let mainAppTab = tabGroup.addTab({
 mainAppTab.webview.addEventListener('page-title-updated', () => {
   const newTitle = mainAppTab.webview.getTitle();
   let bgColor;
-  mainAppTab.setTitle(newTitle);
   switch (newTitle) {
     case 'Backend.AI':
       bgColor = '#2e7d32';
@@ -98,6 +97,7 @@ mainAppTab.webview.addEventListener('page-title-updated', () => {
     default:
       bgColor = '#cccccc';
   }
+  mainAppTab.setTitle(newTitle.replace("Backend.AI - ", ""));
   document.querySelector(".etabs-tab:first-child").style.background = bgColor;
   document.querySelector(".etabs-tab:first-child").style.color = '#efefef';
 });

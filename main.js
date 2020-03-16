@@ -4,9 +4,17 @@
  */
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
-process.env.serveMode = "prod"; // Prod OR debug
-let debugMode = false;
-process.env.liveDebugMode = false;
+function isDev() {
+  return process.argv[2] == '--dev';
+}
+let debugMode = true;
+if (isDev()) { // Dev mode from Makefile
+  process.env.serveMode = "dev"; // Prod OR debug
+} else {
+  process.env.serveMode = "prod"; // Prod OR debug
+  debugMode = false;
+}
+process.env.liveDebugMode = false; // Special flag for live server debug.
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
