@@ -6,13 +6,8 @@
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-
 import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-select';
@@ -31,6 +26,8 @@ import 'weightless/label';
 import 'weightless/radio';
 import 'weightless/select';
 import 'weightless/slider';
+
+import '@material/mwc-linear-progress';
 
 import './lablup-slider';
 
@@ -180,42 +177,38 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --slider-color: var(--paper-pink-400);
         }
 
-        paper-progress {
+        mwc-linear-progress {
           width: 90px;
-          --paper-progress-height: 5px;
-          --paper-progress-active-color: #98be5a;
-          --paper-progress-secondary-color: #3677eb;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
+          height: 5px;
+          --mdc-theme-primary: #98be5a;
         }
 
-        paper-progress.project-bar {
-          --paper-progress-height: 15px;
+        mwc-linear-progress.project-bar {
+          height: 15px;
         }
 
-        paper-progress.start-bar {
+        mwc-linear-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
-          --paper-progress-active-color: #3677eb;
+          --mdc-theme-primary: #3677eb;
         }
 
-        paper-progress.middle-bar {
-          --paper-progress-active-color: #4f8b46;
+        mwc-linear-progress.middle-bar {
+          --mdc-theme-primary: #4f8b46;
         }
 
-        paper-progress.end-bar {
+        mwc-linear-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
-          --paper-progress-active-color: #98be5a;
+          --mdc-theme-primary: #98be5a;
         }
 
-        paper-progress.full-bar {
+        mwc-linear-progress.full-bar {
           border-radius: 3px;
-          --paper-progress-height: 10px;
+          height: 10px;
         }
 
-        .resources.horizontal .short-indicator paper-progress {
+        .resources.horizontal .short-indicator mwc-linear-progress {
           width: 50px;
         }
 
@@ -244,6 +237,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           height: 48px;
           color: #ffffff;
           background-color: transparent;
+        }
+
+        wl-icon {
+          --icon-size: 24px;
         }
 
         @media screen and (max-width: 749px) {
@@ -2012,25 +2009,25 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           ` : html``}
           <div class="layout horizontal start-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+              <wl-icon class="fg blue">developer_board</wl-icon>
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_sg_slot.cpu_slot}/${this.total_sg_slot.cpu_slot}</span>
-              <paper-progress id="cpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.cpu_slot}"></paper-progress>
-              <paper-progress id="cpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.cpu_slot}"></paper-progress>
+              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cpu_slot / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu_slot / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+              <wl-icon class="fg blue">memory</wl-icon>
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
               <span class="gauge-label">${this.used_sg_slot.mem_slot}/${this.total_sg_slot.mem_slot}GB</span>
-              <paper-progress id="mem-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.mem_slot}"></paper-progress>
-              <paper-progress id="mem-usage-bar-2" class="end-bar" value="${this.used_slot_percent.mem_slot}"></paper-progress>
+              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.mem_slot / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem_slot / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
             </div>
           </div>
@@ -2038,13 +2035,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+              <wl-icon class="fg blue">view_module</wl-icon>
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
               <span class="gauge-label">${this.used_sg_slot.gpu_slot}/${this.total_sg_slot.gpu_slot}</span>
-              <paper-progress id="gpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.gpu_slot}"></paper-progress>
-              <paper-progress id="gpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.gpu_slot}"></paper-progress>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.gpu_slot / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.gpu_slot / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.gpu_slot}/${this.total_slot.gpu_slot}</span>
             </div>
           </div>` :
@@ -2053,25 +2050,25 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+              <wl-icon class="fg blue">view_module</wl-icon>
               <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_sg_slot.fgpu_slot}/${this.total_sg_slot.fgpu_slot}</span>
-              <paper-progress id="gpu-usage-bar" class="start-bar" value="${this.used_sg_slot_percent.fgpu_slot}"></paper-progress>
-              <paper-progress id="gpu-usage-bar-2" class="end-bar" value="${this.used_slot_percent.fgpu_slot}"></paper-progress>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.fgpu_slot / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.fgpu_slot / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.fgpu_slot}/${this.total_slot.fgpu_slot}</span>
             </div>
           </div>` :
       html``}
           <div class="layout horizontal center-justified monitor session">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <iron-icon class="fg blue" icon="icons:assignment"></iron-icon>
+              <wl-icon class="fg blue">assignment</wl-icon>
               <span class="gauge-name">Session</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
-              <paper-progress class="short full-bar" id="concurrency-usage-bar" value="${this.used_slot_percent.concurrency}"></paper-progress>
+              <mwc-linear-progress class="short full-bar" id="concurrency-usage-bar" progress="${this.used_slot_percent.concurrency / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">&nbsp;</span>
             </div>
           </div>
@@ -2102,30 +2099,30 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="flex"></div>
         <div class="layout horizontal center-justified monitor">
           <div class="layout vertical center center-justified" style="margin-right:5px;">
-            <iron-icon class="fg blue" icon="icons:group-work"></iron-icon>
+            <wl-icon class="fg blue">group_work</wl-icon>
             <span class="gauge-name">Project</span>
           </div>
           <div class="layout vertical start-justified wrap short-indicator">
             <div class="layout horizontal">
               <span style="width:35px; margin-left:5px; margin-right:5px;">CPU</span>
-              <paper-progress id="cpu-project-usage-bar" class="start-bar project-bar" value="${this.used_pj_slot_percent.cpu_slot}"></paper-progress>
+              <mwc-linear-progress id="cpu-project-usage-bar" class="start-bar project-bar" progress="${this.used_pj_slot_percent.cpu_slot / 100.0}"></mwc-linear-progress>
               <span style="margin-left:5px;">${this.used_pj_slot.cpu_slot}/${this.total_pj_slot.cpu_slot === Infinity ? '∞' : this.total_pj_slot.cpu_slot}</span>
             </div>
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">RAM</span>
-              <paper-progress id="mem-project-usage-bar" class="middle-bar project-bar" value="${this.used_pj_slot_percent.mem_slot}"></paper-progress>
+              <mwc-linear-progress id="mem-project-usage-bar" class="middle-bar project-bar" progress="${this.used_pj_slot_percent.mem_slot / 100.0}"></mwc-linear-progress>
               <span style="margin-left:5px;">${this.used_pj_slot.mem_slot}/${this.total_pj_slot.mem_slot === Infinity ? '∞' : this.total_pj_slot.mem_slot}</span>
             </div>
             ${this.total_pj_slot.gpu_slot ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <paper-progress id="gpu-project-usage-bar" class="end-bar project-bar" value="${this.used_pj_slot_percent.gpu_slot}"></paper-progress>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.gpu_slot / 100.0}"></mwc-linear-progress>
               <span style="margin-left:5px;">${this.used_pj_slot.gpu_slot}/${this.total_pj_slot.gpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.gpu_slot}</span>
             </div>` : html``}
             ${this.total_pj_slot.fgpu_slot ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <paper-progress id="gpu-project-usage-bar" class="end-bar project-bar" value="${this.used_pj_slot_percent.fgpu_slot}"></paper-progress>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.fgpu_slot / 100.0}"></mwc-linear-progress>
               <span style="margin-left:5px;">${this.used_pj_slot.fgpu_slot}/${this.total_pj_slot.fgpu_slot === 'Infinity' ? '∞' : this.total_pj_slot.fgpu_slot}</span>
             </div>` : html``}
           </div>
@@ -2191,7 +2188,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </mwc-select>
             </div>
               <div style="display:none;">
-                <paper-checkbox id="use-gpu-checkbox">Use GPU</paper-checkbox>
+                <wl-checkbox id="use-gpu-checkbox">Use GPU</wl-checkbox>
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`

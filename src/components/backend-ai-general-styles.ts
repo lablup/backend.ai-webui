@@ -69,7 +69,7 @@ export const BackendAiStyles = [
     }
 
     span,
-    iron-icon {
+    wl-icon {
       pointer-events: none;
     }
 
@@ -183,14 +183,8 @@ export const BackendAiStyles = [
       margin: 60px;
     }
 
-    paper-checkbox {
-      display: block;
-      margin-bottom: 40px;
-    }
-
-    iron-icon.tiny {
-      --iron-icon-height: 12px;
-      --iron-icon-width: 12px;
+    wl-icon.tiny {
+      --icon-size: 12px;
     }
 
     wl-card {
@@ -271,10 +265,6 @@ export const BackendAiStyles = [
     .wide-panels wl-card {
       width: 100%;
       margin: 0 0 16px 0;
-    }
-
-    paper-dialog form {
-      margin-bottom: 0;
     }
 
     .line {

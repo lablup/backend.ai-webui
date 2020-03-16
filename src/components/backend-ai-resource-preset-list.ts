@@ -8,10 +8,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
 

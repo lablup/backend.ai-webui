@@ -62,10 +62,6 @@ export default class BackendAiSignup extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          paper-icon-button {
-              --paper-icon-button-ink-color: white;
-          }
-
           fieldset input {
               width: 100%;
               border: 0;

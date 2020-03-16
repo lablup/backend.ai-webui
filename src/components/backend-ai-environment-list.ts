@@ -254,7 +254,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
           <div class="layout horizontal center flex">
             <div class="layout horizontal configuration">
-              <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+              <wl-icon class="fg green">developer_board</wl-icon>
               <span>${rowData.item.cpu_limit_min}</span> ~
               <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
               <span class="indicator">core</span>
@@ -262,7 +262,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </div>
           <div class="layout horizontal center flex">
             <div class="layout horizontal configuration">
-              <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+              <wl-icon class="fg green">memory</wl-icon>
               <span>${rowData.item.mem_limit_min}</span> ~
               <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
             </div>
@@ -270,7 +270,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
+                <wl-icon class="fg green">view_module</wl-icon>
                 <span>${rowData.item.cuda_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
                 <span class="indicator">GPU</span>
@@ -280,7 +280,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_shares_limit_min ? html`
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:apps"></iron-icon>
+                <wl-icon class="fg green">apps</wl-icon>
                 <span>${rowData.item.cuda_shares_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
                 <span class="indicator">fGPU</span>
@@ -362,7 +362,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
-          <paper-icon-button
+          <wl-button fab flat inverted
             class="fg blue controls-running"
             on-tap="_modifyImage"
             icon="icons:settings"
@@ -371,9 +371,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
         this._launchDialogById("#modify-image-dialog");
         this.requestUpdate();
-      }}
-          ></paper-icon-button>
-          <paper-icon-button
+      }}>
+            <wl-icon>settings</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
             class="fg pink controls-running"
             icon="icons:apps"
             @click=${() => {
@@ -382,8 +383,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this._decodeServicePort();
         this._launchDialogById("#modify-app-dialog");
         this.requestUpdate();
-      }}
-          ></paper-icon-button>
+      }}>
+            <wl-icon>apps</wl-icon>
+          </wl-button>
         </div>
       `,
       root

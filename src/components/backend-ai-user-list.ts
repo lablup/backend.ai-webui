@@ -8,11 +8,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
 import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
@@ -23,6 +18,7 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
+import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/snackbar';
@@ -72,100 +68,77 @@ export default class BackendAIUserList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          vaadin-grid {
-              border: 0;
-              font-size: 14px;
-              height: calc(100vh - 350px);
-          }
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 350px);
+        }
 
-          paper-item {
-              height: 30px;
-              --paper-item-min-height: 30px;
-          }
+        paper-item {
+          height: 30px;
+          --paper-item-min-height: 30px;
+        }
 
-          iron-icon {
-              width: 16px;
-              height: 16px;
-              min-width: 16px;
-              min-height: 16px;
-              padding: 0;
-          }
+        wl-card h4,
+        wl-card wl-label {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+        }
 
-          paper-icon-button {
-              --paper-icon-button: {
-                  width: 25px;
-                  height: 25px;
-                  min-width: 25px;
-                  min-height: 25px;
-                  padding: 3px;
-                  margin-right: 5px;
-              };
-          }
+        wl-card h4 {
+          border-bottom: 1px solid #DDD;
+        }
 
-          wl-card h4,
-          wl-card wl-label {
-              font-size: 14px;
-              padding: 5px 15px 5px 12px;
-              margin: 0 0 10px 0;
-              display: block;
-              height: 20px;
-          }
+        wl-label {
+          font-family: Roboto;
+        }
 
-          wl-card h4 {
-              border-bottom: 1px solid #DDD;
-          }
+        wl-switch {
+          margin-right: 15px;
+        }
 
-          wl-label {
-              font-family: Roboto;
-          }
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
 
-          wl-switch {
-              margin-right: 15px;
-          }
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
-          vaadin-item {
-              font-size: 13px;
-              font-weight: 100;
-          }
+        div.configuration {
+          width: 70px !important;
+        }
 
-          div.indicator,
-          span.indicator {
-              font-size: 9px;
-              margin-right: 5px;
-          }
+        wl-dialog wl-textfield,
+        wl-dialog wl-textarea {
+          padding-left: 15px;
+          --input-font-family: Roboto, Noto, sans-serif;
+          --input-color-disabled: #222;
+          --input-label-color-disabled: #222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #ccc;
+        }
 
-          div.configuration {
-              width: 70px !important;
-          }
+        wl-textfield:not([disabled]),
+        wl-textarea:not([disabled]) {
+          margin-bottom: 15px;
+          width: 280px;
+        }
 
-          div.configuration iron-icon {
-              padding-right: 5px;
-          }
+        wl-button {
+          --button-bg: var(--paper-light-green-50);
+          --button-bg-hover: var(--paper-green-100);
+          --button-bg-active: var(--paper-green-600);
+          color: var(--paper-green-900);
+        }
 
-          wl-dialog wl-textfield,
-          wl-dialog wl-textarea {
-              padding-left: 15px;
-              --input-font-family: Roboto, Noto, sans-serif;
-              --input-color-disabled: #222;
-              --input-label-color-disabled: #222;
-              --input-label-font-size: 12px;
-              --input-border-style-disabled: 1px solid #ccc;
-          }
-
-          wl-textfield:not([disabled]),
-          wl-textarea:not([disabled]) {
-              margin-bottom: 15px;
-              width: 280px;
-          }
-
-          wl-button {
-              --button-bg: var(--paper-light-green-50);
-              --button-bg-hover: var(--paper-green-100);
-              --button-bg-active: var(--paper-green-600);
-              color: var(--paper-green-900);
-          }
-
-                  wl-icon.pagination {
+        wl-icon.pagination {
           color: var(--paper-grey-700);
         }
 
@@ -360,28 +333,30 @@ export default class BackendAIUserList extends BackendAIPage {
   controlRenderer(root, column?, rowData?) {
     render(
       html`
-            <div
-              id="controls"
-              class="layout horizontal flex center"
-              .user-id="${rowData.item.email}"
-            >
-              <paper-icon-button
-                class="fg green"
-                icon="assignment"
-                @click="${(e) => this._showUserDetail(e)}"
-              ></paper-icon-button>
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+          .user-id="${rowData.item.email}">
+          <wl-button fab flat inverted
+            class="fg green"
+            icon="assignment"
+            @click="${(e) => this._showUserDetail(e)}">
+            <wl-icon>assignment</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
+            class="fg blue"
+            icon="settings"
+            @click="${(e) => this._editUserDetail(e)}">
+            <wl-icon>settings</wl-icon>
+          </wl-button>
 
-              <paper-icon-button
-                class="fg blue"
-                icon="settings"
-                @click="${(e) => this._editUserDetail(e)}"
-              ></paper-icon-button>
-
-              ${window.backendaiclient.is_superadmin && this._isActive() ? html`
-                    <paper-icon-button class="fg red controls-running" icon="icons:delete-forever"
-                                       @click="${(e) => this._signoutUserDialog(e)}"></paper-icon-button>
-              ` : html``}
-            </div>
+          ${window.backendaiclient.is_superadmin && this._isActive() ? html`
+            <wl-button fab flat inverted class="fg red controls-running"
+                               @click="${(e) => this._signoutUserDialog(e)}">
+                               <wl-icon>delete_forever</wl-icon>
+            </wl-button>
+          ` : html``}
+        </div>
       `, root
     );
   }

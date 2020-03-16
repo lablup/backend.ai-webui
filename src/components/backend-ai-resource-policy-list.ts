@@ -7,11 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
 import '@material/mwc-textfield/mwc-textfield';
@@ -80,23 +75,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --paper-item-min-height: 30px;
         }
 
-        iron-icon {
+        wl-icon.indicator {
           width: 16px;
           height: 16px;
+          --icon-size: 16px;
           min-width: 16px;
           min-height: 16px;
           padding: 0;
         }
 
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        wl-button {
+          --button-fab-size: 40px;
+          margin-right: 5px;
         }
 
         vaadin-item {
@@ -114,7 +104,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: 70px !important;
         }
 
-        div.configuration iron-icon {
+        div.configuration wl-icon {
           padding-right: 5px;
         }
 
@@ -364,12 +354,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       html`
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+            <wl-icon class="fg green indicator">developer_board</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+            <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
             <span class="indicator">GB</span>
           </div>
@@ -378,7 +368,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         ${rowData.item.total_resource_slots['cuda_device'] ?
         html`
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+            <wl-icon class="fg green indicator">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
             <span class="indicator">GPU</span>
           </div>
@@ -386,7 +376,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         ${rowData.item.total_resource_slots['cuda_shares'] ?
         html`
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+            <wl-icon class="fg green indicator">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
             <span class="indicator">fGPU</span>
           </div>
@@ -394,12 +384,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </div>
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
+            <wl-icon class="fg green indicator">cloud_queue</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="icons:folder"></iron-icon>
+            <wl-icon class="fg green indicator">folder</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
             <span class="indicator">Folders</span>
           </div>
@@ -414,8 +404,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div id="controls" class="layout horizontal flex center"
              .policy-name="${rowData.item.name}">
         ${this.is_admin ? html`
-              <paper-icon-button class="fg green controls-running" icon="settings"
-                                 @click="${(e) => this._launchResourcePolicyDialog(e)}"></paper-icon-button>
+              <wl-button fab flat inverted class="fg green controls-running" icon="settings"
+                                 @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
                                  ` : html``}
         </div>
     `, root

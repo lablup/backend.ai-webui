@@ -6,13 +6,6 @@
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -22,13 +15,14 @@ import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as AnsiUp} from '../lib/ansiup';
-import 'weightless/card';
-import 'weightless/dialog';
-import 'weightless/checkbox';
-import 'weightless/title';
 import 'weightless/button';
+import 'weightless/card';
+import 'weightless/checkbox';
+import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/textfield';
+import 'weightless/title';
+import '@material/mwc-icon-button';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator';
@@ -114,22 +108,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           --paper-item-min-height: 30px;
         }
 
-        iron-icon {
-          width: 16px;
-          height: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
-        wl-icon {
+        wl-icon.indicator {
           --icon-size: 16px;
-          padding: 0;
         }
 
         wl-icon.pagination {
@@ -151,26 +131,17 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-active-flat: var(--paper-red-600);
         }
 
-        paper-icon-button.controls-running {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        wl-button.controls-running {
+          --button-fab-size: 32px;
+          --button-padding: 3px;
+          margin-right: 5px;
         }
 
-        paper-icon-button.apps {
-          --paper-icon-button: {
-            width: 50px;
-            height: 50px;
-            min-width: 50px;
-            min-height: 50px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        mwc-icon-button.apps {
+          --mdc-icon-button-size: 48px;
+          --mdc-icon-size: 36px;
+          padding: 3px;
+          margin-right: 5px;
         }
 
         #work-dialog {
@@ -203,6 +174,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         #work-area {
           width: 100%;
+          padding:5px;
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;
@@ -228,13 +200,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           width: 70px !important;
         }
 
-        div.configuration iron-icon {
+        div.configuration wl-icon {
           padding-right: 5px;
-        }
-
-        paper-icon-button.apps {
-          width: 48px;
-          height: 48px;
         }
 
         .app-icon .label {
@@ -266,7 +233,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         wl-label {
           width: 100%;
-          background-color : color: var(--paper-grey-500);
+          background-color: color: var(--paper-grey-500);
           min-width: 60px;
           font-size: 12px;
           --label-font-family: Roboto, Noto, sans-serif;
@@ -309,11 +276,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-     const preparingStatuses = ['RESTARTING', 'PULLING'];
-     if (preparingStatuses.indexOf(status) === -1) {
-       return false;
-     }
-     return true;
+    const preparingStatuses = ['RESTARTING', 'PULLING'];
+    if (preparingStatuses.indexOf(status) === -1) {
+      return false;
+    }
+    return true;
   }
 
   firstUpdated() {
@@ -341,15 +308,15 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
     this._defaultFileName = new Date().toISOString().substring(0, 10) + '_'
-                          + new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
+      + new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
 
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
 
     /* TODO: json to csv file converting */
     document.addEventListener('backend-ai-csv-file-export-session', () => {
       this._openExportToCsvDialog();
-  });
-}
+    });
+  }
 
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -1071,24 +1038,24 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div>${rowData.item[this.sessionNameField]}</div>
           ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
             ${item.map(item => {
-              if (item.category === 'Env') {
-                item.category = item.tag;
-              }
-              if (item.category && rowData.item.baseversion) {
-                item.tag = rowData.item.baseversion;
-              }
-              return html`
+        if (item.category === 'Env') {
+          item.category = item.tag;
+        }
+        if (item.category && rowData.item.baseversion) {
+          item.tag = rowData.item.baseversion;
+        }
+        return html`
                 <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
               `;
-            })}
+      })}
           `) : html``}
           ${rowData.item.additional_reqs ? html`
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
-                return html`
+        return html`
                   <lablup-shields app="" color="green" description="${tag}"></lablup-shields>
                 `;
-              })}
+      })}
             </div>
           ` : html``}
         </div>
@@ -1105,24 +1072,24 @@ export default class BackendAiSessionList extends BackendAIPage {
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}">
           ${rowData.item.appSupport ? html`
-            <paper-icon-button class="fg controls-running green"
+            <wl-button fab flat inverted class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
-                               icon="vaadin:caret-right"></paper-icon-button>
-            <paper-icon-button class="fg controls-running"
+                               icon="vaadin:caret-right"><wl-icon>launch</wl-icon></wl-button>
+            <wl-button fab flat inverted class="fg controls-running"
                                @click="${(e) => this._runTerminal(e)}"
-                               icon="vaadin:terminal"></paper-icon-button>
+                               icon="vaadin:terminal"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
           ${this._isRunning && !this._isPreparing(rowData.item.status) ? html`
-            <paper-icon-button class="fg red controls-running"
+            <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
-                               icon="delete"></paper-icon-button>
+                               icon="delete"><wl-icon>delete</wl-icon></wl-button>
           ` : html``}
           ${this._isRunning ? html`
-            <paper-icon-button class="fg blue controls-running" icon="assignment"
+            <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
-                               on-tap="_showLogs"></paper-icon-button>
+                               on-tap="_showLogs"><wl-icon>assignment</wl-icon></wl-button>
           ` : html`
-            <paper-icon-button disabled class="fg controls-running" icon="assignment"></paper-icon-button>
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="assignment"><wl-icon>assignment</wl-icon></wl-button>
           `}
         </div>`, root
     );
@@ -1132,7 +1099,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div class="layout horizontal center flex">
-          <iron-icon class="fg blue" icon="hardware:developer-board" style="margin-right:3px;"></iron-icon>
+          <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
           ${rowData.item.cpu_used_time.D ? html`
           <div class="vertical center-justified center layout">
             <span style="font-size:11px">${rowData.item.cpu_used_time.D}</span>
@@ -1164,7 +1131,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>` : html``}
         </div>
         <div class="layout horizontal center flex">
-          <iron-icon class="fg blue" icon="hardware:device-hub" style="margin-right:3px;"></iron-icon>
+          <wl-icon class="fg blue indicator" style="margin-right:3px;">device_hub</wl-icon>
           <div class="vertical start layout">
             <span style="font-size:9px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
             <span class="indicator">READ</span>
@@ -1237,8 +1204,8 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _getDefaultCSVFileName() {
     let date = new Date().toISOString().substring(0, 10);
-    let time = new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
-    return date+'_'+time;
+    let time = new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
+    return date + '_' + time;
   }
 
   _validateDateRange() {
@@ -1262,8 +1229,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     let group_id = window.backendaiclient.current_group_id();
-    let fields = [ "session_name", "lang", "created_at", "terminated_at", "status", "status_info",
-                  "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
+    let fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info",
+      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
 
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
@@ -1340,7 +1307,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <template is="dom-if" if="[[item.scaling_group]]">
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:work"></iron-icon>
+                <wl-icon class="fg green indicator">work</wl-icon>
                 <span>[[item.scaling_group]]</span>
                 <span class="indicator">SG</span>
               </div>
@@ -1348,12 +1315,12 @@ export default class BackendAiSessionList extends BackendAIPage {
             </template>
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                <wl-icon class="fg green indicator">developer_board</wl-icon>
                 <span>[[item.cpu_slot]]</span>
                 <span class="indicator">core</span>
               </div>
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                <wl-icon class="fg green indicator">memory</wl-icon>
                 <span>[[item.mem_slot]]</span>
                 <span class="indicator">GB</span>
               </div>
@@ -1361,28 +1328,28 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
                 <template is="dom-if" if="[[item.gpu_slot]]">
-                  <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                  <wl-icon class="fg green indicator">view_module</wl-icon>
                   <span>[[item.gpu_slot]]</span>
                   <span class="indicator">GPU</span>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
                   <template is="dom-if" if="[[item.fgpu_slot]]">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <wl-icon class="fg green indicator">view_module</wl-icon>
                     <span>[[item.fgpu_slot]]</span>
                     <span class="indicator">GPU</span>
                   </template>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
                   <template is="dom-if" if="[[!item.fgpu_slot]]">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <wl-icon class="fg green indicator">view_module</wl-icon>
                     <span>-</span>
                     <span class="indicator">GPU</span>
                   </template>
                 </template>
               </div>
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
-                <!-- <iron-icon class="fg yellow" icon="device:storage"></iron-icon> -->
+                <wl-icon class="fg green indicator">cloud_queue</wl-icon>
+                <!-- <wl-icon class="fg yellow" icon="device:storage"></wl-icon> -->
                 <!-- <span>[[item.storage_capacity]]</span> -->
                 <!-- <span class="indicator">[[item.storage_unit]]</span> -->
               </div>
@@ -1417,15 +1384,19 @@ export default class BackendAiSessionList extends BackendAIPage {
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
         <wl-button class="pagination" id="previous-page"
-                   ?disabled="${ this.current_page === 1 }"
-                   @click="${(e) => {this._updateSessionPage(e)}}">
+                   ?disabled="${this.current_page === 1}"
+                   @click="${(e) => {
+      this._updateSessionPage(e)
+    }}">
           <wl-icon class="pagination">navigate_before</wl-icon>
         </wl-button>
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
-        ${this.current_page} / ${ Math.ceil( this.total_session_count / this.session_page_limit)}</wl-label>
+        ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
         <wl-button class="pagination" id="next-page"
-                   ?disabled="${ this.total_session_count <= this.session_page_limit * this.current_page}"
-                   @click="${(e) => {this._updateSessionPage(e)}}">
+                   ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
+                   @click="${(e) => {
+      this._updateSessionPage(e)
+    }}">
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
@@ -1440,7 +1411,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <paper-dialog-scrollable id="work-area" style="overflow:scroll;"></paper-dialog-scrollable>
+          <div id="work-area" style="overflow:scroll;"></div>
           <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                   style="border-style: none;width: 100%;"></iframe>
         </wl-card>
@@ -1458,10 +1429,11 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div style="padding:15px;" class="horizontal layout wrap center center-justified">
           ${this.appSupportList.map(item => html`
             <div class="vertical layout center center-justified app-icon">
-              <paper-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+              <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
                                  .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runApp(e)}"
-                                 src="${item.src}"></paper-icon-button>
+                                 @click="${(e) => this._runApp(e)}">
+                <img src="${item.src}" />
+              </mwc-icon-button>
               <span class="label">${item.title}</span>
             </div>
           `)}
@@ -1537,7 +1509,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <section style="padding: 10px;">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
-                          value="${'session_'+this._defaultFileName}" required
+                          value="${'session_' + this._defaultFileName}" required
                           style="margin-bottom:10px;"></mwc-textfield>
           <div class="horizontal center layout" style="display:none;">
             <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
@@ -1571,6 +1543,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       </wl-dialog>
       `;
   }
+
   _updateSessionPage(e) {
     let page_action = e.target;
     if (page_action['role'] !== 'button') {
