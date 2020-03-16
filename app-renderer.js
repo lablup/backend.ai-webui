@@ -15,6 +15,8 @@ if (remote.process.env.serveMode === 'dev') {
   TabGroup = require("./tab");
   //TabGroup = require("electron-tabs");
 }
+const dragula = require("dragula");
+
 
 if (remote.process.env.siteDescription !== '') {
   document.querySelector('#description').innerHTML = remote.process.env.siteDescription;
@@ -29,7 +31,13 @@ mainURL = url.format({
 let openPageURL = '';
 let defaultWebPreferences = "allowRunningInsecureContent,nativeWindowOpen=yes";
 
-let tabGroup = new TabGroup();
+let tabGroup = new TabGroup({
+  ready: function (tabGroup) {
+    dragula([tabGroup.tabContainer], {
+      direction: "horizontal"
+    });
+  }
+});
 let mainAppTab = tabGroup.addTab({
   title: "Backend.AI",
   src: mainURL,
@@ -155,7 +163,7 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   });
   tab.on("webview-ready", (tab) => {
   });
-  newTabWebView.add1entListener('dom-ready', (e) => {
+  newTabWebView.addEventListener('dom-ready', (e) => {
     if (remote.debugMode === true) {
       e.target.openDevTools();
     }

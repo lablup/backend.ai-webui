@@ -30,6 +30,8 @@ body {
   padding-left: 80px;
   background-color: rgba(24, 24, 24, 1.0);
   color: #efefef;
+  -webkit-user-select: none !important;
+  -webkit-app-region: drag !important;
 }
 
 .site-name {
@@ -74,6 +76,7 @@ body {
   font-size: 14px;
   background-color: #cccccc;
   cursor: default;
+  -webkit-app-region: no-drag !important;
 }
 
 /* Dragula */

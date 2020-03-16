@@ -28,7 +28,7 @@ if (process.env.serveMode == 'dev') {
 }
 let windowWidth = 1280;
 let windowHeight = 970;
-let debugMode = false;
+let debugMode = true;
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}

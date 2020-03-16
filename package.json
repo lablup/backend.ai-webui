@@ -60,7 +60,7 @@
     "@webcomponents/webcomponentsjs": "^2.4.2",
     "bufferutil": "^4.0.1",
     "d3": "^5.15.0",
-    "electron-tabs": "^0.15.0",
+    "dragula": "^3.7.2",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "log": "^6.0.0",
