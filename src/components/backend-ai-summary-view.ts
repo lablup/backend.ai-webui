@@ -9,10 +9,11 @@ import {BackendAIPage} from './backend-ai-page';
 import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
 import 'weightless/icon';
+
+import '@material/mwc-linear-progress/mwc-linear-progress';
 
 import './lablup-activity-panel';
 import './backend-ai-chart';
@@ -122,8 +123,10 @@ export default class BackendAISummary extends BackendAIPage {
           height: 10px;
         }
 
-        paper-progress {
+        paper-progress,
+        mwc-linear-progress {
           width: 190px;
+          height: 5px;
           border-radius: 0;
           --paper-progress-height: 5px;
           --paper-progress-active-color: #3677eb;
@@ -132,15 +135,19 @@ export default class BackendAISummary extends BackendAIPage {
           --paper-progress-transition-delay: 0s;
         }
 
-        paper-progress.start-bar {
+        paper-progress.start-bar,
+        mwc-linear-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
+          --mdc-theme-primary: #3677eb;
           --paper-progress-active-color: #3677eb;
         }
 
-        paper-progress.end-bar {
+        paper-progress.end-bar,
+        mwc-linear-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
+          --mdc-theme-primary: #98be5a;
           --paper-progress-active-color: #98be5a;
         }
 
@@ -465,8 +472,8 @@ export default class BackendAISummary extends BackendAIPage {
                   <span>CPU</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
-                  <paper-progress class="mem-usage-bar start-bar" value="${this.cpu_total_usage_ratio}"></paper-progress>
-                  <paper-progress class="mem-usage-bar end-bar" id="cpu-usage-bar" value="${this.cpu_current_usage_ratio}"></paper-progress>
+                  <mwc-linear-progress class="mem-usage-bar start-bar" progress="${this.cpu_total_usage_ratio / 100.0}"></mwc-linear-progress>
+                  <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar" progress="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
                     Cores reserved.
                   </div>
@@ -480,8 +487,8 @@ export default class BackendAISummary extends BackendAIPage {
                   <span>RAM</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
-                  <paper-progress class="mem-usage-bar start-bar" id="mem-usage-bar" value="${this.mem_total_usage_ratio}"></paper-progress>
-                  <paper-progress class="mem-usage-bar end-bar" value="${this.mem_current_usage_ratio}"></paper-progress>
+                  <mwc-linear-progress class="mem-usage-bar start-bar" id="mem-usage-bar" progress="${this.mem_total_usage_ratio / 100.0}"></mwc-linear-progress>
+                  <mwc-linear-progress class="mem-usage-bar end-bar" progress="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
                     reserved.
                   </div>
