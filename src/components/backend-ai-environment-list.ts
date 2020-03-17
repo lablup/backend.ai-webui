@@ -235,7 +235,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.notification.show();
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Downloading...');
-    globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
+    globalThis.backendaiclient.getResourceSlots().then((response) => {
+      let results = response;
+      if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
+        if ('fgpu' in this.installImageResource && 'gpu' in this.installImageResource) { // Keep fgpu only.
+          delete this.installImageResource['gpu'];
+        }
+      } else if ('cuda.device' in results) { // GPU mode
+        delete this.installImageResource['fgpu'];
+      } else if ('cuda.shares' in results) { // Fractional GPU mode
+        delete this.installImageResource['gpu'];
+      }
+      return globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource);
+    }).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
       this._getImages();
