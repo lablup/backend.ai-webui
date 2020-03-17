@@ -33,7 +33,7 @@ export default class BackendAIPainKiller {
       return 'Problem occurred.';
     }
     console.log(msg);
-    if (window.backendaiconsole.debug === true) {
+    if (globalThis.backendaiconsole.debug === true) {
       return msg;
     }
     if (this.errorMessageTable.hasOwnProperty(msg)) {

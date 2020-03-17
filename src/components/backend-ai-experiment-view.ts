@@ -7,17 +7,9 @@ import {css, customElement, html} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
 
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-button/paper-button';
 import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-slider/paper-slider';
-import '@polymer/paper-item/paper-item';
 
 import '@vaadin/vaadin-dialog/vaadin-dialog';
 import './backend-ai-session-list';
@@ -234,44 +226,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
           font-weight: 100;
         }
 
-        paper-slider {
-          width: 285px;
-          --paper-slider-input: {
-            width: 70px;
-          };
-          --paper-slider-height: 3px;
-        }
-
-        paper-slider.mem {
-          --paper-slider-knob-color: var(--paper-orange-400);
-          --paper-slider-active-color: var(--paper-orange-400);
-        }
-
-        paper-slider.cpu {
-          --paper-slider-knob-color: var(--paper-light-green-400);
-          --paper-slider-active-color: var(--paper-light-green-400);
-        }
-
-        paper-slider.gpu {
-          --paper-slider-knob-color: var(--paper-cyan-400);
-          --paper-slider-active-color: var(--paper-cyan-400);
-        }
-
-        paper-progress {
-          width: 100px;
-          border-radius: 3px;
-          --paper-progress-height: 10px;
-          --paper-progress-active-color: #3677eb;
-          --paper-progress-secondary-color: #98be5a;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
-        }
-
-        .short-indicator paper-progress {
-          width: 50px;
-        }
-
         .short-indicator .gauge-label {
           width: 80px;
         }
@@ -361,7 +315,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   _showTab(tab) {
@@ -398,38 +352,38 @@ export default class BackendAIExperimentView extends BackendAIPage {
             <div class="horizontal wrap layout" style="margin:0;padding:0;">
               <div style="weight: 300px;border-right:1px solid #ccc;height:calc(100vh - 235px);">
                 <wl-list-item active style="width:300px;">
-                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:flask" slot="before"></wl-icon>
                   <span slot="after">5<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Test experiment</wl-title>
                   <span style="font-size: 11px;">Test experiment</span>
                 </wl-list-item>
                 <wl-list-item style="width:300px;">
-                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:flask" slot="before"></wl-icon>
                    <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                    <wl-title level="3" style="margin: 0">Fashion MNIST</wl-title>
                    <span style="font-size: 11px;">Fashion MNIST serving test</span>
                 </wl-list-item>
                 <wl-list-item style="width:300px;">
-                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:flask" slot="before"></wl-icon>
                    <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                    <wl-title level="4" style="margin: 0">Test experiment2</wl-title>
                    <span style="font-size: 11px;">Test experiment2</span>
                 </wl-list-item>
                 <h4>Templates</h4>
                 <wl-list-item style="width:300px;">
-                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:flask" slot="before"></wl-icon>
                    <span slot="after">5<br/><span style="font-size:9px">components</span></span>
                    <wl-title level="2" style="margin: 0">Example Experiment (TensorFlow)</wl-title>
                    <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
                 </wl-list-item>
                 <wl-list-item style="width:300px;">
-                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:flask" slot="before"></wl-icon>
                    <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                    <wl-title level="2" style="margin: 0">Example Experiment (PyTorch)</wl-title>
                    <span style="font-size: 11px;">Basic experiment example using Pytorch</span>
                 </wl-list-item>
                 <wl-list-item style="width:300px;">
-                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:flask" slot="before"></wl-icon>
                    <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                    <wl-title level="2" style="margin: 0">Facet data cleaner</wl-title>
                    <span style="font-size: 11px;">Data preprocessing using Facet</span>
@@ -437,25 +391,25 @@ export default class BackendAIExperimentView extends BackendAIPage {
               </div>
               <div class="layout vertical">
                 <wl-list-item active style="width:calc(100% - 55px);height:80px;">
-                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:puzzle-piece" slot="before"></wl-icon>
                   <div slot="after">
                     <div class="horizontal layout">
                       <div class="layout vertical center center-justified flex" style="width:50px;">
-                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                          <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                       </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:developer-board"></wl-icon>
                           <span>1</span>
                           <span class="indicator">core</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>1</span>
                           <span class="indicator">GB</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
                           <span>-</span>
                           <span class="indicator">GPU</span>
                         </div>
@@ -466,25 +420,25 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div style="font-size:11px;max-width:450px;">Backend.AI data uploader helps users uploading the data to experiment store.</div>
                 </wl-list-item>
                 <wl-list-item style="width:calc(100% - 55px);height:80px;">
-                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:puzzle-piece" slot="before"></wl-icon>
                   <div slot="after">
                     <div class="horizontal layout">
                       <div class="layout vertical center center-justified flex" style="width:50px;">
-                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                          <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                       </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:developer-board"></wl-icon>
                           <span>1</span>
                           <span class="indicator">core</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>2</span>
                           <span class="indicator">GB</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
                           <span>-</span>
                           <span class="indicator">GPU</span>
                         </div>
@@ -495,25 +449,25 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div style="font-size:11px;max-width:450px;">Facets contains two robust visualizations to aid in understanding and analyzing machine learning datasets.</div>
                 </wl-list-item>
                 <wl-list-item style="width:calc(100% - 55px);height:80px;">
-                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:puzzle-piece" slot="before"></wl-icon>
                   <div slot="after">
                   <div class="horizontal layout">
                     <div class="layout vertical center center-justified flex" style="width:50px;">
-                        <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                        <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                     </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:developer-board"></wl-icon>
                           <span>4</span>
                           <span class="indicator">core</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>16</span>
                           <span class="indicator">GB</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
                           <span>1.5</span>
                           <span class="indicator">GPU</span>
                         </div>
@@ -524,25 +478,25 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div style="font-size:11px;max-width:450px;">TensorFlow is an end-to-end open source platform for machine learning.</div>
                 </wl-list-item>
                 <wl-list-item style="width:calc(100% - 55px);height:80px;">
-                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:puzzle-piece" slot="before"></wl-icon>
                   <div slot="after">
                   <div class="horizontal layout">
                     <div class="layout vertical center center-justified flex" style="width:50px;">
-                        <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                        <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                     </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:developer-board"></wl-icon>
                           <span>4</span>
                           <span class="indicator">core</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>16</span>
                           <span class="indicator">GB</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
                           <span>1.5</span>
                           <span class="indicator">GPU</span>
                         </div>
@@ -553,25 +507,25 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <div style="font-size:11px;max-width:450px;">TensorFlow is an end-to-end open source platform for machine learning.</div>
                 </wl-list-item>
                 <wl-list-item style="width:calc(100% - 55px);height:80px;">
-                  <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                  <wl-icon icon="vaadin:puzzle-piece" slot="before"></wl-icon>
                   <div slot="after">
                     <div class="horizontal layout">
                       <div class="layout vertical center center-justified flex" style="width:50px;">
-                          <paper-icon-button class="fg black" icon="vaadin:controller"></paper-icon-button>
+                          <wl-button fab flat inverted class="fg black" icon="vaadin:controller"></wl-button>
                       </div>
                       <div class="layout vertical start flex" style="width:80px!important;">
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:developer-board"></wl-icon>
                           <span>1</span>
                           <span class="indicator">core</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                          <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>1</span>
                           <span class="indicator">GB</span>
                         </div>
                         <div class="layout horizontal configuration">
-                          <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                          <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
                           <span>-</span>
                           <span class="indicator">GPU</span>
                         </div>

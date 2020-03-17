@@ -5,7 +5,6 @@
 
 import {css, customElement, html, LitElement, property} from "lit-element";
 
-import "@polymer/paper-icon-button/paper-icon-button";
 import "weightless/card";
 
 import * as d3 from "d3";

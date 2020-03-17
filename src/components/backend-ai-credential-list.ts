@@ -78,11 +78,6 @@ export default class BackendAICredentialList extends BackendAIPage {
           height: calc(100vh - 400px);
         }
 
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
@@ -167,7 +162,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   async _viewStateChanged(active) {
@@ -176,15 +171,15 @@ export default class BackendAICredentialList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshKeyData();
-        this.isAdmin = window.backendaiclient.is_admin;
+        this.isAdmin = globalThis.backendaiclient.is_admin;
         this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
       }, true);
     } else { // already connected
       this._refreshKeyData();
-      this.isAdmin = window.backendaiclient.is_admin;
+      this.isAdmin = globalThis.backendaiclient.is_admin;
       this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
     }
   }
@@ -198,14 +193,14 @@ export default class BackendAICredentialList extends BackendAIPage {
       default:
         is_active = false;
     }
-    return window.backendaiclient.resourcePolicy.get().then((response) => {
+    return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       this.indicator.hide();
       let rp = response.keypair_resource_policies;
-      this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
     }).then(() => {
       let fields = ["access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
         'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-      return window.backendaiclient.keypair.list(user_id, fields, is_active);
+      return globalThis.backendaiclient.keypair.list(user_id, fields, is_active);
     }).then((response) => {
       let keypairs = response.keypairs;
       Object.keys(keypairs).map((objectKey, index) => {
@@ -227,7 +222,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             keypair['total_resource_slots'].cpu = '-';
           }
           if ('mem' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(keypair['total_resource_slots'].mem, 'g'));
+            keypair['total_resource_slots'].mem = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(keypair['total_resource_slots'].mem, 'g'));
             //keypair['total_resource_slots'].mem = parseFloat(keypair['total_resource_slots'].mem);
           } else if (keypair['default_for_unspecified'] === 'UNLIMITED') {
             keypair['total_resource_slots'].mem = '-';
@@ -302,7 +297,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   async _getKeyData(accessKey) {
     let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
-    return window.backendaiclient.keypair.info(accessKey, fields);
+    return globalThis.backendaiclient.keypair.info(accessKey, fields);
   }
 
   refresh() {
@@ -316,7 +311,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   _deleteKey(e) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
-    window.backendaiclient.keypair.delete(accessKey).then(response => {
+    globalThis.backendaiclient.keypair.delete(accessKey).then(response => {
       if (response.delete_keypair && !response.delete_keypair.ok) {
         throw {
           title: 'Unable to delete keypair',
@@ -353,7 +348,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       'rate_limit': original.rate_limit,
       'concurrency_limit': original.concurrency_limit,
     };
-    window.backendaiclient.keypair.mutate(accessKey, input).then((response) => {
+    globalThis.backendaiclient.keypair.mutate(accessKey, input).then((response) => {
       let event = new CustomEvent("backend-ai-credential-refresh", {"detail": this});
       document.dispatchEvent(event);
     }).catch(err => {
@@ -473,7 +468,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       this.notification.text = "No changes were made";
       this.notification.show();
     } else {
-      window.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
+      globalThis.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
         .then(res => {
           if (res.modify_keypair.ok) {
             this.notification.text = "Successfully modified";

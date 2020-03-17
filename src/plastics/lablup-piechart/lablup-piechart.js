@@ -3,7 +3,6 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 import {css, html, LitElement} from "lit-element";
-import '@polymer/iron-icon/iron-icon';
 import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
 
 /**

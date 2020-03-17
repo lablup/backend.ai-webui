@@ -186,7 +186,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
+    globalThis.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
       .then(res => {
         const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
 
@@ -228,14 +228,29 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else if (this.installImageResource['mem'].endsWith('m')) {
       this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
     }
-    this.installImageResource['domain'] = window.backendaiclient._config.domainName;
-    this.installImageResource['group_name'] = window.backendaiclient.current_group;
+    this.installImageResource['domain'] = globalThis.backendaiclient._config.domainName;
+    this.installImageResource['group_name'] = globalThis.backendaiclient.current_group;
 
     this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
     this.notification.show();
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Downloading...');
-    window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
+    globalThis.backendaiclient.getResourceSlots().then((response) => {
+      let results = response;
+      if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
+        if ('fgpu' in this.installImageResource && 'gpu' in this.installImageResource) { // Keep fgpu only.
+          delete this.installImageResource['gpu'];
+          delete this.installImageResource['cuda.device'];
+        }
+      } else if ('cuda.device' in results) { // GPU mode
+        delete this.installImageResource['fgpu'];
+        delete this.installImageResource['cuda.shares'];
+      } else if ('cuda.shares' in results) { // Fractional GPU mode
+        delete this.installImageResource['gpu'];
+        delete this.installImageResource['cuda.device'];
+      }
+      return globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource);
+    }).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
       this._getImages();
@@ -254,7 +269,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
           <div class="layout horizontal center flex">
             <div class="layout horizontal configuration">
-              <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+              <wl-icon class="fg green">developer_board</wl-icon>
               <span>${rowData.item.cpu_limit_min}</span> ~
               <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
               <span class="indicator">core</span>
@@ -262,7 +277,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </div>
           <div class="layout horizontal center flex">
             <div class="layout horizontal configuration">
-              <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+              <wl-icon class="fg green">memory</wl-icon>
               <span>${rowData.item.mem_limit_min}</span> ~
               <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
             </div>
@@ -270,7 +285,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
+                <wl-icon class="fg green">view_module</wl-icon>
                 <span>${rowData.item.cuda_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
                 <span class="indicator">GPU</span>
@@ -280,7 +295,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_shares_limit_min ? html`
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:apps"></iron-icon>
+                <wl-icon class="fg green">apps</wl-icon>
                 <span>${rowData.item.cuda_shares_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
                 <span class="indicator">fGPU</span>
@@ -340,7 +355,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   modifyServicePort() {
     const value = this._parseServicePort();
     const image = this.images[this.selectedIndex];
-    window.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
+    globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
       .then(({result}) => {
         if (result === "ok") {
           this.notification.text = "Service port successfully modified";
@@ -362,7 +377,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
-          <paper-icon-button
+          <wl-button fab flat inverted
             class="fg blue controls-running"
             on-tap="_modifyImage"
             icon="icons:settings"
@@ -371,9 +386,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
         this._launchDialogById("#modify-image-dialog");
         this.requestUpdate();
-      }}
-          ></paper-icon-button>
-          <paper-icon-button
+      }}>
+            <wl-icon>settings</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
             class="fg pink controls-running"
             icon="icons:apps"
             @click=${() => {
@@ -382,8 +398,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this._decodeServicePort();
         this._launchDialogById("#modify-app-dialog");
         this.requestUpdate();
-      }}
-          ></paper-icon-button>
+      }}>
+            <wl-icon>apps</wl-icon>
+          </wl-button>
         </div>
       `,
       root
@@ -715,10 +732,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this.indicator = this.shadowRoot.querySelector('#indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
 
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
@@ -758,9 +775,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   _getImages() {
     this.loadingIndicator.show();
 
-    window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
+    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return window.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
+      return globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
     }).then((response) => {
       let images = response.images;
       let domainImages: any = [];

@@ -7,13 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-progress/paper-progress';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
-
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '../plastics/lablup-shields/lablup-shields';
@@ -118,7 +111,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#indicator');
   }
 
@@ -138,7 +131,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _refreshRegistryList() {
-    window.backendaiclient.registry.list()
+    globalThis.backendaiclient.registry.list()
       .then(({result}) => {
         this.registryList = this._parseRegistryList(result);
         console.log(this.registryList);
@@ -153,7 +146,7 @@ class BackendAIRegistryList extends BackendAIPage {
     }
 
     // If disconnected
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._registryType = ['docker', 'harbor'];
       }, true);
@@ -213,7 +206,7 @@ class BackendAIRegistryList extends BackendAIPage {
       }
     }
 
-    window.backendaiclient.registry.add(hostname, input)
+    globalThis.backendaiclient.registry.add(hostname, input)
       .then(({result}) => {
         if (result === "ok") {
           this.notification.text = "Registry successfully added";
@@ -230,7 +223,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
 
     if (this.registryList[this.selectedIndex].hostname === encodeURIComponent(name)) {
-      window.backendaiclient.registry.delete(name)
+      globalThis.backendaiclient.registry.delete(name)
         .then(({result}) => {
           if (result === "ok") {
             this.notification.text = "Registry successfully deleted";
@@ -250,7 +243,7 @@ class BackendAIRegistryList extends BackendAIPage {
   _rescanImage() {
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Updating registry information...');
-    window.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
+    globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
           this.indicator.set(100, 'Registry update finished.');
@@ -288,7 +281,7 @@ class BackendAIRegistryList extends BackendAIPage {
     dialog.hide();
   }
 
-  _toggleProjectNameInput(){
+  _toggleProjectNameInput() {
     let select = this.shadowRoot.querySelector('#select-registry-type');
     let projectTextEl = this.shadowRoot.querySelector('#add-project-name');
     projectTextEl.disabled = !(select.value && select.value === 'harbor');
@@ -316,13 +309,13 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateHostname() {
-   let hostname = this.shadowRoot.querySelector('#add-registry-hostname').value;
-   let validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
-   if (hostname && hostname !== '') {
-     validationMessage.style.display = 'none';
-   } else {
-     validationMessage.style.display = 'block';
-   }
+    let hostname = this.shadowRoot.querySelector('#add-registry-hostname').value;
+    let validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
+    if (hostname && hostname !== '') {
+      validationMessage.style.display = 'none';
+    } else {
+      validationMessage.style.display = 'block';
+    }
   }
 
   _validateProjectName() {
@@ -330,8 +323,7 @@ class BackendAIRegistryList extends BackendAIPage {
     let validationMessage = this.shadowRoot.querySelector('#project-name-validation');
     if (projectName && projectName !== '') {
       validationMessage.style.display = 'none';
-    }
-    else {
+    } else {
       validationMessage.style.display = 'block';
     }
   }
@@ -375,22 +367,25 @@ class BackendAIRegistryList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
-          <paper-icon-button
+          <wl-button fab flat inverted
             icon="delete"
             class="fg red"
             @click=${() => {
         this.selectedIndex = rowData.index;
         this._launchDialogById("#delete-registry-dialog")
-      }}
-          ></paper-icon-button>
-          <paper-icon-button
+      }}>
+                  <wl-icon>delete</wl-icon>
+
+          </wl-button>
+          <wl-button fab flat inverted
             icon="refresh"
             class="fg blue"
             @click=${() => {
         this.selectedIndex = rowData.index;
         this._rescanImage();
-      }}
-          ></paper-icon-button>
+      }}>
+            <wl-icon>refresh</wl-icon>
+          </wl-button>
         </div>
       `,
       root

@@ -5,13 +5,6 @@
 
 import {css, customElement, html, property} from "lit-element";
 
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable';
-import '@polymer/paper-icon-button/paper-icon-button';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -105,10 +98,10 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this._grid = this.shadowRoot.querySelector('#list-grid');
-    if (!window.backendaiclient || !window.backendaiclient.is_admin) {
+    if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 320px)!important';
     }
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
 
     document.addEventListener('log-message-refresh', () => this._refreshLogData());
     document.addEventListener('log-message-clear', () => this._clearLogData());

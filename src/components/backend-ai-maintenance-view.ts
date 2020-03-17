@@ -167,10 +167,10 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#indicator');
 
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
       }, true);
     } else { // already connected
@@ -191,7 +191,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     //this.notification.show();
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Scanning...');
-    window.backendaiclient.maintenance.rescan_images().then((response) => {
+    globalThis.backendaiclient.maintenance.rescan_images().then((response) => {
       this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
       this.scanning = false;
       this.indicator.set(100, 'Rescan image finished.');
@@ -215,7 +215,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     this.recalculating = true;
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Recalculating...');
-    window.backendaiclient.maintenance.recalculate_usage().then((response) => {
+    globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
       this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
       this.recalculating = false;
       this.indicator.set(100, 'Recalculation finished.');

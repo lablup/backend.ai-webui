@@ -7,11 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
 import '@material/mwc-textfield/mwc-textfield';
@@ -80,23 +75,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --paper-item-min-height: 30px;
         }
 
-        iron-icon {
+        wl-icon.indicator {
           width: 16px;
           height: 16px;
+          --icon-size: 16px;
           min-width: 16px;
           min-height: 16px;
           padding: 0;
         }
 
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        wl-button {
+          --button-fab-size: 40px;
+          margin-right: 5px;
         }
 
         vaadin-item {
@@ -114,7 +104,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: 70px !important;
         }
 
-        div.configuration iron-icon {
+        div.configuration wl-icon {
           padding-right: 5px;
         }
 
@@ -364,12 +354,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       html`
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+            <wl-icon class="fg green indicator">developer_board</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+            <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
             <span class="indicator">GB</span>
           </div>
@@ -378,7 +368,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         ${rowData.item.total_resource_slots['cuda_device'] ?
         html`
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+            <wl-icon class="fg green indicator">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
             <span class="indicator">GPU</span>
           </div>
@@ -386,7 +376,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         ${rowData.item.total_resource_slots['cuda_shares'] ?
         html`
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+            <wl-icon class="fg green indicator">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
             <span class="indicator">fGPU</span>
           </div>
@@ -394,12 +384,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </div>
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="icons:cloud-queue"></iron-icon>
+            <wl-icon class="fg green indicator">cloud_queue</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
-            <iron-icon class="fg green" icon="icons:folder"></iron-icon>
+            <wl-icon class="fg green indicator">folder</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
             <span class="indicator">Folders</span>
           </div>
@@ -414,8 +404,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div id="controls" class="layout horizontal flex center"
              .policy-name="${rowData.item.name}">
         ${this.is_admin ? html`
-              <paper-icon-button class="fg green controls-running" icon="settings"
-                                 @click="${(e) => this._launchResourcePolicyDialog(e)}"></paper-icon-button>
+              <wl-button fab flat inverted class="fg green controls-running" icon="settings"
+                                 @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
                                  ` : html``}
         </div>
     `, root
@@ -423,7 +413,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this._validatePolicyName();
   }
 
@@ -432,17 +422,17 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshPolicyData();
         this._getResourceInfo();
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
         this._getResourceInfo();
       }, true);
     } else { // already connected
       this._refreshPolicyData();
       this._getResourceInfo();
-      this.is_admin = window.backendaiclient.is_admin;
+      this.is_admin = globalThis.backendaiclient.is_admin;
       this._getResourceInfo();
     }
   }
@@ -457,7 +447,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   updateCurrentPolicyToDialog(e) {
     const controls = e.target.closest('#controls');
     const policyName = controls['policy-name'];
-    let resourcePolicies = window.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
+    let resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     this.resource_policy_names = Object.keys(resourcePolicies);
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
@@ -488,9 +478,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _refreshPolicyData() {
-    return window.backendaiclient.resourcePolicy.get().then((response) => {
+    return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       let rp = response.keypair_resource_policies;
-      //let resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      //let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
       return rp;
     }).then((response) => {
       let resourcePolicies = response;
@@ -502,7 +492,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           policy['total_resource_slots'].cpu = 'Unlimited';
         }
         if ('mem' in policy['total_resource_slots']) {
-          policy['total_resource_slots'].mem = parseFloat(window.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
+          policy['total_resource_slots'].mem = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(policy['total_resource_slots'].mem, 'g'));
         } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
           policy['total_resource_slots'].mem = 'Unlimited';
         }
@@ -603,7 +593,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     try {
       let input = this._readResourcePolicyInput();
 
-      window.backendaiclient.resourcePolicy.mutate(name, input)
+      globalThis.backendaiclient.resourcePolicy.mutate(name, input)
         .then(({modify_keypair_resource_policy}) => {
           if (modify_keypair_resource_policy.ok) {
             this.shadowRoot.querySelector('#modify-policy-dialog').hide();
@@ -631,7 +621,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _deleteKey(e) {
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
-    window.backendaiclient.keypair.delete(accessKey).then(response => {
+    globalThis.backendaiclient.keypair.delete(accessKey).then(response => {
       this.refresh();
     })
     .catch(err => {

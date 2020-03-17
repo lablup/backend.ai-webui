@@ -155,13 +155,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.readUserSettings();
     // If disconnected
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
+        if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
           this.shell_script_edit = true;
           this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
           this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
@@ -169,7 +169,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       });
     } else { // already connected
-      if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
+      if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
         this.shell_script_edit = true;
         this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
         this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
@@ -256,7 +256,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _fetchBootstrapScript() {
     // Fetch user's bootstrap code.
-    return window.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
+    return globalThis.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
       const script = resp || '';
       this.lastSavedBootstrapScript = script;
       return script;
@@ -279,7 +279,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       return;
     }
     this.indicator.show();
-    window.backendaiclient.userConfig.update_bootstrap_script(script)
+    globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
         this.notification.text = 'Bootstrap script updated.';
         this.notification.show();
@@ -328,7 +328,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _fetchUserConfigScript() {
     // Fetch user's .zshrc or .bashrc code
-    return window.backendaiclient.userConfig.get_dotfile_script().then((resp) => {
+    return globalThis.backendaiclient.userConfig.get_dotfile_script().then((resp) => {
       const script = resp || '';
       return script;
     }).catch(err => {
@@ -355,7 +355,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       if (this.rcfiles[idx]['data'] === '') { // if new rcfile
         if (script !== '') {
           // create and save with data and path
-          window.backendaiclient.userConfig.create_dotfile_script(
+          globalThis.backendaiclient.userConfig.create_dotfile_script(
             script, this.rcfiles[idx]['path'])
             .then(res => {
               this.indicator.hide();
@@ -388,7 +388,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           return;
         }
         else {
-          await window.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
+          await globalThis.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
           .then(res => {
             this.notification.text = 'User config script updated. This will be applied to new sessions only.';
             this.notification.show();
@@ -470,7 +470,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _deleteRcFile(path: string) {
     if (path) {
-      window.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
+      globalThis.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
         let message = 'User config script '+ path + 'is deleted.';
         this.notification.text = message;
         this.notification.show();
@@ -489,7 +489,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _deleteRcFileAll() {
     this.rcfiles.map( item => {
       let path = item.path;
-      window.backendaiclient.userConfig.delete_dotfile_script(item.path).then(res => {
+      globalThis.backendaiclient.userConfig.delete_dotfile_script(item.path).then(res => {
         let message = 'User config script '+ path + ' is deleted.';
         this.notification.text = message;
         this.notification.show();
@@ -507,7 +507,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _createRcFile(path: string) {
     if (path) {
-      window.backendaiclient.userConfig.create_dotfile_script(path);
+      globalThis.backendaiclient.userConfig.create_dotfile_script(path);
     }
   }
 
@@ -566,7 +566,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
             </div>
           </div>
-          ${window.isElectron ? html`
+          ${globalThis.isElectron ? html`
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>Keep Login Session Information while Logout</div>

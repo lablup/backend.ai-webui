@@ -9,10 +9,11 @@ import {BackendAIPage} from './backend-ai-page';
 import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
+import 'weightless/icon';
 
+import '@material/mwc-linear-progress/mwc-linear-progress';
 
 import './lablup-activity-panel';
 import './backend-ai-chart';
@@ -122,26 +123,23 @@ export default class BackendAISummary extends BackendAIPage {
           height: 10px;
         }
 
-        paper-progress {
+        mwc-linear-progress {
           width: 190px;
+          height: 5px;
           border-radius: 0;
-          --paper-progress-height: 5px;
-          --paper-progress-active-color: #3677eb;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
+          --mdc-theme-primary: #3677eb;
         }
 
-        paper-progress.start-bar {
+        mwc-linear-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
-          --paper-progress-active-color: #3677eb;
+          --mdc-theme-primary: #3677eb;
         }
 
-        paper-progress.end-bar {
+        mwc-linear-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
-          --paper-progress-active-color: #98be5a;
+          --mdc-theme-primary: #98be5a;
         }
 
         wl-button[class*="green"] {
@@ -156,6 +154,10 @@ export default class BackendAISummary extends BackendAIPage {
           --button-bg-active: var(--paper-red-600);
         }
 
+        wl-icon {
+          --icon-size: 24px;
+        }
+
         .invitation_folder_name {
           font-size: 13px;
         }
@@ -165,7 +167,7 @@ export default class BackendAISummary extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   _refreshHealthPanel() {
@@ -195,7 +197,7 @@ export default class BackendAISummary extends BackendAIPage {
         status = 'RUNNING';
     }
     let fields = ["created_at"];
-    window.backendaiclient.computeSession.list(fields, status).then((response) => {
+    globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.indicator.hide();
       this.jobs = response;
       this.sessions = response.compute_session_list.total_count;
@@ -218,9 +220,9 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
+    return globalThis.backendaiclient.resourcePolicy.get(globalThis.backendaiclient.resource_policy).then((response) => {
       let rp = response.keypair_resource_policies;
-      this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
     });
   }
 
@@ -241,7 +243,7 @@ export default class BackendAISummary extends BackendAIPage {
     }
     this.indicator.show();
 
-    window.backendaiclient.resources.totalResourceInformation().then((response) => {
+    globalThis.backendaiclient.resources.totalResourceInformation().then((response) => {
       this.indicator.hide();
       this.resources = response;
       this._sync_resource_values();
@@ -289,10 +291,10 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _sync_resource_values() {
-    this.manager_version = window.backendaiclient.managerVersion;
-    this.console_version = window.packageVersion;
+    this.manager_version = globalThis.backendaiclient.managerVersion;
+    this.console_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
-    this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
+    this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources.gpu.total)) {
       this.gpu_total = 0;
     } else {
@@ -315,8 +317,8 @@ export default class BackendAISummary extends BackendAIPage {
     // mem.total: total memory
     // mem.allocated: allocated by backend.ai
     // mem.used: used by backend.ai
-    this.mem_used = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
-    this.mem_allocated = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
+    this.mem_used = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
+    this.mem_allocated = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
 
@@ -341,10 +343,10 @@ export default class BackendAISummary extends BackendAIPage {
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     this._init_resource_values();
     this.requestUpdate();
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_superadmin = window.backendaiclient.is_superadmin;
-        this.is_admin = window.backendaiclient.is_admin;
+        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         if (this.activeConnected) {
           this._refreshHealthPanel();
@@ -354,8 +356,8 @@ export default class BackendAISummary extends BackendAIPage {
         }
       }, true);
     } else {
-      this.is_superadmin = window.backendaiclient.is_superadmin;
-      this.is_admin = window.backendaiclient.is_admin;
+      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+      this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this._refreshHealthPanel();
       this._refreshInvitations();
@@ -384,7 +386,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.invitations().then(res => {
+    globalThis.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
       if (this.active) {
         setTimeout(() => {
@@ -398,7 +400,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.accept_invitation(invitation.id)
+    globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
@@ -415,7 +417,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.delete_invitation(invitation.id)
+    globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
@@ -457,12 +459,12 @@ export default class BackendAISummary extends BackendAIPage {
             <div slot="message">
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
-                  <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                  <wl-icon class="fg green">developer_board</wl-icon>
                   <span>CPU</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
-                  <paper-progress class="mem-usage-bar start-bar" value="${this.cpu_total_usage_ratio}"></paper-progress>
-                  <paper-progress class="mem-usage-bar end-bar" id="cpu-usage-bar" value="${this.cpu_current_usage_ratio}"></paper-progress>
+                  <mwc-linear-progress class="mem-usage-bar start-bar" progress="${this.cpu_total_usage_ratio / 100.0}"></mwc-linear-progress>
+                  <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar" progress="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
                     Cores reserved.
                   </div>
@@ -472,12 +474,12 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
-                  <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                  <wl-icon class="fg green">memory</wl-icon>
                   <span>RAM</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
-                  <paper-progress class="mem-usage-bar start-bar" id="mem-usage-bar" value="${this.mem_total_usage_ratio}"></paper-progress>
-                  <paper-progress class="mem-usage-bar end-bar" value="${this.mem_current_usage_ratio}"></paper-progress>
+                  <mwc-linear-progress class="mem-usage-bar start-bar" id="mem-usage-bar" progress="${this.mem_total_usage_ratio / 100.0}"></mwc-linear-progress>
+                  <mwc-linear-progress class="mem-usage-bar end-bar" progress="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
                     reserved.
                   </div>
@@ -489,7 +491,7 @@ export default class BackendAISummary extends BackendAIPage {
               ${this.gpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <wl-icon class="fg green">view_module</wl-icon>
                     <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
@@ -500,7 +502,7 @@ export default class BackendAISummary extends BackendAIPage {
               ${this.fgpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <wl-icon class="fg green">view_module</wl-icon>
                     <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">

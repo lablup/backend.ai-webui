@@ -223,10 +223,6 @@ export const BackendAiConsoleStyles = [
       padding-right: 0;
     }
 
-    #main-panel-toolbar-buttons paper-icon-button {
-      min-width: 40px;
-    }
-
     .drawer-menu::-webkit-scrollbar {
       display: none !important;
     }
