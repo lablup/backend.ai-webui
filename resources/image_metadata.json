@@ -555,6 +555,20 @@
         }
       ]
     },
+    "texlive": {
+      "name": "TeXLive",
+      "description": "TeX Live is an easy (we hope) way to get up and running with the TeX document production system.",
+      "group": "Language",
+      "tags": [],
+      "icon": "texlive.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "LaTeX",
+          "color": "blue"
+        }
+      ]
+    },
     "sftp": {
       "name": "SFTP",
       "description": "",
