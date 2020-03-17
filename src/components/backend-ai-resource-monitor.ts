@@ -683,6 +683,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           const scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
           scaling_group_selection_dialog.selectedText = this.scaling_group;
+          scaling_group_selection_dialog.value = this.scaling_group;
           scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
             this.updateScalingGroup.bind(this, false);
           });
