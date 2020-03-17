@@ -7,13 +7,28 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/dialog';
 import 'weightless/icon';
+/**
+ Backend.AI Splash component
 
+ `backend-ai-splash` shows simple summary about current app / web application.
+
+ Example:
+
+ ```
+ <backend-ai-splash></backend-ai-console>
+ ...
+ this.shadowRoot.querySelector('backend-ai-splash').show()
+ ```
+ @group Backend.AI Console
+ @element backend-ai-splash
+ */
 @customElement("backend-ai-splash")
 export default class BackendAISplash extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
   @property({type: String}) edition = 'Open Source';
   @property({type: String}) validUntil = '';
+  @property({type: String}) version = '';
 
   constructor() {
     super();
@@ -27,8 +42,17 @@ export default class BackendAISplash extends LitElement {
           font-family: 'Quicksand', Roboto, sans-serif;
         }
 
+        a,
+        a:visited {
+          color: #222222;
+        }
+
+        a:hover {
+          color: #3e872d;
+        }
+
         #splash-panel {
-            --dialog-width: 345px;
+          --dialog-width: 345px;
           --dialog-height: 300px;
         }
 
@@ -55,6 +79,11 @@ export default class BackendAISplash extends LitElement {
         .copyright {
           font-size: 12px;
         }
+
+        .release-note {
+          font-size: 12px;
+        }
+
       `];
   }
 
@@ -69,6 +98,7 @@ export default class BackendAISplash extends LitElement {
   show() {
     this.edition = globalThis.packageEdition;
     this.validUntil = globalThis.packageValidUntil;
+    this.version = globalThis.packageVersion;
     this.dialog.show();
   }
 
@@ -98,6 +128,7 @@ export default class BackendAISplash extends LitElement {
             <ul>
               <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
               <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
+              <li class="release-note"><a target="_blank" href="https://github.com/lablup/backend.ai-console/releases/tag/v${this.version}">Release Note</a></li>
             </ul>
           </div>
       </wl-dialog>
