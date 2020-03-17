@@ -74,11 +74,6 @@ export default class BackendAIUserList extends BackendAIPage {
           height: calc(100vh - 350px);
         }
 
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
         wl-card h4,
         wl-card wl-label {
           font-size: 14px;

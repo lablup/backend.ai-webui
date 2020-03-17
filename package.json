@@ -34,7 +34,6 @@
     "@material/mwc-switch": "^0.13.0",
     "@material/mwc-textfield": "^0.13.0",
     "@material/mwc-top-app-bar-fixed": "^0.13.0",
-    "@polymer/iron-dropdown": "^3.0.1",
     "@polymer/paper-dropdown-menu": "^3.1.0",
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
