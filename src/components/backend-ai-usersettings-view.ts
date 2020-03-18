@@ -33,12 +33,10 @@ import './backend-ai-usersettings-general-list';
 @customElement("backend-ai-usersettings-view")
 export default class BackendAiUserSettingsView extends BackendAIPage {
   public indicator: any;
-  public lastSavedBootstrapScript: string = '';
 
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
   @property({type: Object}) _activeTab = Object();
-  @property({type: Object}) bootstrapDialog = Object();
   @property({type: Object}) clearLogsDialog = Object();
   @property({type: Object}) logGrid = Object();
 
@@ -103,10 +101,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           --button-color-disabled: #cccccc;
         }
 
-        #bootstrap-dialog wl-button {
-          margin-left: 5px;
-        }
-
         wl-card > div {
           padding: 15px;
         }
@@ -125,13 +119,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
 
         wl-tab-group {
           --tab-group-indicator-bg: var(--paper-teal-600);
-        }
-
-        #bootstrap-dialog {
-          --dialog-min-width: calc(100vw - 200px);
-          --dialog-max-width: calc(100vw - 200px);
-          --dialog-min-height: calc(100vh - 100px);
-          --dialog-max-height: calc(100vh - 100px);
         }
 
         wl-tab {
@@ -204,7 +191,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = globalThis.lablupNotification;
     // this._activeTab = "general";
-    this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
     this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');
     document.addEventListener('backend-ai-usersettings-logs', () => {
       this._viewStateChanged(true);
@@ -231,62 +217,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
-  }
-
-  _fetchBootstrapScript() {
-    // Fetch user's bootstrap code.
-    return globalThis.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
-      const script = resp || '';
-      this.lastSavedBootstrapScript = script;
-      return script;
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
-  }
-
-  async _saveBootstrapScript() {
-    const editor = this.shadowRoot.querySelector('#codemirror-editor');
-    const script = editor.getValue();
-    if (this.lastSavedBootstrapScript === script) {
-      this.notification.text = 'No changes';
-      return this.notification.show();
-    }
-    this.indicator.show();
-    globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
-      .then(res => {
-        this.notification.text = 'Saved bootstrap script';
-        this.notification.show();
-        this.indicator.hide();
-      }).catch((err) => {
-      this.indicator.hide();
-      if (typeof err.message !== "undefined") {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-      } else {
-        this.notification.text = PainKiller.relieve('Plugin loading failed.');
-      }
-      this.notification.show();
-    });
-  }
-
-  async _saveBootstrapScriptAndCloseDialog() {
-    await this._saveBootstrapScript();
-    this._hideBootstrapScriptDialog();
-  }
-
-  async _editBootstrapScript() {
-    const script = await this._fetchBootstrapScript();
-    this.bootstrapDialog.setValue(script);
-    await this.bootstrapDialog.show();
-  }
-
-  _hideBootstrapScriptDialog() {
-    this.bootstrapDialog.hide();
   }
 
   _hideClearLogsDialog() {

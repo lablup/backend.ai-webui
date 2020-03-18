@@ -2636,8 +2636,8 @@ class UserConfig {
    *
    * @param {string} data - text content of bootstrap script.
    */
-  update_bootstrap_script(data: string) {
-    const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", {data});
+  update_bootstrap_script(script: string) {
+    const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", {script});
     return this.client._wrapWithPromise(rqst);
   }
   /**
