@@ -159,7 +159,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         @media screen and (max-width: 899px) {
-          #work-dialog {
+          #work-dialog,
+          #work-dialog.mini_ui {
             left: 0;
             --dialog-width: 100%;
           }
@@ -170,11 +171,16 @@ export default class BackendAiSessionList extends BackendAIPage {
             left: 100px;
             --dialog-width: calc(100% - 220px);
           }
+
+          #work-dialog.mini_ui {
+            left: 40px;
+            --dialog-width: calc(100% - 102px);
+          }
         }
 
         #work-area {
           width: 100%;
-          padding:5px;
+          padding: 5px;
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;
@@ -311,6 +317,8 @@ export default class BackendAiSessionList extends BackendAIPage {
       + new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
 
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
+    document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
+    this._refreshWorkDialogUI({"detail": {"mini-ui": globalThis.mini_ui}});
 
     /* TODO: json to csv file converting */
     document.addEventListener('backend-ai-csv-file-export-session', () => {
@@ -516,6 +524,16 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  _refreshWorkDialogUI(e) {
+    console.log(e.detail);
+    let work_dialog = this.shadowRoot.querySelector('#work-dialog');
+    if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
+      work_dialog.classList.add('mini_ui');
+    } else {
+      work_dialog.classList.remove('mini_ui');
+    }
   }
 
   _humanReadableTime(d: any) {
