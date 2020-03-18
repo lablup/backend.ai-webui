@@ -527,7 +527,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _refreshWorkDialogUI(e) {
-    console.log(e.detail);
     let work_dialog = this.shadowRoot.querySelector('#work-dialog');
     if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
       work_dialog.classList.add('mini_ui');

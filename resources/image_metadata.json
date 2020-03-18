@@ -417,6 +417,20 @@
         }
       ]
     },
+    "gcc": {
+      "name": "GCC",
+      "description": "The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Ada, Go, and D, as well as libraries for these languages (libstdc++,...).",
+      "group": "Language",
+      "tags": [],
+      "icon": "gcc.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "C",
+          "color": "blue"
+        }
+      ]
+    },
     "rust": {
       "name": "Rust",
       "description": "Rust is a modern systems programming language focusing on safety, speed, and concurrency. It accomplishes these goals by being memory safe without using garbage collection.",
