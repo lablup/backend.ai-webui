@@ -450,6 +450,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 100%;
         }
 
+        #vfolder mwc-list-item[disabled] {
+          background-color: rgba(255, 0, 0, 0.04) !important;
+        }
+
         wl-button[fab] {
           --button-fab-size: 70px;
           border-radius: 6px;
