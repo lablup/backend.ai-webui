@@ -1160,7 +1160,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async _updateVirtualFolderList() {
     let l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
     l.then((value) => {
-      this.vfolders = value;
+      //this.vfolders = value;
+      let selectableFolders: object[] = [];
+      let automountFolders: object[] = [];
+      value.forEach((item)=>{
+        if (item.name.startsWith('.')) {
+          item.disabled = true;
+          item.name = item.name + ' (Automount folder)';
+          automountFolders.push(item);
+        } else {
+          selectableFolders.push(item);
+        }
+      });
+      this.vfolders = selectableFolders.concat(automountFolders);
     });
   }
 
@@ -2220,7 +2232,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <mwc-multi-select id="vfolder" label="Folders to mount" multi
                 @selected="${this._updateSelectedFolder}">
                 ${this.vfolders.map(item => html`
-                  <mwc-list-item value="${item.name}">${item.name}</mwc-list-item>
+                  <mwc-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-list-item>
                 `)}
                 </mwc-multi-select>
               </div>
