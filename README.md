@@ -96,6 +96,7 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
 # sidebar = "sidebar-test.js"
 ```
 
+
 ## Branches
 
  * master : Development branch
@@ -208,6 +209,8 @@ $ docker-compose up -d console // as a daemon
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
+
+Note: We strongly suggest you to use console-server instead of serving console only. Console server contains Backend.AI console inside.
 
 ```
 $ docker-compose build console-ssl  // build only
