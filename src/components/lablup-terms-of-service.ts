@@ -181,6 +181,7 @@ export default class LablupTermsOfService extends LitElement {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
+        this.shadowRoot.querySelector('#terms-of-service-dialog-content').innerHTML = "Problem found while loading contents. Please try again later.";
       });
     } else {
       this.show = true;
@@ -200,7 +201,7 @@ export default class LablupTermsOfService extends LitElement {
   }
 
   _changeApproved() {
-    if (this.approveCheckbox.checked == true) {
+    if (this.approveCheckbox.checked === true) {
       this.show = false;
       this.dialog.hide();
       this.approved = true;
