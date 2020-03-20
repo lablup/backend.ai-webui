@@ -148,20 +148,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div class="layout horizontal wrap center">
         ${rowData.item.resource_slots['cuda.device'] ?
         html`
-        <div class="layout horizontal configuration">
-          <wl-icon class="fg green">view_module</wl-icon>
-          <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
-          <span class="indicator">GPU</span>
-        </div>
-      ` : html``}
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green">view_module</wl-icon>
+            <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
+            <span class="indicator">GPU</span>
+          </div>
+        ` : html``}
         ${rowData.item.resource_slots['cuda.shares'] ?
         html`
-            <div class="layout horizontal configuration">
-              <wl-icon class="fg green">view_module</wl-icon>
-              <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
-              <span class="indicator">GPU</span>
-            </div>
-          ` : html``}
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green">view_module</wl-icon>
+            <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
+            <span class="indicator">GPU</span>
+          </div>
+        ` : html``}
         </div>
       `, root
     );
@@ -170,19 +170,19 @@ class BackendAiResourcePresetList extends BackendAIPage {
   controlRenderer(root, column?, rowData?) {
     render(
       html`
-            <div id="controls" class="layout horizontal flex center"
-                 .preset-name="${rowData.item.name}">
-              ${this.is_admin ? html`
-                    <wl-button class="fg blue controls-running" fab flat inverted
-                      @click="${(e) => this._launchResourcePresetDialog(e)}">
-                       <wl-icon>settings</wl-icon>
-                    </wl-button>
-                    <wl-button class="fg red controls-running" fab flat inverted
-                      @click="${(e) => this._launchDeleteResourcePresetDialog(e)}">
-                       <wl-icon>delete</wl-icon>
-                    </wl-button>
-              ` : html``}
-            </div>
+        <div id="controls" class="layout horizontal flex center"
+            .preset-name="${rowData.item.name}">
+          ${this.is_admin ? html`
+            <wl-button class="fg blue controls-running" fab flat inverted
+              @click="${(e) => this._launchResourcePresetDialog(e)}">
+                <wl-icon>settings</wl-icon>
+            </wl-button>
+            <wl-button class="fg red controls-running" fab flat inverted
+              @click="${(e) => this._launchDeleteResourcePresetDialog(e)}">
+                <wl-icon>delete</wl-icon>
+            </wl-button>
+          ` : html``}
+        </div>
       `, root
     );
   }
@@ -551,7 +551,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _createPreset() {
-    const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+    const wrapper = (v) => {
+      v = v.toString();
+      return v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+    };
     const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value),
       cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value),
       mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g'),
