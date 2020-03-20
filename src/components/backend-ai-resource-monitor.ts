@@ -513,7 +513,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     ).then(
       json => {
         this.imageInfo = json.imageInfo;
-        //console.log(this.imageInfo);
         for (let key in this.imageInfo) {
           this.tags[key] = [];
           if ("name" in this.imageInfo[key]) {
@@ -1965,6 +1964,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _showKernelDescription(e, name) {
+    e.stopPropagation();
+    if (name in this.imageInfo && 'description' in this.imageInfo[name]) {
+      console.log(this.imageInfo[name].description);
+    }
+  }
+
   _getVersionInfo(version) {
     let info: any = [];
     let fragment = version.split('-');
@@ -2173,7 +2179,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     ` : html`
                       <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                         <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                        <div class="horizontal start-justified layout wrap">
+                        <div class="horizontal start-justified center flex layout wrap">
                           <div style="padding-right:5px;">${item.basename}</div>
                           <div class="flex"></div>
                           <div class="horizontal layout end-justified">
@@ -2181,6 +2187,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
                           `) : ''}
                           </div>
+                          <div class="flex"></div>
+                          <mwc-icon-button icon="info" class="fg blue" @click="${(e) => {
+      this._showKernelDescription(e, item.kernelname)
+    }}"></mwc-icon-button>
                         </div>
                         <div class="flex"></div>
                       </mwc-list-item>

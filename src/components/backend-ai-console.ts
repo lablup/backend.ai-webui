@@ -652,11 +652,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
-              <mwc-icon slot="graphic" id="activities-icon" class="fg green">view_quilt</mwc-icon>
+              <mwc-icon slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
               <span class="full-menu">Summary</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
-              <mwc-icon slot="graphic" class="fg red">subject</mwc-icon>
+              <mwc-icon slot="graphic" class="fg red">ballot</mwc-icon>
               <span class="full-menu">Sessions</span>
             </mwc-list-item>
             ${false ? html`
