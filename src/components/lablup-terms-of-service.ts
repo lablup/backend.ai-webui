@@ -20,6 +20,21 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 import {default as PainKiller} from "./backend-ai-painkiller";
 
+/**
+ Lablup Terms of Service dialog
+
+ `lablup-terms-of-service` is a dialog that shows the specific terms of service with optional approve checkbox.
+
+ Example:
+
+ <lablup-terms-of-service>
+ ... content ...
+ </lablup-terms-of-service>
+
+ @group Lablup-WebComponents
+ @element lablup-terms-of-service
+ */
+
 @customElement("lablup-terms-of-service")
 export default class LablupTermsOfService extends LitElement {
   public shadowRoot: any; // ShadowRoot
