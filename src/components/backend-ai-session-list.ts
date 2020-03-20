@@ -85,6 +85,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) current_page = 1;
   @property({type: Number}) session_page_limit = 50;
   @property({type: Number}) total_session_count = 0;
+  @property({type: Number}) _APIMajorVersion = 5;
 
   constructor() {
     super();
@@ -347,6 +348,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
+        this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -363,6 +365,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
+      this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._refreshJobData();
     }
   }
@@ -1100,14 +1103,15 @@ export default class BackendAiSessionList extends BackendAIPage {
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"><wl-icon>delete</wl-icon></wl-button>
           ` : html``}
-          ${this._isRunning ? html`
+          ${this._isRunning || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
                                on-tap="_showLogs"><wl-icon>assignment</wl-icon></wl-button>
           ` : html`
             <wl-button fab flat inverted disabled class="fg controls-running" icon="assignment"><wl-icon>assignment</wl-icon></wl-button>
           `}
-        </div>`, root
+        </div>
+      `, root
     );
   }
 

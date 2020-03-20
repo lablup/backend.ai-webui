@@ -24,7 +24,6 @@ import 'weightless/icon';
 import 'weightless/button';
 
 
-import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-codemirror';
 import './lablup-loading-indicator';
 import './backend-ai-error-log-list';
