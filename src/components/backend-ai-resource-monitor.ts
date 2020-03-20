@@ -23,6 +23,7 @@ import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
+import 'weightless/popover';
 import 'weightless/radio';
 import 'weightless/select';
 import 'weightless/slider';
@@ -1967,6 +1968,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _showKernelDescription(e, name) {
     e.stopPropagation();
     if (name in this.imageInfo && 'description' in this.imageInfo[name]) {
+      let a = this.shadowRoot.querySelector('#kernel-description');
+      a.innerHTML = this.imageInfo[name].description;
+      a.show();
       console.log(this.imageInfo[name].description);
     }
   }
@@ -2179,20 +2183,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     ` : html`
                       <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                         <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                        <div class="horizontal start-justified center flex layout wrap">
+                        <div class="horizontal justified center flex layout" style="width:305px;">
                           <div style="padding-right:5px;">${item.basename}</div>
                           <div class="flex"></div>
-                          <div class="horizontal layout end-justified">
+                          <div class="horizontal layout end-justified center flex">
                           ${item.tags ? item.tags.map(item => html`
                             <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
                           `) : ''}
-                          </div>
-                          <div class="flex"></div>
-                          <mwc-icon-button icon="info" class="fg blue" @click="${(e) => {
-      this._showKernelDescription(e, item.kernelname)
+                            <mwc-icon-button icon="info" class="fg blue" @click="${(e) => {
+      this._showKernelDescription(e, item.kernelname);
     }}"></mwc-icon-button>
+                          </div>
                         </div>
-                        <div class="flex"></div>
                       </mwc-list-item>
                     `}
                   `)}
@@ -2387,6 +2389,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </fieldset>
           </form>
         </wl-card>
+      </wl-dialog>
+      <wl-dialog id="kernel-description" fixed>
+         <wl-title level="3" slot="header">Description</wl-title>
+         <div slot="content">
+            <wl-text></wl-text>
+         </div>
       </wl-dialog>
 `;
   }
