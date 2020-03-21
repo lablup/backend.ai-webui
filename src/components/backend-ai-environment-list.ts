@@ -565,7 +565,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     style="flex: 1"
                     ?disabled=${this._cuda_gpu_disabled}
                   >
-                    ${[0, 1, 2, 3, 4].map(item => html`
+                    ${[0, 1, 2, 3, 4, 5, 6, 7].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
