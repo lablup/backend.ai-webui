@@ -952,6 +952,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#new-session-dialog').hide();
   }
 
+  _hideDialog(e) {
+    e.detail.hide();
+  }
+
   _guessHumanizedNames(kernelName) {
     const candidate = this.imageNames;
     let imageName = '';
@@ -2128,7 +2132,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       ${this.direction === 'vertical' && this.project_resource_monitor === true && this.total_pj_slot.cpu_slot != 0 ? html`
       <hr />
       <div class="vertical start-justified layout">
-          <div class="flex"></div>
+        <div class="flex"></div>
         <div class="layout horizontal center-justified monitor">
           <div class="layout vertical center center-justified" style="margin-right:5px;">
             <wl-icon class="fg blue">group_work</wl-icon>
@@ -2390,7 +2394,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="kernel-description" fixed>
-         <wl-title level="3" slot="header">Description</wl-title>
+        <h3 class="horizontal center layout">
+          <span>Kernel description</span>
+          <div class="flex"></div>
+          <mwc-icon-button icon="close" class="blue close-button"
+            @click="${(e) => this._hideDialog(e)}">
+          </mwc-icon-button>
+        </h3>
          <div slot="content">
             <wl-text></wl-text>
          </div>
