@@ -1971,7 +1971,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let a = this.shadowRoot.querySelector('#kernel-description');
       a.innerHTML = this.imageInfo[name].description;
       a.show();
-      console.log(this.imageInfo[name].description);
     }
   }
 
