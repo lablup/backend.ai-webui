@@ -126,6 +126,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) project_resource_monitor = false;
   @property({type: Object}) version_selector = Object();
   @property({type: Boolean}) _default_language_updated = false;
+  @property({type: String}) _kernelDescription = '';
+  @property({type: String}) _kernelDescriptionTitle = '';
 
   constructor() {
     super();
@@ -463,6 +465,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         wl-label {
           margin-right: 10px;
           outline: none;
+        }
+
+        #kernel-description {
+          --dialog-width: 350px;
         }
       `];
   }
@@ -953,7 +959,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _hideDialog(e) {
-    e.detail.hide();
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
   }
 
   _guessHumanizedNames(kernelName) {
@@ -1972,9 +1980,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _showKernelDescription(e, name) {
     e.stopPropagation();
     if (name in this.imageInfo && 'description' in this.imageInfo[name]) {
-      let a = this.shadowRoot.querySelector('#kernel-description');
-      a.innerHTML = this.imageInfo[name].description;
-      a.show();
+      let desc = this.shadowRoot.querySelector('#kernel-description');
+      this._kernelDescriptionTitle = this.imageInfo[name].name;
+      this._kernelDescription = this.imageInfo[name].description;
+      desc.show();
     }
   }
 
@@ -2394,15 +2403,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="kernel-description" fixed>
-        <h3 class="horizontal center layout">
-          <span>Kernel description</span>
+        <h3 slot="header" class="horizontal center layout">
+          <span>${this._kernelDescriptionTitle}</span>
           <div class="flex"></div>
           <mwc-icon-button icon="close" class="blue close-button"
             @click="${(e) => this._hideDialog(e)}">
           </mwc-icon-button>
         </h3>
          <div slot="content">
-            <wl-text></wl-text>
+            <wl-text>${this._kernelDescription}</wl-text>
          </div>
       </wl-dialog>
 `;
