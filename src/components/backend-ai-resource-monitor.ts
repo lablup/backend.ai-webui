@@ -4,6 +4,7 @@
  */
 
 import {css, customElement, html, property} from "lit-element";
+import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-listbox/paper-listbox';
@@ -159,9 +160,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         lablup-slider {
-          width: 245px !important;
+          width: 210px !important;
           --textfield-width: 50px;
-          --slider-width: 170px;
+          --slider-width: 135px;
         }
 
         lablup-slider.mem,
@@ -470,6 +471,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         #help-description {
           --dialog-width: 350px;
+        }
+
+        #help-description p {
+          padding: 5px !important;
         }
 
         mwc-icon-button.info {
@@ -1997,6 +2002,47 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _showResourceDescription(e, item) {
+    e.stopPropagation();
+    const resource_description = {
+      'cpu': {
+        'name': 'CPU',
+        'desc': '<p>The CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions.</p>' +
+          '<p>For high performance computing workloads, many CPUs are helpful, but the program code must be written to use multiple CPUs.</p>'
+      },
+      'mem': {
+        'name': 'Memory', 'desc': '<p>Computer memory is a temporary storage area.</p>' +
+          '<p>It holds the data and instructions that the Central Processing Unit (CPU) needs.</p>' +
+          '<p>When using a GPU in a machine learning workload, you must allocate at least twice the memory of the GPU to memory. ' +
+          'Otherwise, the GPU\'s idle time will increase, resulting in a performance penalty.</p>'
+      },
+      'shmem': {
+        'name': 'Shared memory',
+        'desc': '<p>Shared memory is memory that may be simultaneously accessed by multiple programs with an intent to provide communication among them or avoid redundant copies.</p>' +
+          '<p>For multi-CPU or multi-threaded workloads, shared memory is important because it is used for inter-thread communication. ' +
+          'For deep learning workloads and high performance computing workloads using multi-threaded, we recommend setting this value to 1 GB or higher.</p>'
+      },
+      'gpu': {
+        'name': 'GPU',
+        'desc': '<p>GPUs are well-suited for the matrix/vector computations involved in machine learning. ' +
+          'GPUs speed up training algorithms by orders of magnitude, reducing running times from weeks to days.</p>'
+      },
+      'session': {
+        'name': 'Session (Backend.AI)',
+        'desc': '<p>A session is a unit of computational environment that is created according to a specified environment and resources.</p>' +
+          '<p>If this value is set to a value greater than 1, multiple sessions corresponding to the resource set above are created.</p>' +
+          '<p>If there are not enough resources available, requests to create sessions that cannot be created are put on the waiting queue.</p>'
+      }
+    };
+    if (item in resource_description) {
+      this._helpDescriptionTitle = resource_description[item].name;
+      this._helpDescription = resource_description[item].desc;
+      this._helpDescriptionIcon = '';
+      let desc = this.shadowRoot.querySelector('#help-description');
+      desc.show();
+    }
+  }
+
   _getVersionInfo(version) {
     let info: any = [];
     let fragment = version.split('-');
@@ -2324,6 +2370,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                  value="${this.cpu_request}"></lablup-slider>
                   <span class="caption">Core</span>
+                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+      this._showResourceDescription(e, 'cpu');
+    }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">RAM</div>
@@ -2333,6 +2382,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                  value="${this.mem_request}"></lablup-slider>
                   <span class="caption">GB</span>
+                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+      this._showResourceDescription(e, 'mem');
+    }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">Shared Memory</div>
@@ -2342,6 +2394,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="0.0" max="${this.shmem_metric.max}"
                                  value="${this.shmem_request}"></lablup-slider>
                   <span class="caption">GB</span>
+                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+      this._showResourceDescription(e, 'shmem');
+    }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">GPU</div>
@@ -2350,6 +2405,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  marker_limit="${this.marker_limit}"
                                  min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
                   <span class="caption">GPU</span>
+                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+      this._showResourceDescription(e, 'gpu');
+    }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">Sessions</div>
@@ -2358,6 +2416,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  marker_limit="${this.marker_limit}"
                                  min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
                   <span class="caption">#</span>
+                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+      this._showResourceDescription(e, 'session');
+    }}"></mwc-icon-button>
                 </div>
               </div>
             </wl-expansion>
@@ -2424,8 +2485,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </mwc-icon-button>
           </h3>
           <div class="horizontal layout center" style="margin:5px;">
+          ${this._helpDescriptionIcon == '' ? html`` : html`
             <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-            <p style="font-size:14px;">${this._helpDescription}</p>
+            `}
+            <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
           </div>
         </wl-card>
       </wl-dialog>
