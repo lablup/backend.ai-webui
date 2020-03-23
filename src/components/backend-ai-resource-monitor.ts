@@ -24,7 +24,6 @@ import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
-import 'weightless/popover';
 import 'weightless/radio';
 import 'weightless/select';
 import 'weightless/slider';
