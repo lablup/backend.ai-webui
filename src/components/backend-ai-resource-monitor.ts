@@ -4,6 +4,7 @@
  */
 
 import {css, customElement, html, property} from "lit-element";
+import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-listbox/paper-listbox';
@@ -125,6 +126,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) project_resource_monitor = false;
   @property({type: Object}) version_selector = Object();
   @property({type: Boolean}) _default_language_updated = false;
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
 
   constructor() {
     super();
@@ -155,9 +159,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         lablup-slider {
-          width: 245px !important;
+          width: 210px !important;
           --textfield-width: 50px;
-          --slider-width: 170px;
+          --slider-width: 135px;
         }
 
         lablup-slider.mem,
@@ -419,7 +423,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         mwc-select#scaling-groups {
-          margin-right:5px;
+          margin-right: 5px;
           width: 170px;
         }
 
@@ -462,6 +466,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         wl-label {
           margin-right: 10px;
           outline: none;
+        }
+
+        #help-description {
+          --dialog-width: 350px;
+        }
+
+        #help-description p {
+          padding: 5px !important;
+        }
+
+        mwc-icon-button.info {
+          --mdc-icon-button-size: 30px;
         }
       `];
   }
@@ -513,7 +529,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     ).then(
       json => {
         this.imageInfo = json.imageInfo;
-        //console.log(this.imageInfo);
         for (let key in this.imageInfo) {
           this.tags[key] = [];
           if ("name" in this.imageInfo[key]) {
@@ -567,7 +582,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
-    document.addEventListener("backend-ai-group-changed", (e)=> {
+    document.addEventListener("backend-ai-group-changed", (e) => {
       // this.scaling_group = '';
       this._updatePageVariables(true);
     });
@@ -616,7 +631,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let folders = this.shadowRoot.querySelector('#vfolder');
     let selectedFolders = folders.value;
     let indexes = Array<number>();
-    folders.items.map((item, index:number) => {
+    folders.items.map((item, index: number) => {
       if (selectedFolders.indexOf(item.value) > -1) {
         indexes.push(index);
       }
@@ -952,6 +967,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#new-session-dialog').hide();
   }
 
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+    e.stopPropagation();
+  }
+
   _guessHumanizedNames(kernelName) {
     const candidate = this.imageNames;
     let imageName = '';
@@ -1004,6 +1026,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
       'digits': 'DIGITS',
+      'tf1': 'TensorFlow 1',
+      'tf2': 'TensorFlow 2',
       'py3': 'Python 3',
       'py2': 'Python 2',
       'py27': 'Python 2.7',
@@ -1167,7 +1191,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       //this.vfolders = value;
       let selectableFolders: object[] = [];
       let automountFolders: object[] = [];
-      value.forEach((item)=>{
+      value.forEach((item) => {
         if (item.name.startsWith('.')) {
           item.disabled = true;
           item.name = item.name + ' (Automount folder)';
@@ -1965,6 +1989,59 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _showKernelDescription(e, item) {
+    e.stopPropagation();
+    let name = item.kernelname;
+    if (name in this.imageInfo && 'description' in this.imageInfo[name]) {
+      let desc = this.shadowRoot.querySelector('#help-description');
+      this._helpDescriptionTitle = this.imageInfo[name].name;
+      this._helpDescription = this.imageInfo[name].description;
+      this._helpDescriptionIcon = item.icon;
+      desc.show();
+    }
+  }
+
+  _showResourceDescription(e, item) {
+    e.stopPropagation();
+    const resource_description = {
+      'cpu': {
+        'name': 'CPU',
+        'desc': '<p>The CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions.</p>' +
+          '<p>For high performance computing workloads, many CPUs are helpful, but the program code must be written to use multiple CPUs.</p>'
+      },
+      'mem': {
+        'name': 'Memory', 'desc': '<p>Computer memory is a temporary storage area.</p>' +
+          '<p>It holds the data and instructions that the Central Processing Unit (CPU) needs.</p>' +
+          '<p>When using a GPU in a machine learning workload, you must allocate at least twice the memory of the GPU to memory. ' +
+          'Otherwise, the GPU\'s idle time will increase, resulting in a performance penalty.</p>'
+      },
+      'shmem': {
+        'name': 'Shared memory',
+        'desc': '<p>Shared memory is memory that may be simultaneously accessed by multiple programs with an intent to provide communication among them or avoid redundant copies.</p>' +
+          '<p>For multi-CPU or multi-threaded workloads, shared memory is important because it is used for inter-thread communication. ' +
+          'For deep learning workloads and high performance computing workloads using multi-threaded, we recommend setting this value to 1 GB or higher.</p>'
+      },
+      'gpu': {
+        'name': 'GPU',
+        'desc': '<p>GPUs are well-suited for the matrix/vector computations involved in machine learning. ' +
+          'GPUs speed up training algorithms by orders of magnitude, reducing running times from weeks to days.</p>'
+      },
+      'session': {
+        'name': 'Session (Backend.AI)',
+        'desc': '<p>A session is a unit of computational environment that is created according to a specified environment and resources.</p>' +
+          '<p>If this value is set to a value greater than 1, multiple sessions corresponding to the resource set above are created.</p>' +
+          '<p>If there are not enough resources available, requests to create sessions that cannot be created are put on the waiting queue.</p>'
+      }
+    };
+    if (item in resource_description) {
+      this._helpDescriptionTitle = resource_description[item].name;
+      this._helpDescription = resource_description[item].desc;
+      this._helpDescriptionIcon = '';
+      let desc = this.shadowRoot.querySelector('#help-description');
+      desc.show();
+    }
+  }
+
   _getVersionInfo(version) {
     let info: any = [];
     let fragment = version.split('-');
@@ -2119,7 +2196,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       ${this.direction === 'vertical' && this.project_resource_monitor === true && this.total_pj_slot.cpu_slot != 0 ? html`
       <hr />
       <div class="vertical start-justified layout">
-          <div class="flex"></div>
+        <div class="flex"></div>
         <div class="layout horizontal center-justified monitor">
           <div class="layout vertical center center-justified" style="margin-right:5px;">
             <wl-icon class="fg blue">group_work</wl-icon>
@@ -2173,16 +2250,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     ` : html`
                       <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                         <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                        <div class="horizontal start-justified layout wrap">
+                        <div class="horizontal justified center flex layout" style="width:293px;">
                           <div style="padding-right:5px;">${item.basename}</div>
                           <div class="flex"></div>
-                          <div class="horizontal layout end-justified">
+                          <div class="horizontal layout end-justified center flex">
                           ${item.tags ? item.tags.map(item => html`
                             <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
                           `) : ''}
+                            <mwc-icon-button icon="info" class="fg blue info"
+                                             @click="${(e) => {
+      this._showKernelDescription(e, item);
+    }}">
+                            </mwc-icon-button>
                           </div>
                         </div>
-                        <div class="flex"></div>
                       </mwc-list-item>
                     `}
                   `)}
@@ -2288,6 +2369,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                  value="${this.cpu_request}"></lablup-slider>
                   <span class="caption">Core</span>
+                  <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
+      this._showResourceDescription(e, 'cpu');
+    }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">RAM</div>
@@ -2297,6 +2381,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                  value="${this.mem_request}"></lablup-slider>
                   <span class="caption">GB</span>
+                  <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+      this._showResourceDescription(e, 'mem');
+    }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">Shared Memory</div>
@@ -2306,6 +2393,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="0.0" max="${this.shmem_metric.max}"
                                  value="${this.shmem_request}"></lablup-slider>
                   <span class="caption">GB</span>
+                  <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+      this._showResourceDescription(e, 'shmem');
+    }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">GPU</div>
@@ -2314,6 +2404,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  marker_limit="${this.marker_limit}"
                                  min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
                   <span class="caption">GPU</span>
+                  <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
+      this._showResourceDescription(e, 'gpu');
+    }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">Sessions</div>
@@ -2322,6 +2415,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  marker_limit="${this.marker_limit}"
                                  min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
                   <span class="caption">#</span>
+                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+      this._showResourceDescription(e, 'session');
+    }}"></mwc-icon-button>
                 </div>
               </div>
             </wl-expansion>
@@ -2376,6 +2472,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </wl-button>
             </fieldset>
           </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="help-description" fixed backdrop blockscrolling persistent style="padding:0;">
+        <wl-card class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span style="font-size:16px;">${this._helpDescriptionTitle}</span>
+            <div class="flex"></div>
+            <mwc-icon-button icon="close" class="blue close-button"
+              @click="${(e) => this._hideDialog(e)}">
+            </mwc-icon-button>
+          </h3>
+          <div class="horizontal layout center" style="margin:5px;">
+          ${this._helpDescriptionIcon == '' ? html`` : html`
+            <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+            `}
+            <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
+          </div>
         </wl-card>
       </wl-dialog>
 `;

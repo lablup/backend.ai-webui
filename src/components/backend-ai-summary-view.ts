@@ -582,15 +582,17 @@ export default class BackendAISummary extends BackendAIPage {
       ? html`
           <lablup-activity-panel title="Administration" elevation="1">
             <div slot="message">
+      ${this.is_superadmin ? html`
               <div class="layout vertical center flex" style="margin-bottom:5px;">
                 <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
                 <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
-              </div>
+              </div>` : html``}
               <ul>
                 <li><a href="/environment">Update environment images</a></li>
                 <li><a href="/agent">Check resources</a></li>
+      ${this.is_superadmin ? html`
                 <li><a href="/settings">Change system settings</a></li>
-                <li><a href="/environment">System maintenance</a></li>
+                <li><a href="/environment">System maintenance</a></li>` : html``}
               </ul>
             </div>
           </lablup-activity-panel>`
