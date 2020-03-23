@@ -423,7 +423,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         mwc-select#scaling-groups {
-          margin-right:5px;
+          margin-right: 5px;
           width: 170px;
         }
 
@@ -578,7 +578,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
-    document.addEventListener("backend-ai-group-changed", (e)=> {
+    document.addEventListener("backend-ai-group-changed", (e) => {
       // this.scaling_group = '';
       this._updatePageVariables(true);
     });
@@ -627,7 +627,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let folders = this.shadowRoot.querySelector('#vfolder');
     let selectedFolders = folders.value;
     let indexes = Array<number>();
-    folders.items.map((item, index:number) => {
+    folders.items.map((item, index: number) => {
       if (selectedFolders.indexOf(item.value) > -1) {
         indexes.push(index);
       }
@@ -1185,7 +1185,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       //this.vfolders = value;
       let selectableFolders: object[] = [];
       let automountFolders: object[] = [];
-      value.forEach((item)=>{
+      value.forEach((item) => {
         if (item.name.startsWith('.')) {
           item.disabled = true;
           item.name = item.name + ' (Automount folder)';
