@@ -27,6 +27,7 @@ export default class BackendAISplash extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
   @property({type: String}) edition = 'Open Source';
+  @property({type: String}) license = 'Subscription';
   @property({type: String}) validUntil = '';
   @property({type: String}) version = '';
 
@@ -99,6 +100,15 @@ export default class BackendAISplash extends LitElement {
     this.edition = globalThis.packageEdition;
     this.validUntil = globalThis.packageValidUntil;
     this.version = globalThis.packageVersion;
+    if (this.edition !== 'Open Source') {
+      if (globalThis.packageValidUntil === "2099-12-31" || this.validUntil === '""' || this.validUntil == "") {
+        this.license = "Perpetual";
+      } else {
+        this.license = "Subscription";
+      }
+    } else {
+      this.license = "Open Source";
+    }
     this.dialog.show();
   }
 
@@ -120,15 +130,20 @@ export default class BackendAISplash extends LitElement {
             <ul>
               <li>Backend.AI Console <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
               <li><span id="license-detail">${this.edition} Edition</span></li>
-              ${this.validUntil !== '' ? html`
-              <li><span id="valid-until" class="detail">Subscription is active until ${this.validUntil}</span></li>
-              ` : html``}
+              <li><span id="valid-until" class="detail">
+                ${this.license === "Subscription" ? html`Subscription is active until ${this.validUntil}` : html``}
+                ${this.license === "Perpetual" ? html`Perpetual License` : html``}
+                </span></li>
               <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
             </ul>
             <ul>
               <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
               <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
-              <li class="release-note"><a target="_blank" href="https://github.com/lablup/backend.ai-console/releases/tag/v${this.version}">Release Note</a></li>
+              <li class="release-note">
+                <a target="_blank" href="https://github.com/lablup/backend.ai-console/releases/tag/v${this.version}">Release Note</a>
+                <a target="_blank" href="https://github.com/lablup/backend.ai-console/blob/master/LICENSE">License</a>
+              </li>
+              </ul>
             </ul>
           </div>
       </wl-dialog>
