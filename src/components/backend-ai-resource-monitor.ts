@@ -128,6 +128,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) _default_language_updated = false;
   @property({type: String}) _kernelDescription = '';
   @property({type: String}) _kernelDescriptionTitle = '';
+  @property({type: String}) _kernelDescriptionIcon = '';
 
   constructor() {
     super();
@@ -469,6 +470,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         #kernel-description {
           --dialog-width: 350px;
+        }
+
+        mwc-icon-button.info {
+          --mdc-icon-button-size: 30px;
         }
       `];
   }
@@ -962,6 +967,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');
     dialog.hide();
+    e.stopPropagation();
   }
 
   _guessHumanizedNames(kernelName) {
@@ -1977,12 +1983,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  _showKernelDescription(e, name) {
+  _showKernelDescription(e, item) {
     e.stopPropagation();
+    let name = item.kernelname;
     if (name in this.imageInfo && 'description' in this.imageInfo[name]) {
       let desc = this.shadowRoot.querySelector('#kernel-description');
       this._kernelDescriptionTitle = this.imageInfo[name].name;
       this._kernelDescription = this.imageInfo[name].description;
+      this._kernelDescriptionIcon = item.icon;
       desc.show();
     }
   }
@@ -2202,8 +2210,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                           ${item.tags ? item.tags.map(item => html`
                             <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
                           `) : ''}
-                            <mwc-icon-button icon="info" class="fg blue" @click="${(e) => {
-      this._showKernelDescription(e, item.kernelname);
+                            <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
+      this._showKernelDescription(e, item);
     }}"></mwc-icon-button>
                           </div>
                         </div>
@@ -2402,7 +2410,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </form>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="kernel-description" fixed>
+      <wl-dialog id="kernel-description" fixed backdrop>
         <h3 slot="header" class="horizontal center layout">
           <span>${this._kernelDescriptionTitle}</span>
           <div class="flex"></div>
@@ -2410,9 +2418,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             @click="${(e) => this._hideDialog(e)}">
           </mwc-icon-button>
         </h3>
-         <div slot="content">
+        <div slot="content">
+          <div class="horizontal layout center">
+            <img slot="graphic" src="resources/icons/${this._kernelDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
             <wl-text>${this._kernelDescription}</wl-text>
-         </div>
+          </div>
+        </div>
       </wl-dialog>
 `;
   }
