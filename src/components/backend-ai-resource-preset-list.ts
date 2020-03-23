@@ -553,7 +553,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   _createPreset() {
     const wrapper = (v) => {
       v = v.toString();
-      return v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+      return typeof(v) !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
     };
     const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value),
       cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value),
