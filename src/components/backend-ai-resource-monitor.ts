@@ -100,6 +100,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) used_sg_slot_percent;
   @property({type: Object}) used_pj_slot_percent;
   @property({type: Array}) resource_templates;
+  @property({type: Array}) resource_templates_filtered;
   @property({type: String}) default_language;
   @property({type: Number}) cpu_request;
   @property({type: Number}) mem_request;
@@ -498,6 +499,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.used_sg_slot_percent = {};
     this.used_pj_slot_percent = {};
     this.resource_templates = [];
+    this.resource_templates_filtered = [];
     this.vfolders = [];
     this.default_language = '';
     this.concurrency_used = 0;
@@ -1253,6 +1255,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
         });
         this.resource_templates = available_presets;
+        if (this.resource_templates_filtered.length === 0) {
+          this.resource_templates_filtered = this.resource_templates;
+        }
       }
 
       let resource_remaining = response.keypair_remaining;
@@ -1731,22 +1736,25 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
         if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
-          for (var i = 0; i < this.resource_templates.length; i++) {
-            //console.log(parseFloat(this.resource_templates[i].gpu));
-            if (parseFloat(this.resource_templates[i].gpu) > 0) {
-              this.resource_templates.splice(i, 1);
-              i--;
+          let new_resource_templates: any = [];
+          for (let i = 0; i < this.resource_templates.length; i++) {
+            if (parseFloat(this.resource_templates[i].gpu) <= 0.0) {
+              new_resource_templates.push(this.resource_templates[i]);
             }
           }
+          this.resource_templates_filtered = new_resource_templates;
+        } else {
+          this.resource_templates_filtered = this.resource_templates;
         }
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = false;
         this.shadowRoot.querySelector('#gpu-resource').value = this.gpu_metric.max;
+        this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
-      if (this.resource_templates !== [] && this.resource_templates.length > 0) {
-        let resource = this.resource_templates[0];
+      if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
+        let resource = this.resource_templates_filtered[0];
         this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
         let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('wl-button')[0];
         this.shadowRoot.querySelector('#resource-templates').selected = "0";
@@ -2333,7 +2341,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span slot="description"></span>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
-                ${this.resource_templates.map(item => html`
+                ${this.resource_templates_filtered.map(item => html`
                   <wl-button class="resource-button vertical center start layout" role="option"
                              style="height:140px;min-width:120px;" type="button"
                              flat outlined
