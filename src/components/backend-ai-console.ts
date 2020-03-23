@@ -48,7 +48,7 @@ import './backend-ai-login';
 
  <backend-ai-console>
  ... content ...
- </backend-ai-console>
+ </backend-ai-console>lablup-terms-of-service
 
  @group Backend.AI Console
  @element backend-ai-console
