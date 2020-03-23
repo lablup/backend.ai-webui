@@ -126,9 +126,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) project_resource_monitor = false;
   @property({type: Object}) version_selector = Object();
   @property({type: Boolean}) _default_language_updated = false;
-  @property({type: String}) _kernelDescription = '';
-  @property({type: String}) _kernelDescriptionTitle = '';
-  @property({type: String}) _kernelDescriptionIcon = '';
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
 
   constructor() {
     super();
@@ -468,7 +468,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           outline: none;
         }
 
-        #kernel-description {
+        #help-description {
           --dialog-width: 350px;
         }
 
@@ -1987,10 +1987,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     e.stopPropagation();
     let name = item.kernelname;
     if (name in this.imageInfo && 'description' in this.imageInfo[name]) {
-      let desc = this.shadowRoot.querySelector('#kernel-description');
-      this._kernelDescriptionTitle = this.imageInfo[name].name;
-      this._kernelDescription = this.imageInfo[name].description;
-      this._kernelDescriptionIcon = item.icon;
+      let desc = this.shadowRoot.querySelector('#help-description');
+      this._helpDescriptionTitle = this.imageInfo[name].name;
+      this._helpDescription = this.imageInfo[name].description;
+      this._helpDescriptionIcon = item.icon;
       desc.show();
     }
   }
@@ -2203,16 +2203,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     ` : html`
                       <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                         <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                        <div class="horizontal justified center flex layout" style="width:305px;">
+                        <div class="horizontal justified center flex layout" style="width:293px;">
                           <div style="padding-right:5px;">${item.basename}</div>
                           <div class="flex"></div>
                           <div class="horizontal layout end-justified center flex">
                           ${item.tags ? item.tags.map(item => html`
                             <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
                           `) : ''}
-                            <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
+                            <mwc-icon-button icon="info" class="fg blue info"
+                                             @click="${(e) => {
       this._showKernelDescription(e, item);
-    }}"></mwc-icon-button>
+    }}">
+                            </mwc-icon-button>
                           </div>
                         </div>
                       </mwc-list-item>
@@ -2410,20 +2412,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </form>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="kernel-description" fixed backdrop>
-        <h3 slot="header" class="horizontal center layout">
-          <span>${this._kernelDescriptionTitle}</span>
-          <div class="flex"></div>
-          <mwc-icon-button icon="close" class="blue close-button"
-            @click="${(e) => this._hideDialog(e)}">
-          </mwc-icon-button>
-        </h3>
-        <div slot="content">
-          <div class="horizontal layout center">
-            <img slot="graphic" src="resources/icons/${this._kernelDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-            <wl-text>${this._kernelDescription}</wl-text>
+      <wl-dialog id="help-description" fixed backdrop blockscrolling persistent style="padding:0;">
+        <wl-card class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span style="font-size:16px;">${this._helpDescriptionTitle}</span>
+            <div class="flex"></div>
+            <mwc-icon-button icon="close" class="blue close-button"
+              @click="${(e) => this._hideDialog(e)}">
+            </mwc-icon-button>
+          </h3>
+          <div class="horizontal layout center" style="margin:5px;">
+            <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+            <p style="font-size:14px;">${this._helpDescription}</p>
           </div>
-        </div>
+        </wl-card>
       </wl-dialog>
 `;
   }
