@@ -1998,6 +1998,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this._helpDescription = this.imageInfo[name].description;
       this._helpDescriptionIcon = item.icon;
       desc.show();
+    } else {
+      if (name in this.imageInfo) {
+        this._helpDescriptionTitle = this.imageInfo[name].name;
+      } else {
+        this._helpDescriptionTitle = name;
+      }
+      this._helpDescription = "No description found.";
     }
   }
 
