@@ -127,7 +127,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.title = "Terms of Service";
-      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
+      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.ko.html';
       this.TOSdialog.open();
     }
   }
@@ -136,7 +136,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.title = "Privacy Policy";
-      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
+      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.ko.html';
       this.TOSdialog.open();
     }
   }
