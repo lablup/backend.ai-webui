@@ -1022,6 +1022,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
       'digits': 'DIGITS',
+      'tf1': 'TensorFlow 1',
+      'tf2': 'TensorFlow 2',
       'py3': 'Python 3',
       'py2': 'Python 2',
       'py27': 'Python 2.7',
