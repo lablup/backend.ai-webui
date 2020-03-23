@@ -1,6 +1,6 @@
 /**
  @license
- Copyright 2015-2019 Lablup Inc.
+ Copyright 2015-2020 Lablup Inc.
 
  Original code by 2018 Google Inc. All Rights Reserved.
 

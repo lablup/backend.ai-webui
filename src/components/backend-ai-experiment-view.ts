@@ -10,7 +10,6 @@ import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
 
 import '@vaadin/vaadin-dialog/vaadin-dialog';
 import './backend-ai-session-list';

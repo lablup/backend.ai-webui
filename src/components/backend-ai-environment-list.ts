@@ -235,7 +235,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.notification.show();
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Downloading...');
-    globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
+    globalThis.backendaiclient.getResourceSlots().then((response) => {
+      let results = response;
+      if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
+        if ('fgpu' in this.installImageResource && 'gpu' in this.installImageResource) { // Keep fgpu only.
+          delete this.installImageResource['gpu'];
+          delete this.installImageResource['cuda.device'];
+        }
+      } else if ('cuda.device' in results) { // GPU mode
+        delete this.installImageResource['fgpu'];
+        delete this.installImageResource['cuda.shares'];
+      } else if ('cuda.shares' in results) { // Fractional GPU mode
+        delete this.installImageResource['gpu'];
+        delete this.installImageResource['cuda.device'];
+      }
+      return globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource);
+    }).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
       this._getImages();
@@ -865,6 +880,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'haskell': 'Haskell',
       'matlab': 'MATLAB',
       'sagemath': 'Sage',
+      'texlive': 'TeXLive',
       'java': 'Java',
       'php': 'PHP',
       'octave': 'Octave',
@@ -876,6 +892,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
       'digits': 'DIGITS',
+      'tf1': 'TensorFlow 1',
+      'tf2': 'TensorFlow 2',
       'py3': 'Python 3',
       'py2': 'Python 2',
       'py27': 'Python 2.7',
@@ -888,10 +906,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'ubuntu18.04': 'Ubuntu 18.04',
       'ubuntu20.04': 'Ubuntu 20.04',
       'intel': 'Intel MKL',
-      'rocm': 'ROCm',
-      'cuda9': 'CUDA9',
-      'cuda10': 'CUDA10',
-      'cuda10.1': 'CUDA10.1',
+      '2018': '2018',
+      '2019': '2019',
+      '2020': '2020',
+      '2021': '2021',
+      '2022': '2022',
+      'rocm': 'GPU:ROCm',
+      'cuda9': 'GPU:CUDA9',
+      'cuda10': 'GPU:CUDA10',
+      'cuda10.0': 'GPU:CUDA10',
+      'cuda10.1': 'GPU:CUDA10.1',
+      'cuda10.2': 'GPU:CUDA10.2',
+      'cuda10.3': 'GPU:CUDA10.3',
+      'cuda11': 'GPU:CUDA11',
+      'cuda11.0': 'GPU:CUDA11',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',

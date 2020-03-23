@@ -218,7 +218,7 @@
       ]
     },
     "ngc-caffe3": {
-      "name": "Caffe (NGC, 3)",
+      "name": "Caffe (NGC, Python 3)",
       "description": "Caffe is a deep learning framework made with expression, speed, and modularity in mind. This environment is integrated with Nvidia GPU Cloud.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
@@ -417,6 +417,20 @@
         }
       ]
     },
+    "gcc": {
+      "name": "GCC",
+      "description": "The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Ada, Go, and D, as well as libraries for these languages (libstdc++,...).",
+      "group": "Language",
+      "tags": [],
+      "icon": "gcc.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "C",
+          "color": "blue"
+        }
+      ]
+    },
     "rust": {
       "name": "Rust",
       "description": "Rust is a modern systems programming language focusing on safety, speed, and concurrency. It accomplishes these goals by being memory safe without using garbage collection.",
@@ -552,6 +566,20 @@
         {
           "tag": "NeuroDebian",
           "color": "yellow"
+        }
+      ]
+    },
+    "texlive": {
+      "name": "TeXLive",
+      "description": "TeX Live is an easy (we hope) way to get up and running with the TeX document production system.",
+      "group": "Language",
+      "tags": [],
+      "icon": "texlive.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "LaTeX",
+          "color": "blue"
         }
       ]
     },

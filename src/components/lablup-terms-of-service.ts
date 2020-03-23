@@ -20,11 +20,29 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 import {default as PainKiller} from "./backend-ai-painkiller";
 
+/**
+ Lablup Terms of Service dialog
+
+ `lablup-terms-of-service` is a dialog that shows the specific terms of service with optional approve checkbox.
+
+ Example:
+
+ <lablup-terms-of-service>
+ ... content ...
+ </lablup-terms-of-service>
+
+ @group Lablup-WebComponents
+ @element lablup-terms-of-service
+ */
+
 @customElement("lablup-terms-of-service")
 export default class LablupTermsOfService extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: String}) tosEntryURL = '/resources/documents/terms-of-service.html';
+  @property({type: String}) tosEntryURL = '/resources/documents/terms-of-service.en.html';
+  @property({type: String}) tosEntry = 'terms-of-service';
   @property({type: String}) tosContent = '';
+  @property({type: String}) tosLanguage = 'en';
+  @property({type: Array}) tosLanguages = ['ko', 'en'];
   @property({type: String}) title = '';
   @property({type: Boolean}) show = false;
   @property({type: Boolean}) approved = false;
@@ -46,25 +64,35 @@ export default class LablupTermsOfService extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-          @media screen and (max-width: 669px) {
-              wl-dialog.terms-of-service-dialog {
-                  --dialog-width: 80% !important;
-                  --dialog-height: 80vh;
-              }
+        @media screen and (max-width: 669px) {
+          wl-dialog.terms-of-service-dialog {
+            --dialog-width: 80% !important;
+            --dialog-height: 80vh;
           }
+        }
 
-          @media screen and (min-width: 670px) {
-              wl-dialog.terms-of-service-dialog {
-                  --dialog-width: 650px !important;
-                  --dialog-height: 80vh;
-              }
+        @media screen and (min-width: 670px) {
+          wl-dialog.terms-of-service-dialog {
+            --dialog-width: 650px !important;
+            --dialog-height: 80vh;
           }
+        }
 
-          wl-button {
-              --button-bg: transparent;
-              --button-bg-hover: var(--paper-green-300);
-              --button-bg-active: var(--paper-green-300);
-          }
+        wl-button.language {
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-lightblue-300);
+          --button-bg-active: var(--paper-lightblue-300);
+        }
+
+        wl-button.language[active] {
+          --button-bg: var(--paper-lightblue-300);
+        }
+
+        wl-button.dismiss {
+          --button-bg: transparent;
+          --button-bg-hover: var(--paper-green-300);
+          --button-bg-active: var(--paper-green-300);
+        }
       `];
   }
 
@@ -78,12 +106,25 @@ export default class LablupTermsOfService extends LitElement {
     // language=HTML
     return html`
       <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling scrollable>
-        <wl-title level="3" slot="header">${this.title}</wl-title>
+        <div slot="header" class="horizontal center flex layout" style="padding:0 15px;">
+          <h3>${this.title}</h3>
+          <div class="flex"></div>
+          ${this.tosLanguages ? html`
+            Language:
+            ${this.tosLanguages.map(item => html`
+            <wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item}" @click="${() => {
+      this.changeLanguage(item)
+    }}">
+                ${item}
+            </wl-button>`)}
+          ` : html``}
+        </div>
         <div slot="content">
           <div id="terms-of-service-dialog-content"></div>
         </div>
-        <div slot="footer">
-          <wl-button class="fg green" id="dismiss-button" outlined type="button" @click="${() => {
+        <div slot="footer" class="horizontal flex layout">
+          <div class="flex"></div>
+          <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
       this.close();
     }}">
               Dismiss
@@ -106,6 +147,13 @@ export default class LablupTermsOfService extends LitElement {
     }
   }
 
+  attributeChangedCallback(name, oldval, newval) {
+    super.attributeChangedCallback(name, oldval, newval);
+    if (name == 'tosEntry' || name == 'tosLanguage') {
+      this.tosEntryURL = '/resources/documents/' + this.tosEntry + '.' + this.tosLanguage + '.html';
+    }
+  }
+
   async open() {
     await this.updateComplete;
     this._showTOSdialog();
@@ -114,6 +162,13 @@ export default class LablupTermsOfService extends LitElement {
   close() {
     this.show = false;
     this._hideTOSdialog();
+  }
+
+  changeLanguage(lang) {
+    this.tosContent = "";
+    this.tosLanguage = lang;
+    this.tosEntryURL = '/resources/documents/' + this.tosEntry + '.' + this.tosLanguage + '.html';
+    this._showTOSdialog(true);
   }
 
   async sendRequest(rqst) {
@@ -142,7 +197,7 @@ export default class LablupTermsOfService extends LitElement {
   }
 
   // Terms of service dialog
-  _showTOSdialog() {
+  _showTOSdialog(reuseDialog = false) {
     if (this.tosContent == "") {
       let rqst = {
         method: 'GET',
@@ -158,7 +213,9 @@ export default class LablupTermsOfService extends LitElement {
         }
         this.shadowRoot.querySelector('#terms-of-service-dialog-content').innerHTML = this.tosContent;
         this.show = true;
-        this.dialog.show();
+        if (reuseDialog === false) {
+          this.dialog.show();
+        }
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
@@ -166,10 +223,13 @@ export default class LablupTermsOfService extends LitElement {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
+        this.shadowRoot.querySelector('#terms-of-service-dialog-content').innerHTML = "Problem found while loading contents. Please try again later.";
       });
     } else {
       this.show = true;
-      this.dialog.show();
+      if (reuseDialog === false) {
+        this.dialog.show();
+      }
     }
   }
 
@@ -185,7 +245,7 @@ export default class LablupTermsOfService extends LitElement {
   }
 
   _changeApproved() {
-    if (this.approveCheckbox.checked == true) {
+    if (this.approveCheckbox.checked === true) {
       this.show = false;
       this.dialog.hide();
       this.approved = true;

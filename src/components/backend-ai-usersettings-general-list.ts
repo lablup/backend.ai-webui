@@ -293,8 +293,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _editBootstrapScript() {
+    const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
     const script = await this._fetchBootstrapScript();
-    this.bootstrapDialog.setValue(script);
+    editor.setValue(script);
     this.bootstrapDialog.show();
   }
 

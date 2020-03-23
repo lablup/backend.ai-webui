@@ -48,7 +48,7 @@ import './backend-ai-login';
 
  <backend-ai-console>
  ... content ...
- </backend-ai-console>
+ </backend-ai-console>lablup-terms-of-service
 
  @group Backend.AI Console
  @element backend-ai-console
@@ -654,11 +654,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
-              <mwc-icon slot="graphic" id="activities-icon" class="fg green">view_quilt</mwc-icon>
+              <mwc-icon slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
               <span class="full-menu">Summary</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
-              <mwc-icon slot="graphic" class="fg red">subject</mwc-icon>
+              <mwc-icon slot="graphic" class="fg red">ballot</mwc-icon>
               <span class="full-menu">Sessions</span>
             </mwc-list-item>
             ${false ? html`
@@ -728,7 +728,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.03.2.200316</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.03.4.200323</small>
             </address>
           </div>
         </div>
@@ -740,32 +740,32 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
-              <mwc-icon-button slot="actionItems" id="dropdown-button"
-                               icon="account_circle"
-                               @click="${() => this._toggleDropdown()}">
-              </mwc-icon-button>
-              <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-50 y=40>
-                <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
-                    About
-                </mwc-list-item>
-                <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                    Change Password
-                </mwc-list-item>
-                <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
-                    Preferences
-                </mwc-list-item>
-                <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                    Logs / Errors
-                </mwc-list-item>
-                <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
-                    Log Out
-                </mwc-list-item>
-              </mwc-menu>
+            <mwc-icon-button slot="actionItems" id="dropdown-button"
+                             icon="account_circle"
+                             @click="${() => this._toggleDropdown()}">
+            </mwc-icon-button>
+            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-50 y=40>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
+                  About
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                  Change Password
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                  Preferences
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                  Logs / Errors
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                  Log Out
+              </mwc-list-item>
+            </mwc-menu>
           </mwc-top-app-bar-fixed>
 
           <div class="content">
