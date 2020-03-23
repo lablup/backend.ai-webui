@@ -2370,7 +2370,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                  value="${this.cpu_request}"></lablup-slider>
                   <span class="caption">Core</span>
-                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+                  <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
       this._showResourceDescription(e, 'cpu');
     }}"></mwc-icon-button>
                 </div>
@@ -2382,7 +2382,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                  value="${this.mem_request}"></lablup-slider>
                   <span class="caption">GB</span>
-                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+                  <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
       this._showResourceDescription(e, 'mem');
     }}"></mwc-icon-button>
                 </div>
@@ -2394,7 +2394,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  min="0.0" max="${this.shmem_metric.max}"
                                  value="${this.shmem_request}"></lablup-slider>
                   <span class="caption">GB</span>
-                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+                  <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
       this._showResourceDescription(e, 'shmem');
     }}"></mwc-icon-button>
                 </div>
@@ -2405,7 +2405,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  marker_limit="${this.marker_limit}"
                                  min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
                   <span class="caption">GPU</span>
-                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+                  <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
       this._showResourceDescription(e, 'gpu');
     }}"></mwc-icon-button>
                 </div>
