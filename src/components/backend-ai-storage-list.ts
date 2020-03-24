@@ -225,6 +225,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           font-size: 16px;
         }
 
+        .breadcrumb mwc-icon-button {
+          --mdc-icon-size: 20px;
+          --mdc-icon-button-size: 22px;
+        }
+
         mwc-textfield {
           width: 100%;
           --mdc-theme-primary: #242424;
@@ -450,15 +455,22 @@ export default class BackendAiStorageList extends BackendAIPage {
           </h3>
 
           <div class="breadcrumb">
-          ${this.explorer.breadcrumb ? html`
-          <ul>
-              ${this.explorer.breadcrumb.map(item => html`
-               <li>
-                 <a outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</a>
-               </li>
-              `)}
-          </ul>
-          ` : html``}
+            ${this.explorer.breadcrumb ? html`
+              <ul>
+                ${this.explorer.breadcrumb.map(item => html`
+                  <li>
+                    ${item === '.' ? html`
+                      <mwc-icon-button
+                        icon="folder_open" dest="${item}"
+                        @click="${(e) => this._gotoFolder(e)}"
+                      ></mwc-icon-button>
+                    ` : html`
+                      <a outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</a>
+                    `}
+                  </li>
+                `)}
+              </ul>
+            ` : html``}
           </div>
           <div class="horizontal layout folder-action-buttons">
             <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
