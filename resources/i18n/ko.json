@@ -5,7 +5,14 @@
       "Sessions": "세션",
       "Data&Storage": "데이터 & 폴더",
       "Statistics": "통계",
-      "Settings": "설정"
+      "Settings": "설정",
+      "Administration": "관리",
+      "Users": "사용자",
+      "Environments": "실행 환경",
+      "Resources": "리소스",
+      "Configurations": "환경 설정",
+      "Maintenance": "관리",
+      "Information": "정보"
     }
   }
 }

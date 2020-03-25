@@ -693,33 +693,33 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </mwc-list-item>
             ${this.is_admin ?
       html`
-            <h3 class="full-menu">Administration</h3>
+            <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
               <mwc-icon  slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
-              <span class="full-menu">Users</span>
+              <span class="full-menu">${_t("console.menu.Users")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
               <mwc-icon slot="graphic" class="fg orange" icon="icons:extension">extension</mwc-icon>
-              <span class="full-menu">Environments</span>
+              <span class="full-menu">${_t("console.menu.Environments")}</span>
             </mwc-list-item>
     ` : html``}
             ${this.is_superadmin ?
       html`
             <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
               <mwc-icon slot="graphic" class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
-              <span class="full-menu">Resources</span>
+              <span class="full-menu">${_t("console.menu.Resources")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
               <mwc-icon slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
-              <span class="full-menu">Configurations</span>
+              <span class="full-menu">${_t("console.menu.Configurations")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
               <mwc-icon slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
-              <span class="full-menu">Maintenance</span>
+              <span class="full-menu">${_t("console.menu.Maintenance")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
               <mwc-icon slot="graphic" class="fg purple">info</mwc-icon>
-              <span class="full-menu">Information</span>
+              <span class="full-menu">${_t("console.menu.Information")}</span>
             </mwc-list-item>
     ` : html``}
           </mwc-list>

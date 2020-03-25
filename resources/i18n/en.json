@@ -5,7 +5,14 @@
       "Sessions": "Sessions",
       "Data&Storage": "Data & Storage",
       "Statistics": "Statistics",
-      "Settings": "Settings"
+      "Settings": "Settings",
+      "Administration": "Administration",
+      "Users": "Users",
+      "Environments": "Environments",
+      "Resources": "Resources",
+      "Configurations": "Configurations",
+      "Maintenance": "Maintenance",
+      "Information": "Information"
     }
   }
 }
