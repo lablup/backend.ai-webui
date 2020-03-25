@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {registerTranslateConfig, get as _t, use as setLanguage} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -27,6 +27,9 @@ import '@material/mwc-list/mwc-list-item';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator';
 import './lablup-codemirror';
+registerTranslateConfig({
+  loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
+});
 
 @customElement("backend-ai-usersettings-general-list")
 export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
@@ -37,6 +40,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Object}) bootstrapDialog = Object();
   @property({type: Object}) userconfigDialog = Object();
   @property({type: Object}) notification;
+  @property({type: Array}) supportLanguages = [
+    {name:"English", code:"en"},
+    {name:"Korean", code:"ko"}
+  ];
   @property({type: Boolean}) beta_feature_panel = false;
   @property({type: Boolean}) shell_script_edit = false;
   @property({type: Array}) rcfiles = Array();
@@ -49,6 +56,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       desktop_notification: true,
       compact_sidebar: false,
       preserve_login: false,
+      language: "en",
       beta_feature: false,
     }
   }
@@ -87,6 +95,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           width: 35px;
         }
 
+        .setting-select-desc {
+          width: 200px;
+        }
+
+        .setting-select {
+          width: 135px;
+        }
         .setting-item wl-button {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-teal-100);
@@ -241,6 +256,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       this._writeUserSetting('preserve_login', false);
     } else {
       this._writeUserSetting('preserve_login', true);
+    }
+  }
+
+  setUserLanguage(e) {
+    if (e.target.selected.value !== this.options['language']) {
+      this._writeUserSetting('language', e.target.selected.value);
+      setLanguage(e.target.selected.value);
     }
   }
 
@@ -565,6 +587,23 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
             <div class="vertical center-justified layout setting-button">
               <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
+            </div>
+          </div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical center-justified layout setting-select-desc">
+              <div>Language</div>
+              <div class="description">Set the UI language.
+              </div>
+            </div>
+            <div class="vertical center-justified layout setting-select">
+              <mwc-select id="ui-language"
+                          required
+                          @selected="${(e) => this.setUserLanguage(e)}">
+              ${this.supportLanguages.map(item => html`
+                <mwc-list-item value="${item.code}" ?selected=${this.options['language'] === item.code}>
+                  ${item.name}
+                </mwc-list-item>`)}
+              </mwc-select>
             </div>
           </div>
           ${globalThis.isElectron ? html`

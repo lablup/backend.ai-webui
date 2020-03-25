@@ -1,0 +1,11 @@
+{
+  "console": {
+    "menu": {
+      "Summary": "요약",
+      "Sessions": "세션",
+      "Data&Storage": "데이터 & 폴더",
+      "Statistics": "통계",
+      "Settings": "설정"
+    }
+  }
+}

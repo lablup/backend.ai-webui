@@ -100,7 +100,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.options = {
       compact_sidebar: false,
       preserve_login: false,
-      beta_feature: false
+      beta_feature: false,
+      language: 'en'
     }
   }
 
@@ -162,7 +163,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', this.refreshPage.bind(this));
-    await setLanguage("en");
+    this._readUserSettings();
+    //let lang = this._readUserSetting("language", "en");
+    await setLanguage(this.options['language']);
     this.hasLoadedStrings = true;
   }
 
