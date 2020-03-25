@@ -1,5 +1,5 @@
 let footer = '';
-const template = function (title, contents, comment) {
+const template = function (title, contents, comment, options = {}) {
   let result = "";
   result += `<!DOCTYPE html>
 <html>
@@ -23,6 +23,9 @@ const template = function (title, contents, comment) {
   }
   result += '</div>';
   result += `<footer>${footer}</footer>`;
+  if ('retry' in options) {
+    result += `<script>setTimeout( ()=>{location.reload();}, 1000);</script>`;
+  }
   result += `</body></html>`;
   return result;
 };
