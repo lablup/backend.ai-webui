@@ -1,5 +1,5 @@
 const net = require("net");
-//const logger = require('./logger')(__filename);
+const logger = require('./logger')(__filename);
 const WebSocket = require('ws');
   ai = require('../../lib/backend.ai-client-node');
 const bind = require("./bindStream");
@@ -75,28 +75,29 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     url = url.replace(/^http/, "ws");
 
     this.tcpServer.on('listening', () => {
-      //logger.info(`Starting an app-proxy server with ${this.ip}:${this.port}...`);
+      logger.info(`Starting an app-proxy server with ${this.ip}:${this.port}...`);
       this.port = this.tcpServer.address().port;
       this._running = true;
       this._resolve(true);
       this._resolve = undefined;
     });
 
-    this.tcpServer.on('close', () =>{//logger.info(`Closed:W:${process.pid} / P:${this.port}`);
+    this.tcpServer.on('close', () =>{
+      logger.info(`Closed:W:${process.pid} / P:${this.port}`);
     });
 
     this.tcpServer.on("connection", (tcpConn) => {
       tcpConn.setTimeout(60000);
       tcpConn.on('timeout', () => {
-        //logger.debug(`Socket timeout`);
+        logger.debug(`Socket timeout`);
         tcpConn.destroy();
       });
       tcpConn.on("error", function(er) {
-        //logger.debug(`TCP CONN fail: ${this.port} - ${er.toString()}`);
+        logger.debug(`TCP CONN fail: ${this.port} - ${er.toString()}`);
         tcpConn.destroy();
       });
       tcpConn.on("close", function() {
-        //logger.debug(`TCPCONN CLOSED`);
+        logger.debug(`TCPCONN CLOSED`);
       });
       let optionalHeaders = hdrs();
       let ws = new WebSocket(url, {
@@ -104,16 +105,16 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
         perMessageDeflate: false
       });
       ws.on('open', () => {
-        //logger.debug(`ws bind`);
+        logger.debug(`ws bind`);
         const wsStream = WebSocket.createWebSocketStream(ws);
 
         let bh = bind(wsStream, tcpConn);
       });
       ws.on('close', (code, reason) => {
-        //logger.debug(`ws closed - ${code}`);
+        logger.debug(`ws closed - ${code}`);
       });
       ws.on('unexpected-response', (req, res) => {
-        //logger.info(`Got non-101 response: ${res.statusCode}`);
+        logger.warn(`Got non-101 response: ${res.statusCode}`);
         if(tcpConn.writable) {
           tcpConn.write("HTTP/1.1 503 Proxy Error\n"+"Connection: Closed\n"+"Content-Type: text/html; charset=UTF-8\n\n");
           switch(res.statusCode.toString()) {
@@ -125,7 +126,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
               break;
             case "500":
             case "502":
-              //logger.warn(`Server fail: ${res.statusCode}`);
+              logger.warn(`Server fail: ${res.statusCode}`);
               tcpConn.write(htmldeco("Server connection failed", "error_500"));
               break;
             default:
@@ -134,38 +135,38 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
           tcpConn.write("\n");
           tcpConn.end();
         } else {
-          //logger.debug(`TCP socket is not writeable - Ignored`);
+          logger.debug(`TCP socket is not writeable - Ignored`);
         }
         ws.terminate();
       });
       ws.on('error', (err) => {
-        //logger.info(`Websocket fail: ${this.port} - ${err.toString()}`);
+        logger.warn(`Websocket fail: ${this.port} - ${err.toString()}`);
         if(tcpConn.writable) {
           tcpConn.write("HTTP/1.1 503 Proxy Error\n"+"Connection: Closed\n"+"Content-Type: text/html; charset=UTF-8\n\n");
           tcpConn.write(htmldeco("Server connection failed", "Restart your session or contact your administrator"));
           tcpConn.write("\n");
           tcpConn.end();
         } else {
-          //logger.debug(`TCP socket is not writeable - Ignored`);
+          logger.debug(`TCP socket is not writeable - Ignored`);
           tcpConn.destroy();
         }
         ws.terminate();
       });
     });
     this.tcpServer.on('error', (err) => {
-      //logger.warn(`Couldn't start the tcp-ws proxy ${err.toString()}`);
+      logger.warn(`Couldn't start the tcp-ws proxy ${err.toString()}`);
       if(!this._running) {
-        //logger.warn(`Proxy is not started : ${err}`);
+        logger.warn(`Proxy is not started : ${err}`);
         this._resolve(Promise.reject(new Error('PortInUse')));
       } else {
-        //logger.warn(`Proxy error: ${err}`);
+        logger.warn(`Proxy error: ${err}`);
       }
     });
 
   }
 
   stop() {
-    //logger.info(`Trying to close:W:${process.pid} / P:${this.port}`);
+    logger.info(`Trying to close:W:${process.pid} / P:${this.port}`);
     this.tcpServer.close();
   }
 });
