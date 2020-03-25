@@ -99,11 +99,11 @@ export default class LablupShields extends LitElement {
   }
 
   attributeChangedCallback(name, oldval, newval) {
+    super.attributeChangedCallback(name, oldval, newval);
     if (name == 'description') {
       this.description = newval;
       this._descriptionChanged();
     }
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   updated(changedProps) {

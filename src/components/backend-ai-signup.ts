@@ -47,6 +47,7 @@ export default class BackendAiSignup extends BackendAIPage {
   @property({type: Object}) signupPanel = Object();
   @property({type: Object}) blockPanel = Object();
   @property({type: Object}) client;
+  @property({type: String}) TOSlanguage = 'en';
   @property({type: Object}) TOSdialog = Object();
 
   constructor() {
@@ -127,7 +128,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.title = "Terms of Service";
-      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
+      this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
   }
@@ -136,7 +137,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.title = "Privacy Policy";
-      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
+      this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }
   }
