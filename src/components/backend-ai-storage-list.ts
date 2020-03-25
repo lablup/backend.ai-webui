@@ -831,11 +831,11 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         ${!this._isDir(rowData.item) && this._isDownloadable(rowData.item) ?
         html`
-            <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-                               filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
-            <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
-                               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
-                               ` : html``}
+          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+        ` : html``}
+        <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
+              filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
        `, root
     );
   }
