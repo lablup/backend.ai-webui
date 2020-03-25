@@ -27,6 +27,8 @@ import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
 
+import './backend-ai-release-check';
+
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
 
@@ -794,7 +796,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-
+      <backend-ai-release-check></backend-ai-release-check>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">Change password</wl-title>
        <div slot="content">

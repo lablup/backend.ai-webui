@@ -16,6 +16,8 @@ import {
 export default class BackendAiReleaseCheck extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) releaseURL = 'https://raw.githubusercontent.com/lablup/backend.ai-console/release/version.json';
+  @property({type: String}) localVersion = '';
+  @property({type: String}) localBuild = '';
   @property({type: String}) remoteVersion = '';
   @property({type: String}) remoteBuild = '';
   @property({type: String}) remoteRevision = '';
@@ -45,6 +47,7 @@ export default class BackendAiReleaseCheck extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
+    //this.checkRelease();
   }
 
   checkRelease() {
@@ -55,8 +58,28 @@ export default class BackendAiReleaseCheck extends LitElement {
         this.remoteVersion = json.package;
         this.remoteBuild = json.build;
         this.remoteRevision = json.revision;
+        //if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
+        if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // update needed.
+          this.notification.text = `New console version is available: ${this.remoteVersion}`;
+          this.notification.show();
+        }
       }
     );
+  }
+
+  compareVersion(v1, v2) {
+    if (typeof v1 !== 'string') return false;
+    if (typeof v2 !== 'string') return false;
+    v1 = v1.split('.');
+    v2 = v2.split('.');
+    const k = Math.min(v1.length, v2.length);
+    for (let i = 0; i < k; ++i) {
+      v1[i] = parseInt(v1[i], 10);
+      v2[i] = parseInt(v2[i], 10);
+      if (v1[i] > v2[i]) return 1;
+      if (v1[i] < v2[i]) return -1;
+    }
+    return v1.length == v2.length ? 0 : (v1.length < v2.length ? -1 : 1);
   }
 }
 
