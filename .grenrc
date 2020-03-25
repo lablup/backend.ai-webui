@@ -2,7 +2,6 @@
     "username": "lablup",
     "repo": "backend.ai-console",
     "dataSource": "issues",
-    "prefix": "v", 
     "ignoreIssuesWith": [
         "wontfix",
         "duplicate"
