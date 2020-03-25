@@ -26,6 +26,7 @@ module.exports = (proxy = class Proxy {
   constructor(env) {
     this._running = false;
     this._resolve = undefined;
+    this._connectionCount = 0;
     this.tcpServer = net.createServer();
     this._env = env;
     if (env._apiVersionMajor > 4) {
