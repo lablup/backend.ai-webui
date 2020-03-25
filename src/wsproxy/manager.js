@@ -1,6 +1,7 @@
+// Backend.AI Websocket proxy server for local runtime environment / app.
 const express = require('express'),
- EventEmitter = require('events'),
-         cors = require('cors');
+  EventEmitter = require('events'),
+  cors = require('cors');
 const logger = require('./lib/logger')(__filename);
 
 const ai = require('../lib/backend.ai-client-node'),
@@ -11,13 +12,13 @@ const htmldeco = require('./lib/htmldeco');
 class Manager extends EventEmitter {
   constructor(listen_ip, proxyBaseHost, proxyBasePort) {
     super();
-    if(listen_ip === undefined) {
+    if (listen_ip === undefined) {
       this.listen_ip = "127.0.0.1"
     } else {
       this.listen_ip = listen_ip;
     }
 
-    if(proxyBaseHost === undefined) {
+    if (proxyBaseHost === undefined) {
       this.proxyBaseHost = "127.0.0.1"
     } else {
       this.proxyBaseHost = proxyBaseHost;
@@ -58,7 +59,7 @@ class Manager extends EventEmitter {
       } else {
         cf['_apiVersionMajor'] = 4;
       }
-      if (req.body.mode && req.body.mode == "SESSION") {
+      if (req.body.mode && req.body.mode === "SESSION") {
         cf['mode'] = "SESSION";
         cf['session'] = req.body.session;
         cf['endpoint'] = cf['endpoint'] + "/func";
@@ -111,9 +112,9 @@ class Manager extends EventEmitter {
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       let port = undefined;
-      if(this.proxies.hasOwnProperty(p)) {
-          gateway = this.proxies[p];
-          port = gateway.getPort();
+      if (this.proxies.hasOwnProperty(p)) {
+        gateway = this.proxies[p];
+        port = gateway.getPort();
       } else {
         if (this._config.mode == "SESSION") {
           gateway = new SGateway(this._config);
@@ -187,7 +188,7 @@ class Manager extends EventEmitter {
 
     this.app.get('/sftp', (req, res) => {
       let port = req.query.port;
-      let url =  "sftp://upload@127.0.0.1:" + port;
+      let url = "sftp://upload@127.0.0.1:" + port;
       res.send(htmldeco("Connect with your own SFTP", "host: 127.0.0.1<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"));
     });
 

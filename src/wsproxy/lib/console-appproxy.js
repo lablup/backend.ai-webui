@@ -68,8 +68,8 @@ module.exports = (proxy = class Proxy {
     url = url.replace(/^http/, "ws");
 
     this.tcpServer.on('listening', () => {
-      logger.info(`Starting an app-proxy server with ${this.ip}:${this.port}...`);
       this.port = this.tcpServer.address().port;
+      logger.info(`Starting an app-proxy server with ${this.ip}:${this.port}...`);
       this._running = true;
       this._resolve(true);
       this._resolve = undefined;
@@ -99,7 +99,7 @@ module.exports = (proxy = class Proxy {
       });
       ws.on('open', () => {
         logger.debug(`ws bind`);
-        const wsStream = WebSocket.createWebSocketStream(ws);
+        const wsStream = WebSocket.createWebSocketStream(ws, {});
         let bh = bind(wsStream, tcpConn);
       });
       ws.on('close', (code, reason) => {
