@@ -1002,6 +1002,16 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
+     * Rename a Virtual folder.
+     *
+     * @param {string} new_name - New virtual folder name.
+     */
+    rename(new_name = null) {
+        const body = { new_name };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
      * Delete a Virtual folder.
      *
      * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
