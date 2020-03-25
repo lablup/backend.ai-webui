@@ -1,6 +1,7 @@
 const express = require('express'),
  EventEmitter = require('events'),
          cors = require('cors');
+const logger = require('./lib/logger')(__filename);
 
 const ai = require('../lib/backend.ai-client-node'),
   Gateway = require("./gateway/tcpwsproxy"),
@@ -36,7 +37,7 @@ class Manager extends EventEmitter {
   }
 
   refreshPorts() {
-    console.log("PortRefresh");
+    logger.info("PortRefresh");
     for (let i = 0; i < 100; i++) {
       this.ports.push(Math.floor(Math.random() * 20000) + 10000)
     }
@@ -68,7 +69,7 @@ class Manager extends EventEmitter {
         let config = new ai.backend.ClientConfig(
           req.body.access_key,
           req.body.secret_key,
-          req.body.endpoint,
+          req.body.endpoint
         );
         this.aiclient = new ai.backend.Client(config);
         this.aiclient.APIMajorVersion = cf['_apiVersionMajor'];
@@ -131,8 +132,8 @@ class Manager extends EventEmitter {
             break;
           } catch (err) {
             //if port in use
-            console.log(err);
-            console.log("Port in use");
+            logger.warn(err);
+            logger.info("Port in use");
             //or just retry
           }
         }
@@ -144,10 +145,10 @@ class Manager extends EventEmitter {
 
       let proxy_target = "http://localhost:" + port;
       if (app == 'sftp') {
-        console.log(port);
+        logger.info(port);
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
       } else if (app == 'sshd') {
-        console.log(port);
+        logger.info(port);
         res.send({
           "code": 200,
           "proxy": proxy_target,
@@ -155,7 +156,7 @@ class Manager extends EventEmitter {
           "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
         });
       } else if (app == 'vnc') {
-        console.log(port);
+        logger.info(port);
         res.send({
           "code": 200,
           "proxy": proxy_target,
@@ -202,7 +203,7 @@ class Manager extends EventEmitter {
   start() {
     return new Promise((resolve) => {
       this.listener = this.app.listen(this.port, this.listen_ip, () => {
-        console.log(`Listening on port ${this.listener.address().port}!`);
+        logger.info(`Listening on port ${this.listener.address().port}!`);
         this.port = this.listener.address().port;
         this.baseURL = "http://" + this.proxyBaseHost + ":" + this.port;
         resolve(this.listener.address().port);
