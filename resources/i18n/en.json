@@ -1,0 +1,11 @@
+{
+  "console": {
+    "menu": {
+      "Summary": "Summary",
+      "Sessions": "Sessions",
+      "Data&Storage": "Data & Storage",
+      "Statistics": "Statistics",
+      "Settings": "Settings"
+    }
+  }
+}

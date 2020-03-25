@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
+import {registerTranslateConfig, get as _t, use as setLanguage} from "lit-translate";
 import {customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -39,6 +40,10 @@ import {
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
 
+registerTranslateConfig({
+  loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
+});
+
 /**
  Backend.AI GUI Console
 
@@ -57,6 +62,7 @@ import './backend-ai-login';
 @customElement("backend-ai-console")
 export default class BackendAIConsole extends connect(store)(LitElement) {
   public shadowRoot: any; // ShadowRoot
+  @property({type: Boolean}) hasLoadedStrings = false;
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
   @property({type: String}) siteDescription = '';
   @property({type: String}) user_id = 'DISCONNECTED';
@@ -153,9 +159,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', this.refreshPage.bind(this));
+    await setLanguage("en");
+    this.hasLoadedStrings = true;
   }
 
   disconnectedCallback() {
@@ -165,6 +173,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   attributeChangedCallback(name, oldval, newval) {
     super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  shouldUpdate(changedProperties) {
+    return this.hasLoadedStrings && super.shouldUpdate(changedProperties);
   }
 
   loadConfig(config) {
@@ -625,7 +637,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
-  render() {
+  protected render() {
     // language=HTML
     return html`
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}">
@@ -653,28 +665,28 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
               <mwc-icon slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
-              <span class="full-menu">Summary</span>
+              <span class="full-menu">${_t("console.menu.Summary")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
               <mwc-icon slot="graphic" class="fg red">ballot</mwc-icon>
-              <span class="full-menu">Sessions</span>
+              <span class="full-menu">${_t("console.menu.Sessions")}</span>
             </mwc-list-item>
             ${false ? html`
             <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}">
               <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
-              <span class="full-menu">Experiments</span>
+              <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}">
               <mwc-icon slot="graphic" class="fg orange">cloud_upload</mwc-icon>
-              <span class="full-menu">Data &amp; Storage</span>
+              <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
               <mwc-icon slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
-              <span class="full-menu">Statistics</span>
+              <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
               <mwc-icon  slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
-              <span class="full-menu">Settings</span>
+              <span class="full-menu">${_t("console.menu.Settings")}</span>
             </mwc-list-item>
             ${this.is_admin ?
       html`
