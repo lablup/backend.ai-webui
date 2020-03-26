@@ -15,10 +15,6 @@ module.exports = {
     },
     trans: false,
     lngs: ['en', 'ko'],
-    ns: [
-      'locale',
-      'resource'
-    ],
     defaultLng: 'en',
     defaultNs: 'resource',
     defaultValue: function (lng, ns, key) {
