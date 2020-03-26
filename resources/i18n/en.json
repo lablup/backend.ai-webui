@@ -12,7 +12,17 @@
       "Resources": "Resources",
       "Configurations": "Configurations",
       "Maintenance": "Maintenance",
-      "Information": "Information"
+      "Information": "Information",
+      "About": "About",
+      "ChangePassword": "Change Password",
+      "Preferences": "Preferences",
+      "LogsErrors": "Logs / Errors",
+      "LogOut": "Log Out",
+      "Cancel": "Cancel",
+      "Update": "Update",
+      "OriginalPassword": "Original password",
+      "NewPassword": "New password",
+      "NewPasswordAgain": "New password (again)"
     }
   }
 }

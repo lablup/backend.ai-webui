@@ -760,23 +760,23 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-50 y=40>
               <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
-                  About
+                  ${_t("console.menu.About")}
               </mwc-list-item>
               <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                  Change Password
+                  ${_t("console.menu.ChangePassword")}
               </mwc-list-item>
               <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
-                  Preferences
+                  ${_t("console.menu.Preferences")}
               </mwc-list-item>
               <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                  Logs / Errors
+                  ${_t("console.menu.LogsErrors")}
               </mwc-list-item>
               <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
-                  Log Out
+                  ${_t("console.menu.LogOut")}
               </mwc-list-item>
             </mwc-menu>
           </mwc-top-app-bar-fixed>
@@ -811,15 +811,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
 
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
-       <wl-title level="3" slot="header">Change password</wl-title>
+       <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
        <div slot="content">
-        <wl-textfield id="pref-original-password" type="password" label="Original password" maxLength="30"></wl-textfield>
-        <wl-textfield id="pref-new-password" type="password" label="New password" maxLength="30"></wl-textfield>
-        <wl-textfield id="pref-new-password2" type="password" label="New password (again)" maxLength="30"></wl-textfield>
+        <wl-textfield id="pref-original-password" type="password" label="${_t("console.menu.OriginalPassword")}" maxLength="30"></wl-textfield>
+        <wl-textfield id="pref-new-password" type="password" label="${_t("console.menu.NewPassword")}" maxLength="30"></wl-textfield>
+        <wl-textfield id="pref-new-password2" type="password" label="${_t("console.menu.NewPasswordAgain")}" maxLength="30"></wl-textfield>
        </div>
        <div slot="footer">
-        <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">Cancel</wl-button>
-        <wl-button class="ok" @click="${this._updateUserPassword}">Update</wl-button>
+        <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
+        <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
        </div>
       </wl-dialog>
     `;

@@ -12,7 +12,17 @@
       "Resources": "리소스",
       "Configurations": "환경 설정",
       "Maintenance": "관리",
-      "Information": "정보"
+      "Information": "정보",
+      "About": "대하여",
+      "ChangePassword": "패스워드 변경",
+      "Preferences": "설정",
+      "LogsErrors": "로그 / 에러",
+      "LogOut": "로그아웃",
+      "Cancel": "취소",
+      "Update": "변경",
+      "OriginalPassword": "기존 패스워드",
+      "NewPassword": "새 패스워드",
+      "NewPasswordAgain": "새 패스워드 (재입력)"
     }
   }
 }
