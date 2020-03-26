@@ -336,21 +336,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
     if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
       (this.shadowRoot.getElementById('group-select') as any).disabled = true;
-      (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
+      (this.shadowRoot.getElementById('group-select') as any).label = _t("console.menu.NoProject");
     }
     // Detached from template to support live-update after creating new group (will need it)
     if (groupSelectionBox.hasChildNodes()) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild);
     }
     let select = document.createElement('wl-select');
-    select.label = "Project";
+    select.label = _t("console.menu.Project");
     select.name = 'group-select';
     select.id = 'group-select';
     select.value = this.current_group;
     select.addEventListener('input', this.changeGroup.bind(this));
     let opt = document.createElement('option');
     opt.setAttribute('disabled', 'true');
-    opt.innerHTML = 'Select Project';
+    opt.innerHTML = _t("console.menu.SelectProject");
     select.appendChild(opt);
     this.groups.map(group => {
       opt = document.createElement('option');
@@ -444,55 +444,55 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _updateSidebar(view) {
     switch (view) {
       case 'summary':
-        this.menuTitle = 'Summary';
+        this.menuTitle = _t("console.menu.Summary");
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'job':
-        this.menuTitle = 'Sessions';
+        this.menuTitle = _t("console.menu.Sessions");
         this.updateTitleColor('var(--paper-red-800)', '#efefef');
         break;
       case 'experiment':
-        this.menuTitle = 'Experiments';
+        this.menuTitle = _t("console.menu.Experiments");
         this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'data':
-        this.menuTitle = 'Data & Storage';
+        this.menuTitle = _t("console.menu.Data&Storage");
         this.updateTitleColor('var(--paper-orange-800)', '#efefef');
         break;
       case 'statistics':
-        this.menuTitle = 'Statistics';
+        this.menuTitle = _t("console.menu.Statistics");
         this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
         break;
       case 'usersettings':
-        this.menuTitle = 'Settings & Logs';
+        this.menuTitle = _t("console.menu.Settings&Logs");
         this.updateTitleColor('var(--paper-teal-800)', '#efefef');
         break;
       case 'credential':
-        this.menuTitle = 'User Credentials & Policies';
+        this.menuTitle = _t("console.menu.UserCredentials&Policies");
         this.updateTitleColor('var(--paper-lime-800)', '#efefef');
         break;
       case 'environment':
-        this.menuTitle = 'Environments & Presets';
+        this.menuTitle = _t("console.menu.Environments&Presets");
         this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
         break;
       case 'agent':
-        this.menuTitle = 'Computation Resources';
+        this.menuTitle = _t("console.menu.ComputationResources");
         this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'settings':
-        this.menuTitle = 'Configurations';
+        this.menuTitle = _t("console.menu.Configurations");
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'maintenance':
-        this.menuTitle = 'Maintenance';
+        this.menuTitle = _t("console.menu.Maintenance");
         this.updateTitleColor('var(--paper-pink-800)', '#efefef');
         break;
       case 'information':
-        this.menuTitle = 'Information';
+        this.menuTitle = _t("console.menu.Information");
         this.updateTitleColor('var(--paper-purple-800)', '#efefef');
         break;
       case 'logs':
-        this.menuTitle = 'Logs';
+        this.menuTitle = _t("console.menu.Logs");
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       default:
@@ -591,7 +591,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.title = "Terms of Service";
+      this.TOSdialog.title = _t("console.menu.TermsOfService");
       this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
       this.TOSdialog.open();
     }
@@ -600,7 +600,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showPPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.title = "Privacy Policy";
+      this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
       this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
       this.TOSdialog.open();
     }
@@ -726,14 +726,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <footer class="full-menu">
             <div class="terms-of-use" style="margin-bottom:50px;">
               <small style="font-size:11px;">
-                <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
+                <a @click="${() => this.showTOSAgreement()}">${_t("console.menu.TermsOfService")}</a>
                 ·
-                <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">Privacy Policy</a>
+                <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("console.menu.PrivacyPolicy")}</a>
                 ·
-                <a @click="${() =>this.splash.show()}">About</a>
+                <a @click="${() => this.splash.show()}">${_t("console.menu.About")}</a>
                 ${this.allow_signout === true ? html`
                 ·
-                <a @click="${() => this.loginPanel.signout()}">Leave service</a>
+                <a @click="${() => this.loginPanel.signout()}">${_t("console.menu.LeaveService")}</a>
                 ` : html``}
               </small>
             </div>

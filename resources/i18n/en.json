@@ -22,7 +22,18 @@
       "Update": "Update",
       "OriginalPassword": "Original password",
       "NewPassword": "New password",
-      "NewPasswordAgain": "New password (again)"
+      "NewPasswordAgain": "New password (again)",
+      "TermsOfService": "Terms of Service",
+      "PrivacyPolicy": "Privacy Policy",
+      "LeaveService": "Leave service",
+      "Settings&Logs": "Settings & Logs",
+      "UserCredentials&Policies": "User Credentials & Policies",
+      "Environments&Presets": "Environments & Presets",
+      "ComputationResources": "Computation Resources",
+      "Logs": "Logs",
+      "Project": "Project",
+      "NoProject": "No Project",
+      "SelectProject": "Select Project"
     }
   }
 }

@@ -16,13 +16,24 @@
       "About": "대하여",
       "ChangePassword": "패스워드 변경",
       "Preferences": "설정",
-      "LogsErrors": "로그 / 에러",
+      "LogsErrors": "로그기록 / 에러",
       "LogOut": "로그아웃",
       "Cancel": "취소",
       "Update": "변경",
       "OriginalPassword": "기존 패스워드",
       "NewPassword": "새 패스워드",
-      "NewPasswordAgain": "새 패스워드 (재입력)"
+      "NewPasswordAgain": "새 패스워드 (재입력)",
+      "TermsOfService": "약관",
+      "PrivacyPolicy": "개인정보보호",
+      "LeaveService": "탈퇴",
+      "Settings&Logs": "설정 및 로그",
+      "UserCredentials&Policies": "자격 증명 및 정책",
+      "Environments&Presets": "실행환경 및 프리셋",
+      "ComputationResources": "연산 자원",
+      "Logs": "로그",
+      "Project": "프로젝트",
+      "NoProject": "프로젝트 없음",
+      "SelectProject": "프로젝트 선택"
     }
   }
 }
