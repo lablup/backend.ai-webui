@@ -2191,7 +2191,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div class="layout vertical" style="align-self: center;">
           <wl-button class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
             <wl-icon>add</wl-icon>
-            Start
+            ${_t("session.launcher.Start")}
           </wl-button>
         </div>
         <div class="flex"></div>
@@ -2248,7 +2248,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <wl-dialog id="new-session-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <wl-card class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Start new session</span>
+            <span>${_t("session.launcher.StartNewSession")}</span>
             <div class="flex"></div>
             <mwc-icon-button icon="close" class="blue close-button"
               @click="${() => this._hideSessionDialog()}">
@@ -2256,9 +2256,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </h3>
           <form id="launch-session-form">
             <div class="vertical center layout" style="padding-top:15px;">
-              <mwc-select id="environment" label="Environments" required
+              <mwc-select id="environment" label="${_t("session.launcher.Environments")}" required
                 value="${this.default_language}">
-                <mwc-list-item selected style="display:none!important">Choose environment</mwc-list-item>
+                <mwc-list-item selected style="display:none!important">>${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
@@ -2283,12 +2283,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `}
                   `)}
               </mwc-select>
-              <mwc-select id="version" label="Version" required>
+              <mwc-select id="version" label="${_t("session.launcher.Version")}" required>
                 <mwc-list-item selected style="display:none!important"></mwc-list-item>
                   <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
-                    <div style="width:80px;">Version</div>
-                    <div style="width:120px;">Base</div>
-                    <div style="width:150px;">Requirements</div>
+                    <div style="width:80px;">${_t("session.launcher.Version")}</div>
+                    <div style="width:120px;">${_t("session.launcher.Base")}</div>
+                    <div style="width:150px;">${_t("session.launcher.Requirements")}</div>
                   </h5>
               ${this.versions.map(item => html`
                 <mwc-list-item id="${item}" value="${item}">
@@ -2307,11 +2307,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </mwc-select>
             </div>
               <div style="display:none;">
-                <wl-checkbox id="use-gpu-checkbox">Use GPU</wl-checkbox>
+                <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                  <mwc-select id="scaling-groups" label="Resource Group" required
+                  <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required
                               @selected="${(e) => this.updateScalingGroup(false, e)}">
                     ${this.scaling_groups.map(item => html`
                       <mwc-list-item class="scaling-group-dropdown"
@@ -2322,14 +2322,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `)}
                   </mwc-select>
                 ` : html``}
-                <mwc-textfield id="session-name" placeholder="Session name (optional)"
+                <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                                pattern="[a-zA-Z0-9_-]{4,}" fullwidth
                                validationMessage="4 or more characters / no whitespace."
                                style="margin-left:5px;">
                 </mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-multi-select id="vfolder" label="Folders to mount" multi
+                <mwc-multi-select id="vfolder" label="${_t("session.launcher.FolderToMount")}" multi
                 @selected="${this._updateSelectedFolder}">
                 ${this.vfolders.map(item => html`
                   <mwc-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-list-item>
@@ -2337,7 +2337,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </mwc-multi-select>
               </div>
             <wl-expansion name="resource-group" open>
-              <span slot="title">Resource allocation</span>
+              <span slot="title">${_t("session.launcher.ResourceAllocation")}</span>
               <span slot="description"></span>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
@@ -2365,7 +2365,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                            style="height:140px;width:350px;" type="button"
                            flat inverted outlined disabled>
                   <div>
-                    <h4>No suitable preset</h4>
+                    <h4>${_t("session.launcher.NoSuitablePreset")}</h4>
                     <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
                   </div>
                 </wl-button>
@@ -2373,8 +2373,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </paper-listbox>
             </wl-expansion>
             <wl-expansion name="resource-group">
-              <span slot="title">Advanced</span>
-              <span slot="description">Custom allocation</span>
+              <span slot="title">${_t("session.launcher.Advanced")}</span>
+              <span slot="description">${_t("session.launcher.CustomAllocation")}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">CPU</div>
@@ -2383,7 +2383,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  marker_limit="${this.marker_limit}"
                                  min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                  value="${this.cpu_request}"></lablup-slider>
-                  <span class="caption">Core</span>
+                  <span class="caption">${_t("session.launcher.Core")}</span>
                   <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
       this._showResourceDescription(e, 'cpu');
     }}"></mwc-icon-button>
@@ -2401,7 +2401,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
-                  <div class="resource-type" style="width:70px;">Shared Memory</div>
+                  <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
                   <lablup-slider id="shmem-resource" class="mem"
                                  pin snaps step=0.0025 editable markers
                                  marker_limit="${this.marker_limit}"
@@ -2438,18 +2438,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </wl-expansion>
 
             <wl-expansion name="ownership">
-              <span slot="title">Ownership</span>
-              <span slot="description">Set session owner</span>
+              <span slot="title">${_t("session.launcher.Ownership")}</span>
+              <span slot="description">${_t("session.launcher.SetSessionOwner")}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
                   <mwc-textfield id="owner-email" type="email" class="flex" value=""
                     pattern="^.+@.+\..+$"
-                    label="Owner Email" size="40"></mwc-textfield>
+                    label="${_t("session.launcher.OwnerEmail")}" size="40"></mwc-textfield>
                   <mwc-icon-button icon="refresh" class="blue"
                     @click="${() => this._fetchSessionOwnerGroups()}">
                   </mwc-icon-button>
                 </div>
-                <paper-dropdown-menu id="owner-accesskey" label="Owner access key">
+                <paper-dropdown-menu id="owner-accesskey" label="${_t("session.launcher.OwnerAccessKey")}">
                   <paper-listbox slot="dropdown-content" attr-for-selected="id">
                     ${this.ownerKeypairs.map(item => html`
                       <paper-item id="${item.access_key}" label="${item.access_key}">${item.access_key}</paper-item>
@@ -2457,7 +2457,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <div class="horizontal center layout">
-                  <paper-dropdown-menu id="owner-group" label="Owner group" horizontal-align="left">
+                  <paper-dropdown-menu id="owner-group" label="${_t("session.launcher.OwnerGroup")}" horizontal-align="left">
                     <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                    selected="${this.default_language}">
                       ${this.ownerGroups.map(item => html`
@@ -2465,7 +2465,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       `)}
                     </paper-listbox>
                   </paper-dropdown-menu>
-                  <paper-dropdown-menu id="owner-scaling-group" label="Owner resource group">
+                  <paper-dropdown-menu id="owner-scaling-group" label="${_t("session.launcher.OwnerResourceGroup")}">
                     <paper-listbox slot="dropdown-content" selected="0">
                       ${this.ownerScalingGroups.map(item => html`
                         <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
@@ -2475,7 +2475,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </div>
                 <wl-label>
                   <wl-checkbox id="owner-enabled"></wl-checkbox>
-                  Launch session on behalf of the access key
+                  ${_t("session.launcher.LaunchSessionWithAccessKey")}
                 </wl-label>
               </div>
             </wl-expansion>
