@@ -114,3 +114,6 @@ backend.ai-app/
 
 # ctags-generated file
 tags
+
+# i18n temporary files
+**/*_extracted.json

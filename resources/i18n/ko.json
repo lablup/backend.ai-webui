@@ -33,7 +33,8 @@
       "Logs": "로그",
       "Project": "프로젝트",
       "NoProject": "프로젝트 없음",
-      "SelectProject": "프로젝트 선택"
+      "SelectProject": "프로젝트 선택",
+      "Experiments": "실험"
     }
   },
   "summary": {
