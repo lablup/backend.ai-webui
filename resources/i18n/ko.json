@@ -35,5 +35,32 @@
       "NoProject": "프로젝트 없음",
       "SelectProject": "프로젝트 선택"
     }
+  },
+  "summary": {
+    "Dashboard": "대시보드",
+    "SystemHealth": "시스템 상태",
+    "ConnectedNodes": "연결된 노드",
+    "ActiveSessions": "활성 세션",
+    "ResourceStatistics": "자원 상태",
+    "CoresReserved": "코어 예약",
+    "reserved": "예약",
+    "FractionalGPUScalingEnabled": "Fractional GPU 스케일링 사용중",
+    "Reserved": "예약중",
+    "Used": "사용중",
+    "Total": "전체",
+    "Using": "사용",
+    "Actions": "활동",
+    "Shortcut": "바로가기",
+    "UploadFiles": "파일 업로드",
+    "StartASession": "세션 시작",
+    "CreateANewKeypair": "새 키페어 생성",
+    "MaintainKeypairs": "키페어 관리",
+    "Accept": "허용",
+    "Decline": "거부",
+    "Administration": "관리",
+    "UpdateEnvironmentImages": "실환경 이미지 업데이트",
+    "CheckResources": "자원 확인",
+    "ChangeSystemSetting": "시스템 설정 변경",
+    "SystemMaintenance": "시스템 유지보수"
   }
 }

@@ -35,5 +35,32 @@
       "NoProject": "No Project",
       "SelectProject": "Select Project"
     }
+  },
+  "summary": {
+    "Dashboard": "Dashboard",
+    "SystemHealth": "System Health",
+    "ConnectedNodes": "Connected Nodes",
+    "ActiveSessions": "Active Sessions",
+    "ResourceStatistics": "Resource Statistics",
+    "CoresReserved": "Cores reserved",
+    "reserved": "reserved",
+    "FractionalGPUScalingEnabled": "Fractional GPU scaling enabled",
+    "Reserved": "Reserved",
+    "Used": "Used",
+    "Total": "Total",
+    "Using": "Using",
+    "Actions": "Actions",
+    "Shortcut": "Shortcut",
+    "UploadFiles": "Upload files",
+    "StartASession": "Start a session",
+    "CreateANewKeypair": "Create a new keypair",
+    "MaintainKeypairs": "Maintain keypairs",
+    "Accept": "Accept",
+    "Decline": "Decline",
+    "Administration": "Administration",
+    "UpdateEnvironmentImages": "Update environment images",
+    "CheckResources": "Check resources",
+    "ChangeSystemSetting": "Change system setting",
+    "SystemMaintenance": "System maintenance"
   }
 }
