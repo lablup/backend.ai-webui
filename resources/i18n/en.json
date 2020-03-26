@@ -76,6 +76,33 @@
       "ResourceGroup": "Resource Group",
       "CurrentResourceGroup": "Current Resource Group",
       "SelectResourceGroup": "Select Resource Group"
-    }
+    },
+    "Running": "Running",
+    "Finished": "Finished",
+    "Others": "Others",
+    "exportCSV": "export CSV",
+    "Terminate": "Terminate",
+    "SessionInfo": "SessionInfo",
+    "Status": "Status",
+    "Control": "Control",
+    "Configuration": "Configuration",
+    "core": "core",
+    "Starts": "Starts",
+    "Reservation": "Reservation",
+    "Agent": "Agent",
+    "Usage": "Usage",
+    "ConnectionInformation": "Connection Information",
+    "VNCconnection": "VNC connection",
+    "UseYourFavoriteSSHApp": "Use your favorite SSH/SFTP application to connect.",
+    "LetsDouble-Check": "Let's Double-check",
+    "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
+    "TerminatingSessionDialog": "You are terminating multiple sessions.",
+    "ExportSessionListToCSVFile": "Export Session list to CSV File",
+    "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
+    "ExportCSVFile": "Export CSV File"
+  },
+  "button": {
+    "Cancel": "Cancel",
+    "Okay": "Okay"
   }
 }

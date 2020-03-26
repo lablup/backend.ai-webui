@@ -76,6 +76,33 @@
       "ResourceGroup": "리소스 그룹",
       "CurrentResourceGroup": "현재 리소스 그룹",
       "SelectResourceGroup": "리소스 그룹 선택"
-    }
+    },
+    "Running": "실행중",
+    "Finished": "종료",
+    "Others": "기타",
+    "exportCSV": "CSV로 내보내기",
+    "Terminate": "강제종료",
+    "SessionInfo": "세션 정보",
+    "Status": "상태",
+    "Control": "제어",
+    "Configuration": "구성",
+    "core": "코어",
+    "Starts": "시작시간",
+    "Reservation": "예약시간",
+    "Agent": "실행노드",
+    "Usage": "사용량",
+    "ConnectionInformation": "연결 정보",
+    "VNCconnection": "VNC 연결",
+    "UseYourFavoriteSSHApp": "연결을 위해 선호하는 SSH/SFTP 앱을 사용하세요.",
+    "LetsDouble-Check": "한 번 더 확인합시다.",
+    "CheckAgainDialog": "이 선택은 취소할 수 없습니다. 정말 진행하시겠습니까?",
+    "TerminatingSessionDialog": "여러 세션을 동시에 종료하려고 합니다.",
+    "ExportSessionListToCSVFile": "세션 리스트를 CSV로 내보내기",
+    "OnlyRecent100SessionExport": "최근 100개의 세션 실행 기록만 내보낼 수 있습니다.",
+    "ExportCSVFile": "CSV로 내보내기"
+  },
+  "button": {
+    "Cancel": "취소",
+    "Okay": "승인"
   }
 }
