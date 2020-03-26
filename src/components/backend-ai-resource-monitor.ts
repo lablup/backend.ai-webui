@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {get as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -678,7 +678,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
             }
             const scaling_select = document.createElement('wl-select');
-            scaling_select.label = "Resource Group";
+            scaling_select.label = _t('session.launcher.ResourceGroup');
             scaling_select.name = 'scaling-group-select';
             scaling_select.id = 'scaling-group-select';
             scaling_select.value = this.scaling_group;
@@ -686,7 +686,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
-            opt.innerHTML = 'Select Resource Group';
+            opt.innerHTML = _t('session.launcher.SelectResourceGroup');
             scaling_select.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');
@@ -2117,9 +2117,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
         ${this.direction === 'horizontal' ? html`
           <div class="layout vertical end-justified wrap short-indicator">
-            <span class="gauge-label">TOTAL</span>
-            <div style="font-size:8px;height:10px;">RESOURCE</div>
-            <span class="gauge-label">MY</span>
+            <span class="gauge-label">${_t('session.launcher.TOTAL')}</span>
+            <div style="font-size:8px;height:10px;">${_t('session.launcher.RESOURCE')}</div>
+            <span class="gauge-label">${_t('session.launcher.MY')}</span>
           </div>
           ` : html``}
           <div class="layout horizontal start-justified monitor">
@@ -2179,7 +2179,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout horizontal center-justified monitor session">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <wl-icon class="fg blue">assignment</wl-icon>
-              <span class="gauge-name">Session</span>
+              <span class="gauge-name">${_t('session.launcher.Session')}</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
@@ -2200,11 +2200,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div class="vertical start-justified layout">
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
-          <span style="margin-right:5px;">Current Resource Group (${this.scaling_group})</span>
+          <span style="margin-right:5px;">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
         </div>
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
-          <span style="margin-right:5px;">User Resource Limit</span>
+          <span style="margin-right:5px;">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
       </div>
       ` : html``}
@@ -2215,7 +2215,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div class="layout horizontal center-justified monitor">
           <div class="layout vertical center center-justified" style="margin-right:5px;">
             <wl-icon class="fg blue">group_work</wl-icon>
-            <span class="gauge-name">Project</span>
+            <span class="gauge-name">${_t('session.launcher.Project')}</span>
           </div>
           <div class="layout vertical start-justified wrap short-indicator">
             <div class="layout horizontal">

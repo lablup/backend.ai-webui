@@ -38,6 +38,7 @@
   },
   "summary": {
     "Dashboard": "Dashboard",
+    "StartMenu": "Start Menu",
     "SystemHealth": "System Health",
     "ConnectedNodes": "Connected Nodes",
     "ActiveSessions": "Active Sessions",
@@ -62,5 +63,18 @@
     "CheckResources": "Check resources",
     "ChangeSystemSetting": "Change system setting",
     "SystemMaintenance": "System maintenance"
+  },
+  "session": {
+    "launcher": {
+      "TOTAL": "TOTAL",
+      "RESOURCE": "RESOURCE",
+      "MY": "MY",
+      "Session": "Session",
+      "Project": "Project",
+      "UserResourceLimit": "User Resource Limit",
+      "ResourceGroup": "Resource Group",
+      "CurrentResourceGroup": "Current Resource Group",
+      "SelectResourceGroup": "Select Resource Group"
+    }
   }
 }

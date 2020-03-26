@@ -433,7 +433,7 @@ export default class BackendAISummary extends BackendAIPage {
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">${_t('summary.Dashboard')}</h3>
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="Start Menu" elevation="1">
+          <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>

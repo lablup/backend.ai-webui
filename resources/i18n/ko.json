@@ -38,6 +38,7 @@
   },
   "summary": {
     "Dashboard": "대시보드",
+    "StartMenu": "시작",
     "SystemHealth": "시스템 상태",
     "ConnectedNodes": "연결된 노드",
     "ActiveSessions": "활성 세션",
@@ -58,9 +59,22 @@
     "Accept": "허용",
     "Decline": "거부",
     "Administration": "관리",
-    "UpdateEnvironmentImages": "실환경 이미지 업데이트",
+    "UpdateEnvironmentImages": "실행 환경 이미지 업데이트",
     "CheckResources": "자원 확인",
     "ChangeSystemSetting": "시스템 설정 변경",
     "SystemMaintenance": "시스템 유지보수"
+  },
+  "session": {
+    "launcher": {
+      "TOTAL": "전체",
+      "RESOURCE": "자원",
+      "MY": "나의",
+      "Session": "세션",
+      "Project": "프로젝트",
+      "UserResourceLimit": "사용자 리소스 제한",
+      "ResourceGroup": "리소스 그룹",
+      "CurrentResourceGroup": "현재 리소스 그룹",
+      "SelectResourceGroup": "리소스 그룹 선택"
+    }
   }
 }
