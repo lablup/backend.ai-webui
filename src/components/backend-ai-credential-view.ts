@@ -986,7 +986,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </paper-dropdown-menu>
                 </div>
                 <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
-                  <wl-label class="folders">Capacity(GB)</wl-label>
+                  <wl-label class="folders">${_t("credential.Capacity(GB)")}</wl-label>
                   <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
@@ -994,7 +994,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </wl-label>
                 </div>
                 <div class="vertical layout" style="width: 110px;">
-                  <wl-label class="folders">Max.#</wl-label>
+                  <wl-label class="folders">${_t("credential.Max#")}</wl-label>
                   <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 </div>
               </div>
@@ -1003,7 +1003,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined
                @click="${() => this._addResourcePolicy()}">
                          <wl-icon>add</wl-icon>
-                         Create
+                         ${_t("credential.Create")}
               </wl-button>
             </fieldset>
           </form>
@@ -1012,7 +1012,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-dialog id="new-user-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create User</span>
+            <span>${_t("credential.CreateUser")}</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -1024,21 +1024,21 @@ export default class BackendAICredentialView extends BackendAIPage {
                 type="email"
                 name="user_email"
                 id="id_user_email"
-                label="E-mail"
+                label="${_t("general.E-Mail")}"
               >
               </wl-textfield>
               <wl-textfield
                 type="text"
                 name="user_name"
                 id="id_user_name"
-                label="Username"
+                label="${_t("general.Username")}"
               >
               </wl-textfield>
               <wl-textfield
                 type="password"
                 name="user_password"
                 id="id_user_password"
-                label="Password"
+                label="${_t("general.Password")}"
                 pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
               >
               </wl-textfield>
@@ -1046,13 +1046,13 @@ export default class BackendAICredentialView extends BackendAIPage {
                 type="password"
                 name="user_confirm"
                 id="id_user_confirm"
-                label="Password Confirm"
+                label="${_t("general.ConfirmPassword")}"
               >
               </wl-textfield>
               <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
               @click="${this._addUser}">
                 <wl-icon>add</wl-icon>
-                Create User
+                ${_t("credential.CreateUser")}
               </wl-button>
             </fieldset>
           </form>
@@ -1061,7 +1061,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
       <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
         <h3 class="horizontal center layout" style="padding:10px;">
-          <span style="margin-left:10px; font-size:18px;">Export ${this._activeTab} to csv file</span>
+          <span style="margin-left:10px; font-size:18px;">${_t("credential.ExportCSVFile")} (${this._activeTab})</span>
           <div class="flex"></div>
           <wl-button flat fab @click="${(e) => this._hideDialog(e)}">
             <wl-icon class="close">close</wl-icon>
@@ -1070,13 +1070,13 @@ export default class BackendAICredentialView extends BackendAIPage {
         <section style="padding: 5px;">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
-                          value="${this._activeTab+'_'+this._defaultFileName}" required
+                          value="${this._activeTab + '_' + this._defaultFileName}" required
           ></mwc-textfield>
           <div class="horizontal center layout">
             <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
             @click="${this._exportToCSV}">
               <wl-icon>get_app</wl-icon>
-              Export CSV File
+              ${_t("credential.ExportCSVFile")}
             </wl-button>
           </div>
           </section>

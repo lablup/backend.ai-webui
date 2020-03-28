@@ -147,7 +147,11 @@
     "Folders": "Folders",
     "SecretKey": "Secret Key",
     "Advanced": "Advanced",
-    "Add": "Add"
+    "Add": "Add",
+    "E-Mail": "E-Mail",
+    "Username": "Username",
+    "Password": "Password",
+    "ConfirmPassword": "Confirm Password"
   },
   "credential": {
     "Permission": "Permission",
@@ -177,6 +181,10 @@
     "ContainerPerSession": "Container per session",
     "IdleTimeoutSec": "Idle timeout (sec.)",
     "ConcurrentJobs": "Concurrent jobs",
-    "Folders": "Folders"
+    "Folders": "Folders",
+    "Capacity(GB)": "Capacity (GB)",
+    "Max#": "Max. #",
+    "Create": "Create",
+    "ExportCSVFile": "Export CSV File"
   }
 }

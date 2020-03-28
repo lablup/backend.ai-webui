@@ -147,7 +147,11 @@
     "Folders": "폴더",
     "SecretKey": "비밀키",
     "Advanced": "고급",
-    "Add": "추가"
+    "Add": "추가",
+    "E-Mail": "E-Mail",
+    "Username": "사용자명",
+    "Password": "패스워드",
+    "ConfirmPassword": "패스워드 (확인)"
   },
   "credential": {
     "Permission": "권한",
@@ -177,6 +181,10 @@
     "ContainerPerSession": "세션당 컨테이너 수",
     "IdleTimeoutSec": "유휴 대기 시간 (초)",
     "ConcurrentJobs": "동시 세션 실행 수",
-    "Folders": "폴더"
+    "Folders": "폴더",
+    "Capacity(GB)": "용량 (GB)",
+    "Max#": "최대 ",
+    "Create": "생성",
+    "ExportCSVFile": "CSV 파일 내보내기"
   }
 }
