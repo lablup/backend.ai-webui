@@ -127,7 +127,12 @@
   },
   "button": {
     "Cancel": "Cancel",
-    "Okay": "Okay"
+    "Okay": "Okay",
+    "Create": "Create",
+    "View": "View",
+    "Edit": "Edit",
+    "Share": "Share",
+    "SaveChanges": "SaveChanges"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -151,7 +156,8 @@
     "E-Mail": "E-Mail",
     "Username": "Username",
     "Password": "Password",
-    "ConfirmPassword": "Confirm Password"
+    "ConfirmPassword": "Confirm Password",
+    "Create": "Create"
   },
   "credential": {
     "Permission": "Permission",
@@ -201,6 +207,45 @@
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
     "Host": "Host",
     "Foldername": "Folder name",
-    "Type": "Type"
+    "Type": "Type",
+    "folders": {
+      "Location": "Location",
+      "Type": "Type",
+      "Permission": "Permission",
+      "Control": "Control",
+      "Name": "Name",
+      "DeleteAFolder": "Delete a folder",
+      "Delete": "Delete",
+      "NumberOfFiles": "Number of files",
+      "Ownership": "Ownership",
+      "DescYouAreFolderOwner": "You are the owner of this folder."
+    },
+    "explorer": {
+      "Delete": "Delete...",
+      "UploadFiles": "Upload Files...",
+      "NewFolder": "New Folder",
+      "StopUploading": "Stop Uploading",
+      "Size": "Size",
+      "CreateANewFolder": "Create a new folder",
+      "Name": "Name",
+      "Created": "Created",
+      "Actions": "Actions",
+      "ShareFolder": "Share Folder",
+      "People": "People",
+      "Permissions": "Permissions",
+      "ModifyPermissions": "Modify Permissions",
+      "Permission": "Permission",
+      "InviteeEmail": "Invitee E-Mail",
+      "Foldername": "Folder name",
+      "EnterEmailAddress": "Enter E-Mail address"
+    }
+  },
+  "dialog": {
+    "warning": {
+      "CannotBeUndone": "WARNING: this cannot be undone!"
+    },
+    "ask": {
+      "DoYouWantToProceed": "Do you want to proceed?"
+    }
   }
 }

@@ -16,7 +16,7 @@
       "About": "대하여",
       "ChangePassword": "패스워드 변경",
       "Preferences": "설정",
-      "LogsErrors": "로그기록 / 에러",
+      "LogsErrors": "로그 / 에러기록",
       "LogOut": "로그아웃",
       "Cancel": "취소",
       "Update": "변경",
@@ -127,7 +127,12 @@
   },
   "button": {
     "Cancel": "취소",
-    "Okay": "승인"
+    "Okay": "승인",
+    "Create": "만들",
+    "View": "보기",
+    "Edit": "수정",
+    "Share": "공유",
+    "SaveChanges": "변경사항 저장"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -201,6 +206,45 @@
     "Allowslettersnumbersand-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
     "Host": "호스트",
     "Foldername": "폴더 이름",
-    "Type": "종류"
+    "Type": "종류",
+    "folders": {
+      "Name": "이름",
+      "Location": "위치",
+      "Type": "종류",
+      "Permission": "권한",
+      "Control": "제어",
+      "DeleteAFolder": "폴더 삭제",
+      "Delete": "삭제",
+      "NumberOfFiles": "파일 갯수",
+      "Ownership": "소유",
+      "DescYouAreFolderOwner": "이 폴더의 소유자입니다."
+    },
+    "explorer": {
+      "Delete": "삭제...",
+      "UploadFiles": "파일 업로드...",
+      "NewFolder": "새 폴더",
+      "StopUploading": "업로드 취소",
+      "Size": "크기",
+      "CreateANewFolder": "새 폴더 만들기",
+      "Name": "이름",
+      "Created": "생성일",
+      "Actions": "작업",
+      "ShareFolder": "폴더 공유",
+      "People": "멤버",
+      "Permissions": "권한",
+      "ModifyPermissions": "권한 수정",
+      "Permission": "권한",
+      "InviteeEmail": "초대한 E-Mail",
+      "Foldername": "폴더 이름",
+      "EnterEmailAddress": "E-mail 주소를 입력하세요"
+    }
+  },
+  "dialog": {
+    "warning": {
+      "CannotBeUndone": "주의: 이 동작은 취소할 수 없습니다!"
+    },
+    "ask": {
+      "DoYouWantToProceed": "계속 진행하시겠습니까?"
+    }
   }
 }
