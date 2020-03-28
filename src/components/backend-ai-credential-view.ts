@@ -1,7 +1,7 @@
 /**
  * Backend.AI-credential-view
  */
-
+import {get as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@polymer/paper-listbox/paper-listbox';
@@ -774,7 +774,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
             ${this._status === 'active' && this.use_user_list === true ? html`
-              <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">Users</wl-tab>
+              <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
             ` : html``}
             <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
@@ -787,7 +787,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                   <mwc-list-item>
                     <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
                       <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                      export CSV
+                      ${_t("credential.exportCSV")}
                     </a>
                   </mwc-list-item>
                 </mwc-menu>
@@ -796,11 +796,11 @@ export default class BackendAICredentialView extends BackendAIPage {
         </h3>
         <wl-card id="user-lists" class="admin item tab-content">
           <h4 class="horizontal flex center center-justified layout">
-            <span>Users</span>
+            <span>${_t("credential.Users")}</span>
             <span class="flex"></span>
             <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
               <wl-icon>add</wl-icon>
-              Create user
+              ${_t("credential.CreateUser")}
             </wl-button>
           </h4>
           <div>
@@ -812,11 +812,11 @@ export default class BackendAICredentialView extends BackendAIPage {
           <span class="flex"></span>
           <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
             <wl-icon>add</wl-icon>
-            Add credential
+            ${_t("credential.AddCredential")}
           </wl-button>
         </h4>
           <wl-expansion name="credential-group" open role="list">
-            <h4 slot="title">Active</h4>
+            <h4 slot="title">${_t("credential.Active")}</h4>
             <span slot="description">
             </span>
             <div>
@@ -824,7 +824,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             </div>
           </wl-expansion>
           <wl-expansion name="credential-group" role="list">
-            <h4 slot="title">Inactive</h4>
+            <h4 slot="title">${_t("credential.Inactive")}</h4>
             <div>
               <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
             </div>
@@ -832,11 +832,11 @@ export default class BackendAICredentialView extends BackendAIPage {
         </wl-card>
         <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
           <h4 class="horizontal flex center center-justified layout">
-            <span>Policy groups</span>
+            <span>${_t("credential.PolicyGroup")}</span>
             <span class="flex"></span>
             <wl-button class="fg green" id="add-policy" outlined @click="${this._launchResourcePolicyDialog}">
               <wl-icon>add</wl-icon>
-              Create policy
+              ${_t("credential.CreatePolicy")}
             </wl-button>
           </h4>
           <div>
@@ -848,7 +848,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
 
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span style="margin-right:15px;">Add credential</span>
+            <span style="margin-right:15px;">${_t("credential.AddCredential")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -875,7 +875,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </paper-dropdown-menu>
               </div>
               <wl-expansion name="advanced-keypair-info">
-                <span slot="title">Advanced</span>
+                <span slot="title">${_t("general.Advanced")}</span>
                 <span slot="description"></span>
                 <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
                               auto-validate .value="${this.new_access_key}">
@@ -888,7 +888,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-button class="fg blue create-button" id="create-keypair-button" outlined type="button"
               @click="${this._addKeyPair}">
                          <wl-icon>add</wl-icon>
-                         Add
+                         ${_t("general.Add")}
                          </wl-button>
             </fieldset>
           </form>
@@ -897,7 +897,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create resource policy</span>
+            <span>${_t("credential.CreateResourcePolicy")}</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -908,7 +908,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
                              validationMessage="Policy name is Required."
                              required></mwc-textfield>
-              <h4>Resource Policy</h4>
+              <h4>${_t("credential.ResourcePolicy")}</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
                     <wl-label>CPU</wl-label>
@@ -916,7 +916,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                                   @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                       <wl-label class="unlimited">
                         <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                        Unlimited
+                        ${_t("credential.Unlimited")}
                       </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
@@ -925,7 +925,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                                   @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
@@ -934,7 +934,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                                   @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin:0px 0px 0px 10px;">
@@ -943,38 +943,38 @@ export default class BackendAICredentialView extends BackendAIPage {
                                   @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
               </div>
-              <h4>Sessions</h4>
+              <h4>${_t("credential.Sessions")}</h4>
               <div class="horizontal center layout">
                 <div class="vertical left layout" style="width: 110px;">
-                    <wl-label>Container per session</wl-label>
+                    <wl-label>${_t("credential.ContainerPerSession")}</wl-label>
                     <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
                   <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
-                    <wl-label>Idle timeout (sec.)</wl-label>
+                    <wl-label>${_t("credential.IdleTimeoutSec")}</wl-label>
                     <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
                   <div class="vertical left layout" style="width: 110px;">
-                      <wl-label>Concurrent Jobs</wl-label>
+                      <wl-label>${_t("credential.ConcurrentJobs")}</wl-label>
                       <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                       <wl-label class="unlimited">
                         <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                        Unlimited
+                        ${_t("credential.Unlimited")}
                       </wl-label>
                   </div>
               </div>
-              <h4 style="margin-bottom:0px;">Folders</h4>
+              <h4 style="margin-bottom:0px;">${_t("credential.Folders")}</h4>
               <div class="horizontal center layout">
                 <div class="vertical layout" style="width: 110px;">
                 <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
@@ -990,7 +990,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                   <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                    Unlimited
+                    ${_t("credential.Unlimited")}
                 </wl-label>
                 </div>
                 <div class="vertical layout" style="width: 110px;">

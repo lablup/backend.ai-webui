@@ -145,7 +145,9 @@
     "ResourceGroup": "Resource Group",
     "AccessKey": "Access Key",
     "Folders": "Folders",
-    "SecretKey": "Secret Key"
+    "SecretKey": "Secret Key",
+    "Advanced": "Advanced",
+    "Add": "Add"
   },
   "credential": {
     "Permission": "Permission",
@@ -160,6 +162,21 @@
     "active": "active",
     "concurrentsessions": "Concurrent sessions",
     "RateLimit": "Rate Limit",
-    "for900seconds": "for 900 seconds"
+    "for900seconds": "for 900 seconds",
+    "Users": "Users",
+    "exportCSV": "export CSV",
+    "CreateUser": "Create User",
+    "AddCredential": "Add Credential",
+    "Active": "Active",
+    "Inactive": "Inactive",
+    "PolicyGroup": "Policy Group",
+    "CreatePolicy": "Create Policy",
+    "CreateResourcePolicy": "Create Resource Policy",
+    "Unlimited": "Unlimited",
+    "Sessions": "Sessions",
+    "ContainerPerSession": "Container per session",
+    "IdleTimeoutSec": "Idle timeout (sec.)",
+    "ConcurrentJobs": "Concurrent jobs",
+    "Folders": "Folders"
   }
 }

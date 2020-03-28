@@ -145,7 +145,9 @@
     "ResourceGroup": "자원 그룹",
     "AccessKey": "접근키",
     "Folders": "폴더",
-    "SecretKey": "비밀키"
+    "SecretKey": "비밀키",
+    "Advanced": "고급",
+    "Add": "추가"
   },
   "credential": {
     "Permission": "권한",
@@ -160,6 +162,21 @@
     "active": "활성",
     "concurrentsessions": "동시 세션수",
     "RateLimit": "Rate Limit",
-    "for900seconds": "(900초당)"
+    "for900seconds": "(900초당)",
+    "Users": "사용자",
+    "exportCSV": "CSV 내보내기",
+    "CreateUser": "사용자 추가",
+    "AddCredential": "자격증명 추가",
+    "Active": "활성",
+    "Inactive": "비활성",
+    "PolicyGroup": "정책 그룹",
+    "CreatePolicy": "정책 만들기",
+    "CreateResourcePolicy": "자원 정책 만들기",
+    "Unlimited": "제한 없음",
+    "Sessions": "세션",
+    "ContainerPerSession": "세션당 컨테이너 수",
+    "IdleTimeoutSec": "유휴 대기 시간 (초)",
+    "ConcurrentJobs": "동시 세션 실행 수",
+    "Folders": "폴더"
   }
 }

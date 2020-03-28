@@ -537,7 +537,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         </vaadin-grid-column>
 
         <vaadin-grid-column width="150px" resizable>
-          <template class="header">Resource Policy</template>
+          <template class="header">${_t("credential.ResourcePolicy")}</template>
           <template>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
