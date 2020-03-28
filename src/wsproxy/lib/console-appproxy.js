@@ -4,6 +4,7 @@ const WebSocket = require('ws');
 const ai = require('../../lib/backend.ai-client-node');
 const bind = require("./bindStream");
 const htmldeco = require('./htmldeco');
+const HttpsProxyAgent = require('https-proxy-agent');
 /*
 const i18next = require('i18next');
 const i18next_backend = require('i18next-sync-fs-backend');
@@ -68,8 +69,8 @@ module.exports = (proxy = class Proxy {
     url = url.replace(/^http/, "ws");
 
     this.tcpServer.on('listening', () => {
-      logger.info(`Starting an app-proxy server with ${this.ip}:${this.port}...`);
       this.port = this.tcpServer.address().port;
+      logger.info(`Starting an app-proxy server with ${this.ip}:${this.port}...`);
       this._running = true;
       this._resolve(true);
       this._resolve = undefined;
@@ -80,6 +81,7 @@ module.exports = (proxy = class Proxy {
     });
 
     this.tcpServer.on("connection", (tcpConn) => {
+      logger.info(`App-proxy server connection established: ${this.ip}:${this.port}.`);
       tcpConn.setTimeout(30000);
       tcpConn.on('timeout', () => {
         logger.debug(`Socket timeout`);
@@ -92,11 +94,24 @@ module.exports = (proxy = class Proxy {
       tcpConn.on("close", function() {
         logger.debug(`TCPCONN CLOSED`);
       });
-      let optionalHeaders = hdrs();
-      let ws = new WebSocket(url, {
-        headers: optionalHeaders,
-        perMessageDeflate: false
-      });
+
+      logger.info('destination: ' + url)
+      const optionalHeaders = hdrs();
+      let ws;
+      if (this._env.ext_proxy_url) {
+        logger.info('- try using external http proxy: ' + this._env.ext_proxy_url);
+        const agent = new HttpsProxyAgent(this._env.ext_proxy_url);
+        ws = new WebSocket(url, {
+          agent: agent,
+          headers: optionalHeaders,
+          perMessageDeflate: false
+        });
+      } else {
+        ws = new WebSocket(url, {
+          headers: optionalHeaders,
+          perMessageDeflate: false
+        });
+      }
       ws.on('open', () => {
         logger.debug(`ws bind`);
         const wsStream = WebSocket.createWebSocketStream(ws);

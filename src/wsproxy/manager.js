@@ -8,6 +8,12 @@ const ai = require('../lib/backend.ai-client-node'),
   SGateway = require("./gateway/consoleproxy");
 const htmldeco = require('./lib/htmldeco');
 
+// extHttpProxy is an endpoint of a http proxy server in a network.
+// Can be set when a user in a company network needs to access the web socket
+// externally through the http proxy provided by the company.
+// ex) http://10.20.30.40:3128
+const extHttpProxyURL = process.env.EXT_HTTP_PROXY;
+
 class Manager extends EventEmitter {
   constructor(listen_ip, proxyBaseHost, proxyBasePort) {
     super();
@@ -22,12 +28,13 @@ class Manager extends EventEmitter {
     } else {
       this.proxyBaseHost = proxyBaseHost;
     }
-
     if (proxyBasePort !== undefined) {
       this.port = proxyBasePort;
     } else {
       this.port = 0; //with 0, OS will assign the port
     }
+
+    this.extHttpProxyURL = extHttpProxyURL;
     this.app = express();
     this.aiclient = undefined;
     this.proxies = {};
@@ -50,7 +57,8 @@ class Manager extends EventEmitter {
     this.app.put('/conf', (req, res) => {
       let cf = {
         "created": Date.now(),
-        "endpoint": req.body.endpoint
+        "endpoint": req.body.endpoint,
+        "ext_proxy_url": this.extHttpProxyURL
       };
       // Receive API version from console. Initialization timing is different so we use API information from requester.
       if (req.body.api_version) {
