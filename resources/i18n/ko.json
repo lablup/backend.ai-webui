@@ -46,7 +46,7 @@
     "ResourceStatistics": "자원 상태",
     "CoresReserved": "코어 예약",
     "reserved": "예약",
-    "FractionalGPUScalingEnabled": "Fractional GPU 스케일링 사용중",
+    "FractionalGPUScalingEnabled": "Fractional GPU 가상화 사용중",
     "Reserved": "예약중",
     "Used": "사용중",
     "Total": "전체",
