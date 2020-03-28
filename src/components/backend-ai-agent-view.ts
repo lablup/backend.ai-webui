@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {get as _t} from "lit-translate";
 import {customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
@@ -72,10 +73,10 @@ export default class BackendAIAgentView extends BackendAIPage {
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">Connected</wl-tab>
-            <wl-tab value="terminated-lists" @click="${(e) => this._showTab(e.target)}">Terminated</wl-tab>
+            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("agent.Connected")}</wl-tab>
+            <wl-tab value="terminated-lists" @click="${(e) => this._showTab(e.target)}">${_t("agent.Terminated")}</wl-tab>
             <wl-tab value="maintenance-lists" disabled>Maintaining</wl-tab>
-            <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>Resource Group</wl-tab>
+            <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>${_t("general.ResourceGroup")}</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
         </h3>

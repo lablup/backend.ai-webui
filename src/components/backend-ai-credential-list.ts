@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {get as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import {render} from 'lit-html';
@@ -503,7 +504,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Access Key</template>
+          <template class="header">${_t("general.AccessKey")}</template>
           <template>
             <div class="monospace">[[item.access_key]]</div>
           </template>
@@ -511,7 +512,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="is_admin">Permission</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="is_admin">${_t("credential.Permission")}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout horizontal center flex">
@@ -525,7 +526,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="created_at">Key age</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="created_at">${_t("credential.KeyAge")}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout vertical">
@@ -542,7 +543,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green">developer_board</wl-icon>
                 <span>[[item.total_resource_slots.cpu]]</span>
-                <span class="indicator">cores</span>
+                <span class="indicator">${_t("general.cores")}</span>
               </div>
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green">memory</wl-icon>
@@ -575,14 +576,14 @@ export default class BackendAICredentialList extends BackendAIPage {
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green">folder</wl-icon>
                 <span>[[item.max_vfolder_count]]</span>
-                <span class="indicator">Folders</span>
+                <span class="indicator">${_t("general.Folders")}</span>
               </div>
             </div>
           </template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Allocation</template>
+          <template class="header">${_t("credential.Allocation")}</template>
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">
@@ -629,50 +630,50 @@ export default class BackendAICredentialList extends BackendAIPage {
           </h3>
           <div class="horizontal layout">
             <div style="width:335px;">
-              <h4>Information</h4>
+              <h4>${_t("credential.Information")}</h4>
               <div role="listbox" style="margin: 0;">
                 <vaadin-item>
                   <div><strong>User ID</strong></div>
                   <div secondary>${this.keypairInfo.user_id}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Access Key</strong></div>
+                  <div><strong>${_t("general.AccessKey")}</strong></div>
                   <div secondary>${this.keypairInfo.access_key}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Secret Key</strong></div>
+                  <div><strong>${_t("general.SecretKey")}</strong></div>
                   <div secondary>${this.keypairInfo.secret_key}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Created</strong></div>
+                  <div><strong>${_t("credential.Created")}</strong></div>
                   <div secondary>${this.keypairInfo.created_at}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Last used</strong></div>
+                  <div><strong>${_t("credential.Lastused")}</strong></div>
                   <div secondary>${this.keypairInfo.last_used}</div>
                 </vaadin-item>
               </div>
             </div>
             <div style="width:335px;">
-              <h4>Allocation</h4>
+              <h4>${_t("credential.Allocation")}</h4>
               <div role="listbox" style="margin: 0;">
                 <vaadin-item>
-                  <div><strong>Resource Policy</strong></div>
+                  <div><strong>${_t("credential.ResourcePolicy")}</strong></div>
                   <div secondary>${this.keypairInfo.resource_policy}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Number of queries</strong></div>
+                  <div><strong>${_t("credential.NumberOfQueries")}</strong></div>
                   <div secondary>${this.keypairInfo.num_queries}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Concurrent Sessions</strong></div>
-                  <div secondary>${this.keypairInfo.concurrency_used} active / ${this.keypairInfo.concurrency_used} concurrent
-                    sessions.
+                  <div><strong>${_t("credential.ConcurrentSessions")}</strong></div>
+                  <div secondary>${this.keypairInfo.concurrency_used} ${_t("credential.active")} /
+                    ${this.keypairInfo.concurrency_used} ${_t("credential.concurrentsessions")}.
                   </div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Rate Limit</strong></div>
-                  <div secondary>${this.keypairInfo.rate_limit} for 900 seconds.</div>
+                  <div><strong>${_t("credential.RateLimit")}</strong></div>
+                  <div secondary>${this.keypairInfo.rate_limit} ${_t("credential.for900seconds")}.</div>
                 </vaadin-item>
               </div>
             </div>

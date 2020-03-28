@@ -123,10 +123,40 @@
     "ExportSessionListToCSVFile": "Export Session list to CSV File",
     "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
     "ExportCSVFile": "Export CSV File",
-    "ResourceGroup": "ResourceGroup"
+    "ResourceGroup": "Resource Group"
   },
   "button": {
     "Cancel": "Cancel",
     "Okay": "Okay"
+  },
+  "agent": {
+    "Endpoint": "Endpoint",
+    "Region": "Region",
+    "Starts": "Starts",
+    "Resources": "Resources",
+    "Connected": "Connected",
+    "Terminated": "Terminated"
+  },
+  "general": {
+    "cores": "cores",
+    "ResourceGroup": "Resource Group",
+    "AccessKey": "Access Key",
+    "Folders": "Folders",
+    "SecretKey": "Secret Key"
+  },
+  "credential": {
+    "Permission": "Permission",
+    "KeyAge": "Key Age",
+    "Allocation": "Allocation",
+    "Information": "Information",
+    "Created": "Created",
+    "Lastused": "Last used",
+    "ResourcePolicy": "Resource Policy",
+    "NumberOfQueries": "Number Of Queries",
+    "ConcurrentSessions": "Concurrent Sessions",
+    "active": "active",
+    "concurrentsessions": "Concurrent sessions",
+    "RateLimit": "Rate Limit",
+    "for900seconds": "for 900 seconds"
   }
 }

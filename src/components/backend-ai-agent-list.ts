@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {get as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -369,22 +370,22 @@ export default class BackendAIAgentList extends BackendAIPage {
       <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="80px">
-          <template class="header">Endpoint</template>
+          <template class="header">${_t("agent.Endpoint")}</template>
           <template>
             <div>[[item.id]]</div>
             <div class="indicator monospace">[[item.addr]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
-          <template class="header">Region</template>
+          <template class="header">${_t("agent.Region")}</template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable .renderer="${this._boundContactDateRenderer}">
-          <template class="header">Starts</template>
+          <template class="header">${_t("agent.Starts")}</template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Resources</template>
+          <template class="header">${_t("agent.Resources")}</template>
           <template>
             <div class="layout flex">
               <div class="layout horizontal center flex">
@@ -392,7 +393,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 <div class="layout vertical start" style="padding-left:5px;">
                   <div class="layout horizontal start">
                     <span>[[ item.cpu_slots ]]</span>
-                    <span class="indicator">cores</span>
+                    <span class="indicator">${_t("general.cores")}</span>
                   </div>
                   <div class="layout horizontal start">
                     <span>[[item.current_cpu_percent]]</span>
