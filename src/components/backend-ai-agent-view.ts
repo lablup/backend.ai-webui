@@ -75,7 +75,7 @@ export default class BackendAIAgentView extends BackendAIPage {
           <wl-tab-group>
             <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("agent.Connected")}</wl-tab>
             <wl-tab value="terminated-lists" @click="${(e) => this._showTab(e.target)}">${_t("agent.Terminated")}</wl-tab>
-            <wl-tab value="maintenance-lists" disabled>Maintaining</wl-tab>
+            <wl-tab value="maintenance-lists" disabled>${_t("agent.Maintaining")}</wl-tab>
             <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>${_t("general.ResourceGroup")}</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>

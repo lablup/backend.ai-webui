@@ -135,7 +135,10 @@
     "Starts": "Starts",
     "Resources": "Resources",
     "Connected": "Connected",
-    "Terminated": "Terminated"
+    "Terminated": "Terminated",
+    "Maintaining": "Maintaining",
+    "Status": "Status",
+    "Control": "Control"
   },
   "general": {
     "cores": "cores",

@@ -94,7 +94,7 @@
       "SharedMemory": "공유 메모리",
       "Ownership": "소유자",
       "SetSessionOwner": "세션 소유자 설정",
-      "OwnerAccessKey": "소유자 액세스키",
+      "OwnerAccessKey": "소유자 접근키",
       "OwnerGroup": "소유자 그룹",
       "OwnerResourceGroup": "소유자 리소스 그룹",
       "LaunchSessionWithAccessKey": "지정한 키로 세션 시작",
@@ -130,33 +130,36 @@
     "Okay": "승인"
   },
   "agent": {
-    "Endpoint": "Endpoint",
-    "Region": "Region",
-    "Starts": "Starts",
-    "Resources": "Resources",
-    "Connected": "Connected",
-    "Terminated": "Terminated"
+    "Endpoint": "엔드포인트",
+    "Region": "지역",
+    "Starts": "시작",
+    "Resources": "자원",
+    "Connected": "연결중",
+    "Terminated": "종료됨",
+    "Maintaining": "보수중",
+    "Status": "상태",
+    "Control": "제어"
   },
   "general": {
-    "cores": "cores",
-    "ResourceGroup": "ResourceGroup",
-    "AccessKey": "AccessKey",
-    "Folders": "Folders",
-    "SecretKey": "SecretKey"
+    "cores": "코어",
+    "ResourceGroup": "자원 그룹",
+    "AccessKey": "접근키",
+    "Folders": "폴더",
+    "SecretKey": "비밀키"
   },
   "credential": {
-    "Permission": "Permission",
-    "KeyAge": "KeyAge",
-    "Allocation": "Allocation",
-    "Information": "Information",
-    "Created": "Created",
-    "Lastused": "Lastused",
-    "ResourcePolicy": "ResourcePolicy",
-    "NumberOfQueries": "NumberOfQueries",
-    "ConcurrentSessions": "ConcurrentSessions",
-    "active": "active",
-    "concurrentsessions": "concurrentsessions",
-    "RateLimit": "RateLimit",
-    "for900seconds": "for900seconds"
+    "Permission": "권한",
+    "KeyAge": "키 수명",
+    "Allocation": "할당",
+    "Information": "정보",
+    "Created": "생성일",
+    "Lastused": "최종 사용일",
+    "ResourcePolicy": "자원 정책",
+    "NumberOfQueries": "쿼리 수",
+    "ConcurrentSessions": "동시 세션수",
+    "active": "활성",
+    "concurrentsessions": "동시 세션수",
+    "RateLimit": "Rate Limit",
+    "for900seconds": "(900초당)"
   }
 }
