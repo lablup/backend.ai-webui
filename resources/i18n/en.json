@@ -186,5 +186,21 @@
     "Max#": "Max. #",
     "Create": "Create",
     "ExportCSVFile": "Export CSV File"
+  },
+  "data": {
+    "Folders": "Folders",
+    "AutomountFolders": "Automount Folders",
+    "SharedData": "Shared Data",
+    "Models": "Models",
+    "NewFolder": "New Folder",
+    "CreateANewStorageFolder": "Create a new storage folder",
+    "Group": "Group",
+    "DialogFolderStartingWithDotAutomount": "Folders starting with a .(dot) are automatically mounted when a new session is started.",
+    "User": "User",
+    "Create": "Create",
+    "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
+    "Host": "Host",
+    "Foldername": "Folder name",
+    "Type": "Type"
   }
 }

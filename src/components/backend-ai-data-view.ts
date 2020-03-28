@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _t} from "lit-translate";
+import {get as _t, translate} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -172,59 +172,59 @@ export default class BackendAIData extends BackendAIPage {
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="horizontal center flex layout tab">
           <wl-tab-group>
-            <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">Folders</wl-tab>
-            <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">Automount Folders</wl-tab>
-            <wl-tab value="shared-folder" disabled>Shared Data</wl-tab>
-            <wl-tab value="model" disabled>Models</wl-tab>
+            <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
+            <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
+            <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
+            <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
           <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
             <wl-icon>add</wl-icon>
-            New folder
+            ${_t("data.NewFolder")}
           </wl-button>
         </h3>
         <div id="general-folder-lists" class="tab-content">
           <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
         <div id="automount-folder-lists" class="tab-content" style="display:none;">
-        <p>Folders starting with a <span class="monospace">.</span>(dot) are automatically mounted when a new session is started.</p>
+          <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
           <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
       </wl-card>
       <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered">
           <h3 class="horizontal center layout">
-            <span>Create a new storage folder</span>
+            <span>${_t("data.CreateANewStorageFolder")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
           <section>
-            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-.]*"
-            auto-validate required validationMessage="Allows letters, numbers and -_."></mwc-textfield>
+            <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
+            auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
             <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-host" label="Host">
+              <paper-dropdown-menu id="add-folder-host" label="${_t("data.Host")}">
                 <paper-listbox slot="dropdown-content" selected="0">
                 ${this.vhosts.map(item => html`
                   <paper-item id="${item}" label="${item}">${item}</paper-item>
                 `)}
                 </paper-listbox>
               </paper-dropdown-menu>
-              <paper-dropdown-menu id="add-folder-type" label="Type">
+              <paper-dropdown-menu id="add-folder-type" label="${_t("data.Type")}">
                 <paper-listbox slot="dropdown-content" selected="0">
                 ${(this.allowed_folder_type as String[]).includes('user') ? html`
-                  <paper-item label="user">User</paper-item>
+                  <paper-item label="user">${_t("data.User")}</paper-item>
                 ` : html``}
                 ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-                  <paper-item label="group">Group</paper-item>
+                  <paper-item label="group">${_t("data.Group")}</paper-item>
                 ` : html``}
                 </paper-listbox>
               </paper-dropdown-menu>
             </div>
             ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
             <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-group" label="Group">
+              <paper-dropdown-menu id="add-folder-group" label=" ${_t("data.Group")}">
                 <paper-listbox slot="dropdown-content" selected="0">
                 ${(this.allowedGroups as any).map(item => html`
                   <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
@@ -234,13 +234,12 @@ export default class BackendAIData extends BackendAIPage {
             </div>
             ` : html``}
             <div style="font-size:11px;">
-              Folders starting with a <span class="monospace">.</span>(dot) are automatically mounted
-              <br/>when a new session is started.
+              ${_t("data.DialogFolderStartingWithDotAutomount")}
             </div>
             <br/>
             <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
               <wl-icon>rowing</wl-icon>
-              Create
+               ${_t("data.Create")}
             </wl-button>
           </section>
         </wl-card>
