@@ -100,14 +100,14 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
 ## Branches
 
  * master : Development branch
- * production : Latest release branch
+ * release : Latest release branch
  * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
  * tags/v[versions] : version tags. Each tag represents release versions.
  
 ## Development Guide
 
 Backend.AI console is built with  
- * `litelement` / `Polymer 3 `as webcomponent framework
+ * `lit-element` / `Polymer 3 `as webcomponent framework
  * `npm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
@@ -333,4 +333,34 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 ```
 $ make dep # Compile with app dependencies
 $ npm run electron:d  # OR, ./node_modules/electron/cli.js . 
+```
+
+### Localization
+Locale resources are JSON files located in `resources/i18n`.
+
+#### Extracting i18n resources
+ 
+Run
+```
+make i18n
+```
+to update / extract i18n resources.
+
+### Adding i18n strings
+
+Use `_t` for i18n resource handler.
+#### Example
+
+In webcomponent:
+```
+<div>${_t('general.helloworld')}</div>
+```
+
+In i18n resource (en.json):
+```
+{
+   'general':{
+      'helloworld': 'Hello World'
+   }
+}
 ```
