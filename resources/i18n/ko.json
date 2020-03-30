@@ -385,6 +385,21 @@
     "RegistryType": "레지스트리 유형",
     "ProjectName": "프로젝트 이름",
     "ProjectNameIsRequired": "프로젝트 이름이 필요합니다.",
-    "TypeRegistryNameToDelete": "__NOT_TRANSLATED__"
+    "TypeRegistryNameToDelete": "삭제 확인을 위해 레지스트리 이름을 입력하세요."
+  },
+  "resourceGroup": {
+    "ResourceGroups": "자원 그룹",
+    "Name": "이름",
+    "Description": "설명",
+    "ActiveStatus": "활성 상태",
+    "Driver": "드라이버",
+    "DriverOptions": "드라이버 옵션",
+    "Scheduler": "스케줄",
+    "SchedulerOptions": "스케줄러 옵션",
+    "CreateResourceGroup": "자원 그룹 추가",
+    "SelectDomain": "도메인 선택",
+    "ModifyResourceGroup": "자원 그룹 수정",
+    "TypeResourceGroupNameToDelete": "_삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
+    "ResourceGroupName": "자원 그룹 이름"
   }
 }

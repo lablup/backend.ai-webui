@@ -388,5 +388,20 @@
     "ProjectName": "Project Name",
     "ProjectNameIsRequired": "Project name is required",
     "TypeRegistryNameToDelete": "Type registry hostname to delete"
+  },
+  "resourceGroup": {
+    "ResourceGroups": "Resource Groups",
+    "Name": "Name",
+    "Description": "Description",
+    "ActiveStatus": "Active Status",
+    "Driver": "Driver",
+    "DriverOptions": "Driver Options",
+    "Scheduler": "Scheduler",
+    "SchedulerOptions": "Scheduler Options",
+    "CreateResourceGroup": "Create Resource Group",
+    "SelectDomain": "Select Domain",
+    "ModifyResourceGroup": "Modify Resource Group",
+    "TypeResourceGroupNameToDelete": "Type resource group name to delete",
+    "ResourceGroupName": "ResourceGroupName"
   }
 }
