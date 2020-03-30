@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {store} from '../store';
@@ -141,8 +142,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       <wl-card class="item">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            <wl-tab value="general" checked @click="${(e) => this._showTab(e.target)}" >General</wl-tab>
-            <wl-tab value="logs" @click="${(e) => this._showTab(e.target)}">Logs</wl-tab>
+            <wl-tab value="general" checked @click="${(e) => this._showTab(e.target)}" >${_t("usersettings.General")}</wl-tab>
+            <wl-tab value="logs" @click="${(e) => this._showTab(e.target)}">${_t("usersettings.Logs")}</wl-tab>
           </wl-tab-group>
         </h3>
         <wl-card id="general" class="item tab-content">
@@ -150,30 +151,30 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         </wl-card>
         <wl-card id="logs" class="item tab-content" style="display:none;">
           <h3 class="horizontal center layout">
-            <span>Log messages</span>
-            <span class="mini" style="font-size:13px;padding-left:15px;">(Up to 5000 recent logs)</span>
+            <span>${_t("logs.LogMessages")}</span>
+            <span class="mini" style="font-size:13px;padding-left:15px;">${_t("logs.UpTo5000Logs")}</span>
             <span class="flex"></span>
             <wl-button class="fg cyan" inverted outlined @click="${() => this._refreshLogs()}" style="margin: 0px 10px;">
               <wl-icon>refresh</wl-icon>
-              refresh
+              ${_t("button.Refresh")}
             </wl-button>
             <wl-button class="fg teal" inverted outlined @click="${() => this._showClearLogsDialog()}" style="margin: 0px 10px;">
               <wl-icon>delete</wl-icon>
-              clear logs
+               ${_t("button.ClearLogs")}
           </wl-button>
           </h3>
           <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
         </wl-card>
       </wl-card>
       <wl-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling style="border-bottom:none;">
-        <div slot="header" style="border-bottom:none;">Are you sure you want to delete all of the log messages ?</div>
+        <div slot="header" style="border-bottom:none;">${_t("dialog.warning.LogDeletion")} ${_t("dialog.warning.CannotBeUndone")}</div>
         <div slot="footer" style="border-top:none;">
           <wl-button inverted flat id="discard-removal"
                      style="margin: 0 5px;"
-                     @click="${() => this._hideClearLogsDialog()}">No</wl-button>
+                     @click="${() => this._hideClearLogsDialog()}">${_t("button.No")}</wl-button>
           <wl-button id="apply-removal" class="button"
                      style="margin: 0 5px;"
-                     @click="${() => this._removeLogMessage()}">Yes</wl-button>
+                     @click="${() => this._removeLogMessage()}">${_t("button.Yes")}</wl-button>
         </div>
       </wl-dialog>
     `;
