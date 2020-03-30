@@ -94,6 +94,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
   @property({type: Object}) options = Object();
+  @property({type: Array}) supportLanguageCodes = ["en", "ko"];
 
   constructor() {
     super();
@@ -165,7 +166,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     document.addEventListener('backend-ai-connected', this.refreshPage.bind(this));
     this._readUserSettings();
     //let lang = this._readUserSetting("language", "en");
-    if (this.options['language'] === "default" && ["en", "ko"].includes(globalThis.navigator.language)) { // Language is not set and
+    if (this.options['language'] === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
       this.options['language'] = globalThis.navigator.language;
     }
     await setLanguage(this.options['language']);
