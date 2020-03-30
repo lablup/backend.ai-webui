@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -98,14 +99,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return html`
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
-          <span>General</span>
+          <span>${_t("settings.General")}</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Register new images from repository</div>
-              <div class="description">Register new environments from repository.
+              <div>${_t("settings.RegisterNewImagesFromRepo")}</div>
+              <div class="description">${_t("settings.DescRegisterNewImagesFromRepo")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -114,8 +115,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Automatic image update from repository</div>
-              <div class="description">When new image comes out, update current image automatically. Please turn off when you preserve the current environment without updating.
+              <div>${_t("settings.AutomaticImageUpdateFromRepo")}</div>
+              <div class="description">${_tr("settings.DescAutomaticImageUpdateFromRepo")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -124,8 +125,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Use Backend.AI CLI on GUI</div>
-              <div class="description">Provide Backend.AI CLI on GUI app/web.<br/>Requires Backend.AI CLI image.
+              <div>${_t("settings.UseCLIonGUI")}</div>
+              <div class="description">${_tr("settings.DescUseCLIonGUI")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -134,8 +135,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Use Backend.AI GUI on Web</div>
-              <div class="description">Provide Backend.AI GUI as a web service.<br/>Requires Backend.AI Console image.
+              <div>${_t("settings.UseGUIonWeb")}</div>
+              <div class="description">${_tr("settings.DescUseGUIonWeb")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -144,18 +145,17 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </div>
         <div class="horizontal wrap layout" style="background-color:#FFFBE7;padding: 5px 15px;">
-          Note: The settings below are automatically applied depending on the installation environment and status.
+          ${_t("settings.NoteAboutFixedSetup")}
         </div>
         <h3 class="horizontal center layout">
-            <span>Scaling</span>
+            <span>${_t("settings.Scaling")}</span>
             <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Allow agent-side registration</div>
-              <div class="description">Allow agent to register itself to manager.<br/>Use only if Backend.AI cluster is
-                  managed on secure location.
+              <div>${_t("settings.AllowAgentSideRegistration")}</div>
+              <div class="description">${_tr("settings.DescAllowAgentSideRegistration")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -164,15 +164,15 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </div>
         <h3 class="horizontal center layout">
-            <span>Plugins</span>
+            <span>${_t("settings.Plugins")}</span>
             <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>CUDA GPU support</div>
-              <div class="description">NVidia CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.
-              ${this.options['cuda_fgpu'] ? html`<br />Disabled because system uses Fractional GPU plugin` : html``}
+              <div>${_t("settings.CUDAGPUsupport")}</div>
+              <div class="description">${_tr("settings.DescCUDAGPUsupport")}
+              ${this.options['cuda_fgpu'] ? html`<br />${_t("settings.CUDAGPUdisabledByFGPUsupport")}` : html``}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -181,9 +181,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>ROCm GPU support</div>
-              <div class="description">AMD ROCm GPU support. <br/>Requires Backend.AI ROCm Plugin. <br/>
-                  Requires Backend.AI 19.12 or above.
+              <div>${_t("settings.ROCMGPUsupport")}</div>
+              <div class="description">${_tr("settings.DescROCMGPUsupport")}<br />${_t("settings.Require1912orAbove")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -192,9 +191,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc-pulldown">
-              <div>Scheduler</div>
-              <div class="description">Job scheduler.<br/>
-                  Requires Backend.AI 19.12 or above.
+              <div>${_t("settings.Scheduler")}</div>
+              <div class="description">${_t("settings.JobScheduler")}<br/>
+                  ${_t("settings.Require1912orAbove")}
               </div>
             </div>
             <div class="vertical layout setting-pulldown">
@@ -207,14 +206,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </div>
         <h3 class="horizontal center layout">
-          <span>Enterprise features</span>
+          <span>${_t("settings.EnterpriseFeatures")}</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Fractional GPU</div>
-              <div class="description">Use Fractional GPU feature with GPU virtualization. <br/>Requires Backend.AI Virtual CUDA API Layer Plugin.
+              <div>${_t("settings.FractionalGPU")}</div>
+              <div class="description">${_t("settings.DescFractionalGPU")} <br/> ${_t("settings.RequireFGPUPlugin")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -223,9 +222,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>TPU</div>
-              <div class="description">Use TPU accelerator. <br/>Requires resource nodes on Google Cloud with Cloud TPU
-                  enabled.
+              <div>${_t("settings.TPU")}</div>
+              <div class="description">${_t("settings.DescTPU")} <br/>${_t("settings.RequireTPUPlugin")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
