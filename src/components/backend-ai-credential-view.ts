@@ -1,7 +1,8 @@
 /**
  * Backend.AI-credential-view
  */
-import {translate as _t} from "lit-translate";
+
+import {translate as _t, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@polymer/paper-listbox/paper-listbox';
@@ -652,7 +653,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
     policy_info.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity) {
-        policy_info.validationMessage = "Policy name Required.";
+        policy_info.validationMessage = _text("credential.validation.PolicyName");
         return {
           valid: false,
           valueMissing: true
@@ -660,21 +661,21 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
-          policy_info.validationMessage = "Allows letters, numbers and -_.";
+          policy_info.validationMessage = _text("credential.validation.LetterNumber-_dot");
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid
           };
         }
         else if (nativeValidity.valueMissing) {
-          policy_info.validationMessage = "Policy name Required."
+          policy_info.validationMessage = _text("credential.validation.PolicyName");
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
           }
         }
         else {
-          policy_info.validationMessage = "Allows letters, numbers and -_.";
+          policy_info.validationMessage = _text("credential.validation.LetterNumber-_dot");
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid,
@@ -683,7 +684,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       } else {
         const isValid = !this.resource_policy_names.includes(value);
         if (!isValid) {
-          policy_info.validationMessage = "Policy Name Already Exists!";
+          policy_info.validationMessage = _text("credential.validation.NameAlreadyExists");
         }
         return {
           valid: isValid,

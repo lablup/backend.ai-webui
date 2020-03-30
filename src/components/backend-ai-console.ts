@@ -757,7 +757,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                              icon="account_circle"
                              @click="${() => this._toggleDropdown()}">
             </mwc-icon-button>
-            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-50 y=40>
+            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=40>
               <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
                   ${_t("console.menu.About")}

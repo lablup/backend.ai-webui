@@ -219,7 +219,12 @@
     "UserName": "User Name",
     "FullName": "Full Name",
     "Description": "Description",
-    "Days": "Days"
+    "Days": "Days",
+    "validation": {
+      "PolicyName": "Policy name Required.",
+      "LetterNumber-_dot": "Allows letters, numbers and -_.",
+      "NameAlreadyExists": "Policy Name Already Exists!"
+    }
   },
   "data": {
     "Folders": "Folders",
@@ -368,7 +373,8 @@
     "IdleTimeoutSec": "Idle timeout (sec.)",
     "ConcurrentJobs": "Concurrent Jobs",
     "Capacity": "Capacity",
-    "Folders": "Folders"
+    "Folders": "Folders",
+    "Name": "Name"
   },
   "registry": {
     "Hostname": "Hostname",

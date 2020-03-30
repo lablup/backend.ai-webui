@@ -169,7 +169,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="name">${_t("resourcePolicy.Name")}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout horizontal center flex">
