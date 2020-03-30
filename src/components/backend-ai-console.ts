@@ -168,6 +168,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     //let lang = this._readUserSetting("language", "en");
     if (this.options['language'] === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
       this.options['language'] = globalThis.navigator.language;
+    } else if (this.options['language'] === "default") {
+      this.options['language'] = "en";
     }
     await setLanguage(this.options['language']);
     this.hasLoadedStrings = true;
@@ -745,7 +747,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.03.4.200323</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.03.5.200330</small>
             </address>
           </div>
         </div>
