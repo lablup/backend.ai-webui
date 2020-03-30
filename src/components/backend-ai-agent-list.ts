@@ -445,7 +445,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="100px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("agent.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
     `;
   }

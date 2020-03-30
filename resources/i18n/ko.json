@@ -107,7 +107,6 @@
     "Terminate": "강제종료",
     "SessionInfo": "세션 정보",
     "Status": "상태",
-    "Control": "제어",
     "Configuration": "구성",
     "core": "코어",
     "Starts": "시작시간",
@@ -132,7 +131,8 @@
     "View": "보기",
     "Edit": "수정",
     "Share": "공유",
-    "SaveChanges": "변경사항 저장"
+    "SaveChanges": "변경사항 저장",
+    "Finish": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -142,8 +142,7 @@
     "Connected": "연결중",
     "Terminated": "종료됨",
     "Maintaining": "보수중",
-    "Status": "상태",
-    "Control": "제어"
+    "Status": "상태"
   },
   "general": {
     "cores": "코어",
@@ -156,7 +155,8 @@
     "E-Mail": "E-Mail",
     "Username": "사용자명",
     "Password": "패스워드",
-    "ConfirmPassword": "패스워드 (확인)"
+    "ConfirmPassword": "패스워드 (확인)",
+    "Control": "제어"
   },
   "credential": {
     "Permission": "권한",
@@ -245,6 +245,30 @@
     },
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?"
-    }
+    },
+    "ErrorOccurred": "문제가 발생했습니다"
+  },
+  "environment": {
+    "DescProblemOccurred": "설치 중 오류가 발생했습니다",
+    "DescServicePortModified": "서비스 포트 수정이 완료되었습니다.",
+    "Registry": "레지스트리",
+    "Namespace": "네임스페이스",
+    "Language": "언어",
+    "Version": "버전",
+    "Digest": "Digest",
+    "ModifyImage": "이미지 수정",
+    "ManageApps": "앱 관리",
+    "AppName": "앱 이름",
+    "Protocol": "프로토콜",
+    "Port": "포트",
+    "Action": "동작",
+    "Base": "기반",
+    "Constraint": "제약",
+    "ResourceLimit": "자원 제한",
+    "DescDownloadImage": "이미지를 다운로드하려고 합니다: ",
+    "DescSignificantDownloadTime": "다운로드에 매우 오랜 시간이 걸릴 것입니다.",
+    "Images": "이미",
+    "ResourcePresets": "자원 프리셋",
+    "Registries": "레지스트리"
   }
 }

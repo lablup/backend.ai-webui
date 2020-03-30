@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {get as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
@@ -259,7 +259,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
-      this.indicator.set(100, 'Problem occurred during installation.');
+      this.indicator.set(100, _t('environment.DescProblemOccurred'));
       this.indicator.end(1000);
     });
   }
@@ -272,7 +272,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <wl-icon class="fg green">developer_board</wl-icon>
               <span>${rowData.item.cpu_limit_min}</span> ~
               <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
-              <span class="indicator">core</span>
+              <span class="indicator">${_t("general.cores")}</span>
             </div>
           </div>
           <div class="layout horizontal center flex">
@@ -358,9 +358,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
       .then(({result}) => {
         if (result === "ok") {
-          this.notification.text = "Service port successfully modified";
+          this.notification.text = _t("environment.DescServicePortModified");
         } else {
-          this.notification.text = "Error Occurred";
+          this.notification.text = _t("dialog.ErrorOccurred");
         }
         this._getImages();
         this.requestUpdate();
@@ -379,8 +379,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         >
           <wl-button fab flat inverted
             class="fg blue controls-running"
-            on-tap="_modifyImage"
-            icon="icons:settings"
             @click=${() => {
         this.selectedIndex = rowData.index;
         this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
@@ -391,7 +389,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </wl-button>
           <wl-button fab flat inverted
             class="fg pink controls-running"
-            icon="icons:apps"
             @click=${() => {
         if (this.selectedIndex !== rowData.index) this._clearRows();
         this.selectedIndex = rowData.index;
@@ -438,7 +435,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
         <vaadin-grid-column width="80px" resizable>
           <template class="header">
-            <vaadin-grid-sorter path="registry">Registry</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="registry">${_t("environment.Registry")}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout vertical">
@@ -449,7 +446,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
         <vaadin-grid-column width="60px" resizable>
           <template class="header">
-            <vaadin-grid-sorter path="namespace">Namespace</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="namespace">${_t("environment.Namespace")}</vaadin-grid-sorter>
           </template>
           <template>
             <div>[[item.namespace]]</div>
@@ -457,7 +454,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="lang">Language</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="lang">${_t("environment.Language")}</vaadin-grid-sorter>
           </template>
           <template>
             <div>[[item.lang]]</div>
@@ -465,14 +462,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" resizable>
           <template class="header">
-            <vaadin-grid-sorter path="baseversion">Version</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="baseversion">${_t("environment.Version")}</vaadin-grid-sorter>
           </template>
           <template>
             <div>[[item.baseversion]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="60px" resizable>
-          <template class="header">Base</template>
+          <template class="header">${_t("environment.Base")}</template>
           <template>
             <template is="dom-repeat" items="[[ item.baseimage ]]">
               <lablup-shields app="" color="blue" description="[[item]]"></lablup-shields>
@@ -480,7 +477,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="50px" resizable>
-          <template class="header">Constraint</template>
+          <template class="header">${_t("environment.Constraint")}</template>
           <template>
             <template is="dom-if" if="[[item.additional_req]]">
               <lablup-shields app="" color="green" description="[[item.additional_req]]"></lablup-shields>
@@ -489,7 +486,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="150px" flex-grow="0" resizable>
           <template class="header">
-            Digest
+            ${_t("environment.Digest")}
           </template>
           <template>
             <div class="layout vertical">
@@ -498,15 +495,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="150px" flex-grow="0" resizable header="Resource Limit" .renderer="${this._boundRequirementsRenderer}">
+        <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t("environment.ResourceLimit")}" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable header="Control" .renderer=${this._boundControlsRenderer}>
+        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro">
           <h3 class="horizontal center layout">
-            <span>Modify Image</span>
+            <span>${_t("environment.ModifyImage")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -574,7 +571,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 @click=${this.modifyImage}
               >
                 <wl-icon>check</wl-icon>
-                Save Changes
+                ${_t("button.SaveChanges")}
               </wl-button>
             </fieldset>
           </form>
@@ -583,7 +580,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       <wl-dialog id="modify-app-dialog" fixed backdrop blockscrolling>
         <div slot="header" class="gutterBottom">
           <div class="horizontal center layout">
-            <span style="font-family: Quicksand, Roboto; font-size: 20px;">Manage Apps</span>
+            <span style="font-family: Quicksand, Roboto; font-size: 20px;">${_t("environment.ManageApps")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${e => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -593,10 +590,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </div>
         <div slot="content" id="modify-app-container" class="container">
           <div class="row header">
-            <div> App Name </div>
-            <div> Protocol </div>
-            <div> Port </div>
-            <div> Action </div>
+            <div> ${_t("environment.AppName")} </div>
+            <div> ${_t("environment.Protocol")} </div>
+            <div> ${_t("environment.Port")} </div>
+            <div> ${_t("environment.Action")} </div>
           </div>
           ${this.servicePorts.map((item, index) => html`
           <div class="row">
@@ -617,7 +614,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               class="fg pink"
               @click=${e => this._removeRow(e)}
             >
-              <wl-icon> remove </wl-icon>
+              <wl-icon>remove</wl-icon>
             </wl-button>
           </div>
           `)}
@@ -643,25 +640,25 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             @click=${this.modifyServicePort}
           >
             <wl-icon>check</wl-icon>
-            Finish
+            ${_t("button.Finish")}
           </wl-button>
         </div>
       </wl-dialog>
       <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling persistent>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
-            <p>You are about to install the image <span style="color:blue;">${this.installImageName}</span>.</p>
-            <p>This process requires significant download time. Do you want to proceed?</p>
+            <p>${_t("environment.DescDownloadImage")} <span style="color:blue;">${this.installImageName}</span></p>
+            <p>${_t("environment.DescSignificantDownloadTime")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer">
             <wl-button class="cancel" inverted flat
                 @click="${(e) => {
-                  this._hideDialog(e)
-                  this._uncheckSelectedRow();
-                }}">
-              Cancel
+      this._hideDialog(e)
+      this._uncheckSelectedRow();
+    }}">
+              ${_t("button.Cancel")}
             </wl-button>
-            <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>
+            <wl-button class="ok" @click="${() => this._installImage()}">${_t("button.Okay")}</wl-button>
          </div>
       </wl-dialog>
     `;

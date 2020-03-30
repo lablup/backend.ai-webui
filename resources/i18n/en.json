@@ -132,7 +132,8 @@
     "View": "View",
     "Edit": "Edit",
     "Share": "Share",
-    "SaveChanges": "SaveChanges"
+    "SaveChanges": "Save Changes",
+    "Finish": "Finish"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -142,8 +143,7 @@
     "Connected": "Connected",
     "Terminated": "Terminated",
     "Maintaining": "Maintaining",
-    "Status": "Status",
-    "Control": "Control"
+    "Status": "Status"
   },
   "general": {
     "cores": "cores",
@@ -157,7 +157,8 @@
     "Username": "Username",
     "Password": "Password",
     "ConfirmPassword": "Confirm Password",
-    "Create": "Create"
+    "Create": "Create",
+    "Control": "Control"
   },
   "credential": {
     "Permission": "Permission",
@@ -246,6 +247,30 @@
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"
-    }
+    },
+    "ErrorOccurred": "Error Occurred"
+  },
+  "environment": {
+    "DescProblemOccurred": "Problem occurred during installation",
+    "DescServicePortModified": "Service port successfully modified",
+    "Registry": "Registry",
+    "Namespace": "Namespace",
+    "Language": "Language",
+    "Version": "Version",
+    "Digest": "Digest",
+    "ModifyImage": "Modify Image",
+    "ManageApps": "Manage Apps",
+    "AppName": "App Name",
+    "Protocol": "Protocol",
+    "Port": "Port",
+    "Action": "Action",
+    "Base": "Base",
+    "Constraint": "Constraint",
+    "ResourceLimit": "Resource Limit",
+    "DescDownloadImage": "You are about to install the image: ",
+    "DescSignificantDownloadTime": "This process requires significant download time.",
+    "Images": "Images",
+    "ResourcePresets": "Resource Presets",
+    "Registries": "Registries"
   }
 }

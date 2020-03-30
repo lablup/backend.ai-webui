@@ -1321,7 +1321,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="90px" flex-grow="0" header="${_t("session.Status")}" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("session.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="${_t("session.Configuration")}" resizable>
           <template>
             <template is="dom-if" if="[[item.scaling_group]]">
