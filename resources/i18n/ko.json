@@ -116,7 +116,6 @@
     "ConnectionInformation": "연결 정보",
     "VNCconnection": "VNC 연결",
     "UseYourFavoriteSSHApp": "연결을 위해 선호하는 SSH/SFTP 앱을 사용하세요.",
-    "LetsDouble-Check": "한 번 더 확인합시다.",
     "CheckAgainDialog": "이 선택은 취소할 수 없습니다. 정말 진행하시겠습니까?",
     "TerminatingSessionDialog": "여러 세션을 동시에 종료하려고 합니다.",
     "ExportSessionListToCSVFile": "세션 리스트를 CSV로 내보내기",
@@ -132,7 +131,8 @@
     "Edit": "수정",
     "Share": "공유",
     "SaveChanges": "변경사항 저장",
-    "Finish": "__NOT_TRANSLATED__"
+    "Finish": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -246,7 +246,10 @@
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?"
     },
-    "ErrorOccurred": "문제가 발생했습니다"
+    "ErrorOccurred": "문제가 발생했습니다",
+    "title": {
+      "LetsDouble-Check": "한 번 더 확인합시다"
+    }
   },
   "environment": {
     "DescProblemOccurred": "설치 중 오류가 발생했습니다",
@@ -270,5 +273,15 @@
     "Images": "이미",
     "ResourcePresets": "자원 프리셋",
     "Registries": "레지스트리"
+  },
+  "resourcePreset": {
+    "ResourcePresets": "자원 프리셋",
+    "CreatePreset": "프리셋 생성",
+    "Name": "이름",
+    "Resources": "자원",
+    "ModifyResourcePreset": "자원 프리셋 수정",
+    "ResourcePreset": "자원 프리셋",
+    "CreateResourcePreset": "자원 프리셋 생성",
+    "PresetName": "자원 프리셋 이름"
   }
 }

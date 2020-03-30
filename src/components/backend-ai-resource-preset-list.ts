@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {get as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -137,7 +138,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">developer_board</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
-            <span class="indicator">cores</span>
+            <span class="indicator">${_t("general.cores")}</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">memory</wl-icon>
@@ -206,11 +207,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
     return html`
       <wl-card>
         <h4 class="horizontal flex center center-justified layout">
-          <span>Resource Presets</span>
+          <span>${_t("resourcePreset.ResourcePresets")}</span>
           <span class="flex"></span>
           <wl-button class="fg orange" id="add-resource-preset" outlined @click="${e => this._launchPresetAddDialog(e)}">
             <wl-icon>add</wl-icon>
-            Create Preset
+            ${_t("resourcePreset.CreatePreset")}
           </wl-button>
         </h4>
         <div>
@@ -220,7 +221,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
             <vaadin-grid-column resizable>
               <template class="header">
-                <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
+                <vaadin-grid-sorter path="name">${_t("resourcePreset.Name")}</vaadin-grid-sorter>
               </template>
               <template>
                 <div class="layout horizontal center flex">
@@ -229,10 +230,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
               </template>
             </vaadin-grid-column>
 
-            <vaadin-grid-column width="150px" resizable header="Resources" .renderer="${this._boundResourceRenderer}">
+            <vaadin-grid-column width="150px" resizable header="${_t("resourcePreset.Resources")}" .renderer="${this._boundResourceRenderer}">
             </vaadin-grid-column>
 
-            <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
+            <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
         </div>
@@ -240,7 +241,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered">
           <h3 class="horizontal center layout">
-            <span>Modify resource preset</span>
+            <span>${_t("resourcePreset.ModifyResourcePreset")}</span>
             <div class="flex"></div>
             <wl-button class="fg orange" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -248,12 +249,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </h3>
           <form id="login-form">
             <fieldset>
-              <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="Preset Name"
+              <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="${_t("resourcePreset.PresetName")}"
                           auto-validate required
                           pattern="[a-zA-Z0-9_-]+"
                           disabled
                           error-message="Policy name only accepts letters, numbers, underscore, and dash"></mwc-textfield>
-              <h4>Resource Preset</h4>
+              <h4>${_t("resourcePreset.ResourcePreset")}</h4>
               <div class="horizontal center layout">
                 <mwc-textfield id="cpu-resource" type="number" label="CPU"
                     min="1" value="1"></mwc-textfield>
@@ -270,7 +271,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
               <wl-button class="fg orange create-button" outlined type="button"
                 @click="${() => this._modifyResourceTemplate()}">
                 <wl-icon>check</wl-icon>
-                Save Changes
+                ${_t("button.SaveChanges")}
               </wl-button>
             </fieldset>
           </form>
@@ -279,7 +280,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       <wl-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create resource preset</span>
+            <span>${_t("resourcePreset.CreateResourcePreset")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -297,7 +298,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 pattern="[a-zA-Z0-9-_]+"
                 error-message="Preset name only accepts letters and numbers"
               ></mwc-textfield>
-              <h4>Resource Preset</h4>
+              <h4>${_t("resourcePreset.ResourcePreset")}</h4>
               <div class="horizontal center layout">
                 <mwc-textfield id="create-cpu-resource" type="number" label="CPU"
                     min="1" value="1"></mwc-textfield>
@@ -318,20 +319,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 @click="${this._createPreset}"
               >
                 <wl-icon>add</wl-icon>
-                Add
+                ${_t("button.Add")}
               </wl-button>
             </fieldset>
           </form>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
          <div slot="content">
-            <p>You are about to delete ${this.presetName} preset. This action cannot be undone. Do you want to proceed?</p>
+            <p>You are about to delete ${this.presetName} preset. ${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer">
-            <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">Okay</wl-button>
+            <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
       </wl-dialog>
     `;

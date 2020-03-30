@@ -117,7 +117,6 @@
     "ConnectionInformation": "Connection Information",
     "VNCconnection": "VNC connection",
     "UseYourFavoriteSSHApp": "Use your favorite SSH/SFTP application to connect.",
-    "LetsDouble-Check": "Let's Double-check",
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
     "TerminatingSessionDialog": "You are terminating multiple sessions.",
     "ExportSessionListToCSVFile": "Export Session list to CSV File",
@@ -133,7 +132,8 @@
     "Edit": "Edit",
     "Share": "Share",
     "SaveChanges": "Save Changes",
-    "Finish": "Finish"
+    "Finish": "Finish",
+    "Add": "Add"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -248,6 +248,9 @@
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"
     },
+    "title": {
+      "LetsDouble-Check": "Let's Double-check"
+    },
     "ErrorOccurred": "Error Occurred"
   },
   "environment": {
@@ -272,5 +275,15 @@
     "Images": "Images",
     "ResourcePresets": "Resource Presets",
     "Registries": "Registries"
+  },
+  "resourcePreset": {
+    "ResourcePresets": "ResourcePresets",
+    "CreatePreset": "CreatePreset",
+    "Name": "Name",
+    "Resources": "Resources",
+    "ModifyResourcePreset": "ModifyResourcePreset",
+    "ResourcePreset": "ResourcePreset",
+    "CreateResourcePreset": "CreateResourcePreset",
+    "PresetName": "PresetName"
   }
 }

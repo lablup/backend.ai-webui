@@ -1498,7 +1498,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </wl-card>
       </wl-dialog>
       <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("session.LetsDouble-Check")}</wl-title>
+         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
          <div slot="content">
             <p>${_t("session.CheckAgainDialog")}</p>
          </div>
