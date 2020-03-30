@@ -50,6 +50,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) authenticated = false;
+  @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
   @property({type: Object}) explorer = Object();
   @property({type: Array}) explorerFiles = [];
@@ -385,6 +386,30 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
+      <wl-dialog id="rename-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
+        <wl-card class="login-panel intro centered">
+          <h3 class="horizontal center layout">
+            <span>Rename a folder</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <section>
+            <div>
+              <mwc-textfield class="red" id="new-folder-name" label="Type new folder name"
+                pattern="[a-zA-Z0-9_-.]*"
+                validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
+              <br/>
+              <wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
+                <wl-icon>edit</wl-icon>
+                Rename
+              </wl-button>
+            </div>
+            </section>
+        </wl-card>
+      </wl-dialog>
+
       <wl-dialog id="delete-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card class="login-panel intro centered">
           <h3 class="horizontal center layout">
@@ -409,6 +434,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </section>
         </wl-card>
       </wl-dialog>
+
       <wl-dialog id="info-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card class="intro centered" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
@@ -776,50 +802,55 @@ export default class BackendAiStorageList extends BackendAIPage {
           ></mwc-icon-button>
 
           ${this._hasPermission(rowData.item, 'r')
-        ? html`
+            ? html`
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="folder_open"
                 @click="${(e) => this._folderExplorer(e)}" .folder-id="${rowData.item.name}"
               ></mwc-icon-button>
             `
-        : html``
-      }
+            : html``
+          }
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
 
           ${rowData.item.is_owner && rowData.item.type == 'user'
-        ? html`
+            ? html`
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="share"
                 @click="${(e) => this._shareFolderDialog(e)}"
               ></mwc-icon-button>
             `
-        : html``
-      }
+            : html``
+          }
 
           ${rowData.item.is_owner
-        ? html`
+            ? html`
               <mwc-icon-button
                 class="fg cyan controls-running"
                 icon="perm_identity"
                 @click=${e => this._modifyPermissionDialog(rowData.item.id)}
               ></mwc-icon-button>
             `
-        : html``
-      }
+            : html``
+          }
 
           ${this._hasPermission(rowData.item, 'd')
-        ? html`
+            ? html`
+              <mwc-icon-button
+                class="fg blue controls-running"
+                icon="edit"
+                @click="${(e) => this._renameFolderDialog(e)}"
+              ></mwc-icon-button>
               <mwc-icon-button
                 class="fg red controls-running"
                 icon="delete"
                 @click="${(e) => this._deleteFolderDialog(e)}"
               ></mwc-icon-button>
             `
-        : html``
-      }
+            : html``
+          }
         </div>
        `, root
     );
@@ -1011,6 +1042,31 @@ export default class BackendAiStorageList extends BackendAIPage {
     job.then((value) => {
       this.folderInfo = value;
       this.openDialog('info-folder-dialog');
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+  _renameFolderDialog(e) {
+    this.renameFolderId = this._getControlId(e);
+    this.shadowRoot.querySelector('#new-folder-name').value = '';
+    this.openDialog('rename-folder-dialog');
+  }
+
+  _renameFolder() {
+    globalThis.backendaiclient.vfolder.name = this.renameFolderId;
+    const newName = this.shadowRoot.querySelector('#new-folder-name').value;
+    const job = globalThis.backendaiclient.vfolder.rename(newName);
+    this.closeDialog('rename-folder-dialog');
+    job.then((value) => {
+      this.notification.text = 'Folder renamed.';
+      this.notification.show();
+      this._refreshFolderList();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
