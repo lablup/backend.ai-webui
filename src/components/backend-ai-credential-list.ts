@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {translate as _t, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import {render} from 'lit-html';
@@ -53,6 +53,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) keypairs = Object();
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
+  @property({type: Object}) _boundKeyageRenderer = this.keyageRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) keypairView = Object();
   @property({type: Number}) _pageSize = 10;
@@ -418,6 +419,17 @@ export default class BackendAICredentialList extends BackendAIPage {
     console.log()
   }
 
+  keyageRenderer(root, column?, rowData?) {
+    render(
+      html`
+            <div class="layout vertical">
+              <span>${rowData.item.elapsed} ${_t("credential.Days")}</span>
+              <span class="indicator">(${rowData.item.created_at_formatted})</span>
+            </div>
+      `, root
+    );
+  }
+
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -524,17 +536,8 @@ export default class BackendAICredentialList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="created_at">${_t("credential.KeyAge")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[item.elapsed]] Days</span>
-              <span class="indicator">([[item.created_at_formatted]])</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-sort-column resizable header="${_t("credential.KeyAge")}" path="created_at" .renderer="${this._boundKeyageRenderer}">
+        </vaadin-grid-sort-column>
 
         <vaadin-grid-column width="150px" resizable>
           <template class="header">${_t("credential.ResourcePolicy")}</template>

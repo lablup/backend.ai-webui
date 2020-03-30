@@ -216,7 +216,8 @@
     "DescActiveUser": "활성화 유저?",
     "UserName": "사용자명",
     "FullName": "성명",
-    "Description": "소개"
+    "Description": "소개",
+    "Days": "일"
   },
   "data": {
     "Folders": "폴더",

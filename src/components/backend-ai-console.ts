@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {registerTranslateConfig, get as _t, use as setLanguage} from "lit-translate";
+import {registerTranslateConfig, translate as _t, get as _text, use as setLanguage} from "lit-translate";
 import {customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -343,14 +343,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild);
     }
     let select = document.createElement('wl-select');
-    select.label = _t("console.menu.Project");
+    select.label = _text("console.menu.Project");
     select.name = 'group-select';
     select.id = 'group-select';
     select.value = this.current_group;
     select.addEventListener('input', this.changeGroup.bind(this));
     let opt = document.createElement('option');
     opt.setAttribute('disabled', 'true');
-    opt.innerHTML = _t("console.menu.SelectProject");
+    opt.innerHTML = _text("console.menu.SelectProject");
     select.appendChild(opt);
     this.groups.map(group => {
       opt = document.createElement('option');
@@ -444,55 +444,55 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _updateSidebar(view) {
     switch (view) {
       case 'summary':
-        this.menuTitle = _t("console.menu.Summary");
+        this.menuTitle = _text("console.menu.Summary");
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'job':
-        this.menuTitle = _t("console.menu.Sessions");
+        this.menuTitle = _text("console.menu.Sessions");
         this.updateTitleColor('var(--paper-red-800)', '#efefef');
         break;
       case 'experiment':
-        this.menuTitle = _t("console.menu.Experiments");
+        this.menuTitle = _text("console.menu.Experiments");
         this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'data':
-        this.menuTitle = _t("console.menu.Data&Storage");
+        this.menuTitle = _text("console.menu.Data&Storage");
         this.updateTitleColor('var(--paper-orange-800)', '#efefef');
         break;
       case 'statistics':
-        this.menuTitle = _t("console.menu.Statistics");
+        this.menuTitle = _text("console.menu.Statistics");
         this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
         break;
       case 'usersettings':
-        this.menuTitle = _t("console.menu.Settings&Logs");
+        this.menuTitle = _text("console.menu.Settings&Logs");
         this.updateTitleColor('var(--paper-teal-800)', '#efefef');
         break;
       case 'credential':
-        this.menuTitle = _t("console.menu.UserCredentials&Policies");
+        this.menuTitle = _text("console.menu.UserCredentials&Policies");
         this.updateTitleColor('var(--paper-lime-800)', '#efefef');
         break;
       case 'environment':
-        this.menuTitle = _t("console.menu.Environments&Presets");
+        this.menuTitle = _text("console.menu.Environments&Presets");
         this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
         break;
       case 'agent':
-        this.menuTitle = _t("console.menu.ComputationResources");
+        this.menuTitle = _text("console.menu.ComputationResources");
         this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'settings':
-        this.menuTitle = _t("console.menu.Configurations");
+        this.menuTitle = _text("console.menu.Configurations");
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'maintenance':
-        this.menuTitle = _t("console.menu.Maintenance");
+        this.menuTitle = _text("console.menu.Maintenance");
         this.updateTitleColor('var(--paper-pink-800)', '#efefef');
         break;
       case 'information':
-        this.menuTitle = _t("console.menu.Information");
+        this.menuTitle = _text("console.menu.Information");
         this.updateTitleColor('var(--paper-purple-800)', '#efefef');
         break;
       case 'logs':
-        this.menuTitle = _t("console.menu.Logs");
+        this.menuTitle = _text("console.menu.Logs");
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       default:

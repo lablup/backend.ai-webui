@@ -218,7 +218,8 @@
     "DescActiveUser": "Active user?",
     "UserName": "User Name",
     "FullName": "Full Name",
-    "Description": "Description"
+    "Description": "Description",
+    "Days": "Days"
   },
   "data": {
     "Folders": "Folders",
