@@ -416,7 +416,8 @@
     "DescCleanupOldImages": "Clean up old images from docker image list.",
     "CleanupImages": "Cleanup Images",
     "RescanImageList": "Rescan image list from repository",
-    "DescRescanImageList": "Rescan image list from registered repositories.<br />It may take a long time, so please wait after execution."
+    "DescRescanImageList": "Rescan image list from registered repositories.<br />It may take a long time, so please wait after execution.",
+    "Recalculating": "Recalculating..."
   },
   "statistics": {
     "Usage": "Usage",

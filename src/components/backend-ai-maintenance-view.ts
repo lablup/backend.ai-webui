@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -80,30 +80,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           --button-color-disabled: #ccc;
         }
       `];
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      scanning: {
-        type: Boolean
-      },
-      recalculating: {
-        type: Boolean
-      },
-      images: {
-        type: Object,
-        hasChanged: () => true
-      },
-      notification: {
-        type: Object
-      },
-      indicator: {
-        type: Object
-      }
-    }
   }
 
   render() {
@@ -210,18 +186,18 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   }
 
   async recalculate_usage() {
-    this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculating...';
+    this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.Recalculating');
     this.recalculating = true;
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Recalculating...');
     globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
-      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
+      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
       this.recalculating = false;
       this.indicator.set(100, 'Recalculation finished.');
       this.indicator.end(1000);
     }).catch(err => {
       this.recalculating = false;
-      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
+      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
       console.log(err);
       this.indicator.set(50, 'Recalculation failed.');
       this.indicator.end(1000);
