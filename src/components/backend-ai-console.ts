@@ -168,6 +168,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     //let lang = this._readUserSetting("language", "en");
     if (this.options['language'] === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
       this.options['language'] = globalThis.navigator.language;
+    } else if (this.options['language'] === "default") {
+      this.options['language'] = "en";
     }
     await setLanguage(this.options['language']);
     this.hasLoadedStrings = true;
