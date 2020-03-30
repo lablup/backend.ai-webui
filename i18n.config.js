@@ -10,7 +10,7 @@ module.exports = {
   options: {
     debug: true,
     func: {
-      list: ['_t'],
+      list: ['_t', '_tr'], // _t for normal text, _tr for HTML text
       extensions: ['.ts', '.js', '.jsx']
     },
     trans: false,

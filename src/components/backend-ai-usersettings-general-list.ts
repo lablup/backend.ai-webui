@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _t,use as setLanguage} from "lit-translate";
+import {translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -567,9 +567,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
+            <div class="vertical start center-justified layout setting-desc">
               <div>${_t("usersettings.DesktopNotification")}</div>
-              <div class="description">Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within console.
+              <div class="description">${_tr("usersettings.DescDesktopNotification")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -577,19 +577,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
+            <div class="vertical start center-justified layout setting-desc">
               <div>${_t("usersettings.UseCompactSidebar")}</div>
-              <div class="description">Compact sidebar lets you use more workspace. <br />If this option is turned on, compact sidebar becomes the initial UI at startup.
-              </div>
+              <div class="description">${_tr("usersettings.DescUseCompactSidebar")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
               <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-select-desc">
+            <div class="vertical start center-justified layout setting-select-desc">
               <div>${_t("usersettings.Language")}</div>
-              <div class="description">${_t("usersettings.DescLanguage")}
+              <div class="description">${_tr("usersettings.DescLanguage")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-select">
@@ -605,10 +604,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           ${globalThis.isElectron ? html`
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>Keep Login Session Information while Logout</div>
-              <div class="description">Let console app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.
-              </div>
+            <div class="vertical start center-justified layout setting-desc">
+              <div>${_t("usersettings.KeepLoginSessionInformation")}</div>
+              <div class="description">${_tr("usersettings.DescKeepLoginSessionInformation")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
               <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${this.options['preserve_login']}"></wl-switch>
@@ -616,10 +614,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           ` : html``}
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>Beta features</div>
-              <div class="description">Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.
-              </div>
+            <div class="vertical start center-justified layout setting-desc">
+              <div>${_t("usersettings.BetaFeatures")}</div>
+              <div class="description">${_tr("usersettings.DescBetaFeatures")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
               <wl-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${this.options['beta_feature']}"></wl-switch>
@@ -628,11 +625,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
         ${this.beta_feature_panel ? html`
         <h4 class="horizontal center layout">
-          <span>Beta Features</span>
+          <span>${_t("usersettings.BetaFeatures")}</span>
           <span class="flex"></span>
         </h4>
         <div>
-          Preparing now. :)
+          No beta feature available now. :)
         </div>
         ` : html``}
         ${this.shell_script_edit ? html`

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _t} from "lit-translate";
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';

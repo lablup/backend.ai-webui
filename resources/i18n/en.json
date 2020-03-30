@@ -299,7 +299,13 @@
     "DesktopNotification": "Desktop Notification",
     "UseCompactSidebar": "Use Compact Sidebar by default",
     "Language": "Language",
-    "DescLanguage": "Set the UI language."
+    "DescLanguage": "Set the UI language.",
+    "DescDesktopNotification": "Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within console.",
+    "DescUseCompactSidebar": "Compact sidebar lets you use more workspace. <br />If this option is turned on, compact sidebar becomes the initial UI at startup.",
+    "KeepLoginSessionInformation": "Keep Login Session Information while Logout",
+    "DescKeepLoginSessionInformation": "Let console app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
+    "BetaFeatures": "Beta Features",
+    "DescBetaFeatures": "Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature."
   },
   "logs": {
     "LogMessages": "Log Messages",

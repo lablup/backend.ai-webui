@@ -1,7 +1,7 @@
 /**
  * Backend.AI-credential-view
  */
-import {get as _t} from "lit-translate";
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@polymer/paper-listbox/paper-listbox';
