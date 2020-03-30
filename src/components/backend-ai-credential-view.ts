@@ -776,8 +776,8 @@ export default class BackendAICredentialView extends BackendAIPage {
             ${this._status === 'active' && this.use_user_list === true ? html`
               <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
             ` : html``}
-            <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
-            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
+            <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">${_t("credential.Credentials")}</wl-tab>
+            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.ResourcePolicies")}</wl-tab>
           </wl-tab-group>
           ${this.isAdmin ? html`
               <span class="flex"></span>

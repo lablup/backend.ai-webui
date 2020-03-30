@@ -137,11 +137,11 @@
     "ClearLogs": "로그 삭제",
     "No": "아니오",
     "Yes": "네",
-    "Save": "__NOT_TRANSLATED__",
-    "SaveAndClose": "__NOT_TRANSLATED__",
-    "DoNotSave": "__NOT_TRANSLATED__",
-    "Discard": "__NOT_TRANSLATED__",
-    "DeleteAll": "__NOT_TRANSLATED__"
+    "Save": "저장",
+    "SaveAndClose": "저장 후 닫기",
+    "DoNotSave": "저장하지 않음",
+    "Discard": "버리기",
+    "DeleteAll": "모두 삭제"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -165,7 +165,8 @@
     "Username": "사용자명",
     "Password": "패스워드",
     "ConfirmPassword": "패스워드 (확인)",
-    "Control": "제어"
+    "Control": "제어",
+    "NewPassword": "새 패스워드"
   },
   "credential": {
     "Permission": "권한",
@@ -199,7 +200,21 @@
     "Capacity(GB)": "용량 (GB)",
     "Max#": "최대 ",
     "Create": "생성",
-    "ExportCSVFile": "CSV 파일 내보내기"
+    "ExportCSVFile": "CSV 파일 내보내기",
+    "Credentials": "자격 증명",
+    "ResourcePolicies": "자원 정책",
+    "UserID": "사용자 ID",
+    "Name": "이름",
+    "UserDetail": "사용자 정보",
+    "DescRequirePasswordChange": "패스워드 변경 필요?",
+    "Association": "연동",
+    "Domain": "도메인",
+    "Role": "역할",
+    "Groups": "그룹",
+    "DescActiveUser": "활성화 유저?",
+    "UserName": "사용자명",
+    "FullName": "성명",
+    "Description": "소개"
   },
   "data": {
     "Folders": "폴더",
@@ -252,7 +267,7 @@
     "warning": {
       "CannotBeUndone": "주의: 이 동작은 취소할 수 없습니다!",
       "LogDeletion": "정말로 모든 로그를 삭제하시겠습니까?",
-      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
+      "WillBeAppliedToNewSessions": "이 변경사항은 새 세션부터 적용됩니다."
     },
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?"

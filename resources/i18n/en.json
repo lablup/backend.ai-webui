@@ -167,7 +167,8 @@
     "Password": "Password",
     "ConfirmPassword": "Confirm Password",
     "Create": "Create",
-    "Control": "Control"
+    "Control": "Control",
+    "NewPassword": "New Password"
   },
   "credential": {
     "Permission": "Permission",
@@ -201,7 +202,21 @@
     "Capacity(GB)": "Capacity (GB)",
     "Max#": "Max. #",
     "Create": "Create",
-    "ExportCSVFile": "Export CSV File"
+    "ExportCSVFile": "Export CSV File",
+    "Credentials": "Credentials",
+    "ResourcePolicies": "Resource Policies",
+    "UserID": "User ID",
+    "Name": "Name",
+    "UserDetail": "User Detail",
+    "DescRequirePasswordChange": "Require password change?",
+    "Association": "Association",
+    "Domain": "Domain",
+    "Role": "Role",
+    "Groups": "Groups",
+    "DescActiveUser": "Active user?",
+    "UserName": "User Name",
+    "FullName": "Full Name",
+    "Description": "Description"
   },
   "data": {
     "Folders": "Folders",

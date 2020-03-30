@@ -494,7 +494,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="user_id">User ID</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="user_id">${_t("credential.UserID")}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout horizontal center flex">
@@ -599,16 +599,18 @@ export default class BackendAICredentialList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="150px" resizable header="Control" .renderer="${this._boundControlRenderer}">
+        <vaadin-grid-column width="150px" resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
         <wl-button class="pagination" id="previous-page"
-                   ?disabled="${ this._currentPage === 1 }"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+                   ?disabled="${this._currentPage === 1}"
+                   @click="${(e) => {
+      this._updateItemsFromPage(e)
+    }}">
           <wl-icon class="pagination">navigate_before</wl-icon>
         </wl-button>
-        <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${ Math.ceil( this._totalCredentialCount / this._pageSize)} </wl-label>
+        <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${Math.ceil(this._totalCredentialCount / this._pageSize)} </wl-label>
         <wl-button class="pagination" id="next-page"
                    ?disabled="${ this._totalCredentialCount <= this._pageSize * this._currentPage}"
                    @click="${(e) => {this._updateItemsFromPage(e)}}">
