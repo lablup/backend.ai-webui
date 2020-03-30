@@ -143,7 +143,8 @@
     "DoNotSave": "Do Not Save",
     "Discard": "Discard",
     "DeleteAll": "DeleteAll",
-    "Update": "Update"
+    "Update": "Update",
+    "Delete": "Delete"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -367,5 +368,25 @@
     "ConcurrentJobs": "Concurrent Jobs",
     "Capacity": "Capacity",
     "Folders": "Folders"
+  },
+  "registry": {
+    "Hostname": "Hostname",
+    "RegistryURL": "Registry URL",
+    "Type": "Type",
+    "HarborProject": "Harbor Project",
+    "Username": "Username",
+    "Password": "Password",
+    "AddRegistry": "Add Registry",
+    "RegistryHostname": "Registry Hostname",
+    "DescHostnameIsEmpty": "Hostname is empty",
+    "DescURLStartString": "URL Starts with http:// or https://",
+    "UsernameOptional": "Username (Optional)",
+    "PasswordOptional": "Password (Optional)",
+    "ForHarborOnly": "For harbor only!",
+    "Registries": "Registries",
+    "RegistryType": "Registry Type",
+    "ProjectName": "Project Name",
+    "ProjectNameIsRequired": "Project name is required",
+    "TypeRegistryNameToDelete": "Type registry hostname to delete"
   }
 }

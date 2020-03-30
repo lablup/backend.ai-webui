@@ -142,7 +142,8 @@
     "DoNotSave": "저장하지 않음",
     "Discard": "버리기",
     "DeleteAll": "모두 삭제",
-    "Update": "업데이트"
+    "Update": "업데이트",
+    "Delete": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -365,5 +366,25 @@
     "ConcurrentJobs": "동시 실행 세션수",
     "Capacity": "용량",
     "Folders": "폴더"
+  },
+  "registry": {
+    "Hostname": "호스트명",
+    "RegistryURL": "레지스트리 주소",
+    "Type": "유형",
+    "HarborProject": "Harbor 프로젝트",
+    "Username": "사용자명",
+    "Password": "암호",
+    "AddRegistry": "레지스트리 추가",
+    "RegistryHostname": "레지스트리 호스트명",
+    "DescHostnameIsEmpty": "호스트명이 공란입니다",
+    "DescURLStartString": "URL은 http:// 나 https:// 로 시작해야 합니다.",
+    "UsernameOptional": "사용자명 (선택)",
+    "PasswordOptional": "암호 (선택)",
+    "ForHarborOnly": "harbor 레지스트리를 등록할때만 지정하세요!",
+    "Registries": "레지스트리",
+    "RegistryType": "레지스트리 유형",
+    "ProjectName": "프로젝트 이름",
+    "ProjectNameIsRequired": "프로젝트 이름이 필요합니다.",
+    "TypeRegistryNameToDelete": "__NOT_TRANSLATED__"
   }
 }
