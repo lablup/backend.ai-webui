@@ -141,7 +141,8 @@
     "SaveAndClose": "저장 후 닫기",
     "DoNotSave": "저장하지 않음",
     "Discard": "버리기",
-    "DeleteAll": "모두 삭제"
+    "DeleteAll": "모두 삭제",
+    "Update": "업데이트"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -348,5 +349,21 @@
     "RequestUrl": "요청 주소",
     "Parameters": "파라미터",
     "ErrorType": "에러 종류"
+  },
+  "resourcePolicy": {
+    "Resources": "자원",
+    "Concurrency": "동시실행수",
+    "ClusterSize": "클러스터 크기",
+    "StorageNodes": "저장소 노드",
+    "UpdateResourcePolicy": "자원 정책 수정",
+    "PolicyName": "자원 정책 이름",
+    "ResourcePolicy": "자원 정책",
+    "Unlimited": "무제한",
+    "Sessions": "세션",
+    "ContainerPerSession": "세션 당 컨테이너",
+    "IdleTimeoutSec": "유휴 대기 시간 (초)",
+    "ConcurrentJobs": "동시 실행 세션수",
+    "Capacity": "용량",
+    "Folders": "폴더"
   }
 }

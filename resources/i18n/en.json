@@ -142,7 +142,8 @@
     "SaveAndClose": "Save And Close",
     "DoNotSave": "Do Not Save",
     "Discard": "Discard",
-    "DeleteAll": "DeleteAll"
+    "DeleteAll": "DeleteAll",
+    "Update": "Update"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -350,5 +351,21 @@
     "RequestUrl": "Request Url",
     "Parameters": "Parameters",
     "ErrorType": "Error Type"
+  },
+  "resourcePolicy": {
+    "Resources": "Resources",
+    "Concurrency": "Concurrency",
+    "ClusterSize": "Cluster Size",
+    "StorageNodes": "Storage Nodes",
+    "UpdateResourcePolicy": "Update Resource Policy",
+    "PolicyName": "Policy Name",
+    "ResourcePolicy": "Resource Policy",
+    "Unlimited": "Unlimited",
+    "Sessions": "Sessions",
+    "ContainerPerSession": "Container Per Session",
+    "IdleTimeoutSec": "Idle timeout (sec.)",
+    "ConcurrentJobs": "Concurrent Jobs",
+    "Capacity": "Capacity",
+    "Folders": "Folders"
   }
 }
