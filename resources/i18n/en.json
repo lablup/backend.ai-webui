@@ -417,5 +417,11 @@
     "CleanupImages": "Cleanup Images",
     "RescanImageList": "Rescan image list from repository",
     "DescRescanImageList": "Rescan image list from registered repositories.<br />It may take a long time, so please wait after execution."
+  },
+  "statistics": {
+    "Usage": "Usage",
+    "SelectPeriod": "Select Period",
+    "1Day": "1 Day",
+    "1Week": "1 Week"
   }
 }
