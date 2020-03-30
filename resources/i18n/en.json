@@ -5,7 +5,7 @@
       "Sessions": "Sessions",
       "Data&Storage": "Data & Storage",
       "Statistics": "Statistics",
-      "Settings": "s",
+      "Settings": "Settings",
       "Administration": "Administration",
       "Users": "Users",
       "Environments": "Environments",
@@ -309,6 +309,14 @@
   },
   "logs": {
     "LogMessages": "Log Messages",
-    "UpTo5000Logs": "(Up to 5000 recent logs)"
+    "UpTo5000Logs": "(Up to 5000 recent logs)",
+    "TimeStamp": "Timestamp",
+    "Status": "Status",
+    "ErrorTitle": "Error Title",
+    "ErrorMessage": "Error Message",
+    "Method": "Method",
+    "RequestUrl": "Request Url",
+    "Parameters": "Parameters",
+    "ErrorType": "Error Type"
   }
 }

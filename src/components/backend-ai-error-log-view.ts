@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
 import {css, customElement, html, property} from "lit-element";
 
 import './backend-ai-error-log-list';

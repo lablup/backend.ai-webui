@@ -131,12 +131,12 @@
     "Edit": "수정",
     "Share": "공유",
     "SaveChanges": "변경사항 저장",
-    "Finish": "__NOT_TRANSLATED__",
-    "Add": "__NOT_TRANSLATED__",
-    "Refresh": "__NOT_TRANSLATED__",
-    "ClearLogs": "__NOT_TRANSLATED__",
-    "No": "__NOT_TRANSLATED__",
-    "Yes": "__NOT_TRANSLATED__"
+    "Finish": "완료",
+    "Add": "추가",
+    "Refresh": "새로고침",
+    "ClearLogs": "로그 삭제",
+    "No": "아니오",
+    "Yes": "네"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -300,13 +300,21 @@
     "DescLanguage": "인터페이스 언어를 설정합니다.",
     "DescDesktopNotification": "데스크탑 알림을 사용합니다.<br />이 옵션이 켜져 있을때, Backend.AI는 운영체제의 알림 기능을 함께 사용합니다. 이 옵션을 꺼도 콘솔내의 알림은 계속 동작합니다.",
     "DescUseCompactSidebar": "간결한 사이드바는 더 많은 작업 공간을 쓸 수 있게 합니다.<br />이 옵션이 켜져 있을때, 간결한 사이드바가 시작시 기본 인터페이스가 됩니다.",
-    "KeepLoginSessionInformation": "로그아웃 후에도 로그인 정보를 유지합니다.",
-    "DescKeepLoginSessionInformation": "Let console app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
+    "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",
+    "DescKeepLoginSessionInformation": "콘솔 앱이 다음 앱 사용시까지 로그인 세션 정보를 저장합니다.<br />이 옵션이 꺼져있을 경우, 매 종료시마다 로그인 정보가 자동으로 삭제됩니다.",
     "BetaFeatures": "베타 기능",
     "DescBetaFeatures": "GUI용으로 테스트중인 기능들을 사용합니다.<br />베타 기능들은 불안정할 수 있습니다. 몇몇 베타 기능들은 정식 버전에서는 채택되지 않을 수 있습니다."
   },
   "logs": {
     "LogMessages": "로그 메세지",
-    "UpTo5000Logs": "(최근 5000개의 로그)"
+    "UpTo5000Logs": "(최근 5000개의 로그)",
+    "TimeStamp": "시간",
+    "Status": "상태",
+    "ErrorTitle": "제목",
+    "ErrorMessage": "에러메세지",
+    "Method": "요청방법",
+    "RequestUrl": "요청 주소",
+    "Parameters": "파라미터",
+    "ErrorType": "에러 종류"
   }
 }
