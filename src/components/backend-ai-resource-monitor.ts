@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {translate as _t, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -678,7 +678,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
             }
             const scaling_select = document.createElement('wl-select');
-            scaling_select.label = _t('session.launcher.ResourceGroup');
+            scaling_select.label = _text('session.launcher.ResourceGroup');
             scaling_select.name = 'scaling-group-select';
             scaling_select.id = 'scaling-group-select';
             scaling_select.value = this.scaling_group;
@@ -686,7 +686,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
-            opt.innerHTML = _t('session.launcher.SelectResourceGroup');
+            opt.innerHTML = _text('session.launcher.SelectResourceGroup');
             scaling_select.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');

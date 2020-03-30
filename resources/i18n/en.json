@@ -135,9 +135,14 @@
     "Finish": "Finish",
     "Add": "Add",
     "Refresh": "Refresh",
-    "ClearLogs": "ClearLogs",
+    "ClearLogs": "Clear Logs",
     "No": "No",
-    "Yes": "Yes"
+    "Yes": "Yes",
+    "Save": "Save",
+    "SaveAndClose": "Save And Close",
+    "DoNotSave": "Do Not Save",
+    "Discard": "Discard",
+    "DeleteAll": "DeleteAll"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -248,7 +253,8 @@
   "dialog": {
     "warning": {
       "CannotBeUndone": "WARNING: this cannot be undone!",
-      "LogDeletion": "Are you sure you want to delete all of the log messages?"
+      "LogDeletion": "Are you sure you want to delete all of the log messages?",
+      "WillBeAppliedToNewSessions": "This update will be applied to new sessions."
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"
@@ -305,7 +311,18 @@
     "KeepLoginSessionInformation": "Keep Login Session Information while Logout",
     "DescKeepLoginSessionInformation": "Let console app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
     "BetaFeatures": "Beta Features",
-    "DescBetaFeatures": "Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature."
+    "DescBetaFeatures": "Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
+    "DescNoBetaFeatures": "No beta feature available now. :)",
+    "EditBootstrapScript": "EditBootstrapScript",
+    "EditUserConfigScript": "EditUserConfigScript",
+    "PackageInstallation": "PackageInstallation",
+    "BootstrapScript": "BootstrapScript",
+    "DialogSaveToSpecificFile": "Do you want to save the changes you made to File?",
+    "DialogNoSaveNoPreserve": "Your changes will be lost if you don't save them.",
+    "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
+    "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
+    "DescNewUserConfigFileCreated": "New User config file can be created with non-empty data.",
+    "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value."
   },
   "logs": {
     "LogMessages": "Log Messages",

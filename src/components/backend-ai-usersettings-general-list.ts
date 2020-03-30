@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from "lit-translate";
+import {translate as _t, translateUnsafeHTML as _tr, get as _text, use as setLanguage} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -379,7 +379,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             script, this.rcfiles[idx]['path'])
             .then(res => {
               this.indicator.hide();
-              this.notification.text = "User config script created. This will be applied to new sessions only.";
+              this.notification.text = _text("usersettings.DescScriptCreated");
               this.notification.show();
             }).catch(err => {
               this.indicator.hide();
@@ -392,7 +392,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           });
         } else {
           this.indicator.hide();
-          this.notification.text = "New User config file can be created with non-empty data.";
+          this.notification.text = _text("usersettings.DescNewUserConfigFileCreated");
           this.notification.show();
           return;
         }
@@ -403,14 +403,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           return;
         }
         else if (script === '') {
-          this.notification.text = 'Please update script with non empty value.';
+          this.notification.text = _text("usersettings.DescLetUserUpdateScriptWithNonEmptyValue");
           this.notification.show();
           return;
         }
         else {
           await globalThis.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
           .then(res => {
-            this.notification.text = 'User config script updated. This will be applied to new sessions only.';
+            this.notification.text = _text("usersettings.DescScriptUpdated");
             this.notification.show();
             this.indicator.hide();
           }).catch(err => {
@@ -629,7 +629,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span class="flex"></span>
         </h4>
         <div>
-          No beta feature available now. :)
+          ${_t("usersettings.DescNoBetaFeatures")}
         </div>
         ` : html``}
         ${this.shell_script_edit ? html`
@@ -638,17 +638,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout setting-item">
-            <wl-button class="fg teal" outlined @click="${()=>this._editBootstrapScript()}" style="margin-right:20px; display:none;">
+            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; display:none;">
               <wl-icon>edit</wl-icon>
-              Edit bootstrap script
+              ${_t("usersettings.EditBootstrapScript")}
             </wl-button>
-            <wl-button class="fg green" outlined @click="${()=>this._launchUserConfigDialog()}">
+            <wl-button class="fg green" outlined @click="${() => this._launchUserConfigDialog()}">
               <wl-icon>edit</wl-icon>
-              Edit user config script
+              ${_t("usersettings.EditUserConfigScript")}
             </wl-button>
         </div>
         <h3 class="horizontal center layout" style="display:none;">
-          <span>Package Installation</span>
+          <span>${_t("usersettings.PackageInstallation")}</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout" style="display:none;">
@@ -662,13 +662,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <wl-switch id="register-new-image-switch" disabled></wl-switch>
             </div>
           </div>
-        </div>`: html``}
+        </div>` : html``}
       </wl-card>
       <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
         <div slot="header" style="padding: 0px 20px;">
         <h3 class="horizontal center layout">
-          <span>Bootstrap script</span>
+          <span>${_t("usersettings.BootstrapScript")}</span>
           <div class="flex"></div>
           <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
             <wl-icon>close</wl-icon>
@@ -679,9 +679,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer">
-          <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">Cancel</wl-button>
-          <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">Save</wl-button>
-          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">Save and close</wl-button>
+          <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">${_t("button.Cancel")}</wl-button>
+          <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">${_t("button.Save")}</wl-button>
+          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
         </div>
       </wl-dialog>
       <wl-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
@@ -699,7 +699,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                         label="config file name"
                         required
                         validationMessage="Please select one option."
-                        @selected="${()=>this._toggleRcFileName()}">
+                        @selected="${() => this._toggleRcFileName()}">
               ${this.rcfiles.map(item => html`
                 <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                   ${item.path}
@@ -708,7 +708,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <div class="horizontal layout">
               <wl-icon class="warning">warning</wl-icon>
               <wl-label class="warning" for="warning">
-                This Update will be applied to new sessions.
+               ${_t("dialog.warning.WillBeAppliedToNewSessions")}
               </wl-label>
             </div>
           </div>
@@ -717,31 +717,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer">
-          <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">Cancel</wl-button>
-          <wl-button id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">Save</wl-button>
-          <wl-button id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">Save and close</wl-button>
-          <wl-button id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">delete all</wl-button>
+          <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
+          <wl-button style="margin-left:10px;" id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">${_t("button.Save")}</wl-button>
+          <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
+          <wl-button style="margin-left:10px;" id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">${_t("button.DeleteAll")}</wl-button>
         </div>
       </wl-dialog>
       <wl-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
         <div slot="header" style="border-bottom:none;">
-          <h3>Do you want to save the changes you made to ${this.prevRcfile} ?
+          <h3>${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
           </h3>
-          <span>Your changes will be lost if you don't save them.</span>
+          <span>${_t("usersettings.DialogNoSaveNoPreserve")}</span>
         </div>
         <div slot="footer" style="border-top:none;">
           <wl-button id="discard-editor-data"
-                     style="margin: 0 5px;"
+                     style="margin: 0 10px;"
                      @click="${() => this._discardCurrentEditorChange()}">
-                     don't save</wl-button>
+                     ${_t("button.Discard")}</wl-button>
           <wl-button id="save-editor-data"
-                     style="margin: 0 5px;"
+                     style="margin: 0 10px;"
                      @click="${() => this._saveCurrentEditorChange()}">
-                     save</wl-button>
+                     ${_t("button.Save")}</wl-button>
           <wl-button inverted flat id="cancel-editor" class="button"
-                     style="margin: 0 5px;"
+                     style="margin: 0 10px;"
                      @click="${() => this._cancelCurrentEditorChange()}">
-                     cancel</wl-button>
+                     ${_t("button.Cancel")}</wl-button>
         </div>
       </wl-dialog>
     `;

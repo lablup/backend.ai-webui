@@ -136,7 +136,12 @@
     "Refresh": "새로고침",
     "ClearLogs": "로그 삭제",
     "No": "아니오",
-    "Yes": "네"
+    "Yes": "네",
+    "Save": "__NOT_TRANSLATED__",
+    "SaveAndClose": "__NOT_TRANSLATED__",
+    "DoNotSave": "__NOT_TRANSLATED__",
+    "Discard": "__NOT_TRANSLATED__",
+    "DeleteAll": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -246,7 +251,8 @@
   "dialog": {
     "warning": {
       "CannotBeUndone": "주의: 이 동작은 취소할 수 없습니다!",
-      "LogDeletion": "정말로 모든 로그를 삭제하시겠습니까?"
+      "LogDeletion": "정말로 모든 로그를 삭제하시겠습니까?",
+      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
     },
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?"
@@ -275,7 +281,7 @@
     "ResourceLimit": "자원 제한",
     "DescDownloadImage": "이미지를 다운로드하려고 합니다: ",
     "DescSignificantDownloadTime": "다운로드에 매우 오랜 시간이 걸릴 것입니다.",
-    "Images": "이미",
+    "Images": "이미지",
     "ResourcePresets": "자원 프리셋",
     "Registries": "레지스트리"
   },
@@ -303,7 +309,18 @@
     "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",
     "DescKeepLoginSessionInformation": "콘솔 앱이 다음 앱 사용시까지 로그인 세션 정보를 저장합니다.<br />이 옵션이 꺼져있을 경우, 매 종료시마다 로그인 정보가 자동으로 삭제됩니다.",
     "BetaFeatures": "베타 기능",
-    "DescBetaFeatures": "GUI용으로 테스트중인 기능들을 사용합니다.<br />베타 기능들은 불안정할 수 있습니다. 몇몇 베타 기능들은 정식 버전에서는 채택되지 않을 수 있습니다."
+    "DescBetaFeatures": "GUI용으로 테스트중인 기능들을 사용합니다.<br />베타 기능들은 불안정할 수 있습니다. 몇몇 베타 기능들은 정식 버전에서는 채택되지 않을 수 있습니다.",
+    "DescNoBetaFeatures": "사용 가능한 베타 기능이 없습니다. :)",
+    "EditBootstrapScript": "부트스트랩 스크립트 수정",
+    "EditUserConfigScript": "사용자 환경 스크립트 수정",
+    "PackageInstallation": "패키지 설치",
+    "BootstrapScript": "부트스트랩 스크립트",
+    "DialogSaveToSpecificFile": "수정한 내용을 File 에 저장하시겠습니까?",
+    "DialogNoSaveNoPreserve": "저장하지 않은 내용은 삭제됩니다.",
+    "DescScriptUpdated": "사용자 스크립트를 수정했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
+    "DescScriptCreated": "사용자 스크립트를 생성했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
+    "DescNewUserConfigFileCreated": "새 사용자 스크립트 생성을 위한 내용이 필요합니다.",
+    "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요."
   },
   "logs": {
     "LogMessages": "로그 메세지",
