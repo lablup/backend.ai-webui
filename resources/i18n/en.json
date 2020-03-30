@@ -403,5 +403,19 @@
     "ModifyResourceGroup": "Modify Resource Group",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
     "ResourceGroupName": "ResourceGroupName"
+  },
+  "maintenance": {
+    "General": "General",
+    "Fix": "Fix",
+    "MatchDatabase": "Match usage database with current state",
+    "DescMatchDatabase": "Recalculate usage database with current state.<br/>Useful if docker fails by accident, or some sessions have been forcibly terminated.",
+    "RecalculateUsage": "Recalculate Usage",
+    "ImagesEnvironment": "Images / Environment",
+    "RescanImages": "Rescan Images",
+    "CleanupOldImages": "Cleanup old images",
+    "DescCleanupOldImages": "Clean up old images from docker image list.",
+    "CleanupImages": "Cleanup Images",
+    "RescanImageList": "Rescan image list from repository",
+    "DescRescanImageList": "Rescan image list from registered repositories.<br />It may take a long time, so please wait after execution."
   }
 }
