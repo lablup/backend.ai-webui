@@ -431,5 +431,10 @@
     "SelectPeriod": "Select Period",
     "1Day": "1 Day",
     "1Week": "1 Week"
+  },
+  "language": {
+    "Browser": "Browser",
+    "English": "English",
+    "Korean": "Korean"
   }
 }

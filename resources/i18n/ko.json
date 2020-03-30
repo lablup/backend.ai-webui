@@ -429,5 +429,10 @@
     "SelectPeriod": "기간을 선택하세요",
     "1Day": "1일",
     "1Week": "1주"
+  },
+  "language": {
+    "Browser": "브라우저 기본",
+    "English": "English",
+    "Korean": "한국어"
   }
 }
