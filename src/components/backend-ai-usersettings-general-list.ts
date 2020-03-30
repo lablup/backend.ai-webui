@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {registerTranslateConfig, get as _t, use as setLanguage} from "lit-translate";
+import {get as _t,use as setLanguage} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -27,9 +27,6 @@ import '@material/mwc-list/mwc-list-item';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-indicator';
 import './lablup-codemirror';
-registerTranslateConfig({
-  loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
-});
 
 @customElement("backend-ai-usersettings-general-list")
 export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
@@ -565,13 +562,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     return html`
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
-          <span>Preferences</span>
+          <span>${_t("usersettings.Preferences")}</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Desktop Notification</div>
+              <div>${_t("usersettings.DesktopNotification")}</div>
               <div class="description">Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within console.
               </div>
             </div>
@@ -581,7 +578,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Use Compact Sidebar by default</div>
+              <div>${_t("usersettings.UseCompactSidebar")}</div>
               <div class="description">Compact sidebar lets you use more workspace. <br />If this option is turned on, compact sidebar becomes the initial UI at startup.
               </div>
             </div>
@@ -591,8 +588,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-select-desc">
-              <div>Language</div>
-              <div class="description">Set the UI language.
+              <div>${_t("usersettings.Language")}</div>
+              <div class="description">${_t("usersettings.DescLanguage")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-select">

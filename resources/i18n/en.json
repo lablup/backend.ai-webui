@@ -133,7 +133,11 @@
     "Share": "Share",
     "SaveChanges": "Save Changes",
     "Finish": "Finish",
-    "Add": "Add"
+    "Add": "Add",
+    "Refresh": "Refresh",
+    "ClearLogs": "ClearLogs",
+    "No": "No",
+    "Yes": "Yes"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -243,7 +247,8 @@
   },
   "dialog": {
     "warning": {
-      "CannotBeUndone": "WARNING: this cannot be undone!"
+      "CannotBeUndone": "WARNING: this cannot be undone!",
+      "LogDeletion": "Are you sure you want to delete all of the log messages?"
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"
@@ -286,5 +291,18 @@
     "CreateResourcePreset": "Create Resource Preset",
     "PresetName": "Preset Name",
     "AboutToDeletePreset": "You are about to delete this preset:"
+  },
+  "usersettings": {
+    "General": "General",
+    "Logs": "Logs",
+    "Preferences": "Preferences",
+    "DesktopNotification": "Desktop Notification",
+    "UseCompactSidebar": "Use Compact Sidebar by default",
+    "Language": "Language",
+    "DescLanguage": "Set the UI language."
+  },
+  "logs": {
+    "LogMessages": "Log Messages",
+    "UpTo5000Logs": "(Up to 5000 recent logs)"
   }
 }

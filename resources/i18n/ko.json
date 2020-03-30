@@ -132,7 +132,11 @@
     "Share": "공유",
     "SaveChanges": "변경사항 저장",
     "Finish": "__NOT_TRANSLATED__",
-    "Add": "__NOT_TRANSLATED__"
+    "Add": "__NOT_TRANSLATED__",
+    "Refresh": "__NOT_TRANSLATED__",
+    "ClearLogs": "__NOT_TRANSLATED__",
+    "No": "__NOT_TRANSLATED__",
+    "Yes": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -241,7 +245,8 @@
   },
   "dialog": {
     "warning": {
-      "CannotBeUndone": "주의: 이 동작은 취소할 수 없습니다!"
+      "CannotBeUndone": "주의: 이 동작은 취소할 수 없습니다!",
+      "LogDeletion": "정말로 모든 로그를 삭제하시겠습니까?"
     },
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?"
@@ -284,5 +289,18 @@
     "CreateResourcePreset": "자원 프리셋 생성",
     "PresetName": "자원 프리셋 이름",
     "AboutToDeletePreset": "아래의 자원 프리셋을 삭제하려고 합니다:"
+  },
+  "usersettings": {
+    "General": "일반",
+    "Logs": "로그",
+    "Preferences": "__NOT_TRANSLATED__",
+    "DesktopNotification": "__NOT_TRANSLATED__",
+    "UseCompactSidebar": "__NOT_TRANSLATED__",
+    "Language": "__NOT_TRANSLATED__",
+    "DescLanguage": "__NOT_TRANSLATED__"
+  },
+  "logs": {
+    "LogMessages": "로그 메세지",
+    "UpTo5000Logs": "(최근 5000개의 로그)"
   }
 }
