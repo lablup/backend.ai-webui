@@ -328,7 +328,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
       <wl-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
          <div slot="content">
-            <p>You are about to delete ${this.presetName} preset. ${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
+            <p>${_t("resourcePreset.AboutToDeletePreset")}</p>
+            <p style="text-align:center;">${this.presetName}</p>
+            <p>${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer">
             <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>

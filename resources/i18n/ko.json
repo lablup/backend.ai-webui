@@ -282,6 +282,7 @@
     "ModifyResourcePreset": "자원 프리셋 수정",
     "ResourcePreset": "자원 프리셋",
     "CreateResourcePreset": "자원 프리셋 생성",
-    "PresetName": "자원 프리셋 이름"
+    "PresetName": "자원 프리셋 이름",
+    "AboutToDeletePreset": "아래의 자원 프리셋을 삭제하려고 합니다:"
   }
 }

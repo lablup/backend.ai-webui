@@ -277,13 +277,14 @@
     "Registries": "Registries"
   },
   "resourcePreset": {
-    "ResourcePresets": "ResourcePresets",
-    "CreatePreset": "CreatePreset",
+    "ResourcePresets": "Resource Presets",
+    "CreatePreset": "Create Preset",
     "Name": "Name",
     "Resources": "Resources",
-    "ModifyResourcePreset": "ModifyResourcePreset",
-    "ResourcePreset": "ResourcePreset",
-    "CreateResourcePreset": "CreateResourcePreset",
-    "PresetName": "PresetName"
+    "ModifyResourcePreset": "Modify Resource Preset",
+    "ResourcePreset": "Resource Preset",
+    "CreateResourcePreset": "Create Resource Preset",
+    "PresetName": "Preset Name",
+    "AboutToDeletePreset": "You are about to delete this preset:"
   }
 }
