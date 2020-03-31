@@ -3,11 +3,12 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
 
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import './lablup-loading-indicator';
 import 'weightless/button';
@@ -89,12 +90,12 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       return true;
     }
     // If disconnected
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_superadmin = window.backendaiclient.is_superadmin;
+        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       }, true);
     } else { // already connected
-      this.is_superadmin = window.backendaiclient.is_superadmin;
+      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
     }
     return false;
   }
@@ -121,10 +122,10 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">Images</wl-tab>
-            <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">Resource Presets</wl-tab>
+            <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("environment.Images")}</wl-tab>
+            <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.ResourcePresets")}</wl-tab>
             ${this.is_superadmin ? html`
-              <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">Registries</wl-tab>` : html``}
+              <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.Registries")}</wl-tab>` : html``}
           </wl-tab-group>
           <div class="flex"></div>
         </h3>

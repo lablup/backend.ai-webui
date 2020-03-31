@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
 
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -195,7 +195,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
+    globalThis.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
       .then(res => {
         const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
 
@@ -224,11 +224,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _installImage() {
-    this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
-    this.notification.show();
     this.installImageDialog.hide();
-    this.indicator.start('indeterminate');
-    this.indicator.set(10, 'Downloading...');
     if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
       this.installImageResource['gpu'] = 0;
       this.installImageResource['fgpu'] = this.installImageResource['cuda.shares'];
@@ -241,7 +237,29 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else if (this.installImageResource['mem'].endsWith('m')) {
       this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
     }
-    window.backendaiclient.image.install(this.installImageName, this.installImageResource).then((response) => {
+    this.installImageResource['domain'] = globalThis.backendaiclient._config.domainName;
+    this.installImageResource['group_name'] = globalThis.backendaiclient.current_group;
+
+    this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
+    this.notification.show();
+    this.indicator.start('indeterminate');
+    this.indicator.set(10, 'Downloading...');
+    globalThis.backendaiclient.getResourceSlots().then((response) => {
+      let results = response;
+      if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
+        if ('fgpu' in this.installImageResource && 'gpu' in this.installImageResource) { // Keep fgpu only.
+          delete this.installImageResource['gpu'];
+          delete this.installImageResource['cuda.device'];
+        }
+      } else if ('cuda.device' in results) { // GPU mode
+        delete this.installImageResource['fgpu'];
+        delete this.installImageResource['cuda.shares'];
+      } else if ('cuda.shares' in results) { // Fractional GPU mode
+        delete this.installImageResource['gpu'];
+        delete this.installImageResource['cuda.device'];
+      }
+      return globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource);
+    }).then((response) => {
       this.indicator.set(100, 'Install finished.');
       this.indicator.end(1000);
       this._getImages();
@@ -250,7 +268,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
-      this.indicator.set(100, 'Problem occurred during installation.');
+      this.indicator.set(100, _t('environment.DescProblemOccurred'));
       this.indicator.end(1000);
     });
   }
@@ -260,15 +278,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
           <div class="layout horizontal center flex">
             <div class="layout horizontal configuration">
-              <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+              <wl-icon class="fg green">developer_board</wl-icon>
               <span>${rowData.item.cpu_limit_min}</span> ~
               <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
-              <span class="indicator">core</span>
+              <span class="indicator">${_t("general.cores")}</span>
             </div>
           </div>
           <div class="layout horizontal center flex">
             <div class="layout horizontal configuration">
-              <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+              <wl-icon class="fg green">memory</wl-icon>
               <span>${rowData.item.mem_limit_min}</span> ~
               <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
             </div>
@@ -276,7 +294,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon>
+                <!--<iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon>-->
+                <wl-icon class="fg green">view_module</wl-icon>
                 <span>${rowData.item.cuda_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
                 <span class="indicator">CUDA GPU</span>
@@ -286,7 +305,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_shares_limit_min ? html`
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="icons:apps"></iron-icon>
+                <wl-icon class="fg green">apps</wl-icon>
                 <span>${rowData.item.cuda_shares_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
                 <span class="indicator">CUDA fGPU</span>
@@ -376,12 +395,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   modifyServicePort() {
     const value = this._parseServicePort();
     const image = this.images[this.selectedIndex];
-    window.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
+    globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
       .then(({result}) => {
         if (result === "ok") {
-          this.notification.text = "Service port successfully modified";
+          this.notification.text = _t("environment.DescServicePortModified");
         } else {
-          this.notification.text = "Error Occurred";
+          this.notification.text = _t("dialog.ErrorOccurred");
         }
         this._getImages();
         this.requestUpdate();
@@ -398,28 +417,27 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
-          <paper-icon-button
+          <wl-button fab flat inverted
             class="fg blue controls-running"
-            on-tap="_modifyImage"
-            icon="icons:settings"
             @click=${() => {
         this.selectedIndex = rowData.index;
         this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
         this._launchDialogById("#modify-image-dialog");
         this.requestUpdate();
-      }}
-          ></paper-icon-button>
-          <paper-icon-button
+      }}>
+            <wl-icon>settings</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
             class="fg pink controls-running"
-            icon="icons:apps"
             @click=${() => {
         if (this.selectedIndex !== rowData.index) this._clearRows();
         this.selectedIndex = rowData.index;
         this._decodeServicePort();
         this._launchDialogById("#modify-app-dialog");
         this.requestUpdate();
-      }}
-          ></paper-icon-button>
+      }}>
+            <wl-icon>apps</wl-icon>
+          </wl-button>
         </div>
       `,
       root
@@ -432,12 +450,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
         <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
           <wl-checkbox id="${rowData.item.name}" style="--checkbox-size:12px;"
-                       ?checked="${rowData.item.installed}"
-                       ?disabled="${rowData.item.installed}"
-                       @click="${(e) => {
-        this.openInstallImageDialog(rowData.index);
-        this.selectedCheckbox = e.target;
-      }}">
+              ?checked="${rowData.item.installed}"
+              ?disabled="${rowData.item.installed}"
+              @click="${(e) => {
+                this.openInstallImageDialog(rowData.index);
+                this.selectedCheckbox = e.target;
+              }}">
           </wl-checkbox>
         </div>
       `, root);
@@ -457,7 +475,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
         <vaadin-grid-column width="80px" resizable>
           <template class="header">
-            <vaadin-grid-sorter path="registry">Registry</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="registry">${_t("environment.Registry")}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout vertical">
@@ -468,7 +486,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
         <vaadin-grid-column width="60px" resizable>
           <template class="header">
-            <vaadin-grid-sorter path="namespace">Namespace</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="namespace">${_t("environment.Namespace")}</vaadin-grid-sorter>
           </template>
           <template>
             <div>[[item.namespace]]</div>
@@ -476,7 +494,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="lang">Language</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="lang">${_t("environment.Language")}</vaadin-grid-sorter>
           </template>
           <template>
             <div>[[item.lang]]</div>
@@ -484,14 +502,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="40px" resizable>
           <template class="header">
-            <vaadin-grid-sorter path="baseversion">Version</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="baseversion">${_t("environment.Version")}</vaadin-grid-sorter>
           </template>
           <template>
             <div>[[item.baseversion]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="60px" resizable>
-          <template class="header">Base</template>
+          <template class="header">${_t("environment.Base")}</template>
           <template>
             <template is="dom-repeat" items="[[ item.baseimage ]]">
               <lablup-shields app="" color="blue" description="[[item]]"></lablup-shields>
@@ -499,7 +517,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="50px" resizable>
-          <template class="header">Constraint</template>
+          <template class="header">${_t("environment.Constraint")}</template>
           <template>
             <template is="dom-if" if="[[item.additional_req]]">
               <lablup-shields app="" color="green" description="[[item.additional_req]]"></lablup-shields>
@@ -508,7 +526,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="150px" flex-grow="0" resizable>
           <template class="header">
-            Digest
+            ${_t("environment.Digest")}
           </template>
           <template>
             <div class="layout vertical">
@@ -517,15 +535,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="150px" flex-grow="0" resizable header="Resource Limit" .renderer="${this._boundRequirementsRenderer}">
+        <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t("environment.ResourceLimit")}" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable header="Control" .renderer=${this._boundControlsRenderer}>
+        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Modify Image</span>
+            <span>${_t("environment.ModifyImage")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -619,7 +637,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 @click=${this.modifyImage}
               >
                 <wl-icon>check</wl-icon>
-                Save Changes
+                ${_t("button.SaveChanges")}
               </wl-button>
             </fieldset>
           </form>
@@ -628,7 +646,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       <wl-dialog id="modify-app-dialog" fixed backdrop blockscrolling>
         <div slot="header" class="gutterBottom">
           <div class="horizontal center layout">
-            <span style="font-family: Quicksand, Roboto; font-size: 20px;">Manage Apps</span>
+            <span style="font-family: Quicksand, Roboto; font-size: 20px;">${_t("environment.ManageApps")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${e => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -638,10 +656,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </div>
         <div slot="content" id="modify-app-container" class="container">
           <div class="row header">
-            <div> App Name </div>
-            <div> Protocol </div>
-            <div> Port </div>
-            <div> Action </div>
+            <div> ${_t("environment.AppName")} </div>
+            <div> ${_t("environment.Protocol")} </div>
+            <div> ${_t("environment.Port")} </div>
+            <div> ${_t("environment.Action")} </div>
           </div>
           ${this.servicePorts.map((item, index) => html`
           <div class="row">
@@ -662,7 +680,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               class="fg pink"
               @click=${e => this._removeRow(e)}
             >
-              <wl-icon> remove </wl-icon>
+              <wl-icon>remove</wl-icon>
             </wl-button>
           </div>
           `)}
@@ -688,25 +706,25 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             @click=${this.modifyServicePort}
           >
             <wl-icon>check</wl-icon>
-            Finish
+            ${_t("button.Finish")}
           </wl-button>
         </div>
       </wl-dialog>
       <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling persistent>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
-            <p>You are about to install the image <span style="color:blue;">${this.installImageName}</span>.</p>
-            <p>This process requires significant download time. Do you want to proceed?</p>
+            <p>${_t("environment.DescDownloadImage")} <span style="color:blue;">${this.installImageName}</span></p>
+            <p>${_t("environment.DescSignificantDownloadTime")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer">
             <wl-button class="cancel" inverted flat
-                       @click="${(e) => {
+                @click="${(e) => {
       this._hideDialog(e)
       this._uncheckSelectedRow();
     }}">
-              Cancel
+              ${_t("button.Cancel")}
             </wl-button>
-            <wl-button class="ok" @click="${() => this._installImage()}">Okay</wl-button>
+            <wl-button class="ok" @click="${() => this._installImage()}">${_t("button.Okay")}</wl-button>
          </div>
       </wl-dialog>
     `;
@@ -777,10 +795,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   firstUpdated() {
     this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
     this.indicator = this.shadowRoot.querySelector('#indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
 
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
@@ -820,9 +838,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   _getImages() {
     this.loadingIndicator.show();
 
-    window.backendaiclient.domain.get(window.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
+    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return window.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
+      return globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
     }).then((response) => {
       let images = response.images;
       let domainImages: any = [];
@@ -945,6 +963,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'haskell': 'Haskell',
       'matlab': 'MATLAB',
       'sagemath': 'Sage',
+      'texlive': 'TeXLive',
       'java': 'Java',
       'php': 'PHP',
       'octave': 'Octave',
@@ -956,6 +975,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
       'digits': 'DIGITS',
+      'tf1': 'TensorFlow 1',
+      'tf2': 'TensorFlow 2',
       'py3': 'Python 3',
       'py2': 'Python 2',
       'py27': 'Python 2.7',
@@ -968,10 +989,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'ubuntu18.04': 'Ubuntu 18.04',
       'ubuntu20.04': 'Ubuntu 20.04',
       'intel': 'Intel MKL',
-      'rocm': 'ROCm',
-      'cuda9': 'CUDA9',
-      'cuda10': 'CUDA10',
-      'cuda10.1': 'CUDA10.1',
+      '2018': '2018',
+      '2019': '2019',
+      '2020': '2020',
+      '2021': '2021',
+      '2022': '2022',
+      'rocm': 'GPU:ROCm',
+      'cuda9': 'GPU:CUDA9',
+      'cuda10': 'GPU:CUDA10',
+      'cuda10.0': 'GPU:CUDA10',
+      'cuda10.1': 'GPU:CUDA10.1',
+      'cuda10.2': 'GPU:CUDA10.2',
+      'cuda10.3': 'GPU:CUDA10.3',
+      'cuda11': 'GPU:CUDA11',
+      'cuda11.0': 'GPU:CUDA11',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',

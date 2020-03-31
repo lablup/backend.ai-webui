@@ -40,15 +40,14 @@
     }
 
     function isIEEdge() {
-      return window.navigator.userAgent.match(/(MSIE|Trident|Edge)/);
+      return globalThis.navigator.userAgent.match(/(MSIE|Trident|Edge)/);
     }
+    globalThis.isElectron = isElectron();
+    globalThis.enableSW = false;
 
-    window.isElectron = isElectron();
-    window.enableSW = false;
-
-    window.process = {env: {NODE_ENV: 'production'}};
-    window.packageVersion = "20.03.0";
-    window.buildVersion = "200306.210346";
+    globalThis.process = {env: {NODE_ENV: 'production'}};
+    globalThis.packageVersion = "20.03.5";
+    globalThis.buildVersion = "200330.220355";
   </script>
   <style>
     body {
@@ -239,20 +238,20 @@
 </noscript>
 <script src="./dist/components/backend-ai-console.js" type="module"></script>
 <script>
-  document.getElementById('version-detail').innerText = window.packageVersion;
-  document.getElementById('build-detail').innerText = ' Build ' + window.buildVersion;
-  document.getElementById('license-detail').innerText = 'Enterprise Edition';
-  if (window.isElectron) {
+  document.getElementById('version-detail').innerText = globalThis.packageVersion;
+  document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;
+  document.getElementById('license-detail').innerText = '';
+  if (globalThis.isElectron) {
     document.getElementById('mode-detail').innerText = 'App';
   } else {
     document.getElementById('mode-detail').innerText = 'WebServer';
   }
   if (isIEEdge()) {
-    alert('Internet Explorer/MS Edge is not supported. Please visit with modern browsers.');
+    alert('Internet Explorer is not supported. Please visit with modern browsers.');
     document.getElementById('loading-message').innerText = 'Not supported browser.';
     document.getElementById('loading-message').style.color = 'red';
   }
-  if ('enableSW' in window && window.enableSW === true) {
+  if ('enableSW' in globalThis && globalThis.enableSW === true) {
     // Service worker routine.
   }
 </script>

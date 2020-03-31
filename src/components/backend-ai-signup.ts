@@ -13,7 +13,7 @@ import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6';
 
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
   IronFlexAlignment,
@@ -47,6 +47,7 @@ export default class BackendAiSignup extends BackendAIPage {
   @property({type: Object}) signupPanel = Object();
   @property({type: Object}) blockPanel = Object();
   @property({type: Object}) client;
+  @property({type: String}) TOSlanguage = 'en';
   @property({type: Object}) TOSdialog = Object();
 
   constructor() {
@@ -62,10 +63,6 @@ export default class BackendAiSignup extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-          paper-icon-button {
-              --paper-icon-button-ink-color: white;
-          }
-
           fieldset input {
               width: 100%;
               border: 0;
@@ -119,7 +116,7 @@ export default class BackendAiSignup extends BackendAIPage {
   firstUpdated() {
     this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
@@ -131,7 +128,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.title = "Terms of Service";
-      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
+      this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
   }
@@ -140,7 +137,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.title = "Privacy Policy";
-      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
+      this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }
   }

@@ -5,11 +5,10 @@
 
 import {css, customElement, html, LitElement, property} from "lit-element";
 
-import "@polymer/paper-icon-button/paper-icon-button";
 import "weightless/card";
 
 import * as d3 from "d3";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 const ByteConverter = {

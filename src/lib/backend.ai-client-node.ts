@@ -224,6 +224,12 @@ class Client {
   }
 
   /**
+   * Return the server-side manager version.
+   */
+  get apiVersion() {
+    return this._apiVersion;
+  }
+  /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
    * @param {Request} rqst - Request object to send
@@ -1112,6 +1118,17 @@ class VFolder {
   }
 
   /**
+   * Rename a Virtual folder.
+   *
+   * @param {string} new_name - New virtual folder name.
+   */
+  rename(new_name = null) {
+    const body = {new_name};
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Delete a Virtual folder.
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
@@ -1821,7 +1838,7 @@ class ContainerImage {
     }
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
-      resource = {'cpu': '1', 'mem': '512m'}
+      resource = {'cpu': '1', 'mem': '512m'};
     }
     return this.client.createIfNotExists(registry + name, sessionId, resource).then((response) => {
       return this.client.destroyKernel(sessionId);
@@ -2630,10 +2647,71 @@ class UserConfig {
    *
    * @param {string} data - text content of bootstrap script.
    */
-  update_bootstrap_script(data: string) {
-    const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", {data});
+  update_bootstrap_script(script: string) {
+    const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", {script});
     return this.client._wrapWithPromise(rqst);
   }
+  /**
+   * Create content of script dotfile (.bashrc or .zshrc)
+   * @param {string} data - text content of script dotfile
+   * @param {string} path - path of script dotfile. (cwd: home directory)
+   */
+  create_dotfile_script(data: string ='', path: string) {
+    if (!this.client._config.accessKey) {
+      throw 'Your access key is not set';
+    }
+    let params = {
+      "path": path,
+      "data": data,
+      "permission" : '644'
+    };
+    const rqst = this.client.newSignedRequest("POST", "/user-config/dotfiles", params);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get content of script dotfile
+   */
+  get_dotfile_script() {
+    if (!this.client._config.accessKey) {
+      throw 'Your access key is not set';
+    }
+    // let params = {
+    //   "owner_access_key" : this.client._config.accessKey
+    // }
+    const rqst = this.client.newSignedRequest("GET", "/user-config/dotfiles");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Update script dotfile of a keypair.
+   *
+   * @param {string} data - text content of script dotfile.
+   * @param {string} path - path of script dotfile. (cwd: home directory)
+   */
+  update_dotfile_script(data: string, path: string) {
+    let params = {
+      "data" : data,
+      "path" : path,
+      "permission" : '644'
+    }
+    const rqst = this.client.newSignedRequest("PATCH", "/user-config/dotfiles", params);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Delete script dotfile of a keypair.
+   *
+   * @param {string} path - path of script dotfile.
+   */
+  delete_dotfile_script(path: string) {
+    let params = {
+      "path" : path
+    }
+    const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
+    return this.client._wrapWithPromise(rqst);
+  }
+
 }
 
 class utils {

@@ -151,6 +151,12 @@ class Client {
         return this._managerVersion;
     }
     /**
+     * Return the server-side manager version.
+     */
+    get apiVersion() {
+        return this._apiVersion;
+    }
+    /**
      * Promise wrapper for asynchronous request to Backend.AI manager.
      *
      * @param {Request} rqst - Request object to send
@@ -993,6 +999,16 @@ class VFolder {
             name = this.name;
         }
         let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`, null);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Rename a Virtual folder.
+     *
+     * @param {string} new_name - New virtual folder name.
+     */
+    rename(new_name = null) {
+        const body = { new_name };
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -2422,8 +2438,65 @@ class UserConfig {
      *
      * @param {string} data - text content of bootstrap script.
      */
-    update_bootstrap_script(data) {
-        const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { data });
+    update_bootstrap_script(script) {
+        const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { script });
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Create content of script dotfile (.bashrc or .zshrc)
+     * @param {string} data - text content of script dotfile
+     * @param {string} path - path of script dotfile. (cwd: home directory)
+     */
+    create_dotfile_script(data = '', path) {
+        if (!this.client._config.accessKey) {
+            throw 'Your access key is not set';
+        }
+        let params = {
+            "path": path,
+            "data": data,
+            "permission": '644'
+        };
+        const rqst = this.client.newSignedRequest("POST", "/user-config/dotfiles", params);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Get content of script dotfile
+     */
+    get_dotfile_script() {
+        if (!this.client._config.accessKey) {
+            throw 'Your access key is not set';
+        }
+        // let params = {
+        //   "owner_access_key" : this.client._config.accessKey
+        // }
+        const rqst = this.client.newSignedRequest("GET", "/user-config/dotfiles");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update script dotfile of a keypair.
+     *
+     * @param {string} data - text content of script dotfile.
+     * @param {string} path - path of script dotfile. (cwd: home directory)
+     */
+    update_dotfile_script(data, path) {
+        let params = {
+            "data": data,
+            "path": path,
+            "permission": '644'
+        };
+        const rqst = this.client.newSignedRequest("PATCH", "/user-config/dotfiles", params);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Delete script dotfile of a keypair.
+     *
+     * @param {string} path - path of script dotfile.
+     */
+    delete_dotfile_script(path) {
+        let params = {
+            "path": path
+        };
+        const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
         return this.client._wrapWithPromise(rqst);
     }
 }

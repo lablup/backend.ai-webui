@@ -77,7 +77,7 @@ export default class LablupNotification extends LitElement {
 
   firstUpdated() {
     if ("Notification" in window) {
-      console.log(Notification.permission);
+      //console.log(Notification.permission);
       if (Notification.permission === "granted") {
         this.supportDesktopNotification = true;
       } else if (Notification.permission !== "denied") {
@@ -145,8 +145,13 @@ export default class LablupNotification extends LitElement {
     //   this._createCloseButton(notification);
     // }
     this._hideNotification(e);
-    window.history.pushState({}, '', '/usersettings');
+    let currentPage = globalThis.location.toString().split(/[\/]+/).pop();
+    globalThis.history.pushState({}, '', '/usersettings');
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+    if (currentPage && currentPage === 'usersettings') {
+      let event = new CustomEvent('backend-ai-usersettings-logs', {});
+      document.dispatchEvent(event);
+    }
   }
 
   _createCloseButton(notification) {

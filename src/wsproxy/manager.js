@@ -1,6 +1,8 @@
+// Backend.AI Websocket proxy server for local runtime environment / app.
 const express = require('express'),
- EventEmitter = require('events'),
-         cors = require('cors');
+  EventEmitter = require('events'),
+  cors = require('cors');
+const logger = require('./lib/logger')(__filename);
 
 const ai = require('../lib/backend.ai-client-node'),
   Gateway = require("./gateway/tcpwsproxy"),
@@ -10,13 +12,13 @@ const htmldeco = require('./lib/htmldeco');
 class Manager extends EventEmitter {
   constructor(listen_ip, proxyBaseHost, proxyBasePort) {
     super();
-    if(listen_ip === undefined) {
+    if (listen_ip === undefined) {
       this.listen_ip = "127.0.0.1"
     } else {
       this.listen_ip = listen_ip;
     }
 
-    if(proxyBaseHost === undefined) {
+    if (proxyBaseHost === undefined) {
       this.proxyBaseHost = "127.0.0.1"
     } else {
       this.proxyBaseHost = proxyBaseHost;
@@ -36,7 +38,7 @@ class Manager extends EventEmitter {
   }
 
   refreshPorts() {
-    console.log("PortRefresh");
+    logger.info("PortRefresh");
     for (let i = 0; i < 100; i++) {
       this.ports.push(Math.floor(Math.random() * 20000) + 10000)
     }
@@ -57,7 +59,7 @@ class Manager extends EventEmitter {
       } else {
         cf['_apiVersionMajor'] = 4;
       }
-      if (req.body.mode && req.body.mode == "SESSION") {
+      if (req.body.mode && req.body.mode === "SESSION") {
         cf['mode'] = "SESSION";
         cf['session'] = req.body.session;
         cf['endpoint'] = cf['endpoint'] + "/func";
@@ -68,7 +70,7 @@ class Manager extends EventEmitter {
         let config = new ai.backend.ClientConfig(
           req.body.access_key,
           req.body.secret_key,
-          req.body.endpoint,
+          req.body.endpoint
         );
         this.aiclient = new ai.backend.Client(config);
         this.aiclient.APIMajorVersion = cf['_apiVersionMajor'];
@@ -110,9 +112,9 @@ class Manager extends EventEmitter {
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       let port = undefined;
-      if(this.proxies.hasOwnProperty(p)) {
-          gateway = this.proxies[p];
-          port = gateway.getPort();
+      if (this.proxies.hasOwnProperty(p)) {
+        gateway = this.proxies[p];
+        port = gateway.getPort();
       } else {
         if (this._config.mode == "SESSION") {
           gateway = new SGateway(this._config);
@@ -131,8 +133,8 @@ class Manager extends EventEmitter {
             break;
           } catch (err) {
             //if port in use
-            console.log(err);
-            console.log("Port in use");
+            logger.warn(err);
+            logger.info("Port in use");
             //or just retry
           }
         }
@@ -144,10 +146,10 @@ class Manager extends EventEmitter {
 
       let proxy_target = "http://localhost:" + port;
       if (app == 'sftp') {
-        console.log(port);
+        logger.info(port);
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
       } else if (app == 'sshd') {
-        console.log(port);
+        logger.info(port);
         res.send({
           "code": 200,
           "proxy": proxy_target,
@@ -155,7 +157,7 @@ class Manager extends EventEmitter {
           "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
         });
       } else if (app == 'vnc') {
-        console.log(port);
+        logger.info(port);
         res.send({
           "code": 200,
           "proxy": proxy_target,
@@ -186,7 +188,7 @@ class Manager extends EventEmitter {
 
     this.app.get('/sftp', (req, res) => {
       let port = req.query.port;
-      let url =  "sftp://upload@127.0.0.1:" + port;
+      let url = "sftp://upload@127.0.0.1:" + port;
       res.send(htmldeco("Connect with your own SFTP", "host: 127.0.0.1<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"));
     });
 
@@ -202,7 +204,7 @@ class Manager extends EventEmitter {
   start() {
     return new Promise((resolve) => {
       this.listener = this.app.listen(this.port, this.listen_ip, () => {
-        console.log(`Listening on port ${this.listener.address().port}!`);
+        logger.info(`Listening on port ${this.listener.address().port}!`);
         this.port = this.listener.address().port;
         this.baseURL = "http://" + this.proxyBaseHost + ":" + this.port;
         resolve(this.listener.address().port);

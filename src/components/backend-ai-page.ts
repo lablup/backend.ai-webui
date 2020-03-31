@@ -3,13 +3,23 @@
 
  @group Backend.AI Console
  */
+import {registerTranslateConfig} from "lit-translate";
 import {LitElement, property} from 'lit-element';
+
+registerTranslateConfig({
+  loader: lang => {
+    return fetch(`/resources/i18n/${lang}.json`).then(res => {
+      return res.json()
+    })
+  }
+});
 
 export class BackendAIPage extends LitElement {
   public shadowRoot: any; // ShadowRoot
   public updateComplete: any;
   public notification: any;
   @property({type: Boolean}) active = false;
+  @property({type: Boolean}) hasLoadedStrings = false;
 
   constructor() {
     super();
@@ -17,11 +27,11 @@ export class BackendAIPage extends LitElement {
   }
 
   get activeConnected() {
-    return this.active && typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null && window.backendaiclient.ready === true;
+    return this.active && typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null && globalThis.backendaiclient.ready === true;
   }
 
   get connected() {
-    return typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null && window.backendaiclient.ready === true;
+    return typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null && globalThis.backendaiclient.ready === true;
   }
 
   public run_after_connection = (fn: any) => {
