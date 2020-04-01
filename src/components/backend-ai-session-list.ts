@@ -121,6 +121,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           color: red;
         }
 
+        img.indicator-icon {
+          width: 16px;
+          height: 16px;
+          padding-right: 5px;
+        }
+
         wl-button.pagination {
           width: 15px;
           height: 15px;
@@ -1354,22 +1360,20 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
                 <template is="dom-if" if="[[item.cuda_gpu_slot]]">
-                  <wl-icon class="fg green indicator">view_module</wl-icon>
-                  <!-- <iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon> -->
+                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
                   <span>[[item.cuda_gpu_slot]]</span>
                   <span class="indicator">GPU</span>
                 </template>
                 <template is="dom-if" if="[[!item.gpu_slot]]">
                   <template is="dom-if" if="[[item.cuda_fgpu_slot]]">
-                    <wl-icon class="fg green indicator">view_module</wl-icon>
-                    <!-- <iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon> -->
+                    <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
                     <span>[[item.cuda_fgpu_slot]]</span>
                     <span class="indicator">GPU</span>
                   </template>
                 </template>
                 <template is="dom-if" if="[[item.rocm_gpu_slot]]">
                   <wl-icon class="fg green indicator">view_module</wl-icon>
-                  <!--<iron-icon class="fg red" src="resources/icons/ROCm.png"></iron-icon> -->
+                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
                   <span>[[item.rocm_gpu_slot]]</span>
                   <span class="indicator">GPU</span>
                 </template>

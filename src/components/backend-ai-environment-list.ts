@@ -82,6 +82,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           padding: 0;
         }
 
+        img.indicator-icon {
+          width: 16px;
+          height: 16px;
+        }
+
         div.indicator,
         span.indicator {
           font-size: 9px;
@@ -294,8 +299,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <!--<iron-icon class="fg green" src="resources/icons/file_type_cuda.svg"></iron-icon>-->
-                <wl-icon class="fg green">view_module</wl-icon>
+                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
                 <span>${rowData.item.cuda_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
                 <span class="indicator">CUDA GPU</span>
@@ -315,7 +319,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.rocm_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" src="resources/icons/ROCm.png"></iron-icon>
+                <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
                 <span>${rowData.item.rocm_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
                 <span class="indicator">ROCm GPU</span>
@@ -325,7 +329,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.tpu_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <iron-icon class="fg green" icon="hardware:icons:view-module"></iron-icon>
+                <wl-icon class="fg green indicator">view_module</wl-icon>
                 <span>${rowData.item.tpu_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
                 <span class="indicator">TPU</span>
