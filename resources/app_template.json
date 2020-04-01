@@ -76,9 +76,17 @@
     ],
     "vnc-web": [
       {
-        "name": "vnc",
+        "name": "vnc-web",
         "title": "VNC (Web)",
         "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "novnc": [
+      {
+        "name": "novnc",
+        "title": "VNC (Web)",
+        "redirect": "",
         "src": "./resources/icons/default_app.svg"
       }
     ],
