@@ -627,7 +627,12 @@ class Client {
         params['config'].resource_opts.shmem = resources['shmem'];
       }
     }
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+    let rqst;
+    if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+    } else {
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
+    }
     return this._wrapWithPromise(rqst);
   }
 
