@@ -10,3 +10,6 @@ Icon made by Freepik from www.flaticon.com
 Icons made by Kiranshastry from www.flaticon.com
  * default.png
 
+Icons from pngwave https://www.pngwave.com/png-clip-art-cdsrv
+ * xfce.png
+

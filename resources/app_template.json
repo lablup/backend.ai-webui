@@ -86,23 +86,31 @@
       {
         "name": "novnc",
         "title": "VNC (Web)",
-        "redirect": "",
+        "redirect": "/vnc.html?autoconnect=true&amp;password=backendai",
         "src": "./resources/icons/default_app.svg"
       }
     ],
-    "lxde": [
+    "novnc": [
       {
-        "name": "lxde",
-        "title": "LXDE",
-        "redirect": "",
-        "src": "./resources/icons/default_app.svg"
+        "name": "novnc",
+        "title": "VNC (Web)",
+        "redirect": "/resize",
+        "src": "./resources/icons/novnc.svg"
+      }
+    ],
+    "xfce": [
+      {
+        "name": "xfce",
+        "title": "XFCE",
+        "redirect": "/resize",
+        "src": "./resources/icons/xfce.png"
       }
     ],
     "gnome": [
       {
         "name": "gnome",
         "title": "GNOME",
-        "redirect": "",
+        "redirect": "/vnc.html?autoconnect=true&amp;password=backendai",
         "src": "./resources/icons/default_app.svg"
       }
     ],

@@ -902,6 +902,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'py39': 'Python 3.9',
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
+      'xfce': 'XFCE',
       'gnome': 'GNOME',
       'kde': 'KDE',
       'ubuntu16.04': 'Ubuntu 16.04',
