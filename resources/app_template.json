@@ -90,6 +90,30 @@
         "src": "./resources/icons/default_app.svg"
       }
     ],
+    "lxde": [
+      {
+        "name": "lxde",
+        "title": "LXDE",
+        "redirect": "",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "gnome": [
+      {
+        "name": "gnome",
+        "title": "GNOME",
+        "redirect": "",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "KDE": [
+      {
+        "name": "kde",
+        "title": "KDE",
+        "redirect": "",
+        "src": "./resources/icons/default_app.svg"
+      }
+    ],
     "matlab": [
       {
         "name": "matlab",
