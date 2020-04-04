@@ -110,7 +110,7 @@
       {
         "name": "gnome",
         "title": "GNOME",
-        "redirect": "/vnc.html?autoconnect=true&amp;password=backendai",
+        "redirect": "/resize",
         "src": "./resources/icons/default_app.svg"
       }
     ],
