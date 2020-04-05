@@ -109,9 +109,9 @@
     "gnome": [
       {
         "name": "gnome",
-        "title": "GNOME",
+        "title": "GNOME Desktop",
         "redirect": "/resize",
-        "src": "./resources/icons/default_app.svg"
+        "src": "./resources/icons/gnome.svg"
       }
     ],
     "KDE": [
@@ -119,7 +119,7 @@
         "name": "kde",
         "title": "KDE",
         "redirect": "",
-        "src": "./resources/icons/default_app.svg"
+        "src": "./resources/icons/kde.svg"
       }
     ],
     "matlab": [
