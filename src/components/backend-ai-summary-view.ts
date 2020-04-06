@@ -383,13 +383,13 @@ export default class BackendAISummary extends BackendAIPage {
     return num.toString().replace(regexp, ',');
   }
 
-  _refreshInvitations() {
+  _refreshInvitations(refreshOnly = false) {
     if (!this.activeConnected) {
       return;
     }
     globalThis.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
-      if (this.active) {
+      if (this.active && !refreshOnly) {
         setTimeout(() => {
           this._refreshInvitations()
         }, 15000);
@@ -405,7 +405,7 @@ export default class BackendAISummary extends BackendAIPage {
       .then(response => {
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
-        this._refreshInvitations();
+        this._refreshInvitations(true);
       })
       .catch(err => {
         this.notification.text = PainKiller.relieve(err.title);
@@ -422,7 +422,7 @@ export default class BackendAISummary extends BackendAIPage {
       .then(res => {
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
-        this._refreshInvitations();
+        this._refreshInvitations(true);
       })
   }
 
