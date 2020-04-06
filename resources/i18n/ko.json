@@ -464,6 +464,10 @@
     "RequireFGPUPlugin": "Backend.AI Virtual CUDA API 층 플러그인이 필요합니다.",
     "TPU": "TPU",
     "DescTPU": "TPU 가속기 사용.",
-    "RequireTPUPlugin": "Google Cloud 상의 TPU가 연결된 자원 노드가 필요합니다."
+    "RequireTPUPlugin": "Google Cloud 상의 TPU가 연결된 자원 노드가 필요합니다.",
+    "Image": "Image",
+    "ImagePullBehavior": "Image Pull Behavior",
+    "DescImagePullBehavior": "Change image pulling behavior.",
+    "GUI": "GUI"
   }
 }

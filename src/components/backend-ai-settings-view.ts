@@ -18,6 +18,9 @@ import {
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+
 import 'weightless/card';
 import 'weightless/switch';
 import 'weightless/select';
@@ -28,6 +31,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
   @property({type: Object}) notification = Object();
+  @property({type: Array}) imagePullingBehavior = [
+    {name: _text("default"), behavior: "default"},
+    {name: _text("pull"), behavior: "pull"},
+    {name: _text("uuid"), behavior: "uuid"}
+  ];
 
   constructor() {
     super();
@@ -37,7 +45,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       cuda_fgpu: false,
       rocm_gpu: false,
       tpu: false,
-      scheduler: 'fifo'
+      scheduler: 'fifo',
+      image_pulling_behavior: 'default'
     }
   }
 
@@ -102,6 +111,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
           <span>${_t("settings.General")}</span>
           <span class="flex"></span>
         </h3>
+        <h4 class="horizontal center layout">
+          <span>${_t("settings.Image")}</span>
+          <span class="flex"></span>
+        </h4>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
@@ -119,10 +132,33 @@ export default class BackendAiSettingsView extends BackendAIPage {
               <div class="description">${_tr("settings.DescAutomaticImageUpdateFromRepo")}
               </div>
             </div>
+            <div class="vertical center-justified layout setting-select">
+              <mwc-select id="ui-language"
+                          required
+                          @selected="${(e) => this.setImagePullingBehavior(e)}">
+              ${this.imagePullingBehavior.map(item => html`
+                <mwc-list-item value="${item.behavior}" ?selected=${this.options['image_pulling_behavior'] === item.behavior}>
+                  ${item.name}
+                </mwc-list-item>`)}
+              </mwc-select>
+            </div>
+          </div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("settings.ImagePullBehavior")}</div>
+              <div class="description">${_tr("settings.DescImagePullBehavior")}
+              </div>
+            </div>
             <div class="vertical center-justified layout setting-button">
               <wl-switch id="allow-image-update-switch" @change="${(e) => this.toggleImageUpdate(e)}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
             </div>
           </div>
+        </div>
+        <h4 class="horizontal center layout">
+          <span>${_t("settings.GUI")}</span>
+          <span class="flex"></span>
+        </h4>
+        <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>${_t("settings.UseCLIonGUI")}</div>
@@ -296,6 +332,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
         console.log(response);
       });
     }
+  }
+
+  setImagePullingBehavior(e) {
+    
   }
 
   changeScheduler(e) {

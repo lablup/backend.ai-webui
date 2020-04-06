@@ -466,6 +466,10 @@
     "RequireFGPUPlugin": "Requires Backend.AI Virtual CUDA API Layer Plugin.",
     "TPU": "TPU",
     "DescTPU": "Use TPU accelerator.",
-    "RequireTPUPlugin": "Requires resource nodes on Google Cloud with Cloud TPU enabled / binded."
+    "RequireTPUPlugin": "Requires resource nodes on Google Cloud with Cloud TPU enabled / binded.",
+    "Image": "Image",
+    "ImagePullBehavior": "Image Pull Behavior",
+    "DescImagePullBehavior": "Change image pulling behavior.",
+    "GUI": "GUI"
   }
 }
