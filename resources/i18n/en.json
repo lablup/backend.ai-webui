@@ -460,6 +460,7 @@
     "Scheduler": "Scheduler",
     "JobScheduler": "Choose default job scheduler",
     "Require1912orAbove": "Requires Backend.AI 19.12 or above.",
+    "Require2003orAbove": "Requires Backend.AI 19.12 or above.",
     "EnterpriseFeatures": "Enterprise Features",
     "FractionalGPU": "Fractional GPU",
     "DescFractionalGPU": "Use Fractional GPU feature with GPU virtualization.",
@@ -468,8 +469,16 @@
     "DescTPU": "Use TPU accelerator.",
     "RequireTPUPlugin": "Requires resource nodes on Google Cloud with Cloud TPU enabled / binded.",
     "Image": "Image",
-    "ImagePullBehavior": "Image Pull Behavior",
-    "DescImagePullBehavior": "Change image pulling behavior.",
-    "GUI": "GUI"
+    "ImagePullBehavior": "Image auto install / update rule",
+    "DescImagePullBehavior": "Determines the conditions for automatically downloading new images when a new version is registered in the registry.<br />For none, new images will not be automatically downloaded.",
+    "GUI": "GUI",
+    "image": {
+      "digest": "Digest",
+      "tag": "Tag",
+      "none": "None"
+    }
+  },
+  "notification": {
+    "SuccessfullyUpdated": "Successfully Updated"
   }
 }
