@@ -1364,7 +1364,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                   <span>[[item.cuda_gpu_slot]]</span>
                   <span class="indicator">GPU</span>
                 </template>
-                <template is="dom-if" if="[[!item.gpu_slot]]">
+                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
                   <template is="dom-if" if="[[item.cuda_fgpu_slot]]">
                     <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
                     <span>[[item.cuda_fgpu_slot]]</span>
@@ -1372,7 +1372,6 @@ export default class BackendAiSessionList extends BackendAIPage {
                   </template>
                 </template>
                 <template is="dom-if" if="[[item.rocm_gpu_slot]]">
-                  <wl-icon class="fg green indicator">view_module</wl-icon>
                   <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
                   <span>[[item.rocm_gpu_slot]]</span>
                   <span class="indicator">GPU</span>
@@ -1384,9 +1383,13 @@ export default class BackendAiSessionList extends BackendAIPage {
                 </template>
                 <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
                   <template is="dom-if" if="[[!item.cuda_fgpu_slot]]">
-                    <wl-icon class="fg green indicator">view_module</wl-icon>
-                    <span>-</span>
-                    <span class="indicator">GPU</span>
+                    <template is="dom-if" if="[[!item.rocm_gpu_slot]]">
+                      <template is="dom-if" if="[[!item.tpu_slot]]">
+                        <wl-icon class="fg green indicator">view_module</wl-icon>
+                        <span>-</span>
+                        <span class="indicator">GPU</span>
+                      </template>
+                    </template>
                   </template>
                 </template>
               </div>

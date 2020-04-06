@@ -250,7 +250,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             keypair['total_resource_slots'].rocm_device = '-';
           }
           if ('tpu.device' in keypair['total_resource_slots']) {
-            keypair['total_resource_slots'].rocm_device = keypair['total_resource_slots']['tpu.device'];
+            keypair['total_resource_slots'].tpu_device = keypair['total_resource_slots']['tpu.device'];
           }
           if (('tpu_device' in keypair['total_resource_slots']) === false &&
             keypair['default_for_unspecified'] === 'UNLIMITED') {
