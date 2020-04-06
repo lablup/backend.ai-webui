@@ -262,6 +262,22 @@ This is only needed with pure ES6 dev. environment / browser. Websocket proxy is
 $ npm run wsproxy
 ```
 
+If console app is behind an external http proxy, and you have to pass through
+it to connect to a console-server or manager server, you can set
+`EXT_HTTP_PROXY` environment variable with the address of the http proxy.
+Local websocket proxy then communicates with the final destination via the http
+proxy. The address should include the protocol, host, and/or port (if exists).
+For example,
+
+```console
+export EXT_HTTP_PROXY=http://10.20.30.40:3128 (Linux)
+set EXT_HTTP_PROXY=http://10.20.30.40:3128 (Windows)
+```
+
+Even if you are using Electron embedded websocket proxy, you have to set the
+environment variable manually to pass through a http proxy.
+
+
 ## Build web server with specific configuration
 
 You can prepare site-specific configuration as `ini` format. Also, you can build site-specific web bundle refering in `configs` directory.

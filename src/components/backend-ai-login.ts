@@ -476,14 +476,16 @@ export default class BackendAILogin extends BackendAIPage {
     if (isLogon === false) {
       this.client.login().then(response => {
         if (response === false) {
-          throw {"message": "Authentication failed. Check information and manager status."};
+          throw {
+            "title": "No manager found at API Endpoint.",
+            "message": "Authentication failed. Check information and manager status."
+          };
         } else {
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
         this.free();
         if (this.loginPanel.open !== true) {
-          console.log(err);
           if (typeof err.message !== "undefined") {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
