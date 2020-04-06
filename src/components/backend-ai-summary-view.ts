@@ -397,12 +397,14 @@ export default class BackendAISummary extends BackendAIPage {
     });
   }
 
-  _acceptInvitation(invitation: any) {
+  _acceptInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
     globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
+        let panel = e.target.closest('lablup-activity-panel');
+        panel.setAttribute('disabled', 'true');
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations(true);
@@ -414,12 +416,14 @@ export default class BackendAISummary extends BackendAIPage {
       })
   }
 
-  _deleteInvitation(invitation: any) {
+  _deleteInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
     globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
+        let panel = e.target.closest('lablup-activity-panel');
+        panel.setAttribute('disabled', 'true');
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations(true);
@@ -561,7 +565,7 @@ export default class BackendAISummary extends BackendAIPage {
                   <wl-button
                     class="fg green"
                     outlined
-                    @click=${e => this._acceptInvitation(invitation)}
+                    @click=${e => this._acceptInvitation(e, invitation)}
                   >
                     <wl-icon>add</wl-icon>
                     ${_t('summary.Accept')}
@@ -569,7 +573,7 @@ export default class BackendAISummary extends BackendAIPage {
                   <wl-button
                     class="fg red"
                     outlined
-                    @click=${e => this._deleteInvitation(invitation)}
+                    @click=${e => this._deleteInvitation(e, invitation)}
                   >
                     <wl-icon>remove</wl-icon>
                     ${_t('summary.Decline')}
