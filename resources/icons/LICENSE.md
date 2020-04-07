@@ -13,3 +13,6 @@ ROCm.png , ROCm project icon is trademark of amd.com
 Icons made by Kiranshastry from www.flaticon.com
  * default.png
 
+Icons from pngwave https://www.pngwave.com/png-clip-art-cdsrv
+ * xfce.png
+
