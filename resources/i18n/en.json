@@ -460,7 +460,7 @@
     "Scheduler": "Scheduler",
     "JobScheduler": "Choose default job scheduler",
     "Require1912orAbove": "Requires Backend.AI 19.12 or above.",
-    "Require2003orAbove": "Requires Backend.AI 19.12 or above.",
+    "Require2003orAbove": "Requires Backend.AI 20.03 or above.",
     "EnterpriseFeatures": "Enterprise Features",
     "FractionalGPU": "Fractional GPU",
     "DescFractionalGPU": "Use Fractional GPU feature with GPU virtualization.",
