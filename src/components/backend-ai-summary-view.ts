@@ -401,9 +401,9 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
+    let panel = e.target.closest('lablup-activity-panel');
     globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
-        let panel = e.target.closest('lablup-activity-panel');
         panel.setAttribute('disabled', 'true');
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
@@ -420,9 +420,9 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
+    let panel = e.target.closest('lablup-activity-panel');
     globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
-        let panel = e.target.closest('lablup-activity-panel');
         panel.setAttribute('disabled', 'true');
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
