@@ -15,9 +15,10 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/icon';
+import 'weightless/label';
+import 'weightless/switch';
 import 'weightless/textfield';
 import 'weightless/title';
-import 'weightless/label';
 
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
@@ -117,12 +118,6 @@ class BackendAIRegistryList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#indicator');
   }
 
-  _getCurrentAllowedRegistries() {
-    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
-      this.allowed_registries = response.domain.allowed_docker_registries;
-    });
-  }
-
   _parseRegistryList(obj) {
     const isString = (val) => typeof val === "string" || val instanceof String;
     return Object.keys(obj).map(hostname =>
@@ -144,7 +139,6 @@ class BackendAIRegistryList extends BackendAIPage {
       return globalThis.backendaiclient.registry.list()
     }).then(({result}) => {
       this.registryList = this._parseRegistryList(result);
-      console.log(this.registryList);
       this.requestUpdate();
     })
   }
@@ -338,6 +332,38 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
+  toggleRegistry(e, hostname) {
+    console.log(e, hostname);
+    if (!e.target.checked) {
+      this._changeRegistryState(hostname, false);
+      //this._writeUserSetting('beta_feature', false);
+      //this.beta_feature_panel = false;
+    } else {
+      this._changeRegistryState(hostname, true);
+      //this._writeUserSetting('beta_feature', true);
+      //this.beta_feature_panel = true;
+    }
+  }
+
+  _changeRegistryState(hostname, state) {
+    let input: any = Object();
+    if (state === true) {
+      this.allowed_registries.push(hostname);
+      this.notification.text = _text("registry.RegistryTurnedOn");
+    } else {
+      let index = this.allowed_registries.indexOf(hostname);
+      if (index !== 1) {
+        this.allowed_registries.splice(index, 1);
+      }
+      this.notification.text = _text("registry.RegistryTurnedOff");
+    }
+    input.allowed_docker_registries = this.allowed_registries;
+    globalThis.backendaiclient.domain.modify(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
+      //this.allowed_registries = response.domain.allowed_docker_registries;
+      this.notification.show();
+    });
+  }
+
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
@@ -373,6 +399,7 @@ class BackendAIRegistryList extends BackendAIPage {
     render(
       html`
         <div>
+           <wl-switch @change="${(e) => this.toggleRegistry(e, rowData.item["hostname"])}" ?checked="${this.allowed_registries.includes(rowData.item["hostname"])}"></wl-switch>
         </div>
       `,
       root
