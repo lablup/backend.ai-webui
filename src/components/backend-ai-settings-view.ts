@@ -327,8 +327,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
     if (e.target.selected === null) return false;
     if (e.target.selected.value !== this.options['image_pulling_behavior'] && ['none', 'digest', 'tag'].includes(e.target.selected.value)) {
       globalThis.backendaiclient.setting.set('docker/image/auto_pull', e.target.selected.value).then((response) => {
+        this.options['image_pulling_behavior'] = e.target.selected.value;
         this.notification.text = _text("notification.SuccessfullyUpdated");
         this.notification.show();
+        this.update(this.options);
         console.log(response);
       });
     }
