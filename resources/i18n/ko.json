@@ -458,12 +458,25 @@
     "Scheduler": "스케쥴러",
     "JobScheduler": "기본 잡 스케쥴러를 지정합니다.",
     "Require1912orAbove": "Backend.AI 19.12 이상의 버전이 필요합니다.",
-    "EnterpriseFeatures": "Enterprise Features",
+    "Require2003orAbove": "Backend.AI 20.03 이상의 버전이 필요합니다.",
+    "EnterpriseFeatures": "엔터프라이즈 기능",
     "FractionalGPU": "부분 GPU 가상화",
     "DescFractionalGPU": "GPU 가상화와 함께 Fractional GPU 기능을 사용합니다.",
     "RequireFGPUPlugin": "Backend.AI Virtual CUDA API 층 플러그인이 필요합니다.",
     "TPU": "TPU",
     "DescTPU": "TPU 가속기 사용.",
-    "RequireTPUPlugin": "Google Cloud 상의 TPU가 연결된 자원 노드가 필요합니다."
+    "RequireTPUPlugin": "Google Cloud 상의 TPU가 연결된 자원 노드가 필요합니다.",
+    "Image": "계산 환경 이미지",
+    "ImagePullBehavior": "계산 환경 업데이트 조건",
+    "DescImagePullBehavior": "현재 사용중인 이미지의 새 버전이 레지스트리에 등록되었을 때 새로운 이미지를 자동으로 다운로드하는 비교 기준을 결정합니다.<br />현재 계산환경 이미지를 업데이트 없이 유지하려면 이 옵션을 사용 안함으로 지정하시기 바랍니다.",
+    "GUI": "그래픽 사용자 환경",
+    "image": {
+      "digest": "해시값",
+      "tag": "태그",
+      "none": "사용안함"
+    }
+  },
+  "notification": {
+    "SuccessfullyUpdated": "성공적으로 수정되었습니다."
   }
 }

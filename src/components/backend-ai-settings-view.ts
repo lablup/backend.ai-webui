@@ -18,6 +18,9 @@ import {
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+
 import 'weightless/card';
 import 'weightless/switch';
 import 'weightless/select';
@@ -28,11 +31,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
   @property({type: Object}) notification = Object();
+  @property({type: Array}) imagePullingBehavior = [
+    {name: _text("settings.image.digest"), behavior: "digest"},
+    {name: _text("settings.image.tag"), behavior: "tag"},
+    {name: _text("settings.image.none"), behavior: "none"}
+  ];
 
   constructor() {
     super();
     this.options = {
-      automatic_image_update: false,
+      image_pulling_behavior: "digest",
       cuda_gpu: false,
       cuda_fgpu: false,
       rocm_gpu: false,
@@ -80,6 +88,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
           width: 35px;
         }
 
+        .setting-select-desc {
+          width: 200px;
+        }
+
+        .setting-select {
+          width: 135px;
+        }
+
         .setting-desc-pulldown {
           width: 265px;
         }
@@ -102,6 +118,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
           <span>${_t("settings.General")}</span>
           <span class="flex"></span>
         </h3>
+        <h4 class="horizontal center layout">
+          <span>${_t("settings.Image")}</span>
+          <span class="flex"></span>
+        </h4>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
@@ -114,15 +134,30 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.AutomaticImageUpdateFromRepo")}</div>
-              <div class="description">${_tr("settings.DescAutomaticImageUpdateFromRepo")}
+            <div class="vertical center-justified layout setting-select-desc">
+              <div>${_t("settings.ImagePullBehavior")}</div>
+              <div class="description">${_tr("settings.DescImagePullBehavior")}<br />
+                  ${_t("settings.Require2003orAbove")}
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="allow-image-update-switch" @change="${(e) => this.toggleImageUpdate(e)}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
+            <div class="vertical center-justified layout setting-select">
+              <mwc-select id="ui-image-pulling-behavior"
+                          required
+                          @selected="${(e) => this.setImagePullingBehavior(e)}">
+              ${this.imagePullingBehavior.map(item => html`
+                <mwc-list-item value="${item.behavior}" ?selected=${this.options['image_pulling_behavior'] === item.behavior}>
+                  ${item.name}
+                </mwc-list-item>`)}
+              </mwc-select>
             </div>
+
           </div>
+        </div>
+        <h4 class="horizontal center layout">
+          <span>${_t("settings.GUI")}</span>
+          <span class="flex"></span>
+        </h4>
+        <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>${_t("settings.UseCLIonGUI")}</div>
@@ -255,9 +290,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
   updateSettings() {
     globalThis.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
-        this.options['automatic_image_update'] = true;
-      } else if (response['result'] === 'tag' || response['result'] === 'none') {
-        this.options['automatic_image_update'] = false;
+        this.options['image_pulling_behavior'] = 'digest';
+      } else if (response['result'] === 'tag') {
+        this.options['image_pulling_behavior'] = 'tag';
+      } else {
+        this.options['image_pulling_behavior'] = 'none';
       }
       this.update(this.options);
     });
@@ -286,16 +323,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
     });
   }
 
-  toggleImageUpdate(e) {
-    if (e.target.checked === false) {
-      globalThis.backendaiclient.setting.set('docker/image/auto_pull', 'none').then((response) => {
-        console.log(response);
-      });
-    } else {
-      globalThis.backendaiclient.setting.set('docker/image/auto_pull', 'digest').then((response) => {
+  setImagePullingBehavior(e) {
+    if (e.target.selected === null) return false;
+    if (e.target.selected.value !== this.options['image_pulling_behavior'] && ['none', 'digest', 'tag'].includes(e.target.selected.value)) {
+      globalThis.backendaiclient.setting.set('docker/image/auto_pull', e.target.selected.value).then((response) => {
+        this.options['image_pulling_behavior'] = e.target.selected.value;
+        this.notification.text = _text("notification.SuccessfullyUpdated");
+        this.notification.show();
+        this.update(this.options);
         console.log(response);
       });
     }
+    return true;
   }
 
   changeScheduler(e) {

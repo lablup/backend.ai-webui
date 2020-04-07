@@ -1876,6 +1876,7 @@ class ContainerImage {
     });
     return this.client._wrapWithPromise(rqst);
   }
+
 }
 
 class ComputeSession {
