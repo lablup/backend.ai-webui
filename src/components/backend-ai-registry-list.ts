@@ -33,8 +33,10 @@ class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;
   @property({type: Object}) indicator = Object();
   @property({type: Number}) selectedIndex = 0;
+  @property({type: String}) boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
   @property({type: Array}) _registryType = Array();
+  @property({type: Array}) allowed_registries = Array();
 
   constructor() {
     super();
@@ -115,9 +117,14 @@ class BackendAIRegistryList extends BackendAIPage {
     this.indicator = this.shadowRoot.querySelector('#indicator');
   }
 
+  _getCurrentAllowedRegistries() {
+    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
+      this.allowed_registries = response.domain.allowed_docker_registries;
+    });
+  }
+
   _parseRegistryList(obj) {
     const isString = (val) => typeof val === "string" || val instanceof String;
-
     return Object.keys(obj).map(hostname =>
       isString(obj[hostname])
         ? {
@@ -131,12 +138,15 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _refreshRegistryList() {
-    globalThis.backendaiclient.registry.list()
-      .then(({result}) => {
-        this.registryList = this._parseRegistryList(result);
-        console.log(this.registryList);
-        this.requestUpdate();
-      })
+    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
+      this.allowed_registries = response.domain.allowed_docker_registries;
+      console.log(this.allowed_registries);
+      return globalThis.backendaiclient.registry.list()
+    }).then(({result}) => {
+      this.registryList = this._parseRegistryList(result);
+      console.log(this.registryList);
+      this.requestUpdate();
+    })
   }
 
   async _viewStateChanged(active) {
@@ -359,6 +369,15 @@ class BackendAIRegistryList extends BackendAIPage {
       root
     )
   }
+  _isEnabledRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>
+        </div>
+      `,
+      root
+    )
+  }
 
   _controlsRenderer(root, column, rowData) {
     render(
@@ -437,6 +456,7 @@ class BackendAIRegistryList extends BackendAIPage {
             <div> [[item.password]] </div>
           </template>
         </vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" header="${_t("general.Enabled")}" .renderer=${this.boundIsEnabledRenderer}></vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t("general.Control")}" .renderer=${this.boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
