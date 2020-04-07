@@ -1274,14 +1274,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (session !== null) {
       (this.fileUploadQueue as any).push(session);
     }
-    if (this.fileUploadCount < this.concurrentFileUploadLimit) {
-      let queuedSession;
-      for (let i = this.fileUploadCount; i < this.concurrentFileUploadLimit; i++) {
-        if (this.fileUploadQueue.length > 0) {
-          queuedSession = this.fileUploadQueue.shift();
-          this.fileUploadCount = this.fileUploadCount + 1;
-          queuedSession.start();
-        }
+    let queuedSession;
+    for (let i = this.fileUploadCount; i < this.concurrentFileUploadLimit; i++) {
+      if (this.fileUploadQueue.length > 0) {
+        queuedSession = this.fileUploadQueue.shift();
+        this.fileUploadCount = this.fileUploadCount + 1;
+        queuedSession.start();
       }
     }
   }
