@@ -173,7 +173,8 @@
     "ConfirmPassword": "Confirm Password",
     "Create": "Create",
     "Control": "Control",
-    "NewPassword": "New Password"
+    "NewPassword": "New Password",
+    "Enabled": "Enabled"
   },
   "credential": {
     "Permission": "Permission",
@@ -397,7 +398,9 @@
     "RegistryType": "Registry Type",
     "ProjectName": "Project Name",
     "ProjectNameIsRequired": "Project name is required",
-    "TypeRegistryNameToDelete": "Type registry hostname to delete"
+    "TypeRegistryNameToDelete": "Type registry hostname to delete",
+    "RegistryTurnedOn": "Registry enabled",
+    "RegistryTurnedOff": "Registry disabled"
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",

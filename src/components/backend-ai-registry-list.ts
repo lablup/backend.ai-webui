@@ -359,7 +359,6 @@ class BackendAIRegistryList extends BackendAIPage {
     }
     input.allowed_docker_registries = this.allowed_registries;
     globalThis.backendaiclient.domain.modify(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
-      //this.allowed_registries = response.domain.allowed_docker_registries;
       this.notification.show();
     });
   }
@@ -483,7 +482,7 @@ class BackendAIRegistryList extends BackendAIPage {
             <div> [[item.password]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("general.Enabled")}" .renderer=${this.boundIsEnabledRenderer}></vaadin-grid-column>
+        <vaadin-grid-column flex-grow="0" width="60px" header="${_t("general.Enabled")}" .renderer=${this.boundIsEnabledRenderer}></vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t("general.Control")}" .renderer=${this.boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
