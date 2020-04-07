@@ -481,5 +481,28 @@
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다."
+  },
+  "information": {
+    "System": "시스템",
+    "Core": "핵심 구성 요소",
+    "ManagerVersion": "매니저 버전",
+    "APIVersion": "API 버전",
+    "DockerVersion": "Docker 버전",
+    "PostgreSQLVersion": "PostgreSQL 버전",
+    "ETCDVersion": "ETCD 버전",
+    "RedisVersion": "Redis 버전",
+    "Security": "보안",
+    "Component": "구성 요소",
+    "Installation": "설치",
+    "LatestRelease": "최신 릴리즈",
+    "DescDockerVersion": "클러스터에 설치된 Docker 버전",
+    "DescPostgreSQLVersion": "Backend.AI에서 사용하는 데이터베이스 관리 시스템",
+    "DescETCDVersion": "Backend.AI용 설정 저장소",
+    "DescRedisVersion": "Backend.AI용 캐시 / 임시 저장소. <br />에이전트간 동기화 통신에도 사용합니다.",
+    "DefaultAdministratorAccountChanged": "기본 관리자 계정 정보 변경",
+    "DescDefaultAdministratorAccountChanged": "실제 사용을 위해서는 초기 계정 정보를 반드시 변경해야 합니다.",
+    "UsesSSL": "SSL 사용",
+    "DescUsesSSL": "적절하게 설정된 SSL을 통한 HTTPS 통신은 시스템 보안을 강화합니다.",
+    "Compatible": "호환"
   }
 }

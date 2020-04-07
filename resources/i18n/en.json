@@ -483,5 +483,28 @@
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated"
+  },
+  "information": {
+    "System": "System",
+    "Core": "Core",
+    "ManagerVersion": "Manager version",
+    "APIVersion": "API version",
+    "DockerVersion": "Docker version",
+    "PostgreSQLVersion": "PostgreSQL version",
+    "ETCDVersion": "ETCD version",
+    "RedisVersion": "Redis version",
+    "Security": "Security",
+    "Component": "Component",
+    "Installation": "Installation",
+    "LatestRelease": "Latest release",
+    "DescDockerVersion": "Docker version on the cluster",
+    "DescPostgreSQLVersion": "Database system for Backend.AI",
+    "DescETCDVersion": "Settings registry for Backend.AI",
+    "DescRedisVersion": "Cache / temporary storage for Backend.AI. <br />Also uses as asynchronous communication along agents.",
+    "DefaultAdministratorAccountChanged": "Default administrator account changed",
+    "DescDefaultAdministratorAccountChanged": "SHOULD change the default account / password for production use.",
+    "UsesSSL": "Uses SSL",
+    "DescUsesSSL": "HTTPS with proper SSL setup helps system security.",
+    "Compatible": "Compatible"
   }
 }
