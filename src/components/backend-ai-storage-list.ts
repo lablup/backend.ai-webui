@@ -58,6 +58,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Array}) invitees = [];
   @property({type: String}) selectedFolder = '';
   @property({type: Array}) uploadFiles = [];
+  @property({type: Array}) fileUploadQueue = [];
+  @property({type: Number}) fileUploadCount = 0;
+  @property({type: Number}) concurrentFileUploadLimit = 2;
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
   @property({type: Array}) allowedGroups = [];
@@ -1225,6 +1228,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           (this.uploadFiles as any).push(file);
         }
       }
+      return;
 
       for (let i = 0; i < temp.length; i++) {
         this.fileUpload(temp[i]);
@@ -1266,6 +1270,20 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.shadowRoot.querySelector('#fileInput').value = '';
   }
 
+  runFileUploadQueue(session = null) {
+    if (session !== null) {
+      (this.fileUploadQueue as any).push(session);
+    }
+    let queuedSession;
+    for (let i = this.fileUploadCount; i < this.concurrentFileUploadLimit; i++) {
+      if (this.fileUploadQueue.length > 0) {
+        queuedSession = this.fileUploadQueue.shift();
+        this.fileUploadCount = this.fileUploadCount + 1;
+        queuedSession.start();
+      }
+    }
+  }
+
   fileUpload(fileObj) {
     this._uploadFlag = true;
     this.uploadFilesExist = this.uploadFiles.length > 0;
@@ -1282,8 +1300,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           filename: path,
           filetype: fileObj.type
         },
-        onError: function (error) {
-          console.log("Failed because: " + error)
+        onError: (error) => {
+          console.log("Failed because: " + error);
+          this.fileUploadCount = this.fileUploadCount - 1;
+          this.runFileUploadQueue();
         },
         onProgress: (bytesUploaded, bytesTotal) => {
           if (!this._uploadFlag) {
@@ -1322,10 +1342,12 @@ export default class BackendAiStorageList extends BackendAIPage {
             this.uploadFiles.splice((this.uploadFiles as any).indexOf(fileObj), 1);
             this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
             this.uploadFiles = this.uploadFiles.slice();
+            this.fileUploadCount = this.fileUploadCount - 1;
+            this.runFileUploadQueue();
           }, 1000);
         }
       });
-      upload.start();
+      this.runFileUploadQueue(upload);
     });
   }
 
