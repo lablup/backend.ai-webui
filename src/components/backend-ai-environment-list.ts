@@ -40,8 +40,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
   @property({type: Array}) servicePorts = Array();
   @property({type: Number}) selectedIndex = 0;
-  @property({type: Boolean}) _gpu_disabled = false;
-  @property({type: Boolean}) _fgpu_disabled = false;
+  @property({type: Boolean}) _cuda_gpu_disabled = false;
+  @property({type: Boolean}) _cuda_fgpu_disabled = false;
+  @property({type: Boolean}) _rocm_gpu_disabled = false;
+  @property({type: Boolean}) _tpu_disabled = false;
   @property({type: Object}) alias = Object();
   @property({type: Object}) loadingIndicator = Object();
   @property({type: Object}) indicator = Object();
@@ -78,6 +80,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         wl-icon {
           --icon-size: 16px;
           padding: 0;
+        }
+
+        img.indicator-icon {
+          width: 16px;
+          height: 16px;
         }
 
         div.indicator,
@@ -164,18 +171,25 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   modifyImage() {
     const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
       mem = this.shadowRoot.querySelector("#modify-image-mem").value,
-      gpu = this.shadowRoot.querySelector("#modify-image-gpu").value,
-      fgpu = this.shadowRoot.querySelector("#modify-image-fgpu").value;
+      gpu = this.shadowRoot.querySelector("#modify-image-cuda-gpu").value,
+      fgpu = this.shadowRoot.querySelector("#modify-image-cuda-fgpu").value,
+      rocm_gpu = this.shadowRoot.querySelector("#modify-image-rocm-gpu").value,
+      tpu = this.shadowRoot.querySelector("#modify-image-tpu").value;
 
     const {resource_limits} = this.images[this.selectedIndex];
 
     let input = {};
 
-    const mem_idx = this._gpu_disabled ? (this._fgpu_disabled ? 1 : 2) : (this._fgpu_disabled ? 2 : 3);
+    // TODO : index modification
+    const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
     if (cpu !== resource_limits[0].min) input["cpu"] = {"min": cpu};
-    if (mem !== resource_limits[mem_idx].min) input["mem"] = {"min": mem};
-    if (!this._gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
-    if (!this._fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
+    let memory = this._symbolicUnit(mem);
+    if (memory !== resource_limits[mem_idx].min) input["mem"] = {"min": memory};
+    // TODO : let add options for ROCm devices
+    if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
+    if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
+    if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input["rocm.device"] = {"min": rocm_gpu};
+    if (!this._tpu_disabled && tpu !== resource_limits[4].min) input["tpu.device"] = {"min": tpu};
 
     const image = this.images[this.selectedIndex];
 
@@ -285,10 +299,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.cuda_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green">view_module</wl-icon>
+                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
                 <span>${rowData.item.cuda_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
-                <span class="indicator">GPU</span>
+                <span class="indicator">CUDA GPU</span>
               </div>
             </div>
             ` : html``}
@@ -298,27 +312,57 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 <wl-icon class="fg green">apps</wl-icon>
                 <span>${rowData.item.cuda_shares_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
-                <span class="indicator">fGPU</span>
+                <span class="indicator">CUDA fGPU</span>
               </div>
             </div>
             ` : html``}
+        ${rowData.item.rocm_device_limit_min ? html`
+           <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+                <span>${rowData.item.rocm_device_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
+                <span class="indicator">ROCm GPU</span>
+              </div>
+            </div>
+            ` : html``}
+        ${rowData.item.tpu_device_limit_min ? html`
+           <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <span>${rowData.item.tpu_device_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
+                <span class="indicator">TPU</span>
+              </div>
+            </div>
+            ` : html``}
+
       `, root
     );
   }
 
   _setPulldownDefaults(resource_limits) {
-    this._gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
-    this._fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
+    this._cuda_gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
+    this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
+    this._rocm_gpu_disabled = resource_limits.filter(e => e.key === "rocm_device").length === 0;
+    this._tpu_disabled = resource_limits.filter(e => e.key === "tpu_device").length === 0;
 
     this.shadowRoot.querySelector("#modify-image-cpu").value = resource_limits[0].min;
-    if (!this._gpu_disabled)
-      this.shadowRoot.querySelector("#modify-image-gpu").value = resource_limits[1].min;
+    if (!this._cuda_gpu_disabled) {
+      this.shadowRoot.querySelector("#modify-image-cuda-gpu").value = resource_limits[1].min;
+    }
+    if (!this._cuda_fgpu_disabled) {
+      this.shadowRoot.querySelector("#modify-image-cuda-fgpu").value = resource_limits[2].min;
+    }
+    if (!this._rocm_gpu_disabled) {
+      this.shadowRoot.querySelector("#modify-image-rocm-gpu").value = resource_limits[3].min;
+    }
+    if (!this._tpu_disabled) {
+      this.shadowRoot.querySelector("#modify-image-tpu").value = resource_limits[4].min;
+    }
 
-    if (!this._fgpu_disabled)
-      this.shadowRoot.querySelector("#modify-image-fgpu").value = resource_limits[2].min;
-
-    const mem_idx = this._gpu_disabled ? (this._fgpu_disabled ? 1 : 2) : (this._fgpu_disabled ? 2 : 3);
-    this.shadowRoot.querySelector("#modify-image-mem").value = resource_limits[mem_idx].min;
+    const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
+    this.shadowRoot.querySelector("#modify-image-mem").value = this._addUnit(resource_limits[mem_idx].min);
   }
 
   _decodeServicePort() {
@@ -501,7 +545,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro">
+        <wl-card elevation="1" class="login-panel intro" style="margin: 0;">
           <h3 class="horizontal center layout">
             <span>${_t("environment.ModifyImage")}</span>
             <div class="flex"></div>
@@ -514,7 +558,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div style="display: flex; flex-direction: column;">
                 <div style="display: flex;">
                   <wl-select
-                    label="CPU"
+                    label="CPU Core"
                     id="modify-image-cpu"
                     style="flex: 1"
                   >
@@ -529,7 +573,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     id="modify-image-mem"
                     style="flex: 1"
                   >
-                    ${["64m", "128m", "256m", "512m", "1g", "2g", "4g", "8g", "16g"].map(item => html`
+                    ${["64MB", "128MB", "256MB", "512MB", "1GB", "2GB", "4GB", "8GB", "16GB", "32GB", "256GB", "512GB"].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
@@ -538,24 +582,50 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 </div>
                 <div style="display: flex;">
                   <wl-select
-                    label="GPU"
-                    id="modify-image-gpu"
+                    label="CUDA GPU"
+                    id="modify-image-cuda-gpu"
                     style="flex: 1"
-                    ?disabled=${this._gpu_disabled}
+                    ?disabled=${this._cuda_gpu_disabled}
                   >
-                    ${[0, 1, 2, 3, 4].map(item => html`
+                    ${[0, 1, 2, 3, 4, 5, 6, 7].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
                     `)}
                   </wl-select>
                   <wl-select
-                    label="fGPU"
-                    id="modify-image-fgpu"
-                    ?disabled=${this._fgpu_disabled}
+                    label="CUDA fractional GPU"
+                    id="modify-image-cuda-fgpu"
+                    ?disabled=${this._cuda_fgpu_disabled}
                     style="flex: 1"
                   >
                     ${[0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
+                      <option
+                        value=${item}
+                      >${item}</option>
+                    `)}
+                  </wl-select>
+                </div>
+                <div style="display: flex;">
+                  <wl-select
+                    label="ROCm GPU"
+                    id="modify-image-rocm-gpu"
+                    style="flex: 1"
+                    ?disabled=${this._rocm_gpu_disabled}
+                  >
+                    ${[0, 1, 2, 3, 4, 5, 6, 7].map(item => html`
+                      <option
+                        value=${item}
+                      >${item}</option>
+                    `)}
+                  </wl-select>
+                  <wl-select
+                    label="TPU"
+                    id="modify-image-tpu"
+                    ?disabled=${this._tpu_disabled}
+                    style="flex: 1"
+                  >
+                    ${[0, 1, 2].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
@@ -819,6 +889,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             if (resource.key == 'cuda.shares') {
               resource.key = 'cuda_shares';
             }
+            if (resource.key == 'rocm.device') {
+              resource.key = 'rocm_device';
+            }
+            if (resource.key == 'tpu.device') {
+              resource.key = 'tpu_device';
+            }
             image[resource.key + '_limit_min'] = this._addUnit(resource.min);
             image[resource.key + '_limit_max'] = this._addUnit(resource.max);
           });
@@ -856,6 +932,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
     if (unit == 't') {
       return value.slice(0, -1) + 'TB';
+    }
+    return value;
+  }
+
+  _symbolicUnit(value) {
+    let unit = value.substr(-2);
+    if (unit == 'MB') {
+      return value.slice(0, -2) + 'm';
+    }
+    if (unit == 'GB') {
+      return value.slice(0, -2) + 'g';
+    }
+    if (unit == 'TB') {
+      return value.slice(0, -2) + 't';
     }
     return value;
   }

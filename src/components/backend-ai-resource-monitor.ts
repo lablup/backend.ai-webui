@@ -802,11 +802,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     globalThis.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
       if ('cuda.device' in results) {
-        this.gpu_mode = 'gpu';
+        this.gpu_mode = 'cuda.gpu';
         this.gpu_step = 1;
       }
       if ('cuda.shares' in results) {
-        this.gpu_mode = 'fgpu';
+        this.gpu_mode = 'cuda.fgpu';
         this.gpu_step = 0.05;
       }
     });
@@ -862,7 +862,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    if (this.gpu_mode == 'fgpu') {
+    if (this.gpu_mode == 'cuda.fgpu') {
       config['cuda.shares'] = this.gpu_request;
     } else {
       config['cuda.device'] = this.gpu_request;
@@ -886,7 +886,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
-      if (this.gpu_mode == 'fgpu') {
+      if (this.gpu_mode == 'cuda.fgpu') {
         config['fgpu'] = 0.0;
       } else {
         config['gpu'] = 0.0;
@@ -1597,7 +1597,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.cpu_metric = cpu_metric;
         }
 
-        if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
+        if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.gpu') {
           let gpu_metric = {...item};
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
@@ -1625,7 +1625,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           this.gpu_metric = gpu_metric;
         }
-        if (item.key === 'cuda.shares' && this.gpu_mode === 'fgpu') {
+        if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.fgpu') {
           let fgpu_metric = {...item};
           fgpu_metric.min = parseFloat(fgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
