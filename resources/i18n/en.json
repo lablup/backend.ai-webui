@@ -63,7 +63,10 @@
     "UpdateEnvironmentImages": "Update environment images",
     "CheckResources": "Check resources",
     "ChangeSystemSetting": "Change system setting",
-    "SystemMaintenance": "System maintenance"
+    "SystemMaintenance": "System maintenance",
+    "Invitation": "Invitation",
+    "FolderName": "Folder Name",
+    "Permission": "Permission"
   },
   "session": {
     "launcher": {

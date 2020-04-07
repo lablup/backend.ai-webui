@@ -545,12 +545,12 @@ export default class BackendAISummary extends BackendAIPage {
           </lablup-activity-panel>
       ${this.invitations ? this.invitations.map(invitation =>
       html`
-            <lablup-activity-panel title="Invitation">
+            <lablup-activity-panel title="${_t("summary.Invitation")}>
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
-                <span class="invitation_folder_name">Folder name: ${invitation.vfolder_name}</span>
+                <span class="invitation_folder_name">${_t("summary.FolderName")}>: ${invitation.vfolder_name}</span>
                 <div class="horizontal center layout">
-                Permission:
+                ${_t("summary.Permission")}>:
                 ${[...invitation.perm].map(c => {
         return html`
                   <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"

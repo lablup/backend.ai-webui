@@ -63,7 +63,10 @@
     "UpdateEnvironmentImages": "실행 환경 이미지 업데이트",
     "CheckResources": "자원 확인",
     "ChangeSystemSetting": "시스템 설정 변경",
-    "SystemMaintenance": "시스템 유지보수"
+    "SystemMaintenance": "시스템 유지보수",
+    "Invitation": "초대",
+    "FolderName": "폴더 이름",
+    "Permission": "권한"
   },
   "session": {
     "launcher": {
