@@ -336,12 +336,8 @@ class BackendAIRegistryList extends BackendAIPage {
     console.log(e, hostname);
     if (!e.target.checked) {
       this._changeRegistryState(hostname, false);
-      //this._writeUserSetting('beta_feature', false);
-      //this.beta_feature_panel = false;
     } else {
       this._changeRegistryState(hostname, true);
-      //this._writeUserSetting('beta_feature', true);
-      //this.beta_feature_panel = true;
     }
   }
 
@@ -357,7 +353,7 @@ class BackendAIRegistryList extends BackendAIPage {
       }
       this.notification.text = _text("registry.RegistryTurnedOff");
     }
-    input.allowed_docker_registries = this.allowed_registries;
+    //input.allowed_docker_registries = this.allowed_registries;
     globalThis.backendaiclient.domain.modify(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
       this.notification.show();
     });
