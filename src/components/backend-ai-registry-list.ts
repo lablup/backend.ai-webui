@@ -15,9 +15,10 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/icon';
+import 'weightless/label';
+import 'weightless/switch';
 import 'weightless/textfield';
 import 'weightless/title';
-import 'weightless/label';
 
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
@@ -33,8 +34,10 @@ class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;
   @property({type: Object}) indicator = Object();
   @property({type: Number}) selectedIndex = 0;
+  @property({type: String}) boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
   @property({type: Array}) _registryType = Array();
+  @property({type: Array}) allowed_registries = Array();
 
   constructor() {
     super();
@@ -117,7 +120,6 @@ class BackendAIRegistryList extends BackendAIPage {
 
   _parseRegistryList(obj) {
     const isString = (val) => typeof val === "string" || val instanceof String;
-
     return Object.keys(obj).map(hostname =>
       isString(obj[hostname])
         ? {
@@ -131,12 +133,14 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _refreshRegistryList() {
-    globalThis.backendaiclient.registry.list()
-      .then(({result}) => {
-        this.registryList = this._parseRegistryList(result);
-        console.log(this.registryList);
-        this.requestUpdate();
-      })
+    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
+      this.allowed_registries = response.domain.allowed_docker_registries;
+      console.log(this.allowed_registries);
+      return globalThis.backendaiclient.registry.list()
+    }).then(({result}) => {
+      this.registryList = this._parseRegistryList(result);
+      this.requestUpdate();
+    })
   }
 
   async _viewStateChanged(active) {
@@ -328,6 +332,33 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
+  toggleRegistry(e, hostname) {
+    console.log(e, hostname);
+    if (!e.target.checked) {
+      this._changeRegistryState(hostname, false);
+    } else {
+      this._changeRegistryState(hostname, true);
+    }
+  }
+
+  _changeRegistryState(hostname, state) {
+    let input: any = Object();
+    if (state === true) {
+      this.allowed_registries.push(hostname);
+      this.notification.text = _text("registry.RegistryTurnedOn");
+    } else {
+      let index = this.allowed_registries.indexOf(hostname);
+      if (index !== 1) {
+        this.allowed_registries.splice(index, 1);
+      }
+      this.notification.text = _text("registry.RegistryTurnedOff");
+    }
+    //input.allowed_docker_registries = this.allowed_registries;
+    globalThis.backendaiclient.domain.modify(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
+      this.notification.show();
+    });
+  }
+
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
@@ -354,6 +385,16 @@ class BackendAIRegistryList extends BackendAIPage {
       html`
         <div>
           ${rowData.item[""]}
+        </div>
+      `,
+      root
+    )
+  }
+  _isEnabledRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>
+           <wl-switch @change="${(e) => this.toggleRegistry(e, rowData.item["hostname"])}" ?checked="${this.allowed_registries.includes(rowData.item["hostname"])}"></wl-switch>
         </div>
       `,
       root
@@ -437,6 +478,7 @@ class BackendAIRegistryList extends BackendAIPage {
             <div> [[item.password]] </div>
           </template>
         </vaadin-grid-column>
+        <vaadin-grid-column flex-grow="0" width="60px" header="${_t("general.Enabled")}" .renderer=${this.boundIsEnabledRenderer}></vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t("general.Control")}" .renderer=${this.boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>

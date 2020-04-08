@@ -171,7 +171,8 @@
     "Password": "패스워드",
     "ConfirmPassword": "패스워드 (확인)",
     "Control": "제어",
-    "NewPassword": "새 패스워드"
+    "NewPassword": "새 패스워드",
+    "Enabled": "활성화됨"
   },
   "credential": {
     "Permission": "권한",
@@ -395,7 +396,9 @@
     "RegistryType": "레지스트리 유형",
     "ProjectName": "프로젝트 이름",
     "ProjectNameIsRequired": "프로젝트 이름이 필요합니다.",
-    "TypeRegistryNameToDelete": "삭제 확인을 위해 레지스트리 이름을 입력하세요."
+    "TypeRegistryNameToDelete": "삭제 확인을 위해 레지스트리 이름을 입력하세요.",
+    "RegistryTurnedOn": "레지스트리가 활성화 되었습니다",
+    "RegistryTurnedOff": "레지스트리가 비활성화 되었습니다"
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",
