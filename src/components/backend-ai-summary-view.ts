@@ -405,6 +405,9 @@ export default class BackendAISummary extends BackendAIPage {
     globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
         panel.setAttribute('disabled', 'true');
+        panel.querySelectorAll('wl-button').forEach((btn) => {
+          btn.setAttribute('disabled', 'true');
+        });
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations(true);
@@ -424,6 +427,9 @@ export default class BackendAISummary extends BackendAIPage {
     globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
         panel.setAttribute('disabled', 'true');
+        panel.querySelectorAll('wl-button').forEach((btn) => {
+          btn.setAttribute('disabled', 'true');
+        });
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations(true);
