@@ -2026,32 +2026,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     e.stopPropagation();
     const resource_description = {
       'cpu': {
-        'name': 'CPU',
-        'desc': '<p>The CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions.</p>' +
-          '<p>For high performance computing workloads, many CPUs are helpful, but the program code must be written to use multiple CPUs.</p>'
+        'name': _text("session.launcher.CPU"),
+        'desc': _text("session.launcher.DescCPU")
       },
       'mem': {
-        'name': 'Memory', 'desc': '<p>Computer memory is a temporary storage area.</p>' +
-          '<p>It holds the data and instructions that the Central Processing Unit (CPU) needs.</p>' +
-          '<p>When using a GPU in a machine learning workload, you must allocate at least twice the memory of the GPU to memory. ' +
-          'Otherwise, the GPU\'s idle time will increase, resulting in a performance penalty.</p>'
+        'name': _text("session.launcher.Memory"),
+        'desc': _text("session.launcher.DescMemory")
       },
       'shmem': {
-        'name': 'Shared memory',
-        'desc': '<p>Shared memory is memory that may be simultaneously accessed by multiple programs with an intent to provide communication among them or avoid redundant copies.</p>' +
-          '<p>For multi-CPU or multi-threaded workloads, shared memory is important because it is used for inter-thread communication. ' +
-          'For deep learning workloads and high performance computing workloads using multi-threaded, we recommend setting this value to 1 GB or higher.</p>'
+        'name': _text("session.launcher.SharedMemory"),
+        'desc': _text("session.launcher.DescSharedMemory")
       },
       'gpu': {
-        'name': 'GPU',
-        'desc': '<p>GPUs are well-suited for the matrix/vector computations involved in machine learning. ' +
-          'GPUs speed up training algorithms by orders of magnitude, reducing running times from weeks to days.</p>'
+        'name': _text("session.launcher.GPU"),
+        'desc': _text("session.launcher.DescGPU")
       },
       'session': {
-        'name': 'Session (Backend.AI)',
-        'desc': '<p>A session is a unit of computational environment that is created according to a specified environment and resources.</p>' +
-          '<p>If this value is set to a value greater than 1, multiple sessions corresponding to the resource set above are created.</p>' +
-          '<p>If there are not enough resources available, requests to create sessions that cannot be created are put on the waiting queue.</p>'
+        'name': _text("session.launcher.TitleSession"),
+        'desc': _text("session.launcher.DescSession")
       }
     };
     if (item in resource_description) {
