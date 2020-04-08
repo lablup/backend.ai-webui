@@ -383,13 +383,13 @@ export default class BackendAISummary extends BackendAIPage {
     return num.toString().replace(regexp, ',');
   }
 
-  _refreshInvitations() {
+  _refreshInvitations(refreshOnly = false) {
     if (!this.activeConnected) {
       return;
     }
     globalThis.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
-      if (this.active) {
+      if (this.active && !refreshOnly) {
         setTimeout(() => {
           this._refreshInvitations()
         }, 15000);
@@ -397,15 +397,20 @@ export default class BackendAISummary extends BackendAIPage {
     });
   }
 
-  _acceptInvitation(invitation: any) {
+  _acceptInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
+    let panel = e.target.closest('lablup-activity-panel');
     globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
+        panel.setAttribute('disabled', 'true');
+        panel.querySelectorAll('wl-button').forEach((btn) => {
+          btn.setAttribute('disabled', 'true');
+        });
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
-        this._refreshInvitations();
+        this._refreshInvitations(true);
       })
       .catch(err => {
         this.notification.text = PainKiller.relieve(err.title);
@@ -414,15 +419,20 @@ export default class BackendAISummary extends BackendAIPage {
       })
   }
 
-  _deleteInvitation(invitation: any) {
+  _deleteInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
+    let panel = e.target.closest('lablup-activity-panel');
     globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
+        panel.setAttribute('disabled', 'true');
+        panel.querySelectorAll('wl-button').forEach((btn) => {
+          btn.setAttribute('disabled', 'true');
+        });
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
-        this._refreshInvitations();
+        this._refreshInvitations(true);
       })
   }
 
@@ -561,7 +571,7 @@ export default class BackendAISummary extends BackendAIPage {
                   <wl-button
                     class="fg green"
                     outlined
-                    @click=${e => this._acceptInvitation(invitation)}
+                    @click=${e => this._acceptInvitation(e, invitation)}
                   >
                     <wl-icon>add</wl-icon>
                     ${_t('summary.Accept')}
@@ -569,7 +579,7 @@ export default class BackendAISummary extends BackendAIPage {
                   <wl-button
                     class="fg red"
                     outlined
-                    @click=${e => this._deleteInvitation(invitation)}
+                    @click=${e => this._deleteInvitation(e, invitation)}
                   >
                     <wl-icon>remove</wl-icon>
                     ${_t('summary.Decline')}
