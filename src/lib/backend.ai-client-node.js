@@ -130,22 +130,22 @@ class Client {
         this.computeSession = new ComputeSession(this);
         this.resourcePolicy = new ResourcePolicy(this);
         this.user = new User(this);
-      this.group = new Group(this);
-      this.domain = new Domain(this);
-      this.resources = new Resources(this);
-      this.maintenance = new Maintenance(this);
-      this.scalingGroup = new ScalingGroup(this);
-      this.registry = new Registry(this);
-      this.setting = new Setting(this);
-      this.userConfig = new UserConfig(this);
-      this.domain = new Domain(this);
-      this._features = {}; // feature support list
-      this.abortController = new AbortController();
-      this.abortSignal = this.abortController.signal;
-      this.requestTimeout = 5000;
-      //if (this._config.connectionMode === 'API') {
-      //this.getManagerVersion();
-      //}
+        this.group = new Group(this);
+        this.domain = new Domain(this);
+        this.resources = new Resources(this);
+        this.maintenance = new Maintenance(this);
+        this.scalingGroup = new ScalingGroup(this);
+        this.registry = new Registry(this);
+        this.setting = new Setting(this);
+        this.userConfig = new UserConfig(this);
+        this.domain = new Domain(this);
+        this._features = {}; // feature support list
+        this.abortController = new AbortController();
+        this.abortSignal = this.abortController.signal;
+        this.requestTimeout = 5000;
+        //if (this._config.connectionMode === 'API') {
+        //this.getManagerVersion();
+        //}
     }
     /**
      * Return the server-side manager version.
@@ -157,53 +157,54 @@ class Client {
      * Return the server-side manager version.
      */
     get apiVersion() {
-      return this._apiVersion;
+        return this._apiVersion;
     }
-
-  /**
-   * Promise wrapper for asynchronous request to Backend.AI manager.
-   *
-   * @param {Request} rqst - Request object to send
-   * @param {Boolean} rawFile - True if it is raw request
-   * @param {AbortController.signal} signal - Request signal to abort fetch
-   */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null) {
-    let errorType = Client.ERR_REQUEST;
-    let errorTitle = '';
-    let errorMsg;
-    let resp, body, requestTimer;
-    try {
-      if (rqst.method == 'GET') {
-        rqst.body = undefined;
-      }
-      if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
-        rqst.credentials = 'include';
-        rqst.mode = 'cors';
-      }
-      if (signal !== null) {
-        rqst.signal = signal;
-      } else { // Use client-wide fetch timeout.
-        let controller = new AbortController();
-        rqst.signal = controller.signal;
-        requestTimer = setTimeout(() => {
-          errorType = Client.ERR_ABORT;
-          controller.abort();
-        }, this.requestTimeout);
-      }
-      let resp;
-      resp = await fetch(rqst.uri, rqst);
-      if (typeof (requestTimer) !== "undefined") {
-        clearTimeout(requestTimer);
-      }
-      errorType = Client.ERR_RESPONSE;
-      let contentType = resp.headers.get('Content-Type');
-      if (rawFile === false && contentType === null) {
-        if (resp.blob === undefined)
-          body = await resp.buffer(); // for node-fetch
-        else
-          body = await resp.blob();
-      } else if (rawFile === false && (contentType.startsWith('application/json') ||
-        contentType.startsWith('application/problem+json'))) {
+    /**
+     * Promise wrapper for asynchronous request to Backend.AI manager.
+     *
+     * @param {Request} rqst - Request object to send
+     * @param {Boolean} rawFile - True if it is raw request
+     * @param {AbortController.signal} signal - Request signal to abort fetch
+     */
+    async _wrapWithPromise(rqst, rawFile = false, signal = null) {
+        let errorType = Client.ERR_REQUEST;
+        let errorTitle = '';
+        let errorMsg;
+        let resp, body, requestTimer;
+        try {
+            if (rqst.method == 'GET') {
+                rqst.body = undefined;
+            }
+            if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
+                rqst.credentials = 'include';
+                rqst.mode = 'cors';
+            }
+            if (signal !== null) {
+                rqst.signal = signal;
+            }
+            else { // Use client-wide fetch timeout.
+                let controller = new AbortController();
+                rqst.signal = controller.signal;
+                requestTimer = setTimeout(() => {
+                    errorType = Client.ERR_ABORT;
+                    controller.abort();
+                }, this.requestTimeout);
+            }
+            let resp;
+            resp = await fetch(rqst.uri, rqst);
+            if (typeof (requestTimer) !== "undefined") {
+                clearTimeout(requestTimer);
+            }
+            errorType = Client.ERR_RESPONSE;
+            let contentType = resp.headers.get('Content-Type');
+            if (rawFile === false && contentType === null) {
+                if (resp.blob === undefined)
+                    body = await resp.buffer(); // for node-fetch
+                else
+                    body = await resp.blob();
+            }
+            else if (rawFile === false && (contentType.startsWith('application/json') ||
+                contentType.startsWith('application/problem+json'))) {
                 body = await resp.json(); // Formatted error message from manager
                 errorType = body.type;
                 errorTitle = body.title;
@@ -225,49 +226,50 @@ class Client {
             }
         }
         catch (err) {
-          let error_message;
-          if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
-            error_message = err.title; // formatted message
-          } else {
-            error_message = err;
-          }
-          if (typeof (resp) === 'undefined') {
-            resp = {
-              status: 'aborted',
-              statusText: 'Aborted'
-            };
-          }
-          switch (errorType) {
-            case Client.ERR_REQUEST:
-              errorType = 'https://api.backend.ai/probs/client-request-error';
-              errorTitle = error_message;
-              errorMsg = `sending request has failed: ${error_message}`;
-              break;
-            case Client.ERR_RESPONSE:
-              errorType = 'https://api.backend.ai/probs/client-response-error';
-              errorTitle = error_message;
-              errorMsg = `reading response has failed: ${error_message}`;
-              break;
-            case Client.ERR_SERVER:
-              errorType = 'https://api.backend.ai/probs/server-error';
-              errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
-              errorMsg = 'server responded failure: '
-                + `${resp.status} ${resp.statusText} - ${body.title}`;
-              break;
-            case Client.ERR_ABORT:
-              errorType = 'https://api.backend.ai/probs/request-abort-error';
-              errorTitle = `Request aborted`;
-              errorMsg = 'Request aborted by user';
-              break;
-            default:
-              if (errorType === '') {
-                errorType = Client.ERR_UNKNOWN;
-              }
-              if (errorTitle === '') {
-                errorTitle = body.title;
-              }
-              errorMsg = 'server responded failure: '
-                + `${resp.status} ${resp.statusText} - ${body.title}`;
+            let error_message;
+            if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
+                error_message = err.title; // formatted message
+            }
+            else {
+                error_message = err;
+            }
+            if (typeof (resp) === 'undefined') {
+                resp = {
+                    status: 'aborted',
+                    statusText: 'Aborted'
+                };
+            }
+            switch (errorType) {
+                case Client.ERR_REQUEST:
+                    errorType = 'https://api.backend.ai/probs/client-request-error';
+                    errorTitle = error_message;
+                    errorMsg = `sending request has failed: ${error_message}`;
+                    break;
+                case Client.ERR_RESPONSE:
+                    errorType = 'https://api.backend.ai/probs/client-response-error';
+                    errorTitle = error_message;
+                    errorMsg = `reading response has failed: ${error_message}`;
+                    break;
+                case Client.ERR_SERVER:
+                    errorType = 'https://api.backend.ai/probs/server-error';
+                    errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
+                    errorMsg = 'server responded failure: '
+                        + `${resp.status} ${resp.statusText} - ${body.title}`;
+                    break;
+                case Client.ERR_ABORT:
+                    errorType = 'https://api.backend.ai/probs/request-abort-error';
+                    errorTitle = `Request aborted`;
+                    errorMsg = 'Request aborted by user';
+                    break;
+                default:
+                    if (errorType === '') {
+                        errorType = Client.ERR_UNKNOWN;
+                    }
+                    if (errorTitle === '') {
+                        errorTitle = body.title;
+                    }
+                    errorMsg = 'server responded failure: '
+                        + `${resp.status} ${resp.statusText} - ${body.title}`;
             }
             throw {
                 isError: true,
@@ -279,83 +281,80 @@ class Client {
                 statusCode: resp.status,
                 statusText: resp.statusText,
                 title: errorTitle,
-              message: errorMsg,
+                message: errorMsg,
             };
         }
-    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
-    if (previous_log) {
-      if (previous_log.length > 5000) {
-        previous_log = previous_log.slice(1, 5000);
-      }
-    }
-    let log_stack = Array();
-    if (typeof (resp) === 'undefined') {
-      resp = {
-        status: 'No status',
-        statusText: 'No response given.'
-      };
-    }
-    let current_log = {
-      "isError": false,
-      "timestamp": new Date().toUTCString(),
-      "type": "",
-      "requestUrl": rqst.uri,
-      "requestMethod": rqst.method,
-      "requestParameters": rqst.body,
-      "statusCode": resp.status,
-      "statusText": resp.statusText,
-      "title": body.title,
+        let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+        if (previous_log) {
+            if (previous_log.length > 5000) {
+                previous_log = previous_log.slice(1, 5000);
+            }
+        }
+        let log_stack = Array();
+        if (typeof (resp) === 'undefined') {
+            resp = {
+                status: 'No status',
+                statusText: 'No response given.'
+            };
+        }
+        let current_log = {
+            "isError": false,
+            "timestamp": new Date().toUTCString(),
+            "type": "",
+            "requestUrl": rqst.uri,
+            "requestMethod": rqst.method,
+            "requestParameters": rqst.body,
+            "statusCode": resp.status,
+            "statusText": resp.statusText,
+            "title": body.title,
             "message": ""
         };
         log_stack.push(current_log);
         if (previous_log) {
             log_stack = log_stack.concat(previous_log);
         }
-    localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
-    return body;
-  }
-
-  /**
-   * Return the server-side API version.
-   *
-   * @param {AbortController.signal} signal - Request signal to abort fetch
-   *
-   */
-  getServerVersion(signal = null) {
-    let rqst = this.newPublicRequest('GET', '/', null, '');
-    return this._wrapWithPromise(rqst, false, signal);
-  }
-
-  /**
-   * Get API major version
-   */
-  get APIMajorVersion() {
-    return this._apiVersionMajor;
-  }
+        localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
+        return body;
+    }
+    /**
+     * Return the server-side API version.
+     *
+     * @param {AbortController.signal} signal - Request signal to abort fetch
+     *
+     */
+    getServerVersion(signal = null) {
+        let rqst = this.newPublicRequest('GET', '/', null, '');
+        return this._wrapWithPromise(rqst, false, signal);
+    }
+    /**
+     * Get API major version
+     */
+    get APIMajorVersion() {
+        return this._apiVersionMajor;
+    }
     /**
      * Force API major version
      */
     set APIMajorVersion(value) {
-      this._apiVersionMajor = value;
-      this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+        this._apiVersionMajor = value;
+        this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
     }
-
-  /**
-   * Get the server-side manager version.
-   *
-   * @param {AbortController.signal} signal - Request signal to abort fetch
-   */
-  async getManagerVersion(signal = null) {
-    if (this._managerVersion === null) {
-      let v = await this.getServerVersion(signal);
-      this._managerVersion = v.manager;
-      this._apiVersion = v.version;
-      this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
-      this._apiVersionMajor = v.version.substr(1, 2);
-      this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
-      if (this._apiVersionMajor > 4) {
-        this.kernelPrefix = '/session';
-      }
+    /**
+     * Get the server-side manager version.
+     *
+     * @param {AbortController.signal} signal - Request signal to abort fetch
+     */
+    async getManagerVersion(signal = null) {
+        if (this._managerVersion === null) {
+            let v = await this.getServerVersion(signal);
+            this._managerVersion = v.manager;
+            this._apiVersion = v.version;
+            this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
+            this._apiVersionMajor = v.version.substr(1, 2);
+            this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+            if (this._apiVersionMajor > 4) {
+                this.kernelPrefix = '/session';
+            }
         }
         return this._managerVersion;
     }
@@ -426,14 +425,13 @@ class Client {
         try {
             result = await this._wrapWithPromise(rqst);
             if (result.authenticated === true) {
-                let data = result.data;
                 this._config._accessKey = result.data.access_key;
                 this._config._session_id = result.session_id;
             }
-          console.log("login succeed");
+            console.log("login succeed");
         }
         catch (err) {
-          console.log(err);
+            console.log(err);
             return Promise.resolve(false);
         }
         return result.authenticated;
@@ -1086,8 +1084,6 @@ class VFolder {
             name = this.name;
         }
         let formData = new FormData();
-        let option = { filepath: path };
-        //formData.append('src', fs, {filepath: path});
         formData.append('src', fs, path);
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData);
         return this.client._wrapWithPromise(rqst);
@@ -1150,7 +1146,7 @@ class VFolder {
      * @param {boolean} recursive - delete files recursively.
      * @param {string} name - Virtual folder name that files are in.
      */
-    delete_files(files, recursive = null, name = null) {
+    delete_files(files, recursive = false, name = null) {
         if (name == null) {
             name = this.name;
         }
@@ -1429,7 +1425,7 @@ class Keypair {
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
      * @param {string} accessKey - Manual access key (optional)
      * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
+  
      */
     add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
         let fields = [
@@ -1615,16 +1611,6 @@ class ResourcePolicy {
      * };
      */
     mutate(name = null, input) {
-        let fields = ['name',
-            'created_at',
-            'default_for_unspecified',
-            'total_resource_slots',
-            'max_concurrent_sessions',
-            'max_containers_per_session',
-            'max_vfolder_count',
-            'max_vfolder_size',
-            'allowed_vfolder_hosts',
-            'idle_timeout'];
         if (this.client.is_admin === true && name !== null) {
             let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
                 `  modify_keypair_resource_policy(name: $name, props: $input) {` +
@@ -1790,10 +1776,6 @@ class ComputeSession {
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      */
     async list(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
-        if (accessKey === '')
-            accessKey = null;
-        if (group === '')
-            group = null;
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -1807,10 +1789,10 @@ class ComputeSession {
             'offset': offset,
             'status': status
         };
-        if (accessKey != null) {
+        if (accessKey != '') {
             v['ak'] = accessKey;
         }
-        if (group != null) {
+        if (group != '') {
             v['group_id'] = group;
         }
         return this.client.gql(q, v);
@@ -1825,10 +1807,6 @@ class ComputeSession {
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      */
     async listAll(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], accessKey = '', group = '') {
-        if (accessKey === '')
-            accessKey = null;
-        if (group === '')
-            group = null;
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
         // For V3/V4 API compatibility
         let q, v;
@@ -1843,10 +1821,10 @@ class ComputeSession {
         // access_key: accessKey,
         // status: status
         };
-        if (accessKey != null) {
+        if (accessKey !== '') {
             v['access_key'] = accessKey;
         }
-        if (group != null) {
+        if (group !== '') {
             v['group_id'] = group;
         }
         return this.client.gql(q, v);
@@ -2049,8 +2027,8 @@ class Domain {
     /**
      * Modify domain information.
      * @param {string} domain_name - domain name of group
-
-
+  
+  
      * @param {json} input - Domain specification to change. Required fields are:
      * {
      *   'name': String,          // Group name.
@@ -2066,8 +2044,8 @@ class Domain {
      * };
      */
     modify(domain_name = false, input) {
-        let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-            'allowed_docker_registries', 'integration_id', 'scaling_groups'];
+        //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+        //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
         if (this.client.is_superadmin === true) {
             let q = `mutation($name: String!, $input: ModifyDomainInput!) {` +
                 `  modify_domain(name: $name, props: $input) {` +
@@ -2263,7 +2241,6 @@ class User {
      * };
      */
     modify(email = null, input) {
-        let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
         if (this.client.is_superadmin === true) {
             let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
                 `  modify_user(email: $email, props: $input) {` +
@@ -2676,31 +2653,31 @@ Object.defineProperty(Client, 'ERR_SERVER', {
     value: 0,
     writable: false,
     enumerable: true,
-  configurable: false
+    configurable: false
 });
 Object.defineProperty(Client, 'ERR_RESPONSE', {
-  value: 1,
-  writable: false,
-  enumerable: true,
-  configurable: false
+    value: 1,
+    writable: false,
+    enumerable: true,
+    configurable: false
 });
 Object.defineProperty(Client, 'ERR_REQUEST', {
-  value: 2,
-  writable: false,
-  enumerable: true,
-  configurable: false
+    value: 2,
+    writable: false,
+    enumerable: true,
+    configurable: false
 });
 Object.defineProperty(Client, 'ERR_ABORT', {
-  value: 3,
-  writable: false,
-  enumerable: true,
-  configurable: false
+    value: 3,
+    writable: false,
+    enumerable: true,
+    configurable: false
 });
 Object.defineProperty(Client, 'ERR_UNKNOWN', {
-  value: 99,
-  writable: false,
-  enumerable: true,
-  configurable: false
+    value: 99,
+    writable: false,
+    enumerable: true,
+    configurable: false
 });
 const backend = {
     Client: Client,
