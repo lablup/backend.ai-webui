@@ -168,16 +168,25 @@ export const BackendAiConsoleStyles = [
       color: #ffffff;
     }
 
-    wl-select {
-      --input-bg: transparent;
-      --input-color: rgb(221, 221, 221);
-      --input-color-disabled: rgb(221, 221, 221);
-      --input-label-color: rgb(221, 221, 221);
-      --input-label-font-size: 10px;
-      --input-padding-left-right: 0;
+    mwc-select {
       width: 135px;
-      --input-border-style: 0;
-      --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --mdc-theme-primary: var(--paper-grey-600);
+      --mdc-select-fill-color: transparent;
+      --mdc-select-label-ink-color: rgba(255, 255, 255, 0.75);
+      --mdc-select-dropdown-icon-color: white;
+      --mdc-select-idle-line-color: transparent;
+      --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
+      --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
+      --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
+      --mdc-theme-surface: white;
+      --mdc-list-vertical-padding: 5px;
+      --mdc-list-side-padding: 10px;
+      --mdc-list-item__primary-text: {
+        height: 20px;
+        color: #222222;
+      };
     }
 
     wl-dialog wl-textfield {

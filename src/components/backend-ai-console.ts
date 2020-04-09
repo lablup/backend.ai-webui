@@ -22,7 +22,6 @@ import '@material/mwc-select';
 
 import toml from 'markty-toml';
 
-import 'weightless/select';
 import 'weightless/progress-spinner';
 
 import './backend-ai-splash';
@@ -348,18 +347,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (groupSelectionBox.hasChildNodes()) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild);
     }
-    let select = document.createElement('wl-select');
+    let select = document.createElement('mwc-select');
     select.label = _text("console.menu.Project");
-    select.name = 'group-select';
     select.id = 'group-select';
     select.value = this.current_group;
-    select.addEventListener('input', this.changeGroup.bind(this));
-    let opt = document.createElement('option');
+    select.addEventListener('selected', this.changeGroup.bind(this));
+    let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
     opt.innerHTML = _text("console.menu.SelectProject");
     select.appendChild(opt);
     this.groups.map(group => {
-      opt = document.createElement('option');
+      opt = document.createElement('mwc-list-item');
       opt.value = group;
       if (this.current_group === group) {
         opt.selected = true;
