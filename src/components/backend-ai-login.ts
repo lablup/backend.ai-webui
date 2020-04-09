@@ -106,6 +106,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         #login-panel {
           --dialog-width: 400px;
+          --backdrop-bg: transparent;
         }
 
         h3 small {
