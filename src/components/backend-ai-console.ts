@@ -16,8 +16,9 @@ import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
-import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
+import '@material/mwc-select';
 
 import toml from 'markty-toml';
 

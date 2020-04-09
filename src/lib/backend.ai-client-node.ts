@@ -268,7 +268,7 @@ class Client {
       }
       let resp;
       resp = await fetch(rqst.uri, rqst);
-      if (typeof (requestTimer) !== "undefined") {
+      if (typeof requestTimer !== "undefined") {
         clearTimeout(requestTimer);
       }
       errorType = Client.ERR_RESPONSE;
