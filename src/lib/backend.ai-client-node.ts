@@ -162,6 +162,8 @@ class Client {
   public userConfig: UserConfig;
   public _features: any;
   public ready: boolean = false;
+  public abortController: any;
+  public abortSignal: any;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
   static ERR_SERVER: any;
@@ -210,7 +212,8 @@ class Client {
     this.domain = new Domain(this);
 
     this._features = {}; // feature support list
-
+    this.abortController = new AbortController();
+    this.abortSignal = this.abortController.signal;
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -233,8 +236,10 @@ class Client {
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
    * @param {Request} rqst - Request object to send
+   * @param {Boolean} rawFile - True if it is raw request
+   * @param {AbortController.signal} signal - Request signal to abort fetch
    */
-  async _wrapWithPromise(rqst, rawFile = false) {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
@@ -247,6 +252,9 @@ class Client {
       if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
         rqst.credentials = 'include';
         rqst.mode = 'cors';
+      }
+      if (signal !== null) {
+        rqst.signal = signal;
       }
       resp = await fetch(rqst.uri, rqst);
       errorType = Client.ERR_RESPONSE;
@@ -354,10 +362,13 @@ class Client {
 
   /**
    * Return the server-side API version.
+   *
+   * @param {AbortController.signal} signal - Request signal to abort fetch
+   *
    */
-  getServerVersion() {
+  getServerVersion(signal = null) {
     let rqst = this.newPublicRequest('GET', '/', null, '');
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, signal);
   }
 
   /**
