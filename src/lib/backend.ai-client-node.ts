@@ -355,7 +355,7 @@ class Client {
       };
     }
 
-    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs') as any);
     if (previous_log) {
       if (previous_log.length > 5000) {
         previous_log = previous_log.slice(1, 5000);
@@ -508,7 +508,6 @@ class Client {
     try {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
-        let data = result.data;
         this._config._accessKey = result.data.access_key;
         this._config._session_id = result.session_id;
       }
@@ -1204,8 +1203,6 @@ class VFolder {
       name = this.name;
     }
     let formData = new FormData();
-    let option = {filepath: path};
-    //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData);
     return this.client._wrapWithPromise(rqst);
@@ -1272,7 +1269,7 @@ class VFolder {
    * @param {boolean} recursive - delete files recursively.
    * @param {string} name - Virtual folder name that files are in.
    */
-  delete_files(files, recursive = null, name = null) {
+  delete_files(files, recursive = false, name = null) {
 
     if (name == null) {
       name = this.name;
@@ -1763,16 +1760,6 @@ class ResourcePolicy {
    * };
    */
   mutate(name = null, input) {
-    let fields = ['name',
-      'created_at',
-      'default_for_unspecified',
-      'total_resource_slots',
-      'max_concurrent_sessions',
-      'max_containers_per_session',
-      'max_vfolder_count',
-      'max_vfolder_size',
-      'allowed_vfolder_hosts',
-      'idle_timeout'];
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
         `  modify_keypair_resource_policy(name: $name, props: $input) {` +
@@ -1841,7 +1828,7 @@ class ContainerImage {
    * @param {object} input - value list to set.
    */
   modifyResource(registry, image, tag, input) {
-    let promiseArray = [];
+    let promiseArray: Array<Promise<any>> = [];
     image = image.replace("/", "%2F");
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {
@@ -1949,8 +1936,6 @@ class ComputeSession {
    */
   async list(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
              status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
-    if (accessKey === '') accessKey = null;
-    if (group === '') group = null;
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -1965,10 +1950,10 @@ class ComputeSession {
       'offset': offset,
       'status': status
     };
-    if (accessKey != null) {
+    if (accessKey != '') {
       v['ak'] = accessKey;
     }
-    if (group != null) {
+    if (group != '') {
       v['group_id'] = group;
     }
     return this.client.gql(q, v);
@@ -1984,8 +1969,6 @@ class ComputeSession {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
   async listAll(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], accessKey = '', group = '') {
-    if (accessKey === '') accessKey = null;
-    if (group === '') group = null;
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     // For V3/V4 API compatibility
     let q, v;
@@ -2001,10 +1984,10 @@ class ComputeSession {
       // access_key: accessKey,
       // status: status
     };
-    if (accessKey != null) {
+    if (accessKey !== '') {
       v['access_key'] = accessKey;
     }
-    if (group != null) {
+    if (group !== '') {
       v['group_id'] = group;
     }
     return this.client.gql(q, v);
@@ -2245,8 +2228,8 @@ class Domain {
    * };
    */
   modify(domain_name = false, input) {
-    let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-      'allowed_docker_registries', 'integration_id', 'scaling_groups'];
+    //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+    //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
     if (this.client.is_superadmin === true) {
       let q = `mutation($name: String!, $input: ModifyDomainInput!) {` +
         `  modify_domain(name: $name, props: $input) {` +
@@ -2450,7 +2433,6 @@ class User {
    * };
    */
   modify(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
@@ -2883,7 +2865,7 @@ class utils {
   }
 
   gqlToList(array, key) {
-    let result = [];
+    let result: Array<any> = [];
     array.forEach(function (element) {
       result.push(element[key]);
     });
