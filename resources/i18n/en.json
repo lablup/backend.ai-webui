@@ -156,7 +156,8 @@
     "Discard": "Discard",
     "DeleteAll": "DeleteAll",
     "Update": "Update",
-    "Delete": "Delete"
+    "Delete": "Delete",
+    "Dismiss": "Dismiss"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -450,7 +451,8 @@
   "language": {
     "Browser": "Browser",
     "English": "English",
-    "Korean": "Korean"
+    "Korean": "Korean",
+    "Language": "Language"
   },
   "settings": {
     "General": "General",

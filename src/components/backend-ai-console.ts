@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {registerTranslateConfig, translate as _t, get as _text, use as setLanguage} from "lit-translate";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
 import {customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -597,8 +597,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
+      this.TOSdialog.tosLanguage = this.options["language"];
       this.TOSdialog.title = _t("console.menu.TermsOfService");
-      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
+      this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
   }
@@ -606,8 +607,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showPPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
+      this.TOSdialog.tosLanguage = this.options["language"];
       this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
-      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
+      this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }
   }

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
@@ -127,7 +127,7 @@ export default class BackendAiSignup extends BackendAIPage {
   receiveTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.title = "Terms of Service";
+      this.TOSdialog.title = _t("console.menu.TermsOfService");
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
@@ -136,7 +136,7 @@ export default class BackendAiSignup extends BackendAIPage {
   receivePPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.title = "Privacy Policy";
+      this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }

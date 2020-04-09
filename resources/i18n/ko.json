@@ -155,7 +155,8 @@
     "Discard": "버리기",
     "DeleteAll": "모두 삭제",
     "Update": "업데이트",
-    "Delete": "삭제"
+    "Delete": "삭제",
+    "Dismiss": "해제"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -448,7 +449,8 @@
   "language": {
     "Browser": "브라우저 기본",
     "English": "English",
-    "Korean": "한국어"
+    "Korean": "한국어",
+    "Language": "언어"
   },
   "settings": {
     "General": "일반",
