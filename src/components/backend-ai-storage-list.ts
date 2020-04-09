@@ -57,6 +57,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Array}) explorerFiles = [];
   @property({type: Array}) invitees = [];
   @property({type: String}) selectedFolder = '';
+  @property({type: String}) downloadURL = '';
   @property({type: Array}) uploadFiles = [];
   @property({type: Array}) fileUploadQueue = [];
   @property({type: Number}) fileUploadCount = 0;
@@ -67,6 +68,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) fileListGrid = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) deleteFileDialog = Object();
+  @property({type: Object}) downloadFileDialog = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
@@ -711,7 +713,17 @@ export default class BackendAiStorageList extends BackendAIPage {
             <wl-button @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
       </wl-dialog>
-
+      <wl-dialog id="download-file-dialog" fixed backdrop blockscrolling>
+         <wl-title level="3" slot="header">${_t("data.explorer.DownloadFile")}</wl-title>
+         <div slot="content">
+            <a href="${this.downloadURL}">
+              <wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>
+            </a>
+         </div>
+         <div slot="footer">
+            <wl-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</wl-button>
+         </div>
+      </wl-dialog>
     `;
   }
 
@@ -720,6 +732,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._mkdir = this._mkdir.bind(this);
 
     this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
+    this.downloadFileDialog = this.shadowRoot.querySelector('#download-file-dialog');
     this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
@@ -1362,18 +1375,24 @@ export default class BackendAiStorageList extends BackendAIPage {
     job.then(res => {
       const token = res.token;
       const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
-      let a = document.createElement('a');
-      a.style.display = 'none';
-      a.addEventListener('click', function (e) {
-        e.stopPropagation();
-      });
-      a.href = url;
-      a.download = fn;
-      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-      a.click();
-      //a.remove();  //afterwards we remove the element again
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      if (globalThis.iOSSafari) {
+        this.downloadURL = url;
+        this.downloadFileDialog.show();
+        URL.revokeObjectURL(url);
+      } else {
+        let a = document.createElement('a');
+        a.style.display = 'none';
+        a.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+        a.href = url;
+        a.download = fn;
+        document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+        a.click();
+        //a.remove();  //afterwards we remove the element again
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
     });
   }
 
