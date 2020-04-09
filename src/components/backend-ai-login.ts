@@ -531,11 +531,15 @@ export default class BackendAILogin extends BackendAIPage {
         this._connectViaGQL();
       }
     }).catch((err) => {   // Connection failed
-      console.log(err);
       if (this.loginPanel.open !== true) {
         if (typeof err.message !== "undefined") {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
+          if (err.statusText === "Aborted") { // Failed while loading getManagerVersion
+            this.notification.text = "Login succeed but manager is not responding.";
+            this.notification.detail = err.message;
+          } else {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+          }
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }

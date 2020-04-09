@@ -164,8 +164,10 @@ class Client {
   public ready: boolean = false;
   public abortController: any;
   public abortSignal: any;
+  public requestTimeout: number;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
+  static ERR_ABORT: any;
   static ERR_SERVER: any;
   static ERR_UNKNOWN: any;
 
@@ -214,6 +216,7 @@ class Client {
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
+    this.requestTimeout = 5000;
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -243,7 +246,7 @@ class Client {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
-    let resp, body;
+    let resp, body, requestTimer;
 
     try {
       if (rqst.method == 'GET') {
@@ -255,8 +258,19 @@ class Client {
       }
       if (signal !== null) {
         rqst.signal = signal;
+      } else { // Use client-wide fetch timeout.
+        let controller = new AbortController();
+        rqst.signal = controller.signal;
+        requestTimer = setTimeout(() => {
+          errorType = Client.ERR_ABORT;
+          controller.abort();
+        }, this.requestTimeout);
       }
+      let resp;
       resp = await fetch(rqst.uri, rqst);
+      if (typeof (requestTimer) !== "undefined") {
+        clearTimeout(requestTimer);
+      }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
       if (rawFile === false && contentType === null) {
@@ -289,6 +303,12 @@ class Client {
       } else {
         error_message = err;
       }
+      if (typeof (resp) === 'undefined') {
+        resp = {
+          status: 'aborted',
+          statusText: 'Aborted'
+        }
+      }
       switch (errorType) {
         case Client.ERR_REQUEST:
           errorType = 'https://api.backend.ai/probs/client-request-error';
@@ -305,6 +325,11 @@ class Client {
           errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
           errorMsg = 'server responded failure: '
             + `${resp.status} ${resp.statusText} - ${body.title}`;
+          break;
+        case Client.ERR_ABORT:
+          errorType = 'https://api.backend.ai/probs/request-abort-error';
+          errorTitle = `Request aborted`;
+          errorMsg = 'Request aborted by user';
           break;
         default:
           if (errorType === '') {
@@ -337,16 +362,22 @@ class Client {
       }
     }
     let log_stack = Array();
+    if (typeof (resp) === 'undefined') {
+      resp = {
+        status: 'No status',
+        statusText: 'No response given.'
+      }
+    }
     let current_log = {
-      "isError" : false,
-      "timestamp" : new Date().toUTCString(),
-      "type" : "",
-      "requestUrl" : rqst.uri,
-      "requestMethod" : rqst.method,
-      "requestParameters" : rqst.body,
-      "statusCode" : resp.status,
-      "statusText" : resp.statusText,
-      "title" : body.title,
+      "isError": false,
+      "timestamp": new Date().toUTCString(),
+      "type": "",
+      "requestUrl": rqst.uri,
+      "requestMethod": rqst.method,
+      "requestParameters": rqst.body,
+      "statusCode": resp.status,
+      "statusText": resp.statusText,
+      "title": body.title,
       "message" : ""
     };
 
@@ -388,10 +419,12 @@ class Client {
 
   /**
    * Get the server-side manager version.
+   *
+   * @param {AbortController.signal} signal - Request signal to abort fetch
    */
-  async getManagerVersion() {
+  async getManagerVersion(signal = null) {
     if (this._managerVersion === null) {
-      let v = await this.getServerVersion();
+      let v = await this.getServerVersion(signal);
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
@@ -479,7 +512,9 @@ class Client {
         this._config._accessKey = result.data.access_key;
         this._config._session_id = result.session_id;
       }
+      console.log("login succeed");
     } catch (err) {
+      console.log(err);
       return Promise.resolve(false);
     }
     return result.authenticated;
@@ -2871,6 +2906,12 @@ Object.defineProperty(Client, 'ERR_RESPONSE', {
 });
 Object.defineProperty(Client, 'ERR_REQUEST', {
   value: 2,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+Object.defineProperty(Client, 'ERR_ABORT', {
+  value: 3,
   writable: false,
   enumerable: true,
   configurable: false
