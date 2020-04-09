@@ -636,7 +636,7 @@ export default class BackendAILogin extends BackendAIPage {
       }
     });
   }
-  
+
   async _saveLoginInfo() {
     localStorage.setItem('backendaiconsole.login.api_key', this.api_key);
     localStorage.setItem('backendaiconsole.login.secret_key', this.secret_key);
@@ -648,26 +648,29 @@ export default class BackendAILogin extends BackendAIPage {
     // language=HTML
     return html`
       <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
+        <div class="horizontal center layout">
+          <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 20px;" />
+          <div class="flex"></div>
+          ${this.signup_support ? html`
+          <div class="vertical center-justified layout" style="padding-right:20px;">
+            <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
+            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+          </div>
+          ` : html``}
+        </div>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
             <div>Login with ${this.connection_mode == 'SESSION' ? html`E-mail` : html`IAM`}</div>
             <div class="flex"></div>
-            ${this.signup_support ? html`
-            <div class="vertical center-justified layout">
-              <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
-              <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
-            </div>
+            ${this.change_signin_support ? html`
+                <div class="vertical center-justified layout">
+                  <div style="font-size:12px;margin:0 10px;text-align:center;">Want to login another way?</div>
+                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">Click to use ${this.connection_mode == 'SESSION' ? html`IAM` : html`ID`}</wl-button>
+                </div>
             ` : html``}
           </h3>
           <form id="login-form">
             <fieldset>
-            ${this.change_signin_support ? html`
-                <div class="horizontal center layout">
-                  <small>Want to login another way?</small>
-                  <div class="flex"></div>
-                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">Click to use ${this.connection_mode == 'SESSION' ? html`IAM` : html`ID`}</wl-button>
-                </div>
-            ` : html``}
               <wl-textfield type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
                            label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
               <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"

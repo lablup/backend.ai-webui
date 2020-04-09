@@ -5,6 +5,19 @@ export const BackendAiConsoleStyles = [
   BackendAiStyles,
   // language=CSS
   css`
+    .loading-background[active] {
+      position: fixed;
+      z-index: 10000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-image: url("/resources/images/loading-background.jpg");
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: top left;
+    }
+
     .site-name {
       text-align: center;
       margin-left: 0;

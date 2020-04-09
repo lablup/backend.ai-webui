@@ -261,6 +261,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   refreshPage() {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.is_connected = true;
+
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== "undefined" && globalThis.backendaiclient != null
       && typeof globalThis.backendaiclient.is_admin !== "undefined" && globalThis.backendaiclient.is_admin === true) {
@@ -816,6 +817,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
+      <div class="loading-background" ?active="${!this.is_connected}"></div>
 
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
