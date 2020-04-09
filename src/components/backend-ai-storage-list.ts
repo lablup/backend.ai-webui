@@ -1363,6 +1363,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       const token = res.token;
       const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
       let a = document.createElement('a');
+      a.style.display = 'none';
       a.addEventListener('click', function (e) {
         e.stopPropagation();
       });
@@ -1370,7 +1371,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       a.download = fn;
       document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
       a.click();
-      a.remove();  //afterwards we remove the element again
+      //a.remove();  //afterwards we remove the element again
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
   }
