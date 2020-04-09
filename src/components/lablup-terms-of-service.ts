@@ -153,12 +153,6 @@ export default class LablupTermsOfService extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     super.attributeChangedCallback(name, oldval, newval);
-    if (name == 'tosEntry' || name == 'tosLanguage') {
-      if (!this.tosLanguages.includes(this.tosLanguage)) {
-        this.tosLanguage = 'en';
-      }
-      this.tosEntryURL = '/resources/documents/' + this.tosEntry + '.' + this.tosLanguage + '.html';
-    }
   }
 
   async open() {
@@ -204,6 +198,9 @@ export default class LablupTermsOfService extends LitElement {
 
   // Terms of service dialog
   _showTOSdialog(reuseDialog = false) {
+    if (this.tosLanguage === 'default' && 'language' in globalThis.backendaiconsoleOption) {
+      this.tosLanguage = globalThis.backendaiconsoleOption['language'];
+    }
     if (!['ko', 'en'].includes(this.tosLanguage)) {
       this.tosLanguage = 'en';
     }

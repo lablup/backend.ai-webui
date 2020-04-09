@@ -43,6 +43,7 @@ import './backend-ai-login';
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
 });
+globalThis.backendaiconsoleOption = [];
 
 /**
  Backend.AI GUI Console
@@ -172,6 +173,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.options['language'] = "en";
     }
     await setLanguage(this.options['language']);
+    globalThis.backendaiconsoleOptions = this.options;
     this.hasLoadedStrings = true;
   }
 

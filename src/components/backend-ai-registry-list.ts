@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
-import {translate as _t, get as _text} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -342,7 +342,6 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _changeRegistryState(hostname, state) {
-    let input: any = Object();
     if (state === true) {
       this.allowed_registries.push(hostname);
       this.notification.text = _text("registry.RegistryTurnedOn");
