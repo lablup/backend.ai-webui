@@ -523,13 +523,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.block();
     }
     this.client.getManagerVersion().then(response => {
-      return this.client.isAPIVersionCompatibleWith('v4.20190601');
-    }).then(response => {
-      if (response === false) {// Legacy code to support 19.03
-        this._connectViaGQLLegacy();
-      } else {
-        this._connectViaGQL();
-      }
+      this._connectViaGQL();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (typeof err.message !== "undefined") {
@@ -642,57 +636,7 @@ export default class BackendAILogin extends BackendAIPage {
       }
     });
   }
-
-  _connectViaGQLLegacy() {
-    let fields = ["user_id", "is_admin", "resource_policy"];
-    let q = `query { keypair { ${fields.join(" ")} } }`;
-    let v = {};
-    return this.client.gql(q, v).then(response => {
-      globalThis.backendaiclient = this.client;
-      let email = response['keypair'].user_id;
-      let is_admin = response['keypair'].is_admin;
-      let resource_policy = response['keypair'].resource_policy;
-      if (this.email != email) {
-        this.email = email;
-      }
-      globalThis.backendaiclient.groups = ['default'];
-      globalThis.backendaiclient.email = this.email;
-      globalThis.backendaiclient.current_group = 'default';
-      globalThis.backendaiclient.is_admin = is_admin;
-      globalThis.backendaiclient.is_superadmin = is_admin;
-      globalThis.backendaiclient.resource_policy = resource_policy;
-      globalThis.backendaiclient._config._proxyURL = this.proxy_url;
-      globalThis.backendaiclient._config.domainName = 'default';
-      globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
-      globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
-      return globalThis.backendaiclient.getManagerVersion();
-    }).then(response => {
-      globalThis.backendaiclient.ready = true;
-      let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
-      document.dispatchEvent(event);
-      this.close();
-      this._saveLoginInfo();
-      localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
-      //this.notification.text = 'Connected.';
-      //this.notification.show();
-    }).catch((err) => {   // Connection failed
-      if (this.loginPanel.open !== true) {
-        if (typeof err.message !== "undefined") {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-        } else {
-          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
-        }
-        this.notification.show(false, err);
-        this.open();
-      } else {
-        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show(false, err);
-      }
-      this.open();
-    });
-  }
-
+  
   async _saveLoginInfo() {
     localStorage.setItem('backendaiconsole.login.api_key', this.api_key);
     localStorage.setItem('backendaiconsole.login.secret_key', this.secret_key);
