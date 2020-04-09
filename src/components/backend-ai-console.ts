@@ -16,8 +16,9 @@ import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
-import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
+import '@material/mwc-select';
 
 import toml from 'markty-toml';
 
@@ -342,10 +343,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
     let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
-    if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
-      (this.shadowRoot.getElementById('group-select') as any).disabled = true;
-      (this.shadowRoot.getElementById('group-select') as any).label = _t("console.menu.NoProject");
-    }
     // Detached from template to support live-update after creating new group (will need it)
     if (groupSelectionBox.hasChildNodes()) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild);

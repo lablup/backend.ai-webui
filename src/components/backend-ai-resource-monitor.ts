@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t, get as _text} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -843,22 +843,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
     }
     let config = {};
-    if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
-      config['group_name'] = globalThis.backendaiclient.current_group;
-      config['domain'] = globalThis.backendaiclient._config.domainName;
-      config['scaling_group'] = this.scaling_group;
-      config['maxWaitSeconds'] = 5;
-      const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
-      if (ownerEnabled && ownerEnabled.checked) {
-        config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
-        config['domain'] = this.ownerDomain;
-        config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
-        config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').selectedItemLabel;
-        if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
-          this.notification.text = 'Not enough ownership information';
-          this.notification.show();
-          return;
-        }
+    config['group_name'] = globalThis.backendaiclient.current_group;
+    config['domain'] = globalThis.backendaiclient._config.domainName;
+    config['scaling_group'] = this.scaling_group;
+    config['maxWaitSeconds'] = 5;
+    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+    if (ownerEnabled && ownerEnabled.checked) {
+      config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+      config['domain'] = this.ownerDomain;
+      config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
+      config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').selectedItemLabel;
+      if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
+        this.notification.text = 'Not enough ownership information';
+        this.notification.show();
+        return;
       }
     }
     config['cpu'] = this.cpu_request;
@@ -873,17 +871,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       config['mem'] = String(this.mem_request) + 'g';
     }
-    if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
-      if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
-        this.shmem_request = this.mem_request;
-        this.notification.text = 'Shared memory setting is reduced to below the allocated memory.';
-        this.notification.show();
-      }
-      if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
-        this.shmem_request = 1;
-      }
-      config['shmem'] = String(this.shmem_request) + 'g';
+    if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
+      this.shmem_request = this.mem_request;
+      this.notification.text = 'Shared memory setting is reduced to below the allocated memory.';
+      this.notification.show();
     }
+    if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
+      this.shmem_request = 1;
+    }
+    config['shmem'] = String(this.shmem_request) + 'g';
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
       if (this.gpu_mode == 'cuda.fgpu') {

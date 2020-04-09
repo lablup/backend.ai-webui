@@ -1110,7 +1110,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
-          ${this._isRunning && !this._isPreparing(rowData.item.status) ? html`
+          ${ (this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"><wl-icon>delete</wl-icon></wl-button>
