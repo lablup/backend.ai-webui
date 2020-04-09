@@ -157,7 +157,8 @@
     "DeleteAll": "DeleteAll",
     "Update": "Update",
     "Delete": "Delete",
-    "Dismiss": "Dismiss"
+    "Dismiss": "Dismiss",
+    "Close": "Close"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -284,7 +285,9 @@
       "Permission": "Permission",
       "InviteeEmail": "Invitee E-Mail",
       "Foldername": "Folder name",
-      "EnterEmailAddress": "Enter E-Mail address"
+      "EnterEmailAddress": "Enter E-Mail address",
+      "DownloadFile": "Download File",
+      "TouchToDownload": "Touch to Download file"
     }
   },
   "dialog": {

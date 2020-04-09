@@ -23,6 +23,8 @@ function isElectron() {
   return false;
 }
 
-function isIE() {
-  return globalThis.navigator.userAgent.match(/(MSIE|Trident)/);
-}
+let ua = window.navigator.userAgent;
+let iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+let webkit = !!ua.match(/WebKit/i);
+globalThis.isIE = globalThis.navigator.userAgent.match(/(MSIE|Trident)/);
+globalThis.iOSSafari = iOS && webkit && !ua.match(/CriOS/i);

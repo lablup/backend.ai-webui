@@ -156,7 +156,8 @@
     "DeleteAll": "모두 삭제",
     "Update": "업데이트",
     "Delete": "삭제",
-    "Dismiss": "해제"
+    "Dismiss": "해제",
+    "Close": "닫기"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -282,7 +283,9 @@
       "Permission": "권한",
       "InviteeEmail": "초대한 E-Mail",
       "Foldername": "폴더 이름",
-      "EnterEmailAddress": "E-mail 주소를 입력하세요"
+      "EnterEmailAddress": "E-mail 주소를 입력하세요",
+      "DownloadFile": "파일 다운로드",
+      "TouchToDownload": "터치하여 다운로드하세요"
     }
   },
   "dialog": {
