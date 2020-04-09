@@ -56,6 +56,15 @@
       background-color: rgba(244, 245, 247, 1);
     }
 
+    .loading-background {
+      width: 100%;
+      height: 100vh;
+      background-image: url("resources/images/loading-background.jpg");
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: top left;
+    }
+
     .splash {
       position: absolute;
       top: calc(50% - 150px);
@@ -209,28 +218,30 @@
 
 <body>
 <backend-ai-console id="console-shell" style="background-color:#222222;">
-  <div class="splash">
-    <div class="splash-header">
-      <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;">
+  <div class="loading-background">
+    <div class="splash">
+      <div class="splash-header">
+        <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;">
+      </div>
+      <div class="splash-information">
+        <ul>
+          <li>Backend.AI Console <span id="version-detail" class="detail"></span></li>
+          <li><span id="license-detail"></span></li>
+          <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
+        </ul>
+        <ul>
+          <li>Powered by open-source software</li>
+          <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
+        </ul>
+      </div>
+      <div class="sk-folding-cube">
+        <div class="sk-cube1 sk-cube"></div>
+        <div class="sk-cube2 sk-cube"></div>
+        <div class="sk-cube4 sk-cube"></div>
+        <div class="sk-cube3 sk-cube"></div>
+      </div>
+      <div id="loading-message" class="loading-message">Loading components...</div>
     </div>
-    <div class="splash-information">
-      <ul>
-        <li>Backend.AI Console <span id="version-detail" class="detail"></span></li>
-        <li><span id="license-detail"></span></li>
-        <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
-      </ul>
-      <ul>
-        <li>Powered by open-source software</li>
-        <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
-      </ul>
-    </div>
-    <div class="sk-folding-cube">
-      <div class="sk-cube1 sk-cube"></div>
-      <div class="sk-cube2 sk-cube"></div>
-      <div class="sk-cube4 sk-cube"></div>
-      <div class="sk-cube3 sk-cube"></div>
-    </div>
-    <div id="loading-message" class="loading-message">Loading components...</div>
   </div>
 </backend-ai-console>
 <noscript>
