@@ -2,7 +2,7 @@
  * Backend.AI-credential-view
  */
 
-import {translate as _t, get as _text} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@polymer/paper-listbox/paper-listbox';
@@ -69,7 +69,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: Array}) allowed_vfolder_hosts = Array();
   @property({type: String}) default_vfolder_host = '';
-  @property({type: Boolean}) use_user_list = false;
   @property({type: String}) new_access_key = '';
   @property({type: String}) new_secret_key = '';
   @property({type: String}) _activeTab = 'users';
@@ -265,12 +264,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     } else {
       this.isAdmin = true;
     }
-    if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
-      this.use_user_list = true;
-      this._activeTab = 'user-lists';
-    } else {
-      this.use_user_list = false;
-    }
+    this._activeTab = 'user-lists';
     this._addValidatorToPolicyInput();
     this._getResourceInfo();
     this._getResourcePolicies();
@@ -774,10 +768,8 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            ${this._status === 'active' && this.use_user_list === true ? html`
-              <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
-            ` : html``}
-            <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">${_t("credential.Credentials")}</wl-tab>
+            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
+            <wl-tab value="credential-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.Credentials")}</wl-tab>
             <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.ResourcePolicies")}</wl-tab>
           </wl-tab-group>
           ${this.isAdmin ? html`
@@ -805,7 +797,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             </wl-button>
           </h4>
           <div>
-            <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
+            <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
           </div>
         </wl-card>
         <wl-card id="credential-lists" class="tab-content" style="display:none;">
