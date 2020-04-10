@@ -56,7 +56,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) default_session_environment = '';
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
-  @property({type: String}) connection_mode = 'API';
+  @property({type: String}) connection_mode = 'SESSION';
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
@@ -281,7 +281,7 @@ export default class BackendAILogin extends BackendAIPage {
       }
     } else {
       if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
-        this.connection_mode = 'API';
+        this.connection_mode = 'SESSION';
         //localStorage.setItem('backendaiconsole.connection_mode', 'API');
       } else {
         if (config.general.connectionMode.toUpperCase() === 'SESSION') {
