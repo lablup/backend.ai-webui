@@ -1,5 +1,55 @@
 # Changelog
 
+## v20.04.1 (10/04/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**minor**] Provide kill button to errored session in Others tab [#477](https://github.com/lablup/backend.ai-console/issues/477)
+- [**UI / UX**][**enhancement**][**minor**] Adopt finer group select element on UI [#475](https://github.com/lablup/backend.ai-console/issues/475)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Provide downtime information when manager is not responding [#473](https://github.com/lablup/backend.ai-console/issues/473)
+- [**UI / UX**][**enhancement**][**library / SDK**][**maintenance**][**major**] Spring clean: Remove 19.03 support [#471](https://github.com/lablup/backend.ai-console/issues/471)
+- [**UI / UX**][**enhancement**][**minor**] Background on loading screen [#469](https://github.com/lablup/backend.ai-console/issues/469)
+
+#### Web Features:
+
+- [**UI / UX**][**library / SDK**][**minor**][**web**] vFolder file download not working on iOS/iPadOS [#465](https://github.com/lablup/backend.ai-console/issues/465)
+
+#### UI / UX:
+
+- [**UI / UX**][**library / SDK**][**major**] Limit fetch timeout with general / custom timeout value [#472](https://github.com/lablup/backend.ai-console/issues/472)
+- [**UI / UX**][**cloud**][**enterprise**][**major**] Update Cloud Terms of Service / Privacy Policy to match with GDPR [#468](https://github.com/lablup/backend.ai-console/issues/468)
+- [**UI / UX**][**cloud**][**minor**] Automatic language detection on Terms Of Service panel [#467](https://github.com/lablup/backend.ai-console/issues/467)
+
+---
+
+## v20.04.0 (08/04/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**] GUI option to change image pull behavior [#460](https://github.com/lablup/backend.ai-console/issues/460)
+- [**UI / UX**][**cloud**][**enhancement**] Support Ubuntu Desktop environment [#459](https://github.com/lablup/backend.ai-console/issues/459)
+- [**app**][**enhancement**][**minor**] Add option for local wsproxy to work behind external http proxy [#456](https://github.com/lablup/backend.ai-console/issues/456)
+- [**UI / UX**][**enhancement**] Change invitation panel after decision is made [#426](https://github.com/lablup/backend.ai-console/issues/426)
+- [**UI / UX**][**enhancement**][**library / SDK**] GUI option to allow/disallow images from specific repository. [#421](https://github.com/lablup/backend.ai-console/issues/421)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Queue support to upload files [#392](https://github.com/lablup/backend.ai-console/issues/392)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Support ROCm devices on GUI [#308](https://github.com/lablup/backend.ai-console/issues/308)
+
+---
+
+## v20.03.5 (30/03/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**hard**][**library / SDK**][**major**] Provide i18n framework [#451](https://github.com/lablup/backend.ai-console/issues/451)
+- [**UI / UX**][**enhancement**][**easy**][**library / SDK**][**minor**] Delete directory inside folder explorer [#453](https://github.com/lablup/backend.ai-console/issues/453)
+- [**UI / UX**][**enhancement**][**library / SDK**] Hide GPU-enabled preset when kernel does not require GPU resource [#445](https://github.com/lablup/backend.ai-console/issues/445)
+
+#### Bug Fixes:
+
+- [**bug**][**library / SDK**] Webpage via proxy sometimes produces 500 error while app is not ready yet [#449](https://github.com/lablup/backend.ai-console/issues/449)
+
+---
+
 ## v20.03.4 (23/03/2020)
 
 #### Enhancements:
