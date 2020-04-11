@@ -9,7 +9,9 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
-import 'weightless/textfield';
+
+import '@material/mwc-textfield';
+import '@material/mwc-icon';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -99,9 +101,11 @@ export default class BackendAILogin extends BackendAIPage {
           outline: none;
         }
 
-        wl-textfield {
-          --input-font-family: 'Quicksand', sans-serif;
-          --input-color-disabled: #424242;
+        mwc-textfield {
+          font-family: 'Quicksand', sans-serif;
+          --mdc-theme-primary: black;
+          --mdc-text-field-fill-color: rgb(250, 250, 250);
+          width: 100%;
         }
 
         #login-panel {
@@ -183,17 +187,13 @@ export default class BackendAILogin extends BackendAIPage {
 
   refreshPanel() {
     // TODO : use lit-element dynamic assignment
-    if (this.connection_mode == 'SESSION') {
-      (this.shadowRoot.querySelector('#id_api_key') as any).style.display = 'none';
-      (this.shadowRoot.querySelector('#id_secret_key') as any).style.display = 'none';
-      (this.shadowRoot.querySelector('#id_user_id') as any).style.display = 'block';
-      (this.shadowRoot.querySelector('#id_password') as any).style.display = 'block';
-    } else {
-      (this.shadowRoot.querySelector('#id_api_key') as any).style.display = 'block';
-      (this.shadowRoot.querySelector('#id_secret_key') as any).style.display = 'block';
-      (this.shadowRoot.querySelector('#id_user_id') as any).style.display = 'none';
-      (this.shadowRoot.querySelector('#id_password') as any).style.display = 'none';
-    }
+    //if (this.connection_mode == 'SESSION') {
+    //  (this.shadowRoot.querySelector('#session-login-form') as any).style.display = 'block';
+    //  (this.shadowRoot.querySelector('#api-login-form') as any).style.display = 'none';
+    //} else {
+    //  (this.shadowRoot.querySelector('#session-login-form') as any).style.display = 'none';
+    //  (this.shadowRoot.querySelector('#api-login-form') as any).style.display = 'block';
+    //}
   }
 
   refreshWithConfig(config) {
@@ -380,7 +380,7 @@ export default class BackendAILogin extends BackendAIPage {
   _showSignupDialog() {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.api_endpoint === '') {
-      this.notification.text = 'API Endpoint is empty. Please specify API endpoint to signup.';
+      this.notification.text = 'API Endpoint is empty. Please specify Backend.AI API endpoint to signup.';
       this.notification.show();
       return;
     }
@@ -670,22 +670,29 @@ export default class BackendAILogin extends BackendAIPage {
                 </div>
             ` : html``}
           </h3>
-          <form id="login-form">
+          <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
             <fieldset>
-              <wl-textfield type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
-                           label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"
-                           label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="email" name="user_id" id="id_user_id" maxlength="50" style="display:none;"
-                           label="E-mail" value="${this.user_id}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="password" name="password" id="id_password" style="display:none;"
-                           label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="API Endpoint" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
+              <mwc-textfield type="email" name="user_id" id="id_user_id" maxlength="50"  autocomplete="username"
+                           label="E-mail" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              <mwc-textfield type="password" name="password" id="id_password" autocomplete="current-password"
+                           label="Password" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+            </fieldset>
+          </form>
+          <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
+            <fieldset>
+              <mwc-textfield type="text" name="api_key" id="id_api_key" maxlength="30"
+                           label="API Key" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              <mwc-textfield type="password" name="secret_key" id="id_secret_key"
+                           label="Secret Key" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+            </fieldset>
+          </form>
+          <form>
+            <fieldset>
+              <mwc-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
+                           label="Endpoint" icon="cloud" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              <mwc-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
-                           label="API Endpoint" value=""></wl-textfield>
-              <br/><br/>
+                           label="Endpoint" icon="cloud" value=""></mwc-textfield>
               <wl-button class="fg red full login-button" id="login-button" outlined type="button"
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
@@ -708,10 +715,10 @@ export default class BackendAILogin extends BackendAIPage {
           </section>
           <form id="signout-form">
             <fieldset>
-              <wl-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
-                           label="E-mail" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
-              <wl-textfield type="password" name="signout_password" id="id_signout_password"
-                           label="Password" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
+              <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
+                           label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+              <mwc-textfield type="password" name="signout_password" id="id_signout_password"
+                           label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
               <br/><br/>
               <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
                           @click="${() => this._signout()}">

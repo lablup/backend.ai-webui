@@ -11,8 +11,8 @@ export const BackendAiConsoleStyles = [
       top: 0;
       left: 0;
       width: 100%;
-      height: 100vh;
-      background-image: url("/resources/images/loading-background.jpg");
+      height: 100%;
+      background-image: url("/resources/images/loading-background-large.jpg");
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
