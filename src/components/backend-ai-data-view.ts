@@ -43,6 +43,8 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
+  @property({type: Array}) usageModes = ['General', 'Data', 'Model'];
+  @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
@@ -202,7 +204,7 @@ export default class BackendAIData extends BackendAIPage {
           </h3>
           <section>
             <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
-            auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
+                auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-host" label="${_t("data.Host")}">
                 <paper-listbox slot="dropdown-content" selected="0">
@@ -219,6 +221,22 @@ export default class BackendAIData extends BackendAIPage {
                 ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
                   <paper-item label="group">${_t("data.Group")}</paper-item>
                 ` : html``}
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+            <div class="horizontal layout">
+              <paper-dropdown-menu id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
+                <paper-listbox slot="dropdown-content" selected="0">
+                ${this.usageModes.map(item => html`
+                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+                `)}
+                </paper-listbox>
+              </paper-dropdown-menu>
+              <paper-dropdown-menu id="add-folder-permission" label="${_t("data.Permission")}">
+                <paper-listbox slot="dropdown-content" selected="0">
+                ${this.permissions.map(item => html`
+                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+                `)}
                 </paper-listbox>
               </paper-dropdown-menu>
             </div>
@@ -321,19 +339,35 @@ export default class BackendAIData extends BackendAIPage {
     let nameEl = this.shadowRoot.querySelector('#add-folder-name');
     let name = nameEl.value;
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
-    let type = this.shadowRoot.querySelector('#add-folder-type').value;
+    let ownershipType = this.shadowRoot.querySelector('#add-folder-type').value;
     let group;
-    if (['user', 'group'].includes(type) === false) {
-      type = 'user';
+    let usageMode = this.shadowRoot.querySelector('#add-folder-usage-mode').value;
+    let permission = this.shadowRoot.querySelector('#add-folder-permission').value;
+    if (['user', 'group'].includes(ownershipType) === false) {
+      ownershipType = 'user';
     }
-    if (type === 'user') {
+    if (ownershipType === 'user') {
       group = '';
     } else {
       group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
     }
+    usageMode = usageMode.toLowerCase();
+    switch (permission) {
+      case 'Read-Write':
+        permission = 'rw';
+        break;
+      case 'Read-Only':
+        permission = 'ro';
+        break;
+      case 'Delete':
+        permission = 'wd';
+        break;
+      default:
+        permission = 'rw';
+    }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-      let job = globalThis.backendaiclient.vfolder.create(name, host, group);
+      let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
       job.then((value) => {
         this.notification.text = 'Folder is successfully created.';
         this.notification.show();

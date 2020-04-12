@@ -254,6 +254,8 @@
     "Host": "호스트",
     "Foldername": "폴더 이름",
     "Type": "종류",
+    "UsageMode": "사용 방식",
+    "Permission": "권한",
     "folders": {
       "Name": "이름",
       "Location": "위치",

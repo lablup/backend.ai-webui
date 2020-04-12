@@ -256,6 +256,8 @@
     "Host": "Host",
     "Foldername": "Folder name",
     "Type": "Type",
+    "UsageMode": "Usage Mode",
+    "Permission": "Permission",
     "folders": {
       "Location": "Location",
       "Type": "Type",

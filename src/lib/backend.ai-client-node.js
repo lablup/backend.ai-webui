@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.01.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.04.0)
 ====================================================================
 
 (C) Copyright 2016-2020 Lablup Inc.
@@ -192,7 +192,7 @@ class Client {
             }
             let resp;
             resp = await fetch(rqst.uri, rqst);
-            if (typeof (requestTimer) !== "undefined") {
+            if (typeof requestTimer !== "undefined") {
                 clearTimeout(requestTimer);
             }
             errorType = Client.ERR_RESPONSE;
@@ -1001,8 +1001,10 @@ class VFolder {
      * @param {string} name - Virtual folder name.
      * @param {string} host - Host name to create virtual folder in it.
      * @param {string} group - Virtual folder group name.
+     * @param {string} usageMode - Virtual folder group name.
+     * @param {string} permission - Virtual folder group name.
      */
-    create(name, host = '', group = '') {
+    create(name, host = '', group = '', usageMode = 'general', permission = 'rw') {
         let body;
         if (host !== '') {
             body = {
@@ -1016,6 +1018,12 @@ class VFolder {
                 'host': host,
                 'group': group
             };
+        }
+        if (usageMode) {
+            body['usage_mode'] = usageMode;
+        }
+        if (permission) {
+            body['permission'] = permission;
         }
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
         return this.client._wrapWithPromise(rqst);
