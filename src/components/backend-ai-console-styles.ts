@@ -5,6 +5,10 @@ export const BackendAiConsoleStyles = [
   BackendAiStyles,
   // language=CSS
   css`
+    .loading-background {
+      transition: all 0.3s linear;
+    }
+
     .loading-background[active] {
       position: fixed;
       z-index: 10000;
@@ -16,6 +20,14 @@ export const BackendAiConsoleStyles = [
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .visuallyhidden {
+      opacity: 0;
     }
 
     .site-name {

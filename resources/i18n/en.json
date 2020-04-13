@@ -523,5 +523,23 @@
     "UsesSSL": "Uses SSL",
     "DescUsesSSL": "HTTPS with proper SSL setup helps system security.",
     "Compatible": "Compatible"
+  },
+  "login": {
+    "Login": "Login",
+    "LeaveService": "Leave Service",
+    "DescConfirmLeave": "To confirm, please type your E-mail and password again.",
+    "Password": "Password",
+    "E-mail": "E-mail",
+    "APIKey": "API Key",
+    "SecretKey": "Secret Key",
+    "Endpoint": "Endpoint",
+    "NotAUser": "Not a user?",
+    "LoginAnotherway": "Want to login another way?",
+    "SignUp": "Sign up",
+    "ClickToUseMethod": "Click To Use",
+    "LoginWithE-mail": "Login With E-mail",
+    "LoginWithIAM": "Login With IAM",
+    "ClickToUseIAM": "Click To Use IAM",
+    "ClickToUseID": "Click To Use ID"
   }
 }

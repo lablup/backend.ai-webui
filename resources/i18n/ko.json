@@ -521,5 +521,23 @@
     "UsesSSL": "SSL 사용",
     "DescUsesSSL": "적절하게 설정된 SSL을 통한 HTTPS 통신은 시스템 보안을 강화합니다.",
     "Compatible": "호환"
+  },
+  "login": {
+    "Login": "로그인",
+    "LeaveService": "서비스 탈퇴",
+    "DescConfirmLeave": "확인을 위해 E-mail 및 패스워드를 다시 입력해주세요.",
+    "Password": "패스워드",
+    "E-mail": "E-mail",
+    "APIKey": "접근키",
+    "SecretKey": "비밀키",
+    "Endpoint": "엔드포인트",
+    "NotAUser": "아직 가입 전이면",
+    "LoginAnotherway": "다른 방식으로 로그인하기",
+    "SignUp": "가입하기",
+    "ClickToUseMethod": "Click To Use",
+    "LoginWithE-mail": "E-mail로 로그인",
+    "LoginWithIAM": "IAM으로 로그인",
+    "ClickToUseIAM": "IAM 사용",
+    "ClickToUseID": "ID 사용"
   }
 }
