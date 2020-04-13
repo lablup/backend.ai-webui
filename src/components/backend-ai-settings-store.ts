@@ -25,21 +25,21 @@ export default class BackendAiSettingsStore extends BackendAIPage {
       'user.language': "default",
       'user.beta_feature': false,
     }
-    this.readUserSettings();
+    this.readSettings();
   }
 
   firstUpdated() {
   }
 
-  readUserSettings() {
-    this._readUserSettings();
+  readSettings() {
+    this._readSettings();
   }
 
-  _readUserSettings() { // Read all user settings.
+  _readSettings() { // Read all user settings.
     for (let i = 0, len = localStorage.length; i < len; ++i) {
       if (localStorage.key(i)!.startsWith('backendaiconsole.settings')) {
         let key = localStorage.key(i)!.replace('backendaiconsole.settings.', '');
-        this._readUserSetting(key);
+        this._readSetting(key);
       }
     }
     console.log(this.options);
@@ -53,7 +53,7 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     return this._writeUserSetting(name, value, namespace);
   }
 
-  _readUserSetting(name, default_value = true, namespace = "user") {
+  _readSetting(name, default_value = true, namespace = "user") {
     let value: string | null = localStorage.getItem('backendaiconsole.settings.' + name);
     if (value !== null && value != '' && value != '""') {
       if (value === "false") {
