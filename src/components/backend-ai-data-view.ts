@@ -12,6 +12,8 @@ import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-select';
 import '@material/mwc-textfield';
 
 import 'weightless/button';
@@ -276,7 +278,6 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
@@ -291,6 +292,7 @@ export default class BackendAIData extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
+        this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         globalThis.backendaiclient.vfolder.allowed_types().then(response => {
           this.allowed_folder_type = response;
         });
@@ -298,6 +300,7 @@ export default class BackendAIData extends BackendAIPage {
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       globalThis.backendaiclient.vfolder.allowed_types().then(response => {
         this.allowed_folder_type = response;
       });
