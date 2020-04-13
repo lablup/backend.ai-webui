@@ -36,6 +36,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
+  @property({type: String}) APIMajorVersion = '';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
@@ -224,22 +225,24 @@ export default class BackendAIData extends BackendAIPage {
                 </paper-listbox>
               </paper-dropdown-menu>
             </div>
-            <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${this.usageModes.map(item => html`
-                  <paper-item id="${item}" label="${item}">${item}</paper-item>
-                `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-              <paper-dropdown-menu id="add-folder-permission" label="${_t("data.Permission")}">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${this.permissions.map(item => html`
-                  <paper-item id="${item}" label="${item}">${item}</paper-item>
-                `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-            </div>
+            ${this.apiMajorVersion > '4' ? html`
+              <div class="horizontal layout">
+                <paper-dropdown-menu id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                  ${this.usageModes.map(item => html`
+                    <paper-item id="${item}" label="${item}">${item}</paper-item>
+                  `)}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="add-folder-permission" label="${_t("data.Permission")}">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                  ${this.permissions.map(item => html`
+                    <paper-item id="${item}" label="${item}">${item}</paper-item>
+                  `)}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+            `: html``}
             ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
             <div class="horizontal layout">
               <paper-dropdown-menu id="add-folder-group" label=" ${_t("data.Group")}">
@@ -273,6 +276,8 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+    console.log(this.apiMajorVersion)
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
@@ -341,8 +346,10 @@ export default class BackendAIData extends BackendAIPage {
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
     let ownershipType = this.shadowRoot.querySelector('#add-folder-type').value;
     let group;
-    let usageMode = this.shadowRoot.querySelector('#add-folder-usage-mode').value;
-    let permission = this.shadowRoot.querySelector('#add-folder-permission').value;
+    const usageModeEl = this.shadowRoot.querySelector('#add-folder-usage-mode');
+    const permissionEl = this.shadowRoot.querySelector('#add-folder-permission');
+    let usageMode = '';
+    let permission = '';
     if (['user', 'group'].includes(ownershipType) === false) {
       ownershipType = 'user';
     }
@@ -351,19 +358,25 @@ export default class BackendAIData extends BackendAIPage {
     } else {
       group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
     }
-    usageMode = usageMode.toLowerCase();
-    switch (permission) {
-      case 'Read-Write':
-        permission = 'rw';
-        break;
-      case 'Read-Only':
-        permission = 'ro';
-        break;
-      case 'Delete':
-        permission = 'wd';
-        break;
-      default:
-        permission = 'rw';
+    if (usageModeEl) {
+      usageMode = usageModeEl.value;
+      usageMode = usageMode.toLowerCase();
+    }
+    if (permissionEl) {
+      permission = permissionEl.value;
+      switch (permission) {
+        case 'Read-Write':
+          permission = 'rw';
+          break;
+        case 'Read-Only':
+          permission = 'ro';
+          break;
+        case 'Delete':
+          permission = 'wd';
+          break;
+        default:
+          permission = 'rw';
+      }
     }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {

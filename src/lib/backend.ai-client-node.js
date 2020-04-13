@@ -1019,11 +1019,13 @@ class VFolder {
                 'group': group
             };
         }
-        if (usageMode) {
-            body['usage_mode'] = usageMode;
-        }
-        if (permission) {
-            body['permission'] = permission;
+        if (this.client._apiVersionMajor > '4') {
+            if (usageMode) {
+                body['usage_mode'] = usageMode;
+            }
+            if (permission) {
+                body['permission'] = permission;
+            }
         }
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
         return this.client._wrapWithPromise(rqst);
