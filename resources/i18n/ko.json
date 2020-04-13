@@ -542,7 +542,7 @@
     "ClickToUseID": "ID 사용"
   },
   "signup": {
-    "SignupBETA": "가입 (Beta invitation only)",
+    "SignupBETA": "가입 (베타 초대 대상)",
     "E-mail": "E-mail",
     "UserName": "사용자명",
     "Password": " 암호",
