@@ -168,6 +168,7 @@ class Client {
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
   static ERR_ABORT: any;
+  static ERR_TIMEOUT: any;
   static ERR_SERVER: any;
   static ERR_UNKNOWN: any;
 
@@ -262,7 +263,7 @@ class Client {
         let controller = new AbortController();
         rqst.signal = controller.signal;
         requestTimer = setTimeout(() => {
-          errorType = Client.ERR_ABORT;
+          errorType = Client.ERR_TIMEOUT;
           controller.abort();
         }, this.requestTimeout);
       }
@@ -330,6 +331,11 @@ class Client {
           errorType = 'https://api.backend.ai/probs/request-abort-error';
           errorTitle = `Request aborted`;
           errorMsg = 'Request aborted by user';
+          break;
+        case Client.ERR_TIMEOUT:
+          errorType = 'https://api.backend.ai/probs/request-timeout-error';
+          errorTitle = `Request timeout`;
+          errorMsg = 'No response returned during the timeout period';
           break;
         default:
           if (errorType === '') {
@@ -514,9 +520,6 @@ class Client {
       console.log("login succeed");
     } catch (err) {
       console.log(err);
-      if (err.isError === true && err.statusCode === "aborted") {
-        // No manager is alive at the given Endpoint.
-      }
       return Promise.resolve(false);
     }
     return result.authenticated;
@@ -2897,6 +2900,12 @@ Object.defineProperty(Client, 'ERR_REQUEST', {
 });
 Object.defineProperty(Client, 'ERR_ABORT', {
   value: 3,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+Object.defineProperty(Client, 'ERR_TIMEOUT', {
+  value: 4,
   writable: false,
   enumerable: true,
   configurable: false

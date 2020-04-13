@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.01.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.04.0)
 ====================================================================
 
 (C) Copyright 2016-2020 Lablup Inc.
@@ -186,13 +186,13 @@ class Client {
                 let controller = new AbortController();
                 rqst.signal = controller.signal;
                 requestTimer = setTimeout(() => {
-                    errorType = Client.ERR_ABORT;
+                    errorType = Client.ERR_TIMEOUT;
                     controller.abort();
                 }, this.requestTimeout);
             }
             let resp;
             resp = await fetch(rqst.uri, rqst);
-            if (typeof (requestTimer) !== "undefined") {
+            if (typeof requestTimer !== "undefined") {
                 clearTimeout(requestTimer);
             }
             errorType = Client.ERR_RESPONSE;
@@ -260,6 +260,11 @@ class Client {
                     errorType = 'https://api.backend.ai/probs/request-abort-error';
                     errorTitle = `Request aborted`;
                     errorMsg = 'Request aborted by user';
+                    break;
+                case Client.ERR_TIMEOUT:
+                    errorType = 'https://api.backend.ai/probs/request-timeout-error';
+                    errorTitle = `Request timeout`;
+                    errorMsg = 'No response returned during the timeout period';
                     break;
                 default:
                     if (errorType === '') {
@@ -2669,6 +2674,12 @@ Object.defineProperty(Client, 'ERR_REQUEST', {
 });
 Object.defineProperty(Client, 'ERR_ABORT', {
     value: 3,
+    writable: false,
+    enumerable: true,
+    configurable: false
+});
+Object.defineProperty(Client, 'ERR_TIMEOUT', {
+    value: 4,
     writable: false,
     enumerable: true,
     configurable: false

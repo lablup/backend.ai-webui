@@ -474,7 +474,7 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     let isLogon = await this.client.check_login();
-    if (isLogon === false) {
+    if (isLogon === false) { // Not authenticated yet.
       this.client.login().then(response => {
         if (response === false) {
           throw {
@@ -505,7 +505,7 @@ export default class BackendAILogin extends BackendAIPage {
         this.notification.show();
         this.open();
       });
-    } else {
+    } else { // Login already succeeded.
       return this._connectGQL();
     }
   }
