@@ -654,7 +654,7 @@ export default class BackendAILogin extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
+      <wl-dialog id="login-panel" fixed blockscrolling persistent disablefocustrap>
         <div class="horizontal center layout">
           <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 20px;" />
           <div class="flex"></div>
@@ -734,7 +734,7 @@ export default class BackendAILogin extends BackendAIPage {
           </form>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="block-panel" fixed backdrop blockscrolling persistent>
+      <wl-dialog id="block-panel" fixed blockscrolling persistent>
         ${this.blockMessage != '' ? html`
         <wl-card>
           ${this.blockType !== '' ? html`
