@@ -42,7 +42,6 @@ export default class BackendAiSettingsStore extends BackendAIPage {
         this._readSetting(key);
       }
     }
-    console.log(this.options);
   }
 
   exists(name, namespace: string = "user") {
