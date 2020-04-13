@@ -48,6 +48,10 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     return this.options[name];
   }
 
+  set(name, value) {
+    return this._writeUserSetting(name, value);
+  }
+
   _readUserSetting(name, default_value = true) {
     let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
     if (value !== null && value != '' && value != '""') {

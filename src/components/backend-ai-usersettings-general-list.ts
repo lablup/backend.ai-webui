@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t, translateUnsafeHTML as _tr, get as _text, use as setLanguage} from "lit-translate";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -33,7 +33,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   public indicator: any;
   public lastSavedBootstrapScript: string = '';
 
-  @property({type: Object}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
   @property({type: Object}) userconfigDialog = Object();
   @property({type: Object}) notification;
@@ -50,13 +49,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   constructor() {
     super();
-    this.options = {  // Default option.
-      desktop_notification: true,
-      compact_sidebar: false,
-      preserve_login: false,
-      language: "default",
-      beta_feature: false,
-    }
   }
 
   static get styles() {
@@ -170,7 +162,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.readUserSettings();
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -191,85 +182,45 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
-  readUserSettings() {
-    this._readUserSettings();
-    this.beta_feature_panel = this.options['beta_feature'];
-  }
-
-  _readUserSettings() { // Read all user settings.
-    for (let i = 0, len = localStorage.length; i < len; ++i) {
-      if (localStorage.key(i)!.startsWith('backendaiconsole.usersetting.')) {
-        let key = localStorage.key(i)!.replace('backendaiconsole.usersetting.', '');
-        this._readUserSetting(key);
-      }
-    }
-  }
-
-  _readUserSetting(name, default_value = true) {
-    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
-    if (value !== null && value != '' && value != '""') {
-      if (value === "false") {
-        this.options[name] = false;
-      } else if (value === "true") {
-        this.options[name] = true;
-      } else {
-        this.options[name] = value;
-      }
-    } else {
-      this.options[name] = default_value;
-    }
-  }
-
-  _writeUserSetting(name, value) {
-    if (value === false) {
-      localStorage.setItem('backendaiconsole.usersetting.' + name, "false");
-    } else if (value === true) {
-      localStorage.setItem('backendaiconsole.usersetting.' + name, "true");
-    } else {
-      localStorage.setItem('backendaiconsole.usersetting.' + name, value);
-    }
-    this.options[name] = value;
-  }
-
   toggleDesktopNotification(e) {
     if (e.target.checked === false) {
-      this._writeUserSetting('desktop_notification', false);
+      globalThis.backendaioptions.set('desktop_notification', false);
       this.notification.supportDesktopNotification = false;
     } else {
-      this._writeUserSetting('desktop_notification', true);
+      globalThis.backendaioptions.set('desktop_notification', true);
       this.notification.supportDesktopNotification = true;
     }
   }
 
   toggleCompactSidebar(e) {
     if (e.target.checked === false) {
-      this._writeUserSetting('compact_sidebar', false);
+      globalThis.backendaioptions.set('compact_sidebar', false);
     } else {
-      this._writeUserSetting('compact_sidebar', true);
+      globalThis.backendaioptions.set('compact_sidebar', true);
     }
   }
 
   togglePreserveLogin(e) {
     if (e.target.checked === false) {
-      this._writeUserSetting('preserve_login', false);
+      globalThis.backendaioptions.set('preserve_login', false);
     } else {
-      this._writeUserSetting('preserve_login', true);
+      globalThis.backendaioptions.set('preserve_login', true);
     }
   }
 
   setUserLanguage(e) {
-    if (e.target.selected.value !== this.options['language']) {
-      this._writeUserSetting('language', e.target.selected.value);
+    if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
+      globalThis.backendaioptions.set('language', e.target.selected.value);
       setLanguage(e.target.selected.value);
     }
   }
 
   toggleBetaFeature(e) {
     if (e.target.checked === false) {
-      this._writeUserSetting('beta_feature', false);
+      globalThis.backendaioptions.set('beta_feature', false);
       this.beta_feature_panel = false;
     } else {
-      this._writeUserSetting('beta_feature', true);
+      globalThis.backendaioptions.set('beta_feature', true);
       this.beta_feature_panel = true;
     }
   }
@@ -574,7 +525,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${this.options['desktop_notification']}"></wl-switch>
+              <wl-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${globalThis.backendaioptions.get('desktop_notification')}"></wl-switch>
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
@@ -583,7 +534,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="description">${_tr("usersettings.DescUseCompactSidebar")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
+              <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${globalThis.backendaioptions.get('compact_sidebar')}"></wl-switch>
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
@@ -597,7 +548,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                           required
                           @selected="${(e) => this.setUserLanguage(e)}">
               ${this.supportLanguages.map(item => html`
-                <mwc-list-item value="${item.code}" ?selected=${this.options['language'] === item.code}>
+                <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
                   ${item.name}
                 </mwc-list-item>`)}
               </mwc-select>
@@ -610,7 +561,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="description">${_tr("usersettings.DescKeepLoginSessionInformation")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${this.options['preserve_login']}"></wl-switch>
+              <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${globalThis.backendaioptions.get('preserve_login')}"></wl-switch>
             </div>
           </div>
           ` : html``}
@@ -620,7 +571,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="description">${_tr("usersettings.DescBetaFeatures")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${this.options['beta_feature']}"></wl-switch>
+              <wl-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></wl-switch>
             </div>
           </div>
         </div>
