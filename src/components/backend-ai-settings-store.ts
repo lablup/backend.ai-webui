@@ -45,6 +45,10 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     console.log(this.options);
   }
 
+  exists(name, namespace: string = "user") {
+    return (namespace + '.' + name in this.options);
+  }
+
   get(name, namespace = "user") {
     return this.options[namespace + '.' + name];
   }

@@ -45,7 +45,6 @@ import BackendAiSettingsStore from "./backend-ai-settings-store";
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
 });
-globalThis.backendaiconsoleOption = [];
 globalThis.backendaioptions = new BackendAiSettingsStore;
 /**
  Backend.AI GUI Console
@@ -167,6 +166,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else {
       this.lang = "en";
     }
+    globalThis.backendaioptions.set('current_language', this.lang);
     await setLanguage(this.lang);
     this.hasLoadedStrings = true;
   }
