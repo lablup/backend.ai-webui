@@ -514,6 +514,9 @@ class Client {
       console.log("login succeed");
     } catch (err) {
       console.log(err);
+      if (err.isError === true && err.statusCode === "aborted") {
+        // No manager is alive at the given Endpoint.
+      }
       return Promise.resolve(false);
     }
     return result.authenticated;

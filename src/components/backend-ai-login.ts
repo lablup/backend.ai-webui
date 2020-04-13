@@ -494,7 +494,13 @@ export default class BackendAILogin extends BackendAIPage {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
         } else {
-          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+          if (typeof err.message !== "undefined") {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+          } else {
+            this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+          }
+          console.log(err);
         }
         this.notification.show();
         this.open();
