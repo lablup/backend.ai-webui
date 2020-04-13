@@ -12,6 +12,7 @@ import 'weightless/card';
 
 import '@material/mwc-icon';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon-button';
 import '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textfield';
@@ -76,11 +77,12 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
-  @property({type: Array}) endpoints = [];
+  @property({type: Array}) endpoints;
 
   constructor() {
     super();
     globalThis.backendaiconsole = {};
+    this.endpoints = [];
   }
 
   static get styles() {
@@ -110,6 +112,11 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-theme-primary: black;
           --mdc-text-field-fill-color: rgb(250, 250, 250);
           width: 100%;
+        }
+
+        mwc-icon-button {
+          color: rgba(0, 0, 0, 0.54);
+          --mdc-icon-size: 24px;
         }
 
         #login-panel {
@@ -174,7 +181,6 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = globalThis.lablupNotification;
     this.endpoints = globalThis.backendaioptions.get("endpoints", []);
-    console.log(this.endpoints);
   }
 
   _changeSigninMode() {
@@ -661,6 +667,19 @@ export default class BackendAILogin extends BackendAIPage {
     localStorage.setItem('backendaiconsole.login.password', this.password);
   }
 
+  _toggleEndpoint() {
+    let endpoint_list = this.shadowRoot.querySelector("#endpoint-list");
+    let endpoint_button = this.shadowRoot.querySelector('#endpoint-button');
+    endpoint_list.anchor = endpoint_button;
+    endpoint_list.open = !endpoint_list.open;
+
+  }
+
+  _updateEndpoint() {
+    let endpoint_list = this.shadowRoot.querySelector("#endpoint-list");
+    this.api_endpoint = endpoint_list.selected.value;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -706,8 +725,17 @@ export default class BackendAILogin extends BackendAIPage {
           </form>
           <form>
             <fieldset>
-              <mwc-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="${_t("login.Endpoint")}" icon="cloud" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              <div class="horizontal layout">
+                <mwc-icon-button id="endpoint-button" icon="cloud" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+                <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
+                  <mwc-list-item disabled>Connected lists</mwc-list-item>
+                ${this.endpoints.map(item =>
+      html`<mwc-list-item value="${item}">${item}</mwc-list-item>`)}
+                </mwc-menu>
+                <mwc-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
+                             label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              </div>
+
               <mwc-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
