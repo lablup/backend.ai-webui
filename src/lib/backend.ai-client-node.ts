@@ -1129,8 +1129,8 @@ class VFolder {
    * @param {string} name - Virtual folder name.
    * @param {string} host - Host name to create virtual folder in it.
    * @param {string} group - Virtual folder group name.
-   * @param {string} usageMode - Virtual folder group name.
-   * @param {string} permission - Virtual folder group name.
+   * @param {string} usageMode - Virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
+   * @param {string} permission - Virtual folder's innate permission.
    */
   create(name, host = '', group = '', usageMode = 'general', permission = 'rw') {
     let body;
