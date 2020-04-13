@@ -455,7 +455,8 @@
     "Browser": "Browser",
     "English": "English",
     "Korean": "Korean",
-    "Language": "Language"
+    "Language": "Language",
+    "OSDefault": "OS Default"
   },
   "settings": {
     "General": "General",

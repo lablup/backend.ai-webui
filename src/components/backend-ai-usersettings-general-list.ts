@@ -37,7 +37,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Object}) userconfigDialog = Object();
   @property({type: Object}) notification;
   @property({type: Array}) supportLanguages = [
-    {name: _text("language.Browser"), code: "default"},
+    {name: _text("language.OSDefault"), code: "default"},
     {name: _text("language.English"), code: "en"},
     {name: _text("language.Korean"), code: "ko"}
   ];

@@ -453,7 +453,8 @@
     "Browser": "브라우저 기본",
     "English": "English",
     "Korean": "한국어",
-    "Language": "언어"
+    "Language": "언어",
+    "OSDefault": "운영체제 언어"
   },
   "settings": {
     "General": "일반",
