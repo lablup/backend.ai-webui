@@ -76,6 +76,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Array}) endpoints = [];
 
   constructor() {
     super();
@@ -172,6 +173,8 @@ export default class BackendAILogin extends BackendAIPage {
     this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = globalThis.lablupNotification;
+    this.endpoints = globalThis.backendaioptions.get("endpoints", []);
+    console.log(this.endpoints);
   }
 
   _changeSigninMode() {
@@ -618,6 +621,10 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient.ready = true;
+      if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
+        this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
+        globalThis.backendaioptions.set("endpoints", this.endpoints);
+      }
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();

@@ -48,8 +48,12 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     return (namespace + '.' + name in this.options);
   }
 
-  get(name, namespace = "user") {
-    return this.options[namespace + '.' + name];
+  get(name: string, default_value: any = null, namespace: string = "user") {
+    if (namespace + '.' + name in this.options) {
+      return this.options[namespace + '.' + name];
+    } else {
+      return default_value;
+    }
   }
 
   set(name, value, namespace = "user") {
@@ -63,6 +67,8 @@ export default class BackendAiSettingsStore extends BackendAIPage {
         this.options[name] = false;
       } else if (value === "true") {
         this.options[name] = true;
+      } else if (this.isJson(value)) {
+        this.options[name] = JSON.parse(value);
       } else {
         this.options[name] = value;
       }
@@ -76,10 +82,21 @@ export default class BackendAiSettingsStore extends BackendAIPage {
       localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, "false");
     } else if (value === true) {
       localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, "true");
+    } else if (typeof value === 'object') {
+      localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, JSON.stringify(value));
     } else {
       localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, value);
     }
     this.options[namespace + '.' + name] = value;
+  }
+
+  isJson(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
   }
 
   render() {
