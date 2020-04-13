@@ -305,16 +305,18 @@ class Client {
         error_message = err;
       }
       if (typeof (resp) === 'undefined') {
-        resp = {
-          status: 'aborted',
-          statusText: 'Aborted'
-        }
+        resp = {};
       }
       switch (errorType) {
         case Client.ERR_REQUEST:
           errorType = 'https://api.backend.ai/probs/client-request-error';
-          errorTitle = error_message;
-          errorMsg = `sending request has failed: ${error_message}`;
+          if (navigator.onLine) {
+            errorTitle = error_message;
+            errorMsg = `sending request has failed: ${error_message}`;
+          } else {
+            errorTitle = "Network disconnected.";
+            errorMsg = `sending request has failed: Network disconnected`;
+          }
           break;
         case Client.ERR_RESPONSE:
           errorType = 'https://api.backend.ai/probs/client-response-error';
@@ -331,13 +333,21 @@ class Client {
           errorType = 'https://api.backend.ai/probs/request-abort-error';
           errorTitle = `Request aborted`;
           errorMsg = 'Request aborted by user';
+          resp.status = 408;
+          resp.statusText = 'Request aborted by user'
           break;
         case Client.ERR_TIMEOUT:
           errorType = 'https://api.backend.ai/probs/request-timeout-error';
           errorTitle = `Request timeout`;
           errorMsg = 'No response returned during the timeout period';
+          resp.status = 408;
+          resp.statusText = 'Timeout exceeded'
           break;
         default:
+          if (typeof resp.status === 'undefined') {
+            resp.status = 500;
+            resp.statusText =  'Server error';
+          }
           if (errorType === '') {
             errorType = Client.ERR_UNKNOWN;
           }
