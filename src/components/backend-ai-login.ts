@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
@@ -660,49 +660,51 @@ export default class BackendAILogin extends BackendAIPage {
           <div class="flex"></div>
           ${this.signup_support ? html`
           <div class="vertical center-justified layout" style="padding-right:20px;">
-            <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
-            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
+            <div style="font-size:12px;margin:0 10px;text-align:center;">${_t("login.NotAUser")}</div>
+            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">${_t("login.SignUp")}</wl-button>
           </div>
           ` : html``}
         </div>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Login with ${this.connection_mode == 'SESSION' ? html`E-mail` : html`IAM`}</div>
+            <div>${this.connection_mode == 'SESSION' ? _t("login.LoginWithE-mail") : _t("login.LoginWithIAM")}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
                 <div class="vertical center-justified layout">
-                  <div style="font-size:12px;margin:0 10px;text-align:center;">Want to login another way?</div>
-                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">Click to use ${this.connection_mode == 'SESSION' ? html`IAM` : html`ID`}</wl-button>
+                  <div style="font-size:12px;margin:0 10px;text-align:center;">${_t("login.LoginAnotherway")}</div>
+                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">
+                    ${this.connection_mode == 'SESSION' ? _t("login.ClickToUseIAM") : _t("login.ClickToUseID")}
+                  </wl-button>
                 </div>
             ` : html``}
           </h3>
           <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
             <fieldset>
               <mwc-textfield type="email" name="user_id" id="id_user_id" maxlength="50"  autocomplete="username"
-                           label="E-mail" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                           label="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></mwc-textfield>
               <mwc-textfield type="password" name="password" id="id_password" autocomplete="current-password"
-                           label="Password" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                           label="${_t("login.Password")}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></mwc-textfield>
             </fieldset>
           </form>
           <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
             <fieldset>
               <mwc-textfield type="text" name="api_key" id="id_api_key" maxlength="30"
-                           label="API Key" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                           label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
               <mwc-textfield type="password" name="secret_key" id="id_secret_key"
-                           label="Secret Key" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                           label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
             </fieldset>
           </form>
           <form>
             <fieldset>
               <mwc-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="Endpoint" icon="cloud" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                           label="${_t("login.Endpoint")}" icon="cloud" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
               <mwc-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
-                           label="Endpoint" icon="cloud" value=""></mwc-textfield>
+                           label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
               <wl-button class="fg red full login-button" id="login-button" outlined type="button"
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
-                          Login</wl-button>
+                          ${_t("login.Login")}</wl-button>
             </fieldset>
           </form>
         </wl-card>
@@ -710,14 +712,14 @@ export default class BackendAILogin extends BackendAIPage {
       <wl-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Leave service</div>
+            <div>${_t("login.LeaveService")}</div>
             <div class="flex"></div>
             <wl-button class="red" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
           <section>
-            <div class="warning">To confirm, please type your E-mail and password again.</div>
+            <div class="warning">${_t("login.DescConfirmLeave")}</div>
           </section>
           <form id="signout-form">
             <fieldset>
@@ -729,7 +731,7 @@ export default class BackendAILogin extends BackendAIPage {
               <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
                           @click="${() => this._signout()}">
                           <wl-icon>check</wl-icon>
-                          Leave service</wl-button>
+                          ${_t("login.LeaveService")}</wl-button>
             </fieldset>
           </form>
         </wl-card>
