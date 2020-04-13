@@ -526,7 +526,7 @@
     "Login": "로그인",
     "LeaveService": "서비스 탈퇴",
     "DescConfirmLeave": "확인을 위해 E-mail 및 패스워드를 다시 입력해주세요.",
-    "Password": "패스워드",
+    "Password": "암호",
     "E-mail": "E-mail",
     "APIKey": "접근키",
     "SecretKey": "비밀키",
@@ -539,5 +539,16 @@
     "LoginWithIAM": "IAM으로 로그인",
     "ClickToUseIAM": "IAM 사용",
     "ClickToUseID": "ID 사용"
+  },
+  "signup": {
+    "SignupBETA": "가입 (Beta invitation only)",
+    "E-mail": "E-mail",
+    "UserName": "사용자명",
+    "Password": " 암호",
+    "PasswordAgain": "암호 (다시입력)",
+    "Signup": "가입",
+    "InvitationToken": "초대 토큰",
+    "TermsOfService": "약관",
+    "PrivacyPolicy": "개인정보보호정책"
   }
 }

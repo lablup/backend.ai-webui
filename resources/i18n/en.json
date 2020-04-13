@@ -541,5 +541,16 @@
     "LoginWithIAM": "Login With IAM",
     "ClickToUseIAM": "Click To Use IAM",
     "ClickToUseID": "Click To Use ID"
+  },
+  "signup": {
+    "SignupBETA": "Signup (Beta invitation only)",
+    "E-mail": "E-mail",
+    "UserName": "UserName",
+    "Password": "Password",
+    "PasswordAgain": "Password (again)",
+    "Signup": "Signup",
+    "InvitationToken": "Invitation Token",
+    "TermsOfService": "Terms of service",
+    "PrivacyPolicy": "Privacy Policy"
   }
 }
