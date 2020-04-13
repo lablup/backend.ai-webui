@@ -534,7 +534,7 @@ export default class BackendAILogin extends BackendAIPage {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (typeof err.message !== "undefined") {
-          if (err.statusText === "Aborted") { // Failed while loading getManagerVersion
+          if (err.status === 408) { // Failed while loading getManagerVersion
             this.notification.text = "Login succeed but manager is not responding.";
             this.notification.detail = err.message;
           } else {
