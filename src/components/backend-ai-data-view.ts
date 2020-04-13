@@ -36,7 +36,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
-  @property({type: String}) APIMajorVersion = '';
+  @property({type: String}) apiMajorVersion = '';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
@@ -277,7 +277,6 @@ export default class BackendAIData extends BackendAIPage {
 
   firstUpdated() {
     this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-    console.log(this.apiMajorVersion)
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
