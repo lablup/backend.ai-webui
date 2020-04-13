@@ -231,7 +231,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     let curtain = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
-    curtain.addEventListener('transitionend', function (e) {
+    curtain.addEventListener('transitionend', () => {
       curtain.classList.add('hidden');
       this.is_connected = true;
     }, {
