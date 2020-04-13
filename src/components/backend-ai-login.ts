@@ -10,8 +10,11 @@ import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
 
-import '@material/mwc-textfield';
 import '@material/mwc-icon';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
+import '@material/mwc-select';
+import '@material/mwc-textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 
