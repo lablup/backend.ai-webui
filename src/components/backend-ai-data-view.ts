@@ -167,6 +167,16 @@ export default class BackendAIData extends BackendAIPage {
           --label-color: black;
         }
 
+        mwc-select {
+          width: 180px;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--paper-orange-600);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--paper-orange-400);
+          --mdc-select-hover-line-color: var(--paper-orange-600);
+          --mdc-list-vertical-padding: 5px;
+        }
       `];
   }
 
@@ -209,52 +219,42 @@ export default class BackendAIData extends BackendAIPage {
             <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
                 auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
             <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-host" label="${_t("data.Host")}">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${this.vhosts.map(item => html`
-                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+              <mwc-select id="add-folder-host" label="${_t("data.Host")}">
+                ${this.vhosts.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-              <paper-dropdown-menu id="add-folder-type" label="${_t("data.Type")}">
-                <paper-listbox slot="dropdown-content" selected="0">
+              </mwc-select>
+              <mwc-select id="add-folder-type" label="${_t("data.Type")}">
                 ${(this.allowed_folder_type as String[]).includes('user') ? html`
-                  <paper-item label="user">${_t("data.User")}</paper-item>
+                  <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
                 ` : html``}
                 ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-                  <paper-item label="group">${_t("data.Group")}</paper-item>
+                  <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
                 ` : html``}
-                </paper-listbox>
-              </paper-dropdown-menu>
+              </mwc-select>
             </div>
             ${this.apiMajorVersion > '4' ? html`
               <div class="horizontal layout">
-                <paper-dropdown-menu id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.usageModes.map(item => html`
-                    <paper-item id="${item}" label="${item}">${item}</paper-item>
+                <mwc-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
+                  ${this.usageModes.map((item, idx) => html`
+                    <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                   `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="add-folder-permission" label="${_t("data.Permission")}">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.permissions.map(item => html`
-                    <paper-item id="${item}" label="${item}">${item}</paper-item>
+                </mwc-select>
+                <mwc-select id="add-folder-permission" label="${_t("data.Type")}">
+                  ${this.permissions.map((item, idx) => html`
+                    <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                   `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
+                </mwc-select>
               </div>
             `: html``}
             ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-            <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-group" label=" ${_t("data.Group")}">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${(this.allowedGroups as any).map(item => html`
-                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-            </div>
+              <div class="horizontal layout">
+                <mwc-select id="add-folder-group" label="${_t("data.Group")}">
+                  ${(this.allowedGroups as any).map((item, idx) => html`
+                    <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  `)}
+                </mwc-select>
+              </div>
             ` : html``}
             <div style="font-size:11px;">
               ${_t("data.DialogFolderStartingWithDotAutomount")}
