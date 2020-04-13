@@ -4,7 +4,7 @@ Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / D
 
 Backend.AI console focuses to
 
- * Serve as desktop app and web service
+ * Serve as desktop app (windows, macOS and Linux) and web service
  * Provide both administration and user mode
  * Versatile devices ready such as mobile, tablet and desktop.
  * Built-in websocket proxy feature for apps
@@ -14,7 +14,7 @@ Backend.AI console focuses to
     * Set default resources for runs
     * Choose and run environment-supported apps
     * Terminal for each session
-    * Fully-featured VSCode editor and environments (WIP)
+    * Fully-featured VSCode editor and environments
  * Pipeline
     * Experiments (with SACRED)
     * AutoML (with NNI)

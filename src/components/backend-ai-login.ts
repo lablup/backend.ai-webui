@@ -474,7 +474,7 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     let isLogon = await this.client.check_login();
-    if (isLogon === false) {
+    if (isLogon === false) { // Not authenticated yet.
       this.client.login().then(response => {
         if (response === false) {
           throw {
@@ -494,12 +494,18 @@ export default class BackendAILogin extends BackendAIPage {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
         } else {
-          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+          if (typeof err.message !== "undefined") {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+          } else {
+            this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+          }
+          console.log(err);
         }
         this.notification.show();
         this.open();
       });
-    } else {
+    } else { // Login already succeeded.
       return this._connectGQL();
     }
   }
@@ -528,7 +534,7 @@ export default class BackendAILogin extends BackendAIPage {
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
         if (typeof err.message !== "undefined") {
-          if (err.statusText === "Aborted") { // Failed while loading getManagerVersion
+          if (err.status === 408) { // Failed while loading getManagerVersion
             this.notification.text = "Login succeed but manager is not responding.";
             this.notification.detail = err.message;
           } else {
