@@ -50,7 +50,9 @@ export default class BackendAiReleaseCheck extends LitElement {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     // TODO: adopt general setting to here to turn off autoupdate check (in closed environment)
-    this.checkRelease();
+    if (globalThis.isElectron) {
+      this.checkRelease();
+    }
   }
 
   checkRelease() {
