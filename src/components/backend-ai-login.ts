@@ -120,7 +120,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         mwc-icon-button {
           /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
-          color: var(--paper-red-600);
+          color: var(--paper-blue-600);
           --mdc-icon-size: 24px;
         }
 
