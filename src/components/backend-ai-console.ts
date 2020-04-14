@@ -636,11 +636,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _readRecentProjectGroup() {
+    // TODO: use global store
     let value: string | null = sessionStorage.getItem('backendaiconsole.projectGroup');
     return value ? value : globalThis.backendaiclient.current_group;
   }
 
   _writeRecentProjectGroup(value: string) {
+    // TODO: use global store
     sessionStorage.setItem('backendaiconsole.projectGroup', value ? value : globalThis.backendaiclient.current_group);
   }
 
