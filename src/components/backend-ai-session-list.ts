@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
@@ -119,6 +119,12 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         wl-icon.warning {
           color: red;
+        }
+
+        img.indicator-icon {
+          width: 16px;
+          height: 16px;
+          padding-right: 5px;
         }
 
         wl-button.pagination {
@@ -473,11 +479,17 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].running = false;
           }
           if ('cuda.device' in occupied_slots) {
-            sessions[objectKey].gpu_slot = parseInt(occupied_slots['cuda.device']);
+            sessions[objectKey].cuda_gpu_slot = parseInt(occupied_slots['cuda.device']);
+          }
+          if ('rocm.device' in occupied_slots) {
+            sessions[objectKey].rocm_gpu_slot = parseInt(occupied_slots['rocm.device']);
+          }
+          if ('tpu.device' in occupied_slots) {
+            sessions[objectKey].tpu_slot = parseInt(occupied_slots['tpu.device']);
           }
           if ('cuda.shares' in occupied_slots) {
             //sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
-            sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
+            sessions[objectKey].cuda_fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
@@ -843,7 +855,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
               console.log(sessionName);
-            }, 3000);
+            }, 1000);
           }
         });
     }
@@ -877,7 +889,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               this.shadowRoot.querySelector('#indicator').end();
               console.log("Terminal proxy loaded: ");
               console.log(sessionName);
-            }, 3000);
+            }, 1000);
           }
         });
     }
@@ -1098,7 +1110,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
-          ${this._isRunning && !this._isPreparing(rowData.item.status) ? html`
+          ${ (this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"><wl-icon>delete</wl-icon></wl-button>
@@ -1295,12 +1307,12 @@ export default class BackendAiSessionList extends BackendAIPage {
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
             <wl-icon style="--icon-size: 20px;">delete</wl-icon>
-            terminate
+            ${_t("session.Terminate")}
           </wl-button>
         </div>
         <span class="flex"></span>
         <wl-textfield id="access-key-filter" type="search" size=30
-                     label="access key" no-label-float .value="${this.filterAccessKey}"
+                     label="${_t("general.AccessKey")}" no-label-float .value="${this.filterAccessKey}"
                      style="display:none"
                      on-change="_updateFilterAccessKey">
         </wl-textfield>
@@ -1317,19 +1329,19 @@ export default class BackendAiSessionList extends BackendAIPage {
           <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === "API" ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
-        <vaadin-grid-column width="150px" resizable header="Session Info" .renderer="${this._boundSessionInfoRenderer}">
+        <vaadin-grid-column width="150px" resizable header="${_t("session.SessionInfo")}" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="90px" flex-grow="0" header="Status" resizable .renderer="${this._boundStatusRenderer}">
+        <vaadin-grid-column width="90px" flex-grow="0" header="${_t("session.Status")}" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" header="Configuration" resizable>
+        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("session.Configuration")}" resizable>
           <template>
             <template is="dom-if" if="[[item.scaling_group]]">
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green indicator">work</wl-icon>
                 <span>[[item.scaling_group]]</span>
-                <span class="indicator">SG</span>
+                <span class="indicator">RG</span>
               </div>
             </div>
             </template>
@@ -1337,7 +1349,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green indicator">developer_board</wl-icon>
                 <span>[[item.cpu_slot]]</span>
-                <span class="indicator">core</span>
+                <span class="indicator">${_t("session.core")}</span>
               </div>
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green indicator">memory</wl-icon>
@@ -1347,23 +1359,37 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
             <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <template is="dom-if" if="[[item.gpu_slot]]">
-                  <wl-icon class="fg green indicator">view_module</wl-icon>
-                  <span>[[item.gpu_slot]]</span>
+                <template is="dom-if" if="[[item.cuda_gpu_slot]]">
+                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                  <span>[[item.cuda_gpu_slot]]</span>
                   <span class="indicator">GPU</span>
                 </template>
-                <template is="dom-if" if="[[!item.gpu_slot]]">
-                  <template is="dom-if" if="[[item.fgpu_slot]]">
-                    <wl-icon class="fg green indicator">view_module</wl-icon>
-                    <span>[[item.fgpu_slot]]</span>
+                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
+                  <template is="dom-if" if="[[item.cuda_fgpu_slot]]">
+                    <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                    <span>[[item.cuda_fgpu_slot]]</span>
                     <span class="indicator">GPU</span>
                   </template>
                 </template>
-                <template is="dom-if" if="[[!item.gpu_slot]]">
-                  <template is="dom-if" if="[[!item.fgpu_slot]]">
-                    <wl-icon class="fg green indicator">view_module</wl-icon>
-                    <span>-</span>
-                    <span class="indicator">GPU</span>
+                <template is="dom-if" if="[[item.rocm_gpu_slot]]">
+                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+                  <span>[[item.rocm_gpu_slot]]</span>
+                  <span class="indicator">GPU</span>
+                </template>
+                <template is="dom-if" if="[[item.tpu_slot]]">
+                  <wl-icon class="fg green indicator">view_module</wl-icon>
+                  <span>[[item.tpu_slot]]</span>
+                  <span class="indicator">TPU</span>
+                </template>
+                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
+                  <template is="dom-if" if="[[!item.cuda_fgpu_slot]]">
+                    <template is="dom-if" if="[[!item.rocm_gpu_slot]]">
+                      <template is="dom-if" if="[[!item.tpu_slot]]">
+                        <wl-icon class="fg green indicator">view_module</wl-icon>
+                        <span>-</span>
+                        <span class="indicator">GPU</span>
+                      </template>
+                    </template>
                   </template>
                 </template>
               </div>
@@ -1376,16 +1402,16 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="Usage" .renderer="${this._boundUsageRenderer}">
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t("session.Usage")}" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="Starts" path="created_at">
+        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t("session.Starts")}" path="created_at">
           <template>
             <div class="layout vertical">
               <span>[[item.created_at_hr]]</span>
             </div>
           </template>
         </vaadin-grid-sort-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable header="Reservation">
+        <vaadin-grid-column width="100px" flex-grow="0" resizable header="${_t("session.Reservation")}">
           <template>
             <div class="layout vertical">
               <span>[[item.elapsed]]</span>
@@ -1393,7 +1419,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
         ${this.is_superadmin ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="Agent">
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t("session.Agent")}">
             <template>
               <div class="layout vertical">
                 <span>[[item.agent]]</span>
@@ -1472,7 +1498,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </h4>
           <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
           <section class="vertical layout wrap start start-justified">
-            <h4>Connection information</h4>
+            <h4>${_t("session.ConnectionInformation")}</h4>
             <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
@@ -1484,23 +1510,23 @@ export default class BackendAiSessionList extends BackendAIPage {
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>VNC connection</span>
+            <span>${_t("session.VNCconnection")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h4>
-          <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
+          <div style="padding:0 15px;" >${_t("session.UseYourFavoriteSSHApp")}</div>
           <section class="vertical layout wrap start start-justified">
-            <h4>Connection information</h4>
+            <h4>${_t("session.ConnectionInformation")}</h4>
             <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
           </section>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
          <div slot="content">
-            <p>This action cannot be undone. Do you want to proceed?</p>
+            <p>${_t("session.CheckAgainDialog")}</p>
          </div>
          <div slot="footer">
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
@@ -1510,17 +1536,17 @@ export default class BackendAiSessionList extends BackendAIPage {
       <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
-            <p>You are terminating multiple sessions. This action cannot be undone. Do you want to proceed?</p>
+            <p>${_t("session.TerminatingSessionDialog")} ${_t("session.CheckAgainDialog")}</p>
          </div>
          <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">Okay</wl-button>
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t("button.Okay")}</wl-button>
          </div>
       </wl-dialog>
       <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
       <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
         <h3 class="horizontal center layout" style="padding:10px;">
-          <span style="margin-left:10px;">Export Session list to CSV File</span>
+          <span style="margin-left:10px;">${_t("session.ExportSessionListToCSVFile")}</span>
           <div class="flex"></div>
           <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
             <wl-icon>close</wl-icon>
@@ -1549,13 +1575,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>
           <div class="horizontal center layout" style="margin-bottom:10px;">
             <wl-icon class="warning">warning</wl-icon>
-            <wl-label class="warning" for="warning">Only recent 100 session logs will be exported.</wl-label>
+            <wl-label class="warning" for="warning">${_t("session.OnlyRecent100SessionExport")}</wl-label>
           </div>
           <div class="horizontal center layout">
             <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
             @click="${this._exportToCSV}">
               <wl-icon>get_app</wl-icon>
-              Export CSV File
+              ${_t("session.ExportCSVFile")}
             </wl-button>
           </div>
           </section>

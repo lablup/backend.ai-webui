@@ -91,6 +91,8 @@ pack:
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
+i18n:
+	 ./node_modules/i18next-scanner/bin/cli.js --config ./i18n.config.js
 clean:
 	cd app;	rm -rf ./backend*
 	cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -382,13 +383,13 @@ export default class BackendAISummary extends BackendAIPage {
     return num.toString().replace(regexp, ',');
   }
 
-  _refreshInvitations() {
+  _refreshInvitations(refreshOnly = false) {
     if (!this.activeConnected) {
       return;
     }
     globalThis.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
-      if (this.active) {
+      if (this.active && !refreshOnly) {
         setTimeout(() => {
           this._refreshInvitations()
         }, 15000);
@@ -396,15 +397,20 @@ export default class BackendAISummary extends BackendAIPage {
     });
   }
 
-  _acceptInvitation(invitation: any) {
+  _acceptInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
+    let panel = e.target.closest('lablup-activity-panel');
     globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
+        panel.setAttribute('disabled', 'true');
+        panel.querySelectorAll('wl-button').forEach((btn) => {
+          btn.setAttribute('disabled', 'true');
+        });
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
-        this._refreshInvitations();
+        this._refreshInvitations(true);
       })
       .catch(err => {
         this.notification.text = PainKiller.relieve(err.title);
@@ -413,15 +419,20 @@ export default class BackendAISummary extends BackendAIPage {
       })
   }
 
-  _deleteInvitation(invitation: any) {
+  _deleteInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
+    let panel = e.target.closest('lablup-activity-panel');
     globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
+        panel.setAttribute('disabled', 'true');
+        panel.querySelectorAll('wl-button').forEach((btn) => {
+          btn.setAttribute('disabled', 'true');
+        });
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
-        this._refreshInvitations();
+        this._refreshInvitations(true);
       })
   }
 
@@ -430,32 +441,32 @@ export default class BackendAISummary extends BackendAIPage {
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="plastic-material-title">Statistics</h3>
+        <h3 class="plastic-material-title">${_t('summary.Dashboard')}</h3>
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="Start Menu" elevation="1">
+          <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
               </div>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="System Health" elevation="1">
+          <lablup-activity-panel title="${_t('summary.SystemHealth')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
                 ${this.is_superadmin ? html`
                   <div class="vertical layout center">
                     <div class="big indicator">${this.agents}</div>
-                    <span>Connected nodes</span>
+                    <span>${_t('summary.ConnectedNodes')}</span>
                   </div>` : html``}
                 <div class="vertical layout center">
                   <div class="big indicator">${this.sessions}</div>
-                  <span>Active sessions</span>
+                  <span>${_t('summary.ActiveSessions')}</span>
                 </div>
               </div>
             </div>
           </lablup-activity-panel>
           ${this.is_superadmin ? html`
-          <lablup-activity-panel title="Resource Statistics" elevation="1">
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
             <div slot="message">
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
@@ -466,9 +477,9 @@ export default class BackendAISummary extends BackendAIPage {
                   <mwc-linear-progress class="mem-usage-bar start-bar" progress="${this.cpu_total_usage_ratio / 100.0}"></mwc-linear-progress>
                   <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar" progress="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
-                    Cores reserved.
+                    ${_t('summary.CoresReserved')}.
                   </div>
-                  <div>Using <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
+                  <div>${_t('summary.Using')} <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
                   </div>
                 </div>
               </div>
@@ -481,9 +492,9 @@ export default class BackendAISummary extends BackendAIPage {
                   <mwc-linear-progress class="mem-usage-bar start-bar" id="mem-usage-bar" progress="${this.mem_total_usage_ratio / 100.0}"></mwc-linear-progress>
                   <mwc-linear-progress class="mem-usage-bar end-bar" progress="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
-                    reserved.
+                    ${_t('summary.reserved')}.
                   </div>
-                  <div>Using <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
+                  <div>${_t('summary.Using')} <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
                     (${this.mem_current_usage_percent} %)
                   </div>
                 </div>
@@ -509,47 +520,47 @@ export default class BackendAISummary extends BackendAIPage {
                     <vaadin-progress-bar id="vgpu-bar" value="${this.fgpu_used}"
                                          max="${this.fgpu_total}"></vaadin-progress-bar>
                     <div><span class="progress-value"> ${this.fgpu_used}</span>/${this.fgpu_total} GPUs</div>
-                    <div><span class="progress-value">Fractional GPU scaling enabled</div>
+                    <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
                   </div>
                 </div>` : html``}
                 <div class="horizontal center layout">
                   <div style="width:10px;height:10px;margin-left:40px;margin-right:3px;background-color:#4775E3;"></div>
-                  <span style="margin-right:5px;">Reserved</span>
+                  <span style="margin-right:5px;">${_t('summary.Reserved')}</span>
                   <div style="width:10px;height:10px;margin-right:3px;background-color:#A0BD67"></div>
-                  <span style="margin-right:5px;">Used</span>
+                  <span style="margin-right:5px;">${_t('summary.Used')}</span>
                   <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
-                  <span>Total</span>
+                  <span>${_t('summary.Total')}</span>
                 </div>
             </div>
           </lablup-activity-panel>` : html``}
         </div>
-        <h3 class="plastic-material-title">Actions</h3>
+        <h3 class="plastic-material-title">${_t('summary.Actions')}</h3>
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="Shortcut" elevation="1">
+          <lablup-activity-panel title="${_t('summary.Shortcut')}" elevation="1">
             <div slot="message">
               <ul>
-                <li><a href="/data">Upload files</a></li>
+                <li><a href="/data">${_t('summary.UploadFiles')}</a></li>
               </ul>
               <ul>
-                <li><a href="/job">Start a session</a></li>
+                <li><a href="/job">${_t('summary.StartASession')}</a></li>
               </ul>
               ${this.is_admin
       ? html`
                 <ul>
-                  <li><a href="/credential">Create a new key pair</a></li>
-                  <li><a href="/credential">Maintain keypairs</a></li>
+                  <li><a href="/credential">${_t('summary.CreateANewKeypair')}</a></li>
+                  <li><a href="/credential">${_t('summary.MaintainKeypairs')}</a></li>
                 </ul>`
       : html``}
             </div>
           </lablup-activity-panel>
       ${this.invitations ? this.invitations.map(invitation =>
       html`
-            <lablup-activity-panel title="Invitation">
+            <lablup-activity-panel title="${_t("summary.Invitation")}>
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
-                <span class="invitation_folder_name">Folder name: ${invitation.vfolder_name}</span>
+                <span class="invitation_folder_name">${_t("summary.FolderName")}>: ${invitation.vfolder_name}</span>
                 <div class="horizontal center layout">
-                Permission:
+                ${_t("summary.Permission")}>:
                 ${[...invitation.perm].map(c => {
         return html`
                   <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
@@ -560,18 +571,18 @@ export default class BackendAISummary extends BackendAIPage {
                   <wl-button
                     class="fg green"
                     outlined
-                    @click=${e => this._acceptInvitation(invitation)}
+                    @click=${e => this._acceptInvitation(e, invitation)}
                   >
                     <wl-icon>add</wl-icon>
-                    Accept
+                    ${_t('summary.Accept')}
                   </wl-button>
                   <wl-button
                     class="fg red"
                     outlined
-                    @click=${e => this._deleteInvitation(invitation)}
+                    @click=${e => this._deleteInvitation(e, invitation)}
                   >
                     <wl-icon>remove</wl-icon>
-                    Decline
+                    ${_t('summary.Decline')}
                   </wl-button>
                 </div>
               </div>
@@ -580,7 +591,7 @@ export default class BackendAISummary extends BackendAIPage {
     ) : ''}
     ${this.is_admin
       ? html`
-          <lablup-activity-panel title="Administration" elevation="1">
+          <lablup-activity-panel title="${_t('summary.Administration')}" elevation="1">
             <div slot="message">
       ${this.is_superadmin ? html`
               <div class="layout vertical center flex" style="margin-bottom:5px;">
@@ -588,11 +599,11 @@ export default class BackendAISummary extends BackendAIPage {
                 <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
               </div>` : html``}
               <ul>
-                <li><a href="/environment">Update environment images</a></li>
-                <li><a href="/agent">Check resources</a></li>
+                <li><a href="/environment">${_t('summary.UpdateEnvironmentImages')}</a></li>
+                <li><a href="/agent">${_t('summary.CheckResources')}</a></li>
       ${this.is_superadmin ? html`
-                <li><a href="/settings">Change system settings</a></li>
-                <li><a href="/environment">System maintenance</a></li>` : html``}
+                <li><a href="/settings">${_t('summary.ChangeSystemSetting')}</a></li>
+                <li><a href="/environment">${_t('summary.SystemMaintenance')}</a></li>` : html``}
               </ul>
             </div>
           </lablup-activity-panel>`

@@ -2,9 +2,9 @@
 
 Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
 
-Backend.AI console focuses to 
+Backend.AI console focuses to
 
- * Serve as desktop app and web service
+ * Serve as desktop app (windows, macOS and Linux) and web service
  * Provide both administration and user mode
  * Versatile devices ready such as mobile, tablet and desktop.
  * Built-in websocket proxy feature for apps
@@ -14,7 +14,7 @@ Backend.AI console focuses to
     * Set default resources for runs
     * Choose and run environment-supported apps
     * Terminal for each session
-    * Fully-featured VSCode editor and environments (WIP)
+    * Fully-featured VSCode editor and environments
  * Pipeline
     * Experiments (with SACRED)
     * AutoML (with NNI)
@@ -24,7 +24,7 @@ Backend.AI console focuses to
     * Create / delete folders
     * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
-    * Share folders with friends / groups 
+    * Share folders with friends / groups
  * Statistics
     * User resource statistics
     * Session statistics
@@ -45,7 +45,7 @@ Backend.AI console focuses to
      * Add kernel
      * Refresh kernel list
      * Categorize repository
-     * Add/update resource templates 
+     * Add/update resource templates
      * Add/remove docker registries
  * User management
     * User creation / deletion / key management
@@ -100,14 +100,14 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
 ## Branches
 
  * master : Development branch
- * production : Latest release branch
+ * release : Latest release branch
  * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
  * tags/v[versions] : version tags. Each tag represents release versions.
- 
+
 ## Development Guide
 
-Backend.AI console is built with  
- * `litelement` / `Polymer 3 `as webcomponent framework
+Backend.AI console is built with
+ * `lit-element` / `Polymer 3 `as webcomponent framework
  * `npm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
@@ -262,6 +262,22 @@ This is only needed with pure ES6 dev. environment / browser. Websocket proxy is
 $ npm run wsproxy
 ```
 
+If console app is behind an external http proxy, and you have to pass through
+it to connect to a console-server or manager server, you can set
+`EXT_HTTP_PROXY` environment variable with the address of the http proxy.
+Local websocket proxy then communicates with the final destination via the http
+proxy. The address should include the protocol, host, and/or port (if exists).
+For example,
+
+```console
+export EXT_HTTP_PROXY=http://10.20.30.40:3128 (Linux)
+set EXT_HTTP_PROXY=http://10.20.30.40:3128 (Windows)
+```
+
+Even if you are using Electron embedded websocket proxy, you have to set the
+environment variable manually to pass through a http proxy.
+
+
 ## Build web server with specific configuration
 
 You can prepare site-specific configuration as `ini` format. Also, you can build site-specific web bundle refering in `configs` directory.
@@ -332,5 +348,57 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 
 ```
 $ make dep # Compile with app dependencies
-$ npm run electron:d  # OR, ./node_modules/electron/cli.js . 
+$ npm run electron:d  # OR, ./node_modules/electron/cli.js .
+```
+
+### Localization
+Locale resources are JSON files located in `resources/i18n`.
+
+#### Extracting i18n resources
+
+Run
+```
+make i18n
+```
+to update / extract i18n resources.
+
+### Adding i18n strings
+
+ * Use `_t` as i18n resource handler on lit-element templates.
+ * Use `_tr` as i18n resource handler if i18n resource has HTML code inside.
+ * Use `_text` as i18n resource handler on lit-element Javascript code.
+
+#### Example
+
+In lit-html template:
+```
+<div>${_t('general.helloworld')}</div>
+```
+
+In i18n resource (en.json):
+```
+{
+   'general':{
+      'helloworld': 'Hello World'
+   }
+}
+```
+#### Adding new language
+
+ 1. Copy `en.json` to target language. (e.g. `ko.json`)
+ 2. Add language identifier to `supportLanguageCodes` in `backend-ai-console.ts`.
+e.g.
+```javascript
+  @property({type: Array}) supportLanguageCodes = ["en", "ko"];
+```
+ 3. Add language information to `supportLanguages` in `backend-ai-usersettings-general-list.ts`.
+
+Note: DO NOT DELETE 'default' language. It is used for browser language.
+
+```javascript
+  @property({type: Array}) supportLanguages = [
+    {name: _text("language.Browser"), code: "default"},
+    {name: _text("language.English"), code: "en"},
+    {name: _text("language.Korean"), code: "ko"}
+  ];
 ```

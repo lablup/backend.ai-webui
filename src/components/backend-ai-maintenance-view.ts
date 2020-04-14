@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -81,83 +82,57 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
       `];
   }
 
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      scanning: {
-        type: Boolean
-      },
-      recalculating: {
-        type: Boolean
-      },
-      images: {
-        type: Object,
-        hasChanged: () => true
-      },
-      notification: {
-        type: Object
-      },
-      indicator: {
-        type: Object
-      }
-    }
-  }
-
   render() {
     // language=HTML
     return html`
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
-          <span>General</span>
+          <span>${_t("maintenance.General")}</span>
           <span class="flex"></span>
         </h3>
 
-        <h4>Fix</h4>
+        <h4>${_t("maintenance.Fix")}</h4>
         <div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Match usage database with current state</div>
-              <div class="description">Recalculate usage database with current state.<br/>
-                Useful if docker fails by accident, or some sessions have been forcibly terminated.
+              <div>${_t("maintenance.MatchDatabase")}</div>
+              <div class="description">${_tr("maintenance.DescMatchDatabase")}
               </div>
             </div>
             <div class="vertical center-justified layout">
               <wl-button class="fg red" ?disabled="${this.recalculating}" outlined label="Recalculate usage" icon="refresh" @click="${() => this.recalculate_usage()}">
                 <wl-icon>refresh</wl-icon>
-                <span id="recalculate_usage-button-desc">Recalculate usage</span>
+                <span id="recalculate_usage-button-desc">${_t("maintenance.RecalculateUsage")}</span>
               </wl-button>
             </div>
           </div>
         </div>
-        <h4>Images / Environment</h4>
+        <h4>${_t("maintenance.ImagesEnvironment")}</h4>
         <div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Rescan image list from repository</div>
-              <div class="description">Rescan image list from registered repositories.<br />
-              It may take a long time, so please wait after execution.
+              <div>${_t("maintenance.RescanImageList")}</div>
+              <div class="description">${_tr("maintenance.DescRescanImageList")}
               </div>
             </div>
             <div class="vertical center-justified layout">
               <wl-button class="fg red" ?disabled="${this.scanning}" outlined label="Rescan images" icon="refresh" @click="${() => this.rescan_images()}">
                 <wl-icon>refresh</wl-icon>
-                <span id="rescan-image-button-desc">Rescan images</span>
+                <span id="rescan-image-button-desc">${_t("maintenance.RescanImages")}</span>
               </wl-button>
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Clean up old images</div>
-              <div class="description">Clean up old images from docker image list.
+              <div>${_t("maintenance.CleanupOldImages")}</div>
+              <div class="description">${_t("maintenance.DescCleanupOldImages")}
               </div>
             </div>
             <div class="vertical center-justified layout">
               <wl-button class="fg red" disabled outlined label="Clean up images" icon="delete">
                 <wl-icon>delete</wl-icon>
-                Clean up images
+                ${_t("maintenance.CleanupImages")}
               </wl-button>
             </div>
           </div>
@@ -211,18 +186,18 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   }
 
   async recalculate_usage() {
-    this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculating...';
+    this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.Recalculating');
     this.recalculating = true;
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Recalculating...');
     globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
-      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
+      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
       this.recalculating = false;
       this.indicator.set(100, 'Recalculation finished.');
       this.indicator.end(1000);
     }).catch(err => {
       this.recalculating = false;
-      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = 'Recalculate usage';
+      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
       console.log(err);
       this.indicator.set(50, 'Recalculation failed.');
       this.indicator.end(1000);

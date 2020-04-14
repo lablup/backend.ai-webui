@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -678,7 +678,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
             }
             const scaling_select = document.createElement('wl-select');
-            scaling_select.label = "Resource Group";
+            scaling_select.label = _text('session.launcher.ResourceGroup');
             scaling_select.name = 'scaling-group-select';
             scaling_select.id = 'scaling-group-select';
             scaling_select.value = this.scaling_group;
@@ -686,7 +686,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
             let opt = document.createElement('option');
             opt.setAttribute('disabled', 'true');
-            opt.innerHTML = 'Select Resource Group';
+            opt.innerHTML = _text('session.launcher.SelectResourceGroup');
             scaling_select.appendChild(opt);
             this.scaling_groups.map(group => {
               opt = document.createElement('option');
@@ -802,11 +802,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     globalThis.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
       if ('cuda.device' in results) {
-        this.gpu_mode = 'gpu';
+        this.gpu_mode = 'cuda.gpu';
         this.gpu_step = 1;
       }
       if ('cuda.shares' in results) {
-        this.gpu_mode = 'fgpu';
+        this.gpu_mode = 'cuda.fgpu';
         this.gpu_step = 0.05;
       }
     });
@@ -843,26 +843,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
     }
     let config = {};
-    if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
-      config['group_name'] = globalThis.backendaiclient.current_group;
-      config['domain'] = globalThis.backendaiclient._config.domainName;
-      config['scaling_group'] = this.scaling_group;
-      config['maxWaitSeconds'] = 5;
-      const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
-      if (ownerEnabled && ownerEnabled.checked) {
-        config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
-        config['domain'] = this.ownerDomain;
-        config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
-        config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').selectedItemLabel;
-        if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
-          this.notification.text = 'Not enough ownership information';
-          this.notification.show();
-          return;
-        }
+    config['group_name'] = globalThis.backendaiclient.current_group;
+    config['domain'] = globalThis.backendaiclient._config.domainName;
+    config['scaling_group'] = this.scaling_group;
+    config['maxWaitSeconds'] = 5;
+    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+    if (ownerEnabled && ownerEnabled.checked) {
+      config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+      config['domain'] = this.ownerDomain;
+      config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
+      config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').selectedItemLabel;
+      if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
+        this.notification.text = 'Not enough ownership information';
+        this.notification.show();
+        return;
       }
     }
     config['cpu'] = this.cpu_request;
-    if (this.gpu_mode == 'fgpu') {
+    if (this.gpu_mode == 'cuda.fgpu') {
       config['cuda.shares'] = this.gpu_request;
     } else {
       config['cuda.device'] = this.gpu_request;
@@ -873,20 +871,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       config['mem'] = String(this.mem_request) + 'g';
     }
-    if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20190601')) {
-      if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
-        this.shmem_request = this.mem_request;
-        this.notification.text = 'Shared memory setting is reduced to below the allocated memory.';
-        this.notification.show();
-      }
-      if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
-        this.shmem_request = 1;
-      }
-      config['shmem'] = String(this.shmem_request) + 'g';
+    if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
+      this.shmem_request = this.mem_request;
+      this.notification.text = 'Shared memory setting is reduced to below the allocated memory.';
+      this.notification.show();
     }
+    if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
+      this.shmem_request = 1;
+    }
+    config['shmem'] = String(this.shmem_request) + 'g';
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
-      if (this.gpu_mode == 'fgpu') {
+      if (this.gpu_mode == 'cuda.fgpu') {
         config['fgpu'] = 0.0;
       } else {
         config['gpu'] = 0.0;
@@ -1028,6 +1024,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
       'digits': 'DIGITS',
+      'ubuntu-linux': 'Ubuntu Linux',
       'tf1': 'TensorFlow 1',
       'tf2': 'TensorFlow 2',
       'py3': 'Python 3',
@@ -1038,6 +1035,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'py37': 'Python 3.7',
       'py38': 'Python 3.8',
       'py39': 'Python 3.9',
+      'lxde': 'LXDE',
+      'lxqt': 'LXQt',
+      'xfce': 'XFCE',
+      'gnome': 'GNOME',
+      'kde': 'KDE',
       'ubuntu16.04': 'Ubuntu 16.04',
       'ubuntu18.04': 'Ubuntu 18.04',
       'ubuntu20.04': 'Ubuntu 20.04',
@@ -1597,7 +1599,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.cpu_metric = cpu_metric;
         }
 
-        if (item.key === 'cuda.device' && this.gpu_mode == 'gpu') {
+        if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.gpu') {
           let gpu_metric = {...item};
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
@@ -1625,7 +1627,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           this.gpu_metric = gpu_metric;
         }
-        if (item.key === 'cuda.shares' && this.gpu_mode === 'fgpu') {
+        if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.fgpu') {
           let fgpu_metric = {...item};
           fgpu_metric.min = parseFloat(fgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
@@ -2020,32 +2022,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     e.stopPropagation();
     const resource_description = {
       'cpu': {
-        'name': 'CPU',
-        'desc': '<p>The CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions.</p>' +
-          '<p>For high performance computing workloads, many CPUs are helpful, but the program code must be written to use multiple CPUs.</p>'
+        'name': _text("session.launcher.CPU"),
+        'desc': _text("session.launcher.DescCPU")
       },
       'mem': {
-        'name': 'Memory', 'desc': '<p>Computer memory is a temporary storage area.</p>' +
-          '<p>It holds the data and instructions that the Central Processing Unit (CPU) needs.</p>' +
-          '<p>When using a GPU in a machine learning workload, you must allocate at least twice the memory of the GPU to memory. ' +
-          'Otherwise, the GPU\'s idle time will increase, resulting in a performance penalty.</p>'
+        'name': _text("session.launcher.Memory"),
+        'desc': _text("session.launcher.DescMemory")
       },
       'shmem': {
-        'name': 'Shared memory',
-        'desc': '<p>Shared memory is memory that may be simultaneously accessed by multiple programs with an intent to provide communication among them or avoid redundant copies.</p>' +
-          '<p>For multi-CPU or multi-threaded workloads, shared memory is important because it is used for inter-thread communication. ' +
-          'For deep learning workloads and high performance computing workloads using multi-threaded, we recommend setting this value to 1 GB or higher.</p>'
+        'name': _text("session.launcher.SharedMemory"),
+        'desc': _text("session.launcher.DescSharedMemory")
       },
       'gpu': {
-        'name': 'GPU',
-        'desc': '<p>GPUs are well-suited for the matrix/vector computations involved in machine learning. ' +
-          'GPUs speed up training algorithms by orders of magnitude, reducing running times from weeks to days.</p>'
+        'name': _text("session.launcher.GPU"),
+        'desc': _text("session.launcher.DescGPU")
       },
       'session': {
-        'name': 'Session (Backend.AI)',
-        'desc': '<p>A session is a unit of computational environment that is created according to a specified environment and resources.</p>' +
-          '<p>If this value is set to a value greater than 1, multiple sessions corresponding to the resource set above are created.</p>' +
-          '<p>If there are not enough resources available, requests to create sessions that cannot be created are put on the waiting queue.</p>'
+        'name': _text("session.launcher.TitleSession"),
+        'desc': _text("session.launcher.DescSession")
       }
     };
     if (item in resource_description) {
@@ -2117,9 +2111,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
         ${this.direction === 'horizontal' ? html`
           <div class="layout vertical end-justified wrap short-indicator">
-            <span class="gauge-label">TOTAL</span>
-            <div style="font-size:8px;height:10px;">RESOURCE</div>
-            <span class="gauge-label">MY</span>
+            <span class="gauge-label">${_t('session.launcher.TOTAL')}</span>
+            <div style="font-size:8px;height:10px;">${_t('session.launcher.RESOURCE')}</div>
+            <span class="gauge-label">${_t('session.launcher.MY')}</span>
           </div>
           ` : html``}
           <div class="layout horizontal start-justified monitor">
@@ -2179,7 +2173,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout horizontal center-justified monitor session">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <wl-icon class="fg blue">assignment</wl-icon>
-              <span class="gauge-name">Session</span>
+              <span class="gauge-name">${_t('session.launcher.Session')}</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
@@ -2191,7 +2185,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div class="layout vertical" style="align-self: center;">
           <wl-button class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
             <wl-icon>add</wl-icon>
-            Start
+            ${_t("session.launcher.Start")}
           </wl-button>
         </div>
         <div class="flex"></div>
@@ -2200,11 +2194,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div class="vertical start-justified layout">
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
-          <span style="margin-right:5px;">Current Resource Group (${this.scaling_group})</span>
+          <span style="margin-right:5px;">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
         </div>
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
-          <span style="margin-right:5px;">User Resource Limit</span>
+          <span style="margin-right:5px;">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
       </div>
       ` : html``}
@@ -2215,7 +2209,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div class="layout horizontal center-justified monitor">
           <div class="layout vertical center center-justified" style="margin-right:5px;">
             <wl-icon class="fg blue">group_work</wl-icon>
-            <span class="gauge-name">Project</span>
+            <span class="gauge-name">${_t('session.launcher.Project')}</span>
           </div>
           <div class="layout vertical start-justified wrap short-indicator">
             <div class="layout horizontal">
@@ -2248,7 +2242,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <wl-dialog id="new-session-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <wl-card class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Start new session</span>
+            <span>${_t("session.launcher.StartNewSession")}</span>
             <div class="flex"></div>
             <mwc-icon-button icon="close" class="blue close-button"
               @click="${() => this._hideSessionDialog()}">
@@ -2256,9 +2250,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </h3>
           <form id="launch-session-form">
             <div class="vertical center layout" style="padding-top:15px;">
-              <mwc-select id="environment" label="Environments" required
+              <mwc-select id="environment" label="${_t("session.launcher.Environments")}" required
                 value="${this.default_language}">
-                <mwc-list-item selected style="display:none!important">Choose environment</mwc-list-item>
+                <mwc-list-item selected style="display:none!important">>${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
@@ -2283,12 +2277,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `}
                   `)}
               </mwc-select>
-              <mwc-select id="version" label="Version" required>
+              <mwc-select id="version" label="${_t("session.launcher.Version")}" required>
                 <mwc-list-item selected style="display:none!important"></mwc-list-item>
                   <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
-                    <div style="width:80px;">Version</div>
-                    <div style="width:120px;">Base</div>
-                    <div style="width:150px;">Requirements</div>
+                    <div style="width:80px;">${_t("session.launcher.Version")}</div>
+                    <div style="width:120px;">${_t("session.launcher.Base")}</div>
+                    <div style="width:150px;">${_t("session.launcher.Requirements")}</div>
                   </h5>
               ${this.versions.map(item => html`
                 <mwc-list-item id="${item}" value="${item}">
@@ -2307,11 +2301,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </mwc-select>
             </div>
               <div style="display:none;">
-                <wl-checkbox id="use-gpu-checkbox">Use GPU</wl-checkbox>
+                <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                  <mwc-select id="scaling-groups" label="Resource Group" required
+                  <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required
                               @selected="${(e) => this.updateScalingGroup(false, e)}">
                     ${this.scaling_groups.map(item => html`
                       <mwc-list-item class="scaling-group-dropdown"
@@ -2322,14 +2316,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `)}
                   </mwc-select>
                 ` : html``}
-                <mwc-textfield id="session-name" placeholder="Session name (optional)"
+                <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                                pattern="[a-zA-Z0-9_-]{4,}" fullwidth
                                validationMessage="4 or more characters / no whitespace."
                                style="margin-left:5px;">
                 </mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-multi-select id="vfolder" label="Folders to mount" multi
+                <mwc-multi-select id="vfolder" label="${_t("session.launcher.FolderToMount")}" multi
                 @selected="${this._updateSelectedFolder}">
                 ${this.vfolders.map(item => html`
                   <mwc-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-list-item>
@@ -2337,7 +2331,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </mwc-multi-select>
               </div>
             <wl-expansion name="resource-group" open>
-              <span slot="title">Resource allocation</span>
+              <span slot="title">${_t("session.launcher.ResourceAllocation")}</span>
               <span slot="description"></span>
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
@@ -2365,7 +2359,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                            style="height:140px;width:350px;" type="button"
                            flat inverted outlined disabled>
                   <div>
-                    <h4>No suitable preset</h4>
+                    <h4>${_t("session.launcher.NoSuitablePreset")}</h4>
                     <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
                   </div>
                 </wl-button>
@@ -2373,8 +2367,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </paper-listbox>
             </wl-expansion>
             <wl-expansion name="resource-group">
-              <span slot="title">Advanced</span>
-              <span slot="description">Custom allocation</span>
+              <span slot="title">${_t("session.launcher.Advanced")}</span>
+              <span slot="description">${_t("session.launcher.CustomAllocation")}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">CPU</div>
@@ -2383,7 +2377,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                  marker_limit="${this.marker_limit}"
                                  min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                  value="${this.cpu_request}"></lablup-slider>
-                  <span class="caption">Core</span>
+                  <span class="caption">${_t("session.launcher.Core")}</span>
                   <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
       this._showResourceDescription(e, 'cpu');
     }}"></mwc-icon-button>
@@ -2401,7 +2395,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }}"></mwc-icon-button>
                 </div>
                 <div class="horizontal center layout">
-                  <div class="resource-type" style="width:70px;">Shared Memory</div>
+                  <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
                   <lablup-slider id="shmem-resource" class="mem"
                                  pin snaps step=0.0025 editable markers
                                  marker_limit="${this.marker_limit}"
@@ -2438,18 +2432,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </wl-expansion>
 
             <wl-expansion name="ownership">
-              <span slot="title">Ownership</span>
-              <span slot="description">Set session owner</span>
+              <span slot="title">${_t("session.launcher.Ownership")}</span>
+              <span slot="description">${_t("session.launcher.SetSessionOwner")}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
                   <mwc-textfield id="owner-email" type="email" class="flex" value=""
                     pattern="^.+@.+\..+$"
-                    label="Owner Email" size="40"></mwc-textfield>
+                    label="${_t("session.launcher.OwnerEmail")}" size="40"></mwc-textfield>
                   <mwc-icon-button icon="refresh" class="blue"
                     @click="${() => this._fetchSessionOwnerGroups()}">
                   </mwc-icon-button>
                 </div>
-                <paper-dropdown-menu id="owner-accesskey" label="Owner access key">
+                <paper-dropdown-menu id="owner-accesskey" label="${_t("session.launcher.OwnerAccessKey")}">
                   <paper-listbox slot="dropdown-content" attr-for-selected="id">
                     ${this.ownerKeypairs.map(item => html`
                       <paper-item id="${item.access_key}" label="${item.access_key}">${item.access_key}</paper-item>
@@ -2457,7 +2451,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <div class="horizontal center layout">
-                  <paper-dropdown-menu id="owner-group" label="Owner group" horizontal-align="left">
+                  <paper-dropdown-menu id="owner-group" label="${_t("session.launcher.OwnerGroup")}" horizontal-align="left">
                     <paper-listbox slot="dropdown-content" attr-for-selected="id"
                                    selected="${this.default_language}">
                       ${this.ownerGroups.map(item => html`
@@ -2465,7 +2459,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       `)}
                     </paper-listbox>
                   </paper-dropdown-menu>
-                  <paper-dropdown-menu id="owner-scaling-group" label="Owner resource group">
+                  <paper-dropdown-menu id="owner-scaling-group" label="${_t("session.launcher.OwnerResourceGroup")}">
                     <paper-listbox slot="dropdown-content" selected="0">
                       ${this.ownerScalingGroups.map(item => html`
                         <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
@@ -2475,7 +2469,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </div>
                 <wl-label>
                   <wl-checkbox id="owner-enabled"></wl-checkbox>
-                  Launch session on behalf of the access key
+                  ${_t("session.launcher.LaunchSessionWithAccessKey")}
                 </wl-label>
               </div>
             </wl-expansion>

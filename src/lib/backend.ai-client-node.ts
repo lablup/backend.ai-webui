@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.01.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.04.0)
 ====================================================================
 
 (C) Copyright 2016-2020 Lablup Inc.
@@ -162,8 +162,13 @@ class Client {
   public userConfig: UserConfig;
   public _features: any;
   public ready: boolean = false;
+  public abortController: any;
+  public abortSignal: any;
+  public requestTimeout: number;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
+  static ERR_ABORT: any;
+  static ERR_TIMEOUT: any;
   static ERR_SERVER: any;
   static ERR_UNKNOWN: any;
 
@@ -210,7 +215,9 @@ class Client {
     this.domain = new Domain(this);
 
     this._features = {}; // feature support list
-
+    this.abortController = new AbortController();
+    this.abortSignal = this.abortController.signal;
+    this.requestTimeout = 5000;
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -233,12 +240,14 @@ class Client {
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
    * @param {Request} rqst - Request object to send
+   * @param {Boolean} rawFile - True if it is raw request
+   * @param {AbortController.signal} signal - Request signal to abort fetch
    */
-  async _wrapWithPromise(rqst, rawFile = false) {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
-    let resp, body;
+    let resp, body, requestTimer;
 
     try {
       if (rqst.method == 'GET') {
@@ -248,7 +257,21 @@ class Client {
         rqst.credentials = 'include';
         rqst.mode = 'cors';
       }
+      if (signal !== null) {
+        rqst.signal = signal;
+      } else { // Use client-wide fetch timeout.
+        let controller = new AbortController();
+        rqst.signal = controller.signal;
+        requestTimer = setTimeout(() => {
+          errorType = Client.ERR_TIMEOUT;
+          controller.abort();
+        }, this.requestTimeout);
+      }
+      let resp;
       resp = await fetch(rqst.uri, rqst);
+      if (typeof requestTimer !== "undefined") {
+        clearTimeout(requestTimer);
+      }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
       if (rawFile === false && contentType === null) {
@@ -281,11 +304,19 @@ class Client {
       } else {
         error_message = err;
       }
+      if (typeof (resp) === 'undefined') {
+        resp = {};
+      }
       switch (errorType) {
         case Client.ERR_REQUEST:
           errorType = 'https://api.backend.ai/probs/client-request-error';
-          errorTitle = error_message;
-          errorMsg = `sending request has failed: ${error_message}`;
+          if (navigator.onLine) {
+            errorTitle = error_message;
+            errorMsg = `sending request has failed: ${error_message}`;
+          } else {
+            errorTitle = "Network disconnected.";
+            errorMsg = `sending request has failed: Network disconnected`;
+          }
           break;
         case Client.ERR_RESPONSE:
           errorType = 'https://api.backend.ai/probs/client-response-error';
@@ -298,7 +329,25 @@ class Client {
           errorMsg = 'server responded failure: '
             + `${resp.status} ${resp.statusText} - ${body.title}`;
           break;
+        case Client.ERR_ABORT:
+          errorType = 'https://api.backend.ai/probs/request-abort-error';
+          errorTitle = `Request aborted`;
+          errorMsg = 'Request aborted by user';
+          resp.status = 408;
+          resp.statusText = 'Request aborted by user'
+          break;
+        case Client.ERR_TIMEOUT:
+          errorType = 'https://api.backend.ai/probs/request-timeout-error';
+          errorTitle = `Request timeout`;
+          errorMsg = 'No response returned during the timeout period';
+          resp.status = 408;
+          resp.statusText = 'Timeout exceeded'
+          break;
         default:
+          if (typeof resp.status === 'undefined') {
+            resp.status = 500;
+            resp.statusText =  'Server error';
+          }
           if (errorType === '') {
             errorType = Client.ERR_UNKNOWN;
           }
@@ -322,23 +371,29 @@ class Client {
       };
     }
 
-    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs') as any);
     if (previous_log) {
       if (previous_log.length > 5000) {
         previous_log = previous_log.slice(1, 5000);
       }
     }
     let log_stack = Array();
+    if (typeof (resp) === 'undefined') {
+      resp = {
+        status: 'No status',
+        statusText: 'No response given.'
+      }
+    }
     let current_log = {
-      "isError" : false,
-      "timestamp" : new Date().toUTCString(),
-      "type" : "",
-      "requestUrl" : rqst.uri,
-      "requestMethod" : rqst.method,
-      "requestParameters" : rqst.body,
-      "statusCode" : resp.status,
-      "statusText" : resp.statusText,
-      "title" : body.title,
+      "isError": false,
+      "timestamp": new Date().toUTCString(),
+      "type": "",
+      "requestUrl": rqst.uri,
+      "requestMethod": rqst.method,
+      "requestParameters": rqst.body,
+      "statusCode": resp.status,
+      "statusText": resp.statusText,
+      "title": body.title,
       "message" : ""
     };
 
@@ -354,10 +409,13 @@ class Client {
 
   /**
    * Return the server-side API version.
+   *
+   * @param {AbortController.signal} signal - Request signal to abort fetch
+   *
    */
-  getServerVersion() {
+  getServerVersion(signal = null) {
     let rqst = this.newPublicRequest('GET', '/', null, '');
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, signal);
   }
 
   /**
@@ -377,10 +435,12 @@ class Client {
 
   /**
    * Get the server-side manager version.
+   *
+   * @param {AbortController.signal} signal - Request signal to abort fetch
    */
-  async getManagerVersion() {
+  async getManagerVersion(signal = null) {
     if (this._managerVersion === null) {
-      let v = await this.getServerVersion();
+      let v = await this.getServerVersion(signal);
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
@@ -464,11 +524,12 @@ class Client {
     try {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
-        let data = result.data;
         this._config._accessKey = result.data.access_key;
         this._config._session_id = result.session_id;
       }
+      console.log("login succeed");
     } catch (err) {
+      console.log(err);
       return Promise.resolve(false);
     }
     return result.authenticated;
@@ -627,7 +688,12 @@ class Client {
         params['config'].resource_opts.shmem = resources['shmem'];
       }
     }
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+    let rqst;
+    if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+    } else {
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
+    }
     return this._wrapWithPromise(rqst);
   }
 
@@ -1118,6 +1184,17 @@ class VFolder {
   }
 
   /**
+   * Rename a Virtual folder.
+   *
+   * @param {string} new_name - New virtual folder name.
+   */
+  rename(new_name = null) {
+    const body = {new_name};
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Delete a Virtual folder.
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
@@ -1142,8 +1219,6 @@ class VFolder {
       name = this.name;
     }
     let formData = new FormData();
-    let option = {filepath: path};
-    //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData);
     return this.client._wrapWithPromise(rqst);
@@ -1210,7 +1285,7 @@ class VFolder {
    * @param {boolean} recursive - delete files recursively.
    * @param {string} name - Virtual folder name that files are in.
    */
-  delete_files(files, recursive = null, name = null) {
+  delete_files(files, recursive = false, name = null) {
 
     if (name == null) {
       name = this.name;
@@ -1701,16 +1776,6 @@ class ResourcePolicy {
    * };
    */
   mutate(name = null, input) {
-    let fields = ['name',
-      'created_at',
-      'default_for_unspecified',
-      'total_resource_slots',
-      'max_concurrent_sessions',
-      'max_containers_per_session',
-      'max_vfolder_count',
-      'max_vfolder_size',
-      'allowed_vfolder_hosts',
-      'idle_timeout'];
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
         `  modify_keypair_resource_policy(name: $name, props: $input) {` +
@@ -1779,7 +1844,7 @@ class ContainerImage {
    * @param {object} input - value list to set.
    */
   modifyResource(registry, image, tag, input) {
-    let promiseArray = [];
+    let promiseArray: Array<Promise<any>> = [];
     image = image.replace("/", "%2F");
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {
@@ -1860,6 +1925,7 @@ class ContainerImage {
     });
     return this.client._wrapWithPromise(rqst);
   }
+
 }
 
 class ComputeSession {
@@ -1886,8 +1952,6 @@ class ComputeSession {
    */
   async list(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
              status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
-    if (accessKey === '') accessKey = null;
-    if (group === '') group = null;
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -1902,10 +1966,10 @@ class ComputeSession {
       'offset': offset,
       'status': status
     };
-    if (accessKey != null) {
+    if (accessKey != '') {
       v['ak'] = accessKey;
     }
-    if (group != null) {
+    if (group != '') {
       v['group_id'] = group;
     }
     return this.client.gql(q, v);
@@ -1921,8 +1985,6 @@ class ComputeSession {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
   async listAll(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], accessKey = '', group = '') {
-    if (accessKey === '') accessKey = null;
-    if (group === '') group = null;
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     // For V3/V4 API compatibility
     let q, v;
@@ -1938,10 +2000,10 @@ class ComputeSession {
       // access_key: accessKey,
       // status: status
     };
-    if (accessKey != null) {
+    if (accessKey !== '') {
       v['access_key'] = accessKey;
     }
-    if (group != null) {
+    if (group !== '') {
       v['group_id'] = group;
     }
     return this.client.gql(q, v);
@@ -2161,6 +2223,44 @@ class Domain {
 
     return this.client.gql(q, v);
   }
+
+  /**
+   * Modify domain information.
+   * @param {string} domain_name - domain name of group
+
+
+   * @param {json} input - Domain specification to change. Required fields are:
+   * {
+   *   'name': String,          // Group name.
+   *   'description': String,   // Description for group.
+   *   'is_active': Boolean,    // Whether the group is active or not.
+   *   'created_at': String,    // Created date of group.
+   *   'modified_at': String,   // Modified date of group.
+   *   'total_resource_slots': JSOONString,   // Total resource slots
+   *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
+   *   'allowed_docker_registries': [String],   // Allowed docker registry lists
+   *   'integration_id': [String],   // Integration ids
+   *   'scaling_groups': [String],   // Scaling groups
+   * };
+   */
+  modify(domain_name = false, input) {
+    //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+    //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
+    if (this.client.is_superadmin === true) {
+      let q = `mutation($name: String!, $input: ModifyDomainInput!) {` +
+        `  modify_domain(name: $name, props: $input) {` +
+        `    ok msg` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': domain_name,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return Promise.resolve(false);
+    }
+  }
 }
 
 class Maintenance {
@@ -2349,7 +2449,6 @@ class User {
    * };
    */
   modify(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
@@ -2782,7 +2881,7 @@ class utils {
   }
 
   gqlToList(array, key) {
-    let result = [];
+    let result: Array<any> = [];
     array.forEach(function (element) {
       result.push(element[key]);
     });
@@ -2805,6 +2904,18 @@ Object.defineProperty(Client, 'ERR_RESPONSE', {
 });
 Object.defineProperty(Client, 'ERR_REQUEST', {
   value: 2,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+Object.defineProperty(Client, 'ERR_ABORT', {
+  value: 3,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+Object.defineProperty(Client, 'ERR_TIMEOUT', {
+  value: 4,
   writable: false,
   enumerable: true,
   configurable: false
