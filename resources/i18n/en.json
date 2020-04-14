@@ -265,10 +265,19 @@
       "Control": "Control",
       "Name": "Name",
       "DeleteAFolder": "Delete a folder",
+      "TypeFolderNameToDelete": "Type folder name to delete",
       "Delete": "Delete",
+      "RenameAFolder": "Rename a folder",
+      "TypeNewFolderName": "Type new folder name",
+      "Rename": "Rename",
+      "FolderRenamed": "Folder renamed",
       "NumberOfFiles": "Number of files",
       "Ownership": "Ownership",
-      "DescYouAreFolderOwner": "You are the owner of this folder."
+      "DescYouAreFolderOwner": "You are the owner of this folder.",
+      "SelectPermission": "Select permission",
+      "View": "View",
+      "Edit": "Edit",
+      "EditDelete": "Edit+Delete"
     },
     "explorer": {
       "Delete": "Delete...",

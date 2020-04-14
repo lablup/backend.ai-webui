@@ -395,7 +395,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <wl-dialog id="rename-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card class="login-panel intro centered">
           <h3 class="horizontal center layout">
-            <span>Rename a folder</span>
+            <span>${_t('data.folders.RenameAFolder')}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -403,13 +403,13 @@ export default class BackendAiStorageList extends BackendAIPage {
           </h3>
           <section>
             <div>
-              <mwc-textfield class="red" id="new-folder-name" label="Type new folder name"
+              <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
                 pattern="[a-zA-Z0-9_-.]*"
                 validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
               <br/>
               <wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
                 <wl-icon>edit</wl-icon>
-                Rename
+                ${_t('data.folders.Rename')}
               </wl-button>
             </div>
             </section>
@@ -428,7 +428,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <section>
             <div class="warning">${_t("dialog.warning.CannotBeUndone")}</div>
             <div>
-              <mwc-textfield class="red" id="delete-folder-name" label="Type folder name to delete"
+              <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
                            pattern="[a-zA-Z0-9_-.]*"
                            validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
               <br/>
@@ -774,10 +774,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div>
-          <wl-select outlined label="Select Permission">
-            <option ?selected=${rowData.item.perm === 'ro'} value="ro">View</option>
-            <option ?selected=${rowData.item.perm === 'rw'} value="rw">Edit</option>
-            <option ?selected=${rowData.item.perm === 'wd'} value="wd">Edit+Delete</option>
+          <wl-select outlined label="${_t('data.folders.SelectPermission')}">
+            <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
+            <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
+            <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
           </wl-select>
         </div>
       `, root
@@ -1082,7 +1082,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const job = globalThis.backendaiclient.vfolder.rename(newName);
     this.closeDialog('rename-folder-dialog');
     job.then((value) => {
-      this.notification.text = 'Folder renamed.';
+      this.notification.text = _t('data.folders.FolderRenamed');
       this.notification.show();
       this._refreshFolderList();
     }).catch(err => {

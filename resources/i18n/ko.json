@@ -263,10 +263,19 @@
       "Permission": "권한",
       "Control": "제어",
       "DeleteAFolder": "폴더 삭제",
+      "TypeFolderNameToDelete": "삭제 확인을 위해 폴더 이름을 입력하세요",
       "Delete": "삭제",
+      "RenameAFolder": "폴더 이름 변경",
+      "TypeNewFolderName": "새 폴더 이름을 입력하세요",
+      "Rename": "이름 변경",
+      "FolderRenamed": "폴더 이름이 변경되었습니다",
       "NumberOfFiles": "파일 갯수",
       "Ownership": "소유",
-      "DescYouAreFolderOwner": "이 폴더의 소유자입니다."
+      "DescYouAreFolderOwner": "이 폴더의 소유자입니다.",
+      "SelectPermission": "권한 선택",
+      "View": "읽기 전용",
+      "Edit": "수정",
+      "EditDelete": "수정 및 삭제"
     },
     "explorer": {
       "Delete": "삭제...",
