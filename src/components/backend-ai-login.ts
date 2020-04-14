@@ -127,6 +127,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         mwc-menu {
           --mdc-menu-min-width: 400px;
+          --mdc-menu-max-width: 400px;
         }
 
         mwc-list-item[disabled] {
@@ -645,6 +646,9 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
+        if (this.endpoints.length > 5) { // Keep latest
+          this.endpoints = this.endpoints.slice(1, 6);
+        }
         globalThis.backendaioptions.set("endpoints", this.endpoints);
       }
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
@@ -686,6 +690,8 @@ export default class BackendAILogin extends BackendAIPage {
   _toggleEndpoint() {
     let endpoint_list = this.shadowRoot.querySelector("#endpoint-list");
     let endpoint_button = this.shadowRoot.querySelector('#endpoint-button');
+    console.log(endpoint_list);
+    console.log(endpoint_button);
     endpoint_list.anchor = endpoint_button;
     endpoint_list.open = !endpoint_list.open;
 
@@ -760,7 +766,6 @@ export default class BackendAILogin extends BackendAIPage {
                 <mwc-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
                              label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
               </div>
-
               <mwc-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
