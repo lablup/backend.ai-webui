@@ -114,8 +114,13 @@ export default class BackendAILogin extends BackendAIPage {
           width: 100%;
         }
 
+        .endpoint-text {
+          --mdc-text-field-disabled-line-color: rgba(0, 0, 0, 0.0);
+        }
+
         mwc-icon-button {
-          color: rgba(0, 0, 0, 0.54);
+          /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
+          color: var(--paper-red-600);
           --mdc-icon-size: 24px;
         }
 
@@ -126,6 +131,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         mwc-menu {
+          font-family: 'Quicksand', sans-serif;
           --mdc-menu-min-width: 400px;
           --mdc-menu-max-width: 400px;
         }
@@ -280,15 +286,16 @@ export default class BackendAILogin extends BackendAIPage {
       this.proxy_url = config.wsproxy.proxyURL;
     }
     if (typeof config.general === "undefined" || typeof config.general.apiEndpoint === "undefined" || config.general.apiEndpoint === '') {
-      (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'block';
+      (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
       (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
     } else {
       this.api_endpoint = config.general.apiEndpoint;
       if (typeof config.general === "undefined" || typeof config.general.apiEndpointText === "undefined" || config.general.apiEndpointText === '') {
-        (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'block';
+        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
+        (this.shadowRoot.querySelector('#endpoint-button') as any).disabled = 'true';
       } else {
-        (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'none';
+        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'none';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'block';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).value = config.general.apiEndpointText;
       }
@@ -753,8 +760,8 @@ export default class BackendAILogin extends BackendAIPage {
           </form>
           <form>
             <fieldset>
-              <div class="horizontal layout">
-                <mwc-icon-button id="endpoint-button" icon="cloud" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+              <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
+                <mwc-icon-button id="endpoint-button" icon="cloud" style="margin-left:5px;" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
                 <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
                   <mwc-list-item disabled>${_t("login.EndpointHistory")}</mwc-list-item>
                   ${this.endpoints.length === 0 ? html`
@@ -769,10 +776,10 @@ export default class BackendAILogin extends BackendAIPage {
                     </div>
                   </mwc-list-item>`)}
                 </mwc-menu>
-                <mwc-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
+                <mwc-textfield class="endpoint-text" type="text" name="api_endpoint" id="id_api_endpoint"
                              label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
               </div>
-              <mwc-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
+              <mwc-textfield class="endpoint-text" type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
               <wl-button class="fg red full login-button" id="login-button" outlined type="button"
