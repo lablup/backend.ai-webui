@@ -18,6 +18,7 @@ export default class LablupNotification extends LitElement {
 
   @property({type: String}) text = '';
   @property({type: String}) detail = '';
+  @property({type: String}) url = '';
   @property({type: String}) message = '';
   @property({type: String}) requestUrl = '';
   @property({type: String}) status = '';
@@ -163,6 +164,7 @@ export default class LablupNotification extends LitElement {
     button.innerHTML = "<wl-icon>close</wl-icon>";
     notification.appendChild(button);
   }
+
   async show(persistent: boolean = false, log: object = Object()) {
     let snackbar = document.querySelector("wl-snackbar[persistent='true']");
     if (snackbar) {
@@ -190,7 +192,7 @@ export default class LablupNotification extends LitElement {
     //   notification_detail = this.detail;
     // }
     // this.notificationstore.push(log);
-    if(Object.keys(log).length !== 0) {
+    if (Object.keys(log).length !== 0) {
       this._saveToLocalStoarge("backendaiconsole.logs", log);
     }
 
@@ -201,12 +203,18 @@ export default class LablupNotification extends LitElement {
       more_button.setAttribute('flat', '');
       more_button.setAttribute('fab', '');
       more_button.style.width = 80 + 'px';
-      more_button.addEventListener('click', this._moreNotification.bind(this));
-      more_button.innerHTML = "See Detail";
+      if (this.url != '') {
+        more_button.innerHTML = "Visit";
+        more_button.addEventListener('click', this._openURL.bind(this, this.url));
+      } else {
+        more_button.innerHTML = "See Detail";
+        more_button.addEventListener('click', this._moreNotification.bind(this));
+      }
       // more_button.innerHTML = "<wl-icon>expand_more</wl-icon>";
       notification.appendChild(more_button);
     }
     this.detail = ''; // Reset the temporary detail scripts
+    this.url = '';
     if (persistent === false) {
       notification.setAttribute('hideDelay', '3000');
     } else {
@@ -238,6 +246,10 @@ export default class LablupNotification extends LitElement {
       icon: icon
     };
     this.newDesktopNotification = new Notification(title, options);
+  }
+
+  _openURL(url) {
+    window.open(url, '_blank');
   }
 
   _saveToLocalStoarge(key, logMessages) {

@@ -550,5 +550,8 @@
     "InvitationToken": "초대 토큰",
     "TermsOfService": "약관",
     "PrivacyPolicy": "개인정보보호정책"
+  },
+  "update": {
+    "NewConsoleVersionAvailable": "New console version is available:"
   }
 }

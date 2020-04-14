@@ -552,5 +552,8 @@
     "InvitationToken": "Invitation Token",
     "TermsOfService": "Terms of service",
     "PrivacyPolicy": "Privacy Policy"
+  },
+  "update": {
+    "NewConsoleVersionAvailable": "New console version is available:"
   }
 }

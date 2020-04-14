@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
+
+import {get as _text} from "lit-translate";
 import {css, customElement, html, LitElement, property} from "lit-element";
 
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -47,7 +49,7 @@ export default class BackendAiReleaseCheck extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    //this.checkRelease();
+    this.checkRelease();
   }
 
   checkRelease() {
@@ -59,12 +61,18 @@ export default class BackendAiReleaseCheck extends LitElement {
         this.remoteBuild = json.build;
         this.remoteRevision = json.revision;
         //if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
-        if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // update needed.
-          this.notification.text = `New console version is available: ${this.remoteVersion}`;
-          this.notification.show();
+        if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
+          if (!globalThis.isElectron) {
+            this.notification.text = _text("update.NewConsoleVersionAvailable") + ' ' + this.remoteVersion;
+            this.notification.detail = _text("update.NewConsoleVersionAvailable");
+            this.notification.url = `https://github.com/lablup/backend.ai-console/releases/tag/v${this.remoteVersion}`;
+            this.notification.show();
+          }
         }
       }
-    );
+    ).catch((e) => {
+      console.log(e);
+    });
   }
 
   compareVersion(v1, v2) {
