@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {get as _text} from "lit-translate";
 import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/snackbar';
 import 'weightless/button';
@@ -204,10 +205,10 @@ export default class LablupNotification extends LitElement {
       more_button.setAttribute('fab', '');
       more_button.style.width = 80 + 'px';
       if (this.url != '') {
-        more_button.innerHTML = "Visit";
+        more_button.innerHTML = _text("notification.Visit");
         more_button.addEventListener('click', this._openURL.bind(this, this.url));
       } else {
-        more_button.innerHTML = "See Detail";
+        more_button.innerHTML = _text("notification.SeeDetail");
         more_button.addEventListener('click', this._moreNotification.bind(this));
       }
       // more_button.innerHTML = "<wl-icon>expand_more</wl-icon>";

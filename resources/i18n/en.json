@@ -499,7 +499,9 @@
     }
   },
   "notification": {
-    "SuccessfullyUpdated": "Successfully Updated"
+    "SuccessfullyUpdated": "Successfully Updated",
+    "Visit": "Visit",
+    "SeeDetail": "See Detail"
   },
   "information": {
     "System": "System",
@@ -554,6 +556,6 @@
     "PrivacyPolicy": "Privacy Policy"
   },
   "update": {
-    "NewConsoleVersionAvailable": "New console version is available:"
+    "NewConsoleVersionAvailable": "New version is available:"
   }
 }
