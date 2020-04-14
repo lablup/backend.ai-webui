@@ -49,6 +49,7 @@ export default class BackendAiReleaseCheck extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
+    // TODO: adopt general setting to here to turn off autoupdate check (in closed environment)
     this.checkRelease();
   }
 
@@ -62,7 +63,7 @@ export default class BackendAiReleaseCheck extends LitElement {
         this.remoteRevision = json.revision;
         //if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
         if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
-          if (!globalThis.isElectron) {
+          if (globalThis.isElectron) {
             this.notification.text = _text("update.NewConsoleVersionAvailable") + ' ' + this.remoteVersion;
             this.notification.detail = _text("update.NewConsoleVersionAvailable");
             this.notification.url = `https://github.com/lablup/backend.ai-console/releases/tag/v${this.remoteVersion}`;
@@ -71,6 +72,7 @@ export default class BackendAiReleaseCheck extends LitElement {
         }
       }
     ).catch((e) => {
+      // TODO: adopt general setting to here to turn off autoupdate check (in closed environment)
       console.log(e);
     });
   }
