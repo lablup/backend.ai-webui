@@ -68,26 +68,27 @@ export default class BackendAiSignup extends BackendAIPage {
               border: 0;
               border-bottom: 1px solid #aaa;
               margin: 15px 0;
-              font: inherit;
-              font-size: 16px;
-              outline: none;
+            font: inherit;
+            font-size: 16px;
+            outline: none;
           }
 
           fieldset input:focus {
-              border-bottom: 1.5px solid #0d47a1;
+            border-bottom: 1.5px solid #0d47a1;
           }
 
           #signup-panel {
-              --dialog-width: 400px;
+            --dialog-width: 400px;
+            --dialog-elevation: 0px 0px 5px 5px rgba(0, 0, 0, 0.1);
           }
 
           wl-button {
-              --button-bg: transparent;
-              --button-bg-hover: var(--paper-red-100);
-              --button-bg-active: var(--paper-red-600);
-              --button-bg-disabled: #ddd;
-              --button-color: var(--paper-red-600);
-              --button-color-disabled: #222;
+            --button-bg: transparent;
+            --button-bg-hover: var(--paper-red-100);
+            --button-bg-active: var(--paper-red-600);
+            --button-bg-disabled: #ddd;
+            --button-color: var(--paper-red-600);
+            --button-color-disabled: #222;
           }
 
           wl-button.full {
