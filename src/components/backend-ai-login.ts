@@ -690,11 +690,8 @@ export default class BackendAILogin extends BackendAIPage {
   _toggleEndpoint() {
     let endpoint_list = this.shadowRoot.querySelector("#endpoint-list");
     let endpoint_button = this.shadowRoot.querySelector('#endpoint-button');
-    console.log(endpoint_list);
-    console.log(endpoint_button);
     endpoint_list.anchor = endpoint_button;
     endpoint_list.open = !endpoint_list.open;
-
   }
 
   _updateEndpoint() {
@@ -703,7 +700,12 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   _deleteEndpoint(endpoint) {
-    console.log(endpoint);
+    let idx = this.endpoints.indexOf(endpoint);
+    if (idx > -1) {
+      this.endpoints.splice(idx, 1);
+    }
+    globalThis.backendaioptions.set("endpoints", this.endpoints);
+    this.requestUpdate();
   }
 
   render() {
@@ -754,8 +756,12 @@ export default class BackendAILogin extends BackendAIPage {
               <div class="horizontal layout">
                 <mwc-icon-button id="endpoint-button" icon="cloud" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
                 <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
-                  <mwc-list-item disabled>Endpoint History</mwc-list-item>
-                ${this.endpoints.map(item =>
+                  <mwc-list-item disabled>${_t("login.EndpointHistory")}</mwc-list-item>
+                  ${this.endpoints.length === 0 ? html`
+                  <mwc-list-item value="">${_t("login.NoEndpointSaved")}</mwc-list-item>
+                  ` : html``}
+
+                  ${this.endpoints.map(item =>
       html`<mwc-list-item value="${item}">
                     <div class="horizontal justified center flex layout" style="width:365px;">
                       <span>${item}</span><span class="flex"></span>

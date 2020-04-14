@@ -541,7 +541,9 @@
     "LoginWithE-mail": "Login With E-mail",
     "LoginWithIAM": "Login With IAM",
     "ClickToUseIAM": "Click To Use IAM",
-    "ClickToUseID": "Click To Use ID"
+    "ClickToUseID": "Click To Use ID",
+    "EndpointHistory": "Endpoint History",
+    "NoEndpointSaved": "No endpoint saved."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
