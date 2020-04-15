@@ -17,6 +17,7 @@ export default class BackendAiReleaseCheck extends LitElement {
   @property({type: String}) remoteRevision = '';
   @property({type: Boolean}) updateChecked = false;
   @property({type: Boolean}) updateNeeded = false;
+  @property({type: String}) updateURL = '';
   @property({type: Object}) notification;
 
   constructor() {
@@ -50,20 +51,21 @@ export default class BackendAiReleaseCheck extends LitElement {
           this.remoteVersion = json.package;
           this.remoteBuild = json.build;
           this.remoteRevision = json.revision;
-          //if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
-          if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
+          if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
+            //if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
             this.updateNeeded = true;
+            this.updateURL = `https://github.com/lablup/backend.ai-console/releases/tag/v${this.remoteVersion}`;
             if (globalThis.isElectron) {
               this.notification.text = _text("update.NewConsoleVersionAvailable") + ' ' + this.remoteVersion;
               this.notification.detail = _text("update.NewConsoleVersionAvailable");
-              this.notification.url = `https://github.com/lablup/backend.ai-console/releases/tag/v${this.remoteVersion}`;
+              this.notification.url = this.updateURL;
               this.notification.show();
             }
           }
         }
       ).catch((e) => {
         let count = globalThis.backendaioptions.get("automatic_update_count_trial", 0);
-        if (count > 3) {
+        if (count > 3) { // Try 3 times.
           globalThis.backendaioptions.set("automatic_update_check", false); // Turn off automatic check.
         }
         globalThis.backendaioptions.set("automatic_update_count_trial", count + 1);
