@@ -60,6 +60,10 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     return this._writeUserSetting(name, value, namespace);
   }
 
+  delete(name, namespace: string = "user") {
+    return this._deleteUserSetting(name, namespace);
+  }
+
   _readSetting(name, default_value = true, namespace = "user") {
     let value: string | null = localStorage.getItem('backendaiconsole.settings.' + name);
     if (value !== null && value != '' && value != '""') {
@@ -88,6 +92,12 @@ export default class BackendAiSettingsStore extends BackendAIPage {
       localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, value);
     }
     this.options[namespace + '.' + name] = value;
+  }
+
+  _deleteUserSetting(name, namespace) {
+    localStorage.removeItem('backendaiconsole.settings.' + namespace + '.' + name);
+    delete this.options[namespace + '.' + name];
+    return true;
   }
 
   isJson(str) {
