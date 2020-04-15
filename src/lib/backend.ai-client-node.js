@@ -244,7 +244,7 @@ class Client {
                         errorMsg = `sending request has failed: ${error_message}`;
                     }
                     else {
-                        errorTitle = "Network disconnected";
+                        errorTitle = "Network disconnected.";
                         errorMsg = `sending request has failed: Network disconnected`;
                     }
                     break;
@@ -1017,8 +1017,10 @@ class VFolder {
      * @param {string} name - Virtual folder name.
      * @param {string} host - Host name to create virtual folder in it.
      * @param {string} group - Virtual folder group name.
+     * @param {string} usageMode - Virtual folder group name.
+     * @param {string} permission - Virtual folder group name.
      */
-    create(name, host = '', group = '') {
+    create(name, host = '', group = '', usageMode = 'general', permission = 'rw') {
         let body;
         if (host !== '') {
             body = {
@@ -1032,6 +1034,14 @@ class VFolder {
                 'host': host,
                 'group': group
             };
+        }
+        if (this.client._apiVersionMajor > '4') {
+            if (usageMode) {
+                body['usage_mode'] = usageMode;
+            }
+            if (permission) {
+                body['permission'] = permission;
+            }
         }
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
         return this.client._wrapWithPromise(rqst);
