@@ -454,7 +454,8 @@
     "CleanupImages": "이미지 정리",
     "RescanImageList": "저장소로부터 이미지 목록 새로 읽기",
     "DescRescanImageList": "등록된 컨테이너 이미지 저장소로부터 이미지 목록을 새로 읽습니다.<br />오랜 시간이 걸리므로, 실행 후 종료시까지 기다려주시기 바랍니다.",
-    "Recalculating": "재계산중..."
+    "Recalculating": "재계산중...",
+    "RescanImageScanning": "리스캔중..."
   },
   "statistics": {
     "Usage": "사용량",
