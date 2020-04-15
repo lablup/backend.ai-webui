@@ -622,9 +622,9 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="${_t('summary.Administration')}" elevation="1">
             <div slot="message">
       ${this.is_superadmin ? html`
-              <div class="layout vertical center flex" style="margin-bottom:5px;">
+              <div class="layout vertical center start flex" style="margin-bottom:5px;">
                 <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-                <div class="layout horizontal center flex">
+                <div class="layout horizontal center flex" style="margin-top:4px;">
                   <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.console_version}" ui="flat"></lablup-shields>
                   ${this.update_checker.updateNeeded ? html`
                     <mwc-icon-button class="update-button" icon="error_outline" @click="${() => {
