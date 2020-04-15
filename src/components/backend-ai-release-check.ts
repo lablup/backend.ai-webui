@@ -76,11 +76,11 @@ export default class BackendAiReleaseCheck extends LitElement {
         }
       }
     ).catch((e) => {
-      let count = globalThis.backendaioptions.get("update_count_trial", 0);
+      let count = globalThis.backendaioptions.get("automatic_update_count_trial", 0);
       if (count > 3) {
         globalThis.backendaioptions.set("automatic_update_check", false); // Turn off automatic check.
       }
-      globalThis.backendaioptions.set("update_count_trial", count + 1);
+      globalThis.backendaioptions.set("automatic_update_count_trial", count + 1);
     });
   }
 
