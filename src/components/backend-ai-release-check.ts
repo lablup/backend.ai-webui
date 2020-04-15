@@ -4,15 +4,7 @@
  */
 
 import {get as _text} from "lit-translate";
-import {css, customElement, html, LitElement, property} from "lit-element";
-
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {
-  IronFlex,
-  IronFlexAlignment,
-  IronFlexFactors,
-  IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
+import {customElement, html, LitElement, property} from "lit-element";
 
 @customElement("backend-ai-release-check")
 export default class BackendAiReleaseCheck extends LitElement {
@@ -23,6 +15,7 @@ export default class BackendAiReleaseCheck extends LitElement {
   @property({type: String}) remoteVersion = '';
   @property({type: String}) remoteBuild = '';
   @property({type: String}) remoteRevision = '';
+  @property({type: Boolean}) updateChecked = false;
   @property({type: Boolean}) updateNeeded = false;
   @property({type: Object}) notification;
 
@@ -31,15 +24,7 @@ export default class BackendAiReleaseCheck extends LitElement {
   }
 
   static get styles() {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-      `];
+    return [];
   }
 
   render() {
@@ -56,32 +41,34 @@ export default class BackendAiReleaseCheck extends LitElement {
   }
 
   async checkRelease() {
-    console.log("checking...");
-    fetch(this.releaseURL).then(
-      response => response.json()
-    ).then(
-      json => {
-        this.remoteVersion = json.package;
-        this.remoteBuild = json.build;
-        this.remoteRevision = json.revision;
-        //if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
-        if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
-          this.updateNeeded = true;
-          if (globalThis.isElectron) {
-            this.notification.text = _text("update.NewConsoleVersionAvailable") + ' ' + this.remoteVersion;
-            this.notification.detail = _text("update.NewConsoleVersionAvailable");
-            this.notification.url = `https://github.com/lablup/backend.ai-console/releases/tag/v${this.remoteVersion}`;
-            this.notification.show();
+    if (!this.updateChecked) {
+      fetch(this.releaseURL).then(
+        response => response.json()
+      ).then(
+        json => {
+          this.updateChecked = true;
+          this.remoteVersion = json.package;
+          this.remoteBuild = json.build;
+          this.remoteRevision = json.revision;
+          //if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
+          if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
+            this.updateNeeded = true;
+            if (globalThis.isElectron) {
+              this.notification.text = _text("update.NewConsoleVersionAvailable") + ' ' + this.remoteVersion;
+              this.notification.detail = _text("update.NewConsoleVersionAvailable");
+              this.notification.url = `https://github.com/lablup/backend.ai-console/releases/tag/v${this.remoteVersion}`;
+              this.notification.show();
+            }
           }
         }
-      }
-    ).catch((e) => {
-      let count = globalThis.backendaioptions.get("automatic_update_count_trial", 0);
-      if (count > 3) {
-        globalThis.backendaioptions.set("automatic_update_check", false); // Turn off automatic check.
-      }
-      globalThis.backendaioptions.set("automatic_update_count_trial", count + 1);
-    });
+      ).catch((e) => {
+        let count = globalThis.backendaioptions.get("automatic_update_count_trial", 0);
+        if (count > 3) {
+          globalThis.backendaioptions.set("automatic_update_check", false); // Turn off automatic check.
+        }
+        globalThis.backendaioptions.set("automatic_update_count_trial", count + 1);
+      });
+    }
   }
 
   compareVersion(v1, v2) {
