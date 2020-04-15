@@ -10,7 +10,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
 import 'weightless/icon';
 import 'weightless/button';
@@ -87,11 +86,6 @@ export default class BackendAIAgentList extends BackendAIPage {
         span.indicator {
           font-size: 9px;
           margin-right: 5px;
-        }
-
-        vaadin-progress-bar {
-          width: 100px;
-          height: 6px;
         }
 
         mwc-linear-progress {
