@@ -158,6 +158,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           var agent = agents[objectKey];
           var occupied_slots = JSON.parse(agent.occupied_slots);
           var available_slots = JSON.parse(agent.available_slots);
+          ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
+            if (slot in occupied_slots === false) {
+              occupied_slots[slot] = "0";
+            }
+          });
 
           agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
