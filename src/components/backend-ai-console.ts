@@ -607,14 +607,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _readRecentProjectGroup() {
-    // TODO: use global store
-    let value: string | null = sessionStorage.getItem('backendaiconsole.projectGroup');
+    // TODO: fallback if group has gone.
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_');
+    let value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
     return value ? value : globalThis.backendaiclient.current_group;
   }
 
   _writeRecentProjectGroup(value: string) {
-    // TODO: use global store
-    sessionStorage.setItem('backendaiconsole.projectGroup', value ? value : globalThis.backendaiclient.current_group);
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_');
+    globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
   }
 
   _moveToUserSettingsPage() {
