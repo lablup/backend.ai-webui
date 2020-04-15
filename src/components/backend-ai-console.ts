@@ -229,16 +229,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   refreshPage() {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
-    let curtain = this.shadowRoot.getElementById('loading-curtain');
-    curtain.classList.add('visuallyhidden');
-    curtain.addEventListener('transitionend', () => {
-      curtain.classList.add('hidden');
-      this.is_connected = true;
-    }, {
-      capture: false,
-      once: true,
-      passive: false
-    });
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== "undefined" && globalThis.backendaiclient != null
       && typeof globalThis.backendaiclient.is_admin !== "undefined" && globalThis.backendaiclient.is_admin === true) {
@@ -254,6 +244,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     this._refreshUserInfoPanel();
     this._writeRecentProjectGroup(this.current_group);
+    let curtain = this.shadowRoot.getElementById('loading-curtain');
+    curtain.classList.add('visuallyhidden');
+    curtain.addEventListener('transitionend', () => {
+      curtain.classList.add('hidden');
+      this.is_connected = true;
+    }, {
+      capture: false,
+      once: true,
+      passive: false
+    });
   }
 
   showUpdateNotifier() {
@@ -808,7 +808,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-      <div id="loading-curtain" class="loading-background" ?active="${!this.is_connected}"></div>
+      <div id="loading-curtain" class="loading-background"></div>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
        <div slot="content">

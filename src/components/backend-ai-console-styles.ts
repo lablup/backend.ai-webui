@@ -7,9 +7,6 @@ export const BackendAiConsoleStyles = [
   css`
     .loading-background {
       transition: all 0.3s linear;
-    }
-
-    .loading-background[active] {
       position: fixed;
       z-index: 10000;
       top: 0;
@@ -20,6 +17,10 @@ export const BackendAiConsoleStyles = [
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
+    }
+
+    .loading-background[inactive] {
+      display: none;
     }
 
     .hidden {
