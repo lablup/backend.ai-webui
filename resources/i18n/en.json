@@ -559,7 +559,8 @@
     "ClickToUseIAM": "Click To Use IAM",
     "ClickToUseID": "Click To Use ID",
     "EndpointHistory": "Endpoint History",
-    "NoEndpointSaved": "No endpoint saved."
+    "NoEndpointSaved": "No endpoint saved.",
+    "CancelLogin": "Cancel Login"
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
