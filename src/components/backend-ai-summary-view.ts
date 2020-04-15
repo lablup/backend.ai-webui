@@ -555,7 +555,7 @@ export default class BackendAISummary extends BackendAIPage {
           </lablup-activity-panel>
       ${this.invitations ? this.invitations.map(invitation =>
       html`
-            <lablup-activity-panel title="${_t("summary.Invitation")}>
+            <lablup-activity-panel title="${_t('summary.Invitation')}">
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
                 <span class="invitation_folder_name">${_t("summary.FolderName")}>: ${invitation.vfolder_name}</span>
@@ -576,6 +576,7 @@ export default class BackendAISummary extends BackendAIPage {
                     <wl-icon>add</wl-icon>
                     ${_t('summary.Accept')}
                   </wl-button>
+                  <span class="flex"></span>
                   <wl-button
                     class="fg red"
                     outlined

@@ -12,6 +12,8 @@ import './lablup-loading-indicator';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-select';
 import '@material/mwc-textfield';
 
 import 'weightless/button';
@@ -36,6 +38,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
+  @property({type: String}) apiMajorVersion = '';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
@@ -43,6 +46,8 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
+  @property({type: Array}) usageModes = ['General', 'Data', 'Model'];
+  @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
@@ -162,6 +167,16 @@ export default class BackendAIData extends BackendAIPage {
           --label-color: black;
         }
 
+        mwc-select {
+          width: 180px;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--paper-orange-600);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--paper-orange-400);
+          --mdc-select-hover-line-color: var(--paper-orange-600);
+          --mdc-list-vertical-padding: 5px;
+        }
       `];
   }
 
@@ -202,36 +217,44 @@ export default class BackendAIData extends BackendAIPage {
           </h3>
           <section>
             <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
-            auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
+                auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
             <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-host" label="${_t("data.Host")}">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${this.vhosts.map(item => html`
-                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+              <mwc-select id="add-folder-host" label="${_t("data.Host")}">
+                ${this.vhosts.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-              <paper-dropdown-menu id="add-folder-type" label="${_t("data.Type")}">
-                <paper-listbox slot="dropdown-content" selected="0">
+              </mwc-select>
+              <mwc-select id="add-folder-type" label="${_t("data.Type")}">
                 ${(this.allowed_folder_type as String[]).includes('user') ? html`
-                  <paper-item label="user">${_t("data.User")}</paper-item>
+                  <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
                 ` : html``}
                 ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-                  <paper-item label="group">${_t("data.Group")}</paper-item>
+                  <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
                 ` : html``}
-                </paper-listbox>
-              </paper-dropdown-menu>
+              </mwc-select>
             </div>
+            ${this.apiMajorVersion > '4' ? html`
+              <div class="horizontal layout">
+                <mwc-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
+                  ${this.usageModes.map((item, idx) => html`
+                    <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                  `)}
+                </mwc-select>
+                <mwc-select id="add-folder-permission" label="${_t("data.Type")}">
+                  ${this.permissions.map((item, idx) => html`
+                    <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                  `)}
+                </mwc-select>
+              </div>
+            `: html``}
             ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-            <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-group" label=" ${_t("data.Group")}">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${(this.allowedGroups as any).map(item => html`
-                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-            </div>
+              <div class="horizontal layout">
+                <mwc-select id="add-folder-group" label="${_t("data.Group")}">
+                  ${(this.allowedGroups as any).map((item, idx) => html`
+                    <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  `)}
+                </mwc-select>
+              </div>
             ` : html``}
             <div style="font-size:11px;">
               ${_t("data.DialogFolderStartingWithDotAutomount")}
@@ -269,6 +292,7 @@ export default class BackendAIData extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
+        this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         globalThis.backendaiclient.vfolder.allowed_types().then(response => {
           this.allowed_folder_type = response;
         });
@@ -276,6 +300,7 @@ export default class BackendAIData extends BackendAIPage {
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       globalThis.backendaiclient.vfolder.allowed_types().then(response => {
         this.allowed_folder_type = response;
       });
@@ -321,19 +346,43 @@ export default class BackendAIData extends BackendAIPage {
     let nameEl = this.shadowRoot.querySelector('#add-folder-name');
     let name = nameEl.value;
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
-    let type = this.shadowRoot.querySelector('#add-folder-type').value;
+    let ownershipType = this.shadowRoot.querySelector('#add-folder-type').value;
     let group;
-    if (['user', 'group'].includes(type) === false) {
-      type = 'user';
+    const usageModeEl = this.shadowRoot.querySelector('#add-folder-usage-mode');
+    const permissionEl = this.shadowRoot.querySelector('#add-folder-permission');
+    let usageMode = '';
+    let permission = '';
+    if (['user', 'group'].includes(ownershipType) === false) {
+      ownershipType = 'user';
     }
-    if (type === 'user') {
+    if (ownershipType === 'user') {
       group = '';
     } else {
       group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
     }
+    if (usageModeEl) {
+      usageMode = usageModeEl.value;
+      usageMode = usageMode.toLowerCase();
+    }
+    if (permissionEl) {
+      permission = permissionEl.value;
+      switch (permission) {
+        case 'Read-Write':
+          permission = 'rw';
+          break;
+        case 'Read-Only':
+          permission = 'ro';
+          break;
+        case 'Delete':
+          permission = 'wd';
+          break;
+        default:
+          permission = 'rw';
+      }
+    }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-      let job = globalThis.backendaiclient.vfolder.create(name, host, group);
+      let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
       job.then((value) => {
         this.notification.text = 'Folder is successfully created.';
         this.notification.show();
