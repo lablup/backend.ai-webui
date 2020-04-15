@@ -364,10 +364,10 @@
     "BetaFeatures": "Beta Features",
     "DescBetaFeatures": "Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
     "DescNoBetaFeatures": "No beta feature available now. :)",
-    "EditBootstrapScript": "EditBootstrapScript",
-    "EditUserConfigScript": "EditUserConfigScript",
-    "PackageInstallation": "PackageInstallation",
-    "BootstrapScript": "BootstrapScript",
+    "EditBootstrapScript": "Edit Bootstrap Script",
+    "EditUserConfigScript": "Edit User Config Script",
+    "PackageInstallation": "Package Installation",
+    "BootstrapScript": "Bootstrap Script",
     "DialogSaveToSpecificFile": "Do you want to save the changes you made to File?",
     "DialogNoSaveNoPreserve": "Your changes will be lost if you don't save them.",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
@@ -466,7 +466,8 @@
     "Browser": "Browser",
     "English": "English",
     "Korean": "Korean",
-    "Language": "Language"
+    "Language": "Language",
+    "OSDefault": "OS Default"
   },
   "settings": {
     "General": "General",
@@ -510,7 +511,9 @@
     }
   },
   "notification": {
-    "SuccessfullyUpdated": "Successfully Updated"
+    "SuccessfullyUpdated": "Successfully Updated",
+    "Visit": "Visit",
+    "SeeDetail": "See Detail"
   },
   "information": {
     "System": "System",
@@ -551,7 +554,9 @@
     "LoginWithE-mail": "Login With E-mail",
     "LoginWithIAM": "Login With IAM",
     "ClickToUseIAM": "Click To Use IAM",
-    "ClickToUseID": "Click To Use ID"
+    "ClickToUseID": "Click To Use ID",
+    "EndpointHistory": "Endpoint History",
+    "NoEndpointSaved": "No endpoint saved."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
@@ -563,5 +568,8 @@
     "InvitationToken": "Invitation Token",
     "TermsOfService": "Terms of service",
     "PrivacyPolicy": "Privacy Policy"
+  },
+  "update": {
+    "NewConsoleVersionAvailable": "New version is available:"
   }
 }

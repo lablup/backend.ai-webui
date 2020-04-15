@@ -24,9 +24,12 @@ import toml from 'markty-toml';
 
 import 'weightless/progress-spinner';
 
+import './backend-ai-settings-store';
 import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
+
+import './backend-ai-release-check';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
@@ -39,12 +42,12 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+import BackendAiSettingsStore from "./backend-ai-settings-store";
 
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
 });
-globalThis.backendaiconsoleOption = [];
-
+globalThis.backendaioptions = new BackendAiSettingsStore;
 /**
  Backend.AI GUI Console
 
@@ -94,17 +97,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) sidebarMenu;
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
-  @property({type: Object}) options = Object();
+  @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];
 
   constructor() {
     super();
-    this.options = {
-      compact_sidebar: false,
-      preserve_login: false,
-      beta_feature: false,
-      language: 'default'
-    }
   }
 
   static get styles() {
@@ -152,8 +149,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
-    this._readUserSettings();
-    this.mini_ui = this.options['compact_sidebar'];
+    this.mini_ui = globalThis.backendaioptions.get('compact_sidebar');
     globalThis.mini_ui = this.mini_ui;
 
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
@@ -165,15 +161,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', this.refreshPage.bind(this));
-    this._readUserSettings();
-    //let lang = this._readUserSetting("language", "en");
-    if (this.options['language'] === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
-      this.options['language'] = globalThis.navigator.language;
-    } else if (this.options['language'] === "default") {
-      this.options['language'] = "en";
+    if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
+      this.lang = globalThis.navigator.language;
+    } else if (this.supportLanguageCodes.includes(globalThis.backendaioptions.get('language'))) {
+      this.lang = globalThis.backendaioptions.get('language');
+    } else {
+      this.lang = "en";
     }
-    await setLanguage(this.options['language']);
-    globalThis.backendaiconsoleOptions = this.options;
+    globalThis.backendaioptions.set('current_language', this.lang);
+    await setLanguage(this.lang);
     this.hasLoadedStrings = true;
   }
 
@@ -233,35 +229,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.loginPanel.refreshWithConfig(config);
   }
 
-  _readUserSettings() { // Read all user settings.
-    for (let i = 0, len = localStorage.length; i < len; ++i) {
-      if (localStorage.key(i)!.startsWith('backendaiconsole.usersetting.')) {
-        let key = localStorage.key(i)!.replace('backendaiconsole.usersetting.', '');
-        this._readUserSetting(key);
-      }
-    }
-  }
-
-  _readUserSetting(name, default_value = true) {
-    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
-    if (value !== null && value != '' && value != '""') {
-      if (value === "false") {
-        this.options[name] = false;
-      } else if (value === "true") {
-        this.options[name] = true;
-      } else {
-        this.options[name] = value;
-      }
-    } else {
-      this.options[name] = default_value;
-    }
-  }
-
   refreshPage() {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     let curtain = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
-    curtain.addEventListener('transitionend', function (e) {
+    curtain.addEventListener('transitionend', () => {
       curtain.classList.add('hidden');
       this.is_connected = true;
     }, {
@@ -513,8 +485,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   async close_app_window(performClose = false) {
-    this._readUserSetting('preserve_login', false); // Refresh the option. (it can be changed during the session)
-    if (this.options['preserve_login'] === false) { // Delete login information.
+    if (globalThis.backendaioptions.get('preserve_login') === false) { // Delete login information.
       this.notification.text = 'Clean up login session...';
       this.notification.show();
       const keys = Object.keys(localStorage);
@@ -603,7 +574,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.tosLanguage = this.options["language"];
+      this.TOSdialog.tosLanguage = this.lang;
       this.TOSdialog.title = _t("console.menu.TermsOfService");
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
@@ -613,7 +584,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showPPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.tosLanguage = this.options["language"];
+      this.TOSdialog.tosLanguage = this.lang;
       this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
@@ -825,8 +796,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
+      <backend-ai-release-check></backend-ai-release-check>
       <div id="loading-curtain" class="loading-background" ?active="${!this.is_connected}"></div>
-
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
        <div slot="content">
