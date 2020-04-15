@@ -508,6 +508,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
+    this._deleteRecentProjectGroupInfo();
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = 'Clean up now...';
       this.notification.show();
@@ -607,15 +608,27 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _readRecentProjectGroup() {
-    // TODO: fallback if group has gone.
-    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_');
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_'); // dot is used for namespace divider
     let value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
-    return value ? value : globalThis.backendaiclient.current_group;
+    if (value) { // Check if saved group has gone between logins / sessions
+      if (globalThis.backendaiclient.groups.length > 0 && globalThis.backendaiclient.groups.includes(value)) {
+        return value; // value is included. So it is ok.
+      } else {
+        this._deleteRecentProjectGroupInfo();
+        return globalThis.backendaiclient.current_group;
+      }
+    }
+    return globalThis.backendaiclient.current_group;
   }
 
   _writeRecentProjectGroup(value: string) {
-    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_');
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_'); // dot is used for namespace divider
     globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
+  }
+
+  _deleteRecentProjectGroupInfo() {
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_'); // dot is used for namespace divider
+    globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
   _moveToUserSettingsPage() {
