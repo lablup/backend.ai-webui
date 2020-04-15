@@ -23,6 +23,7 @@ export default class BackendAiSettingsStore extends BackendAIPage {
       'user.compact_sidebar': false,
       'user.preserve_login': false,
       'user.language': "default",
+      'user.automatic_update_check': true,
       'user.beta_feature': false,
     }
     this.readSettings();

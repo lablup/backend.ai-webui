@@ -208,6 +208,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  toggleAutomaticUploadCheck(e) {
+    if (e.target.checked === false) {
+      globalThis.backendaioptions.set('automatic_update_check', false);
+    } else {
+      globalThis.backendaioptions.set('automatic_update_check', true);
+      globalThis.backendaioptions.set('automatic_update_count_trial', 0);
+    }
+  }
+
   setUserLanguage(e) {
     if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
       globalThis.backendaioptions.set('language', e.target.selected.value);
@@ -565,6 +574,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
           </div>
           ` : html``}
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical start center-justified layout setting-desc">
+              <div>${_t("usersettings.AutomaticUpdateCheck")}</div>
+              <div class="description">${_tr("usersettings.DescAutomaticUpdateCheck")}</div>
+            </div>
+            <div class="vertical center-justified layout setting-button">
+              <wl-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></wl-switch>
+            </div>
+          </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical start center-justified layout setting-desc">
               <div>${_t("usersettings.BetaFeatures")}</div>

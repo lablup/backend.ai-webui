@@ -373,7 +373,9 @@
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescNewUserConfigFileCreated": "New User config file can be created with non-empty data.",
-    "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value."
+    "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",
+    "AutomaticUpdateCheck": "Automatic Update Check",
+    "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again."
   },
   "logs": {
     "LogMessages": "Log Messages",
