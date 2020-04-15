@@ -15,6 +15,7 @@ import 'weightless/card';
 import 'weightless/icon';
 
 import '@material/mwc-linear-progress/mwc-linear-progress';
+import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 
 import './lablup-activity-panel';
@@ -170,6 +171,12 @@ export default class BackendAISummary extends BackendAIPage {
           --mdc-icon-size: 16px;
           --mdc-icon-button-size: 24px;
           color: red;
+        }
+
+        mwc-icon.update-icon {
+          --mdc-icon-size: 16px;
+          --mdc-icon-button-size: 24px;
+          color: black;
         }
       `
     ];
@@ -623,7 +630,9 @@ export default class BackendAISummary extends BackendAIPage {
                     <mwc-icon-button class="update-button" icon="error_outline" @click="${() => {
         window.open(this.update_checker.updateURL, '_blank')
       }}"></mwc-icon-button>
-                  ` : html``}
+                  ` : html`
+                    <mwc-icon class="update-icon">done</mwc-icon>
+                  `}
                 </div>
               </div>` : html``}
               <ul>
