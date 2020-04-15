@@ -509,7 +509,9 @@
     }
   },
   "notification": {
-    "SuccessfullyUpdated": "성공적으로 수정되었습니다."
+    "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
+    "Visit": "방문",
+    "SeeDetail": "상세보기"
   },
   "information": {
     "System": "시스템",
@@ -564,5 +566,8 @@
     "InvitationToken": "초대 토큰",
     "TermsOfService": "약관",
     "PrivacyPolicy": "개인정보보호정책"
+  },
+  "update": {
+    "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
   }
 }

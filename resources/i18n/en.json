@@ -511,7 +511,9 @@
     }
   },
   "notification": {
-    "SuccessfullyUpdated": "Successfully Updated"
+    "SuccessfullyUpdated": "Successfully Updated",
+    "Visit": "Visit",
+    "SeeDetail": "See Detail"
   },
   "information": {
     "System": "System",
@@ -566,5 +568,8 @@
     "InvitationToken": "Invitation Token",
     "TermsOfService": "Terms of service",
     "PrivacyPolicy": "Privacy Policy"
+  },
+  "update": {
+    "NewConsoleVersionAvailable": "New version is available:"
   }
 }
