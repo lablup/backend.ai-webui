@@ -351,11 +351,15 @@ export default class BackendAILogin extends BackendAIPage {
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
-    (this.shadowRoot.querySelector('#block-panel') as any).show();
+    setTimeout(() => {
+      if (this.blockPanel.open === false) {
+        this.blockPanel.show();
+      }
+    }, 2000);
   }
 
   free() {
-    (this.shadowRoot.querySelector('#block-panel') as any).hide();
+    this.blockPanel.hide();
   }
 
   _trimChar(str, char) {
@@ -830,7 +834,7 @@ export default class BackendAILogin extends BackendAIPage {
           ${this.blockMessage}
           </div>
           <div style="text-align:right;padding-top:15px;">
-            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">Cancel login</wl-button>
+            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">${_t("login.CancelLogin")}</wl-button>
           </div>
         </wl-card>
         ` : html``}
