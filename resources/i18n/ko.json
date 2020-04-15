@@ -464,7 +464,8 @@
     "Browser": "브라우저 기본",
     "English": "English",
     "Korean": "한국어",
-    "Language": "언어"
+    "Language": "언어",
+    "OSDefault": "운영체제 언어"
   },
   "settings": {
     "General": "일반",
@@ -549,10 +550,12 @@
     "LoginWithE-mail": "E-mail로 로그인",
     "LoginWithIAM": "IAM으로 로그인",
     "ClickToUseIAM": "IAM 사용",
-    "ClickToUseID": "ID 사용"
+    "ClickToUseID": "ID 사용",
+    "EndpointHistory": "엔드포인트 기록",
+    "NoEndpointSaved": "저장된 엔드포인트가 없습니다."
   },
   "signup": {
-    "SignupBETA": "가입 (Beta invitation only)",
+    "SignupBETA": "가입 (베타 초대 대상)",
     "E-mail": "E-mail",
     "UserName": "사용자명",
     "Password": " 암호",
