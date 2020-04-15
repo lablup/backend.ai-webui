@@ -244,6 +244,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     this._refreshUserInfoPanel();
     this._writeRecentProjectGroup(this.current_group);
+
+    this.appBody.style.display = 'flex';
     let curtain = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
     curtain.addEventListener('transitionend', () => {
@@ -642,7 +644,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
-      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}">
+      <div id="loading-curtain" class="loading-background"></div>
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="display:none;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
           <div id="portrait-bar" class="draggable">
             <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
@@ -808,7 +811,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-      <div id="loading-curtain" class="loading-background"></div>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
        <div slot="content">
