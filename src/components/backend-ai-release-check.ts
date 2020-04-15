@@ -23,6 +23,7 @@ export default class BackendAiReleaseCheck extends LitElement {
   @property({type: String}) remoteVersion = '';
   @property({type: String}) remoteBuild = '';
   @property({type: String}) remoteRevision = '';
+  @property({type: Boolean}) updateNeeded = false;
   @property({type: Object}) notification;
 
   constructor() {
@@ -49,13 +50,13 @@ export default class BackendAiReleaseCheck extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    // TODO: adopt general setting to here to turn off autoupdate check (in closed environment)
-    if (globalThis.isElectron) {
+    if (globalThis.isElectron && globalThis.backendaioptions.get("automatic_update_check", true)) {
       this.checkRelease();
     }
   }
 
-  checkRelease() {
+  async checkRelease() {
+    console.log("checking...");
     fetch(this.releaseURL).then(
       response => response.json()
     ).then(
@@ -65,6 +66,7 @@ export default class BackendAiReleaseCheck extends LitElement {
         this.remoteRevision = json.revision;
         //if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
         if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
+          this.updateNeeded = true;
           if (globalThis.isElectron) {
             this.notification.text = _text("update.NewConsoleVersionAvailable") + ' ' + this.remoteVersion;
             this.notification.detail = _text("update.NewConsoleVersionAvailable");
@@ -74,8 +76,11 @@ export default class BackendAiReleaseCheck extends LitElement {
         }
       }
     ).catch((e) => {
-      // TODO: adopt general setting to here to turn off autoupdate check (in closed environment)
-      console.log(e);
+      let count = globalThis.backendaioptions.get("update_count_trial", 0);
+      if (count > 3) {
+        globalThis.backendaioptions.set("automatic_update_check", false); // Turn off automatic check.
+      }
+      globalThis.backendaioptions.set("update_count_trial", count + 1);
     });
   }
 
