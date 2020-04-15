@@ -608,7 +608,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _readRecentProjectGroup() {
-    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_'); // dot is used for namespace divider
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     let value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
     if (value) { // Check if saved group has gone between logins / sessions
       if (globalThis.backendaiclient.groups.length > 0 && globalThis.backendaiclient.groups.includes(value)) {
@@ -622,12 +622,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _writeRecentProjectGroup(value: string) {
-    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_'); // dot is used for namespace divider
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
   }
 
   _deleteRecentProjectGroupInfo() {
-    let endpointId = globalThis.backendaiclient._config.endpointHost.replaceAll('.', '_'); // dot is used for namespace divider
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
