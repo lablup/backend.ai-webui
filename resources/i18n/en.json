@@ -561,7 +561,10 @@
     "EndpointHistory": "Endpoint History",
     "NoEndpointSaved": "No endpoint saved.",
     "CancelLogin": "Cancel Login",
-    "SignoutFinished": "Signout finished."
+    "SignoutFinished": "Signout finished.",
+    "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
+    "PleaseWait": "Please wait to login.",
+    "ConnectingToCluster": "Connecting to Backend.AI Cluster..."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",

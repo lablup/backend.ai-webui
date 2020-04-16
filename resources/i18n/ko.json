@@ -559,7 +559,10 @@
     "EndpointHistory": "엔드포인트 기록",
     "NoEndpointSaved": "저장된 엔드포인트가 없습니다.",
     "CancelLogin": "로그인 취소",
-    "SignoutFinished": "탈퇴가 완료되었습니다."
+    "SignoutFinished": "탈퇴가 완료되었습니다.",
+    "APIEndpointEmpty": "API Endpoint 가 지정되지 않았습니다. 로그인을 위해 앤드포인트를 지정하세요.",
+    "PleaseWait": "로그인 진행중. 기다려주세요.",
+    "ConnectingToCluster": "Backend.AI 클러스터에 연결중..."
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",
