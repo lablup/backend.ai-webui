@@ -2252,7 +2252,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="vertical center layout" style="padding-top:15px;">
               <mwc-select id="environment" label="${_t("session.launcher.Environments")}" required
                 value="${this.default_language}">
-                <mwc-list-item selected style="display:none!important">>${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
+                <mwc-list-item selected style="display:none!important">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
                   ${this.languages.map(item => html`
                     ${item.clickable === false ? html`
                       <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
