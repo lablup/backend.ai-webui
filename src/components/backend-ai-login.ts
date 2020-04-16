@@ -69,6 +69,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Object}) loginPanel;
   @property({type: Object}) signoutPanel;
   @property({type: Object}) blockPanel;
+  @property({type: Boolean}) is_connected = false;
   @property({type: Object}) clientConfig;
   @property({type: Object}) client;
   @property({type: Object}) notification;
@@ -351,14 +352,15 @@ export default class BackendAILogin extends BackendAIPage {
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
-    setTimeout(() => {
-      if (this.blockPanel.open === false) {
+    this.blockTimer = setTimeout(() => {
+      if (this.blockPanel.open === false && this.is_connected === false) {
         this.blockPanel.show();
       }
     }, 2000);
   }
 
   free() {
+    console.log(this.blockTimer);
     this.blockPanel.hide();
   }
 
@@ -522,6 +524,7 @@ export default class BackendAILogin extends BackendAIPage {
             "message": "Authentication failed. Check information and manager status."
           };
         } else {
+          this.is_connected = true;
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
@@ -546,6 +549,7 @@ export default class BackendAILogin extends BackendAIPage {
         this.open();
       });
     } else { // Login already succeeded.
+      this.is_connected = true;
       return this._connectGQL();
     }
   }
@@ -600,6 +604,7 @@ export default class BackendAILogin extends BackendAIPage {
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
     return this.client.gql(q, v).then(response => {
+      this.is_connected = true;
       globalThis.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
       globalThis.backendaiclient.resource_policy = resource_policy;
