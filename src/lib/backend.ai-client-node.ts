@@ -1148,7 +1148,7 @@ class VFolder {
         'group': group
       };
     }
-    if (this.client._apiVersionMajor > '4') {
+    if (this.client.isAPIVersionCompatibleWith('v5.20200401')) {
       if (usageMode) {
         body['usage_mode'] = usageMode;
       }
