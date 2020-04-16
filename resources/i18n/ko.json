@@ -558,7 +558,8 @@
     "ClickToUseID": "ID 사용",
     "EndpointHistory": "엔드포인트 기록",
     "NoEndpointSaved": "저장된 엔드포인트가 없습니다.",
-    "CancelLogin": "로그인 취소"
+    "CancelLogin": "로그인 취소",
+    "SignoutFinished": "탈퇴가 완료되었습니다."
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",

@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
@@ -402,13 +403,9 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      //this.notification.text = 'Connecting...';
-      //this.notification.show();
       this._connectUsingSession();
     } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
       this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      //this.notification.text = 'Connecting...';
-      //this.notification.show();
       this._connectUsingAPI();
     } else {
       this.open();
@@ -461,7 +458,7 @@ export default class BackendAILogin extends BackendAIPage {
     let user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
     let password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
     this.client.signout(user_id, password).then(response => {
-      this.notification.text = 'Signout finished.';
+      this.notification.text = _text("login.SignoutFinished");
       this.notification.show();
       let event = new CustomEvent("backend-ai-logout", {"detail": ""});
       document.dispatchEvent(event);

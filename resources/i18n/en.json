@@ -560,7 +560,8 @@
     "ClickToUseID": "Click To Use ID",
     "EndpointHistory": "Endpoint History",
     "NoEndpointSaved": "No endpoint saved.",
-    "CancelLogin": "Cancel Login"
+    "CancelLogin": "Cancel Login",
+    "SignoutFinished": "Signout finished."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
