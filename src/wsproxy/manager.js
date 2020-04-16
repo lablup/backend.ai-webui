@@ -116,10 +116,11 @@ class Manager extends EventEmitter {
       }
       let sessionName = req.params["sessionName"];
       let app = req.query.app || "jupyter";
+      let port = req.query.port || undefined;
       let p = sessionName + "|" + app;
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
-      let port = undefined;
+      //let port = undefined;
       if (this.proxies.hasOwnProperty(p)) {
         gateway = this.proxies[p];
         port = gateway.getPort();
