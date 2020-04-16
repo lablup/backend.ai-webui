@@ -1,5 +1,19 @@
 # Changelog
 
+## v20.04.3 (16/04/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**hard**][**library / SDK**][**major**]  add 'automatic download' option to manager [#157](https://github.com/lablup/backend.ai-console/issues/157)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**] Block usage mode / permission setting on Backend.AI 19.09 [#492](https://github.com/lablup/backend.ai-console/issues/492)
+- [**UI / UX**][**bug**][**minor**] FOUC during login on Firefox [#491](https://github.com/lablup/backend.ai-console/issues/491)
+- [**bug**][**enterprise**][**library / SDK**] Image rescan button returns error due to short timeout [#490](https://github.com/lablup/backend.ai-console/issues/490)
+
+---
+
 ## v20.04.2 (15/04/2020)
 
 #### Enhancements:
