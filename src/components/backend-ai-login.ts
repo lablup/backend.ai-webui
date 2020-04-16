@@ -2,14 +2,20 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {translate as _t} from "lit-translate";
+import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
-import 'weightless/textfield';
+
+import '@material/mwc-icon';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon-button';
+import '@material/mwc-menu';
+import '@material/mwc-select';
+import '@material/mwc-textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -23,7 +29,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAIPage} from "./backend-ai-page";
 
 declare global {
   const ai: typeof aiSDK;
@@ -44,8 +51,7 @@ declare global {
  @group Backend.AI Console
  */
 @customElement("backend-ai-login")
-export default class BackendAILogin extends LitElement {
-  public shadowRoot: any; // ShadowRoot
+export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) api_key = '';
   @property({type: String}) secret_key = '';
   @property({type: String}) user_id = '';
@@ -56,8 +62,7 @@ export default class BackendAILogin extends LitElement {
   @property({type: String}) default_session_environment = '';
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
-  @property({type: String}) connection_mode = 'API';
-;
+  @property({type: String}) connection_mode = 'SESSION';
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
@@ -72,10 +77,12 @@ export default class BackendAILogin extends LitElement {
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Array}) endpoints;
 
   constructor() {
     super();
-    window.backendaiconsole = {};
+    globalThis.backendaiconsole = {};
+    this.endpoints = [];
   }
 
   static get styles() {
@@ -87,10 +94,6 @@ export default class BackendAILogin extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-
         .warning {
           color: red;
         }
@@ -104,13 +107,44 @@ export default class BackendAILogin extends LitElement {
           outline: none;
         }
 
-        wl-textfield {
-          --input-font-family: 'Quicksand', sans-serif;
-          --input-color-disabled: #424242;
+        mwc-textfield {
+          font-family: 'Quicksand', sans-serif;
+          --mdc-theme-primary: black;
+          --mdc-text-field-fill-color: rgb(250, 250, 250);
+          width: 100%;
+        }
+
+        .endpoint-text {
+          --mdc-text-field-disabled-line-color: rgba(0, 0, 0, 0.0);
+        }
+
+        mwc-icon-button {
+          /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
+          color: var(--paper-blue-600);
+          --mdc-icon-size: 24px;
+        }
+
+        mwc-icon-button.endpoint-control-button {
+          --mdc-icon-size: 16px;
+          --mdc-icon-button-size: 24px;
+          color: red;
+        }
+
+        mwc-menu {
+          font-family: 'Quicksand', sans-serif;
+          --mdc-menu-min-width: 400px;
+          --mdc-menu-max-width: 400px;
+        }
+
+        mwc-list-item[disabled] {
+          --mdc-menu-item-height: 30px;
+          border-bottom: 1px solid #ccc;
         }
 
         #login-panel {
           --dialog-width: 400px;
+          --backdrop-bg: transparent;
+          --dialog-elevation: 0px 0px 5px 5px rgba(0, 0, 0, 0.1);
         }
 
         h3 small {
@@ -168,7 +202,8 @@ export default class BackendAILogin extends LitElement {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
+    this.endpoints = globalThis.backendaioptions.get("endpoints", []);
   }
 
   _changeSigninMode() {
@@ -187,17 +222,13 @@ export default class BackendAILogin extends LitElement {
 
   refreshPanel() {
     // TODO : use lit-element dynamic assignment
-    if (this.connection_mode == 'SESSION') {
-      (this.shadowRoot.querySelector('#id_api_key') as any).style.display = 'none';
-      (this.shadowRoot.querySelector('#id_secret_key') as any).style.display = 'none';
-      (this.shadowRoot.querySelector('#id_user_id') as any).style.display = 'block';
-      (this.shadowRoot.querySelector('#id_password') as any).style.display = 'block';
-    } else {
-      (this.shadowRoot.querySelector('#id_api_key') as any).style.display = 'block';
-      (this.shadowRoot.querySelector('#id_secret_key') as any).style.display = 'block';
-      (this.shadowRoot.querySelector('#id_user_id') as any).style.display = 'none';
-      (this.shadowRoot.querySelector('#id_password') as any).style.display = 'none';
-    }
+    //if (this.connection_mode == 'SESSION') {
+    //  (this.shadowRoot.querySelector('#session-login-form') as any).style.display = 'block';
+    //  (this.shadowRoot.querySelector('#api-login-form') as any).style.display = 'none';
+    //} else {
+    //  (this.shadowRoot.querySelector('#session-login-form') as any).style.display = 'none';
+    //  (this.shadowRoot.querySelector('#api-login-form') as any).style.display = 'block';
+    //}
   }
 
   refreshWithConfig(config) {
@@ -222,15 +253,16 @@ export default class BackendAILogin extends LitElement {
       });
     }
     if (typeof config.general === "undefined" || typeof config.general.debug === "undefined" || config.general.debug === '') {
-      window.backendaiconsole.debug = false;
+      globalThis.backendaiconsole.debug = false;
     } else if (config.general.debug === true) {
-      window.backendaiconsole.debug = true;
+      globalThis.backendaiconsole.debug = true;
       console.log('Debug flag is set to true');
     }
     if (typeof config.general === "undefined" || typeof config.general.signupSupport === "undefined" || config.general.signupSupport === '' || config.general.signupSupport == false) {
       this.signup_support = false;
     } else {
       this.signup_support = true;
+      (this.shadowRoot.querySelector('#signup-dialog') as any).active = true;
     }
     if (typeof config.general === "undefined" || typeof config.general.allowChangeSigninMode === "undefined" || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode == false) {
       this.change_signin_support = false;
@@ -254,15 +286,16 @@ export default class BackendAILogin extends LitElement {
       this.proxy_url = config.wsproxy.proxyURL;
     }
     if (typeof config.general === "undefined" || typeof config.general.apiEndpoint === "undefined" || config.general.apiEndpoint === '') {
-      (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'block';
+      (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
       (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
     } else {
       this.api_endpoint = config.general.apiEndpoint;
       if (typeof config.general === "undefined" || typeof config.general.apiEndpointText === "undefined" || config.general.apiEndpointText === '') {
-        (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'block';
+        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
+        (this.shadowRoot.querySelector('#endpoint-button') as any).disabled = 'true';
       } else {
-        (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'none';
+        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'none';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'block';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).value = config.general.apiEndpointText;
       }
@@ -276,7 +309,7 @@ export default class BackendAILogin extends LitElement {
       this.default_session_environment = config.general.defaultSessionEnvironment;
     }
     let connection_mode: string | null = localStorage.getItem('backendaiconsole.connection_mode');
-    if (connection_mode !== null && connection_mode != '' && connection_mode != '""') {
+    if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
       if (connection_mode === 'SESSION') {
         this.connection_mode = 'SESSION';
       } else {
@@ -284,7 +317,7 @@ export default class BackendAILogin extends LitElement {
       }
     } else {
       if (typeof config.general === "undefined" || typeof config.general.connectionMode === "undefined" || config.general.connectionMode === '') {
-        this.connection_mode = 'API';
+        this.connection_mode = 'SESSION';
         //localStorage.setItem('backendaiconsole.connection_mode', 'API');
       } else {
         if (config.general.connectionMode.toUpperCase() === 'SESSION') {
@@ -318,11 +351,15 @@ export default class BackendAILogin extends LitElement {
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
-    (this.shadowRoot.querySelector('#block-panel') as any).show();
+    setTimeout(() => {
+      if (this.blockPanel.open === false) {
+        this.blockPanel.show();
+      }
+    }, 2000);
   }
 
   free() {
-    (this.shadowRoot.querySelector('#block-panel') as any).hide();
+    this.blockPanel.hide();
   }
 
   _trimChar(str, char) {
@@ -383,7 +420,7 @@ export default class BackendAILogin extends LitElement {
   _showSignupDialog() {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.api_endpoint === '') {
-      this.notification.text = 'API Endpoint is empty. Please specify API endpoint to signup.';
+      this.notification.text = 'API Endpoint is empty. Please specify Backend.AI API endpoint to signup.';
       this.notification.show();
       return;
     }
@@ -477,32 +514,38 @@ export default class BackendAILogin extends LitElement {
       `Backend.AI Console.`,
     );
     let isLogon = await this.client.check_login();
-    if (isLogon === false) {
+    if (isLogon === false) { // Not authenticated yet.
       this.client.login().then(response => {
         if (response === false) {
-          throw {"message": "Authentication failed. Check information and manager status."};
+          throw {
+            "title": "No manager found at API Endpoint.",
+            "message": "Authentication failed. Check information and manager status."
+          };
         } else {
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
         this.free();
         if (this.loginPanel.open !== true) {
-          console.log(err);
           if (typeof err.message !== "undefined") {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
           } else {
             this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
           }
-          this.notification.show();
-          this.open();
         } else {
-          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          this.notification.show();
+          if (typeof err.message !== "undefined") {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+          } else {
+            this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+          }
+          console.log(err);
         }
+        this.notification.show();
         this.open();
       });
-    } else {
+    } else { // Login already succeeded.
       return this._connectGQL();
     }
   }
@@ -527,19 +570,17 @@ export default class BackendAILogin extends LitElement {
       this.block();
     }
     this.client.getManagerVersion().then(response => {
-      return this.client.isAPIVersionCompatibleWith('v4.20190601');
-    }).then(response => {
-      if (response === false) {// Legacy code to support 19.03
-        this._connectViaGQLLegacy();
-      } else {
-        this._connectViaGQL();
-      }
+      this._connectViaGQL();
     }).catch((err) => {   // Connection failed
-      console.log(err);
       if (this.loginPanel.open !== true) {
         if (typeof err.message !== "undefined") {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
+          if (err.status === 408) { // Failed while loading getManagerVersion
+            this.notification.text = "Login succeed but manager is not responding.";
+            this.notification.detail = err.message;
+          } else {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+          }
         } else {
           this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
         }
@@ -559,14 +600,14 @@ export default class BackendAILogin extends LitElement {
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
     return this.client.gql(q, v).then(response => {
-      window.backendaiclient = this.client;
+      globalThis.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
-      window.backendaiclient.resource_policy = resource_policy;
+      globalThis.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
       let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name, id}"];
       let q = `query { user{ ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
-      return window.backendaiclient.gql(q, v);
+      return globalThis.backendaiclient.gql(q, v);
     }).then(response => {
       let email = response['user'].email;
       if (this.email !== email) {
@@ -575,22 +616,22 @@ export default class BackendAILogin extends LitElement {
       this.user_groups = response['user'].groups;
       let role = response['user'].role;
       this.domain_name = response['user'].domain_name;
-      window.backendaiclient.email = this.email;
-      window.backendaiclient.is_admin = false;
-      window.backendaiclient.is_superadmin = false;
+      globalThis.backendaiclient.email = this.email;
+      globalThis.backendaiclient.is_admin = false;
+      globalThis.backendaiclient.is_superadmin = false;
 
       if (["superadmin", "admin"].includes(role)) {
-        window.backendaiclient.is_admin = true;
+        globalThis.backendaiclient.is_admin = true;
       }
       if (["superadmin"].includes((role))) {
-        window.backendaiclient.is_superadmin = true;
+        globalThis.backendaiclient.is_superadmin = true;
       }
-      return window.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
+      return globalThis.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
     }).then(response => {
       let groups = response.groups;
       let user_group_ids = this.user_groups.map(({id}) => id);
       if (groups !== null) {
-        window.backendaiclient.groups = groups.filter((item) => {
+        globalThis.backendaiclient.groups = groups.filter((item) => {
           if (user_group_ids.includes(item.id)) {
             return item;
           }
@@ -601,19 +642,26 @@ export default class BackendAILogin extends LitElement {
         groups.forEach(function (element) {
           groupMap[element.name] = element.id;
         });
-        window.backendaiclient.groupIds = groupMap;
+        globalThis.backendaiclient.groupIds = groupMap;
       } else {
-        window.backendaiclient.groups = ['default'];
+        globalThis.backendaiclient.groups = ['default'];
       }
-      window.backendaiclient.current_group = window.backendaiclient.groups[0];
-      window.backendaiclient.current_group_id = () => {
-        return window.backendaiclient.groupIds[window.backendaiclient.current_group];
+      globalThis.backendaiclient.current_group = globalThis.backendaiclient.groups[0];
+      globalThis.backendaiclient.current_group_id = () => {
+        return globalThis.backendaiclient.groupIds[globalThis.backendaiclient.current_group];
       };
-      window.backendaiclient._config._proxyURL = this.proxy_url;
-      window.backendaiclient._config.domainName = this.domain_name;
-      window.backendaiclient._config.default_session_environment = this.default_session_environment;
-      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
-      window.backendaiclient.ready = true;
+      globalThis.backendaiclient._config._proxyURL = this.proxy_url;
+      globalThis.backendaiclient._config.domainName = this.domain_name;
+      globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
+      globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
+      globalThis.backendaiclient.ready = true;
+      if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
+        this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
+        if (this.endpoints.length > 5) { // Keep latest
+          this.endpoints = this.endpoints.slice(1, 6);
+        }
+        globalThis.backendaioptions.set("endpoints", this.endpoints);
+      }
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
@@ -643,56 +691,6 @@ export default class BackendAILogin extends LitElement {
     });
   }
 
-  _connectViaGQLLegacy() {
-    let fields = ["user_id", "is_admin", "resource_policy"];
-    let q = `query { keypair { ${fields.join(" ")} } }`;
-    let v = {};
-    return this.client.gql(q, v).then(response => {
-      window.backendaiclient = this.client;
-      let email = response['keypair'].user_id;
-      let is_admin = response['keypair'].is_admin;
-      let resource_policy = response['keypair'].resource_policy;
-      if (this.email != email) {
-        this.email = email;
-      }
-      window.backendaiclient.groups = ['default'];
-      window.backendaiclient.email = this.email;
-      window.backendaiclient.current_group = 'default';
-      window.backendaiclient.is_admin = is_admin;
-      window.backendaiclient.is_superadmin = is_admin;
-      window.backendaiclient.resource_policy = resource_policy;
-      window.backendaiclient._config._proxyURL = this.proxy_url;
-      window.backendaiclient._config.domainName = 'default';
-      window.backendaiclient._config.default_session_environment = this.default_session_environment;
-      window.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
-      return window.backendaiclient.getManagerVersion();
-    }).then(response => {
-      window.backendaiclient.ready = true;
-      let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
-      document.dispatchEvent(event);
-      this.close();
-      this._saveLoginInfo();
-      localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
-      //this.notification.text = 'Connected.';
-      //this.notification.show();
-    }).catch((err) => {   // Connection failed
-      if (this.loginPanel.open !== true) {
-        if (typeof err.message !== "undefined") {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-        } else {
-          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
-        }
-        this.notification.show(false, err);
-        this.open();
-      } else {
-        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show(false, err);
-      }
-      this.open();
-    });
-  }
-
   async _saveLoginInfo() {
     localStorage.setItem('backendaiconsole.login.api_key', this.api_key);
     localStorage.setItem('backendaiconsole.login.secret_key', this.secret_key);
@@ -700,48 +698,98 @@ export default class BackendAILogin extends LitElement {
     localStorage.setItem('backendaiconsole.login.password', this.password);
   }
 
+  _toggleEndpoint() {
+    let endpoint_list = this.shadowRoot.querySelector("#endpoint-list");
+    let endpoint_button = this.shadowRoot.querySelector('#endpoint-button');
+    endpoint_list.anchor = endpoint_button;
+    endpoint_list.open = !endpoint_list.open;
+  }
+
+  _updateEndpoint() {
+    let endpoint_list = this.shadowRoot.querySelector("#endpoint-list");
+    this.api_endpoint = endpoint_list.selected.value;
+  }
+
+  _deleteEndpoint(endpoint) {
+    let idx = this.endpoints.indexOf(endpoint);
+    if (idx > -1) {
+      this.endpoints.splice(idx, 1);
+    }
+    globalThis.backendaioptions.set("endpoints", this.endpoints);
+    this.requestUpdate();
+  }
+
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="login-panel" fixed backdrop blockscrolling persistent disablefocustrap>
+      <wl-dialog id="login-panel" fixed blockscrolling persistent disablefocustrap>
+        <div class="horizontal center layout">
+          <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 20px;" />
+          <div class="flex"></div>
+          ${this.signup_support ? html`
+          <div class="vertical center-justified layout" style="padding-right:20px;">
+            <div style="font-size:12px;margin:0 10px;text-align:center;">${_t("login.NotAUser")}</div>
+            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">${_t("login.SignUp")}</wl-button>
+          </div>
+          ` : html``}
+        </div>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Login with ${this.connection_mode == 'SESSION' ? html`E-mail` : html`IAM`}</div>
+            <div>${this.connection_mode == 'SESSION' ? _t("login.LoginWithE-mail") : _t("login.LoginWithIAM")}</div>
             <div class="flex"></div>
-            ${this.signup_support ? html`
-            <div class="vertical center-justified layout">
-              <div style="font-size:12px;margin:0 10px;text-align:center;">Not a user?</div>
-              <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">Sign up</wl-button>
-            </div>
-            ` : html``}
-          </h3>
-          <form id="login-form">
-            <fieldset>
             ${this.change_signin_support ? html`
-                <div class="horizontal center layout">
-                  <small>Want to login another way?</small>
-                  <div class="flex"></div>
-                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">Click to use ${this.connection_mode == 'SESSION' ? html`IAM` : html`ID`}</wl-button>
+                <div class="vertical center-justified layout">
+                  <div style="font-size:12px;margin:0 10px;text-align:center;">${_t("login.LoginAnotherway")}</div>
+                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">
+                    ${this.connection_mode == 'SESSION' ? _t("login.ClickToUseIAM") : _t("login.ClickToUseID")}
+                  </wl-button>
                 </div>
             ` : html``}
-              <wl-textfield type="text" name="api_key" id="id_api_key" maxlength="30" style="display:none;"
-                           label="API Key" value="${this.api_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="password" name="secret_key" id="id_secret_key" style="display:none;"
-                           label="Secret Key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="email" name="user_id" id="id_user_id" maxlength="50" style="display:none;"
-                           label="E-mail" value="${this.user_id}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="password" name="password" id="id_password" style="display:none;"
-                           label="Password" value="${this.password}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="API Endpoint" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></wl-textfield>
-              <wl-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
+          </h3>
+          <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
+            <fieldset>
+              <mwc-textfield type="email" name="user_id" id="id_user_id" maxlength="50"  autocomplete="username"
+                           label="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              <mwc-textfield type="password" name="password" id="id_password" autocomplete="current-password"
+                           label="${_t("login.Password")}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+            </fieldset>
+          </form>
+          <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
+            <fieldset>
+              <mwc-textfield type="text" name="api_key" id="id_api_key" maxlength="30"
+                           label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              <mwc-textfield type="password" name="secret_key" id="id_secret_key"
+                           label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+            </fieldset>
+          </form>
+          <form>
+            <fieldset>
+              <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
+                <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="margin-left:5px;" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+                <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
+                  <mwc-list-item disabled>${_t("login.EndpointHistory")}</mwc-list-item>
+                  ${this.endpoints.length === 0 ? html`
+                  <mwc-list-item value="">${_t("login.NoEndpointSaved")}</mwc-list-item>
+                  ` : html``}
+
+                  ${this.endpoints.map(item =>
+      html`<mwc-list-item value="${item}">
+                    <div class="horizontal justified center flex layout" style="width:365px;">
+                      <span>${item}</span><span class="flex"></span>
+                      <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
+                    </div>
+                  </mwc-list-item>`)}
+                </mwc-menu>
+                <mwc-textfield class="endpoint-text" type="text" name="api_endpoint" id="id_api_endpoint"
+                             label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              </div>
+              <mwc-textfield class="endpoint-text" type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
-                           label="API Endpoint" value=""></wl-textfield>
-              <br/><br/>
+                           label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
               <wl-button class="fg red full login-button" id="login-button" outlined type="button"
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
-                          Login</wl-button>
+                          ${_t("login.Login")}</wl-button>
             </fieldset>
           </form>
         </wl-card>
@@ -749,31 +797,31 @@ export default class BackendAILogin extends LitElement {
       <wl-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Leave service</div>
+            <div>${_t("login.LeaveService")}</div>
             <div class="flex"></div>
             <wl-button class="red" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
           <section>
-            <div class="warning">To confirm, please type your E-mail and password again.</div>
+            <div class="warning">${_t("login.DescConfirmLeave")}</div>
           </section>
           <form id="signout-form">
             <fieldset>
-              <wl-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
-                           label="E-mail" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
-              <wl-textfield type="password" name="signout_password" id="id_signout_password"
-                           label="Password" value="" @keyup="${this._signoutIfEnter}"></wl-textfield>
+              <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
+                           label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+              <mwc-textfield type="password" name="signout_password" id="id_signout_password"
+                           label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
               <br/><br/>
               <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
                           @click="${() => this._signout()}">
                           <wl-icon>check</wl-icon>
-                          Leave service</wl-button>
+                          ${_t("login.LeaveService")}</wl-button>
             </fieldset>
           </form>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="block-panel" fixed backdrop blockscrolling persistent>
+      <wl-dialog id="block-panel" fixed blockscrolling persistent>
         ${this.blockMessage != '' ? html`
         <wl-card>
           ${this.blockType !== '' ? html`
@@ -786,7 +834,7 @@ export default class BackendAILogin extends LitElement {
           ${this.blockMessage}
           </div>
           <div style="text-align:right;padding-top:15px;">
-            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">Cancel login</wl-button>
+            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">${_t("login.CancelLogin")}</wl-button>
           </div>
         </wl-card>
         ` : html``}

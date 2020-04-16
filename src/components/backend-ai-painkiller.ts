@@ -29,8 +29,11 @@ export default class BackendAIPainKiller {
   public regexTable: any;
 
   static relieve(msg) {
+    if (typeof msg === 'undefined') {
+      return 'Problem occurred.';
+    }
     console.log(msg);
-    if (window.backendaiconsole.debug === true) {
+    if (globalThis.backendaiconsole.debug === true) {
       return msg;
     }
     if (this.errorMessageTable.hasOwnProperty(msg)) {

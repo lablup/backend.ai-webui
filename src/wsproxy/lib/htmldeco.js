@@ -1,5 +1,5 @@
 let footer = '';
-const template = function(title, contents, comment) {
+const template = function (title, contents, comment, options = {}) {
   let result = "";
   result += `<!DOCTYPE html>
 <html>
@@ -9,17 +9,23 @@ const template = function(title, contents, comment) {
 </head>
 <body>
   `;
-result += `<div class="cover">`;
-  result +=`<h1>Backend.AI</h1>`;
-  result +=`<h2>${title}</h1>`;
-  if (typeof contents ==="string"){
+  result += `<div class="cover">`;
+  result += `<h1>Backend.AI</h1>`;
+  result += `<h2>${title}</h1>`;
+  if (typeof contents === "string") {
     result += `<p>${contents}</p>`;
-  } else if(typeof contents ==="array"){
-    result += `<ul>`;
-    result += `</ul>`;
+  } else if (typeof contents !== "undefined" && Array.isArray(contents) === true) {
+    contents.forEach(item => {
+      result += `<ul>`;
+      result += `${item}`;
+      result += `</ul>`;
+    });
   }
   result += '</div>';
   result += `<footer>${footer}</footer>`;
+  if ('retry' in options) {
+    result += `<script>setTimeout( ()=>{location.reload();}, 1000);</script>`;
+  }
   result += `</body></html>`;
   return result;
 };

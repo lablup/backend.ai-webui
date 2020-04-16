@@ -3,25 +3,40 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-indicator';
 
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@polymer/paper-progress/paper-progress';
 
 import 'weightless/card';
+import 'weightless/icon';
 
+import '@material/mwc-linear-progress/mwc-linear-progress';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
 
 import './lablup-activity-panel';
 import './backend-ai-chart';
 import './backend-ai-resource-monitor';
+import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+
+/**
+ `<backend-ai-summary-view>` is a Summary panel of backend.ai console.
+
+ Example:
+ <backend-ai-summary-view active></backend-ai-summary-view>
+
+ @group Lablup Elements
+ @element backend-ai-summary-view
+ */
 
 @customElement("backend-ai-summary-view")
 export default class BackendAISummary extends BackendAIPage {
@@ -32,8 +47,10 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: Object}) resources = Object();
+  @property({type: Object}) update_checker = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
+  @property({type: String}) console_version = '';
   @property({type: Number}) cpu_total = 0;
   @property({type: Number}) cpu_used = 0;
   @property({type: String}) cpu_percent = '0';
@@ -74,7 +91,19 @@ export default class BackendAISummary extends BackendAIPage {
 
         ul li {
           list-style: none;
-          font-size: 13px;
+          font-size: 14px;
+        }
+
+        li:before {
+          padding: 3px;
+          transform: rotate(-45deg) translateY(-2px);
+          transition: color ease-in .2s;
+          border: solid;
+          border-width: 0 2px 2px 0;
+          border-color: #242424;
+          margin-right: 10px;
+          content: '';
+          display: inline-block;
         }
 
         span.indicator {
@@ -85,31 +114,37 @@ export default class BackendAISummary extends BackendAIPage {
           font-size: 48px;
         }
 
+        a,
+        a:visited {
+          color: #222222;
+        }
+
+        a:hover {
+          color: #3e872d;
+        }
+
         vaadin-progress-bar {
           width: 190px;
           height: 10px;
         }
 
-        paper-progress {
+        mwc-linear-progress {
           width: 190px;
+          height: 5px;
           border-radius: 0;
-          --paper-progress-height: 5px;
-          --paper-progress-active-color: #3677eb;
-          --paper-progress-transition-duration: 0.08s;
-          --paper-progress-transition-timing-function: ease;
-          --paper-progress-transition-delay: 0s;
+          --mdc-theme-primary: #3677eb;
         }
 
-        paper-progress.start-bar {
+        mwc-linear-progress.start-bar {
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
-          --paper-progress-active-color: #3677eb;
+          --mdc-theme-primary: #3677eb;
         }
 
-        paper-progress.end-bar {
+        mwc-linear-progress.end-bar {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
-          --paper-progress-active-color: #98be5a;
+          --mdc-theme-primary: #98be5a;
         }
 
         wl-button[class*="green"] {
@@ -124,8 +159,24 @@ export default class BackendAISummary extends BackendAIPage {
           --button-bg-active: var(--paper-red-600);
         }
 
+        wl-icon {
+          --icon-size: 24px;
+        }
+
         .invitation_folder_name {
           font-size: 13px;
+        }
+
+        mwc-icon-button.update-button {
+          --mdc-icon-size: 16px;
+          --mdc-icon-button-size: 24px;
+          color: red;
+        }
+
+        mwc-icon.update-icon {
+          --mdc-icon-size: 16px;
+          --mdc-icon-button-size: 24px;
+          color: black;
         }
       `
     ];
@@ -133,7 +184,8 @@ export default class BackendAISummary extends BackendAIPage {
 
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
+    this.update_checker = this.shadowRoot.querySelector('#update-checker');
   }
 
   _refreshHealthPanel() {
@@ -163,7 +215,7 @@ export default class BackendAISummary extends BackendAIPage {
         status = 'RUNNING';
     }
     let fields = ["created_at"];
-    window.backendaiclient.computeSession.list(fields, status).then((response) => {
+    globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.indicator.hide();
       this.jobs = response;
       this.sessions = response.compute_session_list.total_count;
@@ -182,13 +234,19 @@ export default class BackendAISummary extends BackendAIPage {
     });
   }
 
+  _refreshConsoleUpdateInformation() {
+    if (this.is_superadmin && globalThis.backendaioptions.get("automatic_update_check", true)) {
+      this.update_checker.checkRelease();
+    }
+  }
+
   _refreshResourceInformation() {
     if (!this.activeConnected) {
       return;
     }
-    return window.backendaiclient.resourcePolicy.get(window.backendaiclient.resource_policy).then((response) => {
+    return globalThis.backendaiclient.resourcePolicy.get(globalThis.backendaiclient.resource_policy).then((response) => {
       let rp = response.keypair_resource_policies;
-      this.resourcePolicy = window.backendaiclient.utils.gqlToObject(rp, 'name');
+      this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
     });
   }
 
@@ -209,7 +267,7 @@ export default class BackendAISummary extends BackendAIPage {
     }
     this.indicator.show();
 
-    window.backendaiclient.resources.totalResourceInformation().then((response) => {
+    globalThis.backendaiclient.resources.totalResourceInformation().then((response) => {
       this.indicator.hide();
       this.resources = response;
       this._sync_resource_values();
@@ -257,9 +315,11 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _sync_resource_values() {
-    this.manager_version = window.backendaiclient.managerVersion;
+    console.log(this.update_checker.updateNeeded);
+    this.manager_version = globalThis.backendaiclient.managerVersion;
+    this.console_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
-    this.mem_total = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
+    this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources.gpu.total)) {
       this.gpu_total = 0;
     } else {
@@ -282,8 +342,8 @@ export default class BackendAISummary extends BackendAIPage {
     // mem.total: total memory
     // mem.allocated: allocated by backend.ai
     // mem.used: used by backend.ai
-    this.mem_used = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
-    this.mem_allocated = parseFloat(window.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
+    this.mem_used = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
+    this.mem_allocated = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
     this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
     this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
 
@@ -307,23 +367,28 @@ export default class BackendAISummary extends BackendAIPage {
     }
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     this._init_resource_values();
-    this.requestUpdate();
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_superadmin = window.backendaiclient.is_superadmin;
+        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+        this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         if (this.activeConnected) {
+          this._refreshConsoleUpdateInformation();
           this._refreshHealthPanel();
           this._refreshInvitations();
+          this.requestUpdate();
           //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
           //document.dispatchEvent(event);
         }
       }, true);
     } else {
-      this.is_superadmin = window.backendaiclient.is_superadmin;
+      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+      this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this._refreshConsoleUpdateInformation();
       this._refreshHealthPanel();
       this._refreshInvitations();
+      this.requestUpdate();
       //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
       //document.dispatchEvent(event);
     }
@@ -345,13 +410,13 @@ export default class BackendAISummary extends BackendAIPage {
     return num.toString().replace(regexp, ',');
   }
 
-  _refreshInvitations() {
+  _refreshInvitations(refreshOnly = false) {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.invitations().then(res => {
+    globalThis.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
-      if (this.active) {
+      if (this.active && !refreshOnly) {
         setTimeout(() => {
           this._refreshInvitations()
         }, 15000);
@@ -359,15 +424,20 @@ export default class BackendAISummary extends BackendAIPage {
     });
   }
 
-  _acceptInvitation(invitation: any) {
+  _acceptInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.accept_invitation(invitation.id)
+    let panel = e.target.closest('lablup-activity-panel');
+    globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
       .then(response => {
+        panel.setAttribute('disabled', 'true');
+        panel.querySelectorAll('wl-button').forEach((btn) => {
+          btn.setAttribute('disabled', 'true');
+        });
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
-        this._refreshInvitations();
+        this._refreshInvitations(true);
       })
       .catch(err => {
         this.notification.text = PainKiller.relieve(err.title);
@@ -376,15 +446,20 @@ export default class BackendAISummary extends BackendAIPage {
       })
   }
 
-  _deleteInvitation(invitation: any) {
+  _deleteInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
-    window.backendaiclient.vfolder.delete_invitation(invitation.id)
+    let panel = e.target.closest('lablup-activity-panel');
+    globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
+        panel.setAttribute('disabled', 'true');
+        panel.querySelectorAll('wl-button').forEach((btn) => {
+          btn.setAttribute('disabled', 'true');
+        });
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
-        this._refreshInvitations();
+        this._refreshInvitations(true);
       })
   }
 
@@ -393,63 +468,60 @@ export default class BackendAISummary extends BackendAIPage {
     return html`
       <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="plastic-material-title">Statistics</h3>
+        <h3 class="plastic-material-title">${_t('summary.Dashboard')}</h3>
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="Start Menu" elevation="1">
+          <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
               </div>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="System Health" elevation="1">
+          <lablup-activity-panel title="${_t('summary.SystemHealth')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
                 ${this.is_superadmin ? html`
                   <div class="vertical layout center">
                     <div class="big indicator">${this.agents}</div>
-                    <span>Connected nodes</span>
+                    <span>${_t('summary.ConnectedNodes')}</span>
                   </div>` : html``}
                 <div class="vertical layout center">
                   <div class="big indicator">${this.sessions}</div>
-                  <span>Active sessions</span>
+                  <span>${_t('summary.ActiveSessions')}</span>
                 </div>
               </div>
             </div>
           </lablup-activity-panel>
           ${this.is_superadmin ? html`
-          <lablup-activity-panel title="Resource Statistics" elevation="1">
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
             <div slot="message">
-              <div class="layout vertical center flex" style="margin-bottom:5px;">
-                <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-              </div>
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
-                  <iron-icon class="fg green" icon="hardware:developer-board"></iron-icon>
+                  <wl-icon class="fg green">developer_board</wl-icon>
                   <span>CPU</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
-                  <paper-progress class="mem-usage-bar start-bar" value="${this.cpu_total_usage_ratio}"></paper-progress>
-                  <paper-progress class="mem-usage-bar end-bar" id="cpu-usage-bar" value="${this.cpu_current_usage_ratio}"></paper-progress>
+                  <mwc-linear-progress class="mem-usage-bar start-bar" progress="${this.cpu_total_usage_ratio / 100.0}"></mwc-linear-progress>
+                  <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar" progress="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
-                    Cores reserved.
+                    ${_t('summary.CoresReserved')}.
                   </div>
-                  <div>Using <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
+                  <div>${_t('summary.Using')} <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
                   </div>
                 </div>
               </div>
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
-                  <iron-icon class="fg green" icon="hardware:memory"></iron-icon>
+                  <wl-icon class="fg green">memory</wl-icon>
                   <span>RAM</span>
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
-                  <paper-progress class="mem-usage-bar start-bar" id="mem-usage-bar" value="${this.mem_total_usage_ratio}"></paper-progress>
-                  <paper-progress class="mem-usage-bar end-bar" value="${this.mem_current_usage_ratio}"></paper-progress>
+                  <mwc-linear-progress class="mem-usage-bar start-bar" id="mem-usage-bar" progress="${this.mem_total_usage_ratio / 100.0}"></mwc-linear-progress>
+                  <mwc-linear-progress class="mem-usage-bar end-bar" progress="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
-                    reserved.
+                    ${_t('summary.reserved')}.
                   </div>
-                  <div>Using <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
+                  <div>${_t('summary.Using')} <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
                     (${this.mem_current_usage_percent} %)
                   </div>
                 </div>
@@ -457,7 +529,7 @@ export default class BackendAISummary extends BackendAIPage {
               ${this.gpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <wl-icon class="fg green">view_module</wl-icon>
                     <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
@@ -468,54 +540,54 @@ export default class BackendAISummary extends BackendAIPage {
               ${this.fgpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
-                    <iron-icon class="fg green" icon="icons:view-module"></iron-icon>
+                    <wl-icon class="fg green">view_module</wl-icon>
                     <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
                     <vaadin-progress-bar id="vgpu-bar" value="${this.fgpu_used}"
                                          max="${this.fgpu_total}"></vaadin-progress-bar>
                     <div><span class="progress-value"> ${this.fgpu_used}</span>/${this.fgpu_total} GPUs</div>
-                    <div><span class="progress-value">Fractional GPU scaling enabled</div>
+                    <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
                   </div>
                 </div>` : html``}
                 <div class="horizontal center layout">
                   <div style="width:10px;height:10px;margin-left:40px;margin-right:3px;background-color:#4775E3;"></div>
-                  <span style="margin-right:5px;">Reserved</span>
+                  <span style="margin-right:5px;">${_t('summary.Reserved')}</span>
                   <div style="width:10px;height:10px;margin-right:3px;background-color:#A0BD67"></div>
-                  <span style="margin-right:5px;">Used</span>
+                  <span style="margin-right:5px;">${_t('summary.Used')}</span>
                   <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
-                  <span>Total</span>
+                  <span>${_t('summary.Total')}</span>
                 </div>
             </div>
           </lablup-activity-panel>` : html``}
         </div>
-        <h3 class="plastic-material-title">Actions</h3>
+        <h3 class="plastic-material-title">${_t('summary.Actions')}</h3>
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="Shortcut" elevation="1">
+          <lablup-activity-panel title="${_t('summary.Shortcut')}" elevation="1">
             <div slot="message">
               <ul>
-                <li><a href="/data">Upload files</a></li>
+                <li><a href="/data">${_t('summary.UploadFiles')}</a></li>
               </ul>
               <ul>
-                <li><a href="/job">Start a session</a></li>
+                <li><a href="/job">${_t('summary.StartASession')}</a></li>
               </ul>
               ${this.is_admin
       ? html`
                 <ul>
-                  <li><a href="/credential">Create a new key pair</a></li>
-                  <li><a href="/credential">Maintain keypairs</a></li>
+                  <li><a href="/credential">${_t('summary.CreateANewKeypair')}</a></li>
+                  <li><a href="/credential">${_t('summary.MaintainKeypairs')}</a></li>
                 </ul>`
       : html``}
             </div>
           </lablup-activity-panel>
       ${this.invitations ? this.invitations.map(invitation =>
       html`
-            <lablup-activity-panel title="Invitation">
+            <lablup-activity-panel title="${_t('summary.Invitation')}">
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
-                <span class="invitation_folder_name">Folder name: ${invitation.vfolder_name}</span>
+                <span class="invitation_folder_name">${_t("summary.FolderName")}>: ${invitation.vfolder_name}</span>
                 <div class="horizontal center layout">
-                Permission:
+                ${_t("summary.Permission")}>:
                 ${[...invitation.perm].map(c => {
         return html`
                   <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
@@ -526,26 +598,56 @@ export default class BackendAISummary extends BackendAIPage {
                   <wl-button
                     class="fg green"
                     outlined
-                    @click=${e => this._acceptInvitation(invitation)}
+                    @click=${e => this._acceptInvitation(e, invitation)}
                   >
                     <wl-icon>add</wl-icon>
-                    Accept
+                    ${_t('summary.Accept')}
                   </wl-button>
+                  <span class="flex"></span>
                   <wl-button
                     class="fg red"
                     outlined
-                    @click=${e => this._deleteInvitation(invitation)}
+                    @click=${e => this._deleteInvitation(e, invitation)}
                   >
                     <wl-icon>remove</wl-icon>
-                    Decline
+                    ${_t('summary.Decline')}
                   </wl-button>
                 </div>
               </div>
             </lablup-activity-panel>
             `
     ) : ''}
+    ${this.is_admin
+      ? html`
+          <lablup-activity-panel title="${_t('summary.Administration')}" elevation="1">
+            <div slot="message">
+      ${this.is_superadmin ? html`
+              <div class="layout vertical center start flex" style="margin-bottom:5px;">
+                <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+                <div class="layout horizontal center flex" style="margin-top:4px;">
+                  <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.console_version}" ui="flat"></lablup-shields>
+                  ${this.update_checker.updateNeeded ? html`
+                    <mwc-icon-button class="update-button" icon="error_outline" @click="${() => {
+        window.open(this.update_checker.updateURL, '_blank')
+      }}"></mwc-icon-button>
+                  ` : html`
+                    <mwc-icon class="update-icon">done</mwc-icon>
+                  `}
+                </div>
+              </div>` : html``}
+              <ul>
+                <li><a href="/environment">${_t('summary.UpdateEnvironmentImages')}</a></li>
+                <li><a href="/agent">${_t('summary.CheckResources')}</a></li>
+      ${this.is_superadmin ? html`
+                <li><a href="/settings">${_t('summary.ChangeSystemSetting')}</a></li>
+                <li><a href="/environment">${_t('summary.SystemMaintenance')}</a></li>` : html``}
+              </ul>
+            </div>
+          </lablup-activity-panel>`
+      : html``}
         </div>
       </wl-card>
+      <backend-ai-release-check id="update-checker"></backend-ai-release-check>
 `;
   }
 }

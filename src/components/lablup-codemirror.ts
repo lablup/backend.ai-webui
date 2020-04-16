@@ -49,7 +49,7 @@ export default class LablupCodemirror extends LitElement {
   _initEditor() {
     const cm = this.shadowRoot.querySelector('#codemirror-editor');
     if (!cm.__initialized) {
-      window.setTimeout(this._initEditor.bind(this), 100);
+      globalThis.setTimeout(this._initEditor.bind(this), 100);
       return;
     }
     this.editor = cm.__editor;
@@ -58,7 +58,7 @@ export default class LablupCodemirror extends LitElement {
   }
 
   refresh() {
-    window.setTimeout(() => this.editor.refresh(), 100);
+    globalThis.setTimeout(() => this.editor.refresh(), 100);
   }
 
   getValue() {
@@ -86,7 +86,7 @@ export default class LablupCodemirror extends LitElement {
 
   render() {
     return html`
-      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai" src="${this.src}"></wc-codemirror>
+      <wc-codemirror id="codemirror-editor" src="" mode="${this.mode}" theme="monokai"></wc-codemirror>
     `;
   }
 }

@@ -22,6 +22,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Number}) minwidth = 0;
   @property({type: Number}) maxwidth = 0;
   @property({type: Boolean}) pinned = false;
+  @property({type: Boolean}) disabled = false;
 
   constructor() {
     super();
@@ -59,6 +60,10 @@ export default class LablupActivityPanel extends LitElement {
           overflow: hidden;
         }
 
+        wl-card[disabled] {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+
         wl-card > div {
           margin: 20px;
           padding-bottom: 20px;
@@ -79,7 +84,7 @@ export default class LablupActivityPanel extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-card id="activity" elevation="${this.elevation}">
+      <wl-card id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
         <h4 class="horizontal center layout" style="font-weight:bold">
           <span>${this.title}</span>
           <div class="flex"></div>
@@ -87,7 +92,7 @@ export default class LablupActivityPanel extends LitElement {
             <wl-icon>close</wl-icon>
           </wl-button>
         </h4>
-        <div>
+        <div class="${this.disabled ? `disabled` : `enabled`}">
           <slot name="message"></slot>
         </div>
       </wl-card>

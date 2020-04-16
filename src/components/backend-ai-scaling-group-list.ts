@@ -3,19 +3,13 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-icons/av-icons';
-
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@polymer/paper-progress/paper-progress';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -29,9 +23,8 @@ import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
 
-
 import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
 @customElement("backend-ai-scaling-group-list")
@@ -46,29 +39,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     super();
     this.active = false;
     this.schedulerTypes = ['fifo', 'lifo', 'drf'];
-  }
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean
-      },
-      scalingGroups: {
-        type: Array
-      },
-      schedulerTypes: {
-        type: Array
-      },
-      notification: {
-        type: Object
-      },
-      domain: {
-        type: Array
-      },
-      selectedIndex: {
-        type: Number
-      }
-    };
   }
 
   static get styles() {
@@ -131,7 +101,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
   }
 
   connectedCallback() {
@@ -144,26 +114,26 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        window.backendaiclient.scalingGroup.list_all()
+        globalThis.backendaiclient.scalingGroup.list_all()
           .then(res => {
             this.scalingGroups = res.scaling_groups;
           });
 
-        window.backendaiclient.domain.list()
+        globalThis.backendaiclient.domain.list()
           .then(({domains}) => {
             this.domains = domains;
             this.requestUpdate(); // without this render is called beforehands, so update is required
           })
       }, true);
     } else { // already connected
-      window.backendaiclient.scalingGroup.list_all()
+      globalThis.backendaiclient.scalingGroup.list_all()
         .then(res => {
           this.scalingGroups = res.scaling_groups;
         });
 
-      window.backendaiclient.domain.list()
+      globalThis.backendaiclient.domain.list()
         .then(({domains}) => {
           this.domains = domains;
           this.requestUpdate(); // without this render is called beforehands, so update is required
@@ -211,7 +181,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
-          <paper-icon-button
+          <wl-button fab flat inverted
             icon="settings"
             class="fg blue"
             @click=${() => {
@@ -219,15 +189,14 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         this.shadowRoot.querySelector("#modify-scaling-group-active").checked = this.scalingGroups[rowData.index].is_active;
         this._launchDialogById("#modify-scaling-group-dialog")
       }}
-          ></paper-icon-button>
-          <paper-icon-button
+          ><wl-icon>settings</wl-icon></wl-button>
+          <wl-button fab flat inverted
             icon="delete"
             class="fg red"
             @click=${() => {
         this.selectedIndex = rowData.index;
         this._launchDialogById("#delete-scaling-group-dialog")
-      }}
-          ></paper-icon-button>
+      }}><wl-icon>delete</wl-icon></wl-button>
         </div>
       `, root
     )
@@ -251,10 +220,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.scalingGroup.create(scalingGroup, description)
+    globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
       .then(({create_scaling_group: res}) => {
         if (res.ok) {
-          return window.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
+          return globalThis.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
         } else {
           this.notification.text = PainKiller.relieve(res.title);
           this.notification.detail = res.msg;
@@ -300,7 +269,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.scalingGroup.modify(name, input)
+    globalThis.backendaiclient.scalingGroup.modify(name, input)
       .then(({modify_scaling_group}) => {
         if (modify_scaling_group.ok) {
           this.notification.text = "Resource group successfully modified";
@@ -324,7 +293,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
 
-    window.backendaiclient.scalingGroup.delete(name)
+    globalThis.backendaiclient.scalingGroup.delete(name)
       .then(({delete_scaling_group}) => {
         if (delete_scaling_group.ok) {
           this.notification.text = "Resource group successfully deleted";
@@ -341,7 +310,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
-    window.backendaiclient.scalingGroup.list_all()
+    globalThis.backendaiclient.scalingGroup.list_all()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         this.requestUpdate(); // without this render is called beforehands, so update is required
@@ -352,7 +321,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     // languate=HTML
     return html`
       <h4 class="horizontal flex center center-justified layout">
-        <span>Resource groups</span>
+        <span>${_t("resourceGroup.ResourceGroups")}</span>
         <span class="flex"></span>
         <wl-button
           class="fg blue"
@@ -361,51 +330,51 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           @click=${() => this._launchDialogById("#create-scaling-group-dialog")}
         >
           <wl-icon>add</wl-icon>
-          Create
+          ${_t("button.Add")}
         </wl-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
         <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="Name">
+        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.Name")}">
           <template>
             <div> [[item.name]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow"1" header="Description">
+        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.Description")}">
           <template>
             <div> [[item.description]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow"1" header="Active Status" .renderer=${this._activeStatusRenderer}>
+        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.ActiveStatus")}" .renderer=${this._activeStatusRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow"1" header="Driver">
+        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.Driver")}">
           <template>
             <div> [[item.driver]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow"1" header="Driver Options">
+        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.DriverOptions")}">
           <template>
             <div> [[item.driver_opts]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow"1" header="Scheduler">
+        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.Scheduler")}">
           <template>
             <div> [[item.scheduler]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow"1" header="Scheduler Options">
+        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.SchedulerOptions")}">
           <template>
             <div> [[item.scheduler_opts]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow"1" header="Controls" .renderer=${this._boundControlRenderer}>
+        <vaadin-grid-column flex-grow="1" header="${_t("general.Control")}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <wl-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create Resource Group</span>
+            <span>${_t("resourceGroup.CreateResourceGroup")}</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click=${e => this._hideDialog(e)}>
               <wl-icon>close</wl-icon>
@@ -416,18 +385,18 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               <wl-textfield
                 type="text"
                 id="scaling-group-name"
-                label="Resource Group Name"
+                label="${_t("resourceGroup.ResourceGroupName")}"
               ></wl-textfield>
               <wl-textarea
                 name="description"
                 id="scaling-group-description"
-                label="Description"
+                label="${_t("resourceGroup.Description")}"
               ></wl-textarea>
               <wl-select
                 id="scaling-group-domain"
-                label="Select Domain"
+                label="${_t("resourceGroup.SelectDomain")}"
               >
-                <option disabled>Select Domain</option>
+                <option disabled>${_t("resourceGroup.SelectDomain")}</option>
                 ${this.domains.map(e => html`
                     <option value="${e.name}">
                       ${e.name}
@@ -439,7 +408,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                 <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
                   @click="${this._createScalingGroup}">
                   <wl-icon>add</wl-icon>
-                  Create resource group
+                  ${_t("button.Create")}
                 </wl-button>
               </div>
             </fieldset>
@@ -449,7 +418,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       <wl-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Modify resource group</span>
+            <span>${_t("resourceGroup.ModifyResourceGroup")}</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click="${e => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -471,7 +440,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                 `)}
               </wl-select>
               <wl-label for="switch">
-                Active Status
+                ${_t("resourceGroup.ActiveStatus")}
               </wl-label>
               <div id="switch">
                 <wl-switch
@@ -486,19 +455,19 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                 @click=${this._modifyScalingGroup}
               >
                 <wl-icon>check</wl-icon>
-                Save Changes
+                ${_t("button.Save")}
               </wl-button>
             </fieldset>
           </form>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
-        <wl-title slot="header" level="3" style="color: #EF1320">Warning: this cannot be undone!</wl-title>
+        <wl-title slot="header" level="3" style="color: #EF1320">${_t("dialog.warning.CannotBeUndone")}</wl-title>
         <div slot="content">
           <wl-textfield
             id="delete-scaling-group"
             type="text"
-            label="Type resource group name to delete"
+            label="${_t("resourceGroup.TypeResourceGroupNameToDelete")}"
           ></wl-textfield>
           <wl-button
             class="fg red delete"
@@ -508,7 +477,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             @click=${this._deleteScalingGroup}
           >
             <wl-icon>delete</wl-icon>
-            Delete
+            ${_t("button.Delete")}
           </wl-button>
         </div>
       </wl-dialog>

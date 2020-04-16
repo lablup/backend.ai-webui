@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -11,32 +12,26 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-item/paper-item';
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
-import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
+import '@material/mwc-select';
 
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-import '@polymer/iron-icons/hardware-icons';
-import '@polymer/iron-image/iron-image';
-
-import '@vaadin/vaadin-icons/vaadin-icons';
 import toml from 'markty-toml';
 
-import 'weightless/select';
 import 'weightless/progress-spinner';
 
+import './backend-ai-settings-store';
 import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
 
+import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
-import {BackendAiStyles} from './backend-ai-console-styles';
+
 import {
   IronFlex,
   IronFlexAlignment,
@@ -45,7 +40,12 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+import BackendAiSettingsStore from "./backend-ai-settings-store";
 
+registerTranslateConfig({
+  loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
+});
+globalThis.backendaioptions = new BackendAiSettingsStore;
 /**
  Backend.AI GUI Console
 
@@ -55,32 +55,16 @@ import './backend-ai-login';
 
  <backend-ai-console>
  ... content ...
- </backend-ai-console>
+ </backend-ai-console>lablup-terms-of-service
 
  @group Backend.AI Console
+ @element backend-ai-console
  */
-
-declare global {
-  interface Window {
-    backendaiclient: any;
-    backendaiconsole: any;
-    backendaiwsproxy: any;
-    isElectron: boolean;
-    buildVersion: string;
-    packageVersion: string;
-    __local_proxy: string;
-    lablupNotification: any;
-    process: any;
-  }
-
-  interface ai {
-    backend: any;
-  }
-}
 
 @customElement("backend-ai-console")
 export default class BackendAIConsole extends connect(store)(LitElement) {
   public shadowRoot: any; // ShadowRoot
+  @property({type: Boolean}) hasLoadedStrings = false;
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
   @property({type: String}) siteDescription = '';
   @property({type: String}) user_id = 'DISCONNECTED';
@@ -92,6 +76,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: String}) proxy_url = '';
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
+  @property({type: String}) edition = 'Open Source';
+  @property({type: String}) validUntil = '';
   @property({type: Array}) groups = Array();
   @property({type: String}) current_group = '';
   @property({type: Object}) plugins = Object();
@@ -109,147 +95,25 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) sidebarMenu;
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
-  @property({type: Object}) options = Object();
+  @property({type: String}) lang = 'default';
+  @property({type: Array}) supportLanguageCodes = ["en", "ko"];
 
   constructor() {
     super();
-    this.options = {
-      compact_sidebar: false,
-      preserve_login: false
-    }
   }
 
   static get styles() {
     return [
-      BackendAiStyles,
+      BackendAiConsoleStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-        .drawer-menu,
-        paper-listbox.sidebar,
-        .drawer-menu footer,
-        #sidebar-navbar-footer {
-          background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
-        }
-
-        #portrait-bar .bar {
-          background-color: var(--sidebar-topbar-background-color, var(--general-sidebar-topbar-background-color));
-        }
-
-        #app-body {
-          --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
-          --mdc-drawer-border-left: 0;
-          --mdc-drawer-border-right: 0;
-        }
-
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
-
-        .page {
-          display: none;
-        }
-
-        .page[active] {
-          display: block;
-        }
-
-        wl-progress-spinner {
-          --progress-spinner-size: 48px;
-          --progress-spinner-stroke-width: 12px;
-          width: 48px;
-          height: 48px;
-          position: fixed;
-          top: calc(50vh - 24px);
-        }
-
-        @media screen and (max-width: 899px) {
-          wl-progress-spinner {
-            left: calc(50% - 24px);
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          wl-progress-spinner {
-            left: calc(50% + 71px);
-          }
-        }
-
-        .draggable {
-          -webkit-user-select: none !important;
-          -webkit-app-region: drag !important;
-        }
-
-        .drawer-menu footer {
-          width: 190px;
-        }
-
-        mwc-tab {
-          color: #ffffff;
-        }
-
-        .mdc-drawer {
-        }
-
-        wl-select {
-          --input-bg: transparent;
-          --input-color: rgb(221, 221, 221);
-          --input-color-disabled: rgb(221, 221, 221);
-          --input-label-color: rgb(221, 221, 221);
-          --input-label-font-size: 10px;
-          --input-padding-left-right: 0;
-          width: 135px;
-          --input-border-style: 0;
-          --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-        }
-
-        wl-dialog wl-textfield {
-          --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
-        paper-item {
-          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          font-weight: 400;
-        }
-
-        a.email:hover {
-          color: #29b6f6;
-        }
-
-        mwc-menu {
-          --mdc-theme-surface: #f1f1f1;
-          --mdc-menu-item-height : auto;
-          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-        }
-
-        mwc-list-item {
-          font-size : 13px;
-          text-align: 13px;
-        }
-
-        mwc-list-item mwc-icon {
-          --mdc-icon-size : 13px;
-        }
-
-        .mini-ui .full-menu {
-          display: none;
-        }
-
-        .mini-ui a:hover paper-item span.full-menu {
-        }
-      `];
+      IronPositioning];
   }
 
   firstUpdated() {
-    window.lablupNotification = this.shadowRoot.querySelector('#notification');
-    this.notification = window.lablupNotification;
+    globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
+    this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
@@ -257,13 +121,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.splash = this.shadowRoot.querySelector('#about-panel');
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
-    if (window.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
+    if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     let configPath;
-    if (window.isElectron) {
+    if (globalThis.isElectron) {
       configPath = './config.toml';
       document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
       document.addEventListener('backend-ai-app-close', this.close_app_window.bind(this, true));
@@ -274,40 +138,37 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
-      if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         this.loginPanel.login();
       }
     }).catch(err => {
       console.log("Initialization failed.");
-      if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+      if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         this.loginPanel.block('Configuration is not loaded.', 'Error');
       }
     });
-    this._readUserSetting('compact_sidebar', false);
-    this._readUserSetting('preserve_login', false);
-    this.mini_ui = this.options['compact_sidebar'];
+    this.mini_ui = globalThis.backendaioptions.get('compact_sidebar');
+    globalThis.mini_ui = this.mini_ui;
 
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
-    window.addEventListener("resize", (event) => {
+    globalThis.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
-    // TODO : it should be reimplemented.
-    // window.addEventListener("click", (event) => {
-    //   let path = event['path'];
-    //   if (typeof path === 'object') {
-    //     let elements_name = Object.keys(path).map(function (key, index) {
-    //       return path[key]['id'];
-    //     });
-    //     if (!elements_name.includes("dropdown-button")) {
-    //       this.shadowRoot.querySelector(".dropdown-content").classList.remove('dropdown-show');
-    //     }
-    //   }
-    // });
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', this.refreshPage.bind(this));
+    if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
+      this.lang = globalThis.navigator.language;
+    } else if (this.supportLanguageCodes.includes(globalThis.backendaioptions.get('language'))) {
+      this.lang = globalThis.backendaioptions.get('language');
+    } else {
+      this.lang = "en";
+    }
+    globalThis.backendaioptions.set('current_language', this.lang);
+    await setLanguage(this.lang);
+    this.hasLoadedStrings = true;
   }
 
   disconnectedCallback() {
@@ -319,18 +180,32 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     super.attributeChangedCallback(name, oldval, newval);
   }
 
+  shouldUpdate(changedProperties) {
+    return this.hasLoadedStrings && super.shouldUpdate(changedProperties);
+  }
+
   loadConfig(config) {
     if (typeof config.general !== "undefined" && 'siteDescription' in config.general) {
       this.siteDescription = config.general.siteDescription;
     }
     if (typeof config.general !== "undefined" && 'connectionMode' in config.general) {
       this.connection_mode = config.general.connectionMode;
-      console.log(this.connection_mode);
+      //console.log(this.connection_mode);
     }
     if (typeof config.general !== "undefined" && 'connectionServer' in config.general) {
       this.connection_server = config.general.connectionServer;
-      console.log(this.connection_server);
+      //console.log(this.connection_server);
     }
+    if (typeof config.license !== "undefined" && 'edition' in config.license) {
+      this.edition = config.license.edition;
+      //console.log(this.edition);
+    }
+    globalThis.packageEdition = this.edition;
+    if (typeof config.license !== "undefined" && 'validUntil' in config.license) {
+      this.validUntil = config.license.validUntil;
+      //console.log(this.validUntil);
+    }
+    globalThis.packageValidUntil = this.validUntil;
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
@@ -352,43 +227,40 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.loginPanel.refreshWithConfig(config);
   }
 
-  _readUserSetting(name, default_value = true) {
-    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
-    if (value !== null && value != '' && value != '""') {
-      if (value === "false") {
-        this.options[name] = false;
-      } else if (value === "true") {
-        this.options[name] = true;
-      } else {
-        this.options[name] = value;
-      }
-    } else {
-      this.options[name] = default_value;
-    }
-  }
-
   refreshPage() {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
-    this.is_connected = true;
-    window.backendaiclient.proxyURL = this.proxy_url;
-    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
-      && typeof window.backendaiclient.is_admin !== "undefined" && window.backendaiclient.is_admin === true) {
+    globalThis.backendaiclient.proxyURL = this.proxy_url;
+    if (typeof globalThis.backendaiclient !== "undefined" && globalThis.backendaiclient != null
+      && typeof globalThis.backendaiclient.is_admin !== "undefined" && globalThis.backendaiclient.is_admin === true) {
       this.is_admin = true;
     } else {
       this.is_admin = false;
     }
-    if (typeof window.backendaiclient !== "undefined" && window.backendaiclient != null
-      && typeof window.backendaiclient.is_superadmin !== "undefined" && window.backendaiclient.is_superadmin === true) {
+    if (typeof globalThis.backendaiclient !== "undefined" && globalThis.backendaiclient != null
+      && typeof globalThis.backendaiclient.is_superadmin !== "undefined" && globalThis.backendaiclient.is_superadmin === true) {
       this.is_superadmin = true;
     } else {
       this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
+    this._writeRecentProjectGroup(this.current_group);
+    document.body.style.backgroundImage = 'none';
+    this.appBody.style.visibility = 'visible';
+    let curtain = this.shadowRoot.getElementById('loading-curtain');
+    curtain.classList.add('visuallyhidden');
+    curtain.addEventListener('transitionend', () => {
+      curtain.classList.add('hidden');
+      this.is_connected = true;
+    }, {
+      capture: false,
+      once: true,
+      passive: false
+    });
   }
 
   showUpdateNotifier() {
     let indicator = <any>this.shadowRoot.getElementById('backend-ai-indicator');
-    indicator.innerHTML = 'New console available. Please <a onclick="window.location.reload()">reload</a> to update.';
+    indicator.innerHTML = 'New console available. Please <a onclick="globalThis.location.reload()">reload</a> to update.';
     indicator.show();
   }
 
@@ -413,6 +285,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else {
       this.mini_ui = false;
     }
+    globalThis.mini_ui = this.mini_ui;
+    let event = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
+    document.dispatchEvent(event);
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 
@@ -425,11 +300,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
         this.mini_ui = false;
+        globalThis.mini_ui = this.mini_ui;
       }
     } else { // Open drawer
       if (this.mini_ui) {
-        this.appBody.style.setProperty('--mdc-drawer-width', '71px');
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '71px');
+        this.appBody.style.setProperty('--mdc-drawer-width', '54px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', '190px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
@@ -441,31 +317,27 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _refreshUserInfoPanel() {
-    this.user_id = window.backendaiclient.email;
-    this.domain = window.backendaiclient._config.domainName;
-    this.current_group = window.backendaiclient.current_group;
-    this.groups = window.backendaiclient.groups;
+    this.user_id = globalThis.backendaiclient.email;
+    this.domain = globalThis.backendaiclient._config.domainName;
+    this.current_group = this._readRecentProjectGroup();
+    globalThis.backendaiclient.current_group = this.current_group;
+    this.groups = globalThis.backendaiclient.groups;
     let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
-    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === false) {
-      (this.shadowRoot.getElementById('group-select') as any).disabled = true;
-      (this.shadowRoot.getElementById('group-select') as any).label = 'No Project';
-    }
     // Detached from template to support live-update after creating new group (will need it)
     if (groupSelectionBox.hasChildNodes()) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild);
     }
-    let select = document.createElement('wl-select');
-    select.label = "Project";
-    select.name = 'group-select';
+    let select = document.createElement('mwc-select');
+    select.label = _text("console.menu.Project");
     select.id = 'group-select';
     select.value = this.current_group;
-    select.addEventListener('input', this.changeGroup.bind(this));
-    let opt = document.createElement('option');
+    select.addEventListener('selected', this.changeGroup.bind(this));
+    let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
-    opt.innerHTML = 'Select Project';
+    opt.innerHTML = _text("console.menu.SelectProject");
     select.appendChild(opt);
     this.groups.map(group => {
-      opt = document.createElement('option');
+      opt = document.createElement('mwc-list-item');
       opt.value = group;
       if (this.current_group === group) {
         opt.selected = true;
@@ -515,7 +387,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.notification.show();
       return;
     }
-    const p = window.backendaiclient.updatePassword(oldPassword, newPassword, newPassword2);
+    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword, newPassword2);
     p.then((resp) => {
       this.notification.text = 'Password updated';
       this.notification.show();
@@ -532,11 +404,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
   }
 
+  _menuSelected(e) {
+    // Reserved for future use.
+  }
+
   updated(changedProps: any) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
@@ -545,126 +421,128 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
         this._page = view;
       }
-      switch (view) {
-        case 'summary':
-          this.menuTitle = 'Summary';
-          this.sidebarMenu.selected = 0;
-          this.updateTitleColor('var(--paper-green-800)', '#efefef');
-          break;
-        case 'job':
-          this.menuTitle = 'Sessions';
-          this.sidebarMenu.selected = 1;
-          this.updateTitleColor('var(--paper-red-800)', '#efefef');
-          break;
-        case 'pipeline':
-          this.menuTitle = 'Pipeline';
-          this.sidebarMenu.selected = 2;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
-        case 'experiment':
-          this.menuTitle = 'Experiments';
-          this.sidebarMenu.selected = 2;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
-        case 'data':
-          this.menuTitle = 'Data & Storage';
-          this.sidebarMenu.selected = 3;
-          this.updateTitleColor('var(--paper-orange-800)', '#efefef');
-          break;
-        case 'statistics':
-          this.menuTitle = 'Statistics';
-          this.sidebarMenu.selected = 4;
-          this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
-          break;
-        case 'usersettings':
-          this.menuTitle = 'Settings & Logs';
-          this.sidebarMenu.selected = 4;
-          this.updateTitleColor('var(--paper-teal-800)', '#efefef');
-          break;
-        case 'credential':
-          this.menuTitle = 'User Credentials & Policies';
-          this.sidebarMenu.selected = 6;
-          this.updateTitleColor('var(--paper-lime-800)', '#efefef');
-          break;
-        case 'environment':
-          this.menuTitle = 'Environments & Presets';
-          this.sidebarMenu.selected = 7;
-          this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
-          break;
-        case 'agent':
-          this.menuTitle = 'Computation Resources';
-          this.sidebarMenu.selected = 8;
-          this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-          break;
-        case 'settings':
-          this.menuTitle = 'Settings';
-          this.sidebarMenu.selected = 9;
-          this.updateTitleColor('var(--paper-green-800)', '#efefef');
-          break;
-        case 'maintenance':
-          this.menuTitle = 'Maintenance';
-          this.sidebarMenu.selected = 10;
-          this.updateTitleColor('var(--paper-pink-800)', '#efefef');
-          break;
-        case 'logs':
-          this.menuTitle = 'Logs';
-          this.sidebarMenu.selected = null;
-          this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
-          break;
-        default:
-          this.menuTitle = 'LOGIN REQUIRED';
-          this.sidebarMenu.selected = 0;
-      }
+      this._updateSidebar(view);
+    }
+  }
+
+  _updateSidebar(view) {
+    switch (view) {
+      case 'summary':
+        this.menuTitle = _text("console.menu.Summary");
+        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        break;
+      case 'job':
+        this.menuTitle = _text("console.menu.Sessions");
+        this.updateTitleColor('var(--paper-red-800)', '#efefef');
+        break;
+      case 'pipeline':
+        this.menuTitle = _text("console.menu.Pipeline");
+        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+        break;
+      case 'experiment':
+        this.menuTitle = _text("console.menu.Experiments");
+        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+        break;
+      case 'data':
+        this.menuTitle = _text("console.menu.Data&Storage");
+        this.updateTitleColor('var(--paper-orange-800)', '#efefef');
+        break;
+      case 'statistics':
+        this.menuTitle = _text("console.menu.Statistics");
+        this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
+        break;
+      case 'usersettings':
+        this.menuTitle = _text("console.menu.Settings&Logs");
+        this.updateTitleColor('var(--paper-teal-800)', '#efefef');
+        break;
+      case 'credential':
+        this.menuTitle = _text("console.menu.UserCredentials&Policies");
+        this.updateTitleColor('var(--paper-lime-800)', '#efefef');
+        break;
+      case 'environment':
+        this.menuTitle = _text("console.menu.Environments&Presets");
+        this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
+        break;
+      case 'agent':
+        this.menuTitle = _text("console.menu.ComputationResources");
+        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+        break;
+      case 'settings':
+        this.menuTitle = _text("console.menu.Configurations");
+        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        break;
+      case 'maintenance':
+        this.menuTitle = _text("console.menu.Maintenance");
+        this.updateTitleColor('var(--paper-pink-800)', '#efefef');
+        break;
+      case 'information':
+        this.menuTitle = _text("console.menu.Information");
+        this.updateTitleColor('var(--paper-purple-800)', '#efefef');
+        break;
+      case 'logs':
+        this.menuTitle = _text("console.menu.Logs");
+        this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
+        break;
+      default:
+        this.menuTitle = 'LOGIN REQUIRED';
     }
   }
 
   async close_app_window(performClose = false) {
-    this._readUserSetting('preserve_login', false); // Refresh the option. (it can be changed during the session)
-    if (this.options['preserve_login'] === false) { // Delete login information.
+    if (globalThis.backendaioptions.get('preserve_login') === false) { // Delete login information.
       this.notification.text = 'Clean up login session...';
       this.notification.show();
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) {
+          localStorage.removeItem(key);
+        }
       }
+      // remove data in sessionStorage
+      sessionStorage.clear();
     }
-    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
-      if (window.backendaiclient._config.connectionMode === 'SESSION') {
-        await window.backendaiclient.logout();
+    if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
+      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
+        await globalThis.backendaiclient.logout();
       }
-      window.backendaiclient = null;
+      globalThis.backendaiclient = null;
     }
   }
 
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
-    if (typeof window.backendaiclient != 'undefined' && window.backendaiclient !== null) {
+    this._deleteRecentProjectGroupInfo();
+    if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = 'Clean up now...';
       this.notification.show();
-      if (window.backendaiclient._config.connectionMode === 'SESSION') {
-        await window.backendaiclient.logout();
+      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
+        await globalThis.backendaiclient.logout();
       }
       this.is_admin = false;
       this.is_superadmin = false;
-      window.backendaiclient = null;
+      globalThis.backendaiclient = null;
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) localStorage.removeItem(key);
+        if (/^(backendaiconsole\.login\.)/.test(key)) {
+          localStorage.removeItem(key);
+        }
       }
+      // remove data in sessionStorage
+      sessionStorage.clear();
 
       if (performClose === true) {
         // Do nothing. this window will be closed.
-      } else if (window.isElectron) {
+      } else if (globalThis.isElectron) {
         this.user_id = '';
         this.domain = '';
         this._page = 'summary';
-        window.history.pushState({}, '', '/summary');
+        globalThis.history.pushState({}, '', '/summary');
         store.dispatch(navigate(decodeURIComponent('/')));
         this.loginPanel.login();
       } else {
-        window.location.reload();
+        globalThis.location.reload();
       }
     }
   }
@@ -675,9 +553,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   changeGroup(e) {
-    window.backendaiclient.current_group = e.target.value;
-    this.current_group = window.backendaiclient.current_group;
-    let event = new CustomEvent("backend-ai-group-changed", {"detail": window.backendaiclient.current_group});
+    globalThis.backendaiclient.current_group = e.target.value;
+    this.current_group = globalThis.backendaiclient.current_group;
+    this._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
+    let event = new CustomEvent("backend-ai-group-changed", {"detail": globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
 
@@ -700,8 +579,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.title = "Terms of Service";
-      this.TOSdialog.tosEntryURL = '/resources/documents/terms-of-service.html';
+      this.TOSdialog.tosLanguage = this.lang;
+      this.TOSdialog.title = _t("console.menu.TermsOfService");
+      this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
   }
@@ -709,15 +589,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showPPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.title = "Privacy Policy";
-      this.TOSdialog.tosEntryURL = '/resources/documents/privacy-policy.html';
+      this.TOSdialog.tosLanguage = this.lang;
+      this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
+      this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }
   }
 
+  _moveTo(url) {
+    globalThis.history.pushState({}, '', url);
+    store.dispatch(navigate(decodeURIComponent(url), {}));
+  }
+
   _moveToLogPage() {
-    let currentPage = window.location.toString().split(/[\/]+/).pop();
-    window.history.pushState({}, '', '/usersettings');
+    let currentPage = globalThis.location.toString().split(/[\/]+/).pop();
+    globalThis.history.pushState({}, '', '/usersettings');
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
     if (currentPage && currentPage === 'usersettings') {
       let event = new CustomEvent('backend-ai-usersettings-logs', {});
@@ -725,9 +611,33 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  _readRecentProjectGroup() {
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
+    let value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
+    if (value) { // Check if saved group has gone between logins / sessions
+      if (globalThis.backendaiclient.groups.length > 0 && globalThis.backendaiclient.groups.includes(value)) {
+        return value; // value is included. So it is ok.
+      } else {
+        this._deleteRecentProjectGroupInfo();
+        return globalThis.backendaiclient.current_group;
+      }
+    }
+    return globalThis.backendaiclient.current_group;
+  }
+
+  _writeRecentProjectGroup(value: string) {
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
+    globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
+  }
+
+  _deleteRecentProjectGroupInfo() {
+    let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
+    globalThis.backendaioptions.delete('projectGroup.' + endpointId);
+  }
+
   _moveToUserSettingsPage() {
-    let currentPage = window.location.toString().split(/[\/]+/).pop();
-    window.history.pushState({}, '', '/usersettings');
+    let currentPage = globalThis.location.toString().split(/[\/]+/).pop();
+    globalThis.history.pushState({}, '', '/usersettings');
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'general'}));
     if (currentPage && currentPage === 'usersettings') {
       let event = new CustomEvent('backend-ai-usersettings', {});
@@ -735,141 +645,116 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
-  render() {
+  protected render() {
     // language=HTML
     return html`
-      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}">
+      <div id="loading-curtain" class="loading-background"></div>
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
-            <div id="portrait-bar" class="draggable">
-              <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
-                <div class="portrait-canvas">
-                  <iron-image width=43 height=43 style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
-                    sizing="contain"></iron-image>
-                </div>
-                <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
-                  <div class="site-name"><span class="bold">Backend</span>.AI</div>
-                  ${this.siteDescription ?
+          <div id="portrait-bar" class="draggable">
+            <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
+              <div class="portrait-canvas">
+                <img style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
+                  sizing="contain" />
+              </div>
+              <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
+                <div class="site-name"><span class="bold">Backend</span>.AI</div>
+                ${this.siteDescription ?
       html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
       html``
     }
-                </div>
-                <span class="flex"></span>
               </div>
+              <span class="flex"></span>
             </div>
-            <div class="horizontal start-justified layout">
-              <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
-              <div id="group-select-box" class="full-menu" style="height:50px;"></div>
-            </div>
-            <paper-listbox id="sidebar-menu" class="sidebar list" selected="0">
-              <a ?selected="${this._page === 'summary'}" href="/summary" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon id="activities-icon" class="fg green" icon="icons:view-quilt"></iron-icon>
-                  <span class="full-menu">Summary</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'job'}" href="/job" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg red" icon="icons:subject"></iron-icon>
-                  <span class="full-menu">Sessions</span>
-                </paper-item>
-              </a>
-              ${true ? html`
-              <a ?selected="${this._page === 'pipeline'}" href="/pipeline" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
-                  Pipeline
-                </paper-item>
-              </a>` : html``}
-              ${false ? html`
-              <paper-item disabled>
-                <iron-icon class="fg blue" icon="icons:pageview"></iron-icon>
-                <span class="full-menu">Experiments</span>
-              </paper-item>` : html``}
-              <a ?selected="${this._page === 'data'}" href="/data" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg orange" icon="vaadin:folder-open-o"></iron-icon>
-                  <span class="full-menu">Data &amp; Storage</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'statistics'}" href="/statistics" tabindex="-1" role="menuItem">
-                <paper-item link>
-                  <iron-icon class="fg cyan" icon="icons:assessment"></iron-icon>
-                  <span class="full-menu">Statistics</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'usersettings'}" href="/usersettings" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg teal" icon="icons:settings"></iron-icon>
-                  <span class="full-menu">Settings</span>
-                </paper-item>
-              </a>
-
-              ${this.is_admin ?
+          </div>
+          <div class="horizontal start-justified layout">
+            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
+            <div id="group-select-box" class="full-menu" style="height:50px;"></div>
+          </div>
+          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
+              <mwc-icon slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Summary")}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
+              <mwc-icon slot="graphic" class="fg red">ballot</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Sessions")}</span>
+            </mwc-list-item>
+            ${true ? html`
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}">
+              <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Pipeline")}</span>
+            </mwc-list-item>` : html``}
+            ${false ? html`
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}">
+              <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Experiments")}</span>
+            </mwc-list-item>` : html``}
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}">
+              <mwc-icon slot="graphic" class="fg orange">cloud_upload</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
+              <mwc-icon slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Statistics")}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
+              <mwc-icon  slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Settings")}</span>
+            </mwc-list-item>
+            ${this.is_admin ?
       html`
-              <h4 class="full-menu" style="font-size:10px;font-weight:100;border-top:1px solid #444;padding-top: 10px;padding-left:20px;">Administration</h4>
-
-              <a ?selected="${this._page === 'credential'}" href="/credential" tabindex="-1" role="menuitem">
-                <paper-item link ?disabled="${!this.is_admin}">
-                  <iron-icon class="fg lime" icon="icons:face"></iron-icon>
-                  <span class="full-menu">Users</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'environment'}" href="/environment" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg orange" icon="icons:extension"></iron-icon>
-                  <span class="full-menu">Environments</span>
-                </paper-item>
-              </a>
-      ` : html``}
-              ${this.is_superadmin ?
+            <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
+              <mwc-icon  slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Users")}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
+              <mwc-icon slot="graphic" class="fg orange" icon="icons:extension">extension</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Environments")}</span>
+            </mwc-list-item>
+    ` : html``}
+            ${this.is_superadmin ?
       html`
-              <a ?selected="${this._page === 'agent'}" href="/agent" tabindex="-1" role="menuitem">
-                <paper-item link ?disabled="${!this.is_admin}">
-                  <iron-icon class="fg blue" icon="hardware:device-hub"></iron-icon>
-                  <span class="full-menu">Resources</span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'settings'}" href="/settings" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg green" icon="icons:settings"></iron-icon>
-                  <span class="full-menu">System Settings</span>
-                  <span class="flex"></span>
-                </paper-item>
-              </a>
-              <a ?selected="${this._page === 'maintenance'}" href="/maintenance" tabindex="-1" role="menuitem">
-                <paper-item link>
-                  <iron-icon class="fg pink" icon="icons:build"></iron-icon>
-                  <span class="full-menu">Maintenance</span>
-                  <span class="flex"></span>
-                </paper-item>
-              </a>
-      ` : html``}
-            </paper-listbox>
-            <footer class="full-menu">
-              <div class="terms-of-use" style="margin-bottom:50px;">
-                <small style="font-size:11px;">
-                  <a @click="${() => this.showTOSAgreement()}">Terms of Service</a>
-                  ·
-                  <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">Privacy Policy</a>
-                  ·
-                  <a @click="${() => {
-      this.splash.show()
-    }}">About</a>
-                  ${this.allow_signout === true ? html`
-                  ·
-                  <a @click="${() => {
-      this.loginPanel.signout()
-    }}">Leave service</a>
-                  ` : html``}
-                </small>
-              </div>
-            </footer>
-            <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
-              <address>
-                <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">20.02.5.200227</small>
-              </address>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
+              <mwc-icon slot="graphic" class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Resources")}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
+              <mwc-icon slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Configurations")}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
+              <mwc-icon slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Maintenance")}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
+              <mwc-icon slot="graphic" class="fg purple">info</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Information")}</span>
+            </mwc-list-item>
+    ` : html``}
+          </mwc-list>
+          <footer class="full-menu">
+            <div class="terms-of-use" style="margin-bottom:50px;">
+              <small style="font-size:11px;">
+                <a @click="${() => this.showTOSAgreement()}">${_t("console.menu.TermsOfService")}</a>
+                ·
+                <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("console.menu.PrivacyPolicy")}</a>
+                ·
+                <a @click="${() => this.splash.show()}">${_t("console.menu.About")}</a>
+                ${this.allow_signout === true ? html`
+                ·
+                <a @click="${() => this.loginPanel.signout()}">${_t("console.menu.LeaveService")}</a>
+                ` : html``}
+              </small>
             </div>
+          </footer>
+          <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
+            <address>
+              <small class="sidebar-footer">Lablup Inc.</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.04.2.200415</small>
+            </address>
+          </div>
         </div>
         <div slot="appContent">
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
@@ -879,40 +764,32 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
-              <mwc-icon-button slot="actionItems" id="dropdown-button"
-                               icon="account_circle"
-                               @click="${() => this._toggleDropdown()}">
-              </mwc-icon-button>
-              <mwc-menu id="dropdown-menu" absolute x=-50 y=40>
-                <mwc-list-item>
-                  <a class="horizontal layout start center"
-                     @click="${() => this._openUserPrefDialog()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                    Change Password
-                </a>
-                </mwc-list-item>
-                <mwc-list-item>
-                  <a class="horizontal layout start center"
-                     @click="${() => this._moveToUserSettingsPage()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
-                    Preferences
-                  </a>
-                </mwc-list-item>
-                <mwc-list-item>
-                  <a class="horizontal layout start center"
-                    @click="${() => this._moveToLogPage()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                    Logs / Errors
-                  </a>
-                </mwc-list-item>
-                <mwc-list-item>
-                  <a class="horizontal layout start center" id="sign-button"
-                    @click="${() => this.logout()}">
-                    <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
-                    Log Out
-                  </a>
-                </mwc-list-item>
-              </mwc-menu>
+            <mwc-icon-button slot="actionItems" id="dropdown-button"
+                             icon="account_circle"
+                             @click="${() => this._toggleDropdown()}">
+            </mwc-icon-button>
+            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=40>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
+                  ${_t("console.menu.About")}
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                  ${_t("console.menu.ChangePassword")}
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                  ${_t("console.menu.Preferences")}
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                  ${_t("console.menu.LogsErrors")}
+              </mwc-list-item>
+              <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+                  <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                  ${_t("console.menu.LogOut")}
+              </mwc-list-item>
+            </mwc-menu>
           </mwc-top-app-bar-fixed>
 
           <div class="content">
@@ -930,31 +807,31 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
                 <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
+                <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
               </div>
             </section>
           </div>
-          </div>
+        </div>
       </mwc-drawer>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         You are now ${this._offline ? 'offline' : 'online'}.
       </backend-ai-offline-indicator>
-      <backend-ai-login id="login-panel"></backend-ai-login>
+      <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Change password</wl-title>
-         <div slot="content">
-            <wl-textfield id="pref-original-password" type="password" label="Original password" maxLength="30"></wl-textfield>
-            <wl-textfield id="pref-new-password" type="password" label="New password" maxLength="30"></wl-textfield>
-            <wl-textfield id="pref-new-password2" type="password" label="New password (again)" maxLength="30"></wl-textfield>
-         </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">Cancel</wl-button>
-            <wl-button class="ok" @click="${this._updateUserPassword}">Update</wl-button>
-         </div>
+       <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
+       <div slot="content">
+        <wl-textfield id="pref-original-password" type="password" label="${_t("console.menu.OriginalPassword")}" maxLength="30"></wl-textfield>
+        <wl-textfield id="pref-new-password" type="password" label="${_t("console.menu.NewPassword")}" maxLength="30"></wl-textfield>
+        <wl-textfield id="pref-new-password2" type="password" label="${_t("console.menu.NewPasswordAgain")}" maxLength="30"></wl-textfield>
+       </div>
+       <div slot="footer">
+        <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
+        <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
+       </div>
       </wl-dialog>
     `;
   }

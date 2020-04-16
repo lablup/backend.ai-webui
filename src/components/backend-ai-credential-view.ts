@@ -2,9 +2,9 @@
  * Backend.AI-credential-view
  */
 
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
-import '@polymer/paper-input/paper-input';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
@@ -32,7 +32,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 
 import JsonToCsv from '../lib/json_to_csv';
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from "./backend-ai-console-styles";
+import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
   IronFlexAlignment,
@@ -69,7 +69,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: Array}) allowed_vfolder_hosts = Array();
   @property({type: String}) default_vfolder_host = '';
-  @property({type: Boolean}) use_user_list = false;
   @property({type: String}) new_access_key = '';
   @property({type: String}) new_secret_key = '';
   @property({type: String}) _activeTab = 'users';
@@ -238,7 +237,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     document.addEventListener('backend-ai-credential-refresh', () => {
       this.shadowRoot.querySelector('#active-credential-list').refresh();
       this.shadowRoot.querySelector('#inactive-credential-list').refresh();
@@ -250,7 +249,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       }, true);
     });
 
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._preparePage();
       });
@@ -260,17 +259,13 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _preparePage() {
-    if (window.backendaiclient.is_admin !== true) {
+    if (globalThis.backendaiclient.is_admin !== true) {
       this.disablePage();
     } else {
       this.isAdmin = true;
     }
-    if (window.backendaiclient.isAPIVersionCompatibleWith('v4.20190601') === true) {
-      this.use_user_list = true;
-      this._activeTab = 'user-lists';
-    } else {
-      this.use_user_list = false;
-    }
+    this._activeTab = 'user-lists';
+    this._addValidatorToPolicyInput();
     this._getResourceInfo();
     this._getResourcePolicies();
     this._updateInputStatus(this.cpu_resource);
@@ -305,7 +300,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _readVFolderHostInfo() {
-    window.backendaiclient.vfolder.list_hosts().then(response => {
+    globalThis.backendaiclient.vfolder.list_hosts().then(response => {
       this.allowed_vfolder_hosts = response.allowed;
       this.default_vfolder_host = response.default;
     }).catch(err => {
@@ -336,13 +331,13 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   async _getResourcePolicies() {
-    return window.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
+    return globalThis.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
       'total_resource_slots',
       'max_concurrent_sessions',
       'max_containers_per_session',
     ]).then((response) => {
-      let policies = window.backendaiclient.utils.gqlToObject(response.keypair_resource_policies, 'name');
-      let policyNames = window.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
+      let policies = globalThis.backendaiclient.utils.gqlToObject(response.keypair_resource_policies, 'name');
+      let policyNames = globalThis.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
       this.resource_policies = policies;
       this.resource_policy_names = policyNames;
     });
@@ -358,14 +353,14 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
       user_id = this.shadowRoot.querySelector('#id_new_user_id').value;
     } else {
-      user_id = window.backendaiclient.email;
+      user_id = globalThis.backendaiclient.email;
     }
     let resource_policy = this.shadowRoot.querySelector('#resource-policy').value;
     let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
     let access_key = this.shadowRoot.querySelector('#id_new_access_key').value;
     let secret_key = this.shadowRoot.querySelector('#id_new_secret_key').value;
     // Read resources
-    window.backendaiclient.keypair.add(user_id, is_active, is_admin,
+    globalThis.backendaiclient.keypair.add(user_id, is_active, is_admin,
       resource_policy, rate_limit, access_key, secret_key).then(response => {
       this.shadowRoot.querySelector('#new-keypair-dialog').hide();
       this.notification.text = "Keypair successfully created.";
@@ -437,8 +432,14 @@ export default class BackendAICredentialView extends BackendAIPage {
       return;
     }
     try {
+      let name_field = this.shadowRoot.querySelector('#id_new_policy_name');
+      name_field.checkValidity();
+      let name = name_field.value;
+      if (name === '') {
+        throw {"message": "Policy name should not be empty"};
+      }
       let input = this._readResourcePolicyInput();
-      window.backendaiclient.resourcePolicy.add(name, input).then(response => {
+      globalThis.backendaiclient.resourcePolicy.add(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
         this.notification.text = "Resource policy successfully created.";
         this.notification.show();
@@ -517,10 +518,10 @@ export default class BackendAICredentialView extends BackendAIPage {
       'role': 'user'
     };
 
-    window.backendaiclient.group.list()
+    globalThis.backendaiclient.group.list()
       .then(res => {
         const default_id = res.groups.find(x => x.name === 'default').id;
-        return Promise.resolve(window.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
+        return Promise.resolve(globalThis.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
       })
       .then(res => {
         this.shadowRoot.querySelector('#new-user-dialog').hide();
@@ -546,7 +547,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     try {
       let input = this._readResourcePolicyInput();
 
-      window.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
+      globalThis.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
         this.notification.text = "Resource policy successfully updated.";
         this.notification.show();
@@ -642,43 +643,42 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
-  _validatePolicyName(e) {
-    let policy_info = e.target;
-    let policy_name = e.target.value;
-    policy_info.validityTransform = (nativeValidity) => {
-      if (!nativeValidity) { 
-        policy_info.validationMessage = "Policy name Required."
+  _addValidatorToPolicyInput() {
+    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    policy_info.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity) {
+        policy_info.validationMessage = _text("credential.validation.PolicyName");
         return {
           valid: false,
           valueMissing: true
-        }
+        };
       }
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
-          policy_info.validationMessage = "Allows letters, numbers and -_.";
+          policy_info.validationMessage = _text("credential.validation.LetterNumber-_dot");
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid
           };
         }
         else if (nativeValidity.valueMissing) {
-          policy_info.validationMessage = "Policy name Required."
+          policy_info.validationMessage = _text("credential.validation.PolicyName");
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
           }
         }
         else {
-          policy_info.validationMessage = "Allows letters, numbers and -_."
+          policy_info.validationMessage = _text("credential.validation.LetterNumber-_dot");
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid,
           }
         }
       } else {
-        const isValid = !this.resource_policy_names.includes(policy_name);
+        const isValid = !this.resource_policy_names.includes(value);
         if (!isValid) {
-          policy_info.validationMessage = "Policy Name Already Exists!";
+          policy_info.validationMessage = _text("credential.validation.NameAlreadyExists");
         }
         return {
           valid: isValid,
@@ -686,7 +686,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         };
       }
     };
-   }
+  }
 
   _updateInputStatus(resource) {
     let textfield = resource;
@@ -768,11 +768,9 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-card class="admin item" elevation="1">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
-            ${this._status === 'active' && this.use_user_list === true ? html`
-              <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">Users</wl-tab>
-            ` : html``}
-            <wl-tab value="credential-lists" ?checked="${this._status === 'active' && this.use_user_list === true}" @click="${(e) => this._showTab(e.target)}">Credentials</wl-tab>
-            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">Resource Policies</wl-tab>
+            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
+            <wl-tab value="credential-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.Credentials")}</wl-tab>
+            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.ResourcePolicies")}</wl-tab>
           </wl-tab-group>
           ${this.isAdmin ? html`
               <span class="flex"></span>
@@ -782,7 +780,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                   <mwc-list-item>
                     <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
                       <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                      export CSV
+                      ${_t("credential.exportCSV")}
                     </a>
                   </mwc-list-item>
                 </mwc-menu>
@@ -791,15 +789,15 @@ export default class BackendAICredentialView extends BackendAIPage {
         </h3>
         <wl-card id="user-lists" class="admin item tab-content">
           <h4 class="horizontal flex center center-justified layout">
-            <span>Users</span>
+            <span>${_t("credential.Users")}</span>
             <span class="flex"></span>
             <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
               <wl-icon>add</wl-icon>
-              Create user
+              ${_t("credential.CreateUser")}
             </wl-button>
           </h4>
           <div>
-            <backend-ai-user-list id="user-list" ?active="${this._status === 'active' && this.use_user_list === true}"></backend-ai-user-list>
+            <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
           </div>
         </wl-card>
         <wl-card id="credential-lists" class="tab-content" style="display:none;">
@@ -807,11 +805,11 @@ export default class BackendAICredentialView extends BackendAIPage {
           <span class="flex"></span>
           <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
             <wl-icon>add</wl-icon>
-            Add credential
+            ${_t("credential.AddCredential")}
           </wl-button>
         </h4>
           <wl-expansion name="credential-group" open role="list">
-            <h4 slot="title">Active</h4>
+            <h4 slot="title">${_t("credential.Active")}</h4>
             <span slot="description">
             </span>
             <div>
@@ -819,7 +817,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             </div>
           </wl-expansion>
           <wl-expansion name="credential-group" role="list">
-            <h4 slot="title">Inactive</h4>
+            <h4 slot="title">${_t("credential.Inactive")}</h4>
             <div>
               <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
             </div>
@@ -827,11 +825,11 @@ export default class BackendAICredentialView extends BackendAIPage {
         </wl-card>
         <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
           <h4 class="horizontal flex center center-justified layout">
-            <span>Policy groups</span>
+            <span>${_t("credential.PolicyGroup")}</span>
             <span class="flex"></span>
             <wl-button class="fg green" id="add-policy" outlined @click="${this._launchResourcePolicyDialog}">
               <wl-icon>add</wl-icon>
-              Create policy
+              ${_t("credential.CreatePolicy")}
             </wl-button>
           </h4>
           <div>
@@ -843,7 +841,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
 
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span style="margin-right:15px;">Add credential</span>
+            <span style="margin-right:15px;">${_t("credential.AddCredential")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -870,7 +868,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </paper-dropdown-menu>
               </div>
               <wl-expansion name="advanced-keypair-info">
-                <span slot="title">Advanced</span>
+                <span slot="title">${_t("general.Advanced")}</span>
                 <span slot="description"></span>
                 <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
                               auto-validate .value="${this.new_access_key}">
@@ -883,7 +881,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               <wl-button class="fg blue create-button" id="create-keypair-button" outlined type="button"
               @click="${this._addKeyPair}">
                          <wl-icon>add</wl-icon>
-                         Add
+                         ${_t("general.Add")}
                          </wl-button>
             </fieldset>
           </form>
@@ -892,7 +890,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create resource policy</span>
+            <span>${_t("credential.CreateResourcePolicy")}</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -902,9 +900,8 @@ export default class BackendAICredentialView extends BackendAIPage {
             <fieldset>
             <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
                              validationMessage="Policy name is Required."
-                             required
-                             @change="${(e)=>this._validatePolicyName(e)}"></mwc-textfield>
-              <h4>Resource Policy</h4>
+                             required></mwc-textfield>
+              <h4>${_t("credential.ResourcePolicy")}</h4>
               <div class="horizontal center layout">
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
                     <wl-label>CPU</wl-label>
@@ -912,7 +909,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                                   @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                       <wl-label class="unlimited">
                         <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                        Unlimited
+                        ${_t("credential.Unlimited")}
                       </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
@@ -921,7 +918,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                                   @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
@@ -930,7 +927,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                                   @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
                   <div class="vertical layout" style="width:75px; margin:0px 0px 0px 10px;">
@@ -939,38 +936,38 @@ export default class BackendAICredentialView extends BackendAIPage {
                                   @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
               </div>
-              <h4>Sessions</h4>
+              <h4>${_t("credential.Sessions")}</h4>
               <div class="horizontal center layout">
                 <div class="vertical left layout" style="width: 110px;">
-                    <wl-label>Container per session</wl-label>
+                    <wl-label>${_t("credential.ContainerPerSession")}</wl-label>
                     <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
                   <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
-                    <wl-label>Idle timeout (sec.)</wl-label>
+                    <wl-label>${_t("credential.IdleTimeoutSec")}</wl-label>
                     <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                     <wl-label class="unlimited">
                       <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      Unlimited
+                      ${_t("credential.Unlimited")}
                     </wl-label>
                   </div>
                   <div class="vertical left layout" style="width: 110px;">
-                      <wl-label>Concurrent Jobs</wl-label>
+                      <wl-label>${_t("credential.ConcurrentJobs")}</wl-label>
                       <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                       <wl-label class="unlimited">
                         <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                        Unlimited
+                        ${_t("credential.Unlimited")}
                       </wl-label>
                   </div>
               </div>
-              <h4 style="margin-bottom:0px;">Folders</h4>
+              <h4 style="margin-bottom:0px;">${_t("credential.Folders")}</h4>
               <div class="horizontal center layout">
                 <div class="vertical layout" style="width: 110px;">
                 <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
@@ -982,24 +979,24 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </paper-dropdown-menu>
                 </div>
                 <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
-                  <wl-label class="folders">Capacity(GB)</wl-label>
+                  <wl-label class="folders">${_t("credential.Capacity(GB)")}</wl-label>
                   <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                    Unlimited
+                    ${_t("credential.Unlimited")}
                 </wl-label>
                 </div>
                 <div class="vertical layout" style="width: 110px;">
-                  <wl-label class="folders">Max.#</wl-label>
+                  <wl-label class="folders">${_t("credential.Max#")}</wl-label>
                   <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 </div>
               </div>
 
               <br/><br/>
               <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined
-               @click="${this._addResourcePolicy}">
+               @click="${() => this._addResourcePolicy()}">
                          <wl-icon>add</wl-icon>
-                         Create
+                         ${_t("credential.Create")}
               </wl-button>
             </fieldset>
           </form>
@@ -1008,7 +1005,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-dialog id="new-user-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create User</span>
+            <span>${_t("credential.CreateUser")}</span>
             <div class="flex"></div>
             <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -1020,21 +1017,21 @@ export default class BackendAICredentialView extends BackendAIPage {
                 type="email"
                 name="user_email"
                 id="id_user_email"
-                label="E-mail"
+                label="${_t("general.E-Mail")}"
               >
               </wl-textfield>
               <wl-textfield
                 type="text"
                 name="user_name"
                 id="id_user_name"
-                label="Username"
+                label="${_t("general.Username")}"
               >
               </wl-textfield>
               <wl-textfield
                 type="password"
                 name="user_password"
                 id="id_user_password"
-                label="Password"
+                label="${_t("general.Password")}"
                 pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
               >
               </wl-textfield>
@@ -1042,13 +1039,13 @@ export default class BackendAICredentialView extends BackendAIPage {
                 type="password"
                 name="user_confirm"
                 id="id_user_confirm"
-                label="Password Confirm"
+                label="${_t("general.ConfirmPassword")}"
               >
               </wl-textfield>
               <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
               @click="${this._addUser}">
                 <wl-icon>add</wl-icon>
-                Create User
+                ${_t("credential.CreateUser")}
               </wl-button>
             </fieldset>
           </form>
@@ -1057,7 +1054,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
       <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
         <h3 class="horizontal center layout" style="padding:10px;">
-          <span style="margin-left:10px; font-size:18px;">Export ${this._activeTab} to csv file</span>
+          <span style="margin-left:10px; font-size:18px;">${_t("credential.ExportCSVFile")} (${this._activeTab})</span>
           <div class="flex"></div>
           <wl-button flat fab @click="${(e) => this._hideDialog(e)}">
             <wl-icon class="close">close</wl-icon>
@@ -1066,13 +1063,13 @@ export default class BackendAICredentialView extends BackendAIPage {
         <section style="padding: 5px;">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
-                          value="${this._activeTab+'_'+this._defaultFileName}" required
+                          value="${this._activeTab + '_' + this._defaultFileName}" required
           ></mwc-textfield>
           <div class="horizontal center layout">
             <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
             @click="${this._exportToCSV}">
               <wl-icon>get_app</wl-icon>
-              Export CSV File
+              ${_t("credential.ExportCSVFile")}
             </wl-button>
           </div>
           </section>

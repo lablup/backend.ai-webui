@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -11,7 +12,7 @@ import 'weightless/tab-group';
 import 'weightless/tab';
 import 'weightless/select';
 
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart.js'
 import {
   IronFlex,
@@ -105,7 +106,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   }
 
   init() {
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener("backend-ai-connected", () => {
         if (this.updating) {
           return;
@@ -139,7 +140,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   }
 
   readUserStat() {
-    return window.backendaiclient.resources.user_stats()
+    return globalThis.backendaiclient.resources.user_stats()
       .then(res => {
         const {period, templates} = this;
         this.data = res;
@@ -197,10 +198,10 @@ export default class BackendAIUsageList extends BackendAIPage {
     return html`
       <wl-card elevation="0">
         <h3 class="horizontal center layout">
-          <wl-select label="Select Period" style="width: 130px;" @input=${this.pulldownChange}>
-            <option value disabled>Select Period</option>
-            <option value="1D" selected>1 Day</option>
-            <option value="1W">1 Week</option>
+          <wl-select label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @input=${this.pulldownChange}>
+            <option value disabled>${_t("statistics.SelectPeriod")}</option>
+            <option value="1D" selected>${_t("statistics.1Day")}</option>
+            <option value="1W">${_t("statistics.1Week")}</option>
           </wl-select>
           <span class="flex"></span>
         </h3>
