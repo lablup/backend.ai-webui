@@ -160,20 +160,20 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   }
 
   async rescan_images() {
-    this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Scanning...';
+    this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImageScanning");
     this.scanning = true;
     //this.notification.text = 'Rescan image started.';
     //this.notification.show();
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Scanning...');
     globalThis.backendaiclient.maintenance.rescan_images().then((response) => {
-      this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
+      this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImages");
       this.scanning = false;
       this.indicator.set(100, 'Rescan image finished.');
       this.indicator.end(1000);
     }).catch(err => {
       this.scanning = false;
-      this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = 'Rescan images';
+      this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImages");
       console.log(err);
       this.indicator.set(50, 'Rescan failed.');
       this.indicator.end(1000);

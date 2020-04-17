@@ -364,16 +364,18 @@
     "BetaFeatures": "Beta Features",
     "DescBetaFeatures": "Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
     "DescNoBetaFeatures": "No beta feature available now. :)",
-    "EditBootstrapScript": "EditBootstrapScript",
-    "EditUserConfigScript": "EditUserConfigScript",
-    "PackageInstallation": "PackageInstallation",
-    "BootstrapScript": "BootstrapScript",
+    "EditBootstrapScript": "Edit Bootstrap Script",
+    "EditUserConfigScript": "Edit User Config Script",
+    "PackageInstallation": "Package Installation",
+    "BootstrapScript": "Bootstrap Script",
     "DialogSaveToSpecificFile": "Do you want to save the changes you made to File?",
     "DialogNoSaveNoPreserve": "Your changes will be lost if you don't save them.",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescNewUserConfigFileCreated": "New User config file can be created with non-empty data.",
-    "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value."
+    "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",
+    "AutomaticUpdateCheck": "Automatic Update Check",
+    "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again."
   },
   "logs": {
     "LogMessages": "Log Messages",
@@ -454,7 +456,8 @@
     "CleanupImages": "Cleanup Images",
     "RescanImageList": "Rescan image list from repository",
     "DescRescanImageList": "Rescan image list from registered repositories.<br />It may take a long time, so please wait after execution.",
-    "Recalculating": "Recalculating..."
+    "Recalculating": "Recalculating...",
+    "RescanImageScanning": "Scanning..."
   },
   "statistics": {
     "Usage": "Usage",
@@ -466,7 +469,8 @@
     "Browser": "Browser",
     "English": "English",
     "Korean": "Korean",
-    "Language": "Language"
+    "Language": "Language",
+    "OSDefault": "OS Default"
   },
   "settings": {
     "General": "General",
@@ -510,7 +514,9 @@
     }
   },
   "notification": {
-    "SuccessfullyUpdated": "Successfully Updated"
+    "SuccessfullyUpdated": "Successfully Updated",
+    "Visit": "Visit",
+    "SeeDetail": "See Detail"
   },
   "information": {
     "System": "System",
@@ -551,7 +557,14 @@
     "LoginWithE-mail": "Login With E-mail",
     "LoginWithIAM": "Login With IAM",
     "ClickToUseIAM": "Click To Use IAM",
-    "ClickToUseID": "Click To Use ID"
+    "ClickToUseID": "Click To Use ID",
+    "EndpointHistory": "Endpoint History",
+    "NoEndpointSaved": "No endpoint saved.",
+    "CancelLogin": "Cancel Login",
+    "SignoutFinished": "Signout finished.",
+    "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
+    "PleaseWait": "Please wait to login.",
+    "ConnectingToCluster": "Connecting to Backend.AI Cluster..."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
@@ -563,5 +576,8 @@
     "InvitationToken": "Invitation Token",
     "TermsOfService": "Terms of service",
     "PrivacyPolicy": "Privacy Policy"
+  },
+  "update": {
+    "NewConsoleVersionAvailable": "New version is available:"
   }
 }

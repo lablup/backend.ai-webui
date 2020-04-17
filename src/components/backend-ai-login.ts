@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
@@ -10,8 +11,12 @@ import 'weightless/icon';
 import 'weightless/dialog';
 import 'weightless/card';
 
-import '@material/mwc-textfield';
 import '@material/mwc-icon';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon-button';
+import '@material/mwc-menu';
+import '@material/mwc-select';
+import '@material/mwc-textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -65,6 +70,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Object}) loginPanel;
   @property({type: Object}) signoutPanel;
   @property({type: Object}) blockPanel;
+  @property({type: Boolean}) is_connected = false;
   @property({type: Object}) clientConfig;
   @property({type: Object}) client;
   @property({type: Object}) notification;
@@ -73,10 +79,12 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Array}) endpoints;
 
   constructor() {
     super();
     globalThis.backendaiconsole = {};
+    this.endpoints = [];
   }
 
   static get styles() {
@@ -108,9 +116,37 @@ export default class BackendAILogin extends BackendAIPage {
           width: 100%;
         }
 
+        .endpoint-text {
+          --mdc-text-field-disabled-line-color: rgba(0, 0, 0, 0.0);
+        }
+
+        mwc-icon-button {
+          /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
+          color: var(--paper-blue-600);
+          --mdc-icon-size: 24px;
+        }
+
+        mwc-icon-button.endpoint-control-button {
+          --mdc-icon-size: 16px;
+          --mdc-icon-button-size: 24px;
+          color: red;
+        }
+
+        mwc-menu {
+          font-family: 'Quicksand', sans-serif;
+          --mdc-menu-min-width: 400px;
+          --mdc-menu-max-width: 400px;
+        }
+
+        mwc-list-item[disabled] {
+          --mdc-menu-item-height: 30px;
+          border-bottom: 1px solid #ccc;
+        }
+
         #login-panel {
           --dialog-width: 400px;
           --backdrop-bg: transparent;
+          --dialog-elevation: 0px 0px 5px 5px rgba(0, 0, 0, 0.1);
         }
 
         h3 small {
@@ -169,6 +205,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = globalThis.lablupNotification;
+    this.endpoints = globalThis.backendaioptions.get("endpoints", []);
   }
 
   _changeSigninMode() {
@@ -251,15 +288,16 @@ export default class BackendAILogin extends BackendAIPage {
       this.proxy_url = config.wsproxy.proxyURL;
     }
     if (typeof config.general === "undefined" || typeof config.general.apiEndpoint === "undefined" || config.general.apiEndpoint === '') {
-      (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'block';
+      (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
       (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
     } else {
       this.api_endpoint = config.general.apiEndpoint;
       if (typeof config.general === "undefined" || typeof config.general.apiEndpointText === "undefined" || config.general.apiEndpointText === '') {
-        (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'block';
+        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
+        (this.shadowRoot.querySelector('#endpoint-button') as any).disabled = 'true';
       } else {
-        (this.shadowRoot.querySelector('#id_api_endpoint') as any).style.display = 'none';
+        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'none';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'block';
         (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).value = config.general.apiEndpointText;
       }
@@ -315,11 +353,16 @@ export default class BackendAILogin extends BackendAIPage {
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
-    (this.shadowRoot.querySelector('#block-panel') as any).show();
+    this.blockTimer = setTimeout(() => {
+      if (this.blockPanel.open === false && this.is_connected === false) {
+        this.blockPanel.show();
+      }
+    }, 2000);
   }
 
   free() {
-    (this.shadowRoot.querySelector('#block-panel') as any).hide();
+    console.log(this.blockTimer);
+    this.blockPanel.hide();
   }
 
   _trimChar(str, char) {
@@ -359,14 +402,10 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
-      this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      //this.notification.text = 'Connecting...';
-      //this.notification.show();
+      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingSession();
     } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      //this.notification.text = 'Connecting...';
-      //this.notification.show();
+      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingAPI();
     } else {
       this.open();
@@ -419,7 +458,7 @@ export default class BackendAILogin extends BackendAIPage {
     let user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
     let password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
     this.client.signout(user_id, password).then(response => {
-      this.notification.text = 'Signout finished.';
+      this.notification.text = _text("login.SignoutFinished");
       this.notification.show();
       let event = new CustomEvent("backend-ai-logout", {"detail": ""});
       document.dispatchEvent(event);
@@ -445,7 +484,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     if (this.api_endpoint === '') {
-      this.notification.text = 'API Endpoint is empty. Please specify API endpoint to login.';
+      this.notification.text = _text('login.APIEndpointEmpty');
       this.notification.show();
       return;
     }
@@ -482,6 +521,7 @@ export default class BackendAILogin extends BackendAIPage {
             "message": "Authentication failed. Check information and manager status."
           };
         } else {
+          this.is_connected = true;
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
@@ -506,6 +546,7 @@ export default class BackendAILogin extends BackendAIPage {
         this.open();
       });
     } else { // Login already succeeded.
+      this.is_connected = true;
       return this._connectGQL();
     }
   }
@@ -560,6 +601,7 @@ export default class BackendAILogin extends BackendAIPage {
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
     return this.client.gql(q, v).then(response => {
+      this.is_connected = true;
       globalThis.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
       globalThis.backendaiclient.resource_policy = resource_policy;
@@ -615,6 +657,13 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient.ready = true;
+      if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
+        this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
+        if (this.endpoints.length > 5) { // Keep latest
+          this.endpoints = this.endpoints.slice(1, 6);
+        }
+        globalThis.backendaioptions.set("endpoints", this.endpoints);
+      }
       let event = new CustomEvent("backend-ai-connected", {"detail": this.client});
       document.dispatchEvent(event);
       this.close();
@@ -649,6 +698,27 @@ export default class BackendAILogin extends BackendAIPage {
     localStorage.setItem('backendaiconsole.login.secret_key', this.secret_key);
     localStorage.setItem('backendaiconsole.login.user_id', this.user_id);
     localStorage.setItem('backendaiconsole.login.password', this.password);
+  }
+
+  _toggleEndpoint() {
+    let endpoint_list = this.shadowRoot.querySelector("#endpoint-list");
+    let endpoint_button = this.shadowRoot.querySelector('#endpoint-button');
+    endpoint_list.anchor = endpoint_button;
+    endpoint_list.open = !endpoint_list.open;
+  }
+
+  _updateEndpoint() {
+    let endpoint_list = this.shadowRoot.querySelector("#endpoint-list");
+    this.api_endpoint = endpoint_list.selected.value;
+  }
+
+  _deleteEndpoint(endpoint) {
+    let idx = this.endpoints.indexOf(endpoint);
+    if (idx > -1) {
+      this.endpoints.splice(idx, 1);
+    }
+    globalThis.backendaioptions.set("endpoints", this.endpoints);
+    this.requestUpdate();
   }
 
   render() {
@@ -696,9 +766,26 @@ export default class BackendAILogin extends BackendAIPage {
           </form>
           <form>
             <fieldset>
-              <mwc-textfield type="text" name="api_endpoint" id="id_api_endpoint" style="display:none;"
-                           label="${_t("login.Endpoint")}" icon="cloud" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-              <mwc-textfield type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
+              <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
+                <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="margin-left:5px;" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+                <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
+                  <mwc-list-item disabled>${_t("login.EndpointHistory")}</mwc-list-item>
+                  ${this.endpoints.length === 0 ? html`
+                  <mwc-list-item value="">${_t("login.NoEndpointSaved")}</mwc-list-item>
+                  ` : html``}
+
+                  ${this.endpoints.map(item =>
+      html`<mwc-list-item value="${item}">
+                    <div class="horizontal justified center flex layout" style="width:365px;">
+                      <span>${item}</span><span class="flex"></span>
+                      <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
+                    </div>
+                  </mwc-list-item>`)}
+                </mwc-menu>
+                <mwc-textfield class="endpoint-text" type="text" name="api_endpoint" id="id_api_endpoint"
+                             label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              </div>
+              <mwc-textfield class="endpoint-text" type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
                            style="display:none;"
                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
               <wl-button class="fg red full login-button" id="login-button" outlined type="button"
@@ -749,7 +836,7 @@ export default class BackendAILogin extends BackendAIPage {
           ${this.blockMessage}
           </div>
           <div style="text-align:right;padding-top:15px;">
-            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">Cancel login</wl-button>
+            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">${_t("login.CancelLogin")}</wl-button>
           </div>
         </wl-card>
         ` : html``}

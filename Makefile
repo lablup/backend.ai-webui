@@ -51,8 +51,8 @@ dep:
 	#rm ./build/electron-app/node_modules/markty-toml/dist/marktytoml.js
 	#cp ./node_modules/markty-toml/dist/marktytoml.es.js ./build/electron-app/node_modules/markty-toml/dist/marktytoml.js
 	cp ./preload.js ./build/electron-app/preload.js
-	mkdir -p ./build/electron-app/app/wsproxy/config
-	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
+	#mkdir -p ./build/electron-app/app/wsproxy/config
+	#cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
 web:
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \

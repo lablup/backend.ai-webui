@@ -43,10 +43,10 @@ export default class LablupTermsOfService extends LitElement {
   @property({type: String}) tosEntry = 'terms-of-service';
   @property({type: String}) tosContent = '';
   @property({type: String}) tosLanguage = 'en';
-  @property({type: Array}) tosLanguages = [{code: 'ko', text: _text("language.Korean")}, {
-    code: 'en',
-    text: _text("language.English")
-  }];
+  @property({type: Array}) tosLanguages = [
+    {code: 'ko', text: _text("language.Korean")},
+    {code: 'en', text: _text("language.English")}
+  ];
   @property({type: String}) title = '';
   @property({type: Boolean}) show = false;
   @property({type: Boolean}) approved = false;
@@ -198,8 +198,8 @@ export default class LablupTermsOfService extends LitElement {
 
   // Terms of service dialog
   _showTOSdialog(reuseDialog = false) {
-    if (this.tosLanguage === 'default' && 'language' in globalThis.backendaiconsoleOption) {
-      this.tosLanguage = globalThis.backendaiconsoleOption['language'];
+    if (this.tosLanguage === 'default' && globalThis.backendaioptions.exists('current_language')) {
+      this.tosLanguage = globalThis.backendaioptions.get('current_language');
     }
     if (!['ko', 'en'].includes(this.tosLanguage)) {
       this.tosLanguage = 'en';

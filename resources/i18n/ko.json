@@ -371,7 +371,9 @@
     "DescScriptUpdated": "사용자 스크립트를 수정했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
     "DescScriptCreated": "사용자 스크립트를 생성했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
     "DescNewUserConfigFileCreated": "새 사용자 스크립트 생성을 위한 내용이 필요합니다.",
-    "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요."
+    "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요.",
+    "AutomaticUpdateCheck": "자동 업데이트 체크",
+    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연경 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다."
   },
   "logs": {
     "LogMessages": "로그 메세지",
@@ -452,7 +454,8 @@
     "CleanupImages": "이미지 정리",
     "RescanImageList": "저장소로부터 이미지 목록 새로 읽기",
     "DescRescanImageList": "등록된 컨테이너 이미지 저장소로부터 이미지 목록을 새로 읽습니다.<br />오랜 시간이 걸리므로, 실행 후 종료시까지 기다려주시기 바랍니다.",
-    "Recalculating": "재계산중..."
+    "Recalculating": "재계산중...",
+    "RescanImageScanning": "리스캔중..."
   },
   "statistics": {
     "Usage": "사용량",
@@ -464,7 +467,8 @@
     "Browser": "브라우저 기본",
     "English": "English",
     "Korean": "한국어",
-    "Language": "언어"
+    "Language": "언어",
+    "OSDefault": "운영체제 언어"
   },
   "settings": {
     "General": "일반",
@@ -508,7 +512,9 @@
     }
   },
   "notification": {
-    "SuccessfullyUpdated": "성공적으로 수정되었습니다."
+    "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
+    "Visit": "방문",
+    "SeeDetail": "상세보기"
   },
   "information": {
     "System": "시스템",
@@ -549,10 +555,17 @@
     "LoginWithE-mail": "E-mail로 로그인",
     "LoginWithIAM": "IAM으로 로그인",
     "ClickToUseIAM": "IAM 사용",
-    "ClickToUseID": "ID 사용"
+    "ClickToUseID": "ID 사용",
+    "EndpointHistory": "엔드포인트 기록",
+    "NoEndpointSaved": "저장된 엔드포인트가 없습니다.",
+    "CancelLogin": "로그인 취소",
+    "SignoutFinished": "탈퇴가 완료되었습니다.",
+    "APIEndpointEmpty": "API Endpoint 가 지정되지 않았습니다. 로그인을 위해 앤드포인트를 지정하세요.",
+    "PleaseWait": "로그인 진행중. 기다려주세요.",
+    "ConnectingToCluster": "Backend.AI 클러스터에 연결중..."
   },
   "signup": {
-    "SignupBETA": "가입 (Beta invitation only)",
+    "SignupBETA": "가입 (베타 초대 대상)",
     "E-mail": "E-mail",
     "UserName": "사용자명",
     "Password": " 암호",
@@ -561,5 +574,8 @@
     "InvitationToken": "초대 토큰",
     "TermsOfService": "약관",
     "PrivacyPolicy": "개인정보보호정책"
+  },
+  "update": {
+    "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
   }
 }

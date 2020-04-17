@@ -165,8 +165,9 @@ class Client {
      * @param {Request} rqst - Request object to send
      * @param {Boolean} rawFile - True if it is raw request
      * @param {AbortController.signal} signal - Request signal to abort fetch
+     * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
      */
-    async _wrapWithPromise(rqst, rawFile = false, signal = null) {
+    async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout = 0) {
         let errorType = Client.ERR_REQUEST;
         let errorTitle = '';
         let errorMsg;
@@ -188,7 +189,7 @@ class Client {
                 requestTimer = setTimeout(() => {
                     errorType = Client.ERR_TIMEOUT;
                     controller.abort();
-                }, this.requestTimeout);
+                }, (timeout === 0 ? this.requestTimeout : timeout));
             }
             let resp;
             resp = await fetch(rqst.uri, rqst);
@@ -728,13 +729,13 @@ class Client {
         return uaSig;
     }
     /* GraphQL requests */
-    gql(q, v) {
+    gql(q, v, signal = null, timeout = 0) {
         let query = {
             'query': q,
             'variables': v
         };
         let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
-        return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, signal, timeout);
     }
     /**
      * Generate a RequestInfo object that can be passed to fetch() API,
@@ -1017,8 +1018,8 @@ class VFolder {
      * @param {string} name - Virtual folder name.
      * @param {string} host - Host name to create virtual folder in it.
      * @param {string} group - Virtual folder group name.
-     * @param {string} usageMode - Virtual folder group name.
-     * @param {string} permission - Virtual folder group name.
+     * @param {string} usageMode - Virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
+     * @param {string} permission - Virtual folder's innate permission.
      */
     create(name, host = '', group = '', usageMode = 'general', permission = 'rw') {
         let body;
@@ -1035,7 +1036,7 @@ class VFolder {
                 'group': group
             };
         }
-        if (this.client._apiVersionMajor > '4') {
+        if (this.client.isAPIVersionCompatibleWith('v5.20200401')) {
             if (usageMode) {
                 body['usage_mode'] = usageMode;
             }
@@ -2125,7 +2126,7 @@ class Maintenance {
                     `}`;
                 v = {};
             }
-            return this.client.gql(q, v);
+            return this.client.gql(q, v, null, 600 * 1000);
         }
         else {
             return Promise.resolve(false);
@@ -2134,7 +2135,7 @@ class Maintenance {
     recalculate_usage() {
         if (this.client.is_superadmin === true) {
             let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
-            return this.client._wrapWithPromise(rqst);
+            return this.client._wrapWithPromise(rqst, null, null, 60 * 1000);
         }
     }
 }

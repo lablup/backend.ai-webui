@@ -1,5 +1,44 @@
 # Changelog
 
+## v20.04.3 (16/04/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**hard**][**library / SDK**][**major**]  add 'automatic download' option to manager [#157](https://github.com/lablup/backend.ai-console/issues/157)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**] Block usage mode / permission setting on Backend.AI 19.09 [#492](https://github.com/lablup/backend.ai-console/issues/492)
+- [**UI / UX**][**bug**][**minor**] FOUC during login on Firefox [#491](https://github.com/lablup/backend.ai-console/issues/491)
+- [**bug**][**enterprise**][**library / SDK**] Image rescan button returns error due to short timeout [#490](https://github.com/lablup/backend.ai-console/issues/490)
+
+---
+
+## v20.04.2 (15/04/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**][**major**] Implement general user settings store [#484](https://github.com/lablup/backend.ai-console/issues/484)
+- [**enhancement**][**library / SDK**][**major**] Account for vfolder permission and usage mode during vfolder creation [#482](https://github.com/lablup/backend.ai-console/issues/482)
+- [**UI / UX**][**easy**][**enhancement**] Support major password managers [#480](https://github.com/lablup/backend.ai-console/issues/480)
+- [**UI / UX**][**blocker**][**bug**][**enhancement**][**minor**] Login sometimes changes to IAM and not returned [#479](https://github.com/lablup/backend.ai-console/issues/479)
+- [**UI / UX**][**app**][**enhancement**][**enterprise**][**library / SDK**][**major**][**web**][**working**] Automatic release check [#443](https://github.com/lablup/backend.ai-console/issues/443)
+- [**UI / UX**][**enhancement**] Keep last used group on console [#437](https://github.com/lablup/backend.ai-console/issues/437)
+- [**UI / UX**][**enhancement**][**hard**][**major**] Save previous endpoints for app [#436](https://github.com/lablup/backend.ai-console/issues/436)
+- [**UI / UX**][**enhancement**][**library / SDK**][**minor**] Validate whether API endpoint is correct Backend.AI manager / console server or not [#251](https://github.com/lablup/backend.ai-console/issues/251)
+- [**enhancement**][**library / SDK**] More diverse resource policy setting [#56](https://github.com/lablup/backend.ai-console/issues/56)
+- [**UI / UX**][**enhancement**][**hard**][**library / SDK**] Basic settings for admin [#28](https://github.com/lablup/backend.ai-console/issues/28)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] Monitor display does not show animation on resource view when no resource is used [#489](https://github.com/lablup/backend.ai-console/issues/489)
+- [**blocker**][**bug**] After completing signout (leave service), no logout or dialog close event is not performed in windows app [#230](https://github.com/lablup/backend.ai-console/issues/230)
+
+#### UI / UX:
+
+- [**UI / UX**] Divide fetch failure and connection lost [#339](https://github.com/lablup/backend.ai-console/issues/339)
+
+
 ## v20.04.1 (10/04/2020)
 
 #### Enhancements:

@@ -10,7 +10,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
 import 'weightless/icon';
 import 'weightless/button';
@@ -89,11 +88,6 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-right: 5px;
         }
 
-        vaadin-progress-bar {
-          width: 100px;
-          height: 6px;
-        }
-
         mwc-linear-progress {
           width: 100px;
           border-radius: 3px;
@@ -158,6 +152,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           var agent = agents[objectKey];
           var occupied_slots = JSON.parse(agent.occupied_slots);
           var available_slots = JSON.parse(agent.available_slots);
+          ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
+            if (slot in occupied_slots === false) {
+              occupied_slots[slot] = "0";
+            }
+          });
 
           agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
@@ -184,21 +183,30 @@ export default class BackendAIAgentList extends BackendAIPage {
           agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
           if ('cuda.device' in available_slots) {
             agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+            if ('cuda.device' in occupied_slots) {
+              agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
+            } else {
+              agents[objectKey].used_gpu_slots = 0;
+            }
+            agents[objectKey].used_gpu_slots_ratio = agents[objectKey].used_gpu_slots / agents[objectKey].gpu_slots;
           }
           if ('cuda.shares' in available_slots) {
             agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
-          }
-          if ('cuda.device' in occupied_slots) {
-            agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
-          }
-          if ('cuda.shares' in occupied_slots) {
-            agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
+            if ('cuda.shares' in occupied_slots) {
+              agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
+            } else {
+              agents[objectKey].used_vgpu_slots = 0;
+            }
+            agents[objectKey].used_vgpu_slots_ratio = agents[objectKey].used_vgpu_slots / agents[objectKey].vgpu_slots;
           }
           if ('rocm.device' in available_slots) {
             agents[objectKey].gpu_slots = parseInt(available_slots['rocm.device']);
-          }
-          if ('rocm.device' in occupied_slots) {
-            agents[objectKey].used_gpu_slots = parseInt(occupied_slots['rocm.device']);
+            if ('rocm.device' in occupied_slots) {
+              agents[objectKey].used_gpu_slots = parseInt(occupied_slots['rocm.device']);
+            } else {
+              agents[objectKey].used_gpu_slots = 0;
+            }
+            agents[objectKey].used_gpu_slots_ratio = agents[objectKey].used_gpu_slots / agents[objectKey].gpu_slots;
           }
         });
       }
@@ -433,8 +441,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                   <span style="padding-left:5px;">[[item.gpu_slots]]</span>
                   <span class="indicator">GPU</span>
                   <span class="flex"></span>
-                  <vaadin-progress-bar id="gpu-bar" value="[[item.used_gpu_slots]]"
-                                       max="[[item.gpu_slots]]"></vaadin-progress-bar>
+                  <mwc-linear-progress id="gpu-bar" value="[[item.used_gpu_slots_ratio]]" buffer="[[item.used_gpu_slots_ratio]]"></mwc-linear-progress>
                 </div>
               </template>
               <template is="dom-if" if="[[item.vgpu_slots]]">
@@ -443,8 +450,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                   <span style="padding-left:5px;">[[item.vgpu_slots]]</span>
                   <span class="indicator">fGPU</span>
                   <span class="flex"></span>
-                  <vaadin-progress-bar id="vgpu-bar" value="[[item.used_vgpu_slots]]"
-                                       max="[[item.vgpu_slots]]"></vaadin-progress-bar>
+                  <mwc-linear-progress id="vgpu-bar" value="[[item.used_vgpu_slots_ratio]]" buffer="[[item.used_vgpu_slots_ratio]]"></mwc-linear-progress>
                 </div>
               </template>
             </div>

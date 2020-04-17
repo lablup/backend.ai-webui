@@ -15,10 +15,13 @@ import 'weightless/card';
 import 'weightless/icon';
 
 import '@material/mwc-linear-progress/mwc-linear-progress';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
 
 import './lablup-activity-panel';
 import './backend-ai-chart';
 import './backend-ai-resource-monitor';
+import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -44,6 +47,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: Object}) resources = Object();
+  @property({type: Object}) update_checker = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
   @property({type: String}) console_version = '';
@@ -162,6 +166,18 @@ export default class BackendAISummary extends BackendAIPage {
         .invitation_folder_name {
           font-size: 13px;
         }
+
+        mwc-icon-button.update-button {
+          --mdc-icon-size: 16px;
+          --mdc-icon-button-size: 24px;
+          color: red;
+        }
+
+        mwc-icon.update-icon {
+          --mdc-icon-size: 16px;
+          --mdc-icon-button-size: 24px;
+          color: black;
+        }
       `
     ];
   }
@@ -169,6 +185,7 @@ export default class BackendAISummary extends BackendAIPage {
   firstUpdated() {
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = globalThis.lablupNotification;
+    this.update_checker = this.shadowRoot.querySelector('#update-checker');
   }
 
   _refreshHealthPanel() {
@@ -215,6 +232,12 @@ export default class BackendAISummary extends BackendAIPage {
       this.notification.detail = err;
       this.notification.show(true, err);
     });
+  }
+
+  _refreshConsoleUpdateInformation() {
+    if (this.is_superadmin && globalThis.backendaioptions.get("automatic_update_check", true)) {
+      this.update_checker.checkRelease();
+    }
   }
 
   _refreshResourceInformation() {
@@ -292,6 +315,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _sync_resource_values() {
+    console.log(this.update_checker.updateNeeded);
     this.manager_version = globalThis.backendaiclient.managerVersion;
     this.console_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
@@ -343,15 +367,16 @@ export default class BackendAISummary extends BackendAIPage {
     }
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     this._init_resource_values();
-    this.requestUpdate();
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         if (this.activeConnected) {
+          this._refreshConsoleUpdateInformation();
           this._refreshHealthPanel();
           this._refreshInvitations();
+          this.requestUpdate();
           //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
           //document.dispatchEvent(event);
         }
@@ -360,8 +385,10 @@ export default class BackendAISummary extends BackendAIPage {
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this._refreshConsoleUpdateInformation();
       this._refreshHealthPanel();
       this._refreshInvitations();
+      this.requestUpdate();
       //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
       //document.dispatchEvent(event);
     }
@@ -595,9 +622,18 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="${_t('summary.Administration')}" elevation="1">
             <div slot="message">
       ${this.is_superadmin ? html`
-              <div class="layout vertical center flex" style="margin-bottom:5px;">
+              <div class="layout vertical center start flex" style="margin-bottom:5px;">
                 <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-                <lablup-shields app="Console version" color="darkgreen" description="${this.console_version}" ui="flat"></lablup-shields>
+                <div class="layout horizontal center flex" style="margin-top:4px;">
+                  <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.console_version}" ui="flat"></lablup-shields>
+                  ${this.update_checker.updateNeeded ? html`
+                    <mwc-icon-button class="update-button" icon="error_outline" @click="${() => {
+        window.open(this.update_checker.updateURL, '_blank')
+      }}"></mwc-icon-button>
+                  ` : html`
+                    <mwc-icon class="update-icon">done</mwc-icon>
+                  `}
+                </div>
               </div>` : html``}
               <ul>
                 <li><a href="/environment">${_t('summary.UpdateEnvironmentImages')}</a></li>
@@ -611,6 +647,7 @@ export default class BackendAISummary extends BackendAIPage {
       : html``}
         </div>
       </wl-card>
+      <backend-ai-release-check id="update-checker"></backend-ai-release-check>
 `;
   }
 }

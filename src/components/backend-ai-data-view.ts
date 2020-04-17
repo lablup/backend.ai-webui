@@ -233,7 +233,7 @@ export default class BackendAIData extends BackendAIPage {
                 ` : html``}
               </mwc-select>
             </div>
-            ${this.apiMajorVersion > '4' ? html`
+            ${globalThis.backendaiclient.isAPIVersionCompatibleWith('v5.20200401') ? html`
               <div class="horizontal layout">
                 <mwc-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
                   ${this.usageModes.map((item, idx) => html`
