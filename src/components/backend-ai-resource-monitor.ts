@@ -555,7 +555,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
     this.version_selector = this.shadowRoot.querySelector('#version');
-    this.version_selector.addEventListener('selected', this.updateMetric.bind(this));
+    this.version_selector.addEventListener('selected', this.updateResourceAllocationPane.bind(this));
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
@@ -620,11 +620,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         //console.log('force update called');
         //this.metric_updating = true;
         //await this._aggregateResourceUse('update-scaling-group');
-        this._refreshResourcePolicy();
-        //this.aggregateResource('update-scaling-group'); // updateMetric does not work when no language is selected (on
+        await this._refreshResourcePolicy();
+        //this.aggregateResource('update-scaling-group'); // updateResourceAllocationPane does not work when no language is selected (on
         // summary panel)
       } else {
-        this.updateMetric('session dialog');
+        this.updateResourceAllocationPane('session dialog');
       }
     }
   }
@@ -654,7 +654,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }, true);
     } else {
       this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
-      this._updatePageVariables(true);
+      await this._updatePageVariables(true);
       this._disableEnterKey();
     }
     //this.run_after_connection(this._updatePageVariables());
@@ -720,7 +720,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         });
 
       this._initAliases();
-      this._refreshResourcePolicy();
+      await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
     }
@@ -732,8 +732,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
-  _refreshResourcePolicy() {
-    globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
+  async _refreshResourcePolicy() {
+    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
       this.concurrency_used = response.keypair.concurrency_used;
       // Workaround: We need a new API for user mode resource policy access, and current resource usage.
@@ -754,9 +754,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       //this._refreshResourceTemplate('refresh-resource-policy');
-      this._refreshImageList();
+      return this._refreshImageList();
+    }).then(() => {
       this._updateGPUMode();
-      this.updateMetric('refresh resource policy');
+      this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
       console.log(err);
       this.metadata_updating = false;
@@ -777,7 +778,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
     } else {
       this.selectDefaultLanguage();
-      await this.updateMetric('launch session dialog');
+      await this.updateResourceAllocationPane('launch session dialog');
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
@@ -794,6 +795,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         ownershipPanel.style.display = 'none';
       }
       this._updateSelectedScalingGroup();
+      this.requestUpdate();
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -1167,15 +1169,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.versions !== undefined) {
       return this.version_selector.layout(true).then(() => {
         // Set version selector's value beforehand to update resources in
-        // updateMetric method. Without this, LAUNCH button's disabled state is not
+        // updateResourceAllocationPane method. Without this, LAUNCH button's disabled state is not
         // updated, so in some cases, user cannot launch a session even though
         // there are available resources for the selected image.
         this.version_selector.value = this.versions[0];
-        this.updateMetric('update versions');
         setTimeout(() => {
-          this.version_selector.select(0);
+          //this.version_selector.select(0);
           this.version_selector.select(1);
           this.version_selector.disabled = false;
+          this.updateResourceAllocationPane('update versions');
         }, 500);
       });
     }
@@ -1511,7 +1513,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  async updateMetric(from: string = '') {
+  async updateResourceAllocationPane(from: string = '') {
     if (this.metric_updating == true) {
       //console.log('update metric blocked');
       return;
@@ -1519,10 +1521,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (from === 'refresh resource policy') {
       //console.log('refreshing resource policy');
       this.metric_updating = false;
-      return this._aggregateResourceUse('update-metric');
+      return this._aggregateResourceUse('update-metric').then(() => {
+        return this.updateResourceAllocationPane('after refresh resource policy');
+      });
     }
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    let currentVersion = this.shadowRoot.querySelector('#version').value;
+    let selectedVersionItem = this.shadowRoot.querySelector('#version').selected;
+    let selectedVersionValue = selectedVersionItem.value;
+    // Environment is not selected yet.
     if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute("disabled")) {
       this.metric_updating = false;
       return;
@@ -1530,25 +1536,33 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     //console.log('update metric from', from);
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.updateMetric(from);
+        this.updateResourceAllocationPane(from);
       }, true);
     } else {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
-      if (typeof selectedItem === 'undefined' || selectedItem === null) {
+      // Resource limitation is not loaded yet.
+      if (Object.keys(this.resourceLimits).length === 0) {
         this.metric_updating = false;
         return;
       }
       let kernel = selectedItem.id;
-      let kernelName = kernel + ':' + currentVersion;
+      let kernelVersion = selectedVersionValue;
+      // Kernel or Kernel version information is missing
+      if (kernel === '' || kernelVersion === '') {
+        //console.log("No kernel / version");
+        this.metric_updating = false;
+        return;
+      }
+      let kernelName = kernel + ':' + kernelVersion;
       let currentResource = this.resourceLimits[kernelName];
-      //console.log(currentResource);
-      await this._updateVirtualFolderList();
-      let available_slot = this.available_slot;
       if (!currentResource) {
         this.metric_updating = false;
         return;
       }
+      await this._updateVirtualFolderList();
+      let available_slot = this.available_slot;
+
       // Post-UI markup to disable unchangeable values
       this.shadowRoot.querySelector('#cpu-resource').disabled = false;
       this.shadowRoot.querySelector('#mem-resource').disabled = false;
@@ -1653,6 +1667,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             }
           }
+
           this.fgpu_metric = fgpu_metric;
           if (fgpu_metric.max > 0) {
             this.gpu_metric = fgpu_metric;
@@ -1793,12 +1808,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   // Manager requests
-  _refreshImageList() {
+  async _refreshImageList() {
     const fields = [
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
       'resource_limits { key min max }'
     ];
-    globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
+    return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
       const images: Array<object> = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
@@ -1845,6 +1860,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
       });
+      //console.log("update image list.", this.resourceLimits);
       this._updateEnvironment();
     }).catch((err) => {
       this.metadata_updating = false;
