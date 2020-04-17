@@ -1424,13 +1424,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         used_pj_slot['cuda_fgpu_slot'] = 0;
       }
 
-      if ('fgpu_slot' in used_slot) {
+      if ('cuda_fgpu_slot' in used_slot) {
         total_slot['cuda_fgpu_slot'] = parseFloat(total_slot['cuda_fgpu_slot']).toFixed(2);
       }
-      if ('fgpu_slot' in used_sg_slot) {
+      if ('cuda_fgpu_slot' in used_sg_slot) {
         total_sg_slot['cuda_fgpu_slot'] = parseFloat(total_sg_slot['cuda_fgpu_slot']).toFixed(2);
       }
-      if ('fgpu_slot' in used_pj_slot) {
+      if ('cuda_fgpu_slot' in used_pj_slot) {
         total_pj_slot['cuda_fgpu_slot'] = parseFloat(total_pj_slot['cuda_fgpu_slot']).toFixed(2);
       }
 
@@ -1446,7 +1446,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let used_sg_slot_percent = {};
       let used_pj_slot_percent = {};
 
-      ['cpu_slot', 'mem_slot', 'cuda_gpu_slot', 'fgpu_slot'].forEach((slot) => {
+      ['cpu_slot', 'mem_slot', 'cuda_gpu_slot', 'cuda_fgpu_slot'].forEach((slot) => {
         if (slot in used_slot) {
           if (Number(total_slot[slot]) < Number(used_slot[slot])) { // Modify maximum resources when user have infinite resource
             total_slot[slot] = used_slot[slot];
