@@ -353,7 +353,7 @@ export default class BackendAILogin extends BackendAIPage {
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
-    this.blockTimer = setTimeout(() => {
+    setTimeout(() => {
       if (this.blockPanel.open === false && this.is_connected === false) {
         this.blockPanel.show();
       }
@@ -361,7 +361,6 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   free() {
-    console.log(this.blockTimer);
     this.blockPanel.hide();
   }
 
