@@ -1527,6 +1527,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     let selectedVersionItem = this.shadowRoot.querySelector('#version').selected;
+    // Pulldown is not ready yet.
+    if (selectedVersionItem === null) {
+      this.metric_updating = false;
+      return;
+    }
     let selectedVersionValue = selectedVersionItem.value;
     // Environment is not selected yet.
     if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute("disabled")) {
