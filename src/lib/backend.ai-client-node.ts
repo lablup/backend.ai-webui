@@ -281,7 +281,7 @@ class Client {
         else
           body = await resp.blob();
       } else if (rawFile === false && (contentType.startsWith('application/json') ||
-        contentType.startsWith('application/problem+json'))) {
+          contentType.startsWith('application/problem+json'))) {
         body = await resp.json(); // Formatted error message from manager
         errorType = body.type;
         errorTitle = body.title;
@@ -327,8 +327,12 @@ class Client {
         case Client.ERR_SERVER:
           errorType = 'https://api.backend.ai/probs/server-error';
           errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
-          errorMsg = 'server responded failure: '
-            + `${resp.status} ${resp.statusText} - ${body.title}`;
+          errorMsg = 'server responded failure: ';
+          if (body.msg) {
+            errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+          } else {
+            errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+          }
           break;
         case Client.ERR_ABORT:
           errorType = 'https://api.backend.ai/probs/request-abort-error';
@@ -1286,6 +1290,22 @@ class VFolder {
       'path': path
     };
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Rename a file inside a virtual folder.
+   *
+   * @param {string} target_path - path to the target file or directory (with old name).
+   * @param {string} new_name - new name of the target.
+   * @param {string} name - Virtual folder name that target file exists.
+   */
+  rename_file(target_path, new_name, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    const body = {target_path, new_name};
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
     return this.client._wrapWithPromise(rqst);
   }
 

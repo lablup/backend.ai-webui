@@ -284,6 +284,8 @@
       "UploadFiles": "Upload Files...",
       "NewFolder": "New Folder",
       "StopUploading": "Stop Uploading",
+      "RenameAFile": "Rename File",
+      "NewFileName": "New file name",
       "Size": "Size",
       "CreateANewFolder": "Create a new folder",
       "Name": "Name",

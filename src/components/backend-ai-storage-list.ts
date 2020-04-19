@@ -67,6 +67,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Array}) allowedGroups = [];
   @property({type: Object}) fileListGrid = Object();
   @property({type: Object}) notification = Object();
+  @property({type: Object}) renameFileDialog = Object();
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
   @property({type: Object}) indicator = Object();
@@ -702,8 +703,29 @@ export default class BackendAiStorageList extends BackendAIPage {
           </wl-button>
         </div>
       </wl-dialog>
+      <wl-dialog id="rename-file-dialog" class="dialog-ask" fixed backdrop blockscrolling>
+        <wl-card class="login-panel intro centered">
+          <h3 class="horizontal center layout">
+            <span>${_t('data.explorer.RenameAFile')}</span>
+            <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <section>
+            <div>
+              <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"></mwc-textfield>
+              <div id="old-file-name" style="height:2.5em"></div>
+              <wl-button class="blue button" type="submit" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
+                <wl-icon>edit</wl-icon>
+                ${_t('data.explorer.RenameAFile')}
+              </wl-button>
+            </div>
+          </section>
+        </wl-card>
+      </wl-dialog>
       <wl-dialog id="delete-file-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
          <div slot="content">
             <p>${_t("dialog.warning.CannotBeUndone")}
             ${_t("dialog.ask.DoYouWantToProceed")}</p>
@@ -731,6 +753,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
 
+    this.renameFileDialog = this.shadowRoot.querySelector('#rename-file-dialog');
     this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
     this.downloadFileDialog = this.shadowRoot.querySelector('#download-file-dialog');
     this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
@@ -883,8 +906,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
               filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
         ` : html``}
+        <mwc-icon-button id="rename-btn" class="tiny fg green" icon="edit" required
+            filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
         <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
-              filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
+            filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
        `, root
     );
   }
@@ -1392,6 +1417,34 @@ export default class BackendAiStorageList extends BackendAIPage {
         //a.remove();  //afterwards we remove the element again
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+      }
+    });
+  }
+
+  _openRenameFileDialog(e) {
+    const fn = e.target.getAttribute("filename");
+    this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
+    this.renameFileDialog.filename = fn;
+    this.renameFileDialog.show();
+  }
+
+  _renameFile(e) {
+    const fn = this.renameFileDialog.filename;
+    const path = this.explorer.breadcrumb.concat(fn).join("/");
+    const newName = this.renameFileDialog.querySelector('#new-file-name').value;
+    if (!newName) return;
+    const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
+    job.then((res) => {
+      this.notification.text = 'File renamed.';
+      this.notification.show();
+      this._clearExplorer();
+      this.renameFileDialog.hide();
+    }).catch((err) => {
+      console.error(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
       }
     });
   }
