@@ -60,6 +60,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Array}) languages;
   @property({type: Number}) marker_limit = 25;
   @property({type: String}) gpu_mode;
+  @property({type: Array}) gpu_modes = [];
   @property({type: Number}) gpu_step = 0.05;
   @property({type: Object}) cpu_metric = {
     'min': '1',
@@ -812,14 +813,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _updateGPUMode() {
     globalThis.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
-      if ('cuda.device' in results) {
-        this.gpu_mode = 'cuda.gpu';
-        this.gpu_step = 1;
-      }
-      if ('cuda.shares' in results) {
-        this.gpu_mode = 'cuda.fgpu';
-        this.gpu_step = 0.05;
-      }
+
+      ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
+        if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
+          this.gpu_mode = item;
+          (this.gpu_modes as Array<string>).push(item);
+          if (item === 'cuda.shares') {
+            this.gpu_step = 0.05;
+          } else {
+            this.gpu_step = 1;
+          }
+        }
+      });
     });
   }
 
@@ -871,7 +876,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    if (this.gpu_mode == 'cuda.fgpu') {
+    if (this.gpu_mode == 'cuda.shares') {
       config['cuda.shares'] = this.gpu_request;
     } else {
       config['cuda.device'] = this.gpu_request;
@@ -893,7 +898,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     config['shmem'] = String(this.shmem_request) + 'g';
 
     if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
-      if (this.gpu_mode == 'cuda.fgpu') {
+      if (this.gpu_mode == 'cuda.shares') {
         config['fgpu'] = 0.0;
       } else {
         config['gpu'] = 0.0;
@@ -1629,7 +1634,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           this.cpu_metric = cpu_metric;
         }
-        if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.gpu') {
+        if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.device') {
           let gpu_metric = {...item};
           gpu_metric.min = parseInt(gpu_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
@@ -1657,7 +1662,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           this.cuda_gpu_metric = gpu_metric;
         }
-        if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.fgpu') {
+        if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.shares') {
           let fgpu_metric = {...item};
           fgpu_metric.min = parseFloat(fgpu_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
@@ -1690,7 +1695,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             this.cuda_gpu_metric = fgpu_metric;
           }
         }
-        if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.gpu') {
+        if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.device') {
           let rocm_metric = {...item};
           rocm_metric.min = parseInt(rocm_metric.min);
           rocm_metric.max = parseInt(rocm_metric.max);
