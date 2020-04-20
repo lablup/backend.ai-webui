@@ -1290,6 +1290,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let resource_using = response.keypair_using;
       let project_resource_total = response.group_limits;
       let project_resource_using = response.group_using;
+      let device_list = {
+        'cuda.device': 'cuda_device_slot',
+        'cuda.shares': 'cuda_shares_slot',
+        'rocm.device': 'tpu_device_slot',
+        'tpu.device': 'tpu_device_slot'
+      }
+
+
       //let scaling_group_resource_remaining = response.scaling_group_remaining;
       //console.log('current:', this.scaling_group);
       if (this.scaling_group === '') { // no scaling group in the current project
@@ -1322,40 +1330,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
       total_sg_slot['mem_slot'] = total_sg_slot['mem_slot'].toFixed(2);
-      if ('cuda.device' in keypair_resource_limit) {
-        total_sg_slot['cuda_device_slot'] = Number(scaling_group_resource_remaining['cuda.device']) + Number(scaling_group_resource_using['cuda.device']);
-        total_pj_slot['cuda_device_slot'] = Number(project_resource_total['cuda.device']);
-        if (keypair_resource_limit['cuda.device'] === 'Infinity') {
-          total_slot['cuda_device_slot'] = total_sg_slot['cuda_device_slot'];
-        } else {
-          total_slot['cuda_device_slot'] = keypair_resource_limit['cuda.device'];
-        }
-      }
-      if ('cuda.shares' in keypair_resource_limit) {
-        total_sg_slot['cuda_shares_slot'] = Number(scaling_group_resource_remaining['cuda.shares']) + Number(scaling_group_resource_using['cuda.shares']);
-        total_pj_slot['cuda_shares_slot'] = Number(project_resource_total['cuda.shares']);
-        if (keypair_resource_limit['cuda.shares'] === 'Infinity') {
-          total_slot['cuda_shares_slot'] = total_sg_slot['cuda_shares_slot'];
-        } else {
-          total_slot['cuda_shares_slot'] = keypair_resource_limit['cuda.shares'];
-        }
-      }
-      if ('rocm.device' in keypair_resource_limit) {
-        total_sg_slot['rocm_device_slot'] = Number(scaling_group_resource_remaining['rocm.device']) + Number(scaling_group_resource_using['rocm.device']);
-        total_pj_slot['rocm_device_slot'] = Number(project_resource_total['rocm.device']);
-        if (keypair_resource_limit['rocm.device'] === 'Infinity') {
-          total_slot['rocm_device_slot'] = total_sg_slot['rocm_device_slot'];
-        } else {
-          total_slot['rocm_device_slot'] = keypair_resource_limit['rocm.device'];
-        }
-      }
-      if ('tpu.device' in keypair_resource_limit) {
-        total_sg_slot['tpu_device_slot'] = Number(scaling_group_resource_remaining['tpu.device']) + Number(scaling_group_resource_using['tpu.device']);
-        total_pj_slot['tpu_device_slot'] = Number(project_resource_total['tpu.device']);
-        if (keypair_resource_limit['tpu.device'] === 'Infinity') {
-          total_slot['tpu_device_slot'] = total_sg_slot['tpu_device_slot'];
-        } else {
-          total_slot['tpu_device_slot'] = keypair_resource_limit['tpu.device'];
+
+      for (let [slot_key, slot_name] of Object.entries(device_list)) {
+        if (slot_key in keypair_resource_limit) {
+          total_sg_slot[slot_name] = Number(scaling_group_resource_remaining[slot_key]) + Number(scaling_group_resource_using[slot_key]);
+          total_pj_slot[slot_name] = Number(project_resource_total[slot_key]);
+          if (keypair_resource_limit[slot_key] === 'Infinity') {
+            total_slot[slot_name] = total_sg_slot[slot_name];
+          } else {
+            total_slot[slot_name] = keypair_resource_limit[slot_key];
+          }
         }
       }
 
@@ -1421,12 +1405,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       used_pj_slot['mem_slot'] = used_pj_slot['mem_slot'].toFixed(2);
 
-      let device_list = {
-        'cuda.device': 'cuda_device_slot',
-        'cuda.shares': 'cuda_shares_slot',
-        'rocm.device': 'tpu_device_slot',
-        'tpu.device': 'tpu_device_slot'
-      }
       for (let [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in resource_remaining) {
           remaining_slot[slot_name] = resource_remaining[slot_key];
