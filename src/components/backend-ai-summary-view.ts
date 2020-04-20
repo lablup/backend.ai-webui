@@ -176,6 +176,11 @@ export default class BackendAISummary extends BackendAIPage {
           color: black;
         }
 
+        img.resource-type-icon {
+          width: 16px;
+          height: 16px;
+          margin-right: 5px;
+        }
       `
     ];
   }
@@ -536,27 +541,47 @@ export default class BackendAISummary extends BackendAIPage {
                 ${this.cuda_gpu_total ? html`
                   <mwc-linear-progress id="gpu-bar"
                     progress="${this.cuda_gpu_used / this.cuda_gpu_total}"></mwc-linear-progress>
-                  <div><span class="progress-value"> ${this.cuda_gpu_used}</span>/${this.cuda_gpu_total} CUDA GPUs</div>
+                  <div class="horizontal center layout">
+                    <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                    <div>
+                      <div><span class="progress-value"> ${this.cuda_gpu_used}</span>/${this.cuda_gpu_total} CUDA GPUs</div>
+                    </div>
+                  </div>
                 ` : html``}
                 ${this.cuda_fgpu_total ? html`
                   <mwc-linear-progress id="vgpu-bar"
                     progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
                     buffer="${this.cuda_fgpu_used / this.cuda_fgpu_total}"></mwc-linear-progress>
-                  <div><span class="progress-value"> ${this.cuda_fgpu_used}</span>/${this.cuda_fgpu_total} CUDA fGPUs</div>
-                  <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
+                  <div class="horizontal center layout">
+                    <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                    <div>
+                      <div><span class="progress-value"> ${this.cuda_fgpu_used}</span>/${this.cuda_fgpu_total} CUDA fGPUs</div>
+                      <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
+                    </div>
+                  </div>
                 ` : html``}
                 ${this.rocm_gpu_total ? html`
-                  <mwc-linear-progress id="vgpu-bar"
+                  <mwc-linear-progress id="rocm-gpu-bar"
                     progress="${this.rocm_gpu_used / 100.0}"
                     buffer="${this.rocm_gpu_used / 100.0}"></mwc-linear-progress>
-                  <div><span class="progress-value"> ${this.rocm_gpu_used}</span>/${this.rocm_gpu_total} ROCm GPUs</div>
+                  <div class="horizontal center layout">
+                    <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
+                    <div>
+                      <div><span class="progress-value"> ${this.rocm_gpu_used}</span>/${this.rocm_gpu_total} ROCm GPUs</div>
+                    </div>
+                  </div>
                 ` : html``}
                 ${this.tpu_total ? html`
-                  <mwc-linear-progress id="vgpu-bar"
+                  <mwc-linear-progress id="tpu-bar"
                     progress="${this.tpu_used / 100.0}"
                     buffer="${this.tpu_used / 100.0}"></mwc-linear-progress>
-                  <div><span class="progress-value"> ${this.tpu_used}</span>/${this.tpu_total} TPUs</div>
-                ` : html``}
+                  <div class="horizontal center layout">
+                    <img class="resource-type-icon fg green" src="/resources/icons/tpu.svg" />
+                    <div>
+                      <div><span class="progress-value"> ${this.tpu_used}</span>/${this.tpu_total} TPUs</div>
+                    </div>
+                  </div>
+            ` : html``}
                 </div>
               </div>
               <div class="horizontal center layout">

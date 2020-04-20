@@ -252,6 +252,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --icon-size: 24px;
         }
 
+        img.resource-type-icon {
+          width: 24px;
+          height: 24px;
+        }
+
         @media screen and (max-width: 749px) {
           #resource-gauge-toggle.horizontal {
             display: flex;
@@ -2207,7 +2212,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">view_module</wl-icon>
+              <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
@@ -2222,7 +2227,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">view_module</wl-icon>
+              <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
               <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
@@ -2233,6 +2238,37 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
+          ${this.total_slot.rocm_gpu_slot ?
+      html`
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
+              <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
+              <span class="gauge-name">ROCm<br/>GPU</span>
+            </div>
+            <div class="layout vertical center-justified wrap short-indicator">
+              <span class="gauge-label">${this.used_sg_slot.rocm_gpu_slot}/${this.total_sg_slot.rocm_gpu_slot}</span>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.rocm_gpu_slot / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.rocm_gpu_slot / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_slot.rocm_gpu_slot}/${this.total_slot.rocm_gpu_slot}</span>
+            </div>
+          </div>` :
+      html``}
+          ${this.total_slot.tpu_slot ?
+      html`
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified" style="margin-right:5px;">
+              <wl-icon class="fg blue">view_module</wl-icon>
+              <span class="gauge-name">TPU</span>
+            </div>
+            <div class="layout vertical center-justified wrap short-indicator">
+              <span class="gauge-label">${this.used_sg_slot.tpu_slot}/${this.total_sg_slot.tpu_slot}</span>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.tpu_slot / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.tpu_slot / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_slot.tpu_slot}/${this.total_slot.tpu_slot}</span>
+            </div>
+          </div>` :
+      html``}
+
           <div class="layout horizontal center-justified monitor session">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
               <wl-icon class="fg blue">assignment</wl-icon>
