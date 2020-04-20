@@ -246,7 +246,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
-    let curtain = this.shadowRoot.getElementById('loading-curtain');
+    let curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
     curtain.addEventListener('transitionend', () => {
       curtain.classList.add('hidden');
@@ -286,7 +286,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.mini_ui = false;
     }
     globalThis.mini_ui = this.mini_ui;
-    let event = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
+    let event: CustomEvent = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
     document.dispatchEvent(event);
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
@@ -322,10 +322,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.current_group = this._readRecentProjectGroup();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
-    let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
+    let groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
     // Detached from template to support live-update after creating new group (will need it)
     if (groupSelectionBox.hasChildNodes()) {
-      groupSelectionBox.removeChild(groupSelectionBox.firstChild);
+      groupSelectionBox.removeChild(groupSelectionBox.firstChild as ChildNode);
     }
     let select = document.createElement('mwc-select');
     select.label = _text("console.menu.Project");
@@ -480,7 +480,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       default:
-        this.menuTitle = 'LOGIN REQUIRED';
+        this.menuTitle = _text("console.LOGINREQUIRED");
     }
   }
 

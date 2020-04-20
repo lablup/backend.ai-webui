@@ -35,7 +35,8 @@
       "NoProject": "프로젝트 없음",
       "SelectProject": "프로젝트 선택",
       "Experiments": "실험"
-    }
+    },
+    "LOGINREQUIRED": "로그인이 필요합니다"
   },
   "summary": {
     "Dashboard": "대시보드",
