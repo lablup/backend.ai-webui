@@ -282,6 +282,8 @@
       "UploadFiles": "파일 업로드...",
       "NewFolder": "새 폴더",
       "StopUploading": "업로드 취소",
+      "RenameAFile": "파일 이름 변경",
+      "NewFileName": "새로운 파일 이름",
       "Size": "크기",
       "CreateANewFolder": "새 폴더 만들기",
       "Name": "이름",
