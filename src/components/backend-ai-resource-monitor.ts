@@ -78,7 +78,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'min': 0,
     'max': 0
   };
-  @property({type: Object}) cuda_fgpu_metric;cu
+  @property({type: Object}) cuda_fgpu_metric;
+  @property({type: Object}) rocm_gpu_metric = {
+    'min': '0',
+    'max': '0'
+  };
   @property({type: Object}) tpu_metric = {
     'min': '1',
     'max': '1'
@@ -1620,7 +1624,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           this.cpu_metric = cpu_metric;
         }
-
         if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.gpu') {
           let gpu_metric = {...item};
           gpu_metric.min = parseInt(gpu_metric.min);
@@ -1681,6 +1684,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           if (fgpu_metric.max > 0) {
             this.cuda_gpu_metric = fgpu_metric;
           }
+        }
+        if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.gpu') {
+          let rocm_metric = {...item};
+          rocm_metric.min = parseInt(rocm_metric.min);
+          rocm_metric.max = parseInt(rocm_metric.max);
+          if (rocm_metric.min > rocm_metric.max) {
+            // TODO: dynamic maximum per user policy
+          }
+          this.rocm_gpu_metric = rocm_metric;
         }
         if (item.key === 'tpu') {
           let tpu_metric = {...item};
@@ -1781,13 +1793,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       // Refresh with resource template
       if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
         let resource = this.resource_templates_filtered[0];
-        this._updateResourceIndicator(resource.cpu, resource.mem, resource.gpu);
+        this._chooseResourceTemplate(resource);
         let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('wl-button')[0];
         this.shadowRoot.querySelector('#resource-templates').selected = "0";
         default_template.setAttribute('active', true);
         //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
       } else {
-        this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, this.cuda_gpu_metric.min);
+        this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, 'none', 0);
       }
       if (disableLaunch) {
         this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
@@ -1898,14 +1910,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _chooseResourceTemplate(e) {
-    const button = e.target.closest('wl-button');
+    let button;
+    if (typeof e.cpu !== 'undefined') {
+      button = e;
+    } else {
+      button = e.target.closest('wl-button');
+    }
     const cpu = button.cpu;
     const mem = button.mem;
     const cuda_gpu = button.cuda_gpu;
     const cuda_fgpu = button.cuda_fgpu;
     const rocm_gpu = button.rocm_gpu;
     const tpu = button.tpu;
-    console.log(cuda_gpu, cuda_fgpu);
     let gpu_type, gpu_value;
     if ((typeof cuda_gpu !== 'undefined' || typeof cuda_fgpu !== 'undefined')) {
       if (typeof cuda_gpu === 'undefined') { // FGPU
@@ -1927,7 +1943,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     this.shmem_request = 0.0625;
     this._updateResourceIndicator(cpu, mem, gpu_type, gpu_value);
-    //button.raised = true;
   }
 
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
