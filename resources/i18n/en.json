@@ -36,7 +36,9 @@
       "SelectProject": "Select Project",
       "Experiments": "Experiments"
     },
-    "LOGINREQUIRED": "LOGIN REQUIRED"
+    "LOGINREQUIRED": "LOGIN REQUIRED",
+    "YouAreOffline": "You are now offline",
+    "YouAreOnline": "You are now online"
   },
   "summary": {
     "Dashboard": "Dashboard",

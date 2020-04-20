@@ -805,7 +805,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </div>
       </mwc-drawer>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
-        You are now ${this._offline ? 'offline' : 'online'}.
+        ${this._offline ? _t("console.YouAreOffline") : _t("console.YouAreOnline")}.
       </backend-ai-offline-indicator>
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
