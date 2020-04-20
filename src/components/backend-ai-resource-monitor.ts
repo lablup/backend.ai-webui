@@ -1421,49 +1421,34 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       used_pj_slot['mem_slot'] = used_pj_slot['mem_slot'].toFixed(2);
 
-
-      if ('cuda.device' in resource_remaining) {
-        remaining_slot['cuda_device_slot'] = resource_remaining['cuda.device'];
-        if ('cuda.device' in resource_using) {
-          used_slot['cuda_device_slot'] = resource_using['cuda.device'];
-        } else {
-          used_slot['cuda_device_slot'] = 0;
+      let device_list = {
+        'cuda.device': 'cuda_device_slot',
+        'cuda.shares': 'cuda_shares_slot',
+        'rocm.device': 'tpu_device_slot',
+        'tpu.device': 'tpu_device_slot'
+      }
+      for (let [slot_key, slot_name] of Object.entries(device_list)) {
+        if (slot_key in resource_remaining) {
+          remaining_slot[slot_name] = resource_remaining[slot_key];
+          if (slot_key in resource_using) {
+            used_slot[slot_name] = resource_using[slot_key];
+          } else {
+            used_slot[slot_name] = 0;
+          }
         }
-      }
-      if ('cuda.device' in scaling_group_resource_remaining) {
-        remaining_sg_slot['cuda_device_slot'] = scaling_group_resource_remaining['cuda.device'];
-        if ('cuda.device' in scaling_group_resource_using) {
-          used_sg_slot['cuda_device_slot'] = scaling_group_resource_using['cuda.device'];
-        } else {
-          used_sg_slot['cuda_device_slot'] = 0;
+        if (slot_key in scaling_group_resource_remaining) {
+          remaining_sg_slot[slot_name] = scaling_group_resource_remaining[slot_key];
+          if (slot_key in scaling_group_resource_using) {
+            used_sg_slot[slot_name] = scaling_group_resource_using[slot_key];
+          } else {
+            used_sg_slot[slot_name] = 0;
+          }
         }
-      }
-      if ('cuda.device' in project_resource_using) {
-        used_pj_slot['cuda_device_slot'] = project_resource_using['cuda.device'];
-      } else {
-        used_pj_slot['cuda_device_slot'] = 0;
-      }
-
-      if ('cuda.shares' in resource_remaining) {
-        remaining_slot['cuda_shares_slot'] = resource_remaining['cuda.shares'];
-        if ('cuda.shares' in resource_using) {
-          used_slot['cuda_shares_slot'] = parseFloat(resource_using['cuda.shares']).toFixed(2);
+        if (slot_key in project_resource_using) {
+          used_pj_slot[slot_name] = project_resource_using[slot_key];
         } else {
-          used_slot['cuda_shares_slot'] = 0;
+          used_pj_slot[slot_name] = 0;
         }
-      }
-      if ('cuda.shares' in scaling_group_resource_remaining) {
-        remaining_sg_slot['cuda_shares_slot'] = scaling_group_resource_remaining['cuda.shares'];
-        if ('cuda.shares' in resource_using) {
-          used_sg_slot['cuda_shares_slot'] = parseFloat(scaling_group_resource_using['cuda.shares']).toFixed(2);
-        } else {
-          used_sg_slot['cuda_shares_slot'] = 0;
-        }
-      }
-      if ('cuda.shares' in project_resource_using) {
-        used_pj_slot['cuda_shares_slot'] = parseFloat(project_resource_using['cuda.shares']).toFixed(2);
-      } else {
-        used_pj_slot['cuda_shares_slot'] = 0;
       }
 
       if ('cuda_shares_slot' in used_slot) {
