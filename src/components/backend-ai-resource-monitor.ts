@@ -74,11 +74,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'max': 1,
     'preferred': 0.0625
   };
-  @property({type: Object}) gpu_metric = {
+  @property({type: Object}) cuda_gpu_metric = {
     'min': 0,
     'max': 0
   };
-  @property({type: Object}) fgpu_metric;
+  @property({type: Object}) cuda_fgpu_metric;cu
   @property({type: Object}) tpu_metric = {
     'min': '1',
     'max': '1'
@@ -579,7 +579,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
     this.shadowRoot.querySelector('#use-gpu-checkbox').addEventListener('change', () => {
       if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked === true) {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = this.gpu_metric.min === this.gpu_metric.max;
+        this.shadowRoot.querySelector('#gpu-resource').disabled = this.cuda_gpu_metric.min === this.cuda_gpu_metric.max;
       } else {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
@@ -1582,7 +1582,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         'preferred': 0.125
       };
       //console.log(currentResource);
-      this.gpu_metric = {
+      this.cuda_gpu_metric = {
         'min': 0,
         'max': 0
       };
@@ -1643,7 +1643,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             }
           }
-          this.gpu_metric = gpu_metric;
+          this.cuda_gpu_metric = gpu_metric;
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.fgpu') {
           let fgpu_metric = {...item};
@@ -1673,9 +1673,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             }
           }
 
-          this.fgpu_metric = fgpu_metric;
+          this.cuda_fgpu_metric = fgpu_metric;
           if (fgpu_metric.max > 0) {
-            this.gpu_metric = fgpu_metric;
+            this.cuda_gpu_metric = fgpu_metric;
           }
         }
         if (item.key === 'tpu') {
@@ -1732,7 +1732,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
       });
-      //console.log(this.gpu_metric);
+      //console.log(this.cuda_gpu_metric);
       // Shared memory setting
       shmem_metric.max = this.mem_metric.max;
       shmem_metric.min = 0.0625; // 64m
@@ -1752,7 +1752,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shmem_metric = shmem_metric;
 
       // GPU metric
-      if (this.gpu_metric.min == 0 && this.gpu_metric.max == 0) { // GPU is disabled (by image,too)
+      if (this.cuda_gpu_metric.min == 0 && this.cuda_gpu_metric.max == 0) { // GPU is disabled (by image,too)
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
@@ -1770,7 +1770,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = false;
-        this.shadowRoot.querySelector('#gpu-resource').value = this.gpu_metric.max;
+        this.shadowRoot.querySelector('#gpu-resource').value = this.cuda_gpu_metric.max;
         this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
@@ -1782,7 +1782,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         default_template.setAttribute('active', true);
         //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
       } else {
-        this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, this.gpu_metric.min);
+        this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, this.cuda_gpu_metric.min);
       }
       if (disableLaunch) {
         this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
@@ -1792,8 +1792,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.shadowRoot.querySelector('#launch-button').disabled = true;
         this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Not enough resource';
       }
-      if (this.gpu_metric.min == this.gpu_metric.max) {
-        this.shadowRoot.querySelector('#gpu-resource').max = this.gpu_metric.max + 1;
+      if (this.cuda_gpu_metric.min == this.cuda_gpu_metric.max) {
+        this.shadowRoot.querySelector('#gpu-resource').max = this.cuda_gpu_metric.max + 1;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
       if (this.concurrency_limit == 1) {
@@ -2431,7 +2431,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   <lablup-slider id="gpu-resource" class="gpu"
                                  pin snaps editable markers step="${this.gpu_step}"
                                  marker_limit="${this.marker_limit}"
-                                 min="0.0" max="${this.gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
+                                 min="0.0" max="${this.cuda_gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
                   <span class="caption">GPU</span>
                   <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
       this._showResourceDescription(e, 'gpu');

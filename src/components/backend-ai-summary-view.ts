@@ -63,10 +63,10 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Number}) mem_total_usage_ratio = 0;
   @property({type: Number}) mem_current_usage_ratio = 0;
   @property({type: String}) mem_current_usage_percent = '0';
-  @property({type: Number}) gpu_total = 0;
-  @property({type: Number}) gpu_used = 0;
-  @property({type: Number}) fgpu_total = 0;
-  @property({type: Number}) fgpu_used = 0;
+  @property({type: Number}) cuda_gpu_total = 0;
+  @property({type: Number}) cuda_gpu_used = 0;
+  @property({type: Number}) cuda_fgpu_total = 0;
+  @property({type: Number}) cuda_fgpu_used = 0;
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
@@ -295,12 +295,12 @@ export default class BackendAISummary extends BackendAIPage {
     this.resources.mem.total = 0;
     this.resources.mem.allocated = 0;
     this.resources.mem.used = 0;
-    this.resources.gpu = {};
-    this.resources.gpu.total = 0;
-    this.resources.gpu.used = 0;
-    this.resources.fgpu = {};
-    this.resources.fgpu.total = 0;
-    this.resources.fgpu.used = 0;
+    this.resources.cuda_gpu = {};
+    this.resources.cuda_gpu.total = 0;
+    this.resources.cuda_gpu.used = 0;
+    this.resources.cuda_fgpu = {};
+    this.resources.cuda_fgpu.total = 0;
+    this.resources.cuda_fgpu.used = 0;
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
@@ -315,24 +315,23 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _sync_resource_values() {
-    console.log(this.update_checker.updateNeeded);
     this.manager_version = globalThis.backendaiclient.managerVersion;
     this.console_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
-    if (isNaN(this.resources.gpu.total)) {
-      this.gpu_total = 0;
+    if (isNaN(this.resources['cuda.device'].total)) {
+      this.cuda_gpu_total = 0;
     } else {
-      this.gpu_total = this.resources.gpu.total;
+      this.cuda_gpu_total = this.resources['cuda.device'].total;
     }
-    if (isNaN(this.resources.fgpu.total)) {
-      this.fgpu_total = 0;
+    if (isNaN(this.resources['cuda.shares'].total)) {
+      this.cuda_fgpu_total = 0;
     } else {
-      this.fgpu_total = this.resources.fgpu.total;
+      this.cuda_fgpu_total = this.resources['cuda.shares'].total;
     }
     this.cpu_used = this.resources.cpu.used;
-    this.gpu_used = this.resources.gpu.used;
-    this.fgpu_used = this.resources.fgpu.used;
+    this.cuda_gpu_used = this.resources['cuda.device'].used;
+    this.cuda_fgpu_used = this.resources['cuda.shares'].used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
@@ -526,27 +525,27 @@ export default class BackendAISummary extends BackendAIPage {
                   </div>
                 </div>
               </div>
-              ${this.gpu_total ? html`
+              ${this.cuda_gpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
                     <wl-icon class="fg green">view_module</wl-icon>
                     <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
-                    <vaadin-progress-bar id="gpu-bar" .value="${this.gpu_used}" .max="${this.gpu_total}"></vaadin-progress-bar>
-                    <div><span class="progress-value"> ${this.gpu_used}</span>/${this.gpu_total} GPUs</div>
+                    <vaadin-progress-bar id="gpu-bar" .value="${this.cuda_gpu_used}" .max="${this.cuda_gpu_total}"></vaadin-progress-bar>
+                    <div><span class="progress-value"> ${this.cuda_gpu_used}</span>/${this.cuda_gpu_total} CUDA GPUs</div>
                   </div>
                 </div>` : html``}
-              ${this.fgpu_total ? html`
+              ${this.cuda_fgpu_total ? html`
                 <div class="layout horizontal center flex" style="margin-bottom:5px;">
                   <div class="layout vertical start center-justified">
                     <wl-icon class="fg green">view_module</wl-icon>
                     <span>GPU</span>
                   </div>
                   <div class="layout vertical start" style="padding-left:15px;">
-                    <vaadin-progress-bar id="vgpu-bar" value="${this.fgpu_used}"
-                                         max="${this.fgpu_total}"></vaadin-progress-bar>
-                    <div><span class="progress-value"> ${this.fgpu_used}</span>/${this.fgpu_total} GPUs</div>
+                    <vaadin-progress-bar id="vgpu-bar" value="${this.cuda_fgpu_used}"
+                                         max="${this.cuda_fgpu_total}"></vaadin-progress-bar>
+                    <div><span class="progress-value"> ${this.cuda_fgpu_used}</span>/${this.cuda_fgpu_total} CUDA GPUs</div>
                     <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
                   </div>
                 </div>` : html``}
