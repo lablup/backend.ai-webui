@@ -1247,11 +1247,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         presets.forEach((item) => {
           if (item.allocatable === true) {
             if ('cuda.shares' in item.resource_slots) {
-              item.gpu = item.resource_slots['cuda.shares'];
+              item.cuda_fgpu = item.resource_slots['cuda.shares'];
             } else if ('cuda.device' in item.resource_slots) {
-              item.gpu = item.resource_slots['cuda.device'];
-            } else {
-              item.gpu = 0;
+              item.cuda_gpu = item.resource_slots['cuda.device'];
+            }
+            if ('rocm.device' in item.resource_slots) {
+              item.rocm_gpu = item.resource_slots['rocm.device'];
+            }
+            if ('tpu.device' in item.resource_slots) {
+              item.tpu = item.resource_slots['tpu.device'];
             }
             item.cpu = item.resource_slots.cpu;
             item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
@@ -1759,7 +1763,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
           let new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
-            if (parseFloat(this.resource_templates[i].gpu) <= 0.0) {
+            if (parseFloat(this.resource_templates[i].cuda_gpu) <= 0.0 &&
+              parseFloat(this.resource_templates[i].cuda_fgpu) <= 0.0) {
               new_resource_templates.push(this.resource_templates[i]);
             }
           }
@@ -1896,18 +1901,41 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const button = e.target.closest('wl-button');
     const cpu = button.cpu;
     const mem = button.mem;
-    const gpu = button.gpu;
+    const cuda_gpu = button.cuda_gpu;
+    const cuda_fgpu = button.cuda_fgpu;
+    const rocm_gpu = button.rocm_gpu;
+    const tpu = button.tpu;
+    console.log(cuda_gpu, cuda_fgpu);
+    let gpu_type, gpu_value;
+    if ((typeof cuda_gpu !== 'undefined' || typeof cuda_fgpu !== 'undefined')) {
+      if (typeof cuda_gpu === 'undefined') { // FGPU
+        gpu_type = 'cuda.share';
+        gpu_value = cuda_fgpu;
+      } else {
+        gpu_type = 'cuda.device';
+        gpu_value = cuda_gpu;
+      }
+    } else if (typeof rocm_gpu !== 'undefined') {
+      gpu_type = 'rocm.device';
+      gpu_value = rocm_gpu;
+    } else if (typeof tpu !== 'undefined') {
+      gpu_type = 'tpu.device';
+      gpu_value = tpu;
+    } else {
+      gpu_type = 'none';
+      gpu_value = 0;
+    }
     this.shmem_request = 0.0625;
-    this._updateResourceIndicator(cpu, mem, gpu);
+    this._updateResourceIndicator(cpu, mem, gpu_type, gpu_value);
     //button.raised = true;
   }
 
-  _updateResourceIndicator(cpu, mem, gpu) {
-    this.shadowRoot.querySelector('#gpu-resource').value = gpu;
+  _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
+    this.shadowRoot.querySelector('#gpu-resource').value = gpu_value;
     this.shadowRoot.querySelector('#shmem-resource').value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
-    this.gpu_request = gpu;
+    this.gpu_request = gpu_value;
   }
 
   selectDefaultLanguage() {
@@ -2356,20 +2384,26 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
                              style="width:350px; overflow:scroll;">
                 ${this.resource_templates_filtered.map(item => html`
-                  <wl-button class="resource-button vertical center start layout" role="option"
+                  <wl-button class="resource-button vertical center start-justified layout" role="option"
                              style="height:140px;min-width:120px;" type="button"
                              flat outlined
                              @click="${this._chooseResourceTemplate}"
                              id="${item.name}-button"
                              .cpu="${item.cpu}"
                              .mem="${item.mem}"
-                             .gpu="${item.gpu}">
+                             .cuda_gpu="${item.cuda_gpu}"
+                             .cuda_fgpu="${item.cuda_fgpu}"
+                             .rocm_gpu="${item.rocm_gpu}"
+                             .tpu="${item.tpu}">
                   <div>
-                    <h4>${item.name}</h4>
+                    <h4 style="padding-top:15px;padding-bottom:15px;">${item.name}</h4>
                     <ul>
                       <li>${item.cpu} CPU</li>
                       <li>${item.mem}GB RAM</li>
-                      ${!item.gpu ? html`<li>&nbsp;</li>` : html`<li>${item.gpu} GPU</li>`}
+                      ${item.cuda_gpu ? html`<li>${item.cuda_gpu} CUDA GPU</li>` : html``}
+                      ${item.cuda_fgpu ? html`<li>${item.cuda_fgpu} GPU</li>` : html``}
+                      ${item.rocm_gpu ? html`<li>${item.rocm_gpu} ROCM GPU</li>` : html``}
+                      ${item.tpu ? html`<li>${item.tpu} TPU</li>` : html``}
                       </ul>
                   </div>
                 </wl-button>
