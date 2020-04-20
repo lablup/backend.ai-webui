@@ -9,8 +9,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-indicator';
 
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-
 import 'weightless/card';
 import 'weightless/icon';
 
@@ -67,6 +65,10 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Number}) cuda_gpu_used = 0;
   @property({type: Number}) cuda_fgpu_total = 0;
   @property({type: Number}) cuda_fgpu_used = 0;
+  @property({type: Number}) rocm_gpu_total = 0;
+  @property({type: Number}) rocm_gpu_used = 0;
+  @property({type: Number}) tpu_total = 0;
+  @property({type: Number}) tpu_used = 0;
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
@@ -123,11 +125,6 @@ export default class BackendAISummary extends BackendAIPage {
           color: #3e872d;
         }
 
-        vaadin-progress-bar {
-          width: 190px;
-          height: 10px;
-        }
-
         mwc-linear-progress {
           width: 190px;
           height: 5px;
@@ -178,6 +175,7 @@ export default class BackendAISummary extends BackendAIPage {
           --mdc-icon-button-size: 24px;
           color: black;
         }
+
       `
     ];
   }
@@ -501,7 +499,9 @@ export default class BackendAISummary extends BackendAIPage {
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
                   <mwc-linear-progress class="mem-usage-bar start-bar" progress="${this.cpu_total_usage_ratio / 100.0}"></mwc-linear-progress>
-                  <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar" progress="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
+                  <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar"
+                    progress="${this.cpu_current_usage_ratio / 100.0}"
+                    buffer="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
                     ${_t('summary.CoresReserved')}.
                   </div>
@@ -516,7 +516,9 @@ export default class BackendAISummary extends BackendAIPage {
                 </div>
                 <div class="layout vertical start" style="padding-left:15px;">
                   <mwc-linear-progress class="mem-usage-bar start-bar" id="mem-usage-bar" progress="${this.mem_total_usage_ratio / 100.0}"></mwc-linear-progress>
-                  <mwc-linear-progress class="mem-usage-bar end-bar" progress="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
+                  <mwc-linear-progress class="mem-usage-bar end-bar"
+                    progress="${this.mem_current_usage_ratio / 100.0}"
+                    buffer="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
                   <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
                     ${_t('summary.reserved')}.
                   </div>
@@ -525,38 +527,46 @@ export default class BackendAISummary extends BackendAIPage {
                   </div>
                 </div>
               </div>
-              ${this.cuda_gpu_total ? html`
-                <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                  <div class="layout vertical start center-justified">
-                    <wl-icon class="fg green">view_module</wl-icon>
-                    <span>GPU</span>
-                  </div>
-                  <div class="layout vertical start" style="padding-left:15px;">
-                    <vaadin-progress-bar id="gpu-bar" .value="${this.cuda_gpu_used}" .max="${this.cuda_gpu_total}"></vaadin-progress-bar>
-                    <div><span class="progress-value"> ${this.cuda_gpu_used}</span>/${this.cuda_gpu_total} CUDA GPUs</div>
-                  </div>
-                </div>` : html``}
-              ${this.cuda_fgpu_total ? html`
-                <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                  <div class="layout vertical start center-justified">
-                    <wl-icon class="fg green">view_module</wl-icon>
-                    <span>GPU</span>
-                  </div>
-                  <div class="layout vertical start" style="padding-left:15px;">
-                    <vaadin-progress-bar id="vgpu-bar" value="${this.cuda_fgpu_used}"
-                                         max="${this.cuda_fgpu_total}"></vaadin-progress-bar>
-                    <div><span class="progress-value"> ${this.cuda_fgpu_used}</span>/${this.cuda_fgpu_total} CUDA GPUs</div>
-                    <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
-                  </div>
-                </div>` : html``}
-                <div class="horizontal center layout">
-                  <div style="width:10px;height:10px;margin-left:40px;margin-right:3px;background-color:#4775E3;"></div>
-                  <span style="margin-right:5px;">${_t('summary.Reserved')}</span>
-                  <div style="width:10px;height:10px;margin-right:3px;background-color:#A0BD67"></div>
-                  <span style="margin-right:5px;">${_t('summary.Used')}</span>
-                  <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
-                  <span>${_t('summary.Total')}</span>
+              <div class="layout horizontal center flex" style="margin-bottom:5px;">
+                <div class="layout vertical start center-justified">
+                  <wl-icon class="fg green">view_module</wl-icon>
+                  <span>GPU</span>
                 </div>
+                <div class="layout vertical start" style="padding-left:15px;">
+                ${this.cuda_gpu_total ? html`
+                  <mwc-linear-progress id="gpu-bar"
+                    progress="${this.cuda_gpu_used / this.cuda_gpu_total}"></mwc-linear-progress>
+                  <div><span class="progress-value"> ${this.cuda_gpu_used}</span>/${this.cuda_gpu_total} CUDA GPUs</div>
+                ` : html``}
+                ${this.cuda_fgpu_total ? html`
+                  <mwc-linear-progress id="vgpu-bar"
+                    progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
+                    buffer="${this.cuda_fgpu_used / this.cuda_fgpu_total}"></mwc-linear-progress>
+                  <div><span class="progress-value"> ${this.cuda_fgpu_used}</span>/${this.cuda_fgpu_total} CUDA fGPUs</div>
+                  <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
+                ` : html``}
+                ${this.rocm_gpu_total ? html`
+                  <mwc-linear-progress id="vgpu-bar"
+                    progress="${this.rocm_gpu_used / 100.0}"
+                    buffer="${this.rocm_gpu_used / 100.0}"></mwc-linear-progress>
+                  <div><span class="progress-value"> ${this.rocm_gpu_used}</span>/${this.rocm_gpu_total} ROCm GPUs</div>
+                ` : html``}
+                ${this.tpu_total ? html`
+                  <mwc-linear-progress id="vgpu-bar"
+                    progress="${this.tpu_used / 100.0}"
+                    buffer="${this.tpu_used / 100.0}"></mwc-linear-progress>
+                  <div><span class="progress-value"> ${this.tpu_used}</span>/${this.tpu_total} TPUs</div>
+                ` : html``}
+                </div>
+              </div>
+              <div class="horizontal center layout">
+                <div style="width:10px;height:10px;margin-left:40px;margin-right:3px;background-color:#4775E3;"></div>
+                <span style="margin-right:5px;">${_t('summary.Reserved')}</span>
+                <div style="width:10px;height:10px;margin-right:3px;background-color:#A0BD67"></div>
+                <span style="margin-right:5px;">${_t('summary.Used')}</span>
+                <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
+                <span>${_t('summary.Total')}</span>
+              </div>
             </div>
           </lablup-activity-panel>` : html``}
         </div>
