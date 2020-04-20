@@ -116,7 +116,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     super.connectedCallback();
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -133,7 +133,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
   }
 
-  _loadAgentList(status = 'running') {
+  _loadAgentList(status: string = 'running') {
     if (this.active !== true) {
       return;
     }
@@ -243,11 +243,12 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   _elapsed(start, end) {
-    var startDate = new Date(start);
+    let startDate = new Date(start);
+    let endDate: Date;
     if (this.condition === 'running') {
-      var endDate = new Date();
+      endDate = new Date();
     } else {
-      var endDate = new Date(end);
+      endDate = new Date(end);
     }
     var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     if (this.condition === 'running') {
@@ -263,15 +264,15 @@ export default class BackendAIAgentList extends BackendAIPage {
     return startDate.toLocaleString('ko-KR');
   }
 
-  _indexFrom1(index) {
+  _indexFrom1(index: number) {
     return index + 1;
   }
 
-  _heartbeatStatus(state) {
+  _heartbeatStatus(state: string) {
     return state;
   }
 
-  _heartbeatColor(state) {
+  _heartbeatColor(state: string) {
     switch (state) {
       case 'ALIVE':
         return 'green';

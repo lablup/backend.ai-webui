@@ -167,7 +167,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -186,7 +186,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
-  _refreshKeyData(user_id?) {
+  _refreshKeyData(user_id: null|string = null) {
     let is_active = true;
     switch (this.condition) {
       case 'active':
