@@ -510,13 +510,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _modifyResourceTemplate() {
-    let name = this.shadowRoot.querySelector('#id_preset_name').value;
+    const name = this.shadowRoot.querySelector('#id_preset_name').value;
+    const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
     if (!name) {
       this.notification.text = 'No preset name';
       this.notification.show();
       return;
     }
     let input = this._readResourcePresetInput();
+    if (input.shared_memory >= mem) {
+      this.notification.text = 'Memory should be larger than shared memory';
+      this.notification.show();
+      return;
+    }
     globalThis.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#modify-template-dialog').hide();
       this.notification.text = "Resource preset successfully updated.";
@@ -595,6 +602,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
     if (sharedMemory) sharedMemory = sharedMemory + 'g';
     if (!preset_name) {
       this.notification.text = 'No preset name';
+      this.notification.show();
+      return;
+    }
+    if (sharedMemory >= mem) {
+      this.notification.text = 'Memory should be larger than shared memory';
       this.notification.show();
       return;
     }
