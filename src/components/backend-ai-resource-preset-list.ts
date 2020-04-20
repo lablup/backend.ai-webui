@@ -444,7 +444,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
     this.shadowRoot.querySelector('#ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
     if (resourcePreset.shared_memory) {
-      this.shadowRoot.querySelector('#shmem-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g'));
+      this.shadowRoot.querySelector('#shmem-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2);
     } else {
       this.shadowRoot.querySelector('#shmem-resource').value = '';
     }
@@ -460,7 +460,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         let preset = resourcePresets[objectKey];
         preset.resource_slots.mem_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
         if (preset.shared_memory) {
-          preset.shared_memory_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.shared_memory, 'g'));
+          preset.shared_memory_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.shared_memory, 'g')).toFixed(2);
         } else {
           preset.shared_memory_gb = null;
         }
