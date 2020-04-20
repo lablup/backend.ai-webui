@@ -2218,7 +2218,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-          ${this.total_slot.cuda_fgpu_slot ?
+          ${this.total_slot.cuda_fgpu_slot && this.total_slot.cuda_fgpu_slot > 0 ?
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
