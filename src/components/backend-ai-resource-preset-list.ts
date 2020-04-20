@@ -163,6 +163,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <span class="indicator">GPU</span>
           </div>
         ` : html``}
+        ${rowData.item.shared_memory ?
+        html`
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg blue">memory</wl-icon>
+            <span>${rowData.item.shared_memory_gb}</span>
+            <span class="indicator">GB</span>
+          </div>
+        ` : html``}
         </div>
       `, root
     );
@@ -267,6 +275,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 <mwc-textfield id="fgpu-resource" type="number" label="fGPU"
                     min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
+              <div class="horizontal center layout">
+                <mwc-textfield id="shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
+              </div>
               <br/><br/>
               <wl-button class="fg orange create-button" outlined type="button"
                 @click="${() => this._modifyResourceTemplate()}">
@@ -310,6 +321,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
                     min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
                 <mwc-textfield id="create-fgpu-resource" type="number" label="fGPU"
                     min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
+              </div>
+              <div class="horizontal center layout">
+                <mwc-textfield id="create-shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
               </div>
               <wl-button
                 class="fg orange create-button"
@@ -428,6 +442,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
       this.shadowRoot.querySelector('#fgpu-resource').value = "";
     }
     this.shadowRoot.querySelector('#ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
+    if (resourcePreset.shared_memory) {
+      this.shadowRoot.querySelector('#shmem-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g'));
+    } else {
+      this.shadowRoot.querySelector('#shmem-resource').value = '';
+    }
   }
 
   _refreshTemplateData() {
@@ -439,6 +458,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
       Object.keys(resourcePresets).map((objectKey, index) => {
         let preset = resourcePresets[objectKey];
         preset.resource_slots.mem_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
+        if (preset.shared_memory) {
+          preset.shared_memory_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.shared_memory, 'g'));
+        } else {
+          preset.shared_memory_gb = null;
+        }
       });
       this.resourcePresets = resourcePresets;
     }).catch(err => {
@@ -461,10 +485,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   _readResourcePresetInput() {
     const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const cpu = wrapper(this.shadowRoot.querySelector('#cpu-resource').value),
-      mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g'),
-      gpu_resource = wrapper(this.shadowRoot.querySelector('#gpu-resource').value),
-      fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
+    const cpu = wrapper(this.shadowRoot.querySelector('#cpu-resource').value);
+    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
+    const gpu_resource = wrapper(this.shadowRoot.querySelector('#gpu-resource').value);
+    const fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
+    let sharedMemory = this.shadowRoot.querySelector('#shmem-resource').value;
+    if (sharedMemory) sharedMemory = sharedMemory + 'g';
 
     let resource_slots = {cpu, mem};
     if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
@@ -475,7 +501,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
 
     const input = {
-      'resource_slots': JSON.stringify(resource_slots)
+      resource_slots: JSON.stringify(resource_slots),
+      shared_memory: sharedMemory
     };
 
     return input;
@@ -558,11 +585,13 @@ class BackendAiResourcePresetList extends BackendAIPage {
       v = v.toString();
       return typeof (v) !== "undefined" && v.includes('Unlimited') ? 'Infinity' : v;
     };
-    const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value),
-      cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value),
-      mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g'),
-      gpu_resource = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value),
-      fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
+    const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value);
+    const cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value);
+    const mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g');
+    const gpu_resource = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value);
+    const fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
+    let sharedMemory = this.shadowRoot.querySelector('#create-shmem-resource').value;
+    if (sharedMemory) sharedMemory = sharedMemory + 'g';
     if (!preset_name) {
       this.notification.text = 'No preset name';
       this.notification.show();
@@ -578,7 +607,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
 
     const input = {
-      'resource_slots': JSON.stringify(resource_slots)
+      resource_slots: JSON.stringify(resource_slots),
+      shared_memory: sharedMemory
     };
 
     globalThis.backendaiclient.resourcePreset.add(preset_name, input)
@@ -594,6 +624,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           this.shadowRoot.querySelector('#create-ram-resource').value = 1;
           this.shadowRoot.querySelector('#create-gpu-resource').value = 0;
           this.shadowRoot.querySelector('#create-fgpu-resource').value = 0;
+          this.shadowRoot.querySelector('#create-shmem-resource').value = 1;
         } else {
           this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
         }
