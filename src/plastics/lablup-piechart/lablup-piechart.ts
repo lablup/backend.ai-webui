@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {css, html, LitElement} from "lit-element";
+import {css, customElement, html, LitElement, property} from "lit-element";
 import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
 
 /**
@@ -15,63 +15,34 @@ import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
  @group Lablup Elements
  @element lablup-piechart
  */
+@customElement("lablup-piechart")
+export default class LablupPiechart extends LitElement {
+  public shadowRoot: any; // ShadowRoot
+  @property({type: Number}) currentNumber = 50;
+  @property({type: Number}) maxNumber = 100;
+  @property({type: String}) unit = '%';
+  @property({type: String}) url = '';
+  @property({type: String}) textcolor = '#888888';
+  @property({type: String}) chartcolor = '#ff2222';
+  @property({type: Number}) size = 200;
+  @property({type: Number}) fontsize = 60;
+  @property({type: String}) chartFontSize = '0';
+  @property({type: String}) indicatorPath = '';
+  @property({type: String}) prefix = '';
+  @property({type: String}) sizeParam = '';
 
-class LablupPiechart extends LitElement {
   constructor() {
     super();
-    this.currentNumber = 50;
-    this.maxNumber = 100;
-    this.unit = '%';
-    this.url = '';
-    this.textcolor = '#888';
-    this.chartcolor = '#F22';
-    this.size = 200;
-    this.fontsize = 60;
-    this.prefix = '';
-    this.sizeParam = '';
   }
 
   static get is() {
     return 'lablup-piechart';
   }
 
-  static get properties() {
-    return {
-      currentNumber: {
-        type: Number
-      },
-      maxNumber: {
-        type: Number
-      },
-      unit: {
-        type: String
-      },
-      url: {
-        type: String
-      },
-      textcolor: {
-        type: String
-      },
-      chartcolor: {
-        type: String
-      },
-      size: {
-        type: Number
-      },
-      fontsize: {
-        type: Number
-      },
-      prefix: {
-        type: String
-      },
-      sizeParam: String
-    }
-  }
-
   static get styles() {
     return [
       IronFlex,
-      IronFlexAlignment
+      IronFlexAlignment,
       // language=CSS
       css`
         #chart {
@@ -82,16 +53,21 @@ class LablupPiechart extends LitElement {
 
   firstUpdated() {
     this.sizeParam = this.size + "px";
-    this.chartFontSize = this.fontsize / this.size;
-    if (this.chartFontSize >= 0.5) {
-      this.chartFontSize = 0.3;
+    let chartFontSize = this.fontsize / this.size;
+    if (chartFontSize >= 0.5) {
+      chartFontSize = 0.3;
     }
-    this.shadowRoot.querySelector("#chart").setAttribute("fill", this.chartcolor);
-    this.shadowRoot.querySelector("#chart-text").setAttribute("fill", this.textcolor);
-    this.shadowRoot.querySelector("#chart-text").setAttribute("font-size", this.chartFontSize);
-    this.shadowRoot.querySelector("#unit-text").setAttribute("font-size", 0.3 - this.unit.length * 0.05);
-    this.shadowRoot.querySelector("#chart").setAttribute("width", this.sizeParam);
-    this.shadowRoot.querySelector("#chart").setAttribute("height", this.sizeParam);
+    this.chartFontSize = chartFontSize.toString();
+    let chart: HTMLElement = this.shadowRoot.querySelector("#chart");
+    let chartText: HTMLElement = this.shadowRoot.querySelector("#chart-text");
+    let unitText: HTMLElement = this.shadowRoot.querySelector("#unit-text");
+    let unitFontSize: string = (0.3 - this.unit.length * 0.05).toString();
+    chart.setAttribute("fill", this.chartcolor);
+    chartText.setAttribute("fill", this.textcolor);
+    chartText.setAttribute("font-size", this.chartFontSize);
+    unitText.setAttribute("font-size", unitFontSize);
+    chart.setAttribute("width", this.sizeParam);
+    chart.setAttribute("height", this.sizeParam);
 
     this.indicatorPath = "M 0.5 0.5 L0.5 0 ";
     var number = 100 * (this.maxNumber - this.currentNumber) / this.maxNumber;
@@ -127,11 +103,11 @@ class LablupPiechart extends LitElement {
     x = x + 0.5;
     y = -y + 0.5;
     this.indicatorPath = this.indicatorPath + "L" + x + " " + y + " z";
-    this.shadorRoot.querySelector('#pievalue').setAttribute("d", this.indicatorPath);
+    this.shadowRoot.querySelector('#pievalue').setAttribute("d", this.indicatorPath);
     if (this.url !== undefined && this.url !== "") {
       this.shadowRoot.querySelector("#chart").addEventListener('tap', this._moveTo.bind(this));
     }
-    this.updateStyles();
+    this.requestUpdate();
   }
 
   connectedCallback() {
@@ -164,4 +140,8 @@ class LablupPiechart extends LitElement {
   }
 }
 
-customElements.define(LablupPiechart.is, LablupPiechart);
+declare global {
+  interface HTMLElementTagNameMap {
+    "lablup-piechart": LablupPiechart;
+  }
+}

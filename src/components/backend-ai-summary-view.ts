@@ -21,6 +21,7 @@ import './backend-ai-chart';
 import './backend-ai-resource-monitor';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
+import '../plastics/lablup-piechart/lablup-piechart';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
