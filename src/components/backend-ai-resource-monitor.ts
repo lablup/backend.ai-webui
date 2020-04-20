@@ -1253,6 +1253,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             }
             item.cpu = item.resource_slots.cpu;
             item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+            if (item.shared_memory) {
+              item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
+            } else {
+              item.shmem = null;
+            }
             available_presets.push(item);
           }
         });
@@ -1877,7 +1882,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const cpu = button.cpu;
     const mem = button.mem;
     const gpu = button.gpu;
-    this.shmem_request = 0.0625;
+    const shmem = button.shmem;
+    this.shmem_request = shmem ? shmem : 0.0625;
     this._updateResourceIndicator(cpu, mem, gpu);
     //button.raised = true;
   }
@@ -2343,13 +2349,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                              id="${item.name}-button"
                              .cpu="${item.cpu}"
                              .mem="${item.mem}"
-                             .gpu="${item.gpu}">
+                             .gpu="${item.gpu}"
+                             .shmem="${item.shmem}">
                   <div>
                     <h4>${item.name}</h4>
                     <ul>
                       <li>${item.cpu} CPU</li>
                       <li>${item.mem}GB RAM</li>
                       ${!item.gpu ? html`<li>&nbsp;</li>` : html`<li>${item.gpu} GPU</li>`}
+                      ${item.shmem ? html`<li>${item.shmem}GB SHRAM</li>` : html``}
                       </ul>
                   </div>
                 </wl-button>

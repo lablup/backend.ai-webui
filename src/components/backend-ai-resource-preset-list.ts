@@ -114,6 +114,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         }
 
         wl-button {
+          color: var(--paper-yellow-600);
           --button-bg: var(--paper-yellow-50);
           --button-bg-hover: var(--paper-yellow-100);
           --button-bg-active: var(--paper-yellow-600);
@@ -624,7 +625,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           this.shadowRoot.querySelector('#create-ram-resource').value = 1;
           this.shadowRoot.querySelector('#create-gpu-resource').value = 0;
           this.shadowRoot.querySelector('#create-fgpu-resource').value = 0;
-          this.shadowRoot.querySelector('#create-shmem-resource').value = 1;
+          this.shadowRoot.querySelector('#create-shmem-resource').value = '';
         } else {
           this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
         }
