@@ -41,11 +41,14 @@ import {
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
 import BackendAiSettingsStore from "./backend-ai-settings-store";
+import BackendAiTasker from "./backend-ai-tasker";
 
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
 });
 globalThis.backendaioptions = new BackendAiSettingsStore;
+globalThis.tasker = new BackendAiTasker;
+
 /**
  Backend.AI GUI Console
 
