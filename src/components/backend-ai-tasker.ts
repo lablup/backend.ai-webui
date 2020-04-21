@@ -20,6 +20,9 @@ class Task {
     this.status = 'active';
   }
 
+  remove() {
+    delete this.taskobj;
+  }
 }
 
 /**
@@ -83,7 +86,7 @@ export default class BackendAiTasker extends LitElement {
 
   add(task, taskid: string = '') {
     if (taskid === '') {
-      taskid = this.generateId();
+      taskid = this.generate_UUID();
     }
     let item = new Task(task, taskid);
     task.then(() => {
@@ -91,6 +94,7 @@ export default class BackendAiTasker extends LitElement {
       }
     );
     this.taskstore.push(item);
+    console.log(item);
   }
 
   remove(taskid: string = '') {
@@ -100,6 +104,7 @@ export default class BackendAiTasker extends LitElement {
     if (result.length > 0) {
       let index = this.taskstore.indexOf(result[0]);
       if (index > -1) {
+        result[0].remove();
         this.taskstore.splice(index, 1);
       }
       delete result[0];
@@ -110,12 +115,14 @@ export default class BackendAiTasker extends LitElement {
     }
   }
 
-  generateId() {
-    let text: string = "";
-    let possible: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (let i = 0; i < 8; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text;
+  generate_UUID() {
+    let dt = new Date().getTime();
+    let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      let r = (dt + Math.random() * 16) % 16 | 0;
+      dt = Math.floor(dt / 16);
+      return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
   }
 
   gc() {
