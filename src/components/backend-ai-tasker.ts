@@ -51,7 +51,7 @@ export default class BackendAiTasker extends LitElement {
     this.finished = [];
     this.pooler = setInterval(() => {
       this.gc();
-    }, 3000);
+    }, 10000);
   }
 
   static get styles() {
