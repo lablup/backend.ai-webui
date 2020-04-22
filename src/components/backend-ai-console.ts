@@ -116,6 +116,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   firstUpdated() {
     globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
+    globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
@@ -813,6 +814,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
+      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>

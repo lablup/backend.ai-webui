@@ -72,6 +72,7 @@ export default class BackendAiTasker extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
+
     this.indicator = this.shadowRoot.querySelector('#indicator');
   }
 
