@@ -13,8 +13,8 @@ class Task {
   status: string;
   created_at: number;
 
-  constructor(obj: Object, id: number | null) {
-    this.taskid = id;
+  constructor(obj: Object, taskid: string) {
+    this.taskid = taskid;
     this.taskobj = obj;
     this.created_at = Date.now();
     this.status = 'active';
@@ -63,7 +63,6 @@ export default class BackendAiTasker extends LitElement {
   render() {
     // language=HTML
     return html`
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
     `;
   }
 
@@ -125,7 +124,7 @@ export default class BackendAiTasker extends LitElement {
     return uuid;
   }
 
-  gc() {
+  async gc() {
     if (this.finished.length > 0) {
       this.finished.forEach((item) => {
         this.remove(item);
