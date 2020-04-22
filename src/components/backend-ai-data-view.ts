@@ -183,7 +183,7 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     if (!globalThis.backendaiclient) {
       // Do not render until globalThis.backendaiclient is defined first.
-      window.setTimeout(() => render, 0)
+      window.setTimeout(() => this.render, 0)
       return;
     }
     // language=HTML
