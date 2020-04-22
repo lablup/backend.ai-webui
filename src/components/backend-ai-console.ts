@@ -27,6 +27,7 @@ import 'weightless/progress-spinner';
 import './backend-ai-settings-store';
 import './backend-ai-splash';
 import './lablup-notification';
+import './backend-ai-indicator';
 import './lablup-terms-of-service';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
