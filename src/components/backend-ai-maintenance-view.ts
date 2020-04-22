@@ -85,7 +85,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>${_t("maintenance.General")}</span>
@@ -143,7 +142,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.indicator = globalThis.lablupIndicator;
 
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {

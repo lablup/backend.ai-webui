@@ -2086,6 +2086,11 @@ class Resources {
     this.agents = [];
   }
 
+  /**
+   * Total resource information of Backend.AI cluster.
+   *
+   * @param {string} status - Resource node status to get information.
+   */
   totalResourceInformation(status = 'ALIVE') {
     if (this.client.is_admin) {
       let fields = ['id',
@@ -2172,6 +2177,10 @@ class Resources {
     }
   }
 
+  /**
+   * user statistics about usage.
+   *
+   */
   user_stats() {
     const rqst = this.client.newSignedRequest("GET", "/resource/stats/user/month", null);
     return this.client._wrapWithPromise(rqst);
