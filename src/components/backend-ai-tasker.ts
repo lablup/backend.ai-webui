@@ -4,8 +4,6 @@
  */
 
 import {css, customElement, html, LitElement, property} from "lit-element";
-import './backend-ai-indicator';
-
 
 class Task {
   taskid: string;
@@ -54,6 +52,8 @@ export default class BackendAiTasker extends LitElement {
     super();
     this.taskstore = [];
     this.finished = [];
+    this.notification = globalThis.lablupNotification;
+    this.indicator = globalThis.lablupIndicator;
     this.pooler = setInterval(() => {
       this.gc();
     }, 10000);
