@@ -41,7 +41,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = Array();
   @property({type: Array}) _selected_items = Array();
-  @property({type: Object}) loadingIndicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) _grid = Object();
   @property({type: Object}) logView = Object();
   @property({type: Number}) _pageSize = 25;
@@ -97,7 +97,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loadingIndicator = this.shadowRoot.querySelector('#loading-spinner');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 320px)!important';
@@ -109,12 +109,12 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   }
 
   _refreshLogData() {
-    this.loadingIndicator.show();
+    this.spinner.show();
     this.logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
-    this.loadingIndicator.hide();
+    this.spinner.hide();
   }
 
   _clearLogData() {

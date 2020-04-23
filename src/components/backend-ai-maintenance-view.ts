@@ -20,7 +20,6 @@ import 'weightless/icon';
 import 'weightless/card';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-spinner';
 import './backend-ai-indicator';
 
 @customElement("backend-ai-maintenance-view")

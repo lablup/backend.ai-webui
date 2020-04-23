@@ -65,7 +65,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
   @property({type: Object}) exportToCsvDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
-  @property({type: Object}) loadingIndicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) _defaultFileName = '';
@@ -297,7 +297,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loadingIndicator = this.shadowRoot.querySelector('#loading-spinner');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this._initializeAppTemplate();
     this.refreshTimer = null;
@@ -399,7 +399,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
-    this.loadingIndicator.show();
+    this.spinner.show();
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
@@ -435,7 +435,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let group_id = globalThis.backendaiclient.current_group_id();
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
-      this.loadingIndicator.hide();
+      this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
@@ -531,7 +531,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
       }
     }).catch(err => {
-      this.loadingIndicator.hide();
+      this.spinner.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);

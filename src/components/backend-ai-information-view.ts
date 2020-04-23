@@ -19,13 +19,11 @@ import 'weightless/icon';
 import 'weightless/card';
 
 import './lablup-loading-spinner';
-import './backend-ai-indicator';
 
 @customElement("backend-ai-information-view")
 export default class BackendAiInformationView extends BackendAIPage {
 
   @property({type: Object}) notification = Object();
-  @property({type: Object}) indicator = Object();
   @property({type: String}) manager_version = '';
   @property({type: String}) manager_version_latest = '';
   @property({type: String}) console_version = '';
@@ -90,7 +88,6 @@ export default class BackendAiInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>${_t("information.System")}</span>
@@ -190,7 +187,6 @@ export default class BackendAiInformationView extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#indicator');
 
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {

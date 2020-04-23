@@ -70,7 +70,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) renameFileDialog = Object();
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
-  @property({type: Object}) indicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
@@ -760,7 +760,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
-    this.indicator = this.shadowRoot.querySelector('#loading-spinner');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
@@ -981,12 +981,12 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _refreshFolderList() {
-    this.indicator.show();
+    this.spinner.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
     let l = globalThis.backendaiclient.vfolder.list(groupId);
     l.then((value) => {
-      this.indicator.hide();
+      this.spinner.hide();
       let folders = value.filter(item => {
         if (this.storageType === 'general' && !item.name.startsWith('.')) {
           return item;

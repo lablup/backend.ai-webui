@@ -32,7 +32,7 @@ import './backend-ai-usersettings-general-list';
 
 @customElement("backend-ai-usersettings-view")
 export default class BackendAiUserSettingsView extends BackendAIPage {
-  public indicator: any;
+  public spinner: any;
 
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
@@ -65,8 +65,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        div.indicator,
-        span.indicator {
+        div.spinner,
+        span.spinner {
           font-size: 9px;
           margin-right: 5px;
         }
@@ -188,7 +188,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     } else { // already connected
       this.updateSettings();
     }
-    this.indicator = this.shadowRoot.querySelector('#loading-spinner');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     // this._activeTab = "general";
     this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');
@@ -234,7 +234,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this.clearLogsDialog.hide();
     this.notification.text = 'Log Messages have been removed.';
     this.notification.show();
-    this.indicator.hide();
+    this.spinner.hide();
   }
 
   _showClearLogsDialog() {
