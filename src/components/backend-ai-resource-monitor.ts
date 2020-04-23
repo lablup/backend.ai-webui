@@ -1277,6 +1277,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             }
             item.cpu = item.resource_slots.cpu;
             item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+            if (item.shared_memory) {
+              item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
+            } else {
+              item.shmem = null;
+            }
             available_presets.push(item);
           }
         });
@@ -1937,7 +1942,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       gpu_type = 'none';
       gpu_value = 0;
     }
-    this.shmem_request = 0.0625;
+    const shmem = button.shmem;
+    this.shmem_request = shmem ? shmem : 0.0625;
     this._updateResourceIndicator(cpu, mem, gpu_type, gpu_value);
   }
 
@@ -2449,7 +2455,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                              .cuda_gpu="${item.cuda_gpu}"
                              .cuda_fgpu="${item.cuda_fgpu}"
                              .rocm_gpu="${item.rocm_gpu}"
-                             .tpu="${item.tpu}">
+                             .tpu="${item.tpu}"
+                             .shmem="${item.shmem}">
                   <div>
                     <h4 style="padding-top:15px;padding-bottom:15px;">${item.name}</h4>
                     <ul>
@@ -2459,6 +2466,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       ${item.cuda_fgpu ? html`<li>${item.cuda_fgpu} GPU</li>` : html``}
                       ${item.rocm_gpu ? html`<li>${item.rocm_gpu} ROCM GPU</li>` : html``}
                       ${item.tpu ? html`<li>${item.tpu} TPU</li>` : html``}
+                      ${item.shmem ? html`<li>${item.shmem}GB SHRAM</li>` : html``}
                       </ul>
                   </div>
                 </wl-button>
