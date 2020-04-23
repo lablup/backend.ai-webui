@@ -329,7 +329,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.tpu_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
                 <span>${rowData.item.tpu_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
                 <span class="indicator">TPU</span>
