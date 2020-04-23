@@ -26,7 +26,7 @@ import 'weightless/button';
 
 
 import './lablup-codemirror';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import './backend-ai-error-log-list';
 import './backend-ai-usersettings-general-list';
 
@@ -138,7 +138,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item">
         <h3 class="tab horizontal wrap layout">
           <wl-tab-group>
@@ -188,7 +188,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     } else { // already connected
       this.updateSettings();
     }
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     // this._activeTab = "general";
     this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');

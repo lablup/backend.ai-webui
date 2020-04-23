@@ -25,7 +25,7 @@ import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import './lablup-codemirror';
 
 @customElement("backend-ai-usersettings-general-list")
@@ -161,7 +161,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector('#loading-spinner');
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -635,7 +635,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>` : html``}
       </wl-card>
       <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
         <div slot="header" style="padding: 0px 20px;">
         <h3 class="horizontal center layout">
           <span>${_t("usersettings.BootstrapScript")}</span>
@@ -655,7 +655,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
       </wl-dialog>
       <wl-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
         <div slot="header" style="padding: 0px 20px;">
           <h3 class="horizontal center layout">
             <span>Edit ${this.rcfile} shell script</span>

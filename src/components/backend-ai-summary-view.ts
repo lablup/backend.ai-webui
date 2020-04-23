@@ -7,7 +7,7 @@ import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 
 import 'weightless/card';
 import 'weightless/icon';
@@ -187,7 +187,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot.querySelector('#update-checker');
   }
@@ -469,7 +469,7 @@ export default class BackendAISummary extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">${_t('summary.Dashboard')}</h3>
         <div class="horizontal wrap layout">

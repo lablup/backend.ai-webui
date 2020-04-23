@@ -9,7 +9,7 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-item/paper-item';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
@@ -362,7 +362,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
@@ -760,7 +760,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {

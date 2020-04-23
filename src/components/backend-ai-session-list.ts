@@ -25,7 +25,7 @@ import 'weightless/title';
 import '@material/mwc-icon-button';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -297,7 +297,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.loadingIndicator = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this._initializeAppTemplate();
     this.refreshTimer = null;
@@ -1302,7 +1302,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">

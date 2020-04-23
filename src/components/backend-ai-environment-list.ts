@@ -17,7 +17,7 @@ import {
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import './backend-ai-indicator';
 
 import 'weightless/button';
@@ -468,7 +468,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
@@ -797,7 +797,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.loadingIndicator = this.shadowRoot.querySelector('#loading-spinner');
     this.indicator = this.shadowRoot.querySelector('#indicator');
     this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');

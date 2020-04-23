@@ -6,8 +6,8 @@
 import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/progress-spinner';
 
-@customElement("lablup-loading-indicator")
-export default class LablupLoadingIndicator extends LitElement {
+@customElement("lablup-loading-spinner")
+export default class LablupLoadingSpinner extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) indicator;
   @property({type: Boolean}) active = false;
@@ -88,6 +88,6 @@ export default class LablupLoadingIndicator extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lablup-loading-indicator": LablupLoadingIndicator;
+    "lablup-loading-spinner": LablupLoadingSpinner;
   }
 }

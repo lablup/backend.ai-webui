@@ -10,7 +10,7 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
@@ -118,7 +118,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
