@@ -189,7 +189,8 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     this.recalculating = true;
     this.indicator.start('indeterminate');
     this.indicator.set(10, 'Recalculating...');
-    globalThis.tasker.add(
+
+    this.tasker.add(
       globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
         this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
         this.recalculating = false;

@@ -109,6 +109,7 @@ export default class BackendAiTasker extends LitElement {
       return false;
     }
     this.taskstore.push(item);
+    console.log(item);
     return true;
   }
 
