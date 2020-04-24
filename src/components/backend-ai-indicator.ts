@@ -13,6 +13,8 @@ import 'weightless/title';
 export default class BackendAIIndicator extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
+  @property({type: Number}) step = 0;
+
   @property({type: String}) text = '';
   @property({type: String}) mode = 'determinate';
   @property({type: Object}) dialog;
@@ -61,6 +63,16 @@ export default class BackendAIIndicator extends LitElement {
     indicatorDiv.appendChild(progress);
     indicator.appendChild(indicatorTitle);
     indicator.appendChild(indicatorDiv);
+    indicator.style.bottom = (20 + 55 * this.step) + 'px';
+    indicator.style.position = 'fixed';
+    indicator.style.right = '20px';
+    indicator.style.fontSize = '16px';
+    indicator.style.fontWeight = '400';
+    indicator.style.fontFamily = "'Quicksand', Roboto, sans-serif";
+    indicator.style.setProperty('--dialog-height', '80px');
+    indicator.style.setProperty('--dialog-width', '250px');
+    indicator.style.setProperty('--dialog-content-padding', '15px');
+    indicator.style.zIndex = "9000";
     document.body.appendChild(indicator);
     this.dialog = indicator;
     await this.updateComplete;
