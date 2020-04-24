@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {customElement, html, LitElement, property} from "lit-element";
 
 import 'weightless/dialog';
 import 'weightless/banner';
@@ -25,19 +25,7 @@ export default class BackendAIIndicator extends LitElement {
   }
 
   static get styles() {
-    return [
-      // language=CSS
-      css`
-        wl-dialog {
-          position: fixed;
-          right: 20px;
-          bottom: 20px;
-          z-index: 9000;
-          --dialog-height: 80px;
-          --dialog-width: 250px;
-          --dialog-content-padding: 15px;
-        }
-      `];
+    return [];
   }
 
   firstUpdated() {
@@ -63,7 +51,7 @@ export default class BackendAIIndicator extends LitElement {
     indicatorDiv.appendChild(progress);
     indicator.appendChild(indicatorTitle);
     indicator.appendChild(indicatorDiv);
-    indicator.style.bottom = (20 + 55 * this.step) + 'px';
+    indicator.style.bottom = (20 + 90 * this.step) + 'px';
     indicator.style.position = 'fixed';
     indicator.style.right = '20px';
     indicator.style.fontSize = '16px';
@@ -74,6 +62,8 @@ export default class BackendAIIndicator extends LitElement {
     indicator.style.setProperty('--dialog-content-padding', '15px');
     indicator.style.zIndex = "9000";
     document.body.appendChild(indicator);
+    this.pool.push(indicator);
+    this.step = this.pool.length;
     this.dialog = indicator;
     await this.updateComplete;
     indicator.show();
@@ -83,7 +73,7 @@ export default class BackendAIIndicator extends LitElement {
     this.value = 0;
     this.text = 'Initializing...';
     this.mode = mode;
-    this.add();
+    return this.add();
     //console.log(this.dialog);
     //this.dialog.show();
   }
