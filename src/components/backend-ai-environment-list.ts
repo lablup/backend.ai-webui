@@ -18,7 +18,6 @@ import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-spinner';
-import './backend-ai-indicator';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -228,7 +227,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.show();
   }
 
-  _installImage() {
+  async _installImage() {
     this.installImageDialog.hide();
     if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
       this.installImageResource['gpu'] = 0;
@@ -247,8 +246,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
     this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
     this.notification.show();
-    this.indicator.start('indeterminate');
-    this.indicator.set(10, 'Downloading...');
+    let indicator = await this.indicator.start('indeterminate');
+    indicator.set(10, 'Downloading...');
     globalThis.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
       if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
@@ -265,16 +264,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       }
       return globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource);
     }).then((response) => {
-      this.indicator.set(100, 'Install finished.');
-      this.indicator.end(1000);
+      indicator.set(100, 'Install finished.');
+      indicator.end(1000);
       this._getImages();
     }).catch(err => {
       this._uncheckSelectedRow();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
-      this.indicator.set(100, _t('environment.DescProblemOccurred'));
-      this.indicator.end(1000);
+      indicator.set(100, _t('environment.DescProblemOccurred'));
+      indicator.end(1000);
     });
   }
 
@@ -469,7 +468,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
           <template class="header">
@@ -798,7 +796,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
-    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
 

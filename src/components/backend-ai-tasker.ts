@@ -114,7 +114,7 @@ export default class BackendAiTasker extends LitElement {
   }
 
   /**
-   *  Remote task from task list.
+   *  Remove task from task list.
    *
    * @param {string} taskid - Task ID to remove.
    */

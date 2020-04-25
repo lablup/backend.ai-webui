@@ -26,7 +26,6 @@ import '@material/mwc-icon-button';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
-import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 
 import JsonToCsv from '../lib/json_to_csv';
@@ -68,6 +67,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
+  @property({type: Object}) indicator = Object();
   @property({type: Object}) _defaultFileName = '';
   @property({type: Proxy}) statusColorTable = new Proxy({
     'idle-timeout': 'green',
@@ -777,7 +777,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
-      this.shadowRoot.querySelector('#indicator').end();
+      this.indicator.end();
       this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
       this.notification.show();
       return Promise.resolve(false);
@@ -791,17 +791,17 @@ export default class BackendAiSessionList extends BackendAIPage {
       },
       uri: this._getProxyURL() + 'conf'
     };
-    this.shadowRoot.querySelector('#indicator').set(20, 'Setting up proxy for the app...');
+    this.indicator.set(20, 'Setting up proxy for the app...');
     try {
       let response = await this.sendRequest(rqst);
       if (response === undefined) {
-        this.shadowRoot.querySelector('#indicator').end();
+        this.indicator.end();
         this.notification.text = 'Proxy configurator is not responding.';
         this.notification.show();
         return Promise.resolve(false);
       }
       let token = response.token;
-      this.shadowRoot.querySelector('#indicator').set(50, 'Adding kernel to socket queue...');
+      this.indicator.set(50, 'Adding kernel to socket queue...');
       let rqst_proxy = {
         method: 'GET',
         app: app,
@@ -813,7 +813,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _runApp(e) {
+  async _runApp(e) {
     const controller = e.target;
     let controls = controller.closest('#app-dialog');
     let sessionName = controls.getAttribute('session-name');
@@ -829,30 +829,25 @@ export default class BackendAiSessionList extends BackendAIPage {
 
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
-      this.shadowRoot.querySelector('#indicator').start();
+      this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionName, appName)
         .then((response) => {
           if (appName === 'sshd') {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.indicator.set(100, 'Prepared.');
             this.sshPort = response.port;
             this._readSSHKey(sessionName);
             this._openSSHDialog();
             setTimeout(() => {
-              this.shadowRoot.querySelector('#indicator').end();
+              this.indicator.end();
             }, 1000);
           } else if (appName === 'vnc') {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.indicator.set(100, 'Prepared.');
             this.vncPort = response.port;
             this._openVNCDialog();
-            setTimeout(() => {
-              this.shadowRoot.querySelector('#indicator').end();
-            }, 1000);
-
           } else if (response.url) {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
               console.log(sessionName);
             }, 1000);
@@ -874,19 +869,19 @@ export default class BackendAiSessionList extends BackendAIPage {
     downloadLinkEl.download = 'id_container';
   }
 
-  _runTerminal(e) {
+  async _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionName = controls['session-name'];
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
-      this.shadowRoot.querySelector('#indicator').start();
+      this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionName, 'ttyd')
         .then((response) => {
           if (response.url) {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url, '_blank');
-              this.shadowRoot.querySelector('#indicator').end();
+              this.indicator.end();
               console.log("Terminal proxy loaded: ");
               console.log(sessionName);
             }, 1000);
@@ -1446,7 +1441,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-dialog id="work-dialog" fixed blockscrolling scrollable
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">

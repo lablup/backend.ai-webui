@@ -27,7 +27,7 @@ import 'weightless/progress-spinner';
 import './backend-ai-settings-store';
 import './backend-ai-splash';
 import './lablup-notification';
-import './backend-ai-indicator';
+import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
@@ -816,7 +816,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
+      <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>

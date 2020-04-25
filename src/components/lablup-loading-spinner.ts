@@ -9,7 +9,7 @@ import 'weightless/progress-spinner';
 @customElement("lablup-loading-spinner")
 export default class LablupLoadingSpinner extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Object}) indicator;
+  @property({type: Object}) spinner;
   @property({type: Boolean}) active = false;
 
   constructor() {
@@ -35,7 +35,7 @@ export default class LablupLoadingSpinner extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-progress-spinner id="indicator"></wl-progress-spinner>
+      <wl-progress-spinner id="spinner"></wl-progress-spinner>
     `;
   }
 
@@ -44,7 +44,7 @@ export default class LablupLoadingSpinner extends LitElement {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.spinner = this.shadowRoot.querySelector('#spinner');
     this.active = true;
   }
 
@@ -63,25 +63,25 @@ export default class LablupLoadingSpinner extends LitElement {
   async show() {
     this.active = true;
     await this.updateComplete;
-    this.indicator.style.display = 'block';
+    this.spinner.style.display = 'block';
   }
 
   async hide() {
     this.active = true;
     await this.updateComplete;
-    this.indicator.style.display = 'none';
+    this.spinner.style.display = 'none';
     this.active = false;
   }
 
   async toggle() {
     await this.updateComplete;
-    if (this.indicator.active === true) {
+    if (this.spinner.active === true) {
       this.active = true;
-      this.indicator.style.display = 'none';
+      this.spinner.style.display = 'none';
       this.active = false;
     } else {
       this.active = true;
-      this.indicator.style.display = 'block';
+      this.spinner.style.display = 'block';
     }
   }
 }
