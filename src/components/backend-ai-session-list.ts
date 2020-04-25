@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {translate as _t, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
@@ -707,7 +707,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName}`;
-        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || 'No logs.';
+        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
         this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
         this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
         this.shadowRoot.querySelector('#work-dialog').show();
@@ -730,7 +730,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
-      this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || 'No logs.';
+      this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
