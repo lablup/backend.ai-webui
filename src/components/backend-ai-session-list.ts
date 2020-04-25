@@ -289,7 +289,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-    const preparingStatuses = ['RESTARTING', 'PULLING'];
+    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -1110,12 +1110,12 @@ export default class BackendAiSessionList extends BackendAIPage {
                                @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
-          ${ (this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"><wl-icon>delete</wl-icon></wl-button>
           ` : html``}
-          ${this._isRunning || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
                                on-tap="_showLogs"><wl-icon>assignment</wl-icon></wl-button>
@@ -1200,11 +1200,15 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   checkboxRenderer(root, column?, rowData?) {
-    render(
-      html`
-        <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
-      `, root
-    );
+    if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
+      render(
+        html`
+            <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+        `, root
+      );
+    } else {
+      render(html``, root);
+    }
   }
 
   userInfoRenderer(root, column?, rowData?) {
