@@ -2,6 +2,8 @@
 
 Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
 
+For more information, see [manual](https://console.docs.backend.ai/en/latest/).
+
 Backend.AI console focuses to
 
  * Serve as desktop app (windows, macOS and Linux) and web service
