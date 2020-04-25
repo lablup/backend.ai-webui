@@ -137,7 +137,8 @@
     "ExportSessionListToCSVFile": "Export Session list to CSV File",
     "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
     "ExportCSVFile": "Export CSV File",
-    "ResourceGroup": "Resource Group"
+    "ResourceGroup": "Resource Group",
+    "NoLogs": "No logs."
   },
   "button": {
     "Cancel": "Cancel",
