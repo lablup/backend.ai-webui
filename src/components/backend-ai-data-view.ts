@@ -56,6 +56,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
   @property({type: Object}) _lists = Object();
+  @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
 
   constructor() {
     super();
@@ -233,7 +234,7 @@ export default class BackendAIData extends BackendAIPage {
                 ` : html``}
               </mwc-select>
             </div>
-            ${globalThis.backendaiclient.isAPIVersionCompatibleWith('v5.20200401') ? html`
+            ${this._vfolderInnatePermissionSupport ? html`
               <div class="horizontal layout">
                 <mwc-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
                   ${this.usageModes.map((item, idx) => html`
@@ -288,22 +289,25 @@ export default class BackendAIData extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.is_admin = globalThis.backendaiclient.is_admin;
-        this.authenticated = true;
-        this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-        globalThis.backendaiclient.vfolder.allowed_types().then(response => {
-          this.allowed_folder_type = response;
-        });
-      }, true);
-    } else {
+
+    const _init = () => {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+        if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
+          this._vfolderInnatePermissionSupport = true;
+        }
       globalThis.backendaiclient.vfolder.allowed_types().then(response => {
         this.allowed_folder_type = response;
       });
+    }
+
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        _init();
+      }, true);
+    } else {
+      _init();
     }
   }
 
