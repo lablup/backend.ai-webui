@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {translate as _t, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
@@ -289,7 +289,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-    const preparingStatuses = ['RESTARTING', 'PULLING'];
+    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -707,9 +707,30 @@ export default class BackendAiSessionList extends BackendAIPage {
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName}`;
-        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || 'No logs.';
+        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
+        this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
         this.shadowRoot.querySelector('#work-dialog').show();
       }, 100);
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+  _refreshLogs() {
+    const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
+    const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
+    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+      const ansi_up = new AnsiUp();
+      const logs = ansi_up.ansi_to_html(req.result.logs);
+      this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1105,12 +1126,12 @@ export default class BackendAiSessionList extends BackendAIPage {
                                @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
-          ${ (this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"><wl-icon>delete</wl-icon></wl-button>
           ` : html``}
-          ${this._isRunning || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
                                on-tap="_showLogs"><wl-icon>assignment</wl-icon></wl-button>
@@ -1195,11 +1216,15 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   checkboxRenderer(root, column?, rowData?) {
-    render(
-      html`
-        <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
-      `, root
-    );
+    if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
+      render(
+        html`
+            <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+        `, root
+      );
+    } else {
+      render(html``, root);
+    }
   }
 
   userInfoRenderer(root, column?, rowData?) {
@@ -1447,6 +1472,9 @@ export default class BackendAiSessionList extends BackendAIPage {
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span id="work-title"></span>
             <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._refreshLogs(e)}">
+              <wl-icon>refresh</wl-icon>
+            </wl-button>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
