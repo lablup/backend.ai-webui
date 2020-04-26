@@ -1,5 +1,22 @@
 # Changelog
 
+## v20.04.4 (26/04/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**] File rename feature [#434](https://github.com/lablup/backend.ai-console/issues/434)
+- [**enhancement**][**library / SDK**][**major**] Handle heterogeneous resource slots for v1912+ [#407](https://github.com/lablup/backend.ai-console/issues/407)
+- [**UI / UX**][**enhancement**][**hard**][**major**] Detailed kernel selection UI [#258](https://github.com/lablup/backend.ai-console/issues/258)
+
+#### Bug Fixes:
+
+- [**bug**] Blank Data & Storage page [#499](https://github.com/lablup/backend.ai-console/issues/499)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**minor**] Add refresh button in session logs dialog [#502](https://github.com/lablup/backend.ai-console/issues/502)
+
+
 ## v20.04.3 (16/04/2020)
 
 #### Enhancements:
