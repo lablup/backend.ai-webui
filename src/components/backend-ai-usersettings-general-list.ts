@@ -240,7 +240,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         this.notification.text = _text("usersettings.InvalidPortNumber");
         this.notification.show();
         return;
-      } else {
+      } else { // 0 if blank.
         globalThis.backendaioptions.set('custom_ssh_port', value);
       }
     }
@@ -594,7 +594,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${globalThis.backendaioptions.get('preserve_login')}"></wl-switch>
             </div>
           </div>
-          ` : html``}
           <div class="horizontal layout wrap setting-item">
             <div class="vertical start center-justified layout setting-text-desc">
               <div>${_t("usersettings.PreferredSSHPort")}</div>
@@ -605,6 +604,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 validationMessage="Allows numbers only" auto-validate></mwc-textfield>
             </div>
           </div>
+          ` : html``}
           <div class="horizontal layout wrap setting-item">
             <div class="vertical start center-justified layout setting-desc">
               <div>${_t("usersettings.AutomaticUpdateCheck")}</div>

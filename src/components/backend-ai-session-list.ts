@@ -855,9 +855,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
       let port = null;
-      if (appName === 'sshd') {
-        port = globalThis.backendaioptions.get('custom_ssh_port', '');
-        if (port === '') { // setting store does not accept null.
+      if (globalThis.isElectron && appName === 'sshd') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
         }
       }
