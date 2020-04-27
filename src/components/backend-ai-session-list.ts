@@ -856,7 +856,10 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.indicator = await globalThis.lablupIndicator.start();
       let port = null;
       if (appName === 'sshd') {
-        port = globalThis.backendaioptions.get('custom_ssh_port', null);
+        port = globalThis.backendaioptions.get('custom_ssh_port', '');
+        if (port === '') {
+          port = null;
+        }
       }
       this._open_wsproxy(sessionName, appName, port)
         .then((response) => {
