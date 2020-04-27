@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
@@ -69,6 +70,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Object}) loginPanel;
   @property({type: Object}) signoutPanel;
   @property({type: Object}) blockPanel;
+  @property({type: Boolean}) is_connected = false;
   @property({type: Object}) clientConfig;
   @property({type: Object}) client;
   @property({type: Object}) notification;
@@ -352,7 +354,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockMessage = message;
     this.blockType = type;
     setTimeout(() => {
-      if (this.blockPanel.open === false) {
+      if (this.blockPanel.open === false && this.is_connected === false) {
         this.blockPanel.show();
       }
     }, 2000);
@@ -399,14 +401,10 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
-      this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      //this.notification.text = 'Connecting...';
-      //this.notification.show();
+      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingSession();
     } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      this.block('Please wait to login.', 'Connecting to Backend.AI Cluster...');
-      //this.notification.text = 'Connecting...';
-      //this.notification.show();
+      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingAPI();
     } else {
       this.open();
@@ -459,7 +457,7 @@ export default class BackendAILogin extends BackendAIPage {
     let user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
     let password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
     this.client.signout(user_id, password).then(response => {
-      this.notification.text = 'Signout finished.';
+      this.notification.text = _text("login.SignoutFinished");
       this.notification.show();
       let event = new CustomEvent("backend-ai-logout", {"detail": ""});
       document.dispatchEvent(event);
@@ -485,7 +483,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     if (this.api_endpoint === '') {
-      this.notification.text = 'API Endpoint is empty. Please specify API endpoint to login.';
+      this.notification.text = _text('login.APIEndpointEmpty');
       this.notification.show();
       return;
     }
@@ -522,6 +520,7 @@ export default class BackendAILogin extends BackendAIPage {
             "message": "Authentication failed. Check information and manager status."
           };
         } else {
+          this.is_connected = true;
           return this._connectGQL();
         }
       }).catch((err) => {   // Connection failed
@@ -546,6 +545,7 @@ export default class BackendAILogin extends BackendAIPage {
         this.open();
       });
     } else { // Login already succeeded.
+      this.is_connected = true;
       return this._connectGQL();
     }
   }
@@ -600,6 +600,7 @@ export default class BackendAILogin extends BackendAIPage {
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
     return this.client.gql(q, v).then(response => {
+      this.is_connected = true;
       globalThis.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
       globalThis.backendaiclient.resource_policy = resource_policy;

@@ -27,6 +27,7 @@ import 'weightless/progress-spinner';
 import './backend-ai-settings-store';
 import './backend-ai-splash';
 import './lablup-notification';
+import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
@@ -40,12 +41,16 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+
 import BackendAiSettingsStore from "./backend-ai-settings-store";
+import BackendAiTasker from "./backend-ai-tasker";
 
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
 });
 globalThis.backendaioptions = new BackendAiSettingsStore;
+globalThis.tasker = new BackendAiTasker;
+
 /**
  Backend.AI GUI Console
 
@@ -113,6 +118,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   firstUpdated() {
     globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
+    globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
@@ -246,7 +252,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
-    let curtain = this.shadowRoot.getElementById('loading-curtain');
+    let curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
     curtain.addEventListener('transitionend', () => {
       curtain.classList.add('hidden');
@@ -286,7 +292,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.mini_ui = false;
     }
     globalThis.mini_ui = this.mini_ui;
-    let event = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
+    let event: CustomEvent = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
     document.dispatchEvent(event);
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
@@ -322,10 +328,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.current_group = this._readRecentProjectGroup();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
-    let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
+    let groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
     // Detached from template to support live-update after creating new group (will need it)
     if (groupSelectionBox.hasChildNodes()) {
-      groupSelectionBox.removeChild(groupSelectionBox.firstChild);
+      groupSelectionBox.removeChild(groupSelectionBox.firstChild as ChildNode);
     }
     let select = document.createElement('mwc-select');
     select.label = _text("console.menu.Project");
@@ -480,7 +486,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       default:
-        this.menuTitle = 'LOGIN REQUIRED';
+        this.menuTitle = _text("console.LOGINREQUIRED");
     }
   }
 
@@ -743,7 +749,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.04.2.200415</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.04.4.200426</small>
             </address>
           </div>
         </div>
@@ -805,11 +811,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </div>
       </mwc-drawer>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
-        You are now ${this._offline ? 'offline' : 'online'}.
+        ${this._offline ? _t("console.YouAreOffline") : _t("console.YouAreOnline")}.
       </backend-ai-offline-indicator>
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
+      <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>

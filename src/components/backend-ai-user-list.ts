@@ -8,7 +8,7 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -45,7 +45,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) userInfoGroups = Array();
   @property({type: String}) condition = 'active';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) indicator;
+  @property({type: Object}) spinner;
   @property({type: Object}) keypairs;
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
@@ -151,7 +151,7 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     }
@@ -186,7 +186,7 @@ export default class BackendAIUserList extends BackendAIPage {
       default:
         is_active = false;
     }
-    this.indicator.hide();
+    this.spinner.hide();
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
@@ -430,7 +430,7 @@ export default class BackendAIUserList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
                    aria-label="User list" id="user-grid" .items="${this.userView}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#"

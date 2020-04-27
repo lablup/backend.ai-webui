@@ -35,7 +35,10 @@
       "NoProject": "프로젝트 없음",
       "SelectProject": "프로젝트 선택",
       "Experiments": "실험"
-    }
+    },
+    "LOGINREQUIRED": "로그인이 필요합니다",
+    "YouAreOffline": "오프라인 상태가 되었습니다",
+    "YouAreOnline": "온라인 상태가 되었습니다"
   },
   "summary": {
     "Dashboard": "대시보드",
@@ -133,7 +136,8 @@
     "ExportSessionListToCSVFile": "세션 리스트를 CSV로 내보내기",
     "OnlyRecent100SessionExport": "최근 100개의 세션 실행 기록만 내보낼 수 있습니다.",
     "ExportCSVFile": "CSV로 내보내기",
-    "ResourceGroup": "자원 그룹"
+    "ResourceGroup": "자원 그룹",
+    "NoLogs": "로그가 없습니다."
   },
   "button": {
     "Cancel": "취소",
@@ -282,6 +286,8 @@
       "UploadFiles": "파일 업로드...",
       "NewFolder": "새 폴더",
       "StopUploading": "업로드 취소",
+      "RenameAFile": "파일 이름 변경",
+      "NewFileName": "새로운 파일 이름",
       "Size": "크기",
       "CreateANewFolder": "새 폴더 만들기",
       "Name": "이름",
@@ -558,7 +564,11 @@
     "ClickToUseID": "ID 사용",
     "EndpointHistory": "엔드포인트 기록",
     "NoEndpointSaved": "저장된 엔드포인트가 없습니다.",
-    "CancelLogin": "로그인 취소"
+    "CancelLogin": "로그인 취소",
+    "SignoutFinished": "탈퇴가 완료되었습니다.",
+    "APIEndpointEmpty": "API Endpoint 가 지정되지 않았습니다. 로그인을 위해 앤드포인트를 지정하세요.",
+    "PleaseWait": "로그인 진행중. 기다려주세요.",
+    "ConnectingToCluster": "Backend.AI 클러스터에 연결중..."
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",

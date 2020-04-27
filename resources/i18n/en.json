@@ -35,7 +35,10 @@
       "NoProject": "No Project",
       "SelectProject": "Select Project",
       "Experiments": "Experiments"
-    }
+    },
+    "LOGINREQUIRED": "LOGIN REQUIRED",
+    "YouAreOffline": "You are now offline",
+    "YouAreOnline": "You are now online"
   },
   "summary": {
     "Dashboard": "Dashboard",
@@ -134,7 +137,8 @@
     "ExportSessionListToCSVFile": "Export Session list to CSV File",
     "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
     "ExportCSVFile": "Export CSV File",
-    "ResourceGroup": "Resource Group"
+    "ResourceGroup": "Resource Group",
+    "NoLogs": "No logs."
   },
   "button": {
     "Cancel": "Cancel",
@@ -284,6 +288,8 @@
       "UploadFiles": "Upload Files...",
       "NewFolder": "New Folder",
       "StopUploading": "Stop Uploading",
+      "RenameAFile": "Rename File",
+      "NewFileName": "New file name",
       "Size": "Size",
       "CreateANewFolder": "Create a new folder",
       "Name": "Name",
@@ -560,7 +566,11 @@
     "ClickToUseID": "Click To Use ID",
     "EndpointHistory": "Endpoint History",
     "NoEndpointSaved": "No endpoint saved.",
-    "CancelLogin": "Cancel Login"
+    "CancelLogin": "Cancel Login",
+    "SignoutFinished": "Signout finished.",
+    "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
+    "PleaseWait": "Please wait to login.",
+    "ConnectingToCluster": "Connecting to Backend.AI Cluster..."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",

@@ -1,5 +1,36 @@
 # Changelog
 
+## v20.04.4 (26/04/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**] File rename feature [#434](https://github.com/lablup/backend.ai-console/issues/434)
+- [**enhancement**][**library / SDK**][**major**] Handle heterogeneous resource slots for v1912+ [#407](https://github.com/lablup/backend.ai-console/issues/407)
+- [**UI / UX**][**enhancement**][**hard**][**major**] Detailed kernel selection UI [#258](https://github.com/lablup/backend.ai-console/issues/258)
+
+#### Bug Fixes:
+
+- [**bug**] Blank Data & Storage page [#499](https://github.com/lablup/backend.ai-console/issues/499)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**minor**] Add refresh button in session logs dialog [#502](https://github.com/lablup/backend.ai-console/issues/502)
+
+
+## v20.04.3 (16/04/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**hard**][**library / SDK**][**major**]  add 'automatic download' option to manager [#157](https://github.com/lablup/backend.ai-console/issues/157)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**] Block usage mode / permission setting on Backend.AI 19.09 [#492](https://github.com/lablup/backend.ai-console/issues/492)
+- [**UI / UX**][**bug**][**minor**] FOUC during login on Firefox [#491](https://github.com/lablup/backend.ai-console/issues/491)
+- [**bug**][**enterprise**][**library / SDK**] Image rescan button returns error due to short timeout [#490](https://github.com/lablup/backend.ai-console/issues/490)
+
+---
+
 ## v20.04.2 (15/04/2020)
 
 #### Enhancements:

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -20,8 +20,6 @@ import 'weightless/icon';
 import 'weightless/card';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator';
-import './backend-ai-indicator';
 
 @customElement("backend-ai-maintenance-view")
 export default class BackendAiMaintenanceView extends BackendAIPage {
@@ -85,7 +83,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>${_t("maintenance.General")}</span>
@@ -143,7 +140,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.indicator = globalThis.lablupIndicator;
 
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
@@ -164,49 +161,49 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     this.scanning = true;
     //this.notification.text = 'Rescan image started.';
     //this.notification.show();
-    this.indicator.start('indeterminate');
-    this.indicator.set(10, 'Scanning...');
-    globalThis.backendaiclient.maintenance.rescan_images().then((response) => {
-      this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImages");
-      this.scanning = false;
-      this.indicator.set(100, 'Rescan image finished.');
-      this.indicator.end(1000);
-    }).catch(err => {
-      this.scanning = false;
-      this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImages");
-      console.log(err);
-      this.indicator.set(50, 'Rescan failed.');
-      this.indicator.end(1000);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    let indicator = await this.indicator.start('indeterminate');
+    indicator.set(10, 'Scanning...');
+    globalThis.tasker.add(
+      globalThis.backendaiclient.maintenance.rescan_images().then((response) => {
+        this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImages");
+        this.scanning = false;
+        indicator.set(100, 'Rescan image finished.');
+      }).catch(err => {
+        this.scanning = false;
+        this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImages");
+        console.log(err);
+        indicator.set(50, 'Rescan failed.');
+        indicator.end(1000);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      }));
   }
 
   async recalculate_usage() {
     this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.Recalculating');
     this.recalculating = true;
-    this.indicator.start('indeterminate');
-    this.indicator.set(10, 'Recalculating...');
-    globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
-      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
-      this.recalculating = false;
-      this.indicator.set(100, 'Recalculation finished.');
-      this.indicator.end(1000);
-    }).catch(err => {
-      this.recalculating = false;
-      this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
-      console.log(err);
-      this.indicator.set(50, 'Recalculation failed.');
-      this.indicator.end(1000);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    let indicator = await this.indicator.start('indeterminate');
+    indicator.set(10, 'Recalculating...');
+    this.tasker.add(
+      globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
+        this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
+        this.recalculating = false;
+        indicator.set(100, 'Recalculation finished.');
+      }).catch(err => {
+        this.recalculating = false;
+        this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
+        console.log(err);
+        indicator.set(50, 'Recalculation failed.');
+        indicator.end(1000);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      }));
   }
 }
 
