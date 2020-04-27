@@ -46,6 +46,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Array}) rcfiles = Array();
   @property({type: String}) rcfile = '';
   @property({type: String}) prevRcfile = '';
+  @property({type: String}) preferredSSHPort = '';
 
   constructor() {
     super();
@@ -174,6 +175,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
         if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
           this.shell_script_edit = true;
           this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
@@ -182,6 +184,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       });
     } else { // already connected
+      this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
         this.shell_script_edit = true;
         this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
@@ -234,13 +237,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   changePreferredSSHPort(e) {
-    let value = Number(e.target.value);
+    const value = Number(e.target.value);
     if (value !== globalThis.backendaioptions.get('custom_ssh_port', '')) {
-      if (value < 1024 || value > 65534) {
+      if (value === 0 || !value) {
+        globalThis.backendaioptions.delete('custom_ssh_port');
+      } else if (value < 1024 || value > 65534) {
         this.notification.text = _text("usersettings.InvalidPortNumber");
         this.notification.show();
         return;
-      } else { // 0 if blank.
+      } else {
         globalThis.backendaioptions.set('custom_ssh_port', value);
       }
     }
@@ -601,7 +606,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
             <div class="vertical center-justified layout setting-text">
               <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
-                validationMessage="Allows numbers only" auto-validate></mwc-textfield>
+                  value="${this.preferredSSHPort}" validationMessage="Allows numbers only" auto-validate></mwc-textfield>
             </div>
           </div>
           ` : html``}
