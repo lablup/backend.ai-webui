@@ -233,10 +233,19 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
-  changePreferredSSHPort() {
-    // TODO: change port setup
+  changePreferredSSHPort(e) {
+    let value = Number(e.target.value);
+    if (value !== globalThis.backendaioptions.get('custom_ssh_port', '')) {
+      if (value < 1024 || value > 65534) {
+        this.notification.text = _text("usersettings.InvalidPortNumber");
+        this.notification.show();
+        return;
+      } else {
+        globalThis.backendaioptions.set('custom_ssh_port', value);
+      }
+    }
   }
-  
+
   toggleBetaFeature(e) {
     if (e.target.checked === false) {
       globalThis.backendaioptions.set('beta_feature', false);
