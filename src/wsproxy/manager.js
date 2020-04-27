@@ -116,7 +116,7 @@ class Manager extends EventEmitter {
       }
       let sessionName = req.params["sessionName"];
       let app = req.query.app || "jupyter";
-      let port = req.query.port || undefined;
+      let port = parseInt(req.query.port) || undefined;
       let p = sessionName + "|" + app;
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
@@ -141,10 +141,17 @@ class Manager extends EventEmitter {
             assigned = true;
             break;
           } catch (err) {
-            //if port in use
-            logger.warn(err);
-            logger.info("Port in use");
-            //or just retry
+            if ('PortInUse' === err.message) {
+              // try next number or fallback to random port for the last resort
+              port = (i < maxtry - 1) ? port + 1 : undefined;
+              if (port) {
+                logger.warn('trying next port: ' + port);
+              } else {
+                logger.warn('trying random port')
+              }
+            } else {
+              logger.warn(err.message);
+            }
           }
         }
         if (!assigned) {
@@ -155,10 +162,10 @@ class Manager extends EventEmitter {
 
       let proxy_target = "http://localhost:" + port;
       if (app == 'sftp') {
-        logger.info(port);
+        logger.debug('proxy target: ' + proxy_target);
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
       } else if (app == 'sshd') {
-        logger.info(port);
+        logger.debug('proxy target: ' + proxy_target);
         res.send({
           "code": 200,
           "proxy": proxy_target,
@@ -166,7 +173,7 @@ class Manager extends EventEmitter {
           "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
         });
       } else if (app == 'vnc') {
-        logger.info(port);
+        logger.debug('proxy target: ' + proxy_target);
         res.send({
           "code": 200,
           "proxy": proxy_target,

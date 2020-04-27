@@ -797,9 +797,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
-    if (port !== null && port > 1024 && port < 65535) {
-      param['port'] = port;
-    }
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
       this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
@@ -825,11 +822,15 @@ export default class BackendAiSessionList extends BackendAIPage {
         return Promise.resolve(false);
       }
       let token = response.token;
+      let uri = this._getProxyURL() + `proxy/${token}/${sessionName}/add?app=${app}`;
+      if (port !== null && port > 1024 && port < 65535) {
+        uri += `&port=${port}`;
+      }
       this.indicator.set(50, 'Adding kernel to socket queue...');
       let rqst_proxy = {
         method: 'GET',
         app: app,
-        uri: this._getProxyURL() + 'proxy/' + token + "/" + sessionName + "/add?app=" + app
+        uri: uri
       };
       return await this.sendRequest(rqst_proxy);
     } catch (err) {
