@@ -854,7 +854,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
-      this._open_wsproxy(sessionName, appName)
+      let port = null;
+      if (appName === 'sshd') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', null);
+      }
+      this._open_wsproxy(sessionName, appName, port)
         .then((response) => {
           if (appName === 'sshd') {
             this.indicator.set(100, 'Prepared.');
