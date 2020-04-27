@@ -1472,7 +1472,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span id="work-title"></span>
             <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._refreshLogs(e)}">
+            <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
               <wl-icon>refresh</wl-icon>
             </wl-button>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">

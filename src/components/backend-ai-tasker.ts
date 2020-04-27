@@ -16,6 +16,7 @@ class Task {
     this.taskid = taskid;
     this.taskobj = obj;
     this.created_at = Date.now();
+    this.finished_at = 0;
     this.status = 'active';
   }
 
