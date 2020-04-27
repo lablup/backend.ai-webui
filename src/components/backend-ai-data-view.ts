@@ -8,7 +8,7 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-item/paper-item';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
@@ -51,7 +51,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
-  @property({type: Object}) indicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
@@ -184,7 +184,7 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="horizontal center flex layout tab">
           <wl-tab-group>
@@ -279,7 +279,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
   }

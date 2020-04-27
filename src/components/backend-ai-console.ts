@@ -27,6 +27,7 @@ import 'weightless/progress-spinner';
 import './backend-ai-settings-store';
 import './backend-ai-splash';
 import './lablup-notification';
+import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
@@ -40,12 +41,16 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+
 import BackendAiSettingsStore from "./backend-ai-settings-store";
+import BackendAiTasker from "./backend-ai-tasker";
 
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
 });
 globalThis.backendaioptions = new BackendAiSettingsStore;
+globalThis.tasker = new BackendAiTasker;
+
 /**
  Backend.AI GUI Console
 
@@ -113,6 +118,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   firstUpdated() {
     globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
+    globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
@@ -810,6 +816,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
+      <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>

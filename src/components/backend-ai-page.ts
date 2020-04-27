@@ -17,13 +17,15 @@ registerTranslateConfig({
 export class BackendAIPage extends LitElement {
   public shadowRoot: any; // ShadowRoot
   public updateComplete: any;
-  public notification: any;
+  public notification: any; // Global notification
+  public tasker: any; // Global Background tasker
   @property({type: Boolean}) active = false;
   @property({type: Boolean}) hasLoadedStrings = false;
 
   constructor() {
     super();
     this.active = false;
+    this.tasker = globalThis.tasker;
   }
 
   get activeConnected() {

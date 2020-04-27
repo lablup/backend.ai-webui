@@ -9,7 +9,7 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-item/paper-item';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
@@ -70,7 +70,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) renameFileDialog = Object();
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
-  @property({type: Object}) indicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
@@ -362,7 +362,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
@@ -760,7 +760,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
@@ -981,12 +981,12 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _refreshFolderList() {
-    this.indicator.show();
+    this.spinner.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
     let l = globalThis.backendaiclient.vfolder.list(groupId);
     l.then((value) => {
-      this.indicator.hide();
+      this.spinner.hide();
       let folders = value.filter(item => {
         if (this.storageType === 'general' && !item.name.startsWith('.')) {
           return item;
