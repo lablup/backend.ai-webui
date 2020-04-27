@@ -92,6 +92,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         .setting-select {
           width: 135px;
         }
+
+        .setting-text-desc {
+          width: 260px;
+        }
+
+        .setting-text {
+          width: 75px;
+        }
+
         .setting-item wl-button {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-teal-100);
@@ -224,6 +233,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  changePreferredSSHPort() {
+    // TODO: change port setup
+  }
+  
   toggleBetaFeature(e) {
     if (e.target.checked === false) {
       globalThis.backendaioptions.set('beta_feature', false);
@@ -575,6 +588,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
           </div>
           ` : html``}
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical start center-justified layout setting-text-desc">
+              <div>${_t("usersettings.PreferredSSHPort")}</div>
+              <div class="description">${_tr("usersettings.DescPreferredSSHPort")}</div>
+            </div>
+            <div class="vertical center-justified layout setting-text">
+              <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
+                validationMessage="Allows numbers only" auto-validate></mwc-textfield>
+            </div>
+          </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical start center-justified layout setting-desc">
               <div>${_t("usersettings.AutomaticUpdateCheck")}</div>

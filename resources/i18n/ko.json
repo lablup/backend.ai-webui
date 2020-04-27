@@ -379,7 +379,9 @@
     "DescNewUserConfigFileCreated": "새 사용자 스크립트 생성을 위한 내용이 필요합니다.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요.",
     "AutomaticUpdateCheck": "자동 업데이트 체크",
-    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연경 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다."
+    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연경 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
+    "PreferredSSHPort": "Preferred SSH Port",
+    "DescPreferredSSHPort": "Use this value as an SSH/SFTP port if possible. <br />If the port is already in use, assign another random port to SSH/SFTP. Leave blank to auto-assign."
   },
   "logs": {
     "LogMessages": "로그 메세지",
