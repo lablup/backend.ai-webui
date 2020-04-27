@@ -308,7 +308,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   async _editUserConfigScript() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
-    let rcfile_names = Array( ".bashrc", ".zshrc" );
+    let rcfile_names = Array(".bashrc", ".zshrc");
     rcfile_names.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
       if (idx == -1) {
@@ -344,7 +344,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
-  async _saveUserConfigScript(fileName : string = this.rcfile) {
+  async _saveUserConfigScript(fileName: string = this.rcfile) {
     const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     const script = editor.getValue();
     let idx = this.rcfiles.findIndex(item => item.path === fileName);
@@ -367,11 +367,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             }).catch(err => {
             this.spinner.hide();
             console.log(err);
-              if (err && err.message) {
-                this.notification.text = PainKiller.relieve(err.title);
-                this.notification.detail = err.message;
-                this.notification.show(true, err);
-              }
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+            }
           });
         } else {
           this.spinner.hide();
@@ -384,27 +384,25 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           this.notification.text = 'No changes';
           this.notification.show();
           return;
-        }
-        else if (script === '') {
+        } else if (script === '') {
           this.notification.text = _text("usersettings.DescLetUserUpdateScriptWithNonEmptyValue");
           this.notification.show();
           return;
-        }
-        else {
+        } else {
           await globalThis.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
-          .then(res => {
-            this.notification.text = _text("usersettings.DescScriptUpdated");
-            this.notification.show();
-            this.spinner.hide();
-          }).catch(err => {
+            .then(res => {
+              this.notification.text = _text("usersettings.DescScriptUpdated");
+              this.notification.show();
+              this.spinner.hide();
+            }).catch(err => {
               this.spinner.hide();
               console.log(err);
-            if (err && err.message) {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-              this.notification.show(true, err);
-            }
-          });
+              if (err && err.message) {
+                this.notification.text = PainKiller.relieve(err.title);
+                this.notification.detail = err.message;
+                this.notification.show(true, err);
+              }
+            });
         }
       }
     }
@@ -433,7 +431,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     dialog.hide();
   }
 
-  _updateSelectedRcFileName(fileName : string) {
+  _updateSelectedRcFileName(fileName: string) {
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     if (rcfiles.items.length > 0) {
@@ -474,7 +472,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _deleteRcFile(path: string) {
     if (path) {
       globalThis.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
-        let message = 'User config script '+ path + 'is deleted.';
+        let message = 'User config script ' + path + 'is deleted.';
         this.notification.text = message;
         this.notification.show();
         this.spinner.hide();
@@ -490,10 +488,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _deleteRcFileAll() {
-    this.rcfiles.map( item => {
+    this.rcfiles.map(item => {
       let path = item.path;
       globalThis.backendaiclient.userConfig.delete_dotfile_script(item.path).then(res => {
-        let message = 'User config script '+ path + ' is deleted.';
+        let message = 'User config script ' + path + ' is deleted.';
         this.notification.text = message;
         this.notification.show();
         this.spinner.hide();
