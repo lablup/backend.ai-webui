@@ -10,6 +10,7 @@ class Task {
   taskobj: Object;
   status: string;
   created_at: number;
+  finished_at: number;
 
   constructor(obj: Object, taskid: string) {
     this.taskid = taskid;
