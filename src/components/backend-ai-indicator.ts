@@ -56,7 +56,7 @@ export default class BackendAIIndicator extends LitElement {
   set(value, text = '') {
     this.value = value / 100.0;
     this.text = text;
-    if (value >= 1) {
+    if (this.value >= 1) {
       this.end(this.delay);
     }
   }
