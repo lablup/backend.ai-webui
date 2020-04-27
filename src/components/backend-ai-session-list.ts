@@ -857,7 +857,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       let port = null;
       if (appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', '');
-        if (port === '') {
+        if (port === '') { // setting store does not accept null.
           port = null;
         }
       }
