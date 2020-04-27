@@ -780,7 +780,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
-  async _open_wsproxy(sessionName, app = 'jupyter') {
+  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
@@ -797,6 +797,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
+    if (port !== null && port > 1024 && port < 65535) {
+      param['port'] = port;
+    }
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
       this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
