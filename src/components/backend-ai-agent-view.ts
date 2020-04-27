@@ -44,7 +44,7 @@ export default class BackendAIAgentView extends BackendAIPage {
   firstUpdated() {
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
       this.shadowRoot.querySelector('#running-agents').active = false;
@@ -60,8 +60,8 @@ export default class BackendAIAgentView extends BackendAIPage {
   }
 
   _showTab(tab) {
-    var els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (var x = 0; x < els.length; x++) {
+    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';

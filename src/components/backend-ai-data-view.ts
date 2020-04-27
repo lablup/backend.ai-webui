@@ -8,7 +8,7 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-item/paper-item';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
@@ -51,11 +51,12 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
-  @property({type: Object}) indicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
   @property({type: Object}) _lists = Object();
+  @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
 
   constructor() {
     super();
@@ -183,7 +184,7 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="horizontal center flex layout tab">
           <wl-tab-group>
@@ -233,7 +234,7 @@ export default class BackendAIData extends BackendAIPage {
                 ` : html``}
               </mwc-select>
             </div>
-            ${globalThis.backendaiclient.isAPIVersionCompatibleWith('v5.20200401') ? html`
+            ${this._vfolderInnatePermissionSupport ? html`
               <div class="horizontal layout">
                 <mwc-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
                   ${this.usageModes.map((item, idx) => html`
@@ -278,7 +279,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
   }
@@ -288,22 +289,25 @@ export default class BackendAIData extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.is_admin = globalThis.backendaiclient.is_admin;
-        this.authenticated = true;
-        this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-        globalThis.backendaiclient.vfolder.allowed_types().then(response => {
-          this.allowed_folder_type = response;
-        });
-      }, true);
-    } else {
+
+    const _init = () => {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+        if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
+          this._vfolderInnatePermissionSupport = true;
+        }
       globalThis.backendaiclient.vfolder.allowed_types().then(response => {
         this.allowed_folder_type = response;
       });
+    }
+
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        _init();
+      }, true);
+    } else {
+      _init();
     }
   }
 

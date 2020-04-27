@@ -1152,7 +1152,7 @@ class VFolder {
         'group': group
       };
     }
-    if (this.client.isAPIVersionCompatibleWith('v5.20200401')) {
+    if (this.client.isAPIVersionCompatibleWith('v4.20191215')) {
       if (usageMode) {
         body['usage_mode'] = usageMode;
       }
@@ -2073,12 +2073,24 @@ class Resources {
     this.resources['cuda.shares'] = {};
     this.resources['cuda.shares'].total = 0;
     this.resources['cuda.shares'].used = 0;
+    this.resources['rocm.device'] = {};
+    this.resources['rocm.device'].total = 0;
+    this.resources['rocm.device'].used = 0;
+    this.resources['tpu.device'] = {};
+    this.resources['tpu.device'].total = 0;
+    this.resources['tpu.device'].used = 0;
+
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
     this.agents = [];
   }
 
+  /**
+   * Total resource information of Backend.AI cluster.
+   *
+   * @param {string} status - Resource node status to get information.
+   */
   totalResourceInformation(status = 'ALIVE') {
     if (this.client.is_admin) {
       let fields = ['id',
@@ -2096,8 +2108,12 @@ class Resources {
           let value = this.agents[objectKey];
           let occupied_slots = JSON.parse(value.occupied_slots);
           let available_slots = JSON.parse(value.available_slots);
-          this.resources.cpu.total = this.resources.cpu.total + Math.floor(Number(available_slots.cpu));
-          this.resources.cpu.used = this.resources.cpu.used + Math.floor(Number(occupied_slots.cpu));
+          if ('cpu' in available_slots) {
+            this.resources.cpu.total = this.resources.cpu.total + Math.floor(Number(available_slots.cpu));
+          }
+          if ('cpu' in occupied_slots) {
+            this.resources.cpu.used = this.resources.cpu.used + Math.floor(Number(occupied_slots.cpu));
+          }
           this.resources.cpu.percent = this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
 
           if (occupied_slots.mem === undefined) {
@@ -2107,14 +2123,31 @@ class Resources {
           this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'b'));
           this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'b'));
 
-          this.resources.gpu.total = parseInt(this.resources.gpu.total) + Math.floor(Number(available_slots['cuda.device']));
+          if ('cuda.device' in available_slots) {
+            this.resources['cuda.device'].total = parseInt(this.resources['cuda.device'].total) + Math.floor(Number(available_slots['cuda.device']));
+          }
           if ('cuda.device' in occupied_slots) {
-            this.resources.gpu.used = parseInt(this.resources.gpu.used) + Math.floor(Number(occupied_slots['cuda.device']));
+            this.resources['cuda.device'].used = parseInt(this.resources['cuda.device'].used) + Math.floor(Number(occupied_slots['cuda.device']));
           }
-          this.resources.fgpu.total = parseFloat(this.resources.fgpu.total) + parseFloat(available_slots['cuda.shares']);
+          if ('cuda.shares' in available_slots) {
+            this.resources['cuda.shares'].total = parseFloat(this.resources['cuda.shares'].total) + parseFloat(available_slots['cuda.shares']);
+          }
           if ('cuda.shares' in occupied_slots) {
-            this.resources.fgpu.used = parseFloat(this.resources.fgpu.used) + parseFloat(occupied_slots['cuda.shares']);
+            this.resources['cuda.shares'].used = parseFloat(this.resources['cuda.shares'].used) + parseFloat(occupied_slots['cuda.shares']);
           }
+          if ('rocm.device' in available_slots) {
+            this.resources['rocm.device'].total = parseInt(this.resources['rocm.device'].total) + Math.floor(Number(available_slots['rocm.device']));
+          }
+          if ('rocm.device' in occupied_slots) {
+            this.resources['rocm.device'].used = parseInt(this.resources['rocm.device'].used) + Math.floor(Number(occupied_slots['rocm.device']));
+          }
+          if ('tpu.device' in available_slots) {
+            this.resources['tpu.device'].total = parseInt(this.resources['tpu.device'].total) + Math.floor(Number(available_slots['tpu.device']));
+          }
+          if ('tpu.device' in occupied_slots) {
+            this.resources['tpu.device'].used = parseInt(this.resources['tpu.device'].used) + Math.floor(Number(occupied_slots['tpu.device']));
+          }
+
           if (isNaN(this.resources.cpu.used)) {
             this.resources.cpu.used = 0;
           }
@@ -2128,14 +2161,13 @@ class Resources {
             this.resources.fgpu.used = 0;
           }
         });
-        this.resources.fgpu.used = this.resources.fgpu.used.toFixed(2);
-        this.resources.fgpu.total = this.resources.fgpu.total.toFixed(2);
+        // Legacy code
+        this.resources.gpu.total = this.resources['cuda.device'].total;
+        this.resources.gpu.used = this.resources['cuda.device'].used;
+        this.resources.fgpu.used = this.resources['cuda.shares'].used.toFixed(2);
+        this.resources.fgpu.total = this.resources['cuda.shares'].total.toFixed(2);
         this.resources.agents.total = Object.keys(this.agents).length; // TODO : remove terminated agents
         this.resources.agents.using = Object.keys(this.agents).length;
-        this.resources['cuda.shares'].used = this.resources.fgpu.used;
-        this.resources['cuda.device'].used = this.resources.gpu.used;
-        this.resources['cuda.shares'].total = this.resources.fgpu.total;
-        this.resources['cuda.device'].total = this.resources.gpu.total;
         return this.resources;
       }).catch(err => {
         throw err;
@@ -2145,6 +2177,10 @@ class Resources {
     }
   }
 
+  /**
+   * user statistics about usage.
+   *
+   */
   user_stats() {
     const rqst = this.client.newSignedRequest("GET", "/resource/stats/user/month", null);
     return this.client._wrapWithPromise(rqst);

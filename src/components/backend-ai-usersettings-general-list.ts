@@ -25,12 +25,12 @@ import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import './lablup-codemirror';
 
 @customElement("backend-ai-usersettings-general-list")
 export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
-  public indicator: any;
+  public spinner: any;
   public lastSavedBootstrapScript: string = '';
 
   @property({type: Object}) bootstrapDialog = Object();
@@ -161,7 +161,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -258,12 +258,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       this.notification.show();
       return;
     }
-    this.indicator.show();
+    this.spinner.show();
     globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
         this.notification.text = 'Bootstrap script updated.';
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       });
   }
 
@@ -339,12 +339,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           globalThis.backendaiclient.userConfig.create_dotfile_script(
             script, this.rcfiles[idx]['path'])
             .then(res => {
-              this.indicator.hide();
+              this.spinner.hide();
               this.notification.text = _text("usersettings.DescScriptCreated");
               this.notification.show();
             }).catch(err => {
-              this.indicator.hide();
-              console.log(err);
+            this.spinner.hide();
+            console.log(err);
               if (err && err.message) {
                 this.notification.text = PainKiller.relieve(err.title);
                 this.notification.detail = err.message;
@@ -352,7 +352,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               }
           });
         } else {
-          this.indicator.hide();
+          this.spinner.hide();
           this.notification.text = _text("usersettings.DescNewUserConfigFileCreated");
           this.notification.show();
           return;
@@ -373,10 +373,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           .then(res => {
             this.notification.text = _text("usersettings.DescScriptUpdated");
             this.notification.show();
-            this.indicator.hide();
+            this.spinner.hide();
           }).catch(err => {
-            this.indicator.hide();
-            console.log(err);
+              this.spinner.hide();
+              console.log(err);
             if (err && err.message) {
               this.notification.text = PainKiller.relieve(err.title);
               this.notification.detail = err.message;
@@ -389,7 +389,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     await setTimeout(() => {
       this._editUserConfigScript();
     }, 200);
-    this.indicator.show();
+    this.spinner.show();
   }
 
   async _saveUserConfigScriptAndCloseDialog() {
@@ -455,7 +455,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         let message = 'User config script '+ path + 'is deleted.';
         this.notification.text = message;
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -474,7 +474,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         let message = 'User config script '+ path + ' is deleted.';
         this.notification.text = message;
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -521,6 +521,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   render() {
     //languate=HTML
     return html`
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>${_t("usersettings.Preferences")}</span>
@@ -635,7 +636,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>` : html``}
       </wl-card>
       <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
         <div slot="header" style="padding: 0px 20px;">
         <h3 class="horizontal center layout">
           <span>${_t("usersettings.BootstrapScript")}</span>
@@ -655,7 +655,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
       </wl-dialog>
       <wl-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
         <div slot="header" style="padding: 0px 20px;">
           <h3 class="horizontal center layout">
             <span>Edit ${this.rcfile} shell script</span>

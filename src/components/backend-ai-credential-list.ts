@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, get as _text} from "lit-translate";
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import {render} from 'lit-html';
@@ -22,7 +22,6 @@ import 'weightless/label';
 import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
-import './lablup-loading-indicator';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -163,11 +162,10 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = globalThis.lablupNotification;
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -186,7 +184,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
-  _refreshKeyData(user_id?) {
+  _refreshKeyData(user_id: null|string = null) {
     let is_active = true;
     switch (this.condition) {
       case 'active':
@@ -196,7 +194,6 @@ export default class BackendAICredentialList extends BackendAIPage {
         is_active = false;
     }
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
-      this.indicator.hide();
       let rp = response.keypair_resource_policies;
       this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
     }).then(() => {
@@ -267,7 +264,6 @@ export default class BackendAICredentialList extends BackendAIPage {
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
-      this.indicator.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -514,7 +510,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairView}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>

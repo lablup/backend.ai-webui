@@ -7,7 +7,7 @@ import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 
 import 'weightless/card';
 import 'weightless/icon';
@@ -70,7 +70,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Number}) rocm_gpu_used = 0;
   @property({type: Number}) tpu_total = 0;
   @property({type: Number}) tpu_used = 0;
-  @property({type: Object}) indicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   public invitations: any;
@@ -187,7 +187,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot.querySelector('#update-checker');
   }
@@ -205,7 +205,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    this.indicator.show();
+    this.spinner.show();
     let status = 'RUNNING';
     switch (this.condition) {
       case 'running':
@@ -220,7 +220,7 @@ export default class BackendAISummary extends BackendAIPage {
     }
     let fields = ["created_at"];
     globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
-      this.indicator.hide();
+      this.spinner.hide();
       this.jobs = response;
       this.sessions = response.compute_session_list.total_count;
       if (this.active) {
@@ -229,7 +229,7 @@ export default class BackendAISummary extends BackendAIPage {
         }, 15000);
       }
     }).catch(err => {
-      this.indicator.hide();
+      this.spinner.hide();
       this.jobs = [];
       this.sessions = 0;
       this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
@@ -269,10 +269,10 @@ export default class BackendAISummary extends BackendAIPage {
       default:
         status = 'ALIVE';
     }
-    this.indicator.show();
+    this.spinner.show();
 
     globalThis.backendaiclient.resources.totalResourceInformation().then((response) => {
-      this.indicator.hide();
+      this.spinner.hide();
       this.resources = response;
       this._sync_resource_values();
       if (this.active == true) {
@@ -281,7 +281,7 @@ export default class BackendAISummary extends BackendAIPage {
         }, 15000);
       }
     }).catch(err => {
-      this.indicator.hide();
+      this.spinner.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -469,7 +469,7 @@ export default class BackendAISummary extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">${_t('summary.Dashboard')}</h3>
         <div class="horizontal wrap layout">

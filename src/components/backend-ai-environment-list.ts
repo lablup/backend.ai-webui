@@ -17,8 +17,7 @@ import {
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import './lablup-loading-indicator';
-import './backend-ai-indicator';
+import './lablup-loading-spinner';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -45,7 +44,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _rocm_gpu_disabled = false;
   @property({type: Boolean}) _tpu_disabled = false;
   @property({type: Object}) alias = Object();
-  @property({type: Object}) loadingIndicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
@@ -228,7 +227,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.show();
   }
 
-  _installImage() {
+  async _installImage() {
     this.installImageDialog.hide();
     if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
       this.installImageResource['gpu'] = 0;
@@ -247,8 +246,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
     this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
     this.notification.show();
-    this.indicator.start('indeterminate');
-    this.indicator.set(10, 'Downloading...');
+    let indicator = await this.indicator.start('indeterminate');
+    indicator.set(10, 'Downloading...');
     globalThis.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
       if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
@@ -265,16 +264,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       }
       return globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource);
     }).then((response) => {
-      this.indicator.set(100, 'Install finished.');
-      this.indicator.end(1000);
+      indicator.set(100, 'Install finished.');
+      indicator.end(1000);
       this._getImages();
     }).catch(err => {
       this._uncheckSelectedRow();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
-      this.indicator.set(100, _t('environment.DescProblemOccurred'));
-      this.indicator.end(1000);
+      indicator.set(100, _t('environment.DescProblemOccurred'));
+      indicator.end(1000);
     });
   }
 
@@ -468,8 +467,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
           <template class="header">
@@ -797,8 +795,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
 
@@ -840,7 +838,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _getImages() {
-    this.loadingIndicator.show();
+    this.spinner.show();
 
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
@@ -908,7 +906,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       //let sorted_images = {};
       //image_keys.sort();
       this.images = domainImages;
-      this.loadingIndicator.hide();
+      this.spinner.hide();
     }).catch((err) => {
       console.log(err);
       if (typeof err.message !== 'undefined') {
@@ -918,7 +916,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
       }
       this.notification.show(true, err);
-      this.loadingIndicator.hide();
+      this.spinner.hide();
     });
   }
 

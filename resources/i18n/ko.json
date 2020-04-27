@@ -35,7 +35,10 @@
       "NoProject": "프로젝트 없음",
       "SelectProject": "프로젝트 선택",
       "Experiments": "실험"
-    }
+    },
+    "LOGINREQUIRED": "로그인이 필요합니다",
+    "YouAreOffline": "오프라인 상태가 되었습니다",
+    "YouAreOnline": "온라인 상태가 되었습니다"
   },
   "summary": {
     "Dashboard": "대시보드",
@@ -133,7 +136,8 @@
     "ExportSessionListToCSVFile": "세션 리스트를 CSV로 내보내기",
     "OnlyRecent100SessionExport": "최근 100개의 세션 실행 기록만 내보낼 수 있습니다.",
     "ExportCSVFile": "CSV로 내보내기",
-    "ResourceGroup": "자원 그룹"
+    "ResourceGroup": "자원 그룹",
+    "NoLogs": "로그가 없습니다."
   },
   "button": {
     "Cancel": "취소",
