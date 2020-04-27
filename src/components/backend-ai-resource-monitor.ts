@@ -1776,7 +1776,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
           let new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
-            if (parseFloat(this.resource_templates[i].cuda_gpu) <= 0.0 &&
+            if (!('cuda_gpu' in this.resource_templates[i]) &&
+              !('cuda_fgpu' in this.resource_templates[i])) {
+              new_resource_templates.push(this.resource_templates[i]);
+            } else if (parseFloat(this.resource_templates[i].cuda_gpu) <= 0.0 &&
               parseFloat(this.resource_templates[i].cuda_fgpu) <= 0.0) {
               new_resource_templates.push(this.resource_templates[i]);
             }
