@@ -86,6 +86,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Array}) groups = Array();
   @property({type: String}) current_group = '';
   @property({type: Object}) plugins = Object();
+  @property({type: Array}) customMenus = Array();
   @property({type: Object}) notification = Object();
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
@@ -226,7 +227,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         //  console.log(key, item);
         //}
         this.plugins['page'] = config.plugin.page;
+        let customMenus: Array<Object> = [];
         globalThis.backendaiPages = config.plugin.page;
+        for (let [key, item] of Object.entries(globalThis.backendaiPages)) {
+          let title = item.title;
+          customMenus.push(
+            {title: title}
+          );
+        }
+        console.log(customMenus);
+        this.customMenus = customMenus;
+        this.requestUpdate();
       }
       if ('sidebar' in config.plugin) {
         // TODO : multiple sidebar plugins
@@ -701,9 +712,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
-              <mwc-icon  slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
+              <mwc-icon slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
               <span class="full-menu">${_t("console.menu.Settings")}</span>
             </mwc-list-item>
+            ${this.customMenus.map((item) => {
+      html`
+            <mwc-list-item graphic="icon">
+              <mwc-icon slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
+              <span class="full-menu">${item.title}</span>
+            </mwc-list-item>
+              `
+    })}
             ${this.is_admin ?
       html`
             <h3 class="full-menu">${_t("console.menu.Administration")}</h3>

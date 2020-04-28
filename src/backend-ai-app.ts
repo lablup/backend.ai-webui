@@ -81,10 +81,14 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
       import('./components/backend-ai-error-log-view.js');
       break;
     default:
-      if (typeof globalThis.backendaiPage !== 'undefined') {
-        for (let item of globalThis.backendaiPage) {
-          if ('url' in item) {
-            import('./plugins/' + item.url);
+      if (typeof globalThis.backendaiPages !== 'undefined') {
+        for (let item of globalThis.backendaiPages) {
+          if ('url' in item && item.url == page) {
+            import('./plugins/' + item.module).then((module) => {
+              let plugin = document.createElement(item.moduleName);
+              document.body.appendChild(plugin);
+              plugin.setAttribute('active', '');
+            });
             break;
           }
         }
