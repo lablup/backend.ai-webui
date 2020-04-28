@@ -222,8 +222,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.plugins['login'] = config.plugin.login;
       }
       if ('page' in config.plugin) {
-        // TODO : multiple sidebar plugins
+        //for (let [key, item] of Object.entries(config.plugin.page)) {
+        //  console.log(key, item);
+        //}
         this.plugins['page'] = config.plugin.page;
+        globalThis.backendaiPages = config.plugin.page;
       }
       if ('sidebar' in config.plugin) {
         // TODO : multiple sidebar plugins
@@ -486,7 +489,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       default:
-        this.menuTitle = _text("console.LOGINREQUIRED");
+        this._page = 'error';
+        this.menuTitle = _text("console.NOTFOUND");
+        this.updateTitleColor('var(--paper-grey-800)', '#efefef');
     }
   }
 
@@ -805,6 +810,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
                 <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
+                <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
               </div>
             </section>
           </div>

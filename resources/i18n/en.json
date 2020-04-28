@@ -38,7 +38,8 @@
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
-    "YouAreOnline": "You are now online"
+    "YouAreOnline": "You are now online",
+    "NOTFOUND": "Page Not Found."
   },
   "summary": {
     "Dashboard": "Dashboard",
