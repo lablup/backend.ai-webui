@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t, get as _text} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
@@ -780,7 +780,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
-  async _open_wsproxy(sessionName, app = 'jupyter') {
+  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
@@ -822,11 +822,15 @@ export default class BackendAiSessionList extends BackendAIPage {
         return Promise.resolve(false);
       }
       let token = response.token;
+      let uri = this._getProxyURL() + `proxy/${token}/${sessionName}/add?app=${app}`;
+      if (port !== null && port > 1024 && port < 65535) {
+        uri += `&port=${port}`;
+      }
       this.indicator.set(50, 'Adding kernel to socket queue...');
       let rqst_proxy = {
         method: 'GET',
         app: app,
-        uri: this._getProxyURL() + 'proxy/' + token + "/" + sessionName + "/add?app=" + app
+        uri: uri
       };
       return await this.sendRequest(rqst_proxy);
     } catch (err) {
@@ -851,7 +855,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
-      this._open_wsproxy(sessionName, appName)
+      let port = null;
+      if (globalThis.isElectron && appName === 'sshd') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+      }
+      this._open_wsproxy(sessionName, appName, port)
         .then((response) => {
           if (appName === 'sshd') {
             this.indicator.set(100, 'Prepared.');

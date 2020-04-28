@@ -381,7 +381,10 @@
     "DescNewUserConfigFileCreated": "New User config file can be created with non-empty data.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",
     "AutomaticUpdateCheck": "Automatic Update Check",
-    "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again."
+    "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
+    "PreferredSSHPort": "Preferred SSH Port",
+    "DescPreferredSSHPort": "Use this value as an SSH/SFTP port if possible. <br />If the port is already in use, assign another random port to SSH/SFTP. Leave blank to auto-assign.",
+    "InvalidPortNumber": "Port number should be positive number between 1025~65534"
   },
   "logs": {
     "LogMessages": "Log Messages",

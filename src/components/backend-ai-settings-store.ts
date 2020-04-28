@@ -24,6 +24,7 @@ export default class BackendAiSettingsStore extends BackendAIPage {
       'user.preserve_login': false,
       'user.language': "default",
       'user.automatic_update_check': true,
+      'user.custom_ssh_port': '',
       'user.beta_feature': false,
     }
     this.readSettings();
