@@ -531,8 +531,10 @@ class Client {
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
         this._config._session_id = result.session_id;
+        //console.log("login succeed");
+      } else {
+        //console.log("login failed");
       }
-      console.log("login succeed");
     } catch (err) {
       console.log(err);
       return Promise.resolve(false);
@@ -555,11 +557,16 @@ class Client {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         return this.check_login();
-      } else {
+      } else if (result.authenticated === false) { // Authentication failed.
         return Promise.resolve(false);
       }
-    } catch (err) {
-      return false;
+    } catch (err) { // Manager / console server down.
+      throw {
+        "title": "No manager found at API Endpoint.",
+        "message": "Authentication failed. Check information and manager status."
+      };
+      //console.log(err);
+      //return false;
     }
   }
 

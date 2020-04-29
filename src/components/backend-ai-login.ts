@@ -515,10 +515,8 @@ export default class BackendAILogin extends BackendAIPage {
     if (isLogon === false) { // Not authenticated yet.
       this.client.login().then(response => {
         if (response === false) {
-          throw {
-            "title": "No manager found at API Endpoint.",
-            "message": "Authentication failed. Check information and manager status."
-          };
+          this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+          this.notification.show();
         } else {
           this.is_connected = true;
           return this._connectGQL();
