@@ -184,7 +184,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     if (cpu !== resource_limits[0].min) input["cpu"] = {"min": cpu};
     let memory = this._symbolicUnit(mem);
     if (memory !== resource_limits[mem_idx].min) input["mem"] = {"min": memory};
-    // TODO : let add options for ROCm devices
+
     if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
     if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
     if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input["rocm.device"] = {"min": rocm_gpu};
@@ -345,7 +345,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
     this._rocm_gpu_disabled = resource_limits.filter(e => e.key === "rocm_device").length === 0;
     this._tpu_disabled = resource_limits.filter(e => e.key === "tpu_device").length === 0;
-
     this.shadowRoot.querySelector("#modify-image-cpu").value = resource_limits[0].min;
     if (!this._cuda_gpu_disabled) {
       this.shadowRoot.querySelector("#modify-image-cuda-gpu").value = resource_limits[1].min;
@@ -597,7 +596,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     ?disabled=${this._cuda_fgpu_disabled}
                     style="flex: 1"
                   >
-                    ${[0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
+                    ${[0, 0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
