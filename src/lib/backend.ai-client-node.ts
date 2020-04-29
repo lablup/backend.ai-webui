@@ -1876,6 +1876,7 @@ class ContainerImage {
    */
   modifyResource(registry, image, tag, input) {
     let promiseArray: Array<Promise<any>> = [];
+    registry = registry.replace(":", "%3A");
     image = image.replace("/", "%2F");
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {

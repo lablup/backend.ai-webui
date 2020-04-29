@@ -1725,6 +1725,7 @@ class ContainerImage {
      */
     modifyResource(registry, image, tag, input) {
         let promiseArray = [];
+        registry = registry.replace(":", "%3A");
         image = image.replace("/", "%2F");
         Object.keys(input).forEach(slot_type => {
             Object.keys(input[slot_type]).forEach(key => {
@@ -1915,6 +1916,11 @@ class Resources {
         this.resources.agents.using = 0;
         this.agents = [];
     }
+    /**
+     * Total resource information of Backend.AI cluster.
+     *
+     * @param {string} status - Resource node status to get information.
+     */
     totalResourceInformation(status = 'ALIVE') {
         if (this.client.is_admin) {
             let fields = ['id',
@@ -1998,6 +2004,10 @@ class Resources {
             return Promise.resolve(false);
         }
     }
+    /**
+     * user statistics about usage.
+     *
+     */
     user_stats() {
         const rqst = this.client.newSignedRequest("GET", "/resource/stats/user/month", null);
         return this.client._wrapWithPromise(rqst);
