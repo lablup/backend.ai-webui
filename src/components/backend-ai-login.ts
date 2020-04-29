@@ -487,8 +487,8 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       return;
     }
-    this.notification.text = 'Connecting...';
-    this.notification.show();
+    //this.notification.text = 'Connecting...';
+    //this.notification.show();
     if (this.connection_mode === 'SESSION') {
       this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
       this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
