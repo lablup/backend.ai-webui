@@ -217,20 +217,8 @@ export default class BackendAILogin extends BackendAIPage {
         this.connection_mode = 'SESSION';
         localStorage.setItem('backendaiconsole.connection_mode', 'SESSION');
       }
-      this.refreshPanel();
       this.requestUpdate();
     }
-  }
-
-  refreshPanel() {
-    // TODO : use lit-element dynamic assignment
-    //if (this.connection_mode == 'SESSION') {
-    //  (this.shadowRoot.querySelector('#session-login-form') as any).style.display = 'block';
-    //  (this.shadowRoot.querySelector('#api-login-form') as any).style.display = 'none';
-    //} else {
-    //  (this.shadowRoot.querySelector('#session-login-form') as any).style.display = 'none';
-    //  (this.shadowRoot.querySelector('#api-login-form') as any).style.display = 'block';
-    //}
   }
 
   refreshWithConfig(config) {
@@ -329,7 +317,6 @@ export default class BackendAILogin extends BackendAIPage {
         }
       }
     }
-    this.refreshPanel();
   }
 
   open() {
