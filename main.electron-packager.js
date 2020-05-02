@@ -446,9 +446,5 @@ app.on('web-contents-created', (event, contents) => {
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
 
-    // Verify URL being loaded
-    //if (!params.src.startsWith('https://yourapp.com/')) {
-    //  event.preventDefault()
-    //}
   })
 });
