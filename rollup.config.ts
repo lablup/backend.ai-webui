@@ -6,8 +6,6 @@ import typescript from 'rollup-plugin-typescript';
 import { terser } from "rollup-plugin-terser";
 
 export default {
-  // If using any exports from a symlinked project, uncomment the following:
-  // preserveSymlinks: true,
   input: ['src/components/backend-ai-console.ts'],
   output: {
     dir: 'build/rollup/dist/components',
@@ -15,7 +13,6 @@ export default {
     sourcemap: false
   },
   plugins: [
-    //babel(),
     typescript(),
     terser(),
     resolve()
