@@ -71,7 +71,7 @@
         "name": "vnc",
         "title": "VNC",
         "redirect": "",
-        "src": "./resources/icons/default_app.svg"
+        "src": "./resources/icons/novnc.svg"
       }
     ],
     "vnc-web": [
@@ -79,7 +79,7 @@
         "name": "vnc-web",
         "title": "VNC (Web)",
         "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
-        "src": "./resources/icons/default_app.svg"
+        "src": "./resources/icons/novnc.svg"
       }
     ],
     "novnc": [
