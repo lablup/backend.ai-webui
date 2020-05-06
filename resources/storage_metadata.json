@@ -1,0 +1,9 @@
+{
+  "storageInfo": {
+    "L3": {
+      "name": "L3: Lablup LargeData Lake",
+      "description": "L3 is a lablup storage environment specialized in interworking between on-premises and cloud environments. It uses CephFS-based cold storage and a dedicated cache to implement a bottleneck-free data exchange in an inter-node environment.",
+      "icon": "local.png"
+    }
+  }
+}

@@ -306,7 +306,8 @@
       "EnterEmailAddress": "Enter E-Mail address",
       "DownloadFile": "Download File",
       "TouchToDownload": "Touch to Download file"
-    }
+    },
+    "NoStorageDescriptionFound": "No description."
   },
   "dialog": {
     "warning": {
