@@ -2362,7 +2362,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </h3>
           <form id="launch-session-form">
             <div class="vertical center layout" style="padding-top:15px;">
-              <mwc-select id="environment" label="${_t("session.launcher.Environments")}" required
+              <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required
                 value="${this.default_language}">
                 <mwc-list-item selected style="display:none!important;">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
                   ${this.languages.map(item => html`
@@ -2389,7 +2389,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     `}
                   `)}
               </mwc-select>
-              <mwc-select id="version" label="${_t("session.launcher.Version")}" required>
+              <mwc-select id="version" label="${_t("session.launcher.Version")}" fullwidth required>
                 <mwc-list-item selected style="display:none!important"></mwc-list-item>
                   <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
                     <div style="width:80px;">${_t("session.launcher.Version")}</div>
@@ -2435,7 +2435,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 </mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-multi-select id="vfolder" label="${_t("session.launcher.FolderToMount")}" multi
+                <mwc-multi-select fullwidth id="vfolder" label="${_t("session.launcher.FolderToMount")}" multi
                 @selected="${this._updateSelectedFolder}">
                 ${this.vfolders.map(item => html`
                   <mwc-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-list-item>
