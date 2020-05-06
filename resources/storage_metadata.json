@@ -19,6 +19,16 @@
       "name": "Amazon S3 (Simple Storage Service)",
       "description": "Amazon Simple Storage Service (Amazon S3) is an object storage service that offers industry-leading scalability, data availability, security, and performance.",
       "icon": "local.png"
+    },
+    "azure": {
+      "name": "Azure FileShare",
+      "description": "Azure Files offers fully managed file shares in the cloud that are accessible via the industry standard Server Message Block (SMB) protocol.",
+      "icon": "local.png"
+    },
+    "samba": {
+      "name": "SAMBA storage",
+      "description": "Samba is a free software re-implementation of the SMB (Server Message Block) networking protocol.",
+      "icon": "local.png"
     }
   }
 }
