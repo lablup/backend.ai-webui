@@ -1,13 +1,13 @@
 --- mwc-select-base.ts	2020-05-06 14:42:20.000000000 +0900
 +++ mwc-multi-select-base.ts	2020-05-06 15:34:31.000000000 +0900
 @@ -168,6 +168,8 @@
- 
+
    @property({type: Boolean}) naturalMenuWidth = false;
- 
+
 +  @property({type: Boolean}) multi = false;
 +
    @property({type: Boolean}) protected isUiValid = true;
- 
+
    get items(): ListItemBase[] {
 @@ -294,6 +296,7 @@
              wrapFocus
@@ -23,13 +23,12 @@
        notifyChange: async (value) => {
 -        if (!this.valueSetDirectly && value === this.value) {
 +        if (!this.valueSetDirectly && this.multi && this.menuElement !== null) {
-+          const menuElement = this.menuElement;
-+          let values: array<string>= [];
-+          (this.menuElement.selected as array).forEach(item =>{
++          let values: string[] = [];
++          (this.menuElement.selected as any).forEach(item => {
 +            values.push(item.value);
 +          });
 +          this.selectedText = values.join(',');
 +        } else if (!this.valueSetDirectly && value === this.value) {
            return;
          }
- 
+

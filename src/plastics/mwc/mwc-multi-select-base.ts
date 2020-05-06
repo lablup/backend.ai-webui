@@ -423,9 +423,8 @@ export abstract class SelectBase extends FormElement {
       },
       notifyChange: async (value) => {
         if (!this.valueSetDirectly && this.multi && this.menuElement !== null) {
-          const menuElement = this.menuElement;
-          let values: array<string> = [];
-          (this.menuElement.selected as array).forEach(item => {
+          let values: string[] = [];
+          (this.menuElement.selected as any).forEach(item => {
             values.push(item.value);
           });
           this.selectedText = values.join(',');
