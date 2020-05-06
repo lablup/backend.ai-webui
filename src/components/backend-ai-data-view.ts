@@ -192,6 +192,10 @@ export default class BackendAIData extends BackendAIPage {
           padding: 5px !important;
         }
 
+        mwc-select mwc-icon-button {
+          --mdc-icon-button-size: 24px;
+        }
+
       `];
   }
 
@@ -236,16 +240,11 @@ export default class BackendAIData extends BackendAIPage {
             <div class="horizontal layout">
               <mwc-select id="add-folder-host" label="${_t("data.Host")}">
                 ${this.vhosts.map((item, idx) => html`
-                  <mwc-list-item value="${item}" ?selected="${idx === 0}">
-                    <div class="horizontal justified center flex layout" style="width:170px;">
-                      <div style="padding-right:5px;">${item}</div>
-                      <div class="flex"></div>
-                      <mwc-icon-button icon="info" class="fg orange info"
-                                             @click="${(e) => {
-      this._showStorageDescription(e, item);
-    }}">
-                      </mwc-icon-button>
-                    </div>
+                  <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+                    <span>${item}</span>
+                    <mwc-icon-button slot="meta" icon="info" class="fg orange info"
+                        @click="${(e) => { this._showStorageDescription(e, item); }}">
+                    </mwc-icon-button>
                   </mwc-list-item>
                 `)}
               </mwc-select>
