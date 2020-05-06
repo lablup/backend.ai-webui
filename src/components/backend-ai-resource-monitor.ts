@@ -436,7 +436,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         mwc-select#scaling-groups {
           margin-right: 5px;
-          width: 170px;
+          width: 190px;
         }
 
         mwc-textfield {
@@ -1188,10 +1188,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         // updated, so in some cases, user cannot launch a session even though
         // there are available resources for the selected image.
         this.version_selector.value = this.versions[0];
-        setTimeout(() => {
-          //this.version_selector.select(0);
+        setTimeout(async () => {
+          this.version_selector.select(0);
           this.version_selector.select(1);
           this.version_selector.disabled = false;
+          await this.updateComplete;
           this.updateResourceAllocationPane('update versions');
         }, 500);
       });
@@ -2417,7 +2418,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 ${this.enable_scaling_group ? html`
-                  <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required
+                  <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
                               @selected="${(e) => this.updateScalingGroup(false, e)}">
                     ${this.scaling_groups.map(item => html`
                       <mwc-list-item class="scaling-group-dropdown"
