@@ -336,6 +336,11 @@ export default class BackendAIData extends BackendAIPage {
           } else {
             storageInfo[key].icon = 'local.png';
           }
+          if ("dialects" in json.storageInfo[key]) {
+            json.storageInfo[key].dialects.forEach(item => {
+              storageInfo[item] = storageInfo[key];
+            });
+          }
         }
         this.storageInfo = storageInfo;
       }
