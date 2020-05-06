@@ -325,6 +325,8 @@ export default class BackendAIData extends BackendAIPage {
 
   async _addFolderDialog() {
     let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    let nameEl = this.shadowRoot.querySelector('#add-folder-name');
+    nameEl.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
     if ((this.allowed_folder_type as String[]).includes('group')) {
