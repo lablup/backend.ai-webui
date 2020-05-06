@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
-import {render} from 'lit-html';
+import {unsafeHTML} from 'lit-html/directives/unsafe-html';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-item/paper-item';
@@ -57,6 +58,10 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Boolean}) active = true;
   @property({type: Object}) _lists = Object();
   @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
+  @property({type: Object}) storageInfo = Object();
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
 
   constructor() {
     super();
@@ -178,6 +183,19 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-select-hover-line-color: var(--paper-orange-600);
           --mdc-list-vertical-padding: 5px;
         }
+
+        #help-description {
+          --dialog-width: 350px;
+        }
+
+        #help-description p {
+          padding: 5px !important;
+        }
+
+        mwc-select mwc-icon-button {
+          --mdc-icon-button-size: 24px;
+        }
+
       `];
   }
 
@@ -222,7 +240,12 @@ export default class BackendAIData extends BackendAIPage {
             <div class="horizontal layout">
               <mwc-select id="add-folder-host" label="${_t("data.Host")}">
                 ${this.vhosts.map((item, idx) => html`
-                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                  <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+                    <span>${item}</span>
+                    <mwc-icon-button slot="meta" icon="info" class="fg orange info"
+                        @click="${(e) => { this._showStorageDescription(e, item); }}">
+                    </mwc-icon-button>
+                  </mwc-list-item>
                 `)}
               </mwc-select>
               <mwc-select id="add-folder-type" label="${_t("data.Type")}">
@@ -247,7 +270,7 @@ export default class BackendAIData extends BackendAIPage {
                   `)}
                 </mwc-select>
               </div>
-            `: html``}
+            ` : html``}
             ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
               <div class="horizontal layout">
                 <mwc-select id="add-folder-group" label="${_t("data.Group")}">
@@ -268,20 +291,59 @@ export default class BackendAIData extends BackendAIPage {
           </section>
         </wl-card>
       </wl-dialog>
+      <wl-dialog id="help-description" fixed backdrop blockscrolling persistent style="padding:0;">
+        <wl-card class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span style="font-size:16px;">${this._helpDescriptionTitle}</span>
+            <div class="flex"></div>
+            <mwc-icon-button icon="close" class="blue close-button"
+              @click="${(e) => this._hideDialog(e)}">
+            </mwc-icon-button>
+          </h3>
+          <div class="horizontal layout center" style="margin:5px;">
+          ${this._helpDescriptionIcon == '' ? html`` : html`
+            <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+            `}
+            <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+          </div>
+        </wl-card>
+      </wl-dialog>
     `;
-  }
-
-  indexRenderer(root, column?, rowData?) {
-    render(
-      // language=HTML
-      html`${this._indexFrom1(rowData.index)}`, root
-    );
   }
 
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
+    fetch('resources/storage_metadata.json').then(
+      response => response.json()
+    ).then(
+      json => {
+        let storageInfo = Object();
+        for (let key in json.storageInfo) {
+          storageInfo[key] = {};
+          if ("name" in json.storageInfo[key]) {
+            storageInfo[key].name = json.storageInfo[key].name;
+          }
+          if ("description" in json.storageInfo[key]) {
+            storageInfo[key].description = json.storageInfo[key].description;
+          } else {
+            storageInfo[key].description = _text('data.NoStorageDescriptionFound');
+          }
+          if ("icon" in json.storageInfo[key]) {
+            storageInfo[key].icon = json.storageInfo[key].icon;
+          } else {
+            storageInfo[key].icon = 'local.png';
+          }
+          if ("dialects" in json.storageInfo[key]) {
+            json.storageInfo[key].dialects.forEach(item => {
+              storageInfo[item] = storageInfo[key];
+            });
+          }
+        }
+        this.storageInfo = storageInfo;
+      }
+    );
   }
 
   async _viewStateChanged(active) {
@@ -294,9 +356,9 @@ export default class BackendAIData extends BackendAIPage {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-        if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
-          this._vfolderInnatePermissionSupport = true;
-        }
+      if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
+        this._vfolderInnatePermissionSupport = true;
+      }
       globalThis.backendaiclient.vfolder.allowed_types().then(response => {
         this.allowed_folder_type = response;
       });
@@ -342,6 +404,21 @@ export default class BackendAIData extends BackendAIPage {
 
   closeDialog(id) {
     this.shadowRoot.querySelector('#' + id).hide();
+  }
+
+  _showStorageDescription(e, item) {
+    e.stopPropagation();
+    if (item in this.storageInfo) {
+      this._helpDescriptionTitle = this.storageInfo[item].name;
+      this._helpDescription = this.storageInfo[item].description;
+      this._helpDescriptionIcon = this.storageInfo[item].icon;
+    } else {
+      this._helpDescriptionTitle = item;
+      this._helpDescriptionIcon = 'local.png';
+      this._helpDescription = _text('data.NoStorageDescriptionFound');
+    }
+    let desc = this.shadowRoot.querySelector('#help-description');
+    desc.show();
   }
 
   _indexFrom1(index) {
@@ -403,7 +480,7 @@ export default class BackendAIData extends BackendAIPage {
       });
       this.closeDialog('add-folder-dialog');
     } else {
-      return ;
+      return;
     }
   }
 
