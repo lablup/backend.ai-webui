@@ -203,9 +203,7 @@ export const BackendAiConsoleStyles = [
         color: #222222;
       };
     }
-      mwc-select .mdc-select__selected-text {
-        width: 80px!important;
-      }
+
     wl-dialog wl-textfield {
       --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
       --input-color-disabled: #222222;
