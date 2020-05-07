@@ -181,9 +181,10 @@ export const BackendAiConsoleStyles = [
       color: #ffffff;
     }
 
-    mwc-select {
+    mwc-multi-select {
       width: 135px;
       font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --mdc-font-typegraphy-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --mdc-theme-primary: var(--paper-grey-600);
       --mdc-select-fill-color: transparent;
       --mdc-select-label-ink-color: rgba(255, 255, 255, 0.75);
@@ -202,6 +203,7 @@ export const BackendAiConsoleStyles = [
         height: 20px;
         color: #222222;
       };
+      --mdc-select-min-width: 100px;
     }
 
     wl-dialog wl-textfield {

@@ -39,6 +39,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import '../plastics/mwc/mwc-multi-select';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
 
@@ -336,7 +337,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (groupSelectionBox.hasChildNodes()) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild as ChildNode);
     }
-    let select = document.createElement('mwc-select');
+    let select = document.createElement('mwc-multi-select');
     select.label = _text("console.menu.Project");
     select.id = 'group-select';
     select.value = this.current_group;

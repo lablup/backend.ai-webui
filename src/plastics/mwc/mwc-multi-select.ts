@@ -15,7 +15,7 @@
  limitations under the License.
  */
 
-import {customElement} from 'lit-element';
+import {css, customElement} from 'lit-element';
 import {SelectBase} from './mwc-multi-select-base';
 import {style} from '@material/mwc-select/mwc-select-css.js';
 
@@ -27,5 +27,12 @@ declare global {
 
 @customElement('mwc-multi-select')
 export class Select extends SelectBase {
-  static styles = style;
+  static get styles() {
+    return [style,
+      css`
+        .mdc-select__anchor {
+          min-width: var(--mdc-select-min-width, 200px);
+        }
+      `];
+  }
 }
