@@ -117,7 +117,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Number}) lastQueryTime = 0;
   @property({type: String}) scaling_group;
   @property({type: Array}) scaling_groups;
-  @property({type: Boolean}) enable_scaling_group;
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
@@ -524,7 +523,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.session_request = 1;
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
-    this.enable_scaling_group = false;
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
@@ -624,16 +622,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
         scaling_group_selection_box.firstChild.value = this.scaling_group;
       }
-      // let sgnum = this.scaling_groups.map((sg) => sg.name).indexOf(this.scaling_group);
-      // if (sgnum < 0) sgnum = 0;
-      // this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = sgnum;
+      this.lastQueryTime = 0; // Reset query interval
       if (forceUpdate === true) {
-        //console.log('force update called');
-        //this.metric_updating = true;
-        //await this._aggregateResourceUse('update-scaling-group');
         await this._refreshResourcePolicy();
-        //this.aggregateResource('update-scaling-group'); // updateResourceAllocationPane does not work when no language is selected (on
-        // summary panel)
       } else {
         this.updateResourceAllocationPane('session dialog');
       }
@@ -674,52 +665,52 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async _updatePageVariables(isChanged) {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
-      this.enable_scaling_group = globalThis.backendaiclient.supports('scaling-group');
-      if (this.enable_scaling_group === true) {
-        if (this.scaling_group === '' || isChanged) {
-          const currentGroup = globalThis.backendaiclient.current_group || null;
-          let sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
-          // Make empty scaling group item if there is no scaling groups.
-          this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
-          this.scaling_group = this.scaling_groups[0].name;
-          if (this.direction === 'vertical') {
-            const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
-            // Detached from template to support live-update after creating new group (will need it)
-            if (scaling_group_selection_box.hasChildNodes()) {
-              scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
-            }
-            const scaling_select = document.createElement('wl-select');
-            scaling_select.label = _text('session.launcher.ResourceGroup');
-            scaling_select.name = 'scaling-group-select';
-            scaling_select.id = 'scaling-group-select';
-            scaling_select.value = this.scaling_group;
-            scaling_select.addEventListener('input', this.updateScalingGroup.bind(this, true));
-
-            let opt = document.createElement('option');
-            opt.setAttribute('disabled', 'true');
-            opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-            scaling_select.appendChild(opt);
-            this.scaling_groups.map(group => {
-              opt = document.createElement('option');
-              opt.value = group.name;
-              if (this.scaling_group === group.name) {
-                opt.selected = true;
-              } else {
-                opt.selected = false;
-              }
-              opt.innerHTML = group.name;
-              scaling_select.appendChild(opt);
-            });
-            //scaling_select.updateOptions();
-            scaling_group_selection_box.appendChild(scaling_select);
+      if (isChanged) {
+        this.lastQueryTime = 0; // Reset query interval
+      }
+      if (this.scaling_group === '' || isChanged) {
+        const currentGroup = globalThis.backendaiclient.current_group || null;
+        let sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
+        // Make empty scaling group item if there is no scaling groups.
+        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+        this.scaling_group = this.scaling_groups[0].name;
+        if (this.direction === 'vertical') {
+          const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
+          // Detached from template to support live-update after creating new group (will need it)
+          if (scaling_group_selection_box.hasChildNodes()) {
+            scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
           }
-          const scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
-          scaling_group_selection_dialog.selectedText = this.scaling_group;
-          scaling_group_selection_dialog.value = this.scaling_group;
-          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
-            this.updateScalingGroup.bind(this, false);
+          const scaling_select = document.createElement('wl-select');
+          scaling_select.label = _text('session.launcher.ResourceGroup');
+          scaling_select.name = 'scaling-group-select';
+          scaling_select.id = 'scaling-group-select';
+          scaling_select.value = this.scaling_group;
+          scaling_select.addEventListener('input', this.updateScalingGroup.bind(this, true));
+
+          let opt = document.createElement('option');
+          opt.setAttribute('disabled', 'true');
+          opt.innerHTML = _text('session.launcher.SelectResourceGroup');
+          scaling_select.appendChild(opt);
+          this.scaling_groups.map(group => {
+            opt = document.createElement('option');
+            opt.value = group.name;
+            if (this.scaling_group === group.name) {
+              opt.selected = true;
+            } else {
+              opt.selected = false;
+            }
+            opt.innerHTML = group.name;
+            scaling_select.appendChild(opt);
           });
+          //scaling_select.updateOptions();
+          scaling_group_selection_box.appendChild(scaling_select);
         }
+        const scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
+        scaling_group_selection_dialog.selectedText = this.scaling_group;
+        scaling_group_selection_dialog.value = this.scaling_group;
+        scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
+          this.updateScalingGroup.bind(this, false);
+        });
       }
       // update selected Scaling Group depends on project group
       this._updateSelectedScalingGroup();
@@ -856,9 +847,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
       return;
     }
-    if (this.enable_scaling_group) {
-      this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
-    }
+    this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
     let config = {};
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
@@ -1242,7 +1231,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       const param: any = {group: globalThis.backendaiclient.current_group};
-      if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
+      if (this.scaling_groups.length > 0) {
         let scaling_group: string = '';
         if (this.scaling_group !== '') {
           scaling_group = this.scaling_group;
@@ -2169,7 +2158,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      ${this.direction === 'vertical' ? html`
       <div id="scaling-group-select-box" class="layout horizontal start-justified">
       </div>
       ` : html``}
@@ -2290,7 +2279,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
         <div class="flex"></div>
       </div>
-      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      ${this.direction === 'vertical' ? html`
       <div class="vertical start-justified layout">
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
@@ -2417,18 +2406,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
               </div>
               <div class="horizontal center layout">
-                ${this.enable_scaling_group ? html`
-                  <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
-                              @selected="${(e) => this.updateScalingGroup(false, e)}">
-                    ${this.scaling_groups.map(item => html`
-                      <mwc-list-item class="scaling-group-dropdown"
-                                     id="${item.name}"
-                                     value="${item.name}">
-                        ${item.name}
-                      </mwc-list-item>
-                    `)}
-                  </mwc-select>
-                ` : html``}
+                <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
+                            @selected="${(e) => this.updateScalingGroup(false, e)}">
+                  ${this.scaling_groups.map(item => html`
+                    <mwc-list-item class="scaling-group-dropdown"
+                                   id="${item.name}"
+                                   value="${item.name}">
+                      ${item.name}
+                    </mwc-list-item>
+                  `)}
+                </mwc-select>
                 <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                                pattern="[a-zA-Z0-9_-]{4,}" fullwidth
                                validationMessage="4 or more characters / no whitespace."
