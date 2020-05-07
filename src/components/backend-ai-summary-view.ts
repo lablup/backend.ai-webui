@@ -533,6 +533,7 @@ export default class BackendAISummary extends BackendAIPage {
                   </div>
                 </div>
               </div>
+              ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total ? html`
               <div class="layout horizontal center flex" style="margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
                   <wl-icon class="fg green">view_module</wl-icon>
@@ -584,7 +585,7 @@ export default class BackendAISummary extends BackendAIPage {
                   </div>
             ` : html``}
                 </div>
-              </div>
+              </div>` : html``}
               <div class="horizontal center layout">
                 <div style="width:10px;height:10px;margin-left:40px;margin-right:3px;background-color:#4775E3;"></div>
                 <span style="margin-right:5px;">${_t('summary.Reserved')}</span>
