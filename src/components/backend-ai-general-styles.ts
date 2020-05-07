@@ -228,6 +228,10 @@ export const BackendAiStyles = [
       }
     }
 
+    mwc-multi-select {
+      --mdc-select-min-width: 100px; /* Fallback to apply width */
+    }
+
     wl-card p {
       padding: 10px;
     }

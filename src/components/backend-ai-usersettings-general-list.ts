@@ -21,7 +21,7 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import '@material/mwc-select';
+import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -143,7 +143,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --dialog-max-height: calc(100vh - 100px);
         }
 
-        mwc-select#select-rcfile-type {
+        mwc-multi-select {
+          --mdc-select-min-width: 140px;
+        }
+
+        mwc-multi-select#select-rcfile-type {
           width: 300px;
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
@@ -579,14 +583,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               </div>
             </div>
             <div class="vertical center-justified layout setting-select">
-              <mwc-select id="ui-language"
+              <mwc-multi-select id="ui-language"
                           required
                           @selected="${(e) => this.setUserLanguage(e)}">
               ${this.supportLanguages.map(item => html`
                 <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
                   ${item.name}
                 </mwc-list-item>`)}
-              </mwc-select>
+              </mwc-multi-select>
             </div>
           </div>
           ${globalThis.isElectron ? html`
@@ -699,7 +703,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </wl-button>
           </h3>
           <div class="vertical layout">
-            <mwc-select id="select-rcfile-type"
+            <mwc-multi-select id="select-rcfile-type"
                         label="config file name"
                         required
                         validationMessage="Please select one option."
@@ -708,7 +712,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                   ${item.path}
                 </mwc-list-item>`)}
-            </mwc-select>
+            </mwc-multi-select>
             <div class="horizontal layout">
               <wl-icon class="warning">warning</wl-icon>
               <wl-label class="warning" for="warning">

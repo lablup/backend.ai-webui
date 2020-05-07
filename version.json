@@ -1,1 +1,5 @@
-{ "package": "20.05.0", "build": "200507.140548", "revision": "6e3e8be1" }
+{
+  "package": "20.05.0",
+  "build": "200507.160515",
+  "revision": "e8a313c8"
+}

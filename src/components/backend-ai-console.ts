@@ -18,7 +18,6 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
-import '@material/mwc-select';
 
 import toml from 'markty-toml';
 
