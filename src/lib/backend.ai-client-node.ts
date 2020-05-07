@@ -490,10 +490,19 @@ class Client {
   _updateSupportList() {
     if (this.isAPIVersionCompatibleWith('v4.20190601')) {
       this._features['scaling-group'] = true;
+      this._features['resource-pool'] = true;
       this._features['group'] = true;
       this._features['group-folder'] = true;
       this._features['system-images'] = true;
       this._features['detailed-session-states'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('19.09.15')) {
+      this._features['x11'] = true;
+      this._features['native-terminal'] = true;
+    }
+    if (this.isAPIVersionCompatibleWith('v5.20191215')) {
+      this._features['callosum-connection'] = true;
+      this._features['scheduler-change'] = true;
     }
   }
 
