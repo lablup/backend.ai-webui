@@ -420,7 +420,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: blue;
+          --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
+          --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
           --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
           --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
           --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
@@ -433,9 +435,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           };
         }
 
-        mwc-select#scaling-groups {
-          margin-right: 5px;
-          width: 190px;
+        mwc-multi-select#scaling-groups {
+          margin-right: 0;
+          padding-right: 0;
+          width: 50%;
+          --mdc-select-min-width: 190px;
         }
 
         mwc-textfield {
@@ -447,8 +451,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         mwc-textfield#session-name {
+          width: 50%;
           padding-top: 20px;
-          margin-left: 5px;
+          padding-left: 0;
+          margin-left: 0;
+          margin-bottom: 1px;
         }
 
         #environment {
@@ -2406,7 +2413,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
               </div>
               <div class="horizontal center layout">
-                <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
+                <mwc-multi-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
                             @selected="${(e) => this.updateScalingGroup(false, e)}">
                   ${this.scaling_groups.map(item => html`
                     <mwc-list-item class="scaling-group-dropdown"
@@ -2415,7 +2422,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       ${item.name}
                     </mwc-list-item>
                   `)}
-                </mwc-select>
+                </mwc-multi-select>
                 <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                                pattern="[a-zA-Z0-9_-]{4,}" fullwidth
                                validationMessage="4 or more characters / no whitespace."

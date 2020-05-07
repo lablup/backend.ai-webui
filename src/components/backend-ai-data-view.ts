@@ -14,7 +14,7 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select';
+import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-textfield';
 
 import 'weightless/button';
@@ -173,8 +173,9 @@ export default class BackendAIData extends BackendAIPage {
           --label-color: black;
         }
 
-        mwc-select {
+        mwc-multi-select {
           width: 180px;
+          --mdc-select-min-width: 180px;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--paper-orange-600);
           --mdc-select-fill-color: transparent;
@@ -192,7 +193,7 @@ export default class BackendAIData extends BackendAIPage {
           padding: 5px !important;
         }
 
-        mwc-select mwc-icon-button {
+        mwc-multi-select mwc-icon-button {
           --mdc-icon-button-size: 24px;
         }
 
@@ -238,46 +239,48 @@ export default class BackendAIData extends BackendAIPage {
             <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
                 auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
             <div class="horizontal layout">
-              <mwc-select id="add-folder-host" label="${_t("data.Host")}">
+              <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
                 ${this.vhosts.map((item, idx) => html`
                   <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
                     <span>${item}</span>
                     <mwc-icon-button slot="meta" icon="info" class="fg orange info"
-                        @click="${(e) => { this._showStorageDescription(e, item); }}">
+                        @click="${(e) => {
+      this._showStorageDescription(e, item);
+    }}">
                     </mwc-icon-button>
                   </mwc-list-item>
                 `)}
-              </mwc-select>
-              <mwc-select id="add-folder-type" label="${_t("data.Type")}">
+              </mwc-multi-select>
+              <mwc-multi-select id="add-folder-type" label="${_t("data.Type")}">
                 ${(this.allowed_folder_type as String[]).includes('user') ? html`
                   <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
                 ` : html``}
                 ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
                   <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
                 ` : html``}
-              </mwc-select>
+              </mwc-multi-select>
             </div>
             ${this._vfolderInnatePermissionSupport ? html`
               <div class="horizontal layout">
-                <mwc-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
+                <mwc-multi-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
                   ${this.usageModes.map((item, idx) => html`
                     <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                   `)}
-                </mwc-select>
-                <mwc-select id="add-folder-permission" label="${_t("data.Type")}">
+                </mwc-multi-select>
+                <mwc-multi-select id="add-folder-permission" label="${_t("data.Type")}">
                   ${this.permissions.map((item, idx) => html`
                     <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                   `)}
-                </mwc-select>
+                </mwc-multi-select>
               </div>
             ` : html``}
             ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
               <div class="horizontal layout">
-                <mwc-select id="add-folder-group" label="${_t("data.Group")}">
+                <mwc-multi-select id="add-folder-group" label="${_t("data.Group")}">
                   ${(this.allowedGroups as any).map((item, idx) => html`
                     <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                   `)}
-                </mwc-select>
+                </mwc-multi-select>
               </div>
             ` : html``}
             <div style="font-size:11px;">
