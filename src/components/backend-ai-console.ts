@@ -340,6 +340,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     select.label = _text("console.menu.Project");
     select.id = 'group-select';
     select.value = this.current_group;
+    //select.setAttribute('naturalMenuWidth', 'true');
+    select.setAttribute('fullwidth', 'true');
     select.addEventListener('selected', this.changeGroup.bind(this));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
@@ -754,7 +756,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.04.5.200427</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.05.0.200507</small>
             </address>
           </div>
         </div>

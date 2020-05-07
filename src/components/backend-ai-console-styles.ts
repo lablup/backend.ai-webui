@@ -187,7 +187,9 @@ export const BackendAiConsoleStyles = [
       --mdc-theme-primary: var(--paper-grey-600);
       --mdc-select-fill-color: transparent;
       --mdc-select-label-ink-color: rgba(255, 255, 255, 0.75);
-      --mdc-select-dropdown-icon-color: white;
+      --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
+      --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
       --mdc-select-idle-line-color: transparent;
       --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
       --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
@@ -201,7 +203,9 @@ export const BackendAiConsoleStyles = [
         color: #222222;
       };
     }
-
+      mwc-select .mdc-select__selected-text {
+        width: 80px!important;
+      }
     wl-dialog wl-textfield {
       --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
       --input-color-disabled: #222222;
