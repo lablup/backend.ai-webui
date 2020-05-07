@@ -45,7 +45,7 @@
     "Dashboard": "Dashboard",
     "StartMenu": "Start Menu",
     "SystemHealth": "System Health",
-    "ConnectedNodes": "Connected Nodes",
+    "ConnectedNodes": "Connected<br/>Nodes",
     "ActiveSessions": "Active Sessions",
     "ResourceStatistics": "Resource Statistics",
     "CoresReserved": "Cores reserved",

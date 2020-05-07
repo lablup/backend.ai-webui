@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -181,6 +181,10 @@ export default class BackendAISummary extends BackendAIPage {
           width: 16px;
           height: 16px;
           margin-right: 5px;
+        }
+
+        .system-health-indicator {
+          width: 90px;
         }
       `
     ];
@@ -480,25 +484,21 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="${_t('summary.SystemHealth')}" elevation="1">
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
                 ${this.is_superadmin ? html`
-                  <div class="vertical layout center">
+                  <div class="vertical layout center system-health-indicator">
                     <div class="big indicator">${this.agents}</div>
-                    <span>${_t('summary.ConnectedNodes')}</span>
+                    <span>${_tr('summary.ConnectedNodes')}</span>
                   </div>` : html``}
-                <div class="vertical layout center">
+                <div class="vertical layout center system-health-indicator">
                   <div class="big indicator">${this.sessions}</div>
                   <span>${_t('summary.ActiveSessions')}</span>
                 </div>
               </div>
-            </div>
-          </lablup-activity-panel>
-          ${this.is_superadmin ? html`
-          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
-            <div slot="message">
-              <div class="layout horizontal center flex" style="margin-bottom:5px;">
+              ${this.is_superadmin ? html`
+              <div class="layout horizontal center flex" style="margin-top:15px;margin-bottom:5px;">
                 <div class="layout vertical start center-justified">
                   <wl-icon class="fg green">developer_board</wl-icon>
                   <span>CPU</span>
@@ -593,9 +593,9 @@ export default class BackendAISummary extends BackendAIPage {
                 <span style="margin-right:5px;">${_t('summary.Used')}</span>
                 <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
                 <span>${_t('summary.Total')}</span>
-              </div>
+              </div>` : html``}
             </div>
-          </lablup-activity-panel>` : html``}
+          </lablup-activity-panel>
         </div>
         <h3 class="plastic-material-title">${_t('summary.Actions')}</h3>
         <div class="horizontal wrap layout">
