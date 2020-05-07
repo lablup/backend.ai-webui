@@ -2265,7 +2265,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">${_t('session.launcher.Session')}</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
+              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}</span>
               <mwc-linear-progress class="short full-bar" id="concurrency-usage-bar" progress="${this.used_slot_percent.concurrency / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">&nbsp;</span>
             </div>
