@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.05.1 (08/05/2020)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**][**major**] Multiple virtual folder does not mount on GUI [#520](https://github.com/lablup/backend.ai-console/issues/520)
+
+
 ## v20.05.0 (07/05/2020)
 
 #### Enhancements:
