@@ -838,8 +838,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     let vfolder = this.shadowRoot.querySelector('#vfolder').value;
-    console.log(vfolder);
-    return;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.shmem_request = this.shadowRoot.querySelector('#shmem-resource').value;

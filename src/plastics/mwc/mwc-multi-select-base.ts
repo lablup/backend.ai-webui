@@ -390,6 +390,7 @@ export abstract class SelectBase extends FormElement {
         return !!this.label;
       },
       floatLabel: (shouldFloat) => {
+        shouldFloat = this.selectedText !== '' ? true : false; // this is a temporary change for label floating.
         if (this.labelElement) {
           this.labelElement.floatingLabelFoundation.float(shouldFloat);
         }
@@ -427,7 +428,7 @@ export abstract class SelectBase extends FormElement {
             values.push(item.value);
           });
           this.selectedText = values.join(',');
-          this.value = values;
+          //this.value = values;
         } else if (!this.valueSetDirectly && value === this.value) {
           return;
         }
@@ -439,6 +440,7 @@ export abstract class SelectBase extends FormElement {
         this.dispatchEvent(ev);
       },
       setSelectedText: (value) => this.selectedText = value,
+      // @ts-ignore
       isSelectAnchorFocused: () => {
         const selectAnchorElement = this.anchorElement;
 
@@ -636,8 +638,11 @@ export abstract class SelectBase extends FormElement {
     }
   }
 
-  protected selectByValue(value: string) {
+  protected selectByValue(value: any) {
     let indexToSelect = -1;
+    if (this.multi) {
+      return;
+    }
     for (let i = 0; i < this.items.length; i++) {
       const item = this.items[i];
       if (item.value === value) {
@@ -725,6 +730,15 @@ export abstract class SelectBase extends FormElement {
     }
 
     this.mdcFoundation.handleMenuItemAction(evt.detail.index);
+    // CHANGED : to provide multiple selection
+    if (this.multi) {
+      if (this.selected === null) {
+        this.value = '';
+      } else {
+        this.value = (this.selected as any).map(a => a.value);
+        this.selectedText = this.value.toString();
+      }
+    }
   }
 
   protected onOpened() {
