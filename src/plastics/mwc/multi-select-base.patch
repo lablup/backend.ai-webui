@@ -1,13 +1,13 @@
---- mwc-select-base.ts	2020-05-06 14:42:20.000000000 +0900
-+++ mwc-multi-select-base.ts	2020-05-06 15:34:31.000000000 +0900
+--- ./mwc-select-base.ts	2020-05-08 09:46:53.000000000 +0900
++++ ./mwc-multi-select-base.ts	2020-05-08 09:52:01.000000000 +0900
 @@ -168,6 +168,8 @@
-
+ 
    @property({type: Boolean}) naturalMenuWidth = false;
-
+ 
 +  @property({type: Boolean}) multi = false;
 +
    @property({type: Boolean}) protected isUiValid = true;
-
+ 
    get items(): ListItemBase[] {
 @@ -294,6 +296,7 @@
              wrapFocus
@@ -17,7 +17,7 @@
              .fullwidth=${!this.naturalMenuWidth}
              .open=${this.menuOpen}
              .anchor=${this.anchorElement}
-@@ -418,7 +421,14 @@
+@@ -418,7 +421,13 @@
          }
        },
        notifyChange: async (value) => {
@@ -31,4 +31,4 @@
 +        } else if (!this.valueSetDirectly && value === this.value) {
            return;
          }
-
+ 

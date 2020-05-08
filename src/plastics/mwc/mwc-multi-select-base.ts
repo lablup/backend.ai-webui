@@ -1,19 +1,19 @@
 /**
- @license
- Copyright 2020 Google Inc. All Rights Reserved.
+@license
+Copyright 2020 Google Inc. All Rights Reserved.
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
- http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- */
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 import '@material/mwc-notched-outline';
 import '@material/mwc-menu';
 import '@material/mwc-icon';
@@ -43,48 +43,48 @@ declare global {
 }
 
 type CustomValidityState = {
-  -readonly [P in keyof ValidityState]: ValidityState[P]
+  -readonly[P in keyof ValidityState]: ValidityState[P]
 };
 
 const createValidityObj =
-  (customValidity: Partial<ValidityState> = {}): ValidityState => {
-    /*
-     * We need to make ValidityState an object because it is readonly and
-     * we cannot use the spread operator. Also, we don't export
-     * `CustomValidityState` because it is a leaky implementation and the user
-     * already has access to `ValidityState` in lib.dom.ts. Also an interface
-     * {a: Type} can be casted to {readonly a: Type} so passing any object
-     * should be fine.
-     */
-    const objectifiedCustomValidity: Partial<CustomValidityState> = {};
-
-    // eslint-disable-next-line guard-for-in
-    for (const propName in customValidity) {
+    (customValidity: Partial<ValidityState> = {}): ValidityState => {
       /*
-       * Casting is needed because ValidityState's props are all readonly and
-       * thus cannot be set on `onjectifiedCustomValidity`. In the end, the
-       * interface is the same as ValidityState (but not readonly), but the
-       * function signature casts the output to ValidityState (thus readonly).
+       * We need to make ValidityState an object because it is readonly and
+       * we cannot use the spread operator. Also, we don't export
+       * `CustomValidityState` because it is a leaky implementation and the user
+       * already has access to `ValidityState` in lib.dom.ts. Also an interface
+       * {a: Type} can be casted to {readonly a: Type} so passing any object
+       * should be fine.
        */
-      objectifiedCustomValidity[propName as keyof CustomValidityState] =
-        customValidity[propName as keyof ValidityState];
-    }
+      const objectifiedCustomValidity: Partial<CustomValidityState> = {};
 
-    return {
-      badInput: false,
-      customError: false,
-      patternMismatch: false,
-      rangeOverflow: false,
-      rangeUnderflow: false,
-      stepMismatch: false,
-      tooLong: false,
-      tooShort: false,
-      typeMismatch: false,
-      valid: true,
-      valueMissing: false,
-      ...objectifiedCustomValidity
+      // eslint-disable-next-line guard-for-in
+      for (const propName in customValidity) {
+        /*
+         * Casting is needed because ValidityState's props are all readonly and
+         * thus cannot be set on `onjectifiedCustomValidity`. In the end, the
+         * interface is the same as ValidityState (but not readonly), but the
+         * function signature casts the output to ValidityState (thus readonly).
+         */
+        objectifiedCustomValidity[propName as keyof CustomValidityState] =
+            customValidity[propName as keyof ValidityState];
+      }
+
+      return {
+        badInput: false,
+        customError: false,
+        patternMismatch: false,
+        rangeOverflow: false,
+        rangeUnderflow: false,
+        stepMismatch: false,
+        tooLong: false,
+        tooShort: false,
+        typeMismatch: false,
+        valid: true,
+        valueMissing: false,
+        ...objectifiedCustomValidity
+      };
     };
-  };
 
 /**
  * @fires selected {SelectedDetail}
@@ -103,25 +103,25 @@ export abstract class SelectBase extends FormElement {
 
   @query('.formElement') protected formElement!: HTMLInputElement;
 
-  @query('slot') protected slotElement!: HTMLSlotElement | null;
+  @query('slot') protected slotElement!: HTMLSlotElement|null;
 
-  @query('select') protected nativeSelectElement!: HTMLSelectElement | null;
+  @query('select') protected nativeSelectElement!: HTMLSelectElement|null;
 
-  @query('input') protected nativeInputElement!: HTMLInputElement | null;
+  @query('input') protected nativeInputElement!: HTMLInputElement|null;
 
-  @query('.mdc-line-ripple') protected lineRippleElement!: LineRipple | null;
+  @query('.mdc-line-ripple') protected lineRippleElement!: LineRipple|null;
 
-  @query('.mdc-floating-label') protected labelElement!: FloatingLabel | null;
+  @query('.mdc-floating-label') protected labelElement!: FloatingLabel|null;
 
-  @query('mwc-notched-outline') protected outlineElement!: NotchedOutline | null;
+  @query('mwc-notched-outline') protected outlineElement!: NotchedOutline|null;
 
-  @query('.mdc-menu') protected menuElement!: Menu | null;
+  @query('.mdc-menu') protected menuElement!: Menu|null;
 
 
-  @query('.mdc-select__anchor') protected anchorElement!: HTMLDivElement | null;
+  @query('.mdc-select__anchor') protected anchorElement!: HTMLDivElement|null;
 
   @property({type: Boolean, attribute: 'disabled', reflect: true})
-  @observer(function (this: SelectBase, value: boolean) {
+  @observer(function(this: SelectBase, value: boolean) {
     if (this.renderReady) {
       this.mdcFoundation.setDisabled(value);
     }
@@ -137,7 +137,7 @@ export abstract class SelectBase extends FormElement {
   @property({type: Number}) protected outlineWidth = 0;
 
   @property({type: String})
-  @observer(function (this: SelectBase, value: string) {
+  @observer(function(this: SelectBase, value: string) {
     if (this.mdcFoundation) {
       const initialization = this.selected === null && !!value;
       const valueSetByUser = this.selected && this.selected.value !== value;
@@ -181,7 +181,7 @@ export abstract class SelectBase extends FormElement {
     return [];
   }
 
-  get selected(): ListItemBase | null {
+  get selected(): ListItemBase|null {
     const menuElement = this.menuElement;
     if (menuElement) {
       return menuElement.selected as ListItemBase | null;
@@ -205,8 +205,7 @@ export abstract class SelectBase extends FormElement {
     cb: EventListenerOrEventListenerObject;
   })[] = [];
   protected onBodyClickBound: (evt: MouseEvent) => void = () => undefined;
-  protected _menuUpdateComplete: null | Promise<unknown> = null;
-
+  protected _menuUpdateComplete: null|Promise<unknown> = null;
   protected get shouldRenderHelperText(): boolean {
     return !!this.helper || !!this.validationMessage;
   }
@@ -215,8 +214,8 @@ export abstract class SelectBase extends FormElement {
   private valueSetDirectly = false;
 
   validityTransform:
-    ((value: string,
-      nativeValidity: ValidityState) => Partial<ValidityState>) | null = null;
+      ((value: string,
+        nativeValidity: ValidityState) => Partial<ValidityState>)|null = null;
 
   protected _validity: ValidityState = createValidityObj();
 
@@ -320,11 +319,11 @@ export abstract class SelectBase extends FormElement {
         <p
           class="mdc-select-helper-text ${classMap(classes)}"
           id="helper-text">${
-      showValidationMessage ? this.validationMessage : this.helper}</p>`;
+        showValidationMessage ? this.validationMessage : this.helper}</p>`;
   }
 
   protected renderOutlined() {
-    let labelTemplate: TemplateResult | string = '';
+    let labelTemplate: TemplateResult|string = '';
     if (this.label) {
       labelTemplate = this.renderLabel();
     }
@@ -338,7 +337,7 @@ export abstract class SelectBase extends FormElement {
   }
 
   protected renderUnderlined() {
-    let labelTemplate: TemplateResult | string = '';
+    let labelTemplate: TemplateResult|string = '';
     if (this.label) {
       labelTemplate = this.renderLabel();
     }
@@ -362,7 +361,7 @@ export abstract class SelectBase extends FormElement {
 
   protected renderIcon(icon: string) {
     return html`<mwc-icon class="mdc-select__icon"><div>${
-      icon}</div></mwc-icon>`;
+        icon}</div></mwc-icon>`;
   }
 
   protected createAdapter(): MDCSelectAdapter {
@@ -428,6 +427,7 @@ export abstract class SelectBase extends FormElement {
             values.push(item.value);
           });
           this.selectedText = values.join(',');
+          this.value = values;
         } else if (!this.valueSetDirectly && value === this.value) {
           return;
         }
@@ -447,7 +447,7 @@ export abstract class SelectBase extends FormElement {
         }
 
         const rootNode =
-          selectAnchorElement.getRootNode() as ShadowRoot | Document;
+            selectAnchorElement.getRootNode() as ShadowRoot | Document;
 
         return rootNode.activeElement === selectAnchorElement;
       },
@@ -555,7 +555,7 @@ export abstract class SelectBase extends FormElement {
 
     if (!isValid) {
       const invalidEvent =
-        new Event('invalid', {bubbles: false, cancelable: true});
+          new Event('invalid', {bubbles: false, cancelable: true});
       this.dispatchEvent(invalidEvent);
     }
 
@@ -616,7 +616,7 @@ export abstract class SelectBase extends FormElement {
     // init with value set
     if (this.value && !this.selected) {
       if (!this.items.length && this.slotElement &&
-        this.slotElement.assignedNodes({flatten: true}).length) {
+          this.slotElement.assignedNodes({flatten: true}).length) {
         // Shady DOM initial render fix
         await new Promise((res) => requestAnimationFrame(res));
         await this.layout();
@@ -696,7 +696,7 @@ export abstract class SelectBase extends FormElement {
     }
   }
 
-  protected onClick(evt: MouseEvent | TouchEvent) {
+  protected onClick(evt: MouseEvent|TouchEvent) {
     if (this.mdcFoundation) {
       this.focus();
       const targetClientRect = (evt.target as Element).getBoundingClientRect();
@@ -719,7 +719,7 @@ export abstract class SelectBase extends FormElement {
     }
   }
 
-  protected async onSelected(evt: CustomEvent<{ index: number }>) {
+  protected async onSelected(evt: CustomEvent<{index: number}>) {
     if (!this.mdcFoundation) {
       await this.updateComplete;
     }
