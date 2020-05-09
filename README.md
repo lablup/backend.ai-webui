@@ -51,7 +51,7 @@ Backend.AI console focuses to
      * Add/update resource templates
      * Add/remove docker registries
  * User management
-    * User creation / deletion / key management
+    * User creation / deletion / key management / resource templates
  * Manager settings
     * Add /setting repository
     * Plugin support
