@@ -4,6 +4,12 @@ Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / D
 
 For more information, see [manual](https://console.docs.backend.ai/en/latest/).
 
+## Changelog
+
+View [changelog](https://github.com/lablup/backend.ai-console/master/CHANGELOG.md)
+
+## Role
+
 Backend.AI console focuses to
 
  * Serve as desktop app (windows, macOS and Linux) and web service
