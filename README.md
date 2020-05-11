@@ -201,6 +201,8 @@ server {
 
 Make sure that you compile the console.
 
+e.g. You will download the `backend.ai-console-server` package.
+
 ```
 $ make compile
 ```
