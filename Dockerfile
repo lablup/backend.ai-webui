@@ -1,9 +1,30 @@
-FROM nginx
+FROM ubuntu:20.04
 MAINTAINER Jeongkyu Shin <jshin@lablup.com>
 
-COPY ./build/rollup /usr/share/nginx/html
-COPY ./configs/default.toml /usr/share/nginx/html/config.toml
-RUN rm /etc/nginx/conf.d/default.conf
-COPY ./docker_build/nginx.conf /etc/nginx/conf.d/default.template
-COPY ./docker_build/nginx-ssl.conf /etc/nginx/conf.d/default-ssl.template
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && \
+    apt-get install -y \
+        ca-certificates \
+        wget curl git-core \
+        vim-tiny zip unzip \
+        python3 python3-pip \
+        libssl-dev \
+        mime-support && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/
+
+ENV PYTHONUNBUFFERED=1 \
+    PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    LANG=en_us.UTF-8
+
+RUN git clone https://github.com/lablup/backend.ai-console-server.git /console-server
+WORKDIR "/console-server"
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3 && \
+    python3 -m pip install --no-cache-dir  -U -e . && \
+    rm -rf /root/.cache && \
+    rm -f /tmp/*.whl
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 2
+
+COPY ./build/rollup /console-server/src/ai/backend/console/static
+COPY ./docker_build/console-server.conf /console-server/console-server.conf
 
