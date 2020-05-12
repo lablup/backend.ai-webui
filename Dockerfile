@@ -28,3 +28,5 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 2
 COPY ./build/rollup /console-server/src/ai/backend/console/static
 COPY ./docker_build/console-server.conf /console-server/console-server.conf
 
+ENV BACKEND_ENDPOINT_TYPE=api
+ENTRYPOINT ["python3", "-m", "ai.backend.console.server"]
