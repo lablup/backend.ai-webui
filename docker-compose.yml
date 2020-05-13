@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  console-debug:
+  console-dev:
     build:
       context: .
       dockerfile: ./Dockerfile

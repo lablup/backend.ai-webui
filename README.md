@@ -215,9 +215,9 @@ Good for develop phase. Not recommended for production environment.
 This command will use console source in `build/rollup` directory. No certificate will be used therefore console server will serve as HTTP.
 
 ```
-$ docker-compose build console-debug // build only
-$ docker-compose up console-debug    // for testing
-$ docker-compose up -d console-debug // as a daemon
+$ docker-compose build console-dev // build only
+$ docker-compose up console-dev    // for testing
+$ docker-compose up -d console-dev // as a daemon
 ```
 
 #### Web server with SSL
