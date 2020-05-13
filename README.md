@@ -207,12 +207,12 @@ e.g. You will download the `backend.ai-console-server` package.
 $ make compile
 ```
 
-Copy `console-server.example.conf` in `docker_build` directory into current directory and modify configuration files.
-
 #### Web server
 Good for develop phase. Not recommended for production environment.
 
-This command will use console source in `build/rollup` directory. No certificate will be used therefore console server will serve as HTTP.
+Note: This command will use console source in `build/rollup` directory. No certificate will be used therefore console server will serve as HTTP.
+
+Copy `console-server.example.conf` in `docker_build` directory into current directory as `console-server.conf` and modify configuration files for your needs.
 
 ```
 $ docker-compose build console-dev // build only
@@ -220,16 +220,22 @@ $ docker-compose up console-dev    // for testing
 $ docker-compose up -d console-dev // as a daemon
 ```
 
+Visit `http://127.0.0.1:8080` to test console server.
+
 #### Web server with SSL
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
+
+Copy `console-server.example.ssl.conf` in `docker_build` directory into current directory as `console-server.conf` and modify configuration files for your needs.
 
 ```
 $ docker-compose build console  // build only
 $ docker-compose up console     // for testing
 $ docker-compose up -d console  // as a daemon
 ```
+
+Visit `https://127.0.0.1:443` to test console server serving. Change `127.0.0.1` to your production domain.
 
 #### Removing
 
