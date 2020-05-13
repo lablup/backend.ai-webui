@@ -207,26 +207,28 @@ e.g. You will download the `backend.ai-console-server` package.
 $ make compile
 ```
 
-#### HTTP server (with nginx)
+Copy `console-server.example.conf` in `docker_build` directory into current directory and modify configuration files.
+
+#### Web server
 Good for develop phase. Not recommended for production environment.
 
+This command will use console source in `build/rollup` directory. No certificate will be used therefore console server will serve as HTTP.
+
 ```
-$ docker-compose build console // build only
-$ docker-compose up console    // for testing
-$ docker-compose up -d console // as a daemon
+$ docker-compose build console-debug // build only
+$ docker-compose up console-debug    // for testing
+$ docker-compose up -d console-debug // as a daemon
 ```
 
-#### HTTPS with SSL (with nginx)
+#### Web server with SSL
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
 
-Note: We strongly suggest you to use console-server instead of serving console only. Console server contains Backend.AI console inside.
-
 ```
-$ docker-compose build console-ssl  // build only
-$ docker-compose up console-ssl     // for testing
-$ docker-compose up -d console-ssl  // as a daemon
+$ docker-compose build console  // build only
+$ docker-compose up console     // for testing
+$ docker-compose up -d console  // as a daemon
 ```
 
 #### Removing
@@ -249,6 +251,7 @@ Check your image name is `backendai-console_console` or `backendai-console_conso
 $ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 $ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
+
 ### Building / serving with console-server
 
 If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.
