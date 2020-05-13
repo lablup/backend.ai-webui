@@ -6,10 +6,10 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "80:80"
+      - "8080:8080"
     volumes:
       - ./console-server.conf:/console-server.conf
-      - ./build/rollup:/console-server
+      - ./build/rollup:/console-server/src/ai/backend/console/static
     environment:
       - BACKEND_ENDPOINT_TYPE=api
     command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.console.server -f /console-server.conf"
