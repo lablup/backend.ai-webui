@@ -73,6 +73,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
   @property({type: String}) siteDescription = '';
   @property({type: String}) user_id = 'DISCONNECTED';
+  @property({type: String}) full_name = 'DISCONNECTED';
   @property({type: String}) domain = 'CLICK TO CONNECT';
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) is_admin = false;
@@ -327,6 +328,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   _refreshUserInfoPanel() {
     this.user_id = globalThis.backendaiclient.email;
+    this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
     this.current_group = this._readRecentProjectGroup();
     globalThis.backendaiclient.current_group = this.current_group;
@@ -346,6 +348,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
     opt.innerHTML = _text("console.menu.SelectProject");
+    opt.style.borderBottom = "1px solid #ccc";
     select.appendChild(opt);
     this.groups.map(group => {
       opt = document.createElement('mwc-list-item');
@@ -678,7 +681,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <div class="horizontal start-justified layout">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
-            <div id="group-select-box" class="full-menu" style="height:50px;"></div>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
@@ -764,9 +766,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
             <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
             <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
-            <div slot="actionItems" class="vertical end-justified flex layout">
-              <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
-              <div style="font-size: 12px;text-align:right">${this.domain}</div>
+            <div slot="actionItems">
+              <div id="group-select-box" class="full-menu" style="height:48px;"></div>
+            </div>
+            <div slot="actionItems">
+              <div class="vertical center-justified flex layout" style="height:48px;">
+                <span class="full_name" style="font-size: 14px;text-align:right">${this.full_name}</span>
+                <span class="email" style="font-size: 12px;text-align:right">${this.user_id}</span>
+                <div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>
+              </div>
             </div>
             <mwc-icon-button slot="actionItems" id="dropdown-button"
                              icon="account_circle"

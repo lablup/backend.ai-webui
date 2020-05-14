@@ -31,7 +31,7 @@
       "Environments&Presets": "실행환경 및 프리셋",
       "ComputationResources": "연산 자원",
       "Logs": "로그",
-      "Project": "프로젝트",
+      "Project": "현재 프로젝트",
       "NoProject": "프로젝트 없음",
       "SelectProject": "프로젝트 선택",
       "Experiments": "실험"
