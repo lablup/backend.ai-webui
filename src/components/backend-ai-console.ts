@@ -772,7 +772,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div slot="actionItems">
               <div class="vertical center-justified flex layout" style="height:48px;">
                 <span class="full_name" style="font-size: 14px;text-align:right">${this.full_name}</span>
-                <span class="email" style="font-size: 12px;text-align:right">${this.user_id}</span>
+                ${this.full_name != this.user_id ? html`
+                <span class="email" style="font-size: 12px;text-align:right">${this.user_id}</span>` : html``}
                 <div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>
               </div>
             </div>
