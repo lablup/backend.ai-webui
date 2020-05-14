@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -901,11 +901,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        ${!this._isDir(rowData.item) && this._isDownloadable(rowData.item) ?
-        html`
-          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
-        ` : html``}
+        <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+            filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
         <mwc-icon-button id="rename-btn" class="tiny fg green" icon="edit" required
             filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
         <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
@@ -1107,7 +1104,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const job = globalThis.backendaiclient.vfolder.rename(newName);
     this.closeDialog('rename-folder-dialog');
     job.then((value) => {
-      this.notification.text = _t('data.folders.FolderRenamed');
+      this.notification.text = _text('data.folders.FolderRenamed');
       this.notification.show();
       this._refreshFolderList();
     }).catch(err => {
@@ -1141,6 +1138,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     let job = globalThis.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
       this.notification.text = 'Folder is successfully deleted.';
+      this.notification.text = _text('data.folders.FolderDeleted');
       this.notification.show();
       this._refreshFolderList();
     }).catch(err => {
