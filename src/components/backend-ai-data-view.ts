@@ -470,7 +470,7 @@ export default class BackendAIData extends BackendAIPage {
     if (nameEl.checkValidity()) {
       let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
       job.then((value) => {
-        this.notification.text = 'Folder is successfully created.';
+        this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
         this._refreshFolderList();
       }).catch(err => {

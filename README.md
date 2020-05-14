@@ -4,6 +4,12 @@ Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / D
 
 For more information, see [manual](https://console.docs.backend.ai/en/latest/).
 
+## Changelog
+
+View [changelog](https://github.com/lablup/backend.ai-console/master/CHANGELOG.md)
+
+## Role
+
 Backend.AI console focuses to
 
  * Serve as desktop app (windows, macOS and Linux) and web service
@@ -51,7 +57,7 @@ Backend.AI console focuses to
      * Add/update resource templates
      * Add/remove docker registries
  * User management
-    * User creation / deletion / key management
+    * User creation / deletion / key management / resource templates
  * Manager settings
     * Add /setting repository
     * Plugin support
@@ -195,31 +201,41 @@ server {
 
 Make sure that you compile the console.
 
+e.g. You will download the `backend.ai-console-server` package.
+
 ```
 $ make compile
 ```
 
-#### HTTP server (with nginx)
+#### Web server
 Good for develop phase. Not recommended for production environment.
 
+Note: This command will use console source in `build/rollup` directory. No certificate will be used therefore console server will serve as HTTP.
+
+Copy `console-server.example.conf` in `docker_build` directory into current directory as `console-server.conf` and modify configuration files for your needs.
+
 ```
-$ docker-compose build console // build only
-$ docker-compose up console    // for testing
-$ docker-compose up -d console // as a daemon
+$ docker-compose build console-dev // build only
+$ docker-compose up console-dev    // for testing
+$ docker-compose up -d console-dev // as a daemon
 ```
 
-#### HTTPS with SSL (with nginx)
+Visit `http://127.0.0.1:8080` to test console server.
+
+#### Web server with SSL
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
 
-Note: We strongly suggest you to use console-server instead of serving console only. Console server contains Backend.AI console inside.
+Copy `console-server.example.ssl.conf` in `docker_build` directory into current directory as `console-server.conf` and modify configuration files for your needs.
 
 ```
-$ docker-compose build console-ssl  // build only
-$ docker-compose up console-ssl     // for testing
-$ docker-compose up -d console-ssl  // as a daemon
+$ docker-compose build console  // build only
+$ docker-compose up console     // for testing
+$ docker-compose up -d console  // as a daemon
 ```
+
+Visit `https://127.0.0.1:443` to test console server serving. Change `127.0.0.1` to your production domain.
 
 #### Removing
 
@@ -241,6 +257,7 @@ Check your image name is `backendai-console_console` or `backendai-console_conso
 $ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 $ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
+
 ### Building / serving with console-server
 
 If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.

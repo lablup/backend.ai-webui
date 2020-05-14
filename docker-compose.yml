@@ -1,32 +1,32 @@
 version: '3.1'
 
 services:
-  console:
+  console-dev:
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "80:80"
+      - "8080:8080"
     volumes:
-      - ./config.toml:/usr/share/nginx/html/config.toml
-      - ./certificates:/etc/certificates
+      - ./console-server.conf:/console-server.conf
+      - ./build/rollup:/console-server/src/ai/backend/console/static
     environment:
-      - NGINX_HOST=localhost
-    command: /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+      - BACKEND_ENDPOINT_TYPE=api
+    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.console.server -f /console-server.conf"
     networks:
       - backend
-  console-ssl:
+  console:
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
       - "443:443"
     volumes:
-      - ./config.toml:/usr/share/nginx/html/config.toml
+      - ./console-server.conf:/console-server.conf
       - ./certificates:/etc/certificates
     environment:
-      - NGINX_HOST=localhost
-    command: /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+      - BACKEND_ENDPOINT_TYPE=api
+    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.console.server -f /console-server.conf"
     networks:
       - backend
 networks:
