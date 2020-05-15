@@ -148,7 +148,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
       if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-        this.loginPanel.login();
+        if (this._page === 'verify-email') {
+          this.emailVerifyView = this.shadowRoot.querySelector('backend-ai-email-verification-view');
+          window.setTimeout(() => {
+            this.emailVerifyView.verify(this.loginPanel.api_endpoint);
+          }, 1000);
+        } else {
+          this.loginPanel.login();
+        }
       }
     }).catch(err => {
       console.log("Initialization failed.");
@@ -493,6 +500,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.menuTitle = _text("console.menu.Logs");
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
+      case 'verify-email':
+        this.menuTitle = _text("console.menu.Summary");
+        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        break;
       default:
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
@@ -784,30 +795,34 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Settings")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Users")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#resources-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Resources")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#environments-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Environments")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#configurations-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Configurations")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#maintenance-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Maintenance")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#information-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Information")}</div></wl-popover-card>
-          </wl-popover>
+          ${this.is_superadmin ? html`
+            <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Users")}</div></wl-popover-card>
+            </wl-popover>
+          `: html``}
+          ${this.is_superadmin ? html`
+            <wl-popover anchor="#resources-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Resources")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#environments-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Environments")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#configurations-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Configurations")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#maintenance-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Maintenance")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#information-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Information")}</div></wl-popover-card>
+            </wl-popover>
+          `: html``}
         </div>
         <div slot="appContent">
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
@@ -862,6 +877,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
                 <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
+                <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-email-verification-view>
                 <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
               </div>
             </section>
