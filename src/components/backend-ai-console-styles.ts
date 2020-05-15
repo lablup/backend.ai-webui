@@ -302,6 +302,10 @@ export const BackendAiConsoleStyles = [
       font-weight: 300;
     }
 
+    #content {
+      padding-top: 0;
+    }
+
     #sidebar-navbar-footer {
       position: absolute;
       right: 0;
