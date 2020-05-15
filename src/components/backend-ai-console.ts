@@ -25,6 +25,7 @@ import 'weightless/progress-spinner';
 
 import './backend-ai-settings-store';
 import './backend-ai-splash';
+import './backend-ai-help-button';
 import './lablup-notification';
 import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
@@ -768,6 +769,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
+            <backend-ai-help-button slot="actionItems" active></backend-ai-help-button>
             <mwc-icon-button slot="actionItems" id="dropdown-button"
                              icon="account_circle"
                              @click="${() => this._toggleDropdown()}">
