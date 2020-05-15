@@ -304,7 +304,7 @@ export const BackendAiConsoleStyles = [
       left: 0;
       bottom: 0 !important; /* Workaround to prevent miscalculated height */
       text-align: center;
-      height: 45px;
+      height: 100px;
       border-top: 1px solid #eeeeee;
       background-color: var(--general-navbar-footer-background-color);
       color: var(--general-sidebar-navbar-footer-color);

@@ -99,6 +99,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
   @property({type: Object}) appBody;
+  @property({type: Object}) appPage;
   @property({type: Object}) mainToolbar;
   @property({type: Object}) drawerToggleButton;
   @property({type: Object}) sidebarMenu;
@@ -125,6 +126,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
+    this.appPage = this.shadowRoot.querySelector('#app-page');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
@@ -682,8 +684,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="flex"></span>
             </div>
           </div>
-          <div class="horizontal start-justified layout">
-            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
+          <div class="horizontal start-justified layout flex" style="max-height:40px;">
+            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
@@ -708,7 +710,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
-              <mwc-icon id="usersettings-menu-icon" slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
+              <mwc-icon id="usersettings-menu-icon" slot="graphic" class="fg teal" icon="icons:settings">settings_applications</mwc-icon>
               <span class="full-menu">${_t("console.menu.Settings")}</span>
             </mwc-list-item>
             ${this.is_admin ?
@@ -730,7 +732,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Resources")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon id="configurations-menu-icon" slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
+              <mwc-icon id="configurations-menu-icon" slot="graphic" class="fg green" icon="icons:settings">settings_input_component</mwc-icon>
               <span class="full-menu">${_t("console.menu.Configurations")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
@@ -762,8 +764,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <small class="sidebar-footer" style="font-size:9px;">20.05.3.200515</small>
             </address>
           </footer>
-          <div id="sidebar-navbar-footer" class="vertical start start-justified layout">
-            <mwc-icon-button id="admin-menu-icon" icon="settings" slot="graphic" class="fg white" style="margin-left:5px;"></mwc-icon-button>
+          <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
+            <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
+            <mwc-icon-button id="admin-menu-icon" icon="settings" slot="graphic" class="fg white" style="margin-left:4px;"></mwc-icon-button>
           </div>
         </div>
         <div class="mini-menu">
@@ -834,8 +837,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                              icon="more_vert"
                              @click="${() => this._toggleDropdown()}">
             </mwc-icon-button>
-            <backend-ai-help-button slot="actionItems" active style="margin-top:4px;"></backend-ai-help-button>
-
             <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
               <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
                   ${this.user_id}
