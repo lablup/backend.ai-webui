@@ -763,7 +763,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start start-justified layout">
-            <mwc-icon-button id="information-menu-icon" icon="settings" slot="graphic" class="fg white"></mwc-icon-button>
+            <mwc-icon-button id="admin-menu-icon" icon="settings" slot="graphic" class="fg white" style="margin-left:5px;"></mwc-icon-button>
           </div>
         </div>
         <div class="mini-menu">
@@ -811,13 +811,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Information")}</div></wl-popover-card>
           </wl-popover>
+          <wl-popover anchor="#admin-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+             <wl-popover-card><div style="padding:5px">${_t("console.menu.Administration")}</div></wl-popover-card>
+          </wl-popover>
         </div>
         <div slot="appContent">
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
             <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
             <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
             <div slot="actionItems">
-              <div id="group-select-box" class="full-menu" style="height:48px;"></div>
+              <div id="group-select-box" style="height:48px;"></div>
             </div>
             <div slot="actionItems">
               <div class="vertical center-justified flex layout" style="height:48px;">
