@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, LitElement, property} from "lit-element";
 
 import 'weightless/button';
@@ -42,7 +43,10 @@ export default class LablupTermsOfService extends LitElement {
   @property({type: String}) tosEntry = 'terms-of-service';
   @property({type: String}) tosContent = '';
   @property({type: String}) tosLanguage = 'en';
-  @property({type: Array}) tosLanguages = ['ko', 'en'];
+  @property({type: Array}) tosLanguages = [
+    {code: 'ko', text: _text("language.Korean")},
+    {code: 'en', text: _text("language.English")}
+  ];
   @property({type: String}) title = '';
   @property({type: Boolean}) show = false;
   @property({type: Boolean}) approved = false;
@@ -105,17 +109,17 @@ export default class LablupTermsOfService extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling scrollable>
+      <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
         <div slot="header" class="horizontal center flex layout" style="padding:0 15px;">
           <h3>${this.title}</h3>
           <div class="flex"></div>
           ${this.tosLanguages ? html`
-            Language:
+            ${_t("language.Language")}:
             ${this.tosLanguages.map(item => html`
-            <wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item}" @click="${() => {
-      this.changeLanguage(item)
+            <wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item.code}" @click="${() => {
+      this.changeLanguage(item.code)
     }}">
-                ${item}
+                ${item.text}
             </wl-button>`)}
           ` : html``}
         </div>
@@ -127,7 +131,7 @@ export default class LablupTermsOfService extends LitElement {
           <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
       this.close();
     }}">
-              Dismiss
+              ${_t("button.Dismiss")}
           </wl-button>
         </div>
       </wl-dialog>
@@ -149,9 +153,6 @@ export default class LablupTermsOfService extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     super.attributeChangedCallback(name, oldval, newval);
-    if (name == 'tosEntry' || name == 'tosLanguage') {
-      this.tosEntryURL = '/resources/documents/' + this.tosEntry + '.' + this.tosLanguage + '.html';
-    }
   }
 
   async open() {
@@ -167,7 +168,6 @@ export default class LablupTermsOfService extends LitElement {
   changeLanguage(lang) {
     this.tosContent = "";
     this.tosLanguage = lang;
-    this.tosEntryURL = '/resources/documents/' + this.tosEntry + '.' + this.tosLanguage + '.html';
     this._showTOSdialog(true);
   }
 
@@ -198,6 +198,13 @@ export default class LablupTermsOfService extends LitElement {
 
   // Terms of service dialog
   _showTOSdialog(reuseDialog = false) {
+    if (this.tosLanguage === 'default' && globalThis.backendaioptions.exists('current_language')) {
+      this.tosLanguage = globalThis.backendaioptions.get('current_language');
+    }
+    if (!['ko', 'en'].includes(this.tosLanguage)) {
+      this.tosLanguage = 'en';
+    }
+    this.tosEntryURL = '/resources/documents/' + this.tosEntry + '.' + this.tosLanguage + '.html';
     if (this.tosContent == "") {
       let rqst = {
         method: 'GET',

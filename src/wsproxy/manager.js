@@ -1,32 +1,41 @@
+// Backend.AI Websocket proxy server for local runtime environment / app.
 const express = require('express'),
- EventEmitter = require('events'),
-         cors = require('cors');
+  EventEmitter = require('events'),
+  cors = require('cors');
+const logger = require('./lib/logger')(__filename);
 
 const ai = require('../lib/backend.ai-client-node'),
   Gateway = require("./gateway/tcpwsproxy"),
   SGateway = require("./gateway/consoleproxy");
 const htmldeco = require('./lib/htmldeco');
 
+// extHttpProxy is an endpoint of a http proxy server in a network.
+// Can be set when a user in a company network needs to access the web socket
+// externally through the http proxy provided by the company.
+// ex) http://10.20.30.40:3128
+const extHttpProxyURL = process.env.EXT_HTTP_PROXY;
+
 class Manager extends EventEmitter {
   constructor(listen_ip, proxyBaseHost, proxyBasePort) {
     super();
-    if(listen_ip === undefined) {
+    if (listen_ip === undefined) {
       this.listen_ip = "127.0.0.1"
     } else {
       this.listen_ip = listen_ip;
     }
 
-    if(proxyBaseHost === undefined) {
+    if (proxyBaseHost === undefined) {
       this.proxyBaseHost = "127.0.0.1"
     } else {
       this.proxyBaseHost = proxyBaseHost;
     }
-
     if (proxyBasePort !== undefined) {
       this.port = proxyBasePort;
     } else {
       this.port = 0; //with 0, OS will assign the port
     }
+
+    this.extHttpProxyURL = extHttpProxyURL;
     this.app = express();
     this.aiclient = undefined;
     this.proxies = {};
@@ -36,7 +45,7 @@ class Manager extends EventEmitter {
   }
 
   refreshPorts() {
-    console.log("PortRefresh");
+    logger.info("PortRefresh");
     for (let i = 0; i < 100; i++) {
       this.ports.push(Math.floor(Math.random() * 20000) + 10000)
     }
@@ -49,7 +58,8 @@ class Manager extends EventEmitter {
     this.app.put('/conf', (req, res) => {
       let cf = {
         "created": Date.now(),
-        "endpoint": req.body.endpoint
+        "endpoint": req.body.endpoint,
+        "ext_proxy_url": this.extHttpProxyURL
       };
       // Receive API version from console. Initialization timing is different so we use API information from requester.
       if (req.body.api_version) {
@@ -57,7 +67,7 @@ class Manager extends EventEmitter {
       } else {
         cf['_apiVersionMajor'] = 4;
       }
-      if (req.body.mode && req.body.mode == "SESSION") {
+      if (req.body.mode && req.body.mode === "SESSION") {
         cf['mode'] = "SESSION";
         cf['session'] = req.body.session;
         cf['endpoint'] = cf['endpoint'] + "/func";
@@ -68,7 +78,7 @@ class Manager extends EventEmitter {
         let config = new ai.backend.ClientConfig(
           req.body.access_key,
           req.body.secret_key,
-          req.body.endpoint,
+          req.body.endpoint
         );
         this.aiclient = new ai.backend.Client(config);
         this.aiclient.APIMajorVersion = cf['_apiVersionMajor'];
@@ -106,13 +116,14 @@ class Manager extends EventEmitter {
       }
       let sessionName = req.params["sessionName"];
       let app = req.query.app || "jupyter";
+      let port = parseInt(req.query.port) || undefined;
       let p = sessionName + "|" + app;
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
-      let port = undefined;
-      if(this.proxies.hasOwnProperty(p)) {
-          gateway = this.proxies[p];
-          port = gateway.getPort();
+      //let port = undefined;
+      if (this.proxies.hasOwnProperty(p)) {
+        gateway = this.proxies[p];
+        port = gateway.getPort();
       } else {
         if (this._config.mode == "SESSION") {
           gateway = new SGateway(this._config);
@@ -130,10 +141,17 @@ class Manager extends EventEmitter {
             assigned = true;
             break;
           } catch (err) {
-            //if port in use
-            console.log(err);
-            console.log("Port in use");
-            //or just retry
+            if ('PortInUse' === err.message) {
+              // try next number or fallback to random port for the last resort
+              port = (i < maxtry - 1) ? port + 1 : undefined;
+              if (port) {
+                logger.warn('trying next port: ' + port);
+              } else {
+                logger.warn('trying random port')
+              }
+            } else {
+              logger.warn(err.message);
+            }
           }
         }
         if (!assigned) {
@@ -144,10 +162,10 @@ class Manager extends EventEmitter {
 
       let proxy_target = "http://localhost:" + port;
       if (app == 'sftp') {
-        console.log(port);
+        logger.debug('proxy target: ' + proxy_target);
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
       } else if (app == 'sshd') {
-        console.log(port);
+        logger.debug('proxy target: ' + proxy_target);
         res.send({
           "code": 200,
           "proxy": proxy_target,
@@ -155,7 +173,7 @@ class Manager extends EventEmitter {
           "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
         });
       } else if (app == 'vnc') {
-        console.log(port);
+        logger.debug('proxy target: ' + proxy_target);
         res.send({
           "code": 200,
           "proxy": proxy_target,
@@ -186,7 +204,7 @@ class Manager extends EventEmitter {
 
     this.app.get('/sftp', (req, res) => {
       let port = req.query.port;
-      let url =  "sftp://upload@127.0.0.1:" + port;
+      let url = "sftp://upload@127.0.0.1:" + port;
       res.send(htmldeco("Connect with your own SFTP", "host: 127.0.0.1<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"));
     });
 
@@ -202,7 +220,7 @@ class Manager extends EventEmitter {
   start() {
     return new Promise((resolve) => {
       this.listener = this.app.listen(this.port, this.listen_ip, () => {
-        console.log(`Listening on port ${this.listener.address().port}!`);
+        logger.info(`Listening on port ${this.listener.address().port}!`);
         this.port = this.listener.address().port;
         this.baseURL = "http://" + this.proxyBaseHost + ":" + this.port;
         resolve(this.listener.address().port);

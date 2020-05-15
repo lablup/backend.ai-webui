@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import './backend-ai-resource-monitor';
@@ -158,9 +159,9 @@ export default class BackendAiSessionView extends BackendAIPage {
       <wl-card class="item">
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
-            <wl-tab value="running" checked @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
-            <wl-tab value="finished" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
-            <wl-tab value="others" @click="${(e) => this._showTab(e.target)}">Others</wl-tab>
+            <wl-tab value="running" checked @click="${(e) => this._showTab(e.target)}">${_t("session.Running")}</wl-tab>
+            <wl-tab value="finished" @click="${(e) => this._showTab(e.target)}">${_t("session.Finished")}</wl-tab>
+            <wl-tab value="others" @click="${(e) => this._showTab(e.target)}">${_t("session.Others")}</wl-tab>
           </wl-tab-group>
           <div class="flex"></div>
           <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
@@ -171,7 +172,7 @@ export default class BackendAiSessionView extends BackendAIPage {
                   <mwc-list-item>
                     <a class="horizontal layout start center" @click="${this._exportToCSV}">
                       <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                      export CSV
+                      ${_t("session.exportCSV")}
                     </a>
                   </mwc-list-item>
                 </mwc-menu>

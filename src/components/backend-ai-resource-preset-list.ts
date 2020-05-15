@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -113,6 +114,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         }
 
         wl-button {
+          color: var(--paper-yellow-600);
           --button-bg: var(--paper-yellow-50);
           --button-bg-hover: var(--paper-yellow-100);
           --button-bg-active: var(--paper-yellow-600);
@@ -137,7 +139,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">developer_board</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
-            <span class="indicator">cores</span>
+            <span class="indicator">${_t("general.cores")}</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">memory</wl-icon>
@@ -160,6 +162,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <wl-icon class="fg green">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
             <span class="indicator">GPU</span>
+          </div>
+        ` : html``}
+        ${rowData.item.shared_memory ?
+        html`
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg blue">memory</wl-icon>
+            <span>${rowData.item.shared_memory_gb}</span>
+            <span class="indicator">GB</span>
           </div>
         ` : html``}
         </div>
@@ -206,11 +216,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
     return html`
       <wl-card>
         <h4 class="horizontal flex center center-justified layout">
-          <span>Resource Presets</span>
+          <span>${_t("resourcePreset.ResourcePresets")}</span>
           <span class="flex"></span>
           <wl-button class="fg orange" id="add-resource-preset" outlined @click="${e => this._launchPresetAddDialog(e)}">
             <wl-icon>add</wl-icon>
-            Create Preset
+            ${_t("resourcePreset.CreatePreset")}
           </wl-button>
         </h4>
         <div>
@@ -220,7 +230,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
             <vaadin-grid-column resizable>
               <template class="header">
-                <vaadin-grid-sorter path="name">Name</vaadin-grid-sorter>
+                <vaadin-grid-sorter path="name">${_t("resourcePreset.Name")}</vaadin-grid-sorter>
               </template>
               <template>
                 <div class="layout horizontal center flex">
@@ -229,10 +239,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
               </template>
             </vaadin-grid-column>
 
-            <vaadin-grid-column width="150px" resizable header="Resources" .renderer="${this._boundResourceRenderer}">
+            <vaadin-grid-column width="150px" resizable header="${_t("resourcePreset.Resources")}" .renderer="${this._boundResourceRenderer}">
             </vaadin-grid-column>
 
-            <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
+            <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
         </div>
@@ -240,7 +250,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered">
           <h3 class="horizontal center layout">
-            <span>Modify resource preset</span>
+            <span>${_t("resourcePreset.ModifyResourcePreset")}</span>
             <div class="flex"></div>
             <wl-button class="fg orange" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -248,12 +258,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </h3>
           <form id="login-form">
             <fieldset>
-              <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="Preset Name"
+              <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="${_t("resourcePreset.PresetName")}"
                           auto-validate required
                           pattern="[a-zA-Z0-9_-]+"
                           disabled
                           error-message="Policy name only accepts letters, numbers, underscore, and dash"></mwc-textfield>
-              <h4>Resource Preset</h4>
+              <h4>${_t("resourcePreset.ResourcePreset")}</h4>
               <div class="horizontal center layout">
                 <mwc-textfield id="cpu-resource" type="number" label="CPU"
                     min="1" value="1"></mwc-textfield>
@@ -266,11 +276,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 <mwc-textfield id="fgpu-resource" type="number" label="fGPU"
                     min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
+              <div class="horizontal center layout">
+                <mwc-textfield id="shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
+              </div>
               <br/><br/>
               <wl-button class="fg orange create-button" outlined type="button"
                 @click="${() => this._modifyResourceTemplate()}">
                 <wl-icon>check</wl-icon>
-                Save Changes
+                ${_t("button.SaveChanges")}
               </wl-button>
             </fieldset>
           </form>
@@ -279,7 +292,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       <wl-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Create resource preset</span>
+            <span>${_t("resourcePreset.CreateResourcePreset")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -297,7 +310,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 pattern="[a-zA-Z0-9-_]+"
                 error-message="Preset name only accepts letters and numbers"
               ></mwc-textfield>
-              <h4>Resource Preset</h4>
+              <h4>${_t("resourcePreset.ResourcePreset")}</h4>
               <div class="horizontal center layout">
                 <mwc-textfield id="create-cpu-resource" type="number" label="CPU"
                     min="1" value="1"></mwc-textfield>
@@ -310,6 +323,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 <mwc-textfield id="create-fgpu-resource" type="number" label="fGPU"
                     min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
+              <div class="horizontal center layout">
+                <mwc-textfield id="create-shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
+              </div>
               <wl-button
                 class="fg orange create-button"
                 id="create-policy-button"
@@ -318,20 +334,22 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 @click="${this._createPreset}"
               >
                 <wl-icon>add</wl-icon>
-                Add
+                ${_t("button.Add")}
               </wl-button>
             </fieldset>
           </form>
         </wl-card>
       </wl-dialog>
       <wl-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
+         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
          <div slot="content">
-            <p>You are about to delete ${this.presetName} preset. This action cannot be undone. Do you want to proceed?</p>
+            <p>${_t("resourcePreset.AboutToDeletePreset")}</p>
+            <p style="text-align:center;">${this.presetName}</p>
+            <p>${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer">
-            <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">Okay</wl-button>
+            <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
       </wl-dialog>
     `;
@@ -425,6 +443,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
       this.shadowRoot.querySelector('#fgpu-resource').value = "";
     }
     this.shadowRoot.querySelector('#ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
+    if (resourcePreset.shared_memory) {
+      this.shadowRoot.querySelector('#shmem-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2);
+    } else {
+      this.shadowRoot.querySelector('#shmem-resource').value = '';
+    }
   }
 
   _refreshTemplateData() {
@@ -436,6 +459,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
       Object.keys(resourcePresets).map((objectKey, index) => {
         let preset = resourcePresets[objectKey];
         preset.resource_slots.mem_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
+        if (preset.shared_memory) {
+          preset.shared_memory_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.shared_memory, 'g')).toFixed(2);
+        } else {
+          preset.shared_memory_gb = null;
+        }
       });
       this.resourcePresets = resourcePresets;
     }).catch(err => {
@@ -458,10 +486,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   _readResourcePresetInput() {
     const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const cpu = wrapper(this.shadowRoot.querySelector('#cpu-resource').value),
-      mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g'),
-      gpu_resource = wrapper(this.shadowRoot.querySelector('#gpu-resource').value),
-      fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
+    const cpu = wrapper(this.shadowRoot.querySelector('#cpu-resource').value);
+    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
+    const gpu_resource = wrapper(this.shadowRoot.querySelector('#gpu-resource').value);
+    const fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
+    let sharedMemory = this.shadowRoot.querySelector('#shmem-resource').value;
+    if (sharedMemory) sharedMemory = sharedMemory + 'g';
 
     let resource_slots = {cpu, mem};
     if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== "" && gpu_resource !== '0') {
@@ -472,20 +502,28 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
 
     const input = {
-      'resource_slots': JSON.stringify(resource_slots)
+      resource_slots: JSON.stringify(resource_slots),
+      shared_memory: sharedMemory
     };
 
     return input;
   }
 
   _modifyResourceTemplate() {
-    let name = this.shadowRoot.querySelector('#id_preset_name').value;
+    const name = this.shadowRoot.querySelector('#id_preset_name').value;
+    const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
     if (!name) {
       this.notification.text = 'No preset name';
       this.notification.show();
       return;
     }
     let input = this._readResourcePresetInput();
+    if (input.shared_memory >= mem) {
+      this.notification.text = 'Memory should be larger than shared memory';
+      this.notification.show();
+      return;
+    }
     globalThis.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#modify-template-dialog').hide();
       this.notification.text = "Resource preset successfully updated.";
@@ -555,13 +593,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
       v = v.toString();
       return typeof (v) !== "undefined" && v.includes('Unlimited') ? 'Infinity' : v;
     };
-    const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value),
-      cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value),
-      mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g'),
-      gpu_resource = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value),
-      fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
+    const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value);
+    const cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value);
+    const mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g');
+    const gpu_resource = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value);
+    const fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
+    let sharedMemory = this.shadowRoot.querySelector('#create-shmem-resource').value;
+    if (sharedMemory) sharedMemory = sharedMemory + 'g';
     if (!preset_name) {
       this.notification.text = 'No preset name';
+      this.notification.show();
+      return;
+    }
+    if (sharedMemory >= mem) {
+      this.notification.text = 'Memory should be larger than shared memory';
       this.notification.show();
       return;
     }
@@ -575,7 +620,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
 
     const input = {
-      'resource_slots': JSON.stringify(resource_slots)
+      resource_slots: JSON.stringify(resource_slots),
+      shared_memory: sharedMemory
     };
 
     globalThis.backendaiclient.resourcePreset.add(preset_name, input)
@@ -591,6 +637,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           this.shadowRoot.querySelector('#create-ram-resource').value = 1;
           this.shadowRoot.querySelector('#create-gpu-resource').value = 0;
           this.shadowRoot.querySelector('#create-fgpu-resource').value = 0;
+          this.shadowRoot.querySelector('#create-shmem-resource').value = '';
         } else {
           this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
         }

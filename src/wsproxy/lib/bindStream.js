@@ -1,4 +1,4 @@
-//const logger = require('./logger')(__filename);
+const logger = require('./logger')(__filename);
 let _n = 0;
 
 const name = stream => stream._sig || "tcp";
@@ -6,10 +6,10 @@ const name = stream => stream._sig || "tcp";
 module.exports = function(s1, s2) {
   const n = _n++;
   const debug_log = (stream, msg) => {
-    //logger.debug(`${n} ${name(stream)} ${msg}`);
+    logger.debug(`${n} ${name(stream)} ${msg}`);
   };
   const error_log = (stream, msg) => {
-    //logger.warn(`LOGGGGGG ${n} ${name(stream)} ${msg}`);
+    logger.warn(`LOGGGGGG ${n} ${name(stream)} ${msg}`);
   };
 
   // add stop:  end() once wrapper

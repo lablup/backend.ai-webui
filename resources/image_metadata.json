@@ -583,6 +583,20 @@
         }
       ]
     },
+    "ubuntu-linux": {
+      "name": "Ubuntu Linux",
+      "description": "Ubuntu is an open source software operating system that runs from the desktop, to the cloud, to all your internet connected things.",
+      "group": "Desktop Environment",
+      "tags": [],
+      "icon": "ubuntu.svg",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Ubuntu Linux",
+          "color": "yellow"
+        }
+      ]
+    },
     "sftp": {
       "name": "SFTP",
       "description": "",

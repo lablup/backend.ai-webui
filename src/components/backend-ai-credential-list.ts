@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import {render} from 'lit-html';
@@ -21,7 +22,6 @@ import 'weightless/label';
 import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
-import './lablup-loading-indicator';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -52,6 +52,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) keypairs = Object();
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
+  @property({type: Object}) _boundKeyageRenderer = this.keyageRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) keypairView = Object();
   @property({type: Number}) _pageSize = 10;
@@ -161,11 +162,10 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
     this.notification = globalThis.lablupNotification;
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -184,7 +184,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
-  _refreshKeyData(user_id?) {
+  _refreshKeyData(user_id: null|string = null) {
     let is_active = true;
     switch (this.condition) {
       case 'active':
@@ -194,7 +194,6 @@ export default class BackendAICredentialList extends BackendAIPage {
         is_active = false;
     }
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
-      this.indicator.hide();
       let rp = response.keypair_resource_policies;
       this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
     }).then(() => {
@@ -239,7 +238,22 @@ export default class BackendAICredentialList extends BackendAIPage {
             keypair['total_resource_slots'].cuda_shares = '-';
             keypair['total_resource_slots'].cuda_device = '-';
           }
-          ['cpu', 'mem', 'cuda_shares', 'cuda_device'].forEach((slot) => {
+          if ('rocm.device' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].rocm_device = keypair['total_resource_slots']['rocm.device'];
+          }
+
+          if (('rocm_device' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].rocm_device = '-';
+          }
+          if ('tpu.device' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].tpu_device = keypair['total_resource_slots']['tpu.device'];
+          }
+          if (('tpu_device' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].tpu_device = '-';
+          }
+          ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device'].forEach((slot) => {
             keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
           });
         }
@@ -250,7 +264,6 @@ export default class BackendAICredentialList extends BackendAIPage {
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
-      this.indicator.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -417,6 +430,17 @@ export default class BackendAICredentialList extends BackendAIPage {
     console.log()
   }
 
+  keyageRenderer(root, column?, rowData?) {
+    render(
+      html`
+            <div class="layout vertical">
+              <span>${rowData.item.elapsed} ${_t("credential.Days")}</span>
+              <span class="indicator">(${rowData.item.created_at_formatted})</span>
+            </div>
+      `, root
+    );
+  }
+
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -486,14 +510,13 @@ export default class BackendAICredentialList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairView}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="user_id">User ID</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="user_id">${_t("credential.UserID")}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout horizontal center flex">
@@ -503,7 +526,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Access Key</template>
+          <template class="header">${_t("general.AccessKey")}</template>
           <template>
             <div class="monospace">[[item.access_key]]</div>
           </template>
@@ -511,7 +534,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="is_admin">Permission</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="is_admin">${_t("credential.Permission")}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout horizontal center flex">
@@ -523,26 +546,17 @@ export default class BackendAICredentialList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="created_at">Key age</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[item.elapsed]] Days</span>
-              <span class="indicator">([[item.created_at_formatted]])</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-sort-column resizable header="${_t("credential.KeyAge")}" path="created_at" .renderer="${this._boundKeyageRenderer}">
+        </vaadin-grid-sort-column>
 
         <vaadin-grid-column width="150px" resizable>
-          <template class="header">Resource Policy</template>
+          <template class="header">${_t("credential.ResourcePolicy")}</template>
           <template>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green">developer_board</wl-icon>
                 <span>[[item.total_resource_slots.cpu]]</span>
-                <span class="indicator">cores</span>
+                <span class="indicator">${_t("general.cores")}</span>
               </div>
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green">memory</wl-icon>
@@ -575,14 +589,14 @@ export default class BackendAICredentialList extends BackendAIPage {
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green">folder</wl-icon>
                 <span>[[item.max_vfolder_count]]</span>
-                <span class="indicator">Folders</span>
+                <span class="indicator">${_t("general.Folders")}</span>
               </div>
             </div>
           </template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Allocation</template>
+          <template class="header">${_t("credential.Allocation")}</template>
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">
@@ -598,16 +612,18 @@ export default class BackendAICredentialList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="150px" resizable header="Control" .renderer="${this._boundControlRenderer}">
+        <vaadin-grid-column width="150px" resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
         <wl-button class="pagination" id="previous-page"
-                   ?disabled="${ this._currentPage === 1 }"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+                   ?disabled="${this._currentPage === 1}"
+                   @click="${(e) => {
+      this._updateItemsFromPage(e)
+    }}">
           <wl-icon class="pagination">navigate_before</wl-icon>
         </wl-button>
-        <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${ Math.ceil( this._totalCredentialCount / this._pageSize)} </wl-label>
+        <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${Math.ceil(this._totalCredentialCount / this._pageSize)} </wl-label>
         <wl-button class="pagination" id="next-page"
                    ?disabled="${ this._totalCredentialCount <= this._pageSize * this._currentPage}"
                    @click="${(e) => {this._updateItemsFromPage(e)}}">
@@ -629,50 +645,50 @@ export default class BackendAICredentialList extends BackendAIPage {
           </h3>
           <div class="horizontal layout">
             <div style="width:335px;">
-              <h4>Information</h4>
+              <h4>${_t("credential.Information")}</h4>
               <div role="listbox" style="margin: 0;">
                 <vaadin-item>
                   <div><strong>User ID</strong></div>
                   <div secondary>${this.keypairInfo.user_id}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Access Key</strong></div>
+                  <div><strong>${_t("general.AccessKey")}</strong></div>
                   <div secondary>${this.keypairInfo.access_key}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Secret Key</strong></div>
+                  <div><strong>${_t("general.SecretKey")}</strong></div>
                   <div secondary>${this.keypairInfo.secret_key}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Created</strong></div>
+                  <div><strong>${_t("credential.Created")}</strong></div>
                   <div secondary>${this.keypairInfo.created_at}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Last used</strong></div>
+                  <div><strong>${_t("credential.Lastused")}</strong></div>
                   <div secondary>${this.keypairInfo.last_used}</div>
                 </vaadin-item>
               </div>
             </div>
             <div style="width:335px;">
-              <h4>Allocation</h4>
+              <h4>${_t("credential.Allocation")}</h4>
               <div role="listbox" style="margin: 0;">
                 <vaadin-item>
-                  <div><strong>Resource Policy</strong></div>
+                  <div><strong>${_t("credential.ResourcePolicy")}</strong></div>
                   <div secondary>${this.keypairInfo.resource_policy}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Number of queries</strong></div>
+                  <div><strong>${_t("credential.NumberOfQueries")}</strong></div>
                   <div secondary>${this.keypairInfo.num_queries}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Concurrent Sessions</strong></div>
-                  <div secondary>${this.keypairInfo.concurrency_used} active / ${this.keypairInfo.concurrency_used} concurrent
-                    sessions.
+                  <div><strong>${_t("credential.ConcurrentSessions")}</strong></div>
+                  <div secondary>${this.keypairInfo.concurrency_used} ${_t("credential.active")} /
+                    ${this.keypairInfo.concurrency_used} ${_t("credential.concurrentsessions")}.
                   </div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Rate Limit</strong></div>
-                  <div secondary>${this.keypairInfo.rate_limit} for 900 seconds.</div>
+                  <div><strong>${_t("credential.RateLimit")}</strong></div>
+                  <div secondary>${this.keypairInfo.rate_limit} ${_t("credential.for900seconds")}.</div>
                 </vaadin-item>
               </div>
             </div>

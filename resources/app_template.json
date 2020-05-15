@@ -71,15 +71,55 @@
         "name": "vnc",
         "title": "VNC",
         "redirect": "",
-        "src": "./resources/icons/default_app.svg"
+        "src": "./resources/icons/novnc.svg"
       }
     ],
     "vnc-web": [
       {
-        "name": "vnc",
+        "name": "vnc-web",
         "title": "VNC (Web)",
         "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
+        "src": "./resources/icons/novnc.svg"
+      }
+    ],
+    "novnc": [
+      {
+        "name": "novnc",
+        "title": "VNC (Web)",
+        "redirect": "/vnc.html?autoconnect=true&amp;password=backendai",
         "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "novnc": [
+      {
+        "name": "novnc",
+        "title": "VNC (Web)",
+        "redirect": "/resize",
+        "src": "./resources/icons/novnc.svg"
+      }
+    ],
+    "xfce": [
+      {
+        "name": "xfce",
+        "title": "XFCE",
+        "redirect": "/resize",
+        "src": "./resources/icons/xfce.png"
+      }
+    ],
+    "gnome": [
+      {
+        "name": "gnome",
+        "title": "GNOME Desktop",
+        "redirect": "/resize",
+        "src": "./resources/icons/gnome.svg"
+      }
+    ],
+    "KDE": [
+      {
+        "name": "kde",
+        "title": "KDE",
+        "redirect": "",
+        "src": "./resources/icons/kde.svg"
       }
     ],
     "matlab": [

@@ -24,10 +24,6 @@ class BackendAiMessage extends LitElement {
     return 'backend-ai-message';
   }
 
-  static get properties() {
-    return {}
-  }
-
   firstUpdated() {
   }
 

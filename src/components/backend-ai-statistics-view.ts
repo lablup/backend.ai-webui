@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -100,7 +101,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
         <wl-card class="item">
           <h3 class="tab horizontal center layout">
             <wl-tab-group>
-              <wl-tab value="usage" checked @click="${e => this._showTab(e.target)}">Usage</wl-tab>
+              <wl-tab value="usage" checked @click="${e => this._showTab(e.target)}">${_t("statistics.Usage")}</wl-tab>
             </wl-tab-group>
           </h3>
           <div class="horizontal wrap layout">

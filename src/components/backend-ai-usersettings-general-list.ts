@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {get as _text, translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -21,36 +21,35 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import '@material/mwc-select';
+import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import './lablup-codemirror';
 
 @customElement("backend-ai-usersettings-general-list")
 export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
-  public indicator: any;
+  public spinner: any;
   public lastSavedBootstrapScript: string = '';
 
-  @property({type: Object}) options = Object();
   @property({type: Object}) bootstrapDialog = Object();
   @property({type: Object}) userconfigDialog = Object();
   @property({type: Object}) notification;
+  @property({type: Array}) supportLanguages = [
+    {name: _text("language.OSDefault"), code: "default"},
+    {name: _text("language.English"), code: "en"},
+    {name: _text("language.Korean"), code: "ko"}
+  ];
   @property({type: Boolean}) beta_feature_panel = false;
   @property({type: Boolean}) shell_script_edit = false;
   @property({type: Array}) rcfiles = Array();
   @property({type: String}) rcfile = '';
   @property({type: String}) prevRcfile = '';
+  @property({type: String}) preferredSSHPort = '';
 
   constructor() {
     super();
-    this.options = {  // Default option.
-      desktop_notification: true,
-      compact_sidebar: false,
-      preserve_login: false,
-      beta_feature: false,
-    }
   }
 
   static get styles() {
@@ -85,6 +84,22 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         .setting-button {
           width: 35px;
+        }
+
+        .setting-select-desc {
+          width: 200px;
+        }
+
+        .setting-select {
+          width: 135px;
+        }
+
+        .setting-text-desc {
+          width: 260px;
+        }
+
+        .setting-text {
+          width: 75px;
         }
 
         .setting-item wl-button {
@@ -128,7 +143,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --dialog-max-height: calc(100vh - 100px);
         }
 
-        mwc-select#select-rcfile-type {
+        mwc-multi-select {
+          --mdc-select-min-width: 140px;
+        }
+
+        mwc-multi-select#select-rcfile-type {
           width: 300px;
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
@@ -156,11 +175,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.readUserSettings();
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
         if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
           this.shell_script_edit = true;
           this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
@@ -169,6 +188,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       });
     } else { // already connected
+      this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
         this.shell_script_edit = true;
         this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
@@ -178,78 +198,70 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
-  readUserSettings() {
-    this._readUserSettings();
-    this.beta_feature_panel = this.options['beta_feature'];
-  }
-
-  _readUserSettings() { // Read all user settings.
-    for (let i = 0, len = localStorage.length; i < len; ++i) {
-      if (localStorage.key(i)!.startsWith('backendaiconsole.usersetting.')) {
-        let key = localStorage.key(i)!.replace('backendaiconsole.usersetting.', '');
-        this._readUserSetting(key);
-      }
-    }
-  }
-
-  _readUserSetting(name, default_value = true) {
-    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
-    if (value !== null && value != '' && value != '""') {
-      if (value === "false") {
-        this.options[name] = false;
-      } else if (value === "true") {
-        this.options[name] = true;
-      } else {
-        this.options[name] = value;
-      }
-    } else {
-      this.options[name] = default_value;
-    }
-  }
-
-  _writeUserSetting(name, value) {
-    if (value === false) {
-      localStorage.setItem('backendaiconsole.usersetting.' + name, "false");
-    } else if (value === true) {
-      localStorage.setItem('backendaiconsole.usersetting.' + name, "true");
-    } else {
-      localStorage.setItem('backendaiconsole.usersetting.' + name, value);
-    }
-    this.options[name] = value;
-  }
-
   toggleDesktopNotification(e) {
     if (e.target.checked === false) {
-      this._writeUserSetting('desktop_notification', false);
+      globalThis.backendaioptions.set('desktop_notification', false);
       this.notification.supportDesktopNotification = false;
     } else {
-      this._writeUserSetting('desktop_notification', true);
+      globalThis.backendaioptions.set('desktop_notification', true);
       this.notification.supportDesktopNotification = true;
     }
   }
 
   toggleCompactSidebar(e) {
     if (e.target.checked === false) {
-      this._writeUserSetting('compact_sidebar', false);
+      globalThis.backendaioptions.set('compact_sidebar', false);
     } else {
-      this._writeUserSetting('compact_sidebar', true);
+      globalThis.backendaioptions.set('compact_sidebar', true);
     }
   }
 
   togglePreserveLogin(e) {
     if (e.target.checked === false) {
-      this._writeUserSetting('preserve_login', false);
+      globalThis.backendaioptions.set('preserve_login', false);
     } else {
-      this._writeUserSetting('preserve_login', true);
+      globalThis.backendaioptions.set('preserve_login', true);
+    }
+  }
+
+  toggleAutomaticUploadCheck(e) {
+    if (e.target.checked === false) {
+      globalThis.backendaioptions.set('automatic_update_check', false);
+    } else {
+      globalThis.backendaioptions.set('automatic_update_check', true);
+      globalThis.backendaioptions.set('automatic_update_count_trial', 0);
+    }
+  }
+
+  setUserLanguage(e) {
+    if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
+      globalThis.backendaioptions.set('language', e.target.selected.value);
+      globalThis.backendaioptions.set('current_language', e.target.selected.value);
+      setLanguage(e.target.selected.value);
+    }
+  }
+
+  changePreferredSSHPort(e) {
+    const value = Number(e.target.value);
+    if (value !== globalThis.backendaioptions.get('custom_ssh_port', '')) {
+      if (value === 0 || !value) {
+        globalThis.backendaioptions.delete('custom_ssh_port');
+      } else if (value < 1024 || value > 65534) {
+        this.notification.text = _text("usersettings.InvalidPortNumber");
+        this.notification.show();
+        return;
+      } else {
+        globalThis.backendaioptions.set('custom_ssh_port', value);
+      }
     }
   }
 
   toggleBetaFeature(e) {
     if (e.target.checked === false) {
-      this._writeUserSetting('beta_feature', false);
+      globalThis.backendaioptions.set('beta_feature', false);
       this.beta_feature_panel = false;
     } else {
-      this._writeUserSetting('beta_feature', true);
+      globalThis.backendaioptions.set('beta_feature', true);
       this.beta_feature_panel = true;
     }
   }
@@ -278,12 +290,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       this.notification.show();
       return;
     }
-    this.indicator.show();
+    this.spinner.show();
     globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
         this.notification.text = 'Bootstrap script updated.';
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       });
   }
 
@@ -306,7 +318,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   async _editUserConfigScript() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
-    let rcfile_names = Array( ".bashrc", ".zshrc" );
+    let rcfile_names = Array(".bashrc", ".zshrc");
     rcfile_names.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
       if (idx == -1) {
@@ -342,7 +354,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
-  async _saveUserConfigScript(fileName : string = this.rcfile) {
+  async _saveUserConfigScript(fileName: string = this.rcfile) {
     const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     const script = editor.getValue();
     let idx = this.rcfiles.findIndex(item => item.path === fileName);
@@ -359,21 +371,21 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           globalThis.backendaiclient.userConfig.create_dotfile_script(
             script, this.rcfiles[idx]['path'])
             .then(res => {
-              this.indicator.hide();
-              this.notification.text = "User config script created. This will be applied to new sessions only.";
+              this.spinner.hide();
+              this.notification.text = _text("usersettings.DescScriptCreated");
               this.notification.show();
             }).catch(err => {
-              this.indicator.hide();
-              console.log(err);
-              if (err && err.message) {
-                this.notification.text = PainKiller.relieve(err.title);
-                this.notification.detail = err.message;
-                this.notification.show(true, err);
-              }
+            this.spinner.hide();
+            console.log(err);
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+            }
           });
         } else {
-          this.indicator.hide();
-          this.notification.text = "New User config file can be created with non-empty data.";
+          this.spinner.hide();
+          this.notification.text = _text("usersettings.DescNewUserConfigFileCreated");
           this.notification.show();
           return;
         }
@@ -382,34 +394,32 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           this.notification.text = 'No changes';
           this.notification.show();
           return;
-        }
-        else if (script === '') {
-          this.notification.text = 'Please update script with non empty value.';
+        } else if (script === '') {
+          this.notification.text = _text("usersettings.DescLetUserUpdateScriptWithNonEmptyValue");
           this.notification.show();
           return;
-        }
-        else {
+        } else {
           await globalThis.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
-          .then(res => {
-            this.notification.text = 'User config script updated. This will be applied to new sessions only.';
-            this.notification.show();
-            this.indicator.hide();
-          }).catch(err => {
-            this.indicator.hide();
-            console.log(err);
-            if (err && err.message) {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-              this.notification.show(true, err);
-            }
-          });
+            .then(res => {
+              this.notification.text = _text("usersettings.DescScriptUpdated");
+              this.notification.show();
+              this.spinner.hide();
+            }).catch(err => {
+              this.spinner.hide();
+              console.log(err);
+              if (err && err.message) {
+                this.notification.text = PainKiller.relieve(err.title);
+                this.notification.detail = err.message;
+                this.notification.show(true, err);
+              }
+            });
         }
       }
     }
     await setTimeout(() => {
       this._editUserConfigScript();
     }, 200);
-    this.indicator.show();
+    this.spinner.show();
   }
 
   async _saveUserConfigScriptAndCloseDialog() {
@@ -431,7 +441,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     dialog.hide();
   }
 
-  _updateSelectedRcFileName(fileName : string) {
+  _updateSelectedRcFileName(fileName: string) {
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     if (rcfiles.items.length > 0) {
@@ -472,10 +482,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _deleteRcFile(path: string) {
     if (path) {
       globalThis.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
-        let message = 'User config script '+ path + 'is deleted.';
+        let message = 'User config script ' + path + 'is deleted.';
         this.notification.text = message;
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -488,13 +498,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _deleteRcFileAll() {
-    this.rcfiles.map( item => {
+    this.rcfiles.map(item => {
       let path = item.path;
       globalThis.backendaiclient.userConfig.delete_dotfile_script(item.path).then(res => {
-        let message = 'User config script '+ path + ' is deleted.';
+        let message = 'User config script ' + path + ' is deleted.';
         this.notification.text = message;
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -541,62 +551,96 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   render() {
     //languate=HTML
     return html`
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
-          <span>Preferences</span>
+          <span>${_t("usersettings.Preferences")}</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>Desktop Notification</div>
-              <div class="description">Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within console.
+            <div class="vertical start center-justified layout setting-desc">
+              <div>${_t("usersettings.DesktopNotification")}</div>
+              <div class="description">${_tr("usersettings.DescDesktopNotification")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${this.options['desktop_notification']}"></wl-switch>
+              <wl-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${globalThis.backendaioptions.get('desktop_notification')}"></wl-switch>
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>Use Compact Sidebar by default</div>
-              <div class="description">Compact sidebar lets you use more workspace. <br />If this option is turned on, compact sidebar becomes the initial UI at startup.
-              </div>
+            <div class="vertical start center-justified layout setting-desc">
+              <div>${_t("usersettings.UseCompactSidebar")}</div>
+              <div class="description">${_tr("usersettings.DescUseCompactSidebar")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${this.options['compact_sidebar']}"></wl-switch>
+              <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${globalThis.backendaioptions.get('compact_sidebar')}"></wl-switch>
+            </div>
+          </div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical start center-justified layout setting-select-desc">
+              <div>${_t("usersettings.Language")}</div>
+              <div class="description">${_tr("usersettings.DescLanguage")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout setting-select">
+              <mwc-multi-select id="ui-language"
+                          required
+                          @selected="${(e) => this.setUserLanguage(e)}">
+              ${this.supportLanguages.map(item => html`
+                <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
+                  ${item.name}
+                </mwc-list-item>`)}
+              </mwc-multi-select>
             </div>
           </div>
           ${globalThis.isElectron ? html`
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>Keep Login Session Information while Logout</div>
-              <div class="description">Let console app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.
-              </div>
+            <div class="vertical start center-justified layout setting-desc">
+              <div>${_t("usersettings.KeepLoginSessionInformation")}</div>
+              <div class="description">${_tr("usersettings.DescKeepLoginSessionInformation")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${this.options['preserve_login']}"></wl-switch>
+              <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${globalThis.backendaioptions.get('preserve_login')}"></wl-switch>
+            </div>
+          </div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical start center-justified layout setting-text-desc">
+              <div>${_t("usersettings.PreferredSSHPort")}</div>
+              <div class="description">${_tr("usersettings.DescPreferredSSHPort")}</div>
+            </div>
+            <div class="vertical center-justified layout setting-text">
+              <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
+                  value="${this.preferredSSHPort}" validationMessage="Allows numbers only" auto-validate></mwc-textfield>
             </div>
           </div>
           ` : html``}
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>Beta features</div>
-              <div class="description">Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.
-              </div>
+            <div class="vertical start center-justified layout setting-desc">
+              <div>${_t("usersettings.AutomaticUpdateCheck")}</div>
+              <div class="description">${_tr("usersettings.DescAutomaticUpdateCheck")}</div>
             </div>
             <div class="vertical center-justified layout setting-button">
-              <wl-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${this.options['beta_feature']}"></wl-switch>
+              <wl-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></wl-switch>
+            </div>
+          </div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical start center-justified layout setting-desc">
+              <div>${_t("usersettings.BetaFeatures")}</div>
+              <div class="description">${_tr("usersettings.DescBetaFeatures")}</div>
+            </div>
+            <div class="vertical center-justified layout setting-button">
+              <wl-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></wl-switch>
             </div>
           </div>
         </div>
         ${this.beta_feature_panel ? html`
         <h4 class="horizontal center layout">
-          <span>Beta Features</span>
+          <span>${_t("usersettings.BetaFeatures")}</span>
           <span class="flex"></span>
         </h4>
         <div>
-          Preparing now. :)
+          ${_t("usersettings.DescNoBetaFeatures")}
         </div>
         ` : html``}
         ${this.shell_script_edit ? html`
@@ -605,17 +649,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout setting-item">
-            <wl-button class="fg teal" outlined @click="${()=>this._editBootstrapScript()}" style="margin-right:20px; display:none;">
+            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; display:none;">
               <wl-icon>edit</wl-icon>
-              Edit bootstrap script
+              ${_t("usersettings.EditBootstrapScript")}
             </wl-button>
-            <wl-button class="fg green" outlined @click="${()=>this._launchUserConfigDialog()}">
+            <wl-button class="fg green" outlined @click="${() => this._launchUserConfigDialog()}">
               <wl-icon>edit</wl-icon>
-              Edit user config script
+              ${_t("usersettings.EditUserConfigScript")}
             </wl-button>
         </div>
         <h3 class="horizontal center layout" style="display:none;">
-          <span>Package Installation</span>
+          <span>${_t("usersettings.PackageInstallation")}</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout" style="display:none;">
@@ -629,13 +673,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <wl-switch id="register-new-image-switch" disabled></wl-switch>
             </div>
           </div>
-        </div>`: html``}
+        </div>` : html``}
       </wl-card>
       <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
         <div slot="header" style="padding: 0px 20px;">
         <h3 class="horizontal center layout">
-          <span>Bootstrap script</span>
+          <span>${_t("usersettings.BootstrapScript")}</span>
           <div class="flex"></div>
           <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
             <wl-icon>close</wl-icon>
@@ -646,13 +689,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer">
-          <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">Cancel</wl-button>
-          <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">Save</wl-button>
-          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">Save and close</wl-button>
+          <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">${_t("button.Cancel")}</wl-button>
+          <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">${_t("button.Save")}</wl-button>
+          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
         </div>
       </wl-dialog>
       <wl-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
         <div slot="header" style="padding: 0px 20px;">
           <h3 class="horizontal center layout">
             <span>Edit ${this.rcfile} shell script</span>
@@ -662,20 +704,20 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </wl-button>
           </h3>
           <div class="vertical layout">
-            <mwc-select id="select-rcfile-type"
+            <mwc-multi-select id="select-rcfile-type"
                         label="config file name"
                         required
                         validationMessage="Please select one option."
-                        @selected="${()=>this._toggleRcFileName()}">
+                        @selected="${() => this._toggleRcFileName()}">
               ${this.rcfiles.map(item => html`
                 <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                   ${item.path}
                 </mwc-list-item>`)}
-            </mwc-select>
+            </mwc-multi-select>
             <div class="horizontal layout">
               <wl-icon class="warning">warning</wl-icon>
               <wl-label class="warning" for="warning">
-                This Update will be applied to new sessions.
+               ${_t("dialog.warning.WillBeAppliedToNewSessions")}
               </wl-label>
             </div>
           </div>
@@ -684,31 +726,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer">
-          <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">Cancel</wl-button>
-          <wl-button id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">Save</wl-button>
-          <wl-button id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">Save and close</wl-button>
-          <wl-button id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">delete all</wl-button>
+          <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
+          <wl-button style="margin-left:10px;" id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">${_t("button.Save")}</wl-button>
+          <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
+          <wl-button style="margin-left:10px;" id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">${_t("button.DeleteAll")}</wl-button>
         </div>
       </wl-dialog>
       <wl-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
         <div slot="header" style="border-bottom:none;">
-          <h3>Do you want to save the changes you made to ${this.prevRcfile} ?
+          <h3>${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
           </h3>
-          <span>Your changes will be lost if you don't save them.</span>
+          <span>${_t("usersettings.DialogNoSaveNoPreserve")}</span>
         </div>
         <div slot="footer" style="border-top:none;">
           <wl-button id="discard-editor-data"
-                     style="margin: 0 5px;"
+                     style="margin: 0 10px;"
                      @click="${() => this._discardCurrentEditorChange()}">
-                     don't save</wl-button>
+                     ${_t("button.Discard")}</wl-button>
           <wl-button id="save-editor-data"
-                     style="margin: 0 5px;"
+                     style="margin: 0 10px;"
                      @click="${() => this._saveCurrentEditorChange()}">
-                     save</wl-button>
+                     ${_t("button.Save")}</wl-button>
           <wl-button inverted flat id="cancel-editor" class="button"
-                     style="margin: 0 5px;"
+                     style="margin: 0 10px;"
                      @click="${() => this._cancelCurrentEditorChange()}">
-                     cancel</wl-button>
+                     ${_t("button.Cancel")}</wl-button>
         </div>
       </wl-dialog>
     `;

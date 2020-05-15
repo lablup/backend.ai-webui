@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
@@ -21,7 +22,7 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -40,7 +41,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = Array();
   @property({type: Array}) _selected_items = Array();
-  @property({type: Object}) loadingIndicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) _grid = Object();
   @property({type: Object}) logView = Object();
   @property({type: Number}) _pageSize = 25;
@@ -96,7 +97,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 320px)!important';
@@ -108,12 +109,12 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   }
 
   _refreshLogData() {
-    this.loadingIndicator.show();
+    this.spinner.show();
     this.logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
-    this.loadingIndicator.hide();
+    this.spinner.hide();
   }
 
   _clearLogData() {
@@ -142,60 +143,60 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid id="list-grid" page-size="${this._pageSize}"
                    theme="row-stripes column-borders compact wrap-cell-content"
                    aria-label="Error logs" .items="${this.logView}">
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="TimeStamp">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.TimeStamp")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.timestamp]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="Status">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.Status")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.statusCode]] [[item.statusText]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="Error Title">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.ErrorTitle")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.title]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="Error Message">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.ErrorMessage")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.message]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="Method">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.Method")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.requestMethod]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="Request Url">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.RequestUrl")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.requestUrl]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="Parameters">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.Parameters")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.requestParameters]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="Error Type">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.ErrorType")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.type]]</span>
@@ -205,7 +206,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
         <wl-button class="pagination" id="previous-page"
-                   ?disabled="${this._currentPage === 1 }"
+                   ?disabled="${this._currentPage === 1}"
                    @click="${(e) => {this._updateItemsFromPage(e)}}">
           <wl-icon class="pagination">navigate_before</wl-icon>
         </wl-button>

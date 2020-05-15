@@ -70,8 +70,8 @@ dep:
 	#rm ./build/electron-app/node_modules/markty-toml/dist/marktytoml.js
 	#cp ./node_modules/markty-toml/dist/marktytoml.es.js ./build/electron-app/node_modules/markty-toml/dist/marktytoml.js
 	cp ./preload.js ./build/electron-app/preload.js
-	mkdir -p ./build/electron-app/app/wsproxy/config
-	cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
+	#mkdir -p ./build/electron-app/app/wsproxy/config
+	#cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
 web:
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
@@ -95,7 +95,6 @@ mac: dep
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
-	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
 	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
 	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip
 linux: dep
@@ -110,6 +109,8 @@ pack:
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
+i18n:
+	 ./node_modules/i18next-scanner/bin/cli.js --config ./i18n.config.js
 clean:
 	cd app;	rm -rf ./backend*
 	cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app

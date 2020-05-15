@@ -2,10 +2,19 @@
 
 Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
 
+For more information, see [manual](https://console.docs.backend.ai/en/latest/).
+
+## Changelog
+
+View [changelog](https://github.com/lablup/backend.ai-console/master/CHANGELOG.md)
+
+## Role
+
 Backend.AI console focuses to
 
- * Serve as desktop app and web service
- * Provide both administration and user mode
+ * Serve as desktop app (windows, macOS and Linux) and web service
+ * Provide both basic administration and user mode 
+    * Use CLI for detailed administration features such as domain administation
  * Versatile devices ready such as mobile, tablet and desktop.
  * Built-in websocket proxy feature for apps
 
@@ -14,7 +23,7 @@ Backend.AI console focuses to
     * Set default resources for runs
     * Choose and run environment-supported apps
     * Terminal for each session
-    * Fully-featured VSCode editor and environments (WIP)
+    * Fully-featured VSCode editor and environments
  * Pipeline
     * Experiments (with SACRED)
     * AutoML (with NNI)
@@ -48,7 +57,7 @@ Backend.AI console focuses to
      * Add/update resource templates
      * Add/remove docker registries
  * User management
-    * User creation / deletion / key management
+    * User creation / deletion / key management / resource templates
  * Manager settings
     * Add /setting repository
     * Plugin support
@@ -100,14 +109,14 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
 ## Branches
 
  * master : Development branch
- * production : Latest release branch
+ * release : Latest release branch
  * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
  * tags/v[versions] : version tags. Each tag represents release versions.
 
 ## Development Guide
 
 Backend.AI console is built with
- * `litelement` / `Polymer 3 `as webcomponent framework
+ * `lit-element` / `Polymer 3 `as webcomponent framework
  * `npm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
@@ -198,31 +207,41 @@ server {
 
 Make sure that you compile the console.
 
+e.g. You will download the `backend.ai-console-server` package.
+
 ```
 $ make compile
 ```
 
-#### HTTP server (with nginx)
+#### Web server
 Good for develop phase. Not recommended for production environment.
 
+Note: This command will use console source in `build/rollup` directory. No certificate will be used therefore console server will serve as HTTP.
+
+Copy `console-server.example.conf` in `docker_build` directory into current directory as `console-server.conf` and modify configuration files for your needs.
+
 ```
-$ docker-compose build console // build only
-$ docker-compose up console    // for testing
-$ docker-compose up -d console // as a daemon
+$ docker-compose build console-dev // build only
+$ docker-compose up console-dev    // for testing
+$ docker-compose up -d console-dev // as a daemon
 ```
 
-#### HTTPS with SSL (with nginx)
+Visit `http://127.0.0.1:8080` to test console server.
+
+#### Web server with SSL
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
 
-Note: We strongly suggest you to use console-server instead of serving console only. Console server contains Backend.AI console inside.
+Copy `console-server.example.ssl.conf` in `docker_build` directory into current directory as `console-server.conf` and modify configuration files for your needs.
 
 ```
-$ docker-compose build console-ssl  // build only
-$ docker-compose up console-ssl     // for testing
-$ docker-compose up -d console-ssl  // as a daemon
+$ docker-compose build console  // build only
+$ docker-compose up console     // for testing
+$ docker-compose up -d console  // as a daemon
 ```
+
+Visit `https://127.0.0.1:443` to test console server serving. Change `127.0.0.1` to your production domain.
 
 #### Removing
 
@@ -244,6 +263,7 @@ Check your image name is `backendai-console_console` or `backendai-console_conso
 $ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 $ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
+
 ### Building / serving with console-server
 
 If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.
@@ -267,6 +287,22 @@ This is only needed with pure ES6 dev. environment / browser. Websocket proxy is
 ```
 $ npm run wsproxy
 ```
+
+If console app is behind an external http proxy, and you have to pass through
+it to connect to a console-server or manager server, you can set
+`EXT_HTTP_PROXY` environment variable with the address of the http proxy.
+Local websocket proxy then communicates with the final destination via the http
+proxy. The address should include the protocol, host, and/or port (if exists).
+For example,
+
+```console
+export EXT_HTTP_PROXY=http://10.20.30.40:3128 (Linux)
+set EXT_HTTP_PROXY=http://10.20.30.40:3128 (Windows)
+```
+
+Even if you are using Electron embedded websocket proxy, you have to set the
+environment variable manually to pass through a http proxy.
+
 
 ## Build web server with specific configuration
 
@@ -339,4 +375,56 @@ Note: There are two Electron configuration files, `main.js` and `main.electron-p
 ```
 $ make dep # Compile with app dependencies
 $ npm run electron:d  # OR, ./node_modules/electron/cli.js .
+```
+
+### Localization
+Locale resources are JSON files located in `resources/i18n`.
+
+#### Extracting i18n resources
+
+Run
+```
+make i18n
+```
+to update / extract i18n resources.
+
+### Adding i18n strings
+
+ * Use `_t` as i18n resource handler on lit-element templates.
+ * Use `_tr` as i18n resource handler if i18n resource has HTML code inside.
+ * Use `_text` as i18n resource handler on lit-element Javascript code.
+
+#### Example
+
+In lit-html template:
+```
+<div>${_t('general.helloworld')}</div>
+```
+
+In i18n resource (en.json):
+```
+{
+   'general':{
+      'helloworld': 'Hello World'
+   }
+}
+```
+#### Adding new language
+
+ 1. Copy `en.json` to target language. (e.g. `ko.json`)
+ 2. Add language identifier to `supportLanguageCodes` in `backend-ai-console.ts`.
+e.g.
+```javascript
+  @property({type: Array}) supportLanguageCodes = ["en", "ko"];
+```
+ 3. Add language information to `supportLanguages` in `backend-ai-usersettings-general-list.ts`.
+
+Note: DO NOT DELETE 'default' language. It is used for browser language.
+
+```javascript
+  @property({type: Array}) supportLanguages = [
+    {name: _text("language.Browser"), code: "default"},
+    {name: _text("language.English"), code: "en"},
+    {name: _text("language.Korean"), code: "ko"}
+  ];
 ```

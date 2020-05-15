@@ -8,6 +8,10 @@
     ],
     "groupBy": {
         "Enhancements:": ["enhancement"],
-        "Bug Fixes:": ["bug"]
+        "Bug Fixes:": ["bug"],
+	"Web Features:": ["web"],
+	"App-specific Features:": ["app"],
+	"UI / UX:": ["UI / UX"],
+	"Library / SDK:": ["library / SDK"]
     }
 }

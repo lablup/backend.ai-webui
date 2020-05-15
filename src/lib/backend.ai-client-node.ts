@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.01.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.04.0)
 ====================================================================
 
 (C) Copyright 2016-2020 Lablup Inc.
@@ -162,8 +162,13 @@ class Client {
   public userConfig: UserConfig;
   public _features: any;
   public ready: boolean = false;
+  public abortController: any;
+  public abortSignal: any;
+  public requestTimeout: number;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
+  static ERR_ABORT: any;
+  static ERR_TIMEOUT: any;
   static ERR_SERVER: any;
   static ERR_UNKNOWN: any;
 
@@ -210,7 +215,9 @@ class Client {
     this.domain = new Domain(this);
 
     this._features = {}; // feature support list
-
+    this.abortController = new AbortController();
+    this.abortSignal = this.abortController.signal;
+    this.requestTimeout = 5000;
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -233,12 +240,15 @@ class Client {
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
    * @param {Request} rqst - Request object to send
+   * @param {Boolean} rawFile - True if it is raw request
+   * @param {AbortController.signal} signal - Request signal to abort fetch
+   * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
    */
-  async _wrapWithPromise(rqst, rawFile = false) {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
-    let resp, body;
+    let resp, body, requestTimer;
 
     try {
       if (rqst.method == 'GET') {
@@ -248,7 +258,21 @@ class Client {
         rqst.credentials = 'include';
         rqst.mode = 'cors';
       }
+      if (signal !== null) {
+        rqst.signal = signal;
+      } else { // Use client-wide fetch timeout.
+        let controller = new AbortController();
+        rqst.signal = controller.signal;
+        requestTimer = setTimeout(() => {
+          errorType = Client.ERR_TIMEOUT;
+          controller.abort();
+        }, (timeout === 0 ? this.requestTimeout : timeout));
+      }
+      let resp;
       resp = await fetch(rqst.uri, rqst);
+      if (typeof requestTimer !== "undefined") {
+        clearTimeout(requestTimer);
+      }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
       if (rawFile === false && contentType === null) {
@@ -257,7 +281,7 @@ class Client {
         else
           body = await resp.blob();
       } else if (rawFile === false && (contentType.startsWith('application/json') ||
-        contentType.startsWith('application/problem+json'))) {
+          contentType.startsWith('application/problem+json'))) {
         body = await resp.json(); // Formatted error message from manager
         errorType = body.type;
         errorTitle = body.title;
@@ -281,11 +305,19 @@ class Client {
       } else {
         error_message = err;
       }
+      if (typeof (resp) === 'undefined') {
+        resp = {};
+      }
       switch (errorType) {
         case Client.ERR_REQUEST:
           errorType = 'https://api.backend.ai/probs/client-request-error';
-          errorTitle = error_message;
-          errorMsg = `sending request has failed: ${error_message}`;
+          if (navigator.onLine) {
+            errorTitle = error_message;
+            errorMsg = `sending request has failed: ${error_message}`;
+          } else {
+            errorTitle = "Network disconnected.";
+            errorMsg = `sending request has failed: Network disconnected`;
+          }
           break;
         case Client.ERR_RESPONSE:
           errorType = 'https://api.backend.ai/probs/client-response-error';
@@ -295,10 +327,32 @@ class Client {
         case Client.ERR_SERVER:
           errorType = 'https://api.backend.ai/probs/server-error';
           errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
-          errorMsg = 'server responded failure: '
-            + `${resp.status} ${resp.statusText} - ${body.title}`;
+          errorMsg = 'server responded failure: ';
+          if (body.msg) {
+            errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+          } else {
+            errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+          }
+          break;
+        case Client.ERR_ABORT:
+          errorType = 'https://api.backend.ai/probs/request-abort-error';
+          errorTitle = `Request aborted`;
+          errorMsg = 'Request aborted by user';
+          resp.status = 408;
+          resp.statusText = 'Request aborted by user'
+          break;
+        case Client.ERR_TIMEOUT:
+          errorType = 'https://api.backend.ai/probs/request-timeout-error';
+          errorTitle = `Request timeout`;
+          errorMsg = 'No response returned during the timeout period';
+          resp.status = 408;
+          resp.statusText = 'Timeout exceeded'
           break;
         default:
+          if (typeof resp.status === 'undefined') {
+            resp.status = 500;
+            resp.statusText =  'Server error';
+          }
           if (errorType === '') {
             errorType = Client.ERR_UNKNOWN;
           }
@@ -322,23 +376,29 @@ class Client {
       };
     }
 
-    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs') as any);
     if (previous_log) {
       if (previous_log.length > 5000) {
         previous_log = previous_log.slice(1, 5000);
       }
     }
     let log_stack = Array();
+    if (typeof (resp) === 'undefined') {
+      resp = {
+        status: 'No status',
+        statusText: 'No response given.'
+      }
+    }
     let current_log = {
-      "isError" : false,
-      "timestamp" : new Date().toUTCString(),
-      "type" : "",
-      "requestUrl" : rqst.uri,
-      "requestMethod" : rqst.method,
-      "requestParameters" : rqst.body,
-      "statusCode" : resp.status,
-      "statusText" : resp.statusText,
-      "title" : body.title,
+      "isError": false,
+      "timestamp": new Date().toUTCString(),
+      "type": "",
+      "requestUrl": rqst.uri,
+      "requestMethod": rqst.method,
+      "requestParameters": rqst.body,
+      "statusCode": resp.status,
+      "statusText": resp.statusText,
+      "title": body.title,
       "message" : ""
     };
 
@@ -354,10 +414,13 @@ class Client {
 
   /**
    * Return the server-side API version.
+   *
+   * @param {AbortController.signal} signal - Request signal to abort fetch
+   *
    */
-  getServerVersion() {
+  getServerVersion(signal = null) {
     let rqst = this.newPublicRequest('GET', '/', null, '');
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, signal);
   }
 
   /**
@@ -377,10 +440,12 @@ class Client {
 
   /**
    * Get the server-side manager version.
+   *
+   * @param {AbortController.signal} signal - Request signal to abort fetch
    */
-  async getManagerVersion() {
+  async getManagerVersion(signal = null) {
     if (this._managerVersion === null) {
-      let v = await this.getServerVersion();
+      let v = await this.getServerVersion(signal);
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
@@ -464,11 +529,14 @@ class Client {
     try {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
-        let data = result.data;
         this._config._accessKey = result.data.access_key;
         this._config._session_id = result.session_id;
+        //console.log("login succeed");
+      } else {
+        //console.log("login failed");
       }
     } catch (err) {
+      console.log(err);
       return Promise.resolve(false);
     }
     return result.authenticated;
@@ -489,11 +557,16 @@ class Client {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         return this.check_login();
-      } else {
+      } else if (result.authenticated === false) { // Authentication failed.
         return Promise.resolve(false);
       }
-    } catch (err) {
-      return false;
+    } catch (err) { // Manager / console server down.
+      throw {
+        "title": "No manager found at API Endpoint.",
+        "message": "Authentication failed. Check information and manager status."
+      };
+      //console.log(err);
+      //return false;
     }
   }
 
@@ -627,7 +700,12 @@ class Client {
         params['config'].resource_opts.shmem = resources['shmem'];
       }
     }
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+    let rqst;
+    if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+    } else {
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
+    }
     return this._wrapWithPromise(rqst);
   }
 
@@ -761,13 +839,13 @@ class Client {
   }
 
   /* GraphQL requests */
-  gql(q, v) {
+  gql(q, v, signal = null, timeout: number = 0) {
     let query = {
       'query': q,
       'variables': v
     };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, signal, timeout);
   }
 
   /**
@@ -1063,8 +1141,10 @@ class VFolder {
    * @param {string} name - Virtual folder name.
    * @param {string} host - Host name to create virtual folder in it.
    * @param {string} group - Virtual folder group name.
+   * @param {string} usageMode - Virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
+   * @param {string} permission - Virtual folder's innate permission.
    */
-  create(name, host = '', group = '') {
+  create(name, host = '', group = '', usageMode = 'general', permission = 'rw') {
     let body;
     if (host !== '') {
       body = {
@@ -1078,6 +1158,14 @@ class VFolder {
         'host': host,
         'group': group
       };
+    }
+    if (this.client.isAPIVersionCompatibleWith('v4.20191215')) {
+      if (usageMode) {
+        body['usage_mode'] = usageMode;
+      }
+      if (permission) {
+        body['permission'] = permission;
+      }
     }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
     return this.client._wrapWithPromise(rqst);
@@ -1118,6 +1206,17 @@ class VFolder {
   }
 
   /**
+   * Rename a Virtual folder.
+   *
+   * @param {string} new_name - New virtual folder name.
+   */
+  rename(new_name = null) {
+    const body = {new_name};
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Delete a Virtual folder.
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
@@ -1142,8 +1241,6 @@ class VFolder {
       name = this.name;
     }
     let formData = new FormData();
-    let option = {filepath: path};
-    //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData);
     return this.client._wrapWithPromise(rqst);
@@ -1204,13 +1301,29 @@ class VFolder {
   }
 
   /**
+   * Rename a file inside a virtual folder.
+   *
+   * @param {string} target_path - path to the target file or directory (with old name).
+   * @param {string} new_name - new name of the target.
+   * @param {string} name - Virtual folder name that target file exists.
+   */
+  rename_file(target_path, new_name, name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    const body = {target_path, new_name};
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Delete multiple files in a Virtual folder.
    *
    * @param {string} files - Files to delete.
    * @param {boolean} recursive - delete files recursively.
    * @param {string} name - Virtual folder name that files are in.
    */
-  delete_files(files, recursive = null, name = null) {
+  delete_files(files, recursive = false, name = null) {
 
     if (name == null) {
       name = this.name;
@@ -1701,16 +1814,6 @@ class ResourcePolicy {
    * };
    */
   mutate(name = null, input) {
-    let fields = ['name',
-      'created_at',
-      'default_for_unspecified',
-      'total_resource_slots',
-      'max_concurrent_sessions',
-      'max_containers_per_session',
-      'max_vfolder_count',
-      'max_vfolder_size',
-      'allowed_vfolder_hosts',
-      'idle_timeout'];
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
         `  modify_keypair_resource_policy(name: $name, props: $input) {` +
@@ -1779,7 +1882,8 @@ class ContainerImage {
    * @param {object} input - value list to set.
    */
   modifyResource(registry, image, tag, input) {
-    let promiseArray = [];
+    let promiseArray: Array<Promise<any>> = [];
+    registry = registry.replace(":", "%3A");
     image = image.replace("/", "%2F");
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {
@@ -1803,6 +1907,7 @@ class ContainerImage {
    * @param {string} value - value for the key.
    */
   modifyLabel(registry, image, tag, key, value) {
+    registry = registry.replace(":", "%3A");
     image = image.replace("/", "%2F");
     tag = tag.replace("/", "%2F");
     const rqst = this.client.newSignedRequest("POST", "/config/set", {
@@ -1825,6 +1930,7 @@ class ContainerImage {
     } else {
       registry = '';
     }
+    registry = registry.replace(":", "%3A");
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
@@ -1854,12 +1960,14 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   get(registry, image, tag) {
+    registry = registry.replace(":", "%3A");
     const rqst = this.client.newSignedRequest("POST", "/config/get", {
       "key": `images/${registry}/${image}/${tag}/resource/`,
       "prefix": true
     });
     return this.client._wrapWithPromise(rqst);
   }
+
 }
 
 class ComputeSession {
@@ -1886,8 +1994,6 @@ class ComputeSession {
    */
   async list(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
              status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
-    if (accessKey === '') accessKey = null;
-    if (group === '') group = null;
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -1902,10 +2008,10 @@ class ComputeSession {
       'offset': offset,
       'status': status
     };
-    if (accessKey != null) {
+    if (accessKey != '') {
       v['ak'] = accessKey;
     }
-    if (group != null) {
+    if (group != '') {
       v['group_id'] = group;
     }
     return this.client.gql(q, v);
@@ -1921,8 +2027,6 @@ class ComputeSession {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
   async listAll(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], accessKey = '', group = '') {
-    if (accessKey === '') accessKey = null;
-    if (group === '') group = null;
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     // For V3/V4 API compatibility
     let q, v;
@@ -1938,10 +2042,10 @@ class ComputeSession {
       // access_key: accessKey,
       // status: status
     };
-    if (accessKey != null) {
+    if (accessKey !== '') {
       v['access_key'] = accessKey;
     }
-    if (group != null) {
+    if (group !== '') {
       v['group_id'] = group;
     }
     return this.client.gql(q, v);
@@ -1980,12 +2084,24 @@ class Resources {
     this.resources['cuda.shares'] = {};
     this.resources['cuda.shares'].total = 0;
     this.resources['cuda.shares'].used = 0;
+    this.resources['rocm.device'] = {};
+    this.resources['rocm.device'].total = 0;
+    this.resources['rocm.device'].used = 0;
+    this.resources['tpu.device'] = {};
+    this.resources['tpu.device'].total = 0;
+    this.resources['tpu.device'].used = 0;
+
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
     this.agents = [];
   }
 
+  /**
+   * Total resource information of Backend.AI cluster.
+   *
+   * @param {string} status - Resource node status to get information.
+   */
   totalResourceInformation(status = 'ALIVE') {
     if (this.client.is_admin) {
       let fields = ['id',
@@ -2003,8 +2119,12 @@ class Resources {
           let value = this.agents[objectKey];
           let occupied_slots = JSON.parse(value.occupied_slots);
           let available_slots = JSON.parse(value.available_slots);
-          this.resources.cpu.total = this.resources.cpu.total + Math.floor(Number(available_slots.cpu));
-          this.resources.cpu.used = this.resources.cpu.used + Math.floor(Number(occupied_slots.cpu));
+          if ('cpu' in available_slots) {
+            this.resources.cpu.total = this.resources.cpu.total + Math.floor(Number(available_slots.cpu));
+          }
+          if ('cpu' in occupied_slots) {
+            this.resources.cpu.used = this.resources.cpu.used + Math.floor(Number(occupied_slots.cpu));
+          }
           this.resources.cpu.percent = this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
 
           if (occupied_slots.mem === undefined) {
@@ -2014,14 +2134,31 @@ class Resources {
           this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'b'));
           this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'b'));
 
-          this.resources.gpu.total = parseInt(this.resources.gpu.total) + Math.floor(Number(available_slots['cuda.device']));
+          if ('cuda.device' in available_slots) {
+            this.resources['cuda.device'].total = parseInt(this.resources['cuda.device'].total) + Math.floor(Number(available_slots['cuda.device']));
+          }
           if ('cuda.device' in occupied_slots) {
-            this.resources.gpu.used = parseInt(this.resources.gpu.used) + Math.floor(Number(occupied_slots['cuda.device']));
+            this.resources['cuda.device'].used = parseInt(this.resources['cuda.device'].used) + Math.floor(Number(occupied_slots['cuda.device']));
           }
-          this.resources.fgpu.total = parseFloat(this.resources.fgpu.total) + parseFloat(available_slots['cuda.shares']);
+          if ('cuda.shares' in available_slots) {
+            this.resources['cuda.shares'].total = parseFloat(this.resources['cuda.shares'].total) + parseFloat(available_slots['cuda.shares']);
+          }
           if ('cuda.shares' in occupied_slots) {
-            this.resources.fgpu.used = parseFloat(this.resources.fgpu.used) + parseFloat(occupied_slots['cuda.shares']);
+            this.resources['cuda.shares'].used = parseFloat(this.resources['cuda.shares'].used) + parseFloat(occupied_slots['cuda.shares']);
           }
+          if ('rocm.device' in available_slots) {
+            this.resources['rocm.device'].total = parseInt(this.resources['rocm.device'].total) + Math.floor(Number(available_slots['rocm.device']));
+          }
+          if ('rocm.device' in occupied_slots) {
+            this.resources['rocm.device'].used = parseInt(this.resources['rocm.device'].used) + Math.floor(Number(occupied_slots['rocm.device']));
+          }
+          if ('tpu.device' in available_slots) {
+            this.resources['tpu.device'].total = parseInt(this.resources['tpu.device'].total) + Math.floor(Number(available_slots['tpu.device']));
+          }
+          if ('tpu.device' in occupied_slots) {
+            this.resources['tpu.device'].used = parseInt(this.resources['tpu.device'].used) + Math.floor(Number(occupied_slots['tpu.device']));
+          }
+
           if (isNaN(this.resources.cpu.used)) {
             this.resources.cpu.used = 0;
           }
@@ -2035,14 +2172,13 @@ class Resources {
             this.resources.fgpu.used = 0;
           }
         });
-        this.resources.fgpu.used = this.resources.fgpu.used.toFixed(2);
-        this.resources.fgpu.total = this.resources.fgpu.total.toFixed(2);
+        // Legacy code
+        this.resources.gpu.total = this.resources['cuda.device'].total;
+        this.resources.gpu.used = this.resources['cuda.device'].used;
+        this.resources.fgpu.used = this.resources['cuda.shares'].used.toFixed(2);
+        this.resources.fgpu.total = this.resources['cuda.shares'].total.toFixed(2);
         this.resources.agents.total = Object.keys(this.agents).length; // TODO : remove terminated agents
         this.resources.agents.using = Object.keys(this.agents).length;
-        this.resources['cuda.shares'].used = this.resources.fgpu.used;
-        this.resources['cuda.device'].used = this.resources.gpu.used;
-        this.resources['cuda.shares'].total = this.resources.fgpu.total;
-        this.resources['cuda.device'].total = this.resources.gpu.total;
         return this.resources;
       }).catch(err => {
         throw err;
@@ -2052,6 +2188,10 @@ class Resources {
     }
   }
 
+  /**
+   * user statistics about usage.
+   *
+   */
   user_stats() {
     const rqst = this.client.newSignedRequest("GET", "/resource/stats/user/month", null);
     return this.client._wrapWithPromise(rqst);
@@ -2161,6 +2301,44 @@ class Domain {
 
     return this.client.gql(q, v);
   }
+
+  /**
+   * Modify domain information.
+   * @param {string} domain_name - domain name of group
+
+
+   * @param {json} input - Domain specification to change. Required fields are:
+   * {
+   *   'name': String,          // Group name.
+   *   'description': String,   // Description for group.
+   *   'is_active': Boolean,    // Whether the group is active or not.
+   *   'created_at': String,    // Created date of group.
+   *   'modified_at': String,   // Modified date of group.
+   *   'total_resource_slots': JSOONString,   // Total resource slots
+   *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
+   *   'allowed_docker_registries': [String],   // Allowed docker registry lists
+   *   'integration_id': [String],   // Integration ids
+   *   'scaling_groups': [String],   // Scaling groups
+   * };
+   */
+  modify(domain_name = false, input) {
+    //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+    //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
+    if (this.client.is_superadmin === true) {
+      let q = `mutation($name: String!, $input: ModifyDomainInput!) {` +
+        `  modify_domain(name: $name, props: $input) {` +
+        `    ok msg` +
+        `  }` +
+        `}`;
+      let v = {
+        'name': domain_name,
+        'input': input
+      };
+      return this.client.gql(q, v);
+    } else {
+      return Promise.resolve(false);
+    }
+  }
 }
 
 class Maintenance {
@@ -2202,7 +2380,7 @@ class Maintenance {
           `}`;
         v = {};
       }
-      return this.client.gql(q, v);
+      return this.client.gql(q, v, null, 600 * 1000 );
     } else {
       return Promise.resolve(false);
     }
@@ -2211,7 +2389,7 @@ class Maintenance {
   recalculate_usage() {
     if (this.client.is_superadmin === true) {
       let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
-      return this.client._wrapWithPromise(rqst);
+      return this.client._wrapWithPromise(rqst, null, null, 60 * 1000 );
     }
   }
 }
@@ -2349,7 +2527,6 @@ class User {
    * };
    */
   modify(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'group_ids'];
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
@@ -2782,7 +2959,7 @@ class utils {
   }
 
   gqlToList(array, key) {
-    let result = [];
+    let result: Array<any> = [];
     array.forEach(function (element) {
       result.push(element[key]);
     });
@@ -2805,6 +2982,18 @@ Object.defineProperty(Client, 'ERR_RESPONSE', {
 });
 Object.defineProperty(Client, 'ERR_REQUEST', {
   value: 2,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+Object.defineProperty(Client, 'ERR_ABORT', {
+  value: 3,
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+Object.defineProperty(Client, 'ERR_TIMEOUT', {
+  value: 4,
   writable: false,
   enumerable: true,
   configurable: false

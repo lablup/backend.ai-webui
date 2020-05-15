@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -17,6 +18,9 @@ import {
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+
 import 'weightless/card';
 import 'weightless/switch';
 import 'weightless/select';
@@ -27,11 +31,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
   @property({type: Object}) notification = Object();
+  @property({type: Array}) imagePullingBehavior = [
+    {name: _text("settings.image.digest"), behavior: "digest"},
+    {name: _text("settings.image.tag"), behavior: "tag"},
+    {name: _text("settings.image.none"), behavior: "none"}
+  ];
 
   constructor() {
     super();
     this.options = {
-      automatic_image_update: false,
+      image_pulling_behavior: "digest",
       cuda_gpu: false,
       cuda_fgpu: false,
       rocm_gpu: false,
@@ -79,6 +88,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
           width: 35px;
         }
 
+        .setting-select-desc {
+          width: 200px;
+        }
+
+        .setting-select {
+          width: 135px;
+        }
+
         .setting-desc-pulldown {
           width: 265px;
         }
@@ -98,14 +115,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return html`
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
-          <span>General</span>
+          <span>${_t("settings.General")}</span>
           <span class="flex"></span>
         </h3>
+        <h4 class="horizontal center layout">
+          <span>${_t("settings.Image")}</span>
+          <span class="flex"></span>
+        </h4>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Register new images from repository</div>
-              <div class="description">Register new environments from repository.
+              <div>${_t("settings.RegisterNewImagesFromRepo")}</div>
+              <div class="description">${_t("settings.DescRegisterNewImagesFromRepo")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -113,19 +134,34 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>Automatic image update from repository</div>
-              <div class="description">When new image comes out, update current image automatically. Please turn off when you preserve the current environment without updating.
+            <div class="vertical center-justified layout setting-select-desc">
+              <div>${_t("settings.ImagePullBehavior")}</div>
+              <div class="description">${_tr("settings.DescImagePullBehavior")}<br />
+                  ${_t("settings.Require2003orAbove")}
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="allow-image-update-switch" @change="${(e) => this.toggleImageUpdate(e)}" ?checked="${this.options['automatic_image_update']}"></wl-switch>
+            <div class="vertical center-justified layout setting-select">
+              <mwc-select id="ui-image-pulling-behavior"
+                          required
+                          @selected="${(e) => this.setImagePullingBehavior(e)}">
+              ${this.imagePullingBehavior.map(item => html`
+                <mwc-list-item value="${item.behavior}" ?selected=${this.options['image_pulling_behavior'] === item.behavior}>
+                  ${item.name}
+                </mwc-list-item>`)}
+              </mwc-select>
             </div>
+
           </div>
+        </div>
+        <h4 class="horizontal center layout">
+          <span>${_t("settings.GUI")}</span>
+          <span class="flex"></span>
+        </h4>
+        <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Use Backend.AI CLI on GUI</div>
-              <div class="description">Provide Backend.AI CLI on GUI app/web.<br/>Requires Backend.AI CLI image.
+              <div>${_t("settings.UseCLIonGUI")}</div>
+              <div class="description">${_tr("settings.DescUseCLIonGUI")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -134,8 +170,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Use Backend.AI GUI on Web</div>
-              <div class="description">Provide Backend.AI GUI as a web service.<br/>Requires Backend.AI Console image.
+              <div>${_t("settings.UseGUIonWeb")}</div>
+              <div class="description">${_tr("settings.DescUseGUIonWeb")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -144,18 +180,17 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </div>
         <div class="horizontal wrap layout" style="background-color:#FFFBE7;padding: 5px 15px;">
-          Note: The settings below are automatically applied depending on the installation environment and status.
+          ${_t("settings.NoteAboutFixedSetup")}
         </div>
         <h3 class="horizontal center layout">
-            <span>Scaling</span>
+            <span>${_t("settings.Scaling")}</span>
             <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Allow agent-side registration</div>
-              <div class="description">Allow agent to register itself to manager.<br/>Use only if Backend.AI cluster is
-                  managed on secure location.
+              <div>${_t("settings.AllowAgentSideRegistration")}</div>
+              <div class="description">${_tr("settings.DescAllowAgentSideRegistration")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -164,15 +199,15 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </div>
         <h3 class="horizontal center layout">
-            <span>Plugins</span>
+            <span>${_t("settings.Plugins")}</span>
             <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>CUDA GPU support</div>
-              <div class="description">NVidia CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.
-              ${this.options['cuda_fgpu'] ? html`<br />Disabled because system uses Fractional GPU plugin` : html``}
+              <div>${_t("settings.CUDAGPUsupport")}</div>
+              <div class="description">${_tr("settings.DescCUDAGPUsupport")}
+              ${this.options['cuda_fgpu'] ? html`<br />${_t("settings.CUDAGPUdisabledByFGPUsupport")}` : html``}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -181,9 +216,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>ROCm GPU support</div>
-              <div class="description">AMD ROCm GPU support. <br/>Requires Backend.AI ROCm Plugin. <br/>
-                  Requires Backend.AI 19.12 or above.
+              <div>${_t("settings.ROCMGPUsupport")}</div>
+              <div class="description">${_tr("settings.DescROCMGPUsupport")}<br />${_t("settings.Require1912orAbove")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -192,9 +226,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc-pulldown">
-              <div>Scheduler</div>
-              <div class="description">Job scheduler.<br/>
-                  Requires Backend.AI 19.12 or above.
+              <div>${_t("settings.Scheduler")}</div>
+              <div class="description">${_t("settings.JobScheduler")}<br/>
+                  ${_t("settings.Require1912orAbove")}
               </div>
             </div>
             <div class="vertical layout setting-pulldown">
@@ -207,14 +241,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </div>
         <h3 class="horizontal center layout">
-          <span>Enterprise features</span>
+          <span>${_t("settings.EnterpriseFeatures")}</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>Fractional GPU</div>
-              <div class="description">Use Fractional GPU feature with GPU virtualization. <br/>Requires Backend.AI Virtual CUDA API Layer Plugin.
+              <div>${_t("settings.FractionalGPU")}</div>
+              <div class="description">${_t("settings.DescFractionalGPU")} <br/> ${_t("settings.RequireFGPUPlugin")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -223,9 +257,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div class="horizontal layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
-              <div>TPU</div>
-              <div class="description">Use TPU accelerator. <br/>Requires resource nodes on Google Cloud with Cloud TPU
-                  enabled.
+              <div>${_t("settings.TPU")}</div>
+              <div class="description">${_t("settings.DescTPU")} <br/>${_t("settings.RequireTPUPlugin")}
               </div>
             </div>
             <div class="vertical center-justified layout setting-button">
@@ -257,9 +290,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
   updateSettings() {
     globalThis.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
-        this.options['automatic_image_update'] = true;
-      } else if (response['result'] === 'tag' || response['result'] === 'none') {
-        this.options['automatic_image_update'] = false;
+        this.options['image_pulling_behavior'] = 'digest';
+      } else if (response['result'] === 'tag') {
+        this.options['image_pulling_behavior'] = 'tag';
+      } else {
+        this.options['image_pulling_behavior'] = 'none';
       }
       this.update(this.options);
     });
@@ -288,16 +323,19 @@ export default class BackendAiSettingsView extends BackendAIPage {
     });
   }
 
-  toggleImageUpdate(e) {
-    if (e.target.checked === false) {
-      globalThis.backendaiclient.setting.set('docker/image/auto_pull', 'none').then((response) => {
-        console.log(response);
-      });
-    } else {
-      globalThis.backendaiclient.setting.set('docker/image/auto_pull', 'digest').then((response) => {
+  setImagePullingBehavior(e) {
+    if (e.target.selected === null) return false;
+    const value = e.target.selected.value;
+    if (value !== this.options['image_pulling_behavior'] && ['none', 'digest', 'tag'].includes(value)) {
+      globalThis.backendaiclient.setting.set('docker/image/auto_pull', value).then((response) => {
+        this.options['image_pulling_behavior'] = value;
+        this.notification.text = _text("notification.SuccessfullyUpdated");
+        this.notification.show();
+        this.update(this.options);
         console.log(response);
       });
     }
+    return true;
   }
 
   changeScheduler(e) {

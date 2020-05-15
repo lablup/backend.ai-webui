@@ -3,13 +3,13 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
 import 'weightless/icon';
 import 'weightless/button';
@@ -71,6 +71,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           padding: 0;
         }
 
+        img.indicator-icon {
+          width: 16px;
+          height: 16px;
+        }
+
         paper-icon-button {
           --paper-icon-button: {
             width: 25px;
@@ -86,11 +91,6 @@ export default class BackendAIAgentList extends BackendAIPage {
         span.indicator {
           font-size: 9px;
           margin-right: 5px;
-        }
-
-        vaadin-progress-bar {
-          width: 100px;
-          height: 6px;
         }
 
         mwc-linear-progress {
@@ -116,7 +116,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     super.connectedCallback();
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -133,7 +133,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
   }
 
-  _loadAgentList(status = 'running') {
+  _loadAgentList(status: string = 'running') {
     if (this.active !== true) {
       return;
     }
@@ -157,6 +157,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           var agent = agents[objectKey];
           var occupied_slots = JSON.parse(agent.occupied_slots);
           var available_slots = JSON.parse(agent.available_slots);
+          ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
+            if (slot in occupied_slots === false) {
+              occupied_slots[slot] = "0";
+            }
+          });
 
           agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
@@ -182,16 +187,31 @@ export default class BackendAIAgentList extends BackendAIPage {
           agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
           agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
           if ('cuda.device' in available_slots) {
-            agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+            agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
+            if ('cuda.device' in occupied_slots) {
+              agents[objectKey].used_cuda_gpu_slots = parseInt(occupied_slots['cuda.device']);
+            } else {
+              agents[objectKey].used_cuda_gpu_slots = 0;
+            }
+            agents[objectKey].used_cuda_gpu_slots_ratio = agents[objectKey].used_cuda_gpu_slots / agents[objectKey].cuda_gpu_slots;
           }
           if ('cuda.shares' in available_slots) {
-            agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
+            agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
+            if ('cuda.shares' in occupied_slots) {
+              agents[objectKey].used_cuda_fgpu_slots = parseInt(occupied_slots['cuda.shares']);
+            } else {
+              agents[objectKey].used_cuda_fgpu_slots = 0;
+            }
+            agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
           }
-          if ('cuda.device' in occupied_slots) {
-            agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
-          }
-          if ('cuda.shares' in occupied_slots) {
-            agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
+          if ('rocm.device' in available_slots) {
+            agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
+            if ('rocm.device' in occupied_slots) {
+              agents[objectKey].used_rocm_gpu_slots = parseInt(occupied_slots['rocm.device']);
+            } else {
+              agents[objectKey].used_rocm_gpu_slots = 0;
+            }
+            agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
           }
         });
       }
@@ -223,11 +243,12 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   _elapsed(start, end) {
-    var startDate = new Date(start);
+    let startDate = new Date(start);
+    let endDate: Date;
     if (this.condition === 'running') {
-      var endDate = new Date();
+      endDate = new Date();
     } else {
-      var endDate = new Date(end);
+      endDate = new Date(end);
     }
     var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     if (this.condition === 'running') {
@@ -243,15 +264,15 @@ export default class BackendAIAgentList extends BackendAIPage {
     return startDate.toLocaleString('ko-KR');
   }
 
-  _indexFrom1(index) {
+  _indexFrom1(index: number) {
     return index + 1;
   }
 
-  _heartbeatStatus(state) {
+  _heartbeatStatus(state: string) {
     return state;
   }
 
-  _heartbeatColor(state) {
+  _heartbeatColor(state: string) {
     switch (state) {
       case 'ALIVE':
         return 'green';
@@ -369,22 +390,22 @@ export default class BackendAIAgentList extends BackendAIPage {
       <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="80px">
-          <template class="header">Endpoint</template>
+          <template class="header">${_t("agent.Endpoint")}</template>
           <template>
             <div>[[item.id]]</div>
             <div class="indicator monospace">[[item.addr]]</div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
-          <template class="header">Region</template>
+          <template class="header">${_t("agent.Region")}</template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable .renderer="${this._boundContactDateRenderer}">
-          <template class="header">Starts</template>
+          <template class="header">${_t("agent.Starts")}</template>
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">Resources</template>
+          <template class="header">${_t("agent.Resources")}</template>
           <template>
             <div class="layout flex">
               <div class="layout horizontal center flex">
@@ -392,7 +413,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 <div class="layout vertical start" style="padding-left:5px;">
                   <div class="layout horizontal start">
                     <span>[[ item.cpu_slots ]]</span>
-                    <span class="indicator">cores</span>
+                    <span class="indicator">${_t("general.cores")}</span>
                   </div>
                   <div class="layout horizontal start">
                     <span>[[item.current_cpu_percent]]</span>
@@ -420,31 +441,47 @@ export default class BackendAIAgentList extends BackendAIPage {
                                 buffer="[[item.mem_total_usage_ratio]]"></mwc-linear-progress>
 
               </div>
-              <template is="dom-if" if="[[item.gpu_slots]]">
+              <template is="dom-if" if="[[item.cuda_gpu_slots]]">
                 <div class="layout horizontal center flex">
-                  <wl-icon class="fg green">view_module</wl-icon>
-                  <span style="padding-left:5px;">[[item.gpu_slots]]</span>
+                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                  <span style="padding-left:5px;">[[item.cuda_gpu_slots]]</span>
                   <span class="indicator">GPU</span>
                   <span class="flex"></span>
-                  <vaadin-progress-bar id="gpu-bar" value="[[item.used_gpu_slots]]"
-                                       max="[[item.gpu_slots]]"></vaadin-progress-bar>
+                  <mwc-linear-progress id="gpu-bar" value="[[item.used_cuda_gpu_slots_ratio]]" buffer="[[item.used_cuda_gpu_slots_ratio]]"></mwc-linear-progress>
                 </div>
               </template>
-              <template is="dom-if" if="[[item.vgpu_slots]]">
+              <template is="dom-if" if="[[item.cuda_fgpu_slots]]">
                 <div class="layout horizontal center flex">
-                  <wl-icon class="fg green">view_module</wl-icon>
-                  <span style="padding-left:5px;">[[item.vgpu_slots]]</span>
+                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                  <span style="padding-left:5px;">[[item.cuda_fgpu_slots]]</span>
                   <span class="indicator">fGPU</span>
                   <span class="flex"></span>
-                  <vaadin-progress-bar id="vgpu-bar" value="[[item.used_vgpu_slots]]"
-                                       max="[[item.vgpu_slots]]"></vaadin-progress-bar>
+                  <mwc-linear-progress id="vgpu-bar" value="[[item.used_cuda_fgpu_slots_ratio]]" buffer="[[item.used_cuda_fgpu_slots_ratio]]"></mwc-linear-progress>
+                </div>
+              </template>
+              <template is="dom-if" if="[[item.rocm_gpu_slots]]">
+                <div class="layout horizontal center flex">
+                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+                  <span style="padding-left:5px;">[[item.rocm_gpu_slots]]</span>
+                  <span class="indicator">ROCm</span>
+                  <span class="flex"></span>
+                  <mwc-linear-progress id="rocm-gpu-bar" value="[[item.used_rocm_gpu_slots_ratio]]" buffer="[[item.used_rocm_gpu_slots_ratio]]"></mwc-linear-progress>
+                </div>
+              </template>
+              <template is="dom-if" if="[[item.tpu_slots]]">
+                <div class="layout horizontal center flex">
+                  <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+                  <span style="padding-left:5px;">[[item.tpu_slots]]</span>
+                  <span class="indicator">TPU</span>
+                  <span class="flex"></span>
+                  <mwc-linear-progress id="tpu-bar" value="[[item.used_tpu_slots_ratio]]" buffer="[[item.used_tpu_slots_ratio]]"></mwc-linear-progress>
                 </div>
               </template>
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable header="Status" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="100px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
     `;
   }

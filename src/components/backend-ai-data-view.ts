@@ -2,16 +2,19 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
-import {render} from 'lit-html';
+import {unsafeHTML} from 'lit-html/directives/unsafe-html';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-item/paper-item';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
+import '@material/mwc-list/mwc-list-item';
+import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-textfield';
 
 import 'weightless/button';
@@ -36,6 +39,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
+  @property({type: String}) apiMajorVersion = '';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
@@ -43,14 +47,21 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
+  @property({type: Array}) usageModes = ['General', 'Data', 'Model'];
+  @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
-  @property({type: Object}) indicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
   @property({type: Object}) _lists = Object();
+  @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
+  @property({type: Object}) storageInfo = Object();
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
 
   constructor() {
     super();
@@ -162,103 +173,180 @@ export default class BackendAIData extends BackendAIPage {
           --label-color: black;
         }
 
+        mwc-multi-select {
+          width: 180px;
+          --mdc-select-min-width: 180px;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--paper-orange-600);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--paper-orange-400);
+          --mdc-select-hover-line-color: var(--paper-orange-600);
+          --mdc-list-vertical-padding: 5px;
+        }
+
+        #help-description {
+          --dialog-width: 350px;
+        }
+
+        #help-description p {
+          padding: 5px !important;
+        }
+
+        mwc-multi-select mwc-icon-button {
+          --mdc-icon-button-size: 24px;
+        }
+
       `];
   }
 
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="horizontal center flex layout tab">
           <wl-tab-group>
-            <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">Folders</wl-tab>
-            <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">Automount Folders</wl-tab>
-            <wl-tab value="shared-folder" disabled>Shared Data</wl-tab>
-            <wl-tab value="model" disabled>Models</wl-tab>
+            <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
+            <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
+            <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
+            <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
           <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
             <wl-icon>add</wl-icon>
-            New folder
+            ${_t("data.NewFolder")}
           </wl-button>
         </h3>
         <div id="general-folder-lists" class="tab-content">
           <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
         <div id="automount-folder-lists" class="tab-content" style="display:none;">
-        <p>Folders starting with a <span class="monospace">.</span>(dot) are automatically mounted when a new session is started.</p>
+          <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
           <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
       </wl-card>
       <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card elevation="1" class="login-panel intro centered">
           <h3 class="horizontal center layout">
-            <span>Create a new storage folder</span>
+            <span>${_t("data.CreateANewStorageFolder")}</span>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
           <section>
-            <mwc-textfield id="add-folder-name" label="Folder name" pattern="[a-zA-Z0-9_-.]*"
-            auto-validate required validationMessage="Allows letters, numbers and -_."></mwc-textfield>
+            <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
+                auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
             <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-host" label="Host">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${this.vhosts.map(item => html`
-                  <paper-item id="${item}" label="${item}">${item}</paper-item>
+              <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
+                ${this.vhosts.map((item, idx) => html`
+                  <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+                    <span>${item}</span>
+                    <mwc-icon-button slot="meta" icon="info" class="fg orange info"
+                        @click="${(e) => {
+      this._showStorageDescription(e, item);
+    }}">
+                    </mwc-icon-button>
+                  </mwc-list-item>
                 `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-              <paper-dropdown-menu id="add-folder-type" label="Type">
-                <paper-listbox slot="dropdown-content" selected="0">
+              </mwc-multi-select>
+              <mwc-multi-select id="add-folder-type" label="${_t("data.Type")}">
                 ${(this.allowed_folder_type as String[]).includes('user') ? html`
-                  <paper-item label="user">User</paper-item>
+                  <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
                 ` : html``}
                 ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-                  <paper-item label="group">Group</paper-item>
+                  <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
                 ` : html``}
-                </paper-listbox>
-              </paper-dropdown-menu>
+              </mwc-multi-select>
             </div>
+            ${this._vfolderInnatePermissionSupport ? html`
+              <div class="horizontal layout">
+                <mwc-multi-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
+                  ${this.usageModes.map((item, idx) => html`
+                    <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                  `)}
+                </mwc-multi-select>
+                <mwc-multi-select id="add-folder-permission" label="${_t("data.Type")}">
+                  ${this.permissions.map((item, idx) => html`
+                    <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                  `)}
+                </mwc-multi-select>
+              </div>
+            ` : html``}
             ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-            <div class="horizontal layout">
-              <paper-dropdown-menu id="add-folder-group" label="Group">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${(this.allowedGroups as any).map(item => html`
-                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-            </div>
+              <div class="horizontal layout">
+                <mwc-multi-select id="add-folder-group" label="${_t("data.Group")}">
+                  ${(this.allowedGroups as any).map((item, idx) => html`
+                    <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  `)}
+                </mwc-multi-select>
+              </div>
             ` : html``}
             <div style="font-size:11px;">
-              Folders starting with a <span class="monospace">.</span>(dot) are automatically mounted
-              <br/>when a new session is started.
+              ${_t("data.DialogFolderStartingWithDotAutomount")}
             </div>
             <br/>
             <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
               <wl-icon>rowing</wl-icon>
-              Create
+               ${_t("data.Create")}
             </wl-button>
           </section>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="help-description" fixed backdrop blockscrolling persistent style="padding:0;">
+        <wl-card class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout">
+            <span style="font-size:16px;">${this._helpDescriptionTitle}</span>
+            <div class="flex"></div>
+            <mwc-icon-button icon="close" class="blue close-button"
+              @click="${(e) => this._hideDialog(e)}">
+            </mwc-icon-button>
+          </h3>
+          <div class="horizontal layout center" style="margin:5px;">
+          ${this._helpDescriptionIcon == '' ? html`` : html`
+            <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+            `}
+            <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+          </div>
         </wl-card>
       </wl-dialog>
     `;
   }
 
-  indexRenderer(root, column?, rowData?) {
-    render(
-      // language=HTML
-      html`${this._indexFrom1(rowData.index)}`, root
-    );
-  }
-
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
+    fetch('resources/storage_metadata.json').then(
+      response => response.json()
+    ).then(
+      json => {
+        let storageInfo = Object();
+        for (let key in json.storageInfo) {
+          storageInfo[key] = {};
+          if ("name" in json.storageInfo[key]) {
+            storageInfo[key].name = json.storageInfo[key].name;
+          }
+          if ("description" in json.storageInfo[key]) {
+            storageInfo[key].description = json.storageInfo[key].description;
+          } else {
+            storageInfo[key].description = _text('data.NoStorageDescriptionFound');
+          }
+          if ("icon" in json.storageInfo[key]) {
+            storageInfo[key].icon = json.storageInfo[key].icon;
+          } else {
+            storageInfo[key].icon = 'local.png';
+          }
+          if ("dialects" in json.storageInfo[key]) {
+            json.storageInfo[key].dialects.forEach(item => {
+              storageInfo[item] = storageInfo[key];
+            });
+          }
+        }
+        this.storageInfo = storageInfo;
+      }
+    );
   }
 
   async _viewStateChanged(active) {
@@ -266,20 +354,25 @@ export default class BackendAIData extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.is_admin = globalThis.backendaiclient.is_admin;
-        this.authenticated = true;
-        globalThis.backendaiclient.vfolder.allowed_types().then(response => {
-          this.allowed_folder_type = response;
-        });
-      }, true);
-    } else {
+
+    const _init = () => {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
+        this._vfolderInnatePermissionSupport = true;
+      }
       globalThis.backendaiclient.vfolder.allowed_types().then(response => {
         this.allowed_folder_type = response;
       });
+    }
+
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        _init();
+      }, true);
+    } else {
+      _init();
     }
   }
 
@@ -297,6 +390,8 @@ export default class BackendAIData extends BackendAIPage {
 
   async _addFolderDialog() {
     let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    let nameEl = this.shadowRoot.querySelector('#add-folder-name');
+    nameEl.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
     if ((this.allowed_folder_type as String[]).includes('group')) {
@@ -314,6 +409,21 @@ export default class BackendAIData extends BackendAIPage {
     this.shadowRoot.querySelector('#' + id).hide();
   }
 
+  _showStorageDescription(e, item) {
+    e.stopPropagation();
+    if (item in this.storageInfo) {
+      this._helpDescriptionTitle = this.storageInfo[item].name;
+      this._helpDescription = this.storageInfo[item].description;
+      this._helpDescriptionIcon = this.storageInfo[item].icon;
+    } else {
+      this._helpDescriptionTitle = item;
+      this._helpDescriptionIcon = 'local.png';
+      this._helpDescription = _text('data.NoStorageDescriptionFound');
+    }
+    let desc = this.shadowRoot.querySelector('#help-description');
+    desc.show();
+  }
+
   _indexFrom1(index) {
     return index + 1;
   }
@@ -322,21 +432,45 @@ export default class BackendAIData extends BackendAIPage {
     let nameEl = this.shadowRoot.querySelector('#add-folder-name');
     let name = nameEl.value;
     let host = this.shadowRoot.querySelector('#add-folder-host').value;
-    let type = this.shadowRoot.querySelector('#add-folder-type').value;
+    let ownershipType = this.shadowRoot.querySelector('#add-folder-type').value;
     let group;
-    if (['user', 'group'].includes(type) === false) {
-      type = 'user';
+    const usageModeEl = this.shadowRoot.querySelector('#add-folder-usage-mode');
+    const permissionEl = this.shadowRoot.querySelector('#add-folder-permission');
+    let usageMode = '';
+    let permission = '';
+    if (['user', 'group'].includes(ownershipType) === false) {
+      ownershipType = 'user';
     }
-    if (type === 'user') {
+    if (ownershipType === 'user') {
       group = '';
     } else {
       group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
     }
+    if (usageModeEl) {
+      usageMode = usageModeEl.value;
+      usageMode = usageMode.toLowerCase();
+    }
+    if (permissionEl) {
+      permission = permissionEl.value;
+      switch (permission) {
+        case 'Read-Write':
+          permission = 'rw';
+          break;
+        case 'Read-Only':
+          permission = 'ro';
+          break;
+        case 'Delete':
+          permission = 'wd';
+          break;
+        default:
+          permission = 'rw';
+      }
+    }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-      let job = globalThis.backendaiclient.vfolder.create(name, host, group);
+      let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
       job.then((value) => {
-        this.notification.text = 'Folder is successfully created.';
+        this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
         this._refreshFolderList();
       }).catch(err => {
@@ -349,7 +483,7 @@ export default class BackendAIData extends BackendAIPage {
       });
       this.closeDialog('add-folder-dialog');
     } else {
-      return ;
+      return;
     }
   }
 

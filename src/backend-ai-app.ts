@@ -10,7 +10,9 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   // Extract the page name from path.
-  if (['/summary', '/job', '/experiment', '/data', '/statistics', '/usersettings', '/agent', '/resource', '/user', '/credential', '/environment', '/settings', '/maintenance', '/information'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
+  if (['/summary', '/job', '/experiment', '/data', '/statistics', '/usersettings',
+    '/agent', '/resource', '/user', '/credential', '/environment', '/settings',
+    '/maintenance', '/information'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
     path = path.split(/[\/]+/).pop();
   }
   if (path === 'index.html' || path === '') {
@@ -79,7 +81,15 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
       import('./components/backend-ai-error-log-view.js');
       break;
     default:
-      import('./components/backend-ai-summary-view.js').then((module) => {
+      if (typeof globalThis.backendaiPage !== 'undefined') {
+        for (let item of globalThis.backendaiPage) {
+          if ('url' in item) {
+            import('./plugins/' + item.url);
+            break;
+          }
+        }
+      }
+      import('./components/backend-ai-error-view.js').then((module) => {
       });
       break;
   }

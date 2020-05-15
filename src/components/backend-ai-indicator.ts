@@ -13,6 +13,7 @@ import 'weightless/title';
 export default class BackendAIIndicator extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
+  @property({type: Number}) delay = 1000;
   @property({type: String}) text = '';
   @property({type: String}) mode = 'determinate';
   @property({type: Object}) dialog;
@@ -25,15 +26,15 @@ export default class BackendAIIndicator extends LitElement {
     return [
       // language=CSS
       css`
-          wl-dialog {
-              position: fixed;
-              right: 20px;
-              bottom: 20px;
-              z-index: 9000;
-              --dialog-height: 80px;
-              --dialog-width: 250px;
-              --dialog-content-padding: 15px;
-          }
+        wl-dialog {
+          position: fixed;
+          right: 20px;
+          bottom: 20px;
+          z-index: 9000;
+          --dialog-height: 80px;
+          --dialog-width: 250px;
+          --dialog-content-padding: 15px;
+        }
       `];
   }
 
@@ -45,19 +46,25 @@ export default class BackendAIIndicator extends LitElement {
     super.connectedCallback();
   }
 
-  start(mode = 'determinate') {
+  async start(mode = 'determinate') {
     this.value = 0;
-    this.text = 'Initializing...';
     this.mode = mode;
+    await this.updateComplete;
     this.dialog.show();
   }
 
   set(value, text = '') {
     this.value = value / 100.0;
     this.text = text;
+    if (this.value >= 1) {
+      this.end(this.delay);
+    }
   }
 
-  end(delay = 0) {
+  end(delay = 1000) {
+    if (delay !== 0) {
+      this.delay = delay;
+    }
     setTimeout(() => {
       this.dialog.hide();
     }, delay);

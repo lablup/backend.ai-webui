@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -45,7 +45,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) userInfoGroups = Array();
   @property({type: String}) condition = 'active';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) indicator;
+  @property({type: Object}) spinner;
   @property({type: Object}) keypairs;
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
@@ -151,7 +151,7 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     }
@@ -186,7 +186,7 @@ export default class BackendAIUserList extends BackendAIPage {
       default:
         is_active = false;
     }
-    this.indicator.hide();
+    this.spinner.hide();
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
@@ -430,56 +430,60 @@ export default class BackendAIUserList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
                    aria-label="User list" id="user-grid" .items="${this.userView}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="User ID" path="email">
+        <vaadin-grid-sort-column resizable header="${_t("credential.UserID")}" path="email">
           <template>
             <div class="layout horizontal center flex">
               <div>[[item.email]]</div>
             </div>
           </template>
         </vaadin-grid-sort-column>
-        <vaadin-grid-sort-column resizable header="Name" path="username">
+        <vaadin-grid-sort-column resizable header="${_t("credential.Name")}" path="username">
           <template>
             <div class="layout horizontal center flex">
               <div>[[item.username]]</div>
             </div>
           </template>
         </vaadin-grid-sort-column>
-        <vaadin-grid-column resizable header="Control" .renderer="${this._boundControlRenderer}">
+        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
         <wl-button class="pagination" id="previous-page"
-                   ?disabled="${ this._currentPage === 1 }"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+                   ?disabled="${this._currentPage === 1}"
+                   @click="${(e) => {
+      this._updateItemsFromPage(e)
+    }}">
           <wl-icon class="pagination">navigate_before</wl-icon>
         </wl-button>
         <wl-label style="padding: 5px 15px 0px 15px;">
-        ${this._currentPage} / ${ Math.ceil( this._totalUserCount / this._pageSize)}</wl-label>
+        ${this._currentPage} / ${Math.ceil(this._totalUserCount / this._pageSize)}</wl-label>
         <wl-button class="pagination" id="next-page"
-                   ?disabled="${ this._totalUserCount <= this._pageSize * this._currentPage}"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+                   ?disabled="${this._totalUserCount <= this._pageSize * this._currentPage}"
+                   @click="${(e) => {
+      this._updateItemsFromPage(e)
+    }}">
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
       <wl-dialog id="signout-user-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">Let's double-check</wl-title>
          <div slot="content">
-            <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>. Do you want to proceed?</p>
+            <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>. ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button class="ok" @click="${() => this._signoutUser()}">Okay</wl-button>
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button class="ok" @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>
          </div>
       </wl-dialog>
       <wl-dialog id="user-info-dialog" fixed backdrop blockscrolling>
         <wl-card elevation="0" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span style="margin-right:15px;">User Detail</span>
+            <span style="margin-right:15px;">${_t("credential.UserDetail")}</span>
             <lablup-shields app="" description="user" ui="flat"></lablup-shields>
             <div class="flex"></div>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
@@ -488,36 +492,36 @@ export default class BackendAIUserList extends BackendAIPage {
           </h3>
           <div class="horizontal layout">
             <div style="width:335px;">
-              <h4>Information</h4>
+              <h4>${_t("credential.Information")}</h4>
               <div role="listbox" style="margin: 0;">
                 <wl-textfield
-                  label="User ID"
+                  label="${_t("credential.UserID")}"
                   disabled
                   value="${this.userInfo.email}">
                 </wl-textfield>
                 <wl-textfield
-                  label="User name"
+                  label="${_t("credential.UserName")}"
                   id="username"
                   ?disabled=${!this.editMode}
                   value="${this.userInfo.username}">
                 </wl-textfield>
                 <wl-textfield
-                  label="Full name"
+                  label="${_t("credential.FullName")}"
                   id="full_name"
                   ?disabled=${!this.editMode}
                   value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}">
                 </wl-textfield>
                 ${this.editMode ? html`
-                            <wl-textfield type="password" label="New Password" id="password"></wl-textfield>
-                            <wl-textfield type="password" label="Confirm" id="confirm"></wl-textfield>`
-                            : html``}
-                <wl-textarea label="Description" id="description"
+                            <wl-textfield type="password" label="${_t("general.NewPassword")}" id="password"></wl-textfield>
+                            <wl-textfield type="password" label="${_t("general.ConfirmPassword")}" id="confirm"></wl-textfield>`
+      : html``}
+                <wl-textarea label="${_t("credential.Description")}" id="description"
                              value="${this.userInfo.description ? this.userInfo.description : ' '}"
                              ?disabled=${!this.editMode}>
                 </wl-textarea>
                 ${this.editMode ? html`
                   <wl-label label for="is_active_label" style="margin-bottom: auto">
-                    Active user?
+                   ${_t("credential.DescActiveUser")}
                   </wl-label>
                   <wl-label label id="is_active_label">
                     <wl-switch
@@ -526,7 +530,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     </wl-switch>
                   </wl-label>
                   <wl-label label for="need_password_change_label" style="margin-bottom: auto">
-                    Require password change?
+                    ${_t("credential.DescRequirePasswordChange")}
                   </wl-label>
                   <wl-label label id="need_password_change_label">
                     <wl-switch id="need_password_change" ?checked=${this.userInfo.need_password_change}></wl-switch>
@@ -538,12 +542,12 @@ export default class BackendAIUserList extends BackendAIPage {
                     @click=${e => this._saveChanges(e)}
                     style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;">
                     <wl-icon>check</wl-icon>
-                    Save Changes
+                    ${_t("button.SaveChanges")}
                   </wl-button>` : html`
-                      <wl-textfield label="Active user?" disabled
+                      <wl-textfield label="${_t("credential.DescActiveUser")}" disabled
                                     value="${this.userInfo.is_active ? `Yes` : `No`}">
                       </wl-textfield>
-                      <wl-textfield label="Require password change?" disabled
+                      <wl-textfield label="${_t("credential.DescRequirePasswordChange")}" disabled
                                     value="${this.userInfo.need_password_change ? `Yes` : `No`}">
                       </wl-textfield>
               `}
@@ -551,18 +555,18 @@ export default class BackendAIUserList extends BackendAIPage {
           </div>
           ${this.editMode ? html``: html`
             <div style="width:270px;">
-              <h4>Association</h4>
+              <h4>${_t("credential.Association")}</h4>
               <div role="listbox" style="margin: 0;">
                 <vaadin-item>
-                  <div><strong>Domain</strong></div>
+                  <div><strong>${_t("credential.Domain")}</strong></div>
                   <div secondary>${this.userInfo.domain_name}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Role</strong></div>
+                  <div><strong>${_t("credential.Role")}</strong></div>
                   <div secondary>${this.userInfo.role}</div>
                 </vaadin-item>
                 <vaadin-item>
-                  <div><strong>Groups</strong></div>
+                  <div><strong>${_t("credential.Groups")}</strong></div>
                   <div secondary>
                     <ul>
                     ${this.userInfoGroups.map(item => html`

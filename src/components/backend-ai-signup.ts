@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
@@ -68,26 +68,27 @@ export default class BackendAiSignup extends BackendAIPage {
               border: 0;
               border-bottom: 1px solid #aaa;
               margin: 15px 0;
-              font: inherit;
-              font-size: 16px;
-              outline: none;
+            font: inherit;
+            font-size: 16px;
+            outline: none;
           }
 
           fieldset input:focus {
-              border-bottom: 1.5px solid #0d47a1;
+            border-bottom: 1.5px solid #0d47a1;
           }
 
           #signup-panel {
-              --dialog-width: 400px;
+            --dialog-width: 400px;
+            --dialog-elevation: 0px 0px 5px 5px rgba(0, 0, 0, 0.1);
           }
 
           wl-button {
-              --button-bg: transparent;
-              --button-bg-hover: var(--paper-red-100);
-              --button-bg-active: var(--paper-red-600);
-              --button-bg-disabled: #ddd;
-              --button-color: var(--paper-red-600);
-              --button-color-disabled: #222;
+            --button-bg: transparent;
+            --button-bg-hover: var(--paper-red-100);
+            --button-bg-active: var(--paper-red-600);
+            --button-bg-disabled: #ddd;
+            --button-color: var(--paper-red-600);
+            --button-color-disabled: #222;
           }
 
           wl-button.full {
@@ -127,7 +128,8 @@ export default class BackendAiSignup extends BackendAIPage {
   receiveTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.title = "Terms of Service";
+      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get("language");
+      this.TOSdialog.title = _t("console.menu.TermsOfService");
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
@@ -136,7 +138,8 @@ export default class BackendAiSignup extends BackendAIPage {
   receivePPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
-      this.TOSdialog.title = "Privacy Policy";
+      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get("language");
+      this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }
@@ -266,7 +269,7 @@ export default class BackendAiSignup extends BackendAIPage {
       <wl-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <div>Signup (Beta invitation only)</div>
+            <div>${_t("signup.SignupBETA")}</div>
             <div class="flex"></div>
             <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
@@ -275,20 +278,20 @@ export default class BackendAiSignup extends BackendAIPage {
           <form id="signup-form">
             <fieldset>
               <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                           label="E-mail" value="${this.user_email}"
+                           label="${_t("signup.E-mail")}" value="${this.user_email}"
                            @change="${() => this._clear_info()}"></mwc-textfield>
               <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
-                           label="User Name" value="${this.user_name}"></mwc-textfield>
+                           label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
               <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
-                           label="Invitation Token"></mwc-textfield>
+                           label="${_t("signup.InvitationToken")}"></mwc-textfield>
               <mwc-textfield type="password" name="password1" id="id_password1"
-                           label="Password" minlength="8"
+                           label="${_t("signup.Password")}" minlength="8"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                            error-message="At least 1 alphabet, 1 number and 1 special character is required."
                            auto-validate
                            value=""></mwc-textfield>
               <mwc-textfield type="password" name="password2" id="id_password2"
-                           label="Password (again)" minlength="8"
+                           label="${_t("signup.PasswordAgain")}" minlength="8"
                            pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                            error-message="At least 1 alphabet, 1 number and 1 special character is required."
                            auto-validate
@@ -296,13 +299,13 @@ export default class BackendAiSignup extends BackendAIPage {
               <div style="margin-top:10px;">
                 <wl-checkbox id="approve-terms-of-service">
                 </wl-checkbox>
-                 I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">terms of service</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">privacy policy</a>.
+                 I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
               </div>
               <br/><br/>
               <wl-button class="full" id="signup-button" outlined type="button"
                           @click="${() => this._signup()}">
                           <wl-icon>check</wl-icon>
-                          <span id="signup-button-message">Signup</span></wl-button>
+                          <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
             </fieldset>
           </form>
         </wl-card>

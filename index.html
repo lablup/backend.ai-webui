@@ -14,47 +14,31 @@
   <link rel="stylesheet" href="resources/fonts/fonts.css">
   <link rel="stylesheet" href="resources/custom.css">
   <base href="">
-  <script src="manifest/app.js" async></script>
+  <script src="manifest/app.js"></script>
   <title>Backend.AI</title>
   <script src="./src/lib/webcomponents-loader.js"></script>
   <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
 
   <script>
-    function isElectron() {
-      // Renderer process
-      if (typeof window !== 'undefined' && typeof window.process === 'object' &&
-        window.process.type === 'renderer') {
-        return true;
-      }
-      // Main process
-      if (typeof process !== 'undefined' && typeof process.versions === 'object' &&
-        Boolean(process.versions.electron)) {
-        return true;
-      }
-      // Detect the user agent when the `nodeIntegration` option is set to true
-      if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' &&
-        navigator.userAgent.indexOf('Electron') >= 0) {
-        return true;
-      }
-      return false;
-    }
-
-    function isIEEdge() {
-      return globalThis.navigator.userAgent.match(/(MSIE|Trident|Edge)/);
-    }
-
     globalThis.isElectron = isElectron();
     globalThis.enableSW = false;
 
     globalThis.process = {env: {NODE_ENV: 'production'}};
-    globalThis.packageVersion = "20.03.4";
-    globalThis.buildVersion = "200323.200333";
+    globalThis.packageVersion = "20.05.3";
+    globalThis.buildVersion = "200515.150504";
   </script>
   <style>
     body {
       margin: 0;
       font-family: 'Quicksand', Roboto, sans-serif;
       background-color: rgba(244, 245, 247, 1);
+    }
+
+    body {
+      background-image: url("resources/images/loading-background-large.jpg");
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: top left;
     }
 
     .splash {
@@ -220,10 +204,10 @@
         <li><span id="license-detail"></span></li>
         <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
       </ul>
-      <ul>
-        <li>Powered by open-source software</li>
-        <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
-      </ul>
+        <ul>
+          <li>Powered by open-source software</li>
+          <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
+        </ul>
     </div>
     <div class="sk-folding-cube">
       <div class="sk-cube1 sk-cube"></div>
@@ -247,7 +231,7 @@
   } else {
     document.getElementById('mode-detail').innerText = 'WebServer';
   }
-  if (isIEEdge()) {
+  if (globalThis.isIE) {
     alert('Internet Explorer is not supported. Please visit with modern browsers.');
     document.getElementById('loading-message').innerText = 'Not supported browser.';
     document.getElementById('loading-message').style.color = 'red';
