@@ -206,6 +206,10 @@ export const BackendAiConsoleStyles = [
       --mdc-select-min-width: 100px;
     }
 
+    wl-popover-card {
+      padding: 5px;
+    }
+
     wl-dialog wl-textfield {
       --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
       --input-color-disabled: #222222;
@@ -240,6 +244,14 @@ export const BackendAiConsoleStyles = [
     .mini-ui .full-menu {
       display: none;
       margin: 0 !important;
+    }
+
+    .mini-menu {
+      display: none;
+    }
+
+    .mini-ui .mini-menu {
+      display: block;
     }
 
     .sidebar-footer {
