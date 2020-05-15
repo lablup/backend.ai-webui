@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.05.2 (14/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Modified some missing i18n resources.
+
+
 ## v20.05.1 (08/05/2020)
 
 #### Bug Fixes:
